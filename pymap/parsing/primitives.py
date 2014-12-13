@@ -169,7 +169,7 @@ class QuotedString(String):
 
     """
 
-    _quoted_pattern = re.compile(rb'(\\?)\"')
+    _quoted_pattern = re.compile(rb'(\r|\n|\\.|\")')
 
     def __init__(self, string, raw=None):
         self._val = string
@@ -186,14 +186,17 @@ class QuotedString(String):
             raise NotParseable(buf)
         marker = start + 1
         unquoted = bytearray()
-        for match in cls._quote_pattern.finditer(buf, marker):
-            # XXX BROKEN WITH OTHER ESCAPING
-            part = buf[marker:match.start(0)]
-            if b'\r' in part or b'\n' in part:
-                raise NotParseable(buf)
+        for match in cls._quoted_pattern.finditer(buf, marker):
             unquoted += buf[marker:match.start(0)]
-            if match.group(1):
-                unquoted += b'"'
+            match_group = match.group(0)
+            if match_group in (b'\r', b'\n'):
+                raise NotParseable(buf)
+            elif match_group.startswith(b'\\'):
+                escape_char = match_group[-1:]
+                if escape_char in (b'\\', b'"'):
+                    unquoted += escape_char
+                else:
+                    raise NotParseable(buf)
                 marker = match.end(0)
             else:
                 end = match.end(0)
@@ -233,9 +236,12 @@ class LiteralString(String):
         if not match:
             raise NotParseable(buf)
         literal_start = match.end(0)
-        literal_end = literal_start + int(match.group(1))
+        literal_length = int(match.group(1))
+        literal_end = literal_start + literal_length
         literal = buf[literal_start:literal_end]
         raw = buf[start:literal_end]
+        if len(literal) != literal_length:
+            raise NotParseable(buf)
         return cls(literal, raw), literal_end
 
     def __bytes__(self):
