@@ -40,6 +40,10 @@ class Primitive(object):
     """
 
     _whitespace_pattern = re.compile(rb'\s+')
+    _atom_pattern = re.compile(rb'[\x21\x23\x24\x26\x27\x2B'
+                               rb'-\x5B\x5E-\x7A\x7C\x7E]+')
+    _nil_pattern = re.compile(b'^[nN][iI][lL]$')
+    _num_pattern = re.compile(b'^\d+$')
 
     @classmethod
     def _whitespace_length(cls, buf, start):
@@ -69,8 +73,6 @@ class Nil(Primitive):
 
     """
 
-    _pattern = re.compile(rb'[nN][iI][lL]')
-
     def __init__(self):
         super(Nil, self).__init__()
         self._val = None
@@ -78,8 +80,11 @@ class Nil(Primitive):
     @classmethod
     def try_parse(cls, buf, start=0):
         start += cls._whitespace_length(buf, start)
-        match = cls._pattern.match(buf, start)
+        match = cls._atom_pattern.match(buf, start)
         if not match:
+            raise NotParseable(buf)
+        atom = match.group(0)
+        if not cls._nil_pattern.match(atom):
             raise NotParseable(buf)
         return cls(), match.end(0)
 
@@ -94,8 +99,6 @@ class Number(Primitive):
 
     """
 
-    _pattern = re.compile(rb'(\d+)')
-
     def __init__(self, num):
         super(Number, self).__init__()
         self._val = num
@@ -103,10 +106,13 @@ class Number(Primitive):
     @classmethod
     def try_parse(cls, buf, start=0):
         start += cls._whitespace_length(buf, start)
-        match = cls._pattern.match(buf, start)
+        match = cls._atom_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
-        return cls(int(match.group(1))), match.end(1)
+        atom = match.group(0)
+        if not cls._num_pattern.match(atom):
+            raise NotParseable(buf)
+        return cls(int(match.group(0))), match.end(0)
 
     def __bytes__(self):
         return bytes(str(self._val).encode('ascii'))
@@ -117,8 +123,6 @@ class Atom(Primitive):
 
     """
 
-    _pattern = re.compile(rb'[^\(\)\{ \"\\\]\%\*\x00-\x32\x7F]+')
-
     def __init__(self, value):
         super(Atom, self).__init__()
         self._val = value
@@ -126,10 +130,15 @@ class Atom(Primitive):
     @classmethod
     def try_parse(cls, buf, start=0):
         start += cls._whitespace_length(buf, start)
-        match = cls._pattern.match(buf, start)
+        match = cls._atom_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
-        return cls(match.group(0)), match.end(0)
+        atom = match.group(0)
+        if cls._nil_pattern.match(atom):
+            raise NotParseable(buf)
+        elif cls._num_pattern.match(atom):
+            raise NotParseable(buf)
+        return cls(atom), match.end(0)
 
     def __bytes__(self):
         return bytes(self._val)
@@ -177,7 +186,11 @@ class QuotedString(String):
             self._raw = raw
         else:
             quoted_specials = re.compile(rb'[\"\\]')
-            quoted_string = re.sub(quoted_specials, rb'\\0', string)
+
+            def escape_quoted_specials(match):
+                return b'\\' + match.group(0)
+            quoted_string = re.sub(quoted_specials, escape_quoted_specials,
+                                   string)
             self._raw = b'"' + quoted_string + b'"'
 
     @classmethod
@@ -201,7 +214,7 @@ class QuotedString(String):
             else:
                 end = match.end(0)
                 quoted = buf[start:end+1]
-                return cls(bytes(unquoted), quoted), end+1
+                return cls(bytes(unquoted), quoted), end
         raise NotParseable(buf)
 
     def __bytes__(self):
