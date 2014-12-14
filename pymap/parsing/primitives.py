@@ -22,50 +22,22 @@
 import re
 import base64
 
-from pymap.core import PymapError
+from . import Parseable, NotParseable
+
+__all__ = ['Primitive', 'Nil', 'Number', 'Atom', 'List',
+           'String', 'QuotedString', 'LiteralString']
 
 
-class NotParseable(PymapError):
-    """Indicates that the given buffer was not parseable by one or all of the
-    data formats.
-
-    """
-    pass
-
-
-class Primitive(object):
+class Primitive(Parseable):
     """Represents a primitive data object from an IMAP stream. The sub-classes
-    implement the different data formats.
+    implement the different primitive formats.
 
     """
 
-    _whitespace_pattern = re.compile(rb'\s+')
     _atom_pattern = re.compile(rb'[\x21\x23\x24\x26\x27\x2B'
                                rb'-\x5B\x5E-\x7A\x7C\x7E]+')
-    _nil_pattern = re.compile(b'^[nN][iI][lL]$')
+    _nil_pattern = re.compile(b'^NIL$', re.I)
     _num_pattern = re.compile(b'^\d+$')
-
-    @classmethod
-    def _whitespace_length(cls, buf, start):
-        match = cls._whitespace_pattern.match(buf, start)
-        if match:
-            return match.end(0) - start
-        return 0
-
-    @property
-    def value(self):
-        return self._val
-
-    @classmethod
-    def try_parse(cls, buf, start=0, expected=None):
-        expected = expected or \
-            [Nil, Number, Atom, String, List]
-        for prim_type in expected:
-            try:
-                return prim_type.try_parse(buf, start)
-            except NotParseable:
-                pass
-        raise NotParseable(buf)
 
 
 class Nil(Primitive):
@@ -75,7 +47,7 @@ class Nil(Primitive):
 
     def __init__(self):
         super(Nil, self).__init__()
-        self._val = None
+        self.value = None
 
     @classmethod
     def try_parse(cls, buf, start=0):
@@ -91,6 +63,8 @@ class Nil(Primitive):
     def __bytes__(self):
         return b'NIL'
 
+Parseable.register_type(Nil)
+
 
 class Number(Primitive):
     """Represents a number object from an IMAP stream.
@@ -101,7 +75,7 @@ class Number(Primitive):
 
     def __init__(self, num):
         super(Number, self).__init__()
-        self._val = num
+        self.value = num
 
     @classmethod
     def try_parse(cls, buf, start=0):
@@ -115,7 +89,9 @@ class Number(Primitive):
         return cls(int(match.group(0))), match.end(0)
 
     def __bytes__(self):
-        return bytes(str(self._val).encode('ascii'))
+        return bytes(str(self.value).encode('ascii'))
+
+Parseable.register_type(Number)
 
 
 class Atom(Primitive):
@@ -125,7 +101,7 @@ class Atom(Primitive):
 
     def __init__(self, value):
         super(Atom, self).__init__()
-        self._val = value
+        self.value = value
 
     @classmethod
     def try_parse(cls, buf, start=0):
@@ -141,7 +117,9 @@ class Atom(Primitive):
         return cls(atom), match.end(0)
 
     def __bytes__(self):
-        return bytes(self._val)
+        return bytes(self.value)
+
+Parseable.register_type(Atom)
 
 
 class String(Primitive):
@@ -166,6 +144,8 @@ class String(Primitive):
             pass
         raise NotParseable(buf)
 
+Parseable.register_type(String)
+
 
 class QuotedString(String):
     """Represents a string object from an IMAP stream that was encased in
@@ -181,7 +161,7 @@ class QuotedString(String):
     _quoted_pattern = re.compile(rb'(\r|\n|\\.|\")')
 
     def __init__(self, string, raw=None):
-        self._val = string
+        self.value = string
         if raw is not None:
             self._raw = raw
         else:
@@ -235,13 +215,13 @@ class LiteralString(String):
     _literal_pattern = re.compile(rb'\{(\d+)\}\r?\n')
 
     def __init__(self, string, raw=None):
-        self._val = string
+        self.value = string
         if raw is not None:
             self._raw = raw
         else:
-            length_bytes = bytes(str(len(self._val)).encode('ascii'))
+            length_bytes = bytes(str(len(self.value)).encode('ascii'))
             literal_header = b'{' + length_bytes + b'}\r\n'
-            self._raw = literal_header + self._val
+            self._raw = literal_header + self.value
 
     @classmethod
     def _try_parse(cls, buf, start):
@@ -262,7 +242,7 @@ class LiteralString(String):
 
 
 class List(Primitive):
-    """Represents a list of :class:`Primitive` objects from an IMAP stream.
+    """Represents a list of :class:`Parseable` objects from an IMAP stream.
 
     :param items: Iterable of items, collected into a list, that make up the
                   datum.
@@ -272,7 +252,7 @@ class List(Primitive):
 
     def __init__(self, items):
         super(List, self).__init__()
-        self._val = list(items)
+        self.value = list(items)
 
     @classmethod
     def try_parse(cls, buf, start=0):
@@ -284,7 +264,7 @@ class List(Primitive):
         items = []
         cur = start+1
         while True:
-            item, cur = Primitive.try_parse(buf, cur)
+            item, cur = Parseable.try_parse(buf, cur)
             items.append(item)
             if buf[cur:cur+1] == b')':
                 return cls(items), cur + 1
@@ -294,4 +274,6 @@ class List(Primitive):
             cur += white_len
 
     def __bytes__(self):
-        return b'(' + b' '.join([bytes(item) for item in self._val]) + b')'
+        return b'(' + b' '.join([bytes(item) for item in self.value]) + b')'
+
+Parseable.register_type(List)

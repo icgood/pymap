@@ -1,6 +1,7 @@
 
 import unittest
 
+from pymap.parsing import NotParseable
 from pymap.parsing.primitives import *
 
 
