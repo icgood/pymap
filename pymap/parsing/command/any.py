@@ -30,16 +30,16 @@ __all__ = ['CapabilityCommand', 'LogoutCommand', 'NoopCommand']
 class CapabilityCommand(CommandAny, CommandNoArgs):
     pass
 
-CommandAny._commands += [(re.compile(rb'^CAPABILITY$'), CapabilityCommand)]
+CommandAny._commands += [(re.compile(br'^CAPABILITY$'), CapabilityCommand)]
 
 
 class LogoutCommand(CommandAny, CommandNoArgs):
     pass
 
-CommandAny._commands += [(re.compile(rb'^LOGOUT$'), LogoutCommand)]
+CommandAny._commands += [(re.compile(br'^LOGOUT$'), LogoutCommand)]
 
 
 class NoOpCommand(CommandAny, CommandNoArgs):
     pass
 
-CommandAny._commands += [(re.compile(rb'^NOOP$'), NoOpCommand)]
+CommandAny._commands += [(re.compile(br'^NOOP$'), NoOpCommand)]

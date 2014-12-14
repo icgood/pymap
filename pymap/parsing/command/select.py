@@ -30,16 +30,16 @@ __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand']
 class CheckCommand(CommandSelect, CommandNoArgs):
     pass
 
-CommandSelect._commands += [(re.compile(rb'^CHECK$'), CheckCommand)]
+CommandSelect._commands += [(re.compile(br'^CHECK$'), CheckCommand)]
 
 
 class CloseCommand(CommandSelect, CommandNoArgs):
     pass
 
-CommandSelect._commands += [(re.compile(rb'^CLOSE$'), CloseCommand)]
+CommandSelect._commands += [(re.compile(br'^CLOSE$'), CloseCommand)]
 
 
 class ExpungeCommand(CommandSelect, CommandNoArgs):
     pass
 
-CommandSelect._commands += [(re.compile(rb'^EXPUNGE$'), ExpungeCommand)]
+CommandSelect._commands += [(re.compile(br'^EXPUNGE$'), ExpungeCommand)]

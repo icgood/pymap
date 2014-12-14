@@ -34,8 +34,8 @@ class Primitive(Parseable):
 
     """
 
-    _atom_pattern = re.compile(rb'[\x21\x23\x24\x26\x27\x2B'
-                               rb'-\x5B\x5E-\x7A\x7C\x7E]+')
+    _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
+                               br'-\x5B\x5E-\x7A\x7C\x7E]+')
     _nil_pattern = re.compile(b'^NIL$', re.I)
     _num_pattern = re.compile(b'^\d+$')
 
@@ -158,14 +158,14 @@ class QuotedString(String):
 
     """
 
-    _quoted_pattern = re.compile(rb'(\r|\n|\\.|\")')
+    _quoted_pattern = re.compile(br'(\r|\n|\\.|\")')
 
     def __init__(self, string, raw=None):
         self.value = string
         if raw is not None:
             self._raw = raw
         else:
-            quoted_specials = re.compile(rb'[\"\\]')
+            quoted_specials = re.compile(br'[\"\\]')
 
             def escape_quoted_specials(match):
                 return b'\\' + match.group(0)
@@ -212,7 +212,7 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(rb'\{(\d+)\}\r?\n')
+    _literal_pattern = re.compile(br'\{(\d+)\}\r?\n')
 
     def __init__(self, string, raw=None):
         self.value = string

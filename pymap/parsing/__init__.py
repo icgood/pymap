@@ -44,8 +44,8 @@ class Parseable(object):
     """
 
     _known_parseables = []
-    _whitespace_pattern = re.compile(rb' +')
-    _newline_pattern = re.compile(rb'\r?\n')
+    _whitespace_pattern = re.compile(br' +')
+    _newline_pattern = re.compile(br'\r?\n')
 
     @classmethod
     def register_type(cls, type_class):

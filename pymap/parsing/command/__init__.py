@@ -57,8 +57,8 @@ class Tag(Parseable):
 
     """
 
-    _pattern = re.compile(rb'[\x21\x23\x24\x26\x27\x2C-\x5B'
-                          rb'\x5D\x5E-\x7A\x7C\x7E]+')
+    _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2C-\x5B'
+                          br'\x5D\x5E-\x7A\x7C\x7E]+')
 
     #: May be passed in to the constructor to indicate the continuation
     #: response tag, ``+``.

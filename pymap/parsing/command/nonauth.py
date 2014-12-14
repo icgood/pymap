@@ -30,4 +30,4 @@ __all__ = ['StartTLSCommand']
 class StartTLSCommand(CommandNonAuth, CommandNoArgs):
     pass
 
-CommandNonAuth._commands += [(re.compile(rb'^STARTTLS$'), StartTLSCommand)]
+CommandNonAuth._commands += [(re.compile(br'^STARTTLS$'), StartTLSCommand)]
