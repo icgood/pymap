@@ -21,7 +21,7 @@
 
 import re
 
-from .. import Parseable, NotParseable
+from .. import Parseable, NotParseable, EndLine
 from ..primitives import Atom
 
 __all__ = ['CommandNotFound', 'BadCommand', 'Tag', 'Command',
@@ -74,13 +74,13 @@ class Tag(Parseable):
             self.value = tag
 
     @classmethod
-    def try_parse(cls, buf, start=0):
-        start += cls._whitespace_length(buf, start)
+    def parse(cls, buf, **kwargs):
+        start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
-        end = cls._enforce_whitespace(buf, match.end(0))
-        return cls(match.group(0)), end
+        buf = cls._enforce_whitespace(buf, match.end(0))
+        return cls(match.group(0)), buf
 
     def __bytes__(self):
         return self.value
@@ -95,25 +95,23 @@ class Command(Parseable):
 
     """
 
-    def __init__(self, cmd):
-        super(Command, self).__init__()
-        self.command = cmd
-
     @classmethod
-    def try_parse(cls, buf, start=0):
+    def parse(cls, buf, **kwargs):
         from . import any, auth, nonauth, select
-        tag, cur = Tag.try_parse(buf, start)
-        atom, cur = Atom.try_parse(buf, cur)
-        cur += cls._whitespace_length(buf, cur)
+        tag, buf = Tag.parse(buf)
+        atom, buf = Atom.parse(buf)
         command = atom.value.upper()
         for cmd_type in [CommandAny, CommandAuth,
                          CommandNonAuth, CommandSelect]:
-            for regex, cmd_subtype in cmd_type._commands:
+            for cmd_subtype in cmd_type._commands:
+                regex = getattr(cmd_subtype, 'regex', None) or \
+                    re.compile(b'^'+cmd_subtype.command+b'$')
                 match = regex.match(command)
                 if match:
-                    if cmd_subtype:
-                        return cmd_subtype._try_parse(command, buf, cur)
-                    return cmd_type(command), cur
+                    try:
+                        return cmd_subtype._parse(buf, **kwargs)
+                    except NotParseable:
+                        raise BadCommand(buf, cmd_subtype)
         raise CommandNotFound(buf, command)
 
     def __bytes__(self):
@@ -129,11 +127,9 @@ class CommandNoArgs(object):
     """
 
     @classmethod
-    def _try_parse(cls, cmd, buf, start):
-        remaining, end = cls._line_match(buf, start)
-        if remaining:
-            raise BadCommand(buf, cmd)
-        return cls(cmd), end
+    def _parse(cls, buf, **kwargs):
+        _, buf = EndLine.parse(buf)
+        return cls(), buf
 
 
 class CommandAny(Command):

@@ -21,13 +21,35 @@
 
 import re
 
-from .. import Parseable, NotParseable
-from . import CommandNonAuth, CommandNoArgs
+from .. import Parseable, NotParseable, EndLine
+from ..primitives import Atom, String
+from . import CommandNonAuth, CommandNoArgs, BadCommand
 
 __all__ = ['StartTLSCommand']
 
 
 class StartTLSCommand(CommandNonAuth, CommandNoArgs):
-    pass
+    command = b'STARTTLS'
 
-CommandNonAuth._commands += [(re.compile(br'^STARTTLS$'), StartTLSCommand)]
+CommandNonAuth._commands.append(StartTLSCommand)
+
+
+class LoginCommand(CommandNonAuth):
+    command = b'LOGIN'
+
+    def __init__(self, userid, password):
+        super(LoginCommand, self).__init__()
+        self.userid = userid
+        self.password = password
+
+    @classmethod
+    def _parse(cls, buf, continuation=None, **kwargs):
+        userid, buf = Parseable.parse(buf, expected=[Atom, String],
+                                      continuation=continuation)
+        buf = cls._enforce_whitespace(buf)
+        password, buf = Parseable.parse(buf, expected=[Atom, String],
+                                        continuation=continuation)
+        _, buf = EndLine.parse(buf)
+        return cls(userid.value, password.value), buf
+
+CommandNonAuth._commands.append(LoginCommand)

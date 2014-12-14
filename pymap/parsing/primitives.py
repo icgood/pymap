@@ -50,15 +50,15 @@ class Nil(Primitive):
         self.value = None
 
     @classmethod
-    def try_parse(cls, buf, start=0):
-        start += cls._whitespace_length(buf, start)
+    def parse(cls, buf, **kwargs):
+        start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
         atom = match.group(0)
         if not cls._nil_pattern.match(atom):
             raise NotParseable(buf)
-        return cls(), match.end(0)
+        return cls(), buf[match.end(0):]
 
     def __bytes__(self):
         return b'NIL'
@@ -78,15 +78,15 @@ class Number(Primitive):
         self.value = num
 
     @classmethod
-    def try_parse(cls, buf, start=0):
-        start += cls._whitespace_length(buf, start)
+    def parse(cls, buf, **kwargs):
+        start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
         atom = match.group(0)
         if not cls._num_pattern.match(atom):
             raise NotParseable(buf)
-        return cls(int(match.group(0))), match.end(0)
+        return cls(int(match.group(0))), buf[match.end(0):]
 
     def __bytes__(self):
         return bytes(str(self.value).encode('ascii'))
@@ -104,8 +104,8 @@ class Atom(Primitive):
         self.value = value
 
     @classmethod
-    def try_parse(cls, buf, start=0):
-        start += cls._whitespace_length(buf, start)
+    def parse(cls, buf, **kwargs):
+        start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
@@ -114,7 +114,7 @@ class Atom(Primitive):
             raise NotParseable(buf)
         elif cls._num_pattern.match(atom):
             raise NotParseable(buf)
-        return cls(atom), match.end(0)
+        return cls(atom), buf[match.end(0):]
 
     def __bytes__(self):
         return bytes(self.value)
@@ -132,14 +132,14 @@ class String(Primitive):
         raise NotImplementedError()
 
     @classmethod
-    def try_parse(cls, buf, start=0):
-        start += cls._whitespace_length(buf, start)
+    def parse(cls, buf, continuation=None, **kwargs):
+        start = cls._whitespace_length(buf)
         try:
-            return QuotedString._try_parse(buf, start)
+            return QuotedString._parse(buf, start)
         except NotParseable:
             pass
         try:
-            return LiteralString._try_parse(buf, start)
+            return LiteralString._parse(buf, start, continuation)
         except NotParseable:
             pass
         raise NotParseable(buf)
@@ -174,7 +174,7 @@ class QuotedString(String):
             self._raw = b'"' + quoted_string + b'"'
 
     @classmethod
-    def _try_parse(cls, buf, start):
+    def _parse(cls, buf, start):
         if buf[start:start+1] != b'"':
             raise NotParseable(buf)
         marker = start + 1
@@ -194,7 +194,7 @@ class QuotedString(String):
             else:
                 end = match.end(0)
                 quoted = buf[start:end+1]
-                return cls(bytes(unquoted), quoted), end
+                return cls(bytes(unquoted), quoted), buf[end:]
         raise NotParseable(buf)
 
     def __bytes__(self):
@@ -212,7 +212,7 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(br'\{(\d+)\}\r?\n')
+    _literal_pattern = re.compile(br'\{(\d+)\}$')
 
     def __init__(self, string, raw=None):
         self.value = string
@@ -224,18 +224,16 @@ class LiteralString(String):
             self._raw = literal_header + self.value
 
     @classmethod
-    def _try_parse(cls, buf, start):
+    def _parse(cls, buf, start, continuation):
         match = cls._literal_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
-        literal_start = match.end(0)
         literal_length = int(match.group(1))
-        literal_end = literal_start + literal_length
-        literal = buf[literal_start:literal_end]
-        raw = buf[start:literal_end]
+        buf = yield from continuation(literal_length)
+        raw = buf[0:literal_length]
         if len(literal) != literal_length:
             raise NotParseable(buf)
-        return cls(literal, raw), literal_end
+        return cls(literal, raw), buf[literal_length:]
 
     def __bytes__(self):
         return self._raw
@@ -250,28 +248,27 @@ class List(Primitive):
 
     """
 
+    _end_pattern = re.compile(br' *\)')
+
     def __init__(self, items):
         super(List, self).__init__()
         self.value = list(items)
 
     @classmethod
-    def try_parse(cls, buf, start=0):
-        start += cls._whitespace_length(buf, start)
+    def parse(cls, buf, **kwargs):
+        start = cls._whitespace_length(buf)
         if buf[start:start+1] != b'(':
             raise NotParseable(buf)
-        elif buf[start:start+2] == b'()':
-            return cls([]), start+2
         items = []
-        cur = start+1
+        buf = buf[start+1:]
         while True:
-            item, cur = Parseable.try_parse(buf, cur)
-            items.append(item)
-            if buf[cur:cur+1] == b')':
-                return cls(items), cur + 1
-            white_len = cls._whitespace_length(buf, cur)
-            if not white_len:
+            match = cls._end_pattern.match(buf)
+            if match:
+                return cls(items), buf[match.end(0):]
+            elif items and not cls._whitespace_length(buf):
                 raise NotParseable(buf)
-            cur += white_len
+            item, buf = Parseable.parse(buf, **kwargs)
+            items.append(item)
 
     def __bytes__(self):
         return b'(' + b' '.join([bytes(item) for item in self.value]) + b')'
