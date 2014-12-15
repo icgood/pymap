@@ -24,7 +24,24 @@ from enum import Enum
 
 from pymap.core import PymapError
 
-__all__ = ['NotParseable', 'Parseable', 'EndLine']
+__all__ = ['RequiresContinuation', 'NotParseable', 'Parseable',
+           'Space', 'EndLine']
+
+
+class RequiresContinuation(PymapError):
+    """Indicates that the buffer has been successfully parsed so far, but
+    requires a continuation of the command from the client.
+
+    :param bytes message: The message from the server.
+    :param int literal_length: If the continuation is for a string literal,
+                               this is the byte length to expect.
+
+    """
+
+    def __init__(self, message, literal_length=0):
+        super(RequiresContinuation, self).__init__()
+        self.message = message
+        self.literal_length = literal_length
 
 
 class NotParseable(PymapError):
@@ -65,21 +82,37 @@ class Parseable(object):
         return 0
 
     @classmethod
-    def _enforce_whitespace(cls, buf, start=0):
-        ret = cls._whitespace_length(buf, start)
-        if not ret:
-            raise NotParseable(buf)
-        return buf[start+ret:]
-
-    @classmethod
-    def parse(cls, buf, continuation=None, expected=None):
+    def parse(cls, buf, expected=None, **kwargs):
+        from . import primitives
         expected = expected or cls._known_parseables
         for data_type in expected:
             try:
-                return data_type.parse(buf, continuation=continuation)
+                return data_type.parse(buf, **kwargs)
             except NotParseable:
                 pass
         raise NotParseable(buf)
+
+
+class Space(Parseable):
+    """Represents at least one space character.
+
+    :param int length: The number of consecutive space characters.
+
+    """
+
+    def __init__(self, length):
+        super(Space, self).__init__()
+        self.length = length
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        ret = cls._whitespace_length(buf)
+        if not ret:
+            raise NotParseable(buf)
+        return cls(ret), buf[ret:]
+
+    def __bytes__(self):
+        return b' ' * self.length
 
 
 class EndLine(Parseable):
@@ -88,18 +121,22 @@ class EndLine(Parseable):
 
     """
 
-    _pattern = re.compile(br' *\r?\n')
+    _pattern = re.compile(br' *(\r?)\n')
+
+    def __init__(self, preceding_spaces=0, carriage_return=True):
+        super(EndLine, self).__init__()
+        self.preceding_spaces = preceding_spaces
+        self.carriage_return = carriage_return
 
     @classmethod
     def parse(cls, buf):
-        spaces = cls._whitespace_length(buf)
-        match = cls._pattern.search(buf, spaces)
+        match = cls._pattern.match(buf)
         if not match:
-            raise NotParseable(buf, spaces)
-        remaining = buf[spaces:match.start(0)]
-        if remaining:
-            raise NotParseable(buf, spaces)
-        return cls(), buf[match.end(0):]
+            raise NotParseable(buf)
+        preceding_spaces = match.start(1)
+        carriage_return = bool(match.group(1))
+        return cls(preceding_spaces, carriage_return), buf[match.end(0):]
 
     def __bytes__(self):
-        return b'\r\n'
+        endl = b'\r\n' if self.carriage_return else b'\n'
+        return b' ' * self.preceding_spaces + endl

@@ -22,7 +22,7 @@
 import re
 import base64
 
-from . import Parseable, NotParseable
+from . import Parseable, NotParseable, RequiresContinuation
 
 __all__ = ['Primitive', 'Nil', 'Number', 'Atom', 'List',
            'String', 'QuotedString', 'LiteralString']
@@ -76,6 +76,7 @@ class Number(Primitive):
     def __init__(self, num):
         super(Number, self).__init__()
         self.value = num
+        self._raw = bytes(str(self.value), 'ascii')
 
     @classmethod
     def parse(cls, buf, **kwargs):
@@ -89,7 +90,7 @@ class Number(Primitive):
         return cls(int(match.group(0))), buf[match.end(0):]
 
     def __bytes__(self):
-        return bytes(str(self.value).encode('ascii'))
+        return self._raw
 
 Parseable.register_type(Number)
 
@@ -132,14 +133,14 @@ class String(Primitive):
         raise NotImplementedError()
 
     @classmethod
-    def parse(cls, buf, continuation=None, **kwargs):
+    def parse(cls, buf, continuations=None, **kwargs):
         start = cls._whitespace_length(buf)
         try:
             return QuotedString._parse(buf, start)
         except NotParseable:
             pass
         try:
-            return LiteralString._parse(buf, start, continuation)
+            return LiteralString._parse(buf, start, continuations)
         except NotParseable:
             pass
         raise NotParseable(buf)
@@ -214,26 +215,25 @@ class LiteralString(String):
 
     _literal_pattern = re.compile(br'{(\d+)}\r?\n$')
 
-    def __init__(self, string, raw=None):
+    def __init__(self, string):
         self.value = string
-        if raw is not None:
-            self._raw = raw
-        else:
-            length_bytes = bytes(str(len(self.value)).encode('ascii'))
-            literal_header = b'{' + length_bytes + b'}\r\n'
-            self._raw = literal_header + self.value
+        length_bytes = bytes(str(len(self.value)), 'ascii')
+        literal_header = b'{' + length_bytes + b'}\r\n'
+        self._raw = literal_header + self.value
 
     @classmethod
-    def _parse(cls, buf, start, continuation):
+    def _parse(cls, buf, start, continuations):
         match = cls._literal_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
         literal_length = int(match.group(1))
-        #buf = yield from continuation(literal_length)
-        raw = buf[0:literal_length]
+        if not continuations:
+            raise RequiresContinuation('Literal string', literal_length)
+        buf = continuations.pop(0)
+        literal = buf[0:literal_length]
         if len(literal) != literal_length:
             raise NotParseable(buf)
-        return cls(literal, raw), buf[literal_length:]
+        return cls(literal), buf[literal_length:]
 
     def __bytes__(self):
         return self._raw
@@ -252,7 +252,7 @@ class List(Primitive):
 
     def __init__(self, items):
         super(List, self).__init__()
-        self.value = list(items)
+        self.value = items
 
     @classmethod
     def parse(cls, buf, **kwargs):

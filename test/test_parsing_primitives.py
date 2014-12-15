@@ -1,31 +1,8 @@
 
 import unittest
 
-from pymap.parsing import NotParseable
+from pymap.parsing import NotParseable, RequiresContinuation
 from pymap.parsing.primitives import *
-
-
-class TestPrimitive(unittest.TestCase):
-
-    def test_parse(self):
-        nil, _ = Primitive.parse(b'nil')
-        self.assertIsInstance(nil, Nil)
-        num, _ = Primitive.parse(b'123')
-        self.assertIsInstance(num, Number)
-        atom, _ = Primitive.parse(b'ATOM')
-        self.assertIsInstance(atom, Atom)
-        qstr, _ = Primitive.parse(b'"test"')
-        self.assertIsInstance(qstr, QuotedString)
-        list, _ = Primitive.parse(b'()')
-        self.assertIsInstance(list, List)
-
-    def test_parse_expectation(self):
-        with self.assertRaises(NotParseable):
-            Primitive.parse(b'123', expected=[Atom, Nil])
-        with self.assertRaises(NotParseable):
-            Primitive.parse(b'NIL', expected=[Atom, Number])
-        with self.assertRaises(NotParseable):
-            Primitive.parse(b'ATOM', expected=[Number, Nil])
 
 
 class TestNil(unittest.TestCase):
@@ -89,53 +66,64 @@ class TestAtom(unittest.TestCase):
 
 class TestQuotedString(unittest.TestCase):
 
-    def test_parse(self):
-        ret, buf = String.parse(rb'  "one\"two\\three"  ')
+    def test_instantiate(self):
+        with self.assertRaises(NotImplementedError):
+            String()
+
+    def test_quoted_parse(self):
+        ret, buf = String.parse(br'  "one\"two\\three"  ')
         self.assertIsInstance(ret, QuotedString)
-        self.assertEqual(rb'one"two\three', ret.value)
+        self.assertEqual(br'one"two\three', ret.value)
         self.assertEqual(b'  ', buf)
 
-    def test_parse_empty(self):
-        ret, buf = String.parse(rb'  ""  ')
+    def test_quoted_parse_empty(self):
+        ret, buf = String.parse(br'  ""  ')
         self.assertIsInstance(ret, QuotedString)
-        self.assertEqual(rb'', ret.value)
+        self.assertEqual(br'', ret.value)
         self.assertEqual(b'  ', buf)
 
-    def test_parse_failure(self):
+    def test_quoted_parse_failure(self):
         with self.assertRaises(NotParseable):
             String.parse(b'test')
         with self.assertRaises(NotParseable):
             String.parse(b'"one\r\ntwo"')
         with self.assertRaises(NotParseable):
-            String.parse(rb'"one\ two"')
+            String.parse(br'"one\ two"')
         with self.assertRaises(NotParseable):
             String.parse(b'"test')
 
-    def test_bytes(self):
+    def test_quoted_bytes(self):
         qstring1 = QuotedString(b'one"two\\three')
         self.assertEqual(b'"one\\"two\\\\three"', bytes(qstring1))
         qstring2 = QuotedString(b'test', b'"asdf"')
         self.assertEqual(b'"asdf"', bytes(qstring2))
 
+    def test_literal_parse(self):
+        ret, buf = String.parse(b'{5}\r\n', continuations=[b'test\x01abc'])
+        self.assertIsInstance(ret, LiteralString)
+        self.assertEqual(b'test\x01', ret.value)
+        self.assertEqual(b'abc', buf)
 
-class TestLiteralString(unittest.TestCase):
+    def test_literal_parse_empty(self):
+        ret, buf = String.parse(b'{0}\r\n', continuations=[b'abc'])
+        self.assertIsInstance(ret, LiteralString)
+        self.assertEqual(b'', ret.value)
+        self.assertEqual(b'abc', buf)
 
-    def test_parse(self):
-        assert False
-
-    def test_parse_empty(self):
-        assert False
-
-    def test_parse_failure(self):
+    def test_literal_parse_failure(self):
         with self.assertRaises(NotParseable):
             String.parse(b'{}\r\n')
         with self.assertRaises(NotParseable):
             String.parse(b'{10}')
+        with self.assertRaises(RequiresContinuation):
+            String.parse(b'{10}\r\n')
+        with self.assertRaises(NotParseable):
+            String.parse(b'{10}\r\n', continuations=[b'a'*9])
 
-    def test_bytes(self):
+    def test_literal_bytes(self):
         qstring1 = LiteralString(b'one\r\ntwo')
         self.assertEqual(b'{8}\r\none\r\ntwo', bytes(qstring1))
-        qstring2 = LiteralString(b'test', b'{0}\r\n')
+        qstring2 = LiteralString(b'')
         self.assertEqual(b'{0}\r\n', bytes(qstring2))
 
 
@@ -156,7 +144,7 @@ class TestList(unittest.TestCase):
         self.assertEqual(b'four', ret.value[3].value)
 
     def test_parse_empty(self):
-        ret, buf = List.parse(rb'  ()  ')
+        ret, buf = List.parse(br'  ()  ')
         self.assertIsInstance(ret, List)
         self.assertEqual([], ret.value)
         self.assertEqual(b'  ', buf)
@@ -166,3 +154,7 @@ class TestList(unittest.TestCase):
             List.parse(b'{}')
         with self.assertRaises(NotParseable):
             List.parse(b'("one"TWO)')
+
+    def test_bytes(self):
+        ret = List([QuotedString(b'abc'), Number(123), List([Nil()])])
+        self.assertEqual(b'("abc" 123 (NIL))', bytes(ret))

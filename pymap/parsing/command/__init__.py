@@ -21,10 +21,10 @@
 
 import re
 
-from .. import Parseable, NotParseable, EndLine
+from .. import Parseable, NotParseable, Space, EndLine
 from ..primitives import Atom
 
-__all__ = ['CommandNotFound', 'BadCommand', 'Tag', 'Command',
+__all__ = ['CommandNotFound', 'BadCommand', 'Tag', 'Command', 'CommandNoArgs',
            'CommandAny', 'CommandAuth', 'CommandNonAuth', 'CommandSelect']
 
 
@@ -90,15 +90,19 @@ Parseable.register_type(Tag)
 class Command(Parseable):
     """Base class to represent the commands available to clients.
 
-    :param bytes cmd: The actual IMAP command string.
+    :param bytes tag: The tag parsed from the beginning of the command line.
 
     """
+
+    def __init__(self, tag):
+        super(Command, self).__init__()
+        self.tag = tag
 
     @classmethod
     def parse(cls, buf, **kwargs):
         from . import any, auth, nonauth, select
         tag, buf = Tag.parse(buf)
-        buf = cls._enforce_whitespace(buf)
+        _, buf = Space.parse(buf)
         atom, buf = Atom.parse(buf)
         command = atom.value.upper()
         for cmd_type in [CommandAny, CommandAuth,
@@ -109,27 +113,24 @@ class Command(Parseable):
                 match = regex.match(command)
                 if match:
                     try:
-                        return cmd_subtype._parse(buf, **kwargs)
+                        return cmd_subtype._parse(tag.value, buf, **kwargs)
                     except NotParseable:
                         raise BadCommand(buf, cmd_subtype)
         raise CommandNotFound(buf, command)
 
-    def __bytes__(self):
-        return self.cmd + self.remaining
-
 Parseable.register_type(Command)
 
 
-class CommandNoArgs(object):
+class CommandNoArgs(Command):
     """Convenience class used to fail parsing when args are given to a command
     that expects nothing.
 
     """
 
     @classmethod
-    def _parse(cls, buf, **kwargs):
+    def _parse(cls, tag, buf, **kwargs):
         _, buf = EndLine.parse(buf)
-        return cls(), buf
+        return cls(tag), buf
 
 
 class CommandAny(Command):

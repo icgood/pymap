@@ -21,7 +21,7 @@
 
 import re
 
-from .. import Parseable, NotParseable, EndLine
+from .. import Parseable, NotParseable, Space, EndLine
 from ..primitives import Atom, String
 from . import CommandNonAuth, CommandNoArgs, BadCommand
 
@@ -37,18 +37,16 @@ CommandNonAuth._commands.append(StartTLSCommand)
 class LoginCommand(CommandNonAuth):
     command = b'LOGIN'
 
-    def __init__(self, userid, password):
-        super(LoginCommand, self).__init__()
+    def __init__(self, tag, userid, password):
+        super(LoginCommand, self).__init__(tag)
         self.userid = userid
         self.password = password
 
     @classmethod
-    def _parse(cls, buf, continuation=None, **kwargs):
-        userid, buf = Parseable.parse(buf, expected=[Atom, String],
-                                      continuation=continuation)
-        buf = cls._enforce_whitespace(buf)
-        password, buf = Parseable.parse(buf, expected=[Atom, String],
-                                        continuation=continuation)
+    def _parse(cls, buf, **kwargs):
+        userid, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
+        _, buf = Space.parse(buf)
+        password, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
         _, buf = EndLine.parse(buf)
         return cls(userid.value, password.value), buf
 
