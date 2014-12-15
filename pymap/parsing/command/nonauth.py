@@ -43,11 +43,11 @@ class LoginCommand(CommandNonAuth):
         self.password = password
 
     @classmethod
-    def _parse(cls, buf, **kwargs):
+    def _parse(cls, tag, buf, **kwargs):
         userid, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
         _, buf = Space.parse(buf)
         password, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
         _, buf = EndLine.parse(buf)
-        return cls(userid.value, password.value), buf
+        return cls(tag, userid.value, password.value), buf
 
 CommandNonAuth._commands.append(LoginCommand)

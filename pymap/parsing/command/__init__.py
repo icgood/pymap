@@ -45,8 +45,8 @@ class BadCommand(NotParseable):
 
     """
 
-    def __init__(self, buf, command):
-        super(BadCommand, self).__init__(buf)
+    def __init__(self, command, *args):
+        super(BadCommand, self).__init__(*args)
         self.command = command
 
 
@@ -114,8 +114,8 @@ class Command(Parseable):
                 if match:
                     try:
                         return cmd_subtype._parse(tag.value, buf, **kwargs)
-                    except NotParseable:
-                        raise BadCommand(buf, cmd_subtype)
+                    except NotParseable as exc:
+                        raise BadCommand(cmd_subtype, *exc.args)
         raise CommandNotFound(buf, command)
 
 Parseable.register_type(Command)
