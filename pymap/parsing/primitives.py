@@ -36,8 +36,6 @@ class Primitive(Parseable):
 
     _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
                                br'-\x5B\x5E-\x7A\x7C\x7E]+')
-    _nil_pattern = re.compile(b'^NIL$', re.I)
-    _num_pattern = re.compile(b'^\d+$')
 
 
 class Nil(Primitive):
@@ -45,12 +43,15 @@ class Nil(Primitive):
 
     """
 
+    _nil_pattern = re.compile(b'^NIL$', re.I)
+
     def __init__(self):
         super(Nil, self).__init__()
         self.value = None
 
     @classmethod
     def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -73,6 +74,8 @@ class Number(Primitive):
 
     """
 
+    _num_pattern = re.compile(b'^\d+$')
+
     def __init__(self, num):
         super(Number, self).__init__()
         self.value = num
@@ -80,6 +83,7 @@ class Number(Primitive):
 
     @classmethod
     def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -106,15 +110,12 @@ class Atom(Primitive):
 
     @classmethod
     def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
-            raise NotParseable(buf)
+            raise NotParseable(buf[start:])
         atom = match.group(0)
-        if cls._nil_pattern.match(atom):
-            raise NotParseable(buf)
-        elif cls._num_pattern.match(atom):
-            raise NotParseable(buf)
         return cls(atom), buf[match.end(0):]
 
     def __bytes__(self):
@@ -134,6 +135,7 @@ class String(Primitive):
 
     @classmethod
     def parse(cls, buf, continuations=None, **kwargs):
+        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         try:
             return QuotedString._parse(buf, start)
@@ -256,6 +258,7 @@ class List(Primitive):
 
     @classmethod
     def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         if buf[start:start+1] != b'(':
             raise NotParseable(buf)

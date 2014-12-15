@@ -54,10 +54,6 @@ class TestAtom(unittest.TestCase):
     def test_parse_failure(self):
         with self.assertRaises(NotParseable):
             Atom.parse(b'{}')
-        with self.assertRaises(NotParseable):
-            Atom.parse(b'NIL')
-        with self.assertRaises(NotParseable):
-            Atom.parse(b'123')
 
     def test_bytes(self):
         nil = Atom(b'TEST.STUFF:asdf')

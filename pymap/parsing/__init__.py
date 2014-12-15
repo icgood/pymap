@@ -53,9 +53,16 @@ class NotParseable(PymapError):
 
     """
 
-    def __init__(self, buf, where=None):
-        super(NotParseable, self).__init__(buf)
-        self.where = where
+    def __init__(self, buf):
+        self.buf = buf
+        if isinstance(buf, memoryview):
+            self.offset = offset = len(buf.obj) - buf.nbytes
+            before = buf.obj[0:offset]
+            after = buf.tobytes()
+            super(NotParseable, self).__init__((before, after))
+        else:
+            self.offset = 0
+            super(NotParseable, self).__init__((b'', buf))
 
 
 class Parseable(object):
@@ -84,6 +91,7 @@ class Parseable(object):
     @classmethod
     def parse(cls, buf, expected=None, **kwargs):
         from . import primitives
+        buf = memoryview(buf)
         expected = expected or cls._known_parseables
         for data_type in expected:
             try:
@@ -106,6 +114,7 @@ class Space(Parseable):
 
     @classmethod
     def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
         ret = cls._whitespace_length(buf)
         if not ret:
             raise NotParseable(buf)
@@ -130,6 +139,7 @@ class EndLine(Parseable):
 
     @classmethod
     def parse(cls, buf):
+        buf = memoryview(buf)
         match = cls._pattern.match(buf)
         if not match:
             raise NotParseable(buf)

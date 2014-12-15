@@ -45,8 +45,8 @@ class BadCommand(NotParseable):
 
     """
 
-    def __init__(self, command, *args):
-        super(BadCommand, self).__init__(*args)
+    def __init__(self, buf, command):
+        super(BadCommand, self).__init__(buf)
         self.command = command
 
 
@@ -75,6 +75,7 @@ class Tag(Parseable):
 
     @classmethod
     def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:
@@ -101,6 +102,7 @@ class Command(Parseable):
     @classmethod
     def parse(cls, buf, **kwargs):
         from . import any, auth, nonauth, select
+        buf = memoryview(buf)
         tag, buf = Tag.parse(buf)
         _, buf = Space.parse(buf)
         atom, buf = Atom.parse(buf)
@@ -115,7 +117,7 @@ class Command(Parseable):
                     try:
                         return cmd_subtype._parse(tag.value, buf, **kwargs)
                     except NotParseable as exc:
-                        raise BadCommand(cmd_subtype, *exc.args)
+                        raise BadCommand(exc.buf, cmd_subtype)
         raise CommandNotFound(buf, command)
 
 Parseable.register_type(Command)

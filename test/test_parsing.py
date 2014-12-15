@@ -19,13 +19,15 @@ class TestParseable(unittest.TestCase):
         list, _ = Parseable.parse(b'()')
         self.assertIsInstance(list, List)
 
-    def test_parse_expectation(self):
-        with self.assertRaises(NotParseable):
-            Parseable.parse(b'123', expected=[Atom, Nil])
-        with self.assertRaises(NotParseable):
-            Parseable.parse(b'NIL', expected=[Atom, Number])
+    def test_parse_expectation_failure(self):
         with self.assertRaises(NotParseable):
             Parseable.parse(b'ATOM', expected=[Number, Nil])
+
+    def test_parse_expectation_casting(self):
+        num, _ = Parseable.parse(b'123', expected=[Atom])
+        self.assertIsInstance(num, Atom)
+        nil, _ = Parseable.parse(b'nil', expected=[Atom])
+        self.assertIsInstance(num, Atom)
 
 
 class TestSpace(unittest.TestCase):
