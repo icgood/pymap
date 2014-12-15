@@ -79,8 +79,7 @@ class Tag(Parseable):
         match = cls._pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
-        buf = cls._enforce_whitespace(buf, match.end(0))
-        return cls(match.group(0)), buf
+        return cls(match.group(0)), buf[match.end(0):]
 
     def __bytes__(self):
         return self.value
@@ -99,6 +98,7 @@ class Command(Parseable):
     def parse(cls, buf, **kwargs):
         from . import any, auth, nonauth, select
         tag, buf = Tag.parse(buf)
+        buf = cls._enforce_whitespace(buf)
         atom, buf = Atom.parse(buf)
         command = atom.value.upper()
         for cmd_type in [CommandAny, CommandAuth,

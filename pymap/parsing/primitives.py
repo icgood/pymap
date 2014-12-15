@@ -212,7 +212,7 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(br'\{(\d+)\}$')
+    _literal_pattern = re.compile(br'{(\d+)}\r?\n$')
 
     def __init__(self, string, raw=None):
         self.value = string
@@ -229,7 +229,7 @@ class LiteralString(String):
         if not match:
             raise NotParseable(buf)
         literal_length = int(match.group(1))
-        buf = yield from continuation(literal_length)
+        #buf = yield from continuation(literal_length)
         raw = buf[0:literal_length]
         if len(literal) != literal_length:
             raise NotParseable(buf)
