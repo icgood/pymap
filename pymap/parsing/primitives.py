@@ -20,7 +20,6 @@
 #
 
 import re
-import base64
 
 from . import Parseable, NotParseable, RequiresContinuation
 

@@ -20,7 +20,6 @@
 #
 
 import re
-from enum import Enum
 
 from pymap.core import PymapError
 

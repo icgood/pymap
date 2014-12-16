@@ -19,9 +19,6 @@
 # THE SOFTWARE.
 #
 
-import re
-
-from .. import Parseable, NotParseable
 from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand']

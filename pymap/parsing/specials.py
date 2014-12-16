@@ -19,9 +19,7 @@
 # THE SOFTWARE.
 #
 
-import re
-
-from . import Parseable, NotParseable
+from . import Parseable
 from .primitives import Atom
 
 __all__ = ['Special', 'Mailbox']
@@ -135,7 +133,6 @@ class Mailbox(Special):
             decoded = cls._modified_b64decode(to_decode)
             parts.append(decoded)
         return ''.join(parts)
-
 
     @classmethod
     def parse(cls, buf, **kwargs):

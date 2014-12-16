@@ -19,11 +19,9 @@
 # THE SOFTWARE.
 #
 
-import re
-
 from .. import Parseable, Space, EndLine
 from ..primitives import Atom, String
-from . import CommandNonAuth, CommandNoArgs, BadCommand
+from . import CommandNonAuth, CommandNoArgs
 
 __all__ = ['StartTLSCommand']
 

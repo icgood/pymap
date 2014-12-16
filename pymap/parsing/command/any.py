@@ -19,12 +19,9 @@
 # THE SOFTWARE.
 #
 
-import re
-
-from .. import Parseable, NotParseable
 from . import CommandAny, CommandNoArgs
 
-__all__ = ['CapabilityCommand', 'LogoutCommand', 'NoopCommand']
+__all__ = ['CapabilityCommand', 'LogoutCommand', 'NoOpCommand']
 
 
 class CapabilityCommand(CommandAny, CommandNoArgs):
