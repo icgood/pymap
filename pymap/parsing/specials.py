@@ -19,10 +19,12 @@
 # THE SOFTWARE.
 #
 
-from . import Parseable
-from .primitives import Atom
+from datetime import datetime
 
-__all__ = ['Special', 'Mailbox']
+from . import Parseable, NotParseable, Space
+from .primitives import Atom, QuotedString
+
+__all__ = ['Special', 'Mailbox', 'DateTime', 'Flag']
 
 
 class Special(Parseable):
@@ -136,7 +138,6 @@ class Mailbox(Special):
 
     @classmethod
     def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
         atom, buf = Atom.parse(buf)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':
@@ -145,3 +146,78 @@ class Mailbox(Special):
 
     def __bytes__(self):
         return self.encode_name(self.value)
+
+
+class DateTime(Special):
+    """Represents a date-time quoted string from an IMAP stream.
+
+    :param datetime when: The resulting :py:class:`~datetime.datetime` object.
+    :param bytes raw: Provide the pre-computed bytes representation of
+                      ``when``.
+
+    """
+
+    def __init__(self, when, raw=None):
+        super(DateTime, self).__init__()
+        self.when = when
+        self._raw = raw or bytes(when.strftime('%d-%b-%Y %X %z'), 'ascii')
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        string, after = QuotedString.parse(buf)
+        try:
+            when_str = str(string.value, 'ascii')
+            when = datetime.strptime(when_str, '%d-%b-%Y %X %z')
+        except (UnicodeDecodeError, ValueError):
+            raise NotParseable(buf)
+        return cls(when, string.value), after
+
+    def __byte__(self):
+        return b'"' + self._raw + b'"'
+
+
+class Flag(Special):
+    """Represents a message flag from an IMAP stream.
+
+    :param str flag: The flag or keyword string. For system flags, this will
+                     start with a backslash (``\``).
+
+    """
+
+    def __init__(self, flag):
+        super(Flag, self).__init__()
+        self.value = self._capitalize(flag)
+
+    def _capitalize(self, value):
+        if value.startswith(b'\\'):
+            return b'\\' + value[1:].capitalize()
+        return value
+
+    def __eq__(self, other):
+        if isinstance(other, Flag):
+            return self.value == other.value
+        elif isinstance(other, bytes):
+            return self.value == self._capitalize(other)
+        elif isinstance(other, str):
+            other = bytes(other, 'ascii')
+            return self.value == self._capitalize(other)
+        return NotImplemented
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        try:
+            _, buf = Space.parse(buf)
+        except NotParseable:
+            pass
+        if buf[0] == 0x5c:
+            atom, buf = Atom.parse(buf[1:])
+            return cls(b'\\' + atom.value), buf
+        else:
+            atom, buf = Atom.parse(buf)
+            return cls(atom.value), buf
+
+    def __bytes__(self):
+        return self.value

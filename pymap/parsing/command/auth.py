@@ -19,6 +19,8 @@
 # THE SOFTWARE.
 #
 
+from datetime import datetime
+
 from .. import Space, EndLine
 from ..specials import Mailbox
 from . import CommandAuth
@@ -45,9 +47,19 @@ class CommandMailboxArg(CommandAuth):
 class AppendCommand(CommandAuth):
     command = b'APPEND'
 
+    def __init__(self, tag, mailbox, message, flag_list=None, when=None):
+        super(AppendCommand, self).__init__(tag)
+        self.mailbox = mailbox
+        self.message = msg
+        self.flag_list = flag_list or []
+        self.when = when or datetime.now()
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        mailbox, buf = Mailbox.parse(buf)
+        _, buf = Space.parse(buf)
+        pass
 
 CommandAuth._commands.append(AppendCommand)
 
