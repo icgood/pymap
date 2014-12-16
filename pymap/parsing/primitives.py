@@ -134,15 +134,13 @@ class String(Primitive):
         raise NotImplementedError()
 
     @classmethod
-    def parse(cls, buf, continuations=None, **kwargs):
-        buf = memoryview(buf)
-        start = cls._whitespace_length(buf)
+    def parse(cls, buf, **kwargs):
         try:
-            return QuotedString._parse(buf, start)
+            return QuotedString.parse(buf, **kwargs)
         except NotParseable:
             pass
         try:
-            return LiteralString._parse(buf, start, continuations)
+            return LiteralString.parse(buf, **kwargs)
         except NotParseable:
             pass
         raise NotParseable(buf)
@@ -177,7 +175,8 @@ class QuotedString(String):
             self._raw = b'"' + quoted_string + b'"'
 
     @classmethod
-    def _parse(cls, buf, start):
+    def parse(cls, buf, **kwargs):
+        start = cls._whitespace_length(buf)
         if buf[start:start+1] != b'"':
             raise NotParseable(buf)
         marker = start + 1
@@ -224,7 +223,8 @@ class LiteralString(String):
         self._raw = literal_header + self.value
 
     @classmethod
-    def _parse(cls, buf, start, continuations):
+    def parse(cls, buf, continuations=None, **kwargs):
+        start = cls._whitespace_length(buf)
         match = cls._literal_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)

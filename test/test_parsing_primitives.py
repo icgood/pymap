@@ -60,7 +60,7 @@ class TestAtom(unittest.TestCase):
         self.assertEqual(b'TEST.STUFF:asdf', bytes(nil))
 
 
-class TestQuotedString(unittest.TestCase):
+class TestString(unittest.TestCase):
 
     def test_instantiate(self):
         with self.assertRaises(NotImplementedError):
