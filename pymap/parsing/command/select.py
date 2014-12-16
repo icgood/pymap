@@ -19,6 +19,8 @@
 # THE SOFTWARE.
 #
 
+from .. import Space
+from ..specials import Mailbox, SequenceSet
 from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -46,9 +48,20 @@ CommandSelect._commands.append(ExpungeCommand)
 class CopyCommand(CommandSelect):
     command = b'COPY'
 
+    def __init__(self, tag, sequence_set, mailbox, uid=False):
+        super(CopyCommand, self).__init__(tag)
+        self.sequence_set = sequence_set
+        self.mailbox = mailbox
+        self.uid = uid
+
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+    def _parse(cls, tag, buf, uid=False, **kwargs):
+        _, buf = Space.parse(buf)
+        sequence_set, buf = SequenceSet.parse(buf)
+        _, buf = Space.parse(buf)
+        mailbox, buf = Mailbox.parse(buf)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, sequence_set.sequences, mailbox.value, uid=uid), buf
 
 CommandSelect._commands.append(CopyCommand)
 
@@ -78,7 +91,12 @@ class UidCommand(CommandSelect):
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        for cmd in [CopyCommand, FetchCommand, SearchCommand, StoreCommand]:
+            try:
+                return cmd._parse(tag, buf, uid=True, **kwargs)
+            except NotParseable:
+                pass
+        raise NotParseable(buf)
 
 CommandSelect._commands.append(UidCommand)
 
