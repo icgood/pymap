@@ -23,8 +23,8 @@ import re
 
 from pymap.core import PymapError
 
-__all__ = ['RequiresContinuation', 'NotParseable', 'Parseable',
-           'Space', 'EndLine']
+__all__ = ['RequiresContinuation', 'NotParseable', 'UnexpectedType',
+           'Parseable', 'Space', 'EndLine']
 
 
 class RequiresContinuation(PymapError):
@@ -64,6 +64,14 @@ class NotParseable(PymapError):
             super(NotParseable, self).__init__((b'', buf))
 
 
+class UnexpectedType(NotParseable):
+    """Indicates that a generic parseable that was given a sub-type expectation
+    failed to meet that expectation.
+
+    """
+    pass
+
+
 class Parseable(object):
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
@@ -97,7 +105,7 @@ class Parseable(object):
                 return data_type.parse(buf, **kwargs)
             except NotParseable:
                 pass
-        raise NotParseable(buf)
+        raise UnexpectedType(buf)
 
 
 class Space(Parseable):

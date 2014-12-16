@@ -24,7 +24,16 @@ from datetime import datetime
 from . import Parseable, NotParseable, Space
 from .primitives import Atom, QuotedString
 
-__all__ = ['Special', 'Mailbox', 'DateTime', 'Flag']
+__all__ = ['Special', 'InvalidContent',
+           'Mailbox', 'DateTime', 'Flag', 'StatusAttribute']
+
+
+class InvalidContent(NotParseable, ValueError):
+    """Indicates the type of the parsed content was correct, but something
+    about the content did not fit what was expected by the special type.
+
+    """
+    pass
 
 
 class Special(Parseable):
@@ -169,7 +178,7 @@ class DateTime(Special):
             when_str = str(string.value, 'ascii')
             when = datetime.strptime(when_str, '%d-%b-%Y %X %z')
         except (UnicodeDecodeError, ValueError):
-            raise NotParseable(buf)
+            raise InvalidContent(buf)
         return cls(when, string.value), after
 
     def __byte__(self):
@@ -218,6 +227,34 @@ class Flag(Special):
         else:
             atom, buf = Atom.parse(buf)
             return cls(atom.value), buf
+
+    def __bytes__(self):
+        return self.value
+
+
+class StatusAttribute(Special):
+    """Represents a status attribute from an IMAP stream.
+
+    :param str status: The status attribute name.
+
+    """
+
+    _statuses = set([b'MESSAGES', b'RECENT', b'UIDVALIDITY', b'UNSEEN'])
+
+    def __init__(self, status):
+        super(StatusAttribute, self).__init__()
+        self.value = status.upper()
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        try:
+            _, buf = Space.parse(buf)
+        except NotParseable:
+            pass
+        atom, after = Atom.parse(buf)
+        if atom.value.upper() not in cls._statuses:
+            raise InvalidContent(buf)
+        return cls(atom.value), after
 
     def __bytes__(self):
         return self.value

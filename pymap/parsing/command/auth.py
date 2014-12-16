@@ -21,8 +21,9 @@
 
 from datetime import datetime
 
-from .. import Space, EndLine
-from ..specials import Mailbox
+from .. import NotParseable, UnexpectedType, Space, EndLine
+from ..primitives import Atom, List, LiteralString
+from ..specials import InvalidContent, Mailbox, DateTime, Flag, StatusAttribute
 from . import CommandAuth
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
@@ -50,7 +51,7 @@ class AppendCommand(CommandAuth):
     def __init__(self, tag, mailbox, message, flag_list=None, when=None):
         super(AppendCommand, self).__init__(tag)
         self.mailbox = mailbox
-        self.message = msg
+        self.message = message
         self.flag_list = flag_list or []
         self.when = when or datetime.now()
 
@@ -59,7 +60,28 @@ class AppendCommand(CommandAuth):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
-        pass
+        try:
+            flag_list, buf = List.parse(buf, list_expected=[Flag])
+        except UnexpectedType:
+            raise
+        except NotParseable:
+            flag_list = None
+        else:
+            flag_list = flag_list.value
+            _, buf = Space.parse(buf)
+        try:
+            date_time, buf = DateTime.parse(buf)
+        except InvalidContent:
+            raise
+        except NotParseable:
+            date_time = None
+        else:
+            date_time = date_time.when
+            _, buf = Space.parse(buf)
+        message, buf = LiteralString.parse(buf, **kwargs)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, mailbox.value, message.value,
+                   flag_list, date_time), buf
 
 CommandAuth._commands.append(AppendCommand)
 
@@ -85,9 +107,19 @@ CommandAuth._commands.append(ExamineCommand)
 class ListCommand(CommandAuth):
     command = b'LIST'
 
+    def __init__(self, tag, mailbox, list_mailbox):
+        super(ListCommand, self).__init__(tag)
+        self.mailbox = mailbox
+        self.list_mailbox = list_mailbox
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        mailbox, buf = Mailbox.parse(buf)
+        _, buf = Space.parse(buf)
+        list_mailbox, buf = Mailbox.parse(buf)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, mailbox.value, list_mailbox.value), buf
 
 CommandAuth._commands.append(ListCommand)
 
@@ -95,9 +127,19 @@ CommandAuth._commands.append(ListCommand)
 class LSubCommand(CommandAuth):
     command = b'LSUB'
 
+    def __init__(self, tag, mailbox, list_mailbox):
+        super(ListCommand, self).__init__(tag)
+        self.mailbox = mailbox
+        self.list_mailbox = list_mailbox
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        mailbox, buf = Mailbox.parse(buf)
+        _, buf = Space.parse(buf)
+        list_mailbox, buf = Mailbox.parse(buf)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, mailbox.value, list_mailbox.value), buf
 
 CommandAuth._commands.append(LSubCommand)
 
@@ -105,9 +147,19 @@ CommandAuth._commands.append(LSubCommand)
 class RenameCommand(CommandAuth):
     command = b'RENAME'
 
+    def __init__(self, tag, from_mailbox, to_mailbox):
+        super(ListCommand, self).__init__(tag)
+        self.mailbox = mailbox
+        self.list_mailbox = list_mailbox
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        from_mailbox, buf = Mailbox.parse(buf)
+        _, buf = Space.parse(buf)
+        to_mailbox, buf = Mailbox.parse(buf)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, from_mailbox.value, to_mailbox.value), buf
 
 CommandAuth._commands.append(RenameCommand)
 
@@ -121,9 +173,21 @@ CommandAuth._commands.append(SelectCommand)
 class StatusCommand(CommandAuth):
     command = b'STATUS'
 
+    def __init__(self, tag, mailbox, status_list):
+        super(StatusCommand, self).__init__(tag)
+        self.mailbox = mailbox
+        self.status_list = status_list
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        mailbox, buf = Mailbox.parse(buf)
+        _, buf = Space.parse(buf)
+        status_list, after = List.parse(buf, list_expected=[StatusAttribute])
+        if not status_list.value:
+            raise NotParseable(buf)
+        _, buf = EndLine.parse(after)
+        return cls(tag, mailbox.value, status_list.value), buf
 
 CommandAuth._commands.append(StatusCommand)
 

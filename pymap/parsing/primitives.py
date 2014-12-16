@@ -256,7 +256,7 @@ class List(Primitive):
         self.value = items
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf, list_expected=None, **kwargs):
         buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         if buf[start:start+1] != b'(':
@@ -269,7 +269,7 @@ class List(Primitive):
                 return cls(items), buf[match.end(0):]
             elif items and not cls._whitespace_length(buf):
                 raise NotParseable(buf)
-            item, buf = Parseable.parse(buf, **kwargs)
+            item, buf = Parseable.parse(buf, expected=list_expected, **kwargs)
             items.append(item)
 
     def __bytes__(self):
