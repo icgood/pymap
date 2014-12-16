@@ -21,7 +21,8 @@
 
 from . import CommandSelect, CommandNoArgs
 
-__all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand']
+__all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
+           'FetchCommand', 'StoreCommand', 'UidCommand', 'SearchCommand']
 
 
 class CheckCommand(CommandSelect, CommandNoArgs):
@@ -40,3 +41,53 @@ class ExpungeCommand(CommandSelect, CommandNoArgs):
     command = b'EXPUNGE'
 
 CommandSelect._commands.append(ExpungeCommand)
+
+
+class CopyCommand(CommandSelect):
+    command = b'COPY'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandSelect._commands.append(CopyCommand)
+
+
+class FetchCommand(CommandSelect):
+    command = b'FETCH'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandSelect._commands.append(FetchCommand)
+
+
+class StoreCommand(CommandSelect):
+    command = b'STORE'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandSelect._commands.append(StoreCommand)
+
+
+class UidCommand(CommandSelect):
+    command = b'UID'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandSelect._commands.append(UidCommand)
+
+
+class SearchCommand(CommandSelect):
+    command = b'SEARCH'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandSelect._commands.append(SearchCommand)
