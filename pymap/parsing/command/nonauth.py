@@ -21,7 +21,7 @@
 
 import re
 
-from .. import Parseable, NotParseable, Space, EndLine
+from .. import Parseable, Space, EndLine
 from ..primitives import Atom, String
 from . import CommandNonAuth, CommandNoArgs, BadCommand
 
@@ -44,6 +44,7 @@ class LoginCommand(CommandNonAuth):
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
+        _, buf = Space.parse(buf)
         userid, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
         _, buf = Space.parse(buf)
         password, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)

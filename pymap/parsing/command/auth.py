@@ -19,7 +19,110 @@
 # THE SOFTWARE.
 #
 
-from .. import Parseable, NotParseable
+from .. import Space, EndLine
+from ..specials import Mailbox
 from . import CommandAuth
 
-__all__ = []
+__all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
+           'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',
+           'StatusCommand', 'SubscribeCommand', 'UnsubscribeCommand']
+
+
+class CommandMailboxArg(CommandAuth):
+
+    def __init__(self, tag, mailbox):
+        super(CommandMailboxArg, self).__init__(tag)
+        self.mailbox = mailbox
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        _, buf = Space.parse(buf)
+        mailbox, buf = Mailbox.parse(buf)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, mailbox.value), buf
+
+
+class AppendCommand(CommandAuth):
+    command = b'APPEND'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandAuth._commands.append(AppendCommand)
+
+
+class CreateCommand(CommandMailboxArg):
+    command = b'CREATE'
+
+CommandAuth._commands.append(CreateCommand)
+
+
+class DeleteCommand(CommandMailboxArg):
+    command = b'DELETE'
+
+CommandAuth._commands.append(DeleteCommand)
+
+
+class ExamineCommand(CommandMailboxArg):
+    command = b'EXAMINE'
+
+CommandAuth._commands.append(ExamineCommand)
+
+
+class ListCommand(CommandAuth):
+    command = b'LIST'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandAuth._commands.append(ListCommand)
+
+
+class LSubCommand(CommandAuth):
+    command = b'LSUB'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandAuth._commands.append(LSubCommand)
+
+
+class RenameCommand(CommandAuth):
+    command = b'RENAME'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandAuth._commands.append(RenameCommand)
+
+
+class SelectCommand(CommandMailboxArg):
+    command = b'SELECT'
+
+CommandAuth._commands.append(SelectCommand)
+
+
+class StatusCommand(CommandAuth):
+    command = b'STATUS'
+
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandAuth._commands.append(StatusCommand)
+
+
+class SubscribeCommand(CommandMailboxArg):
+    command = b'SUBSCRIBE'
+
+CommandAuth._commands.append(SubscribeCommand)
+
+
+class UnsubscribeCommand(CommandMailboxArg):
+    command = b'UNSUBSCRIBE'
+
+CommandAuth._commands.append(UnsubscribeCommand)
