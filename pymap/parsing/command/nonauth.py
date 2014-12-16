@@ -23,13 +23,17 @@ from .. import Parseable, Space, EndLine
 from ..primitives import Atom, String
 from . import CommandNonAuth, CommandNoArgs
 
-__all__ = ['StartTLSCommand']
+__all__ = ['AuthenticateCommand', 'LoginCommand', 'StartTLSCommand']
 
 
-class StartTLSCommand(CommandNonAuth, CommandNoArgs):
-    command = b'STARTTLS'
+class AuthenticateCommand(CommandNonAuth):
+    command = b'AUTHENTICATE'
 
-CommandNonAuth._commands.append(StartTLSCommand)
+    @classmethod
+    def _parse(cls, tag, buf, **kwargs):
+        raise NotImplementedError
+
+CommandNonAuth._commands.append(AuthenticateCommand)
 
 
 class LoginCommand(CommandNonAuth):
@@ -50,3 +54,9 @@ class LoginCommand(CommandNonAuth):
         return cls(tag, userid.value, password.value), buf
 
 CommandNonAuth._commands.append(LoginCommand)
+
+
+class StartTLSCommand(CommandNonAuth, CommandNoArgs):
+    command = b'STARTTLS'
+
+CommandNonAuth._commands.append(StartTLSCommand)
