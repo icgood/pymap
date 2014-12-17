@@ -19,8 +19,11 @@
 # THE SOFTWARE.
 #
 
-from .. import Space
-from ..specials import Mailbox, SequenceSet
+import re
+
+from .. import NotParseable, Space, EndLine
+from ..primitives import Atom, List
+from ..specials import Mailbox, SequenceSet, Flag
 from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -48,20 +51,20 @@ CommandSelect._commands.append(ExpungeCommand)
 class CopyCommand(CommandSelect):
     command = b'COPY'
 
-    def __init__(self, tag, sequence_set, mailbox, uid=False):
+    def __init__(self, tag, seq_set, mailbox, uid=False):
         super(CopyCommand, self).__init__(tag)
-        self.sequence_set = sequence_set
+        self.sequence_set = seq_set
         self.mailbox = mailbox
         self.uid = uid
 
     @classmethod
     def _parse(cls, tag, buf, uid=False, **kwargs):
         _, buf = Space.parse(buf)
-        sequence_set, buf = SequenceSet.parse(buf)
+        seq_set, buf = SequenceSet.parse(buf)
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, sequence_set.sequences, mailbox.value, uid=uid), buf
+        return cls(tag, seq_set.sequences, mailbox.value, uid=uid), buf
 
 CommandSelect._commands.append(CopyCommand)
 
@@ -79,9 +82,53 @@ CommandSelect._commands.append(FetchCommand)
 class StoreCommand(CommandSelect):
     command = b'STORE'
 
+    _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
+    _modes = {b'': 'replace', b'+': 'add', b'-': 'subtract'}
+
+    def __init__(self, tag, seq_set, flag_list, mode='replace', silent=False):
+        super(StoreCommand, self).__init__(tag)
+        self.sequence_set = seq_set
+        self.flag_list = flag_list
+        self.mode = mode
+        self.silent = silent
+
+    @classmethod
+    def _parse_store_info(cls, buf):
+        info, after = Atom.parse(buf)
+        match = cls._info_pattern.match(info.value)
+        if not match:
+            raise NotParseable(buf)
+        mode = cls._modes[match.group(1)]
+        silent = bool(match.group(2))
+        return {'mode': mode, 'silent': silent}, after
+
+    @classmethod
+    def _parse_flag_list(cls, buf):
+        try:
+            flag_list, buf = List.parse(buf, list_expected=[Flag])
+        except NotParseable:
+            pass
+        else:
+            return flag_list.value, buf
+        flag_list = []
+        while True:
+            try:
+                flag, buf = Flag.parse(buf)
+                flag_list.append(flag)
+                _, buf = Space.parse(buf)
+            except NotParseable:
+                return flag_list, buf
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        seq_set, buf = SequenceSet.parse(buf)
+        _, buf = Space.parse(buf)
+        info, buf = cls._parse_store_info(buf)
+        _, buf = Space.parse(buf)
+        flag_list, buf = cls._parse_flag_list(buf)
+        _, buf = EndLine.parse(buf)
+        return cls(tag, seq_set.sequences, flag_list, **info), buf
 
 CommandSelect._commands.append(StoreCommand)
 

@@ -222,7 +222,7 @@ class Flag(Special):
             _, buf = Space.parse(buf)
         except NotParseable:
             pass
-        if buf[0] == 0x5c:
+        if buf and buf[0] == 0x5c:
             atom, buf = Atom.parse(buf[1:])
             return cls(b'\\' + atom.value), buf
         else:
