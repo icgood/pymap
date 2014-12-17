@@ -28,26 +28,36 @@ __all__ = ['CommandNotFound', 'BadCommand', 'Tag', 'Command', 'CommandNoArgs',
            'CommandAny', 'CommandAuth', 'CommandNonAuth', 'CommandSelect']
 
 
-class CommandNotFound(NotParseable):
-    """Error indicating the data was not parseable because the command was not
-    found.
-
-    """
-
-    def __init__(self, buf, command):
-        super(CommandNotFound, self).__init__(buf)
-        self.command = command
-
-
 class BadCommand(NotParseable):
     """Error indicating the data was not parseable because the command had
     invalid arguments.
 
     """
 
-    def __init__(self, buf, command):
+    def __init__(self, buf, tag, command=None):
         super(BadCommand, self).__init__(buf)
-        self.command = command
+        self.tag = tag
+        self.command = command or b''
+
+    def __bytes__(self):
+        command = self.command
+        if command and issubclass(command, Command):
+            command = command.command
+        return self.tag + b' BAD [' + command + b'] Bad Command: ' + \
+            bytes(super(BadCommand, self).__str__(), 'ascii')
+
+
+class CommandNotFound(BadCommand):
+    """Error indicating the data was not parseable because the command was not
+    found.
+
+    """
+
+    def __init__(self, buf, tag, command):
+        super(CommandNotFound, self).__init__(buf, tag, command)
+
+    def __bytes__(self):
+        return self.tag + b' BAD [' + self.command + b'] Command Not Found'
 
 
 class Tag(Parseable):
@@ -109,17 +119,21 @@ class Command(Parseable):
     def parse(cls, buf, **kwargs):
         from . import any, auth, nonauth, select
         buf = memoryview(buf)
-        tag, buf = Tag.parse(buf)
-        _, buf = Space.parse(buf)
-        atom, buf = Atom.parse(buf)
-        command = atom.value.upper()
+        tag = Tag()
+        try:
+            tag, buf = Tag.parse(buf)
+            _, buf = Space.parse(buf)
+            atom, buf = Atom.parse(buf)
+            command = atom.value.upper()
+        except NotParseable:
+            raise BadCommand(buf, tag.value)
         cmd_type = cls._commands.get(command)
         if cmd_type:
             try:
                 return cmd_type._parse(tag.value, buf, **kwargs)
             except NotParseable as exc:
-                raise BadCommand(exc.buf, cmd_type)
-        raise CommandNotFound(buf, command)
+                raise BadCommand(exc.buf, tag.value, cmd_type)
+        raise CommandNotFound(buf, tag.value, command)
 
 Parseable.register_type(Command)
 

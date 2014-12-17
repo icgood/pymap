@@ -229,7 +229,7 @@ class LiteralString(String):
             raise NotParseable(buf)
         literal_length = int(match.group(1))
         if not continuations:
-            raise RequiresContinuation('Literal string', literal_length)
+            raise RequiresContinuation(b'Literal string', literal_length)
         buf = continuations.pop(0)
         literal = buf[0:literal_length]
         if len(literal) != literal_length:
