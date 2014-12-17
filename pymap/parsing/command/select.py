@@ -33,19 +33,19 @@ __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
 class CheckCommand(CommandSelect, CommandNoArgs):
     command = b'CHECK'
 
-CommandSelect._commands.append(CheckCommand)
+CommandSelect.register_command(CheckCommand)
 
 
 class CloseCommand(CommandSelect, CommandNoArgs):
     command = b'CLOSE'
 
-CommandSelect._commands.append(CloseCommand)
+CommandSelect.register_command(CloseCommand)
 
 
 class ExpungeCommand(CommandSelect, CommandNoArgs):
     command = b'EXPUNGE'
 
-CommandSelect._commands.append(ExpungeCommand)
+CommandSelect.register_command(ExpungeCommand)
 
 
 class CopyCommand(CommandSelect):
@@ -66,7 +66,7 @@ class CopyCommand(CommandSelect):
         _, buf = EndLine.parse(buf)
         return cls(tag, seq_set.sequences, mailbox.value, uid=uid), buf
 
-CommandSelect._commands.append(CopyCommand)
+CommandSelect.register_command(CopyCommand)
 
 
 class FetchCommand(CommandSelect):
@@ -76,7 +76,7 @@ class FetchCommand(CommandSelect):
     def _parse(cls, tag, buf, **kwargs):
         raise NotImplementedError
 
-CommandSelect._commands.append(FetchCommand)
+CommandSelect.register_command(FetchCommand)
 
 
 class StoreCommand(CommandSelect):
@@ -130,7 +130,7 @@ class StoreCommand(CommandSelect):
         _, buf = EndLine.parse(buf)
         return cls(tag, seq_set.sequences, flag_list, **info), buf
 
-CommandSelect._commands.append(StoreCommand)
+CommandSelect.register_command(StoreCommand)
 
 
 class UidCommand(CommandSelect):
@@ -145,7 +145,7 @@ class UidCommand(CommandSelect):
                 pass
         raise NotParseable(buf)
 
-CommandSelect._commands.append(UidCommand)
+CommandSelect.register_command(UidCommand)
 
 
 class SearchCommand(CommandSelect):
@@ -155,4 +155,4 @@ class SearchCommand(CommandSelect):
     def _parse(cls, tag, buf, **kwargs):
         raise NotImplementedError
 
-CommandSelect._commands.append(SearchCommand)
+CommandSelect.register_command(SearchCommand)

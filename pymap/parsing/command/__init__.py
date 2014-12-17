@@ -95,9 +95,15 @@ class Command(Parseable):
 
     """
 
+    _commands = {}
+
     def __init__(self, tag):
         super(Command, self).__init__()
         self.tag = tag
+
+    @classmethod
+    def register_command(cls, command):
+        cls._commands[command.command] = command
 
     @classmethod
     def parse(cls, buf, **kwargs):
@@ -107,17 +113,12 @@ class Command(Parseable):
         _, buf = Space.parse(buf)
         atom, buf = Atom.parse(buf)
         command = atom.value.upper()
-        for cmd_type in [CommandAny, CommandAuth,
-                         CommandNonAuth, CommandSelect]:
-            for cmd_subtype in cmd_type._commands:
-                regex = getattr(cmd_subtype, 'regex', None) or \
-                    re.compile(b'^'+cmd_subtype.command+b'$')
-                match = regex.match(command)
-                if match:
-                    try:
-                        return cmd_subtype._parse(tag.value, buf, **kwargs)
-                    except NotParseable as exc:
-                        raise BadCommand(exc.buf, cmd_subtype)
+        cmd_type = cls._commands.get(command)
+        if cmd_type:
+            try:
+                return cmd_type._parse(tag.value, buf, **kwargs)
+            except NotParseable as exc:
+                raise BadCommand(exc.buf, cmd_type)
         raise CommandNotFound(buf, command)
 
 Parseable.register_type(Command)
@@ -139,8 +140,7 @@ class CommandAny(Command):
     """Represents a command available at any stage of the IMAP session.
 
     """
-
-    _commands = []
+    pass
 
 
 class CommandAuth(Command):
@@ -148,8 +148,7 @@ class CommandAuth(Command):
     authenticated.
 
     """
-
-    _commands = []
+    pass
 
 
 class CommandNonAuth(Command):
@@ -157,8 +156,7 @@ class CommandNonAuth(Command):
     authenticated.
 
     """
-
-    _commands = []
+    pass
 
 
 class CommandSelect(CommandAuth):
@@ -166,5 +164,4 @@ class CommandSelect(CommandAuth):
     authenticated and a mailbox has been selected.
 
     """
-
-    _commands = []
+    pass

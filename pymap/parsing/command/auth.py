@@ -83,25 +83,25 @@ class AppendCommand(CommandAuth):
         return cls(tag, mailbox.value, message.value,
                    flag_list, date_time), buf
 
-CommandAuth._commands.append(AppendCommand)
+CommandAuth.register_command(AppendCommand)
 
 
 class CreateCommand(CommandMailboxArg):
     command = b'CREATE'
 
-CommandAuth._commands.append(CreateCommand)
+CommandAuth.register_command(CreateCommand)
 
 
 class DeleteCommand(CommandMailboxArg):
     command = b'DELETE'
 
-CommandAuth._commands.append(DeleteCommand)
+CommandAuth.register_command(DeleteCommand)
 
 
 class ExamineCommand(CommandMailboxArg):
     command = b'EXAMINE'
 
-CommandAuth._commands.append(ExamineCommand)
+CommandAuth.register_command(ExamineCommand)
 
 
 class ListCommand(CommandAuth):
@@ -121,7 +121,7 @@ class ListCommand(CommandAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, mailbox.value, list_mailbox.value), buf
 
-CommandAuth._commands.append(ListCommand)
+CommandAuth.register_command(ListCommand)
 
 
 class LSubCommand(CommandAuth):
@@ -141,7 +141,7 @@ class LSubCommand(CommandAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, mailbox.value, list_mailbox.value), buf
 
-CommandAuth._commands.append(LSubCommand)
+CommandAuth.register_command(LSubCommand)
 
 
 class RenameCommand(CommandAuth):
@@ -161,13 +161,13 @@ class RenameCommand(CommandAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, from_mailbox.value, to_mailbox.value), buf
 
-CommandAuth._commands.append(RenameCommand)
+CommandAuth.register_command(RenameCommand)
 
 
 class SelectCommand(CommandMailboxArg):
     command = b'SELECT'
 
-CommandAuth._commands.append(SelectCommand)
+CommandAuth.register_command(SelectCommand)
 
 
 class StatusCommand(CommandAuth):
@@ -189,16 +189,16 @@ class StatusCommand(CommandAuth):
         _, buf = EndLine.parse(after)
         return cls(tag, mailbox.value, status_list.value), buf
 
-CommandAuth._commands.append(StatusCommand)
+CommandAuth.register_command(StatusCommand)
 
 
 class SubscribeCommand(CommandMailboxArg):
     command = b'SUBSCRIBE'
 
-CommandAuth._commands.append(SubscribeCommand)
+CommandAuth.register_command(SubscribeCommand)
 
 
 class UnsubscribeCommand(CommandMailboxArg):
     command = b'UNSUBSCRIBE'
 
-CommandAuth._commands.append(UnsubscribeCommand)
+CommandAuth.register_command(UnsubscribeCommand)

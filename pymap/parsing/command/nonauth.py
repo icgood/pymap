@@ -33,7 +33,7 @@ class AuthenticateCommand(CommandNonAuth):
     def _parse(cls, tag, buf, **kwargs):
         raise NotImplementedError
 
-CommandNonAuth._commands.append(AuthenticateCommand)
+CommandNonAuth.register_command(AuthenticateCommand)
 
 
 class LoginCommand(CommandNonAuth):
@@ -53,10 +53,10 @@ class LoginCommand(CommandNonAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, userid.value, password.value), buf
 
-CommandNonAuth._commands.append(LoginCommand)
+CommandNonAuth.register_command(LoginCommand)
 
 
 class StartTLSCommand(CommandNonAuth, CommandNoArgs):
     command = b'STARTTLS'
 
-CommandNonAuth._commands.append(StartTLSCommand)
+CommandNonAuth.register_command(StartTLSCommand)

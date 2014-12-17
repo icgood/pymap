@@ -32,10 +32,7 @@ class TestCommand(unittest.TestCase):
     def setUp(self):
         from pymap.parsing.command import any, auth, nonauth, select
         self.cmd = MagicMock(command=b'TEST', regex=None)
-        CommandAny._commands = [self.cmd]
-        CommandAuth._commands = []
-        CommandNonAuth._commands = []
-        CommandSelect._commands = []
+        Command._commands = {b'TEST': self.cmd}
 
     def test_parse(self):
         self.cmd._parse.return_value = 123
