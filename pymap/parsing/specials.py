@@ -22,11 +22,11 @@
 import re
 from datetime import datetime
 
-from . import Parseable, NotParseable, Space
-from .primitives import Atom, Number, QuotedString
+from . import Parseable, NotParseable, UnexpectedType, Space
+from .primitives import Atom, Number, String, QuotedString, List
 
-__all__ = ['Special', 'InvalidContent',
-           'Mailbox', 'DateTime', 'Flag', 'StatusAttribute', 'SequenceSet']
+__all__ = ['Special', 'InvalidContent', 'Mailbox', 'DateTime', 'Flag',
+           'StatusAttribute', 'SequenceSet', 'FetchAttribute', 'SearchKey']
 
 
 class InvalidContent(NotParseable, ValueError):
@@ -347,3 +347,203 @@ class SequenceSet(Special):
 
     def __bytes__(self):
         return self._raw
+
+
+class FetchAttribute(Special):
+    """Represents an attribute that should be fetched for each message in the
+    sequence set of a FETCH command on an IMAP stream.
+
+    :param byte attribute: Fetch attribute name.
+
+    """
+
+    _attrname_pattern = re.compile(br' *([^ \[\<]+)')
+    _section_start_pattern = re.compile(br' *\[ *')
+    _section_end_pattern = re.compile(br' *\] *')
+    _partial_pattern = re.compile(br'\< *(\d+) *\. *(\d+) *\>')
+
+    _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?', re.I)
+    _sec_msgtext_pattern = re.compile(br'')
+
+    def __init__(self, attribute, section=None, partial=None, raw=None):
+        super(FetchAttribute, self).__init__()
+        self.attribute = attribute.upper()
+        self.section = section
+        self.partial = partial
+        self._raw = raw
+
+    @property
+    def raw(self):
+        if self._raw is not None:
+            return self._raw
+        raise NotImplementedError()
+
+    @classmethod
+    def _parse_section(cls, buf):
+        section_parts = None
+        match = cls._sec_part_pattern.match(buf)
+        if match:
+            section_parts = [int(num) for num in match.group(1).split(b'.')]
+            buf = buf[match.end(0):]
+            if not match.group(2):
+                return (section_parts, None, None), buf
+            elif match.group(3):
+                return (section_parts, b'MIME', None), buf
+        try:
+            atom, after = Atom.parse(buf)
+        except NotParseable:
+            return (section_parts, None, None), buf
+        sec_msgtext = atom.value.upper()
+        if sec_msgtext in (b'HEADER', b'TEXT'):
+            return (section_parts, sec_msgtext, None), after
+        elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
+            header_list, buf = List.parse(after, list_expected=[Atom])
+            header_list = [hdr.value.upper() for hdr in header_list.value]
+            if not header_list:
+                raise NotParseable(after)
+            return (section_parts, sec_msgtext, header_list), buf
+        raise NotParseable(buf)
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
+        match = cls._attrname_pattern.match(buf)
+        if not match:
+            raise NotParseable(buf)
+        attr = match.group(1).upper()
+        after = buf[match.end(0):]
+        if attr in (b'ENVELOPE', b'FLAGS', b'INTERNALDATE', b'UID', b'RFC822',
+                    b'RFC822.HEADER', b'RFC822.SIZE', b'RFC822.TEXT',
+                    b'BODYSTRUCTURE'):
+            return cls(attr), after
+        elif attr not in (b'BODY', b'BODY.PEEK'):
+            raise NotParseable(buf)
+        buf = after
+        match = cls._section_start_pattern.match(buf)
+        if not match:
+            if attr == b'BODY':
+                return cls(attr), buf
+            else:
+                raise NotParseable(buf)
+        section, buf = cls._parse_section(buf[match.end(0):])
+        match = cls._section_end_pattern.match(buf)
+        if not match:
+            raise NotParseable(buf)
+        buf = buf[match.end(0):]
+        match = cls._partial_pattern.match(buf)
+        if match:
+            from_, to = int(match.group(1)), int(match.group(2))
+            if from_ < 0 or to <= 0 or from_ > to:
+                raise NotParseable(buf)
+            return cls(attr, section, (from_, to)), buf[match.end(0):]
+        return cls(attr, section), buf
+
+    def __bytes__(self):
+        return self.raw
+
+
+class SearchKey(Special):
+    """Represents a search key given to the SEARCH command on an IMAP stream.
+
+    :param bytes key: The name of the search key. This value may be ``None`` if
+                      the filter is a :class:`SequenceSet` or if the filter is
+                      a list of :class:`SearchKey` objects.
+    :param filter: A possible filter to narrow down the key. The search ``key``
+                   dictates what the type of this value will be.
+    :param bool inverse: If the ``NOT`` keyword was used to inverse the set.
+
+    """
+
+    _not_pattern = re.compile(br'NOT +', re.I)
+
+    def __init__(self, key, filter=None, inverse=False, raw=None):
+        super(SearchKey, self).__init__()
+        self.key = key
+        self.filter = filter
+        self.inverse = inverse
+        self._raw = None
+
+    @property
+    def raw(self):
+        if self._raw is not None:
+            return self._raw
+        raise NotImplementedError
+
+    @classmethod
+    def _parse_astring_filter(cls, buf, charset, **kwargs):
+        ret, after = Parseable.parse(buf, expected=[Atom, String], **kwargs)
+        return ret.value.decode(charset or 'ascii'), after
+
+    @classmethod
+    def _parse_date_filter(cls, buf):
+        atom, after = Parseable.parse(buf, expected=[Atom, QuotedString])
+        try:
+            date = datetime.strptime(str(atom.value, 'ascii'), '%d-%b-%Y')
+        except ValueError:
+            raise NotParseable(buf)
+        return date, after
+
+    @classmethod
+    def parse(cls, buf, charset=None, **kwargs):
+        buf = memoryview(buf)
+        inverse = False
+        match = cls._not_pattern.match(buf)
+        if match:
+            inverse = True
+            buf = buf[match.end(0):]
+        try:
+            seq_set, buf = SequenceSet.parse(buf)
+        except NotParseable:
+            pass
+        else:
+            return cls(None, seq_set, inverse), buf
+        try:
+            key_list, buf = List.parse(buf, list_expected=[SearchKey],
+                                       charset=charset, **kwargs)
+        except UnexpectedType:
+            raise
+        except NotParseable:
+            pass
+        else:
+            return cls(None, key_list.value, inverse), buf
+        atom, after = Atom.parse(buf)
+        key = atom.value.upper()
+        if key in (b'ALL', b'ANSWERED', b'DELETED', b'FLAGGED', b'NEW', b'OLD',
+                   b'RECENT', b'SEEN', b'UNANSWERED', b'UNDELETED',
+                   b'UNFLAGGED', b'UNSEEN', b'DRAFT', b'UNDRAFT'):
+            return cls(key, inverse=inverse), after
+        elif key in (b'BCC', b'BODY', b'CC', b'FROM', b'SUBJECT',
+                   b'TEXT', b'TO'):
+            _, buf = Space.parse(after)
+            filter, buf = cls._parse_astring_filter(buf, charset, **kwargs)
+            return cls(key, filter, inverse), buf
+        elif key in (b'BEFORE', b'ON', b'SINCE',
+                     b'SENTBEFORE', b'SENTON', b'SENTSINCE'):
+            _, buf = Space.parse(after)
+            filter, buf = cls._parse_date_filter(buf)
+            return cls(key, filter, inverse), buf
+        elif key in (b'KEYWORD', b'UNKEYWORD'):
+            _, buf = Space.parse(after)
+            atom, buf = Atom.parse(buf)
+            return cls(key, Flag(atom.value), inverse), buf
+        elif key in (b'LARGER', b'SMALLER'):
+            _, buf = Space.parse(after)
+            num, buf = Number.parse(buf)
+            return cls(key, num.value, inverse), buf
+        elif key == b'UID':
+            _, buf = Space.parse(after)
+            seq_set, buf = SequenceSet.parse(buf)
+            return cls(key, seq_set, inverse), buf
+        elif key == b'HEADER':
+            _, buf = Space.parse(after)
+            header_field, buf = cls._parse_astring_filter(buf, charset)
+            _, buf = Space.parse(buf)
+            header_value, buf = cls._parse_astring_filter(buf, charset)
+            return cls(key, {header_field: header_value}, inverse), buf
+        elif key == b'OR':
+            _, buf = Space.parse(after)
+            or1, buf = SearchKey.parse(buf, charset=charset)
+            _, buf = Space.parse(buf)
+            or2, buf = SearchKey.parse(buf, charset=charset)
+            return cls(key, (or1, or2), inverse), buf
+        raise NotParseable(buf)

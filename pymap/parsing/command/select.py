@@ -23,7 +23,7 @@ import re
 
 from .. import NotParseable, Space, EndLine
 from ..primitives import Atom, List
-from ..specials import Mailbox, SequenceSet, Flag
+from ..specials import Mailbox, SequenceSet, Flag, FetchAttribute, SearchKey
 from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -72,9 +72,54 @@ CommandSelect.register_command(CopyCommand)
 class FetchCommand(CommandSelect):
     command = b'FETCH'
 
+    def __init__(self, tag, seq_set, attr_list):
+        super(FetchCommand, self).__init__(tag)
+        self.sequence_set = seq_set
+        self.attributes = attr_list
+
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+    def _check_macros(cls, buf):
+        atom, after = Atom.parse(buf)
+        macro = atom.value.upper()
+        if macro == b'ALL':
+            attrs = [FetchAttribute(b'FLAGS'),
+                     FetchAttribute(b'INTERNALDATE'),
+                     FetchAttribute(b'RFC822.SIZE'),
+                     FetchAttribute(b'Envelope')]
+            return attrs, after
+        elif macro == b'FULL':
+            attrs = [FetchAttribute(b'FLAGS'),
+                     FetchAttribute(b'INTERNALDATE'),
+                     FetchAttribute(b'RFC822.SIZE')]
+            return attrs, after
+        elif macro == b'FAST':
+            attrs = [FetchAttribute(b'FLAGS'),
+                     FetchAttribute(b'INTERNALDATE'),
+                     FetchAttribute(b'RFC822.SIZE'),
+                     FetchAttribute(b'Envelope'),
+                     FetchAttribute(b'BODY')]
+            return attrs, after
+        raise NotParseable(buf)
+
+    @classmethod
+    def _parse(cls, tag, buf, uid=False, **kwargs):
+        _, buf = Space.parse(buf)
+        seq_set, buf = SequenceSet.parse(buf)
+        _, buf = Space.parse(buf)
+        try:
+            attrs, buf = cls._check_macros(buf)
+        except NotParseable:
+            pass
+        else:
+            return cls(tag, seq_set.sequences, attrs), buf
+        try:
+            attr, buf = FetchAttribute.parse(buf)
+        except NotParseable:
+            pass
+        else:
+            return cls(tag, seq_set.sequences, [attr]), buf
+        attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
+        return cls(tag, seq_set.sequences, attr_list.value, uid=uid), buf
 
 CommandSelect.register_command(FetchCommand)
 
@@ -85,10 +130,12 @@ class StoreCommand(CommandSelect):
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': 'replace', b'+': 'add', b'-': 'subtract'}
 
-    def __init__(self, tag, seq_set, flag_list, mode='replace', silent=False):
+    def __init__(self, tag, seq_set, flag_list,
+                 uid=False, mode='replace', silent=False):
         super(StoreCommand, self).__init__(tag)
         self.sequence_set = seq_set
         self.flag_list = flag_list
+        self.uid = uid
         self.mode = mode
         self.silent = silent
 
@@ -120,7 +167,7 @@ class StoreCommand(CommandSelect):
                 return flag_list, buf
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def _parse(cls, tag, buf, uid=False, **kwargs):
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf)
         _, buf = Space.parse(buf)
@@ -128,7 +175,7 @@ class StoreCommand(CommandSelect):
         _, buf = Space.parse(buf)
         flag_list, buf = cls._parse_flag_list(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set.sequences, flag_list, **info), buf
+        return cls(tag, seq_set.sequences, flag_list, uid=uid, **info), buf
 
 CommandSelect.register_command(StoreCommand)
 
@@ -151,8 +198,46 @@ CommandSelect.register_command(UidCommand)
 class SearchCommand(CommandSelect):
     command = b'SEARCH'
 
+    def __init__(self, tag, keys, charset=None, uid=None):
+        super(SearchCommand, self).__init__(tag)
+        self.keys = keys
+        self.charset = charset
+        self.uid = uid
+
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+    def _parse_charset(cls, buf):
+        try:
+            _, after = Space.parse(buf)
+            atom, after = Atom.parse(after)
+        except NotParseable:
+            pass
+        else:
+            if atom.value.upper() == b'CHARSET':
+                _, after = Space.parse(after)
+                atom, after = Atom.parse(after)
+                charset = str(atom.value, 'ascii')
+                try:
+                    b' '.decode(charset)
+                except LookupError:
+                    raise NotParseable(buf)
+                return charset, after
+        return 'US-ASCII', buf
+
+    @classmethod
+    def _parse(cls, tag, buf, uid=False, **kwargs):
+        charset, buf = cls._parse_charset(buf)
+        search_keys = []
+        while True:
+            try:
+                _, buf = Space.parse(buf)
+                key, buf = SearchKey.parse(buf, charset=charset, **kwargs)
+                search_keys.append(key)
+            except NotParseable:
+                if not search_keys:
+                    raise
+                break
+            else:
+                continue
+        return cls(tag, search_keys, charset=charset, uid=uid), buf
 
 CommandSelect.register_command(SearchCommand)
