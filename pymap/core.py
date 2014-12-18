@@ -24,8 +24,6 @@ defines the package's version number in ``__version__``.
 
 """
 
-from __future__ import absolute_import
-
 import pkg_resources
 
 __all__ = ['PymapError']

@@ -43,8 +43,11 @@ class BadCommand(NotParseable):
         command = self.command
         if command and issubclass(command, Command):
             command = command.command
-        return self.tag + b' BAD [' + command + b'] Bad Command: ' + \
-            bytes(super(BadCommand, self).__str__(), 'ascii')
+        if command:
+            return command + b': ' + \
+                bytes(super(BadCommand, self).__str__(), 'ascii')
+        else:
+            return b'Command Not Given'
 
 
 class CommandNotFound(BadCommand):
@@ -57,7 +60,7 @@ class CommandNotFound(BadCommand):
         super(CommandNotFound, self).__init__(buf, tag, command)
 
     def __bytes__(self):
-        return self.tag + b' BAD [' + self.command + b'] Command Not Found'
+        return b'Command Not Found: ' + self.command
 
 
 class Tag(Parseable):

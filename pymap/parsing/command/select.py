@@ -219,7 +219,7 @@ class SearchCommand(CommandSelect):
                 try:
                     b' '.decode(charset)
                 except LookupError:
-                    raise NotParseable(buf)
+                    raise BadCharset(buf)
                 return charset, after
         return 'US-ASCII', buf
 
