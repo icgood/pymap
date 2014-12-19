@@ -22,12 +22,14 @@
 import asyncio
 from socket import getfqdn
 
+from .mailbox import UserState
+
 from pymap.core import PymapError
 from pymap.parsing.command import (CommandAny, CommandAuth, CommandNonAuth,
     CommandSelect)
 from pymap.parsing.response import (Response, ResponseContinuation, ResponseOk,
     ResponseBad, ResponseNo, ResponseBye)
-from pymap.parsing.response.code import Capability
+from pymap.parsing.response.code import Capability, ReadOnly, ReadWrite
 
 __all__ = ['CloseConnection', 'ConnectionState']
 
@@ -53,7 +55,7 @@ class ConnectionState(object):
     def __init__(self, transport):
         super(ConnectionState, self).__init__()
         self.transport = transport
-        self.authed = None
+        self.user = None
         self.selected = None
         self.capability = Capability([])
 
@@ -69,13 +71,17 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_login(self, cmd):
-        self.authed = cmd.userid
+        self.user = UserState(cmd.userid)
         return ResponseOk(cmd.tag, b'Authentication successful.')
 
     @asyncio.coroutine
     def do_select(self, cmd):
-        self.selected = cmd.mailbox
-        return ResponseOk(cmd.tag, b'Selected mailbox.')
+        mbx = yield from self.user.select(cmd.mailbox)
+        if mbx:
+            self.selected = mbx
+            return ResponseOk(cmd.tag, b'Selected mailbox.', ReadWrite())
+        else:
+            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
 
     @asyncio.coroutine
     def do_logout(self, cmd):
@@ -85,10 +91,10 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_command(self, cmd):
-        if self.authed and isinstance(cmd, CommandNonAuth):
+        if self.user and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
             return ResponseBad(cmd.tag, msg)
-        elif not self.authed and isinstance(cmd, CommandAuth):
+        elif not self.user and isinstance(cmd, CommandAuth):
             msg = cmd.command + b': Must authenticate first.'
             return ResponseBad(cmd.tag, msg)
         elif not self.selected and isinstance(cmd, CommandSelect):
