@@ -23,8 +23,9 @@ import re
 
 from .. import Parseable, NotParseable, Space, EndLine
 from ..primitives import Atom
+from ..specials import Tag
 
-__all__ = ['CommandNotFound', 'BadCommand', 'Tag', 'Command', 'CommandNoArgs',
+__all__ = ['CommandNotFound', 'BadCommand', 'Command', 'CommandNoArgs',
            'CommandAny', 'CommandAuth', 'CommandNonAuth', 'CommandSelect']
 
 
@@ -63,44 +64,6 @@ class CommandNotFound(BadCommand):
         return b'Command Not Found: ' + self.command
 
 
-class Tag(Parseable):
-    """Represents the tag prefixed to every client command in an IMAP stream.
-
-    :param bytes tag: The contents of the tag.
-
-    """
-
-    _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2C-\x5B'
-                          br'\x5D\x5E-\x7A\x7C\x7E]+')
-
-    #: May be passed in to the constructor to indicate the continuation
-    #: response tag, ``+``.
-    CONTINUATION = object()
-
-    def __init__(self, tag=None):
-        super(Tag, self).__init__()
-        if not tag:
-            self.value = b'*'
-        elif tag == self.CONTINUATION:
-            self.value = b'+'
-        else:
-            self.value = tag
-
-    @classmethod
-    def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
-        start = cls._whitespace_length(buf)
-        match = cls._pattern.match(buf, start)
-        if not match:
-            raise NotParseable(buf)
-        return cls(match.group(0)), buf[match.end(0):]
-
-    def __bytes__(self):
-        return self.value
-
-Parseable.register_type(Tag)
-
-
 class Command(Parseable):
     """Base class to represent the commands available to clients.
 
@@ -122,7 +85,7 @@ class Command(Parseable):
     def parse(cls, buf, **kwargs):
         from . import any, auth, nonauth, select
         buf = memoryview(buf)
-        tag = Tag()
+        tag = Tag(b'*')
         try:
             tag, buf = Tag.parse(buf)
             _, buf = Space.parse(buf)

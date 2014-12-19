@@ -159,19 +159,11 @@ class QuotedString(String):
     """
 
     _quoted_pattern = re.compile(br'(\r|\n|\\.|\")')
+    _quoted_specials_pattern = re.compile(br'[\"\\]')
 
     def __init__(self, string, raw=None):
         self.value = string
-        if raw is not None:
-            self._raw = raw
-        else:
-            quoted_specials = re.compile(br'[\"\\]')
-
-            def escape_quoted_specials(match):
-                return b'\\' + match.group(0)
-            quoted_string = re.sub(quoted_specials, escape_quoted_specials,
-                                   string)
-            self._raw = b'"' + quoted_string + b'"'
+        self._raw = raw
 
     @classmethod
     def parse(cls, buf, **kwargs):
@@ -199,6 +191,14 @@ class QuotedString(String):
         raise NotParseable(buf)
 
     def __bytes__(self):
+        if self._raw is not None:
+            return bytes(self._raw)
+
+        def escape_quoted_specials(match):
+            return b'\\' + match.group(0)
+        pat = self._quoted_specials_pattern
+        quoted_string = pat.sub(escape_quoted_specials, self.value)
+        self._raw = b'"' + quoted_string + b'"'
         return self._raw
 
 
@@ -217,9 +217,7 @@ class LiteralString(String):
 
     def __init__(self, string):
         self.value = string
-        length_bytes = bytes(str(len(self.value)), 'ascii')
-        literal_header = b'{' + length_bytes + b'}\r\n'
-        self._raw = literal_header + self.value
+        self._raw = None
 
     @classmethod
     def parse(cls, buf, continuations=None, **kwargs):
@@ -237,6 +235,11 @@ class LiteralString(String):
         return cls(literal), buf[literal_length:]
 
     def __bytes__(self):
+        if self._raw is not None:
+            return bytes(self._raw)
+        length_bytes = bytes(str(len(self.value)), 'ascii')
+        literal_header = b'{' + length_bytes + b'}\r\n'
+        self._raw = literal_header + self.value
         return self._raw
 
 

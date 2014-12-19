@@ -25,8 +25,9 @@ from datetime import datetime
 from . import Parseable, NotParseable, UnexpectedType, Space
 from .primitives import Atom, Number, String, QuotedString, List
 
-__all__ = ['Special', 'InvalidContent', 'Mailbox', 'DateTime', 'Flag',
-           'StatusAttribute', 'SequenceSet', 'FetchAttribute', 'SearchKey']
+__all__ = ['Special', 'InvalidContent', 'AString', 'Tag', 'Mailbox',
+           'DateTime', 'Flag', 'StatusAttribute', 'SequenceSet',
+           'FetchAttribute', 'SearchKey']
 
 
 class InvalidContent(NotParseable, ValueError):
@@ -42,6 +43,71 @@ class Special(Parseable):
 
     """
     pass
+
+
+class AString(Special):
+    """Represents a string that may have quotes (like a quoted-string) or may
+    not (like an atom).  Additionally allows the closing square bracket (``]``)
+    character in the unquoted form.
+
+    :param bytes string: The parsed string.
+
+    """
+
+    _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B-\x5B'
+                          br'\x5D\x5E-\x7A\x7C\x7E]+')
+
+    def __init__(self, string, raw=None):
+        super(AString, self).__init__()
+        self.value = string
+        self._raw = raw
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
+        start = cls._whitespace_length(buf)
+        match = cls._pattern.match(buf, start)
+        if match:
+            buf = buf[match.end(0):]
+            return cls(match.group(0), match.group(0)), buf
+        string, buf = String.parse(buf)
+        return cls(string.value, bytes(string)), buf
+
+    def __bytes__(self):
+        if self._raw is not None:
+            return self._raw
+        match = self._pattern.fullmatch(self.value)
+        if match:
+            return self.value
+        else:
+            return bytes(QuotedString(self.value))
+
+
+class Tag(Special):
+    """Represents the tag prefixed to every client command in an IMAP stream.
+
+    :param bytes tag: The contents of the tag.
+
+    """
+
+    _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2C-\x5B'
+                          br'\x5D\x5E-\x7A\x7C\x7E]+')
+
+    def __init__(self, tag):
+        super(Tag, self).__init__()
+        self.value = tag
+
+    @classmethod
+    def parse(cls, buf, **kwargs):
+        buf = memoryview(buf)
+        start = cls._whitespace_length(buf)
+        match = cls._pattern.match(buf, start)
+        if not match:
+            raise NotParseable(buf)
+        return cls(match.group(0)), buf[match.end(0):]
+
+    def __bytes__(self):
+        return self.value
 
 
 class Mailbox(Special):
@@ -148,7 +214,7 @@ class Mailbox(Special):
 
     @classmethod
     def parse(cls, buf, **kwargs):
-        atom, buf = Atom.parse(buf)
+        atom, buf = AString.parse(buf)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':
             return cls('INBOX'), buf
@@ -397,7 +463,7 @@ class FetchAttribute(Special):
         if sec_msgtext in (b'HEADER', b'TEXT'):
             return (section_parts, sec_msgtext, None), after
         elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
-            header_list, buf = List.parse(after, list_expected=[Atom])
+            header_list, buf = List.parse(after, list_expected=[AString])
             header_list = [hdr.value.upper() for hdr in header_list.value]
             if not header_list:
                 raise NotParseable(after)
