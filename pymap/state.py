@@ -25,7 +25,7 @@ from socket import getfqdn
 from pymap.core import PymapError
 from pymap.parsing.command import (CommandAny, CommandAuth, CommandNonAuth,
     CommandSelect)
-from pymap.parsing.response import (ResponseContinuation, ResponseOk,
+from pymap.parsing.response import (Response, ResponseContinuation, ResponseOk,
     ResponseBad, ResponseNo, ResponseBye)
 from pymap.parsing.response.code import Capability
 
@@ -55,11 +55,11 @@ class ConnectionState(object):
         self.transport = transport
         self.authed = None
         self.selected = None
+        self.capability = Capability([])
 
     @asyncio.coroutine
     def do_greeting(self):
-        code = Capability()
-        return ResponseOk(b'*', b'Server ready ' + fqdn, code)
+        return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
     @asyncio.coroutine
     def do_command(self, cmd):
@@ -72,7 +72,11 @@ class ConnectionState(object):
         elif not self.selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
-        if cmd.command in (b'LOGIN', ):
+        if cmd.command == b'CAPABILITY':
+            response = ResponseOk(cmd.tag, b'Capabilities listed.')
+            response.add_data(self.capability.to_response())
+            return response
+        elif cmd.command in (b'LOGIN', ):
             self.authed = cmd.userid
             return ResponseOk(cmd.tag, b'Authentication successful.')
         elif cmd.command == b'SELECT':
@@ -82,4 +86,4 @@ class ConnectionState(object):
             response = ResponseOk(cmd.tag, b'Logout successful.')
             response.add_data(ResponseBye(b'Logging out.'))
             raise CloseConnection(response)
-        return ResponseNo(cmd.tag, cmd.command + b' Not Implemented')
+        return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')

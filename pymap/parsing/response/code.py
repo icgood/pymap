@@ -54,13 +54,18 @@ class BadCharset(ResponseCode):
 class Capability(ResponseCode):
     """Lists the capabilities the server advertises to the client."""
 
-    def __init__(self, *capabilities):
+    def __init__(self, server_capabilities):
         super(Capability, self).__init__()
-        self.capabilities = capabilities
+        self.capabilities = server_capabilities
+        self.string = b' '.join([b'CAPABILITY', b'IMAP4rev1'] +
+                                server_capabilities)
+
+    def to_response(self):
+        from . import Response
+        return Response(b'*', self.string)
 
     def __bytes__(self):
-        capabilities = b' '.join(self.capabilities)
-        return b'[CAPABILITY IMAP4rev1 ' + capabilities + b']'
+        return b'[' + self.string + b']'
 
 
 class Parse(ResponseCode):
