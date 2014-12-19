@@ -21,9 +21,9 @@
 
 import asyncio
 
+from .state import CloseConnection, ConnectionState
 from pymap.parsing.command import BadCommand, Command
-from pymap.parsing.response import (ResponseContinuation, ResponseBad,
-    ResponseNo, ResponseOk)
+from pymap.parsing.response import ResponseContinuation, ResponseBadCommand
 from pymap.parsing import RequiresContinuation
 
 
@@ -53,7 +53,7 @@ def read_command(reader, writer):
         try:
             cmd, _ = Command.parse(line, continuations = conts.copy())
         except RequiresContinuation as req:
-            yield from RequiresContinuation(req.message).send_stream(writer)
+            yield from ResponseContinuation(req.message).send_stream(writer)
             cont = yield from read_continuation(reader, req.literal_length)
             conts.append(cont)
         else:
@@ -62,16 +62,25 @@ def read_command(reader, writer):
 
 @asyncio.coroutine
 def client_connected(reader, writer):
+    state = ConnectionState(writer.transport)
+    greeting = yield from state.do_greeting()
+    yield from greeting.send_stream(writer)
     while True:
         try:
             cmd = yield from read_command(reader, writer)
         except BadCommand as bad:
-            yield from ResponseBad(bad).send_stream(writer)
+            yield from ResponseBadCommand(bad).send_stream(writer)
         except Disconnected:
             break
         else:
-            resp = ResponseNo(cmd.tag, cmd.command + b' Not Implemented')
-            yield from resp.send_stream(writer)
+            try:
+                response = yield from state.do_command(cmd)
+            except CloseConnection as close:
+                yield from close.response.send_stream(writer)
+                break
+            else:
+                yield from response.send_stream(writer)
+    writer.write_eof()
 
 
 def main():

@@ -21,9 +21,9 @@
 
 from ..primitives import Number, List
 
-__all__ = ['ResponseCodes', 'ResponseCode', 'Alert', 'BadCharset',
-           'Capability', 'Parse', 'PermanentFlags', 'ReadOnly', 'ReadWrite',
-           'TryCreate', 'UidNext', 'UidValidity', 'Unseen']
+__all__ = ['ResponseCode', 'Alert', 'BadCharset', 'Capability', 'Parse',
+           'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
+           'UidValidity', 'Unseen']
 
 
 class ResponseCode(object):
@@ -31,9 +31,7 @@ class ResponseCode(object):
     server responses.
 
     """
-
-    def __bytes__(self):
-        return self.code
+    pass
 
 
 class Alert(ResponseCode):
@@ -41,42 +39,59 @@ class Alert(ResponseCode):
     catches attention.
 
     """
-    code = b'ALERT'
+
+    def __bytes__(self):
+        return b'[ALERT]'
 
 
 class BadCharset(ResponseCode):
     """A ``SEARCH`` command requested an invalid charset."""
-    code = b'BADCHARSET'
+
+    def __bytes__(self):
+        return b'[BADCHARSET]'
 
 
 class Capability(ResponseCode):
-    code = b'CAPABILITY'
+    """Lists the capabilities the server advertises to the client."""
+
+    def __init__(self, *capabilities):
+        super(Capability, self).__init__()
+        self.capabilities = capabilities
+
+    def __bytes__(self):
+        capabilities = b' '.join(self.capabilities)
+        return b'[CAPABILITY IMAP4rev1 ' + capabilities + b']'
 
 
 class Parse(ResponseCode):
     """Indicates the server failed to parse the headers in a message."""
-    code = b'PARSE'
+
+    def __bytes__(self):
+        return b'[PARSE]'
 
 
 class PermanentFlags(ResponseCode):
-    code = b'PERMANENTFLAGS'
 
     def __init__(self, flags):
         super(PermanentFlags, self).__init__()
         self.flags = List(flags)
 
     def __bytes__(self):
-        return b' '.join((self.code, bytes(self.flags)))
+        return b'[PERMANENTFLAGS ' + bytes(self.flags) + b']'
 
 
 class ReadOnly(ResponseCode):
     """Indicates the currently selected mailbox is opened read-only."""
-    code = b'READ-ONLY'
+
+    def __bytes__(self):
+        return b'[READ-ONLY]'
 
 
 class ReadWrite(ResponseCode):
     """Indicates the currently selected mailbox is opened read-write."""
-    code = b'READ-WRITE'
+
+    def __bytes__(self):
+        return b'[READ-WRITE]'
 
 
 class TryCreate(ResponseCode):
@@ -84,31 +99,32 @@ class TryCreate(ResponseCode):
     the client first creates the destination mailbox.
 
     """
-    code = b'TRYCREATE'
+
+    def __bytes__(self):
+        return b'[TRYCREATE]'
 
 
 class UidNext(ResponseCode):
     """Indicates the next unique identifier value of the mailbox."""
-    code = b'UIDNEXT'
 
     def __init__(self, next):
         super(UidNext, self).__init__()
         self.next = Number(next)
 
     def __bytes__(self):
-        return b' '.join((self.code, bytes(self.next)))
+        return b'[UIDNEXT ' + bytes(self.next) + b']'
 
 
 class UidValidity(ResponseCode):
     """Indicates the mailbox unique identifier validity value."""
-    code = b'UIDVALIDITY'
 
     def __init__(self, validity):
         super(UidValidity, self).__init__()
         self.validity = Number(validity)
 
     def __bytes__(self):
-        return b' '.join((self.code, bytes(self.validity)))
+        return b'[UIDVALIDITY ' + bytes(self.validity) + b']'
+
 
 
 class Unseen(ResponseCode):
@@ -116,11 +132,10 @@ class Unseen(ResponseCode):
     ``\Seen`` flag.
 
     """
-    code = b'UNSEEN'
 
     def __init__(self, next):
         super(Unseen, self).__init__()
         self.next = Number(next)
 
     def __bytes__(self):
-        return b' '.join((self.code, bytes(self.next)))
+        return b'[UNSEEN ' + bytes(self.next) + b']'

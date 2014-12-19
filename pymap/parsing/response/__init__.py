@@ -22,7 +22,7 @@
 import asyncio
 
 __all__ = ['Response', 'ResponseContinuation', 'ResponseBad',
-           'ResponseNo', 'ResponseOk']
+           'ResponseBadCommand', 'ResponseNo', 'ResponseOk', 'ResponseBye']
 
 
 class Response(object):
@@ -41,6 +41,7 @@ class Response(object):
         super(Response, self).__init__()
         self.tag = bytes(tag)
         self.text = bytes(text)
+        self.data = []
         self._raw = None
 
     @asyncio.coroutine
@@ -48,10 +49,15 @@ class Response(object):
         writer.write(bytes(self))
         yield from writer.drain()
 
+    def add_data(self, response):
+        self.data.append(response)
+
     def __bytes__(self):
         if self._raw is not None:
             return self._raw
-        self._raw = b''.join((self.tag, b' ', self.text, b'\r\n'))
+        raw_lines = [bytes(data) for data in self.data]
+        raw_lines.append(b''.join((self.tag, b' ', self.text, b'\r\n')))
+        self._raw = b''.join(raw_lines)
         return self._raw
 
 
@@ -71,12 +77,9 @@ class ResponseContinuation(Response):
 
 class ConditionResponse(Response):
 
-    def _format_codes(self, codes):
-        return b'[' + b' '.join([bytes(code) for code in codes]) + b']'
-
-    def __init__(self, tag, text, codes):
-        if codes:
-            text = b' '.join((self.condition, self._format_codes(codes), text))
+    def __init__(self, tag, text, code):
+        if code:
+            text = b' '.join((self.condition, bytes(code), text))
         else:
             text = b' '.join((self.condition, text))
         super(ConditionResponse, self).__init__(tag, text)
@@ -84,22 +87,39 @@ class ConditionResponse(Response):
 
 
 class ResponseBad(ConditionResponse):
+    """Class used for responses that indicate the server encountered a
+    protocol-related error in responding to the command.
+
+    :param bytes tag: The tag bytestring to associate the response to a
+                      command.
+    :param bytes text: The response text.
+    :param code: Optional response code.
+    :type code: :class:`~pymap.parsing.response.codes.ResponseCode`
+
+    """
+
+    condition = b'BAD'
+
+    def __init__(self, tag, text, code=None):
+        super(ResponseBad, self).__init__(tag, text, code)
+
+
+class ResponseBadCommand(ResponseBad):
     """Class used for responses that indicate the server was not able to parse
     the given command from the client. The server promises that the state of
     the connection or mailbox will not be changed as a result.
 
     :param exc: The  exception that was raised during command parsing.
     :type exc: :exc:`~pymap.parsing.command.BadCommand`
-    :param list codes: List of
-                       :class:`~pymap.parsing.response.codes.ResponseCode`
-                       objects for the response.
+    :param code: Optional response code.
+    :type code: :class:`~pymap.parsing.response.codes.ResponseCode`
 
     """
 
     condition = b'BAD'
 
-    def __init__(self, exc, codes=None):
-        super(ResponseBad, self).__init__(exc.tag, bytes(exc), codes)
+    def __init__(self, exc, code=None):
+        super(ResponseBad, self).__init__(exc.tag, bytes(exc), code)
 
 
 class ResponseNo(ConditionResponse):
@@ -109,16 +129,15 @@ class ResponseNo(ConditionResponse):
     :param bytes tag: The tag bytestring to associate the response to a
                       command.
     :param bytes text: The response text.
-    :param list codes: List of
-                       :class:`~pymap.parsing.response.codes.ResponseCode`
-                       objects for the response.
+    :param code: Optional response code.
+    :type code: :class:`~pymap.parsing.response.codes.ResponseCode`
 
     """
 
     condition = b'NO'
 
-    def __init__(self, tag, text, codes=None):
-        super(ResponseNo, self).__init__(tag, text, codes)
+    def __init__(self, tag, text, code=None):
+        super(ResponseNo, self).__init__(tag, text, code)
 
 
 class ResponseOk(ConditionResponse):
@@ -128,13 +147,27 @@ class ResponseOk(ConditionResponse):
     :param bytes tag: The tag bytestring to associate the response to a
                       command.
     :param bytes text: The response text.
-    :param list codes: List of
-                       :class:`~pymap.parsing.response.codes.ResponseCode`
-                       objects for the response.
+    :param code: Optional response code.
+    :type code: :class:`~pymap.parsing.response.codes.ResponseCode`
 
     """
 
     condition = b'OK'
 
-    def __init__(self, tag, text, codes=None):
-        super(ResponseOk, self).__init__(tag, text, codes)
+    def __init__(self, tag, text, code=None):
+        super(ResponseOk, self).__init__(tag, text, code)
+
+
+class ResponseBye(ConditionResponse):
+    """Response indicating that the server will be closing the connection
+    immediately after sending the response is sent. This may be sent in
+    response to a command (e.g. ``LOGOUT``) or unsolicited.
+
+    :param bytes text: The reason for disconnection.
+
+    """
+
+    condition = b'BYE'
+
+    def __init__(self, text):
+        super(ResponseBye, self).__init__(b'*', text, None)

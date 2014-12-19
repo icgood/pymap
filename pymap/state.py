@@ -20,51 +20,73 @@
 #
 
 import asyncio
+from socket import getfqdn
 
-from pymap.parsing.command import BadCommand, Command
-from pymap.parsing import RequiresContinuation
+from pymap.core import PymapError
+from pymap.parsing.command import (CommandAny, CommandAuth, CommandNonAuth,
+    CommandSelect)
+from pymap.parsing.response import (ResponseContinuation, ResponseOk,
+    ResponseBad, ResponseNo, ResponseBye)
+from pymap.parsing.response.code import Capability
 
+__all__ = ['CloseConnection', 'ConnectionState']
 
-@asyncio.coroutine
-def client_connected(reader, writer):
-    done = False
-    while not done:
-        line = yield from reader.readline()
-        if reader.at_eof():
-            break
-        conts = []
-        while not done:
-            try:
-                ret, _ = Command.parse(line, continuations=conts.copy())
-            except RequiresContinuation as req:
-                writer.write(b'+ ' + req.message + b'\r\n')
-                yield from writer.drain()
-                extra_literal = yield from reader.readexactly(req.literal_length)
-                extra_line = yield from reader.readline()
-                if reader.at_eof():
-                    done = True
-                    break
-                conts.append(extra_literal + extra_line)
-            except BadCommand as bad:
-                writer.write(bytes(bad) + b'\r\n')
-                yield from writer.drain()
-                break
-            else:
-                writer.write(ret.tag + b' ' + ret.command + b' OK\r\n')
-                yield from writer.drain()
-                break
+fqdn = getfqdn().encode('ascii')
 
 
-def main():
-    loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(client_connected, port=1143, loop=loop)
-    server = loop.run_until_complete(coro)
+class CloseConnection(PymapError):
+    """Raised when the connection should be closed immediately after sending
+    the provided response.
 
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        print()
+    :param response: The response to send before closing the connection.
+    :type response: :class:`~pymap.parsing.response.Response`
 
-    server.close()
-    loop.run_until_complete(server.wait_closed())
-    loop.close()
+    """
+
+    def __init__(self, response):
+        super(CloseConnection, self).__init__()
+        self.response = response
+
+
+class ConnectionState(object):
+
+    def __init__(self, transport):
+        super(ConnectionState, self).__init__()
+        self.transport = transport
+        self.authed = None
+        self.selected = None
+
+    @asyncio.coroutine
+    def do_greeting(self):
+        code = Capability(b'LITERAL+',
+                          b'SASL-IR',
+                          b'LOGIN-REFERRALS',
+                          b'ID',
+                          b'ENABLE',
+                          b'IDLE',
+                          b'STARTTLS',
+                          b'AUTH=PLAIN')
+        return ResponseOk(b'*', b'Server ready ' + fqdn, code)
+
+    @asyncio.coroutine
+    def do_command(self, cmd):
+        if self.authed and isinstance(cmd, CommandNonAuth):
+            msg = cmd.command + b': Already authenticated.'
+            return ResponseBad(cmd.tag, msg)
+        elif not self.authed and isinstance(cmd, CommandAuth):
+            msg = cmd.command + b': Must authenticate first.'
+            return ResponseBad(cmd.tag, msg)
+        elif not self.selected and isinstance(cmd, CommandSelect):
+            msg = cmd.command + b': Must select a mailbox first.'
+            return ResponseBad(cmd.tag, msg)
+        if cmd.command in (b'LOGIN', ):
+            self.authed = cmd.userid
+            return ResponseOk(cmd.tag, b'Authentication successful.')
+        elif cmd.command == b'SELECT':
+            self.selected = cmd.mailbox
+            return ResponseOk(cmd.tag, b'Selected mailbox.')
+        elif cmd.command == b'LOGOUT':
+            response = ResponseOk(cmd.tag, b'Logout successful.')
+            response.add_data(ResponseBye(b'Logging out.'))
+            raise CloseConnection(response)
+        return ResponseNo(cmd.tag, cmd.command + b' Not Implemented')
