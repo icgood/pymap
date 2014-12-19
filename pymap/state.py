@@ -62,6 +62,28 @@ class ConnectionState(object):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
     @asyncio.coroutine
+    def do_capability(self, cmd):
+        response = ResponseOk(cmd.tag, b'Capabilities listed.')
+        response.add_data(self.capability.to_response())
+        return response
+
+    @asyncio.coroutine
+    def do_login(self, cmd):
+        self.authed = cmd.userid
+        return ResponseOk(cmd.tag, b'Authentication successful.')
+
+    @asyncio.coroutine
+    def do_select(self, cmd):
+        self.selected = cmd.mailbox
+        return ResponseOk(cmd.tag, b'Selected mailbox.')
+
+    @asyncio.coroutine
+    def do_logout(self, cmd):
+        response = ResponseOk(cmd.tag, b'Logout successful.')
+        response.add_data(ResponseBye(b'Logging out.'))
+        raise CloseConnection(response)
+
+    @asyncio.coroutine
     def do_command(self, cmd):
         if self.authed and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
@@ -72,18 +94,9 @@ class ConnectionState(object):
         elif not self.selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
-        if cmd.command == b'CAPABILITY':
-            response = ResponseOk(cmd.tag, b'Capabilities listed.')
-            response.add_data(self.capability.to_response())
-            return response
-        elif cmd.command in (b'LOGIN', ):
-            self.authed = cmd.userid
-            return ResponseOk(cmd.tag, b'Authentication successful.')
-        elif cmd.command == b'SELECT':
-            self.selected = cmd.mailbox
-            return ResponseOk(cmd.tag, b'Selected mailbox.')
-        elif cmd.command == b'LOGOUT':
-            response = ResponseOk(cmd.tag, b'Logout successful.')
-            response.add_data(ResponseBye(b'Logging out.'))
-            raise CloseConnection(response)
-        return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
+        func_name = 'do_' + str(cmd.command, 'ascii').lower()
+        try:
+            func = getattr(self, func_name)
+        except AttributeError:
+            return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
+        return func(cmd)
