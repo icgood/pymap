@@ -23,7 +23,8 @@ import re
 
 from .. import NotParseable, Space, EndLine
 from ..primitives import Atom, List
-from ..specials import Mailbox, SequenceSet, Flag, FetchAttribute, SearchKey
+from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
+    SearchKey)
 from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -205,7 +206,7 @@ class SearchCommand(CommandSelect):
         self.uid = uid
 
     @classmethod
-    def _parse_charset(cls, buf):
+    def _parse_charset(cls, buf, **kwargs):
         try:
             _, after = Space.parse(buf)
             atom, after = Atom.parse(after)
@@ -214,8 +215,8 @@ class SearchCommand(CommandSelect):
         else:
             if atom.value.upper() == b'CHARSET':
                 _, after = Space.parse(after)
-                atom, after = Atom.parse(after)
-                charset = str(atom.value, 'ascii')
+                string, after = AString.parse(after, **kwargs)
+                charset = str(string.value, 'ascii')
                 try:
                     b' '.decode(charset)
                 except LookupError:
@@ -225,7 +226,7 @@ class SearchCommand(CommandSelect):
 
     @classmethod
     def _parse(cls, tag, buf, uid=False, **kwargs):
-        charset, buf = cls._parse_charset(buf)
+        charset, buf = cls._parse_charset(buf, **kwargs)
         search_keys = []
         while True:
             try:

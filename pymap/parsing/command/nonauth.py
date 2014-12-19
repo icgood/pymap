@@ -20,7 +20,7 @@
 #
 
 from .. import Parseable, Space, EndLine
-from ..primitives import Atom, String
+from ..specials import AString
 from . import CommandNonAuth, CommandNoArgs
 
 __all__ = ['AuthenticateCommand', 'LoginCommand', 'StartTLSCommand']
@@ -47,9 +47,9 @@ class LoginCommand(CommandNonAuth):
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
         _, buf = Space.parse(buf)
-        userid, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
+        userid, buf = AString.parse(buf, **kwargs)
         _, buf = Space.parse(buf)
-        password, buf = Parseable.parse(buf, expected=[Atom, String], **kwargs)
+        password, buf = AString.parse(buf, **kwargs)
         _, buf = EndLine.parse(buf)
         return cls(tag, userid.value, password.value), buf
 

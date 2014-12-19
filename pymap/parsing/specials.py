@@ -70,7 +70,7 @@ class AString(Special):
         if match:
             buf = buf[match.end(0):]
             return cls(match.group(0), match.group(0)), buf
-        string, buf = String.parse(buf)
+        string, buf = String.parse(buf, **kwargs)
         return cls(string.value, bytes(string)), buf
 
     def __bytes__(self):
@@ -214,7 +214,7 @@ class Mailbox(Special):
 
     @classmethod
     def parse(cls, buf, **kwargs):
-        atom, buf = AString.parse(buf)
+        atom, buf = AString.parse(buf, **kwargs)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':
             return cls('INBOX'), buf
@@ -445,7 +445,7 @@ class FetchAttribute(Special):
         raise NotImplementedError()
 
     @classmethod
-    def _parse_section(cls, buf):
+    def _parse_section(cls, buf, **kwargs):
         section_parts = None
         match = cls._sec_part_pattern.match(buf)
         if match:
@@ -463,7 +463,8 @@ class FetchAttribute(Special):
         if sec_msgtext in (b'HEADER', b'TEXT'):
             return (section_parts, sec_msgtext, None), after
         elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
-            header_list, buf = List.parse(after, list_expected=[AString])
+            header_list, buf = List.parse(after, list_expected=[AString],
+                                          **kwargs)
             header_list = [hdr.value.upper() for hdr in header_list.value]
             if not header_list:
                 raise NotParseable(after)
@@ -491,7 +492,7 @@ class FetchAttribute(Special):
                 return cls(attr), buf
             else:
                 raise NotParseable(buf)
-        section, buf = cls._parse_section(buf[match.end(0):])
+        section, buf = cls._parse_section(buf[match.end(0):], **kwargs)
         match = cls._section_end_pattern.match(buf)
         if not match:
             raise NotParseable(buf)
@@ -537,7 +538,7 @@ class SearchKey(Special):
 
     @classmethod
     def _parse_astring_filter(cls, buf, charset, **kwargs):
-        ret, after = Parseable.parse(buf, expected=[Atom, String], **kwargs)
+        ret, after = AString.parse(buf, **kwargs)
         return ret.value.decode(charset or 'ascii'), after
 
     @classmethod
