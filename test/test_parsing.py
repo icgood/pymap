@@ -8,15 +8,15 @@ from pymap.parsing.primitives import *
 class TestParseable(unittest.TestCase):
 
     def test_parse(self):
-        nil, _ = Parseable.parse(b'nil')
+        nil, _ = Parseable.parse(b'nil', [Nil])
         self.assertIsInstance(nil, Nil)
-        num, _ = Parseable.parse(b'123')
+        num, _ = Parseable.parse(b'123', [Number])
         self.assertIsInstance(num, Number)
-        atom, _ = Parseable.parse(b'ATOM')
+        atom, _ = Parseable.parse(b'ATOM', [Atom])
         self.assertIsInstance(atom, Atom)
-        qstr, _ = Parseable.parse(b'"test"')
+        qstr, _ = Parseable.parse(b'"test"', [String])
         self.assertIsInstance(qstr, QuotedString)
-        list, _ = Parseable.parse(b'()')
+        list, _ = Parseable.parse(b'()', [List])
         self.assertIsInstance(list, List)
 
     def test_parse_expectation_failure(self):
@@ -24,9 +24,9 @@ class TestParseable(unittest.TestCase):
             Parseable.parse(b'ATOM', expected=[Number, Nil])
 
     def test_parse_expectation_casting(self):
-        num, _ = Parseable.parse(b'123', expected=[Atom])
+        num, _ = Parseable.parse(b'123', [Atom])
         self.assertIsInstance(num, Atom)
-        nil, _ = Parseable.parse(b'nil', expected=[Atom])
+        nil, _ = Parseable.parse(b'nil', [Atom])
         self.assertIsInstance(num, Atom)
 
 

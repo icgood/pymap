@@ -58,14 +58,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_greeting(self):
-        code = Capability(b'LITERAL+',
-                          b'SASL-IR',
-                          b'LOGIN-REFERRALS',
-                          b'ID',
-                          b'ENABLE',
-                          b'IDLE',
-                          b'STARTTLS',
-                          b'AUTH=PLAIN')
+        code = Capability()
         return ResponseOk(b'*', b'Server ready ' + fqdn, code)
 
     @asyncio.coroutine

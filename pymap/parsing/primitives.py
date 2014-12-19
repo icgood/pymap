@@ -63,8 +63,6 @@ class Nil(Primitive):
     def __bytes__(self):
         return b'NIL'
 
-Parseable.register_type(Nil)
-
 
 class Number(Primitive):
     """Represents a number object from an IMAP stream.
@@ -95,8 +93,6 @@ class Number(Primitive):
     def __bytes__(self):
         return self._raw
 
-Parseable.register_type(Number)
-
 
 class Atom(Primitive):
     """Represents an atom object from an IMAP stream.
@@ -120,8 +116,6 @@ class Atom(Primitive):
     def __bytes__(self):
         return bytes(self.value)
 
-Parseable.register_type(Atom)
-
 
 class String(Primitive):
     """Represents a string object from an IMAP string. This object may not be
@@ -143,8 +137,6 @@ class String(Primitive):
         except NotParseable:
             pass
         raise NotParseable(buf)
-
-Parseable.register_type(String)
 
 
 class QuotedString(String):
@@ -257,6 +249,7 @@ class List(Primitive):
     def __init__(self, items):
         super(List, self).__init__()
         self.value = items
+        self.__iter__ = lambda: iter(items)
 
     @classmethod
     def parse(cls, buf, list_expected=None, **kwargs):
@@ -272,10 +265,9 @@ class List(Primitive):
                 return cls(items), buf[match.end(0):]
             elif items and not cls._whitespace_length(buf):
                 raise NotParseable(buf)
-            item, buf = Parseable.parse(buf, expected=list_expected, **kwargs)
+            item, buf = Parseable.parse(buf, expected=list_expected,
+                                        list_expected=list_expected, **kwargs)
             items.append(item)
 
     def __bytes__(self):
         return b'(' + b' '.join([bytes(item) for item in self.value]) + b')'
-
-Parseable.register_type(List)

@@ -101,8 +101,6 @@ class Command(Parseable):
                 raise BadCommand(exc.buf, tag.value, cmd_type)
         raise CommandNotFound(buf, tag.value, command)
 
-Parseable.register_type(Command)
-
 
 class CommandNoArgs(Command):
     """Convenience class used to fail parsing when args are given to a command

@@ -126,7 +126,8 @@ class TestString(unittest.TestCase):
 class TestList(unittest.TestCase):
 
     def test_parse(self):
-        ret, buf = List.parse(b'  (ONE 2 (NIL) "four" )  ')
+        ret, buf = List.parse(b'  (ONE 2 (NIL) "four" )  ',
+                              list_expected=[Nil, Number, Atom, String, List])
         self.assertIsInstance(ret, List)
         self.assertEqual(4, len(ret.value))
         self.assertEqual(b'  ', buf)
@@ -145,21 +146,11 @@ class TestList(unittest.TestCase):
         self.assertEqual([], ret.value)
         self.assertEqual(b'  ', buf)
 
-    def test_parse_list_expected(self):
-        ret, buf = List.parse(br'(NIL 123 456 789)',
-                              list_expected=[Nil, Number])
-        self.assertIsInstance(ret, List)
-        self.assertEqual(4, len(ret.value))
-        self.assertIsInstance(ret.value[0], Nil)
-        self.assertIsInstance(ret.value[1], Number)
-        self.assertIsInstance(ret.value[2], Number)
-        self.assertIsInstance(ret.value[3], Number)
-
     def test_parse_failure(self):
         with self.assertRaises(NotParseable):
             List.parse(b'{}')
         with self.assertRaises(NotParseable):
-            List.parse(b'("one"TWO)')
+            List.parse(b'("one"TWO)', list_expected=[Atom, String])
         with self.assertRaises(NotParseable):
             List.parse(b'(123 abc 456)', list_expected=[Number])
 

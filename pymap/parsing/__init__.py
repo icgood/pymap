@@ -81,12 +81,7 @@ class Parseable(object):
 
     """
 
-    _known_parseables = []
     _whitespace_pattern = re.compile(br' +')
-
-    @classmethod
-    def register_type(cls, type_class):
-        cls._known_parseables.append(type_class)
 
     @classmethod
     def _whitespace_length(cls, buf, start=0):
@@ -96,10 +91,8 @@ class Parseable(object):
         return 0
 
     @classmethod
-    def parse(cls, buf, expected=None, **kwargs):
-        from . import primitives
+    def parse(cls, buf, expected, **kwargs):
         buf = memoryview(buf)
-        expected = expected or cls._known_parseables
         for data_type in expected:
             try:
                 return data_type.parse(buf, **kwargs)
