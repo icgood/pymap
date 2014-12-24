@@ -35,20 +35,20 @@ class BadCommand(NotParseable):
 
     """
 
-    def __init__(self, buf, tag, command=None):
+    def __init__(self, buf, tag, command):
         super(BadCommand, self).__init__(buf)
         self.tag = tag
-        self.command = command or b''
+        self.command = command
 
     def __bytes__(self):
-        command = self.command
-        if command and issubclass(command, Command):
-            command = command.command
-        if command:
-            return command + b': ' + \
-                bytes(super(BadCommand, self).__str__(), 'ascii')
-        else:
-            return b'Command Not Given'
+        if hasattr(self, '_raw'):
+            return self._raw
+        self._raw = raw = self.command.command + b': ' + \
+            super(BadCommand, self).__bytes__()
+        return raw
+
+    def __str__(self):
+        return str(bytes(self), 'ascii', 'replace')
 
 
 class CommandNotFound(BadCommand):
@@ -57,11 +57,14 @@ class CommandNotFound(BadCommand):
 
     """
 
-    def __init__(self, buf, tag, command):
+    def __init__(self, buf, tag, command=None):
         super(CommandNotFound, self).__init__(buf, tag, command)
 
     def __bytes__(self):
-        return b'Command Not Found: ' + self.command
+        if self.command:
+            return b'Command Not Found: ' + self.command
+        else:
+            return b'Command Not Given'
 
 
 class Command(Parseable):
@@ -92,7 +95,7 @@ class Command(Parseable):
             atom, buf = Atom.parse(buf)
             command = atom.value.upper()
         except NotParseable:
-            raise BadCommand(buf, tag.value)
+            raise CommandNotFound(buf, tag.value)
         cmd_type = cls._commands.get(command)
         if cmd_type:
             try:

@@ -52,16 +52,47 @@ class NotParseable(PymapError):
 
     """
 
+    error_indicator = b'[:ERROR:]'
+
     def __init__(self, buf):
+        super(NotParseable, self).__init__()
         self.buf = buf
         if isinstance(buf, memoryview):
             self.offset = offset = len(buf.obj) - buf.nbytes
-            before = buf.obj[0:offset]
-            after = buf.tobytes()
-            super(NotParseable, self).__init__((before, after))
         else:
             self.offset = 0
-            super(NotParseable, self).__init__((b'', buf))
+
+
+    @property
+    def before(self):
+        if hasattr(self, '_before'):
+            return self._before
+        buf = self.buf
+        if isinstance(self.buf, memoryview):
+            buf = buf.obj
+        self._before = before = buf[0:self.offset]
+        return before
+
+    @property
+    def after(self):
+        if hasattr(self, '_after'):
+            return self._after
+        if isinstance(self.buf, memoryview):
+            self._after = after = self.buf.tobytes()
+        else:
+            self._after = after = self.buf
+        return after
+
+    def __bytes__(self):
+        if hasattr(self, '_raw'):
+            return self._raw
+        before = self.before
+        after = self.after.rstrip(b'\r\n')
+        self._raw = raw = self.error_indicator.join((before, after))
+        return raw
+
+    def __str__(self):
+        return str(bytes(self), 'ascii', 'replace')
 
 
 class UnexpectedType(NotParseable):
