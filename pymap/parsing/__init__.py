@@ -38,7 +38,7 @@ class RequiresContinuation(PymapError):
     """
 
     def __init__(self, message, literal_length=0):
-        super(RequiresContinuation, self).__init__()
+        super().__init__()
         self.message = message
         self.literal_length = literal_length
 
@@ -55,7 +55,7 @@ class NotParseable(PymapError):
     error_indicator = b'[:ERROR:]'
 
     def __init__(self, buf):
-        super(NotParseable, self).__init__()
+        super().__init__()
         self.buf = buf
         if isinstance(buf, memoryview):
             self.offset = offset = len(buf.obj) - buf.nbytes
@@ -140,7 +140,7 @@ class Space(Parseable):
     """
 
     def __init__(self, length):
-        super(Space, self).__init__()
+        super().__init__()
         self.length = length
 
     @classmethod
@@ -164,7 +164,7 @@ class EndLine(Parseable):
     _pattern = re.compile(br' *(\r?)\n')
 
     def __init__(self, preceding_spaces=0, carriage_return=True):
-        super(EndLine, self).__init__()
+        super().__init__()
         self.preceding_spaces = preceding_spaces
         self.carriage_return = carriage_return
 

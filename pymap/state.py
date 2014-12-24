@@ -46,14 +46,14 @@ class CloseConnection(PymapError):
     """
 
     def __init__(self, response):
-        super(CloseConnection, self).__init__()
+        super().__init__()
         self.response = response
 
 
 class ConnectionState(object):
 
     def __init__(self, transport):
-        super(ConnectionState, self).__init__()
+        super().__init__()
         self.transport = transport
         self.user = None
         self.selected = None

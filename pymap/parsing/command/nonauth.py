@@ -40,7 +40,7 @@ class LoginCommand(CommandNonAuth):
     command = b'LOGIN'
 
     def __init__(self, tag, userid, password):
-        super(LoginCommand, self).__init__(tag)
+        super().__init__(tag)
         self.userid = userid
         self.password = password
 

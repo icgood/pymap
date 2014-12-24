@@ -38,7 +38,7 @@ class Response(object):
     """
 
     def __init__(self, tag, text):
-        super(Response, self).__init__()
+        super().__init__()
         self.tag = bytes(tag)
         self.text = bytes(text)
         self.data = []
@@ -72,7 +72,7 @@ class ResponseContinuation(Response):
     """
 
     def __init__(self, text):
-        super(ResponseContinuation, self).__init__(b'+', text)
+        super().__init__(b'+', text)
 
 
 class ConditionResponse(Response):
@@ -82,7 +82,7 @@ class ConditionResponse(Response):
             text = b' '.join((self.condition, bytes(code), text))
         else:
             text = b' '.join((self.condition, text))
-        super(ConditionResponse, self).__init__(tag, text)
+        super().__init__(tag, text)
 
 
 
@@ -101,7 +101,7 @@ class ResponseBad(ConditionResponse):
     condition = b'BAD'
 
     def __init__(self, tag, text, code=None):
-        super(ResponseBad, self).__init__(tag, text, code)
+        super().__init__(tag, text, code)
 
 
 class ResponseBadCommand(ResponseBad):
@@ -119,7 +119,7 @@ class ResponseBadCommand(ResponseBad):
     condition = b'BAD'
 
     def __init__(self, exc, code=None):
-        super(ResponseBad, self).__init__(exc.tag, bytes(exc), code)
+        super().__init__(exc.tag, bytes(exc), code)
 
 
 class ResponseNo(ConditionResponse):
@@ -137,7 +137,7 @@ class ResponseNo(ConditionResponse):
     condition = b'NO'
 
     def __init__(self, tag, text, code=None):
-        super(ResponseNo, self).__init__(tag, text, code)
+        super().__init__(tag, text, code)
 
 
 class ResponseOk(ConditionResponse):
@@ -155,7 +155,7 @@ class ResponseOk(ConditionResponse):
     condition = b'OK'
 
     def __init__(self, tag, text, code=None):
-        super(ResponseOk, self).__init__(tag, text, code)
+        super().__init__(tag, text, code)
 
 
 class ResponseBye(ConditionResponse):
@@ -170,4 +170,4 @@ class ResponseBye(ConditionResponse):
     condition = b'BYE'
 
     def __init__(self, text):
-        super(ResponseBye, self).__init__(b'*', text, None)
+        super().__init__(b'*', text, None)

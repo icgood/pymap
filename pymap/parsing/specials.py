@@ -58,7 +58,7 @@ class AString(Special):
                           br'\x5D\x5E-\x7A\x7C\x7E]+')
 
     def __init__(self, string, raw=None):
-        super(AString, self).__init__()
+        super().__init__()
         self.value = string
         self._raw = raw
 
@@ -94,7 +94,7 @@ class Tag(Special):
                           br'\x5D\x5E-\x7A\x7C\x7E]+')
 
     def __init__(self, tag):
-        super(Tag, self).__init__()
+        super().__init__()
         self.value = tag
 
     @classmethod
@@ -118,7 +118,7 @@ class Mailbox(Special):
     """
 
     def __init__(self, mailbox):
-        super(Mailbox, self).__init__()
+        super().__init__()
         self.value = mailbox
 
     @classmethod
@@ -234,7 +234,7 @@ class DateTime(Special):
     """
 
     def __init__(self, when, raw=None):
-        super(DateTime, self).__init__()
+        super().__init__()
         self.when = when
         self._raw = raw or bytes(when.strftime('%d-%b-%Y %X %z'), 'ascii')
 
@@ -261,7 +261,7 @@ class Flag(Special):
     """
 
     def __init__(self, flag):
-        super(Flag, self).__init__()
+        super().__init__()
         self.value = self._capitalize(flag)
 
     def _capitalize(self, value):
@@ -309,7 +309,7 @@ class StatusAttribute(Special):
     _statuses = set([b'MESSAGES', b'RECENT', b'UIDVALIDITY', b'UNSEEN'])
 
     def __init__(self, status):
-        super(StatusAttribute, self).__init__()
+        super().__init__()
         self.value = status.upper()
 
     @classmethod
@@ -340,7 +340,7 @@ class SequenceSet(Special):
     _num_pattern = re.compile(br'\d+')
 
     def __init__(self, sequences):
-        super(SequenceSet, self).__init__()
+        super().__init__()
         self.sequences = sequences
         parts = []
         for group in sequences:
@@ -432,7 +432,7 @@ class FetchAttribute(Special):
     _sec_msgtext_pattern = re.compile(br'')
 
     def __init__(self, attribute, section=None, partial=None, raw=None):
-        super(FetchAttribute, self).__init__()
+        super().__init__()
         self.attribute = attribute.upper()
         self.section = section
         self.partial = partial
@@ -524,7 +524,7 @@ class SearchKey(Special):
     _not_pattern = re.compile(br'NOT +', re.I)
 
     def __init__(self, key, filter=None, inverse=False, raw=None):
-        super(SearchKey, self).__init__()
+        super().__init__()
         self.key = key
         self.filter = filter
         self.inverse = inverse

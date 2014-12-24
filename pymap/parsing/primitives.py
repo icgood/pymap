@@ -45,7 +45,7 @@ class Nil(Primitive):
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
     def __init__(self):
-        super(Nil, self).__init__()
+        super().__init__()
         self.value = None
 
     @classmethod
@@ -74,7 +74,7 @@ class Number(Primitive):
     _num_pattern = re.compile(b'^\d+$')
 
     def __init__(self, num):
-        super(Number, self).__init__()
+        super().__init__()
         self.value = num
         self._raw = bytes(str(self.value), 'ascii')
 
@@ -100,7 +100,7 @@ class Atom(Primitive):
     """
 
     def __init__(self, value):
-        super(Atom, self).__init__()
+        super().__init__()
         self.value = value
 
     @classmethod
@@ -247,7 +247,7 @@ class List(Primitive):
     _end_pattern = re.compile(br' *\)')
 
     def __init__(self, items):
-        super(List, self).__init__()
+        super().__init__()
         self.value = items
         self.__iter__ = lambda: iter(items)
 

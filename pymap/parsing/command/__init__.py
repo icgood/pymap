@@ -36,7 +36,7 @@ class BadCommand(NotParseable):
     """
 
     def __init__(self, buf, tag, command):
-        super(BadCommand, self).__init__(buf)
+        super().__init__(buf)
         self.tag = tag
         self.command = command
 
@@ -44,7 +44,7 @@ class BadCommand(NotParseable):
         if hasattr(self, '_raw'):
             return self._raw
         self._raw = raw = self.command.command + b': ' + \
-            super(BadCommand, self).__bytes__()
+            super().__bytes__()
         return raw
 
     def __str__(self):
@@ -58,7 +58,7 @@ class CommandNotFound(BadCommand):
     """
 
     def __init__(self, buf, tag, command=None):
-        super(CommandNotFound, self).__init__(buf, tag, command)
+        super().__init__(buf, tag, command)
 
     def __bytes__(self):
         if self.command:
@@ -77,7 +77,7 @@ class Command(Parseable):
     _commands = {}
 
     def __init__(self, tag):
-        super(Command, self).__init__()
+        super().__init__()
         self.tag = tag
 
     @classmethod

@@ -31,7 +31,7 @@ class UserState(object):
     _folders = ['INBOX', '.Testing', '.Testing.Secrets', '.Stuff']
 
     def __init__(self, authed):
-        super(UserState, self).__init__()
+        super().__init__()
         self.authed = authed
         self.mailboxes = {name: MailboxState(authed, name)
                           for name in self._folders}
@@ -53,7 +53,7 @@ class UserState(object):
 class MailboxState(object):
 
     def __init__(self, authed, mailbox):
-        super(MailboxState, self).__init__()
+        super().__init__()
         self.authed = authed
         self.mailbox = mailbox
         self.subscribed = True
@@ -75,5 +75,5 @@ class MailboxState(object):
 class MessageState(object):
 
     def __init__(self):
-        super(MessageState, self).__init__()
+        super().__init__()
         self.unseen = (random.randint(0, 9) >= 8)

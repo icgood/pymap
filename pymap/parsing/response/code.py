@@ -55,7 +55,7 @@ class Capability(ResponseCode):
     """Lists the capabilities the server advertises to the client."""
 
     def __init__(self, server_capabilities):
-        super(Capability, self).__init__()
+        super().__init__()
         self.capabilities = server_capabilities
         self.string = b' '.join([b'CAPABILITY', b'IMAP4rev1'] +
                                 server_capabilities)
@@ -78,7 +78,7 @@ class Parse(ResponseCode):
 class PermanentFlags(ResponseCode):
 
     def __init__(self, flags):
-        super(PermanentFlags, self).__init__()
+        super().__init__()
         self.flags = List(flags)
 
     def __bytes__(self):
@@ -113,7 +113,7 @@ class UidNext(ResponseCode):
     """Indicates the next unique identifier value of the mailbox."""
 
     def __init__(self, next):
-        super(UidNext, self).__init__()
+        super().__init__()
         self.next = Number(next)
 
     def __bytes__(self):
@@ -124,7 +124,7 @@ class UidValidity(ResponseCode):
     """Indicates the mailbox unique identifier validity value."""
 
     def __init__(self, validity):
-        super(UidValidity, self).__init__()
+        super().__init__()
         self.validity = Number(validity)
 
     def __bytes__(self):
@@ -139,7 +139,7 @@ class Unseen(ResponseCode):
     """
 
     def __init__(self, next):
-        super(Unseen, self).__init__()
+        super().__init__()
         self.next = Number(next)
 
     def __bytes__(self):

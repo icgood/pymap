@@ -34,7 +34,7 @@ __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
 class CommandMailboxArg(CommandAuth):
 
     def __init__(self, tag, mailbox):
-        super(CommandMailboxArg, self).__init__(tag)
+        super().__init__(tag)
         self.mailbox = mailbox
 
     @classmethod
@@ -49,7 +49,7 @@ class AppendCommand(CommandAuth):
     command = b'APPEND'
 
     def __init__(self, tag, mailbox, message, flag_list=None, when=None):
-        super(AppendCommand, self).__init__(tag)
+        super().__init__(tag)
         self.mailbox = mailbox
         self.message = message
         self.flag_list = flag_list or []
@@ -108,7 +108,7 @@ class ListCommand(CommandAuth):
     command = b'LIST'
 
     def __init__(self, tag, mailbox, list_mailbox):
-        super(ListCommand, self).__init__(tag)
+        super().__init__(tag)
         self.mailbox = mailbox
         self.list_mailbox = list_mailbox
 
@@ -128,7 +128,7 @@ class LSubCommand(CommandAuth):
     command = b'LSUB'
 
     def __init__(self, tag, mailbox, list_mailbox):
-        super(ListCommand, self).__init__(tag)
+        super().__init__(tag)
         self.mailbox = mailbox
         self.list_mailbox = list_mailbox
 
@@ -148,7 +148,7 @@ class RenameCommand(CommandAuth):
     command = b'RENAME'
 
     def __init__(self, tag, from_mailbox, to_mailbox):
-        super(ListCommand, self).__init__(tag)
+        super().__init__(tag)
         self.mailbox = mailbox
         self.list_mailbox = list_mailbox
 
@@ -174,7 +174,7 @@ class StatusCommand(CommandAuth):
     command = b'STATUS'
 
     def __init__(self, tag, mailbox, status_list):
-        super(StatusCommand, self).__init__(tag)
+        super().__init__(tag)
         self.mailbox = mailbox
         self.status_list = status_list
 

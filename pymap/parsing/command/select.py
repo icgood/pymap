@@ -53,7 +53,7 @@ class CopyCommand(CommandSelect):
     command = b'COPY'
 
     def __init__(self, tag, seq_set, mailbox, uid=False):
-        super(CopyCommand, self).__init__(tag)
+        super().__init__(tag)
         self.sequence_set = seq_set
         self.mailbox = mailbox
         self.uid = uid
@@ -74,7 +74,7 @@ class FetchCommand(CommandSelect):
     command = b'FETCH'
 
     def __init__(self, tag, seq_set, attr_list):
-        super(FetchCommand, self).__init__(tag)
+        super().__init__(tag)
         self.sequence_set = seq_set
         self.attributes = attr_list
 
@@ -133,7 +133,7 @@ class StoreCommand(CommandSelect):
 
     def __init__(self, tag, seq_set, flag_list,
                  uid=False, mode='replace', silent=False):
-        super(StoreCommand, self).__init__(tag)
+        super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_list = flag_list
         self.uid = uid
@@ -200,7 +200,7 @@ class SearchCommand(CommandSelect):
     command = b'SEARCH'
 
     def __init__(self, tag, keys, charset=None, uid=None):
-        super(SearchCommand, self).__init__(tag)
+        super().__init__(tag)
         self.keys = keys
         self.charset = charset
         self.uid = uid
