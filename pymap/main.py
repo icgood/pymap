@@ -31,61 +31,72 @@ class Disconnected(Exception):
     pass
 
 
-@asyncio.coroutine
-def read_continuation(reader, literal_length):
-    try:
-        extra_literal = yield from reader.readexactly(literal_length)
-    except asyncio.IncompleteReadError:
-        raise Disconnected
-    extra_line = yield from reader.readline()
-    if reader.at_eof():
-        raise Disconnected
-    return extra_literal + extra_line
+class IMAPServer(object):
 
+    def __init__(self, reader, writer):
+        super().__init__()
+        self.reader = reader
+        self.writer = writer
 
-@asyncio.coroutine
-def read_command(reader, writer):
-    line = yield from reader.readline()
-    if reader.at_eof():
-        raise Disconnected
-    conts = []
-    while True:
+    @classmethod
+    @asyncio.coroutine
+    def callback(cls, reader, writer):
+        yield from cls(reader, writer).run()
+
+    @asyncio.coroutine
+    def read_continuation(self, literal_length):
         try:
-            cmd, _ = Command.parse(line, continuations = conts.copy())
-        except RequiresContinuation as req:
-            yield from ResponseContinuation(req.message).send_stream(writer)
-            cont = yield from read_continuation(reader, req.literal_length)
-            conts.append(cont)
-        else:
-            return cmd
+            extra_literal = yield from self.reader.readexactly(literal_length)
+        except asyncio.IncompleteReadError:
+            raise Disconnected
+        extra_line = yield from self.reader.readline()
+        if self.reader.at_eof():
+            raise Disconnected
+        return extra_literal + extra_line
 
-
-@asyncio.coroutine
-def client_connected(reader, writer):
-    state = ConnectionState(writer.transport)
-    greeting = yield from state.do_greeting()
-    yield from greeting.send_stream(writer)
-    while True:
-        try:
-            cmd = yield from read_command(reader, writer)
-        except BadCommand as bad:
-            yield from ResponseBadCommand(bad).send_stream(writer)
-        except Disconnected:
-            break
-        else:
+    @asyncio.coroutine
+    def read_command(self):
+        line = yield from self.reader.readline()
+        if self.reader.at_eof():
+            raise Disconnected
+        conts = []
+        while True:
             try:
-                response = yield from state.do_command(cmd)
-            except CloseConnection as close:
-                yield from close.response.send_stream(writer)
+                cmd, _ = Command.parse(line, continuations = conts.copy())
+            except RequiresContinuation as req:
+                cont = ResponseContinuation(req.message)
+                yield from cont.send_stream(self.writer)
+                ret = yield from self.read_continuation(req.literal_length)
+                conts.append(ret)
+            else:
+                return cmd
+
+    @asyncio.coroutine
+    def run(self):
+        state = ConnectionState(self.writer.transport)
+        greeting = yield from state.do_greeting()
+        yield from greeting.send_stream(self.writer)
+        while True:
+            try:
+                cmd = yield from self.read_command()
+            except BadCommand as bad:
+                yield from ResponseBadCommand(bad).send_stream(self.writer)
+            except Disconnected:
                 break
             else:
-                yield from response.send_stream(writer)
-    writer.write_eof()
+                try:
+                    response = yield from state.do_command(cmd)
+                except CloseConnection as close:
+                    yield from close.response.send_stream(self.writer)
+                    break
+                else:
+                    yield from response.send_stream(self.writer)
+        self.writer.write_eof()
 
 
 def main():
     loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(client_connected, port=1143, loop=loop)
+    coro = asyncio.start_server(IMAPServer.callback, port=1143, loop=loop)
     server = loop.run_until_complete(coro)
 
     try:
