@@ -248,7 +248,7 @@ class DateTime(Special):
             raise InvalidContent(buf)
         return cls(when, string.value), after
 
-    def __byte__(self):
+    def __bytes__(self):
         return b'"' + self._raw + b'"'
 
 
