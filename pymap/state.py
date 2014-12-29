@@ -64,15 +64,17 @@ class ConnectionState(object):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
     @asyncio.coroutine
+    def do_authenticate(self, cmd, result):
+        if result.authcid != 'testuser' or not result.check_secret('testpass'):
+            return ResponseNo(cmd.tag, 'Invalid authentication credentials.')
+        self.user = UserState(result.authcid)
+        return ResponseOk(cmd.tag, b'Authentication successful.')
+
+    @asyncio.coroutine
     def do_capability(self, cmd):
         response = ResponseOk(cmd.tag, b'Capabilities listed.')
         response.add_data(self.capability.to_response())
         return response
-
-    @asyncio.coroutine
-    def do_login(self, cmd):
-        self.user = UserState(cmd.userid)
-        return ResponseOk(cmd.tag, b'Authentication successful.')
 
     @asyncio.coroutine
     def do_select(self, cmd):

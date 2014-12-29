@@ -31,7 +31,7 @@ setup(name='pymap',
       url='http://github.com/icgood/pymap/',
       packages=find_packages(),
       namespace_packages=['pymap'],
-      install_requires=['pyparsing'],
+      install_requires=['pysasl'],
       entry_points={'console_scripts': [
           'pymap = pymap.main:main',
       ]},

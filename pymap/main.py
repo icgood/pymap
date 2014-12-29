@@ -21,9 +21,12 @@
 
 import asyncio
 
+from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
+
 from .state import CloseConnection, ConnectionState
 from pymap.parsing.command import BadCommand, Command
 from pymap.parsing.response import ResponseContinuation, ResponseBadCommand
+from pymap.parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from pymap.parsing import RequiresContinuation
 
 
@@ -53,6 +56,21 @@ class IMAPServer(object):
         if self.reader.at_eof():
             raise Disconnected
         return extra_literal + extra_line
+
+    @asyncio.coroutine
+    def authenticate(self, state, mech):
+        responses = []
+        while True:
+            try:
+                result = mech.server_attempt(responses)
+            except IssueChallenge as exc:
+                cont = ResponseContinuation(exc.challenge.challenge)
+                yield from cont.send_stream(self.writer)
+                exc.challenge.response = yield from self.read_continuation(0)
+                responses.append(exc.challenge)
+            else:
+                break
+        return result
 
     @asyncio.coroutine
     def read_command(self):
@@ -85,13 +103,20 @@ class IMAPServer(object):
                 break
             else:
                 try:
-                    response = yield from state.do_command(cmd)
+                    if isinstance(cmd, AuthenticateCommand):
+                        auth = yield from self.authenticate(state, cmd.mech)
+                        response = yield from state.do_authenticate(cmd, auth)
+                    elif isinstance(cmd, LoginCommand):
+                        auth = AuthenticationResult(cmd.userid, cmd.password)
+                        response = yield from state.do_authenticate(cmd, auth)
+                    else:
+                        response = yield from state.do_command(cmd)
                 except CloseConnection as close:
                     yield from close.response.send_stream(self.writer)
                     break
                 else:
                     yield from response.send_stream(self.writer)
-        self.writer.write_eof()
+        self.writer.close()
 
 
 def main():
