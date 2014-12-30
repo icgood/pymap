@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 #
 
+from base64 import b64encode, b64decode
 import asyncio
 
 from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
@@ -64,9 +65,11 @@ class IMAPServer(object):
             try:
                 result = mech.server_attempt(responses)
             except IssueChallenge as exc:
-                cont = ResponseContinuation(exc.challenge.challenge)
+                chal_bytes = b64encode(exc.challenge.challenge.encode('utf-8'))
+                cont = ResponseContinuation(chal_bytes)
                 yield from cont.send_stream(self.writer)
-                exc.challenge.response = yield from self.read_continuation(0)
+                resp_bytes = yield from self.read_continuation(0)
+                exc.challenge.response = b64decode(resp_bytes).decode('utf-8')
                 responses.append(exc.challenge)
             else:
                 break
@@ -80,7 +83,7 @@ class IMAPServer(object):
         conts = []
         while True:
             try:
-                cmd, _ = Command.parse(line, continuations = conts.copy())
+                cmd, _ = Command.parse(line, continuations=conts.copy())
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
                 yield from cont.send_stream(self.writer)

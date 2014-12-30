@@ -66,7 +66,7 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_authenticate(self, cmd, result):
         if result.authcid != 'testuser' or not result.check_secret('testpass'):
-            return ResponseNo(cmd.tag, 'Invalid authentication credentials.')
+            return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
         self.user = UserState(result.authcid)
         return ResponseOk(cmd.tag, b'Authentication successful.')
 

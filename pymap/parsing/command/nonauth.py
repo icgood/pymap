@@ -37,11 +37,11 @@ class AuthenticateCommand(CommandNonAuth):
         self.mech = mech()
 
     @classmethod
-    def _parse(cls, tag, buf, encrypted=False, **kwargs):
+    def _parse(cls, tag, buf, **kwargs):
         _, buf = Space.parse(buf)
         atom, after = Atom.parse(buf)
         _, after = EndLine.parse(after)
-        available = ServerMechanism.get_available(encrypted)
+        available = ServerMechanism.get_available(True)
         mech_name = str(atom.value.upper(), 'ascii')
         mech = available.get(mech_name)
         if not mech:
