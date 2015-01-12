@@ -57,8 +57,29 @@ class Capability(ResponseCode):
     def __init__(self, server_capabilities):
         super().__init__()
         self.capabilities = server_capabilities
-        self.string = b' '.join([b'CAPABILITY', b'IMAP4rev1'] +
-                                server_capabilities)
+
+    @property
+    def string(self):
+        if hasattr(self, '_raw'):
+            return self._raw
+        self._raw = raw = b' '.join([b'CAPABILITY', b'IMAP4rev1'] +
+                                    self.capabilities)
+        return raw
+
+    def add(self, capability):
+        if capability not in self.capabilities:
+            self.capabilities.append(capability)
+            if hasattr(self, '_raw'):
+                del self._raw
+
+    def remove(self, capability):
+        try:
+            self.capabilities.remove(capability)
+        except ValueError:
+            pass
+        else:
+            if hasattr(self, '_raw'):
+                del self._raw
 
     def to_response(self):
         from . import Response

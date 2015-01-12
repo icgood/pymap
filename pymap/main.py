@@ -19,11 +19,15 @@
 # THE SOFTWARE.
 #
 
+from base64 import b64encode, b64decode
 import asyncio
+
+from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
 
 from .state import CloseConnection, ConnectionState
 from pymap.parsing.command import BadCommand, Command
 from pymap.parsing.response import ResponseContinuation, ResponseBadCommand
+from pymap.parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from pymap.parsing import RequiresContinuation
 
 
@@ -55,6 +59,23 @@ class IMAPServer(object):
         return extra_literal + extra_line
 
     @asyncio.coroutine
+    def authenticate(self, state, mech):
+        responses = []
+        while True:
+            try:
+                result = mech.server_attempt(responses)
+            except IssueChallenge as exc:
+                chal_bytes = b64encode(exc.challenge.challenge.encode('utf-8'))
+                cont = ResponseContinuation(chal_bytes)
+                yield from cont.send_stream(self.writer)
+                resp_bytes = yield from self.read_continuation(0)
+                exc.challenge.response = b64decode(resp_bytes).decode('utf-8')
+                responses.append(exc.challenge)
+            else:
+                break
+        return result
+
+    @asyncio.coroutine
     def read_command(self):
         line = yield from self.reader.readline()
         if self.reader.at_eof():
@@ -62,7 +83,7 @@ class IMAPServer(object):
         conts = []
         while True:
             try:
-                cmd, _ = Command.parse(line, continuations = conts.copy())
+                cmd, _ = Command.parse(line, continuations=conts.copy())
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
                 yield from cont.send_stream(self.writer)
@@ -85,13 +106,20 @@ class IMAPServer(object):
                 break
             else:
                 try:
-                    response = yield from state.do_command(cmd)
+                    if isinstance(cmd, AuthenticateCommand):
+                        auth = yield from self.authenticate(state, cmd.mech)
+                        response = yield from state.do_authenticate(cmd, auth)
+                    elif isinstance(cmd, LoginCommand):
+                        auth = AuthenticationResult(cmd.userid, cmd.password)
+                        response = yield from state.do_authenticate(cmd, auth)
+                    else:
+                        response = yield from state.do_command(cmd)
                 except CloseConnection as close:
                     yield from close.response.send_stream(self.writer)
                     break
                 else:
                     yield from response.send_stream(self.writer)
-        self.writer.write_eof()
+        self.writer.close()
 
 
 def main():

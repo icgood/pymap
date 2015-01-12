@@ -19,7 +19,10 @@
 # THE SOFTWARE.
 #
 
-from .. import Parseable, Space, EndLine
+from pysasl import ServerMechanism
+
+from .. import NotParseable, Parseable, Space, EndLine
+from ..primitives import Atom
 from ..specials import AString
 from . import CommandNonAuth, CommandNoArgs
 
@@ -29,9 +32,21 @@ __all__ = ['AuthenticateCommand', 'LoginCommand', 'StartTLSCommand']
 class AuthenticateCommand(CommandNonAuth):
     command = b'AUTHENTICATE'
 
+    def __init__(self, tag, mech):
+        super().__init__(tag)
+        self.mech = mech()
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        raise NotImplementedError
+        _, buf = Space.parse(buf)
+        atom, after = Atom.parse(buf)
+        _, after = EndLine.parse(after)
+        available = ServerMechanism.get_available(True)
+        mech_name = str(atom.value.upper(), 'ascii')
+        mech = available.get(mech_name)
+        if not mech:
+            raise NotParseable(buf)
+        return cls(tag, mech), after
 
 CommandNonAuth.register_command(AuthenticateCommand)
 
