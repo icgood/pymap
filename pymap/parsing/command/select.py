@@ -73,10 +73,11 @@ CommandSelect.register_command(CopyCommand)
 class FetchCommand(CommandSelect):
     command = b'FETCH'
 
-    def __init__(self, tag, seq_set, attr_list):
+    def __init__(self, tag, seq_set, attr_list, uid=False):
         super().__init__(tag)
         self.sequence_set = seq_set
         self.attributes = attr_list
+        self.uid = uid
 
     @classmethod
     def _check_macros(cls, buf):

@@ -463,8 +463,9 @@ class FetchAttribute(Special):
         if sec_msgtext in (b'HEADER', b'TEXT'):
             return (section_parts, sec_msgtext, None), after
         elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
-            header_list, buf = List.parse(after, list_expected=[AString],
-                                          **kwargs)
+            kwargs_copy = kwargs.copy()
+            kwargs_copy['list_expected'] = [AString]
+            header_list, buf = List.parse(after, **kwargs_copy)
             header_list = [hdr.value.upper() for hdr in header_list.value]
             if not header_list:
                 raise NotParseable(after)
