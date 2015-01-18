@@ -1,5 +1,4 @@
 nose
 coverage
 nosexcover
-pep8
-pyflakes
+flake8

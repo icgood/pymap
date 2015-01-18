@@ -46,7 +46,7 @@ class UserState(object):
                                  if state.subscribed]
 
     @asyncio.coroutine
-    def select(self, mbx_name):
+    def get_mailbox(self, mbx_name):
         return self.mailboxes.get(mbx_name)
 
 

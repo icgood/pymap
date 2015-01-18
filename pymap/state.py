@@ -25,11 +25,10 @@ from socket import getfqdn
 from .mailbox import UserState
 
 from pymap.core import PymapError
-from pymap.parsing.command import (CommandAny, CommandAuth, CommandNonAuth,
-    CommandSelect)
-from pymap.parsing.response import (Response, ResponseContinuation, ResponseOk,
-    ResponseBad, ResponseNo, ResponseBye)
-from pymap.parsing.response.code import Capability, ReadOnly, ReadWrite
+from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect
+from pymap.parsing.response import *  # NOPEP8
+from pymap.parsing.response.code import *  # NOPEP8
+from pymap.parsing.response.specials import *  # NOPEP8
 
 __all__ = ['CloseConnection', 'ConnectionState']
 
@@ -76,12 +75,47 @@ class ConnectionState(object):
         response.add_data(self.capability.to_response())
         return response
 
+    def _get_mailbox_response_data(self, mbx, examine=False):
+        data = [FlagsResponse(mbx.flags),
+                ExistsResponse(mbx.exists),
+                RecentResponse(mbx.recent),
+                ResponseOk(b'*', b'Predicted next UID.',
+                           UidNext(mbx.next_uid)),
+                ResponseOk(b'*', b'UIDs valid.',
+                           UidValidity(mbx.uid_validity))]
+        if mbx.readonly or examine:
+            code = ReadOnly()
+            data.append(ResponseOk(b'*', b'Read-only mailbox.',
+                                   PermanentFlags([])))
+        else:
+            code = ReadWrite()
+            perm_flags = mbx.permanent_flags
+            data.append(ResponseOk(b'*', b'Flags permitted.',
+                                   PermanentFlags(perm_flags)))
+        return code, data
+
     @asyncio.coroutine
     def do_select(self, cmd):
-        mbx = yield from self.user.select(cmd.mailbox)
+        mbx = yield from self.user.get_mailbox(cmd.mailbox)
         if mbx:
-            self.selected = mbx
-            return ResponseOk(cmd.tag, b'Selected mailbox.', ReadWrite())
+            self.selected = mbx.name
+            code, data = self._get_mailbox_response_data(mbx)
+            resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
+            for data_part in data:
+                resp.add_data(data_part)
+            return resp
+        else:
+            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+
+    @asyncio.coroutine
+    def do_examine(self, cmd):
+        mbx = yield from self.user.get_mailbox(cmd.mailbox)
+        if mbx:
+            code, data = self._get_mailbox_response_data(mbx, True)
+            resp = ResponseOk(cmd.tag, b'Examined mailbox.', code)
+            for data_part in data:
+                resp.add_data(data_part)
+            return resp
         else:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
 
