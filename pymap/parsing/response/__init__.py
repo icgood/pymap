@@ -85,7 +85,6 @@ class ConditionResponse(Response):
         super().__init__(tag, text)
 
 
-
 class ResponseBad(ConditionResponse):
     """Class used for responses that indicate the server encountered a
     protocol-related error in responding to the command.

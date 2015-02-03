@@ -1,8 +1,8 @@
 
 import unittest
 
-from pymap.parsing import *
-from pymap.parsing.primitives import *
+from pymap.parsing import *  # NOQA
+from pymap.parsing.primitives import *  # NOQA
 
 
 class TestNotParseable(unittest.TestCase):

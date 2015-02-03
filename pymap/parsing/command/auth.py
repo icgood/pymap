@@ -22,7 +22,7 @@
 from datetime import datetime
 
 from .. import NotParseable, UnexpectedType, Space, EndLine
-from ..primitives import Atom, List, LiteralString
+from ..primitives import List, LiteralString
 from ..specials import InvalidContent, Mailbox, DateTime, Flag, StatusAttribute
 from . import CommandAuth
 
@@ -107,19 +107,19 @@ CommandAuth.register_command(ExamineCommand)
 class ListCommand(CommandAuth):
     command = b'LIST'
 
-    def __init__(self, tag, mailbox, list_mailbox):
+    def __init__(self, tag, ref_name, filter):
         super().__init__(tag)
-        self.mailbox = mailbox
-        self.list_mailbox = list_mailbox
+        self.ref_name = ref_name
+        self.filter = filter
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
         _, buf = Space.parse(buf)
-        mailbox, buf = Mailbox.parse(buf)
+        ref_name, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
-        list_mailbox, buf = Mailbox.parse(buf)
+        filter, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, mailbox.value, list_mailbox.value), buf
+        return cls(tag, ref_name.value, filter.value), buf
 
 CommandAuth.register_command(ListCommand)
 
@@ -127,19 +127,19 @@ CommandAuth.register_command(ListCommand)
 class LSubCommand(CommandAuth):
     command = b'LSUB'
 
-    def __init__(self, tag, mailbox, list_mailbox):
+    def __init__(self, tag, ref_name, filter):
         super().__init__(tag)
-        self.mailbox = mailbox
-        self.list_mailbox = list_mailbox
+        self.ref_name = ref_name
+        self.filter = filter
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
         _, buf = Space.parse(buf)
-        mailbox, buf = Mailbox.parse(buf)
+        ref_name, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
-        list_mailbox, buf = Mailbox.parse(buf)
+        filter, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, mailbox.value, list_mailbox.value), buf
+        return cls(tag, ref_name.value, filter.value), buf
 
 CommandAuth.register_command(LSubCommand)
 
@@ -149,8 +149,8 @@ class RenameCommand(CommandAuth):
 
     def __init__(self, tag, from_mailbox, to_mailbox):
         super().__init__(tag)
-        self.mailbox = mailbox
-        self.list_mailbox = list_mailbox
+        self.from_mailbox = from_mailbox
+        self.to_mailbox = to_mailbox
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):

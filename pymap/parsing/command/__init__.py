@@ -19,8 +19,6 @@
 # THE SOFTWARE.
 #
 
-import re
-
 from .. import Parseable, NotParseable, Space, EndLine
 from ..primitives import Atom
 from ..specials import Tag
@@ -86,7 +84,7 @@ class Command(Parseable):
 
     @classmethod
     def parse(cls, buf, **kwargs):
-        from . import any, auth, nonauth, select
+        from . import any, auth, nonauth, select  # NOQA
         buf = memoryview(buf)
         tag = Tag(b'*')
         try:

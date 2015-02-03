@@ -58,10 +58,9 @@ class NotParseable(PymapError):
         super().__init__()
         self.buf = buf
         if isinstance(buf, memoryview):
-            self.offset = offset = len(buf.obj) - buf.nbytes
+            self.offset = len(buf.obj) - buf.nbytes
         else:
             self.offset = 0
-
 
     @property
     def before(self):

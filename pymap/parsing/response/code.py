@@ -152,7 +152,6 @@ class UidValidity(ResponseCode):
         return b'[UIDVALIDITY ' + bytes(self.validity) + b']'
 
 
-
 class Unseen(ResponseCode):
     """Indicates the unique identifier of the first message without the
     ``\Seen`` flag.

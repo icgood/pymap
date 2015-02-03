@@ -306,11 +306,14 @@ class StatusAttribute(Special):
 
     """
 
-    _statuses = set([b'MESSAGES', b'RECENT', b'UIDVALIDITY', b'UNSEEN'])
+    _statuses = set([b'MESSAGES', b'RECENT', b'UIDNEXT', b'UIDVALIDITY',
+                     b'UNSEEN'])
 
     def __init__(self, status):
         super().__init__()
-        self.value = status.upper()
+        if status not in self._statuses:
+            raise ValueError(status)
+        self.value = status
 
     @classmethod
     def parse(cls, buf, **kwargs):
@@ -319,9 +322,10 @@ class StatusAttribute(Special):
         except NotParseable:
             pass
         atom, after = Atom.parse(buf)
-        if atom.value.upper() not in cls._statuses:
+        try:
+            return cls(atom.value.upper()), after
+        except ValueError:
             raise InvalidContent(buf)
-        return cls(atom.value), after
 
     def __bytes__(self):
         return self.value
@@ -342,15 +346,7 @@ class SequenceSet(Special):
     def __init__(self, sequences):
         super().__init__()
         self.sequences = sequences
-        parts = []
-        for group in sequences:
-            if isinstance(group, tuple):
-                left = bytes(str(group[0]), 'ascii')
-                right = bytes(str(group[1]), 'ascii')
-                parts.append(left + b':' + right)
-            else:
-                parts.append(bytes(str(group), 'ascii'))
-        self._raw = b','.join(parts)
+        self._raw = None
 
     def contains(self, num, max_value):
         for group in self.sequences:
@@ -412,7 +408,18 @@ class SequenceSet(Special):
         return cls(sequences), buf
 
     def __bytes__(self):
-        return self._raw
+        if self._raw is not None:
+            return self._raw
+        parts = []
+        for group in self.sequences:
+            if isinstance(group, tuple):
+                left = bytes(str(group[0]), 'ascii')
+                right = bytes(str(group[1]), 'ascii')
+                parts.append(left + b':' + right)
+            else:
+                parts.append(bytes(str(group), 'ascii'))
+        self._raw = raw = b','.join(parts)
+        return raw
 
 
 class FetchAttribute(Special):
@@ -428,7 +435,8 @@ class FetchAttribute(Special):
     _section_end_pattern = re.compile(br' *\] *')
     _partial_pattern = re.compile(br'\< *(\d+) *\. *(\d+) *\>')
 
-    _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?', re.I)
+    _sec_part_pattern = \
+        re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?', re.I)
     _sec_msgtext_pattern = re.compile(br'')
 
     def __init__(self, attribute, section=None, partial=None, raw=None):
@@ -442,7 +450,16 @@ class FetchAttribute(Special):
     def raw(self):
         if self._raw is not None:
             return self._raw
-        raise NotImplementedError()
+        parts = [self.attribute]
+        if self.section:
+            parts += [b'[', self.section, b']']
+        if self.partial:
+            parts += [b'<', self.parts[0], b'.', self.parts[1], b'>']
+        self._raw = raw = b''.join(parts)
+        return raw
+
+    def __hash__(self):
+        return hash((self.attribute, self.section, self.partial))
 
     @classmethod
     def _parse_section(cls, buf, **kwargs):
@@ -581,7 +598,7 @@ class SearchKey(Special):
                    b'UNFLAGGED', b'UNSEEN', b'DRAFT', b'UNDRAFT'):
             return cls(key, inverse=inverse), after
         elif key in (b'BCC', b'BODY', b'CC', b'FROM', b'SUBJECT',
-                   b'TEXT', b'TO'):
+                     b'TEXT', b'TO'):
             _, buf = Space.parse(after)
             filter, buf = cls._parse_astring_filter(buf, charset, **kwargs)
             return cls(key, filter, inverse), buf

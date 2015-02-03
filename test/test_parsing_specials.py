@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime, timezone, timedelta
 
 from pymap.parsing import NotParseable
-from pymap.parsing.specials import *
+from pymap.parsing.specials import *  # NOQA
 
 
 class TestAString(unittest.TestCase):

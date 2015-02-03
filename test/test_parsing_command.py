@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from pymap.parsing import NotParseable
-from pymap.parsing.command import *
+from pymap.parsing.command import *  # NOQA
 
 
 class TestBadCommand(unittest.TestCase):

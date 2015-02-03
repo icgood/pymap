@@ -19,27 +19,52 @@
 # THE SOFTWARE.
 #
 
-from setuptools import setup, find_packages
+"""Module containing the exceptions that may be used by pymap plugins..
+
+"""
+
+from .core import PymapError
+
+__all__ = ['MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
+           'MailboxReadOnly', 'AppendFailure']
 
 
-setup(name='pymap',
-      version='0.0.0',
-      author='Ian Good',
-      author_email='icgood@gmail.com',
-      description='Lightweight, asynchronous IMAP/POP3 serving in Python.',
-      license='MIT',
-      url='http://github.com/icgood/pymap/',
-      packages=find_packages(),
-      namespace_packages=['pymap'],
-      install_requires=['pysasl'],
-      entry_points={'console_scripts': ['pymap = pymap.main:main'],
-                    'pymap.login': []},
-      classifiers=['Development Status :: 3 - Alpha',
-                   'Topic :: Communications :: Email :: Post-Office',
-                   'Topic :: Communications :: Email :: Post-Office :: IMAP',
-                   'Topic :: Communications :: Email :: Post-Office :: POP3',
-                   'Intended Audience :: Developers',
-                   'Intended Audience :: Information Technology',
-                   'License :: OSI Approved :: MIT License',
-                   'Programming Language :: Python',
-                   'Programming Language :: Python :: 3.4'])
+class MailboxError(PymapError):
+
+    def __init__(self, mailbox):
+        super().__init__(mailbox)
+        self.mailbox = mailbox
+
+
+class MailboxNotFound(MailboxError):
+    """The requested mailbox was not found."""
+    pass
+
+
+class MailboxConflict(MailboxError):
+    """The mailbox cannot be created or renamed because of a naming conflict
+    with another mailbox.
+
+    """
+    pass
+
+
+class MailboxHasChildren(PymapError):
+    """The mailbox cannot be deleted because there are other inferior
+    heirarchical mailboxes below it.
+
+    """
+    pass
+
+
+class MailboxReadOnly(PymapError):
+    """The mailbox is opened read-only and the requested operation is not
+    allowed.
+
+    """
+    pass
+
+
+class AppendFailure(PymapError):
+    """The mailbox append operation failed."""
+    pass

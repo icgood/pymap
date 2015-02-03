@@ -24,7 +24,7 @@ import re
 from .. import NotParseable, Space, EndLine
 from ..primitives import Atom, List
 from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
-    SearchKey)
+                        SearchKey)
 from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -78,6 +78,7 @@ class FetchCommand(CommandSelect):
         self.sequence_set = seq_set
         self.attributes = attr_list
         self.uid = uid
+        self.no_expunge_response = not uid
 
     @classmethod
     def _check_macros(cls, buf):
@@ -140,6 +141,7 @@ class StoreCommand(CommandSelect):
         self.uid = uid
         self.mode = mode
         self.silent = silent
+        self.no_expunge_response = not uid
 
     @classmethod
     def _parse_store_info(cls, buf):
@@ -205,6 +207,7 @@ class SearchCommand(CommandSelect):
         self.keys = keys
         self.charset = charset
         self.uid = uid
+        self.no_expunge_response = not uid
 
     @classmethod
     def _parse_charset(cls, buf, **kwargs):
@@ -221,7 +224,7 @@ class SearchCommand(CommandSelect):
                 try:
                     b' '.decode(charset)
                 except LookupError:
-                    raise BadCharset(buf)
+                    raise NotParseable(buf)
                 return charset, after
         return 'US-ASCII', buf
 

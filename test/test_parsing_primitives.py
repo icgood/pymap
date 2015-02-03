@@ -2,7 +2,7 @@
 import unittest
 
 from pymap.parsing import NotParseable, RequiresContinuation
-from pymap.parsing.primitives import *
+from pymap.parsing.primitives import *  # NOQA
 
 
 class TestNil(unittest.TestCase):

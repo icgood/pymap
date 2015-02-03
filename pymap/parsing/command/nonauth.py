@@ -21,7 +21,7 @@
 
 from pysasl import ServerMechanism
 
-from .. import NotParseable, Parseable, Space, EndLine
+from .. import NotParseable, Space, EndLine
 from ..primitives import Atom
 from ..specials import AString
 from . import CommandNonAuth, CommandNoArgs
