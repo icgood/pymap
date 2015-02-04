@@ -19,8 +19,11 @@
 # THE SOFTWARE.
 #
 
+from functools import partial
 from base64 import b64encode, b64decode
 import asyncio
+
+from pkg_resources import iter_entry_points
 
 from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
 
@@ -38,15 +41,16 @@ class Disconnected(Exception):
 
 class IMAPServer(object):
 
-    def __init__(self, reader, writer):
+    def __init__(self, backends, reader, writer):
         super().__init__()
+        self.backends = backends
         self.reader = reader
         self.writer = writer
 
     @classmethod
     @asyncio.coroutine
-    def callback(cls, reader, writer):
-        yield from cls(reader, writer).run()
+    def callback(cls, backends, reader, writer):
+        yield from cls(backends, reader, writer).run()
 
     @asyncio.coroutine
     def read_continuation(self, literal_length):
@@ -95,7 +99,7 @@ class IMAPServer(object):
 
     @asyncio.coroutine
     def run(self):
-        state = ConnectionState(self.writer.transport)
+        state = ConnectionState(self.writer.transport, self.backends)
         greeting = yield from state.do_greeting()
         yield from greeting.send_stream(self.writer)
         while True:
@@ -127,8 +131,14 @@ class IMAPServer(object):
 
 
 def main():
+    backends = []
+    for entry_point in iter_entry_points('pymap.backend'):
+        backend_init = entry_point.load()
+        backends.append(backend_init())
+    callback = partial(IMAPServer.callback, backends)
+
     loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(IMAPServer.callback, port=1143, loop=loop)
+    coro = asyncio.start_server(callback, port=1143, loop=loop)
     server = loop.run_until_complete(coro)
 
     try:

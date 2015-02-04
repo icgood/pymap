@@ -22,8 +22,6 @@
 import asyncio
 from socket import getfqdn
 
-from pkg_resources import iter_entry_points
-
 from pymap.exceptions import *  # NOQA
 
 from pymap.core import PymapError
@@ -57,9 +55,10 @@ class ConnectionState(object):
 
     flags_attr = FetchAttribute(b'FLAGS')
 
-    def __init__(self, transport):
+    def __init__(self, transport, backends):
         super().__init__()
         self.transport = transport
+        self.backends = backends
         self.user = None
         self.selected = None
         self.capability = Capability([])
@@ -70,8 +69,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_authenticate(self, cmd, result):
-        for entry_point in iter_entry_points('pymap.login'):
-            login = entry_point.load()
+        for login in self.backends:
             self.user = user = yield from login(result)
             if user:
                 return ResponseOk(cmd.tag, b'Authentication successful.')
@@ -193,8 +191,9 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_append(self, cmd):
         try:
+            flag_list = [flag.value for flag in cmd.flag_list]
             yield from self.user.append_message(cmd.mailbox, cmd.message,
-                                                cmd.flag_list, fmd.when)
+                                                flag_list, fmd.when)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
         except AppendFailure as exc:
@@ -203,18 +202,12 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_subscribe(self, cmd):
-        try:
-            yield from self.user.subscribe(cmd.mailbox)
-        except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+        yield from self.user.subscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'SUBSCRIBE completed.')
 
     @asyncio.coroutine
     def do_unsubscribe(self, cmd):
-        try:
-            yield from self.user.unsubscribe(cmd.mailbox)
-        except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+        yield from self.user.unsubscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'UNSUBSCRIBE completed.')
 
     @asyncio.coroutine
@@ -236,6 +229,13 @@ class ConnectionState(object):
                 resp.add_data(LSubResponse(mbx.name, mbx.sep,
                                            marked=mbx.marked))
         return resp
+
+    @asyncio.coroutine
+    def _get_messages(self, messages, by_uid):
+        if by_uid:
+            return (yield from self.selected.get_messages_by_uid(messages))
+        else:
+            return (yield from self.selected.get_messages_by_seq(messages))
 
     @asyncio.coroutine
     def do_check(self, cmd):
@@ -263,8 +263,8 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_copy(self, cmd):
-        messages = yield from self.selected.get_messages(
-            cmd.sequence_set.sequences, cmd.uid)
+        messages = yield from self._get_messages(cmd.sequence_set.sequences,
+                                                 cmd.uid)
         try:
             yield from self.selected.copy(messages, cmd.mailbox)
         except MailboxNotFound:
@@ -273,8 +273,8 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_fetch(self, cmd):
-        messages = yield from self.selected.get_messages(
-            cmd.sequence_set.sequences, cmd.uid)
+        messages = yield from self._get_messages(cmd.sequence_set.sequences,
+                                                 cmd.uid)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for msg in messages:
             fetch_data = yield from msg.fetch(cmd.attributes)
@@ -294,15 +294,15 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_store(self, cmd):
-        messages = yield from self.selected.get_messages(
-            cmd.sequence_set.sequences, cmd.uid)
+        messages = yield from self._get_messages(cmd.sequence_set.sequences,
+                                                 cmd.uid)
         flag_list = [flag.value for flag in cmd.flag_list.value]
-        yield from self.selected.update_flags(messages, flag_list,
-                                              cmd.mode, cmd.replace)
+        yield from self.selected.update_flags(messages, flag_list, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
-        for msg in messages:
-            fetch_data = yield from msg.fetch([self.flags_attr])
-            resp.add_data(FetchResponse(msg.seq, fetch_data))
+        if not cmd.silent:
+            for msg in messages:
+                fetch_data = yield from msg.fetch([self.flags_attr])
+                resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
     @asyncio.coroutine
