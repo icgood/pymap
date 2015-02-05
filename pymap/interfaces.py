@@ -25,10 +25,10 @@
 
 import asyncio
 
-__all__ = ['Session', 'Mailbox', 'Message']
+__all__ = ['SessionInterface', 'MailboxInterface', 'MessageInterface']
 
 
-class Session(object):
+class SessionInterface(object):
     """Corresponds to a single, authenticated IMAP session."""
 
     def __init__(self, user):
@@ -38,13 +38,14 @@ class Session(object):
         self.user = user
 
     @asyncio.coroutine
-    def list_messages(self):
+    def list_mailboxes(self, subscribed=False):
         """List the mailboxes owned by the user.
 
         :param bool subscribed: If true, only list the subscribed mailboxes.
         :returns: list of :class:`Mailbox` objects.
 
         """
+        raise NotImplementedError
 
     @asyncio.coroutine
     def get_mailbox(self, name):
@@ -146,7 +147,7 @@ class Session(object):
         raise NotImplementedError
 
 
-class Mailbox(object):
+class MailboxInterface(object):
     """Corresponds to a mailbox available to the IMAP session."""
 
     def __init__(self, name):
@@ -232,7 +233,7 @@ class Mailbox(object):
         raise NotImplementedError
 
 
-class Message(object):
+class MessageInterface(object):
     """Corresponds to a single message, as it exists in a single mailbox."""
 
     def __init__(self, seq, uid, guid):

@@ -26,7 +26,9 @@ from ..specials import Mailbox
 
 from . import Response
 
-__all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse']
+__all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
+           'ExpungeResponse', 'FetchResponse', 'SearchResponse',
+           'ListResponse', 'LSubResponse']
 
 
 class FlagsResponse(Response):
@@ -132,20 +134,20 @@ class ListResponse(Response):
                  no_select=False):
         name_attrs = List([])
         if marked:
-            name_attrs.append(br'\Marked')
+            name_attrs.value.append(br'\Marked')
         else:
-            name_attrs.append(br'\Unmarked')
+            name_attrs.value.append(br'\Unmarked')
         if no_inferior:
-            name_attrs.append(br'\Noinferior')
+            name_attrs.value.append(br'\Noinferior')
         if no_select:
-            name_attrs.append(br'\Noselect')
+            name_attrs.value.append(br'\Noselect')
         sep_raw = bytes(QuotedString(sep))
         name_raw = bytes(Mailbox(name))
         text = b' '.join((self.name, bytes(name_attrs), sep_raw, name_raw))
         super().__init__(b'*', text)
 
 
-class LSubResponse(Response):
+class LSubResponse(ListResponse):
     """Constructs the special LSUB response used by the LSUB command."""
 
     name = b'LSUB'

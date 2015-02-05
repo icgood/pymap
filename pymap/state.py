@@ -210,12 +210,16 @@ class ConnectionState(object):
         yield from self.user.unsubscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'UNSUBSCRIBE completed.')
 
+    def _mailbox_matches(self, name, sep, ref_name, filter):
+        return True
+
     @asyncio.coroutine
     def do_list(self, cmd):
         mailboxes = yield from self.user.list_mailboxes()
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for mbx in mailboxes:
-            if self._mailbox_matches(mbx.name, sep, cmd.ref_name, cmd.filter):
+            if self._mailbox_matches(mbx.name, mbx.sep,
+                                     cmd.ref_name, cmd.filter):
                 resp.add_data(ListResponse(mbx.name, mbx.sep,
                                            marked=mbx.marked))
         return resp
@@ -225,9 +229,9 @@ class ConnectionState(object):
         mailboxes = yield from self.user.list_mailboxes(subscribed=True)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for mbx in mailboxes:
-            if self._mailbox_matches(mbx.name, sep, cmd.ref_name, cmd.filter):
-                resp.add_data(LSubResponse(mbx.name, mbx.sep,
-                                           marked=mbx.marked))
+            if self._mailbox_matches(mbx.name, mbx.sep,
+                                     cmd.ref_name, cmd.filter):
+                resp.add_data(LSubResponse(mbx.name, mbx.sep))
         return resp
 
     @asyncio.coroutine
