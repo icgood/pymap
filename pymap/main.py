@@ -19,20 +19,24 @@
 # THE SOFTWARE.
 #
 
+"""IMAP server with pluggable Python backends."""
+
 from functools import partial
 from base64 import b64encode, b64decode
+from argparse import ArgumentParser
 import asyncio
 
 from pkg_resources import iter_entry_points
 
 from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
 
+from .core import __version__
 from .state import CloseConnection, ConnectionState
-from pymap.parsing.command import BadCommand, Command
-from pymap.parsing.response import (ResponseContinuation, ResponseBadCommand,
-                                    ResponseBad, ResponseNo)
-from pymap.parsing.command.nonauth import AuthenticateCommand, LoginCommand
-from pymap.parsing import RequiresContinuation
+from .parsing.command import BadCommand, Command
+from .parsing.response import (ResponseContinuation, ResponseBadCommand,
+                               ResponseBad, ResponseNo)
+from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
+from .parsing import RequiresContinuation
 
 
 class Disconnected(Exception):
@@ -41,16 +45,16 @@ class Disconnected(Exception):
 
 class IMAPServer(object):
 
-    def __init__(self, backends, reader, writer):
+    def __init__(self, backend, reader, writer):
         super().__init__()
-        self.backends = backends
+        self.backend = backend
         self.reader = reader
         self.writer = writer
 
     @classmethod
     @asyncio.coroutine
-    def callback(cls, backends, reader, writer):
-        yield from cls(backends, reader, writer).run()
+    def callback(cls, backend, reader, writer):
+        yield from cls(backend, reader, writer).run()
 
     @asyncio.coroutine
     def read_continuation(self, literal_length):
@@ -99,7 +103,7 @@ class IMAPServer(object):
 
     @asyncio.coroutine
     def run(self):
-        state = ConnectionState(self.writer.transport, self.backends)
+        state = ConnectionState(self.writer.transport, self.backend)
         greeting = yield from state.do_greeting()
         yield from greeting.send_stream(self.writer)
         while True:
@@ -138,13 +142,29 @@ class IMAPServer(object):
         self.writer.close()
 
 
-def main():
-    backends = []
-    for entry_point in iter_entry_points('pymap.backend'):
-        backend_init = entry_point.load()
-        backends.append(backend_init())
-    callback = partial(IMAPServer.callback, backends)
+def _load_backends():
+    return {entry_point.name: entry_point.load()
+            for entry_point in iter_entry_points('pymap.backend')}
 
+
+def main():
+    backends = _load_backends()
+
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s'+__version__)
+    subparsers = parser.add_subparsers(dest='backend',
+                                       help='Which pymap backend to use.')
+    for mod in backends.values():
+        mod.add_subparser(subparsers)
+    args = parser.parse_args()
+
+    try:
+        backend = backends[args.backend]
+    except KeyError:
+        parser.error('Expected backend name.')
+
+    callback = partial(IMAPServer.callback, backend.init(args))
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(callback, port=1143, loop=loop)
     server = loop.run_until_complete(coro)

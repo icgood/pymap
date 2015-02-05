@@ -55,10 +55,10 @@ class ConnectionState(object):
 
     flags_attr = FetchAttribute(b'FLAGS')
 
-    def __init__(self, transport, backends):
+    def __init__(self, transport, backend):
         super().__init__()
         self.transport = transport
-        self.backends = backends
+        self.backend = backend
         self.user = None
         self.selected = None
         self.capability = Capability([])
@@ -69,10 +69,9 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_authenticate(self, cmd, result):
-        for login in self.backends:
-            self.user = user = yield from login(result)
-            if user:
-                return ResponseOk(cmd.tag, b'Authentication successful.')
+        self.user = user = yield from self.backend(result)
+        if user:
+            return ResponseOk(cmd.tag, b'Authentication successful.')
         return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
 
     @asyncio.coroutine
@@ -131,6 +130,8 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_create(self, cmd):
+        if cmd.mailbox == 'INBOX':
+            return ResponseNo(cmd.tag, b'Cannot create INBOX.')
         try:
             yield from self.user.create_mailbox(cmd.mailbox)
         except MailboxConflict:
@@ -139,7 +140,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_delete(self, cmd):
-        if cmd.mailbox == b'INBOX':
+        if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot delete INBOX.')
         try:
             yield from self.user.delete_mailbox(cmd.mailbox)
@@ -148,7 +149,7 @@ class ConnectionState(object):
         except MailboxHasChildren:
             msg = b'Mailbox has inferior hierarchical names.'
             return ResponseNo(cmd.tag, msg)
-        return responseOk(cmd.tag, b'Mailbox deleted successfully.')
+        return ResponseOk(cmd.tag, b'Mailbox deleted successfully.')
 
     @asyncio.coroutine
     def do_rename(self, cmd):
