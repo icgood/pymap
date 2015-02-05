@@ -193,7 +193,7 @@ class ConnectionState(object):
         try:
             flag_list = [flag.value for flag in cmd.flag_list]
             yield from self.user.append_message(cmd.mailbox, cmd.message,
-                                                flag_list, fmd.when)
+                                                flag_list, cmd.when)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
         except AppendFailure as exc:

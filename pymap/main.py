@@ -30,7 +30,7 @@ from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
 from .state import CloseConnection, ConnectionState
 from pymap.parsing.command import BadCommand, Command
 from pymap.parsing.response import (ResponseContinuation, ResponseBadCommand,
-                                    ResponseBad)
+                                    ResponseBad, ResponseNo)
 from pymap.parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from pymap.parsing import RequiresContinuation
 
@@ -125,6 +125,14 @@ class IMAPServer(object):
                 except CloseConnection as close:
                     yield from close.response.send_stream(self.writer)
                     break
+                except Exception:
+                    resp = ResponseNo(cmd.tag, b'Unhandled server error.')
+                    try:
+                        yield from resp.send_stream(self.writer)
+                        self.writer.close()
+                    except Exception:
+                        pass
+                    raise
                 else:
                     yield from response.send_stream(self.writer)
         self.writer.close()
