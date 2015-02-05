@@ -180,6 +180,7 @@ class MailboxInterface(object):
         """
         raise NotImplementedError
 
+    @asyncio.coroutine
     def expunge(self):
         """All messages that are marked as deleted are immediately expunged
         from the mailbox.
@@ -192,6 +193,7 @@ class MailboxInterface(object):
         """
         raise NotImplementedError
 
+    @asyncio.coroutine
     def copy(self, messages, mailbox):
         """Copy a set of messages into the given mailbox.
 
@@ -205,6 +207,7 @@ class MailboxInterface(object):
         """
         raise NotImplementedError
 
+    @asyncio.coroutine
     def search(self, keys):
         """Get a list of :class:`Message` objects in the current mailbox that
         meet the given search criteria.
@@ -218,6 +221,7 @@ class MailboxInterface(object):
         """
         raise NotImplementedError
 
+    @asyncio.coroutine
     def update_flags(self, messages, flag_list, mode='replace'):
         """Update the flags for the given set of messages.
 
@@ -228,6 +232,17 @@ class MailboxInterface(object):
         :param flag_list: List of flag bytestrings.
         :param str mode: Update mode, can be ``replace``, ``add`` or
                          ``delete``.
+
+        """
+        raise NotImplementedError
+
+    @asyncio.coroutine
+    def poll(self):
+        """Checks the mailbox for any changes. This first time this is called
+        on the object, the ``exists`` and ``recent`` keys are always returned.
+
+        :returns: Dictionary with anything that has changed since the last
+                  :meth:`.poll`.
 
         """
         raise NotImplementedError

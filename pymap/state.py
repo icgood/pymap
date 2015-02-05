@@ -109,6 +109,7 @@ class ConnectionState(object):
             mbx = yield from self.user.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+        yield from mbx.poll()
         self.selected = mbx
         code, data = self._get_mailbox_response_data(mbx)
         resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
@@ -122,6 +123,7 @@ class ConnectionState(object):
             mbx = yield from self.user.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+        yield from mbx.poll()
         code, data = self._get_mailbox_response_data(mbx, True)
         resp = ResponseOk(cmd.tag, b'Examined mailbox.', code)
         for data_part in data:
@@ -222,7 +224,7 @@ class ConnectionState(object):
             if self._mailbox_matches(mbx.name, mbx.sep,
                                      cmd.ref_name, cmd.filter):
                 resp.add_data(ListResponse(mbx.name, mbx.sep,
-                                           marked=mbx.marked))
+                                           marked=bool(mbx.recent)))
         return resp
 
     @asyncio.coroutine
