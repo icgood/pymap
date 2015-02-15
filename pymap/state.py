@@ -352,6 +352,6 @@ class ConnectionState(object):
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         resp = yield from func(cmd)
-        if self.selected == pre_selected:
+        if self.selected and self.selected == pre_selected:
             yield from self._check_mailbox_updates(cmd, resp)
         return resp
