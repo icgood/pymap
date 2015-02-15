@@ -59,7 +59,7 @@ class ConnectionState(object):
         super().__init__()
         self.transport = transport
         self.backend = backend
-        self.user = None
+        self.session = None
         self.selected = None
         self.capability = Capability([])
 
@@ -69,7 +69,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_authenticate(self, cmd, result):
-        self.user = user = yield from self.backend(result)
+        self.session = user = yield from self.backend(result)
         if user:
             return ResponseOk(cmd.tag, b'Authentication successful.')
         return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
@@ -106,7 +106,7 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_select(self, cmd):
         try:
-            mbx = yield from self.user.get_mailbox(cmd.mailbox)
+            mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         yield from mbx.poll()
@@ -120,7 +120,7 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_examine(self, cmd):
         try:
-            mbx = yield from self.user.get_mailbox(cmd.mailbox)
+            mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         yield from mbx.poll()
@@ -135,7 +135,7 @@ class ConnectionState(object):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot create INBOX.')
         try:
-            yield from self.user.create_mailbox(cmd.mailbox)
+            yield from self.session.create_mailbox(cmd.mailbox)
         except MailboxConflict:
             return ResponseNo(cmd.tag, b'Mailbox already exists.')
         return ResponseOk(cmd.tag, b'Mailbox created successfully.')
@@ -145,7 +145,7 @@ class ConnectionState(object):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot delete INBOX.')
         try:
-            yield from self.user.delete_mailbox(cmd.mailbox)
+            yield from self.session.delete_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox not found.')
         except MailboxHasChildren:
@@ -158,8 +158,8 @@ class ConnectionState(object):
         if cmd.to_mailbox == b'INBOX':
             return ResponseNo(cmd.tag, b'Cannot rename to INBOX.')
         try:
-            yield from self.user.rename_mailbox(cmd.from_mailbox,
-                                                cmd.to_mailbox)
+            yield from self.session.rename_mailbox(cmd.from_mailbox,
+                                                   cmd.to_mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox not found.')
         except MailboxConflict:
@@ -169,7 +169,7 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_status(self, cmd):
         try:
-            mbx = yield from self.user.get_mailbox(cmd.mailbox)
+            mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         resp = ResponseOk(cmd.tag, b'STATUS completed.')
@@ -195,8 +195,8 @@ class ConnectionState(object):
     def do_append(self, cmd):
         try:
             flag_list = [flag.value for flag in cmd.flag_list]
-            yield from self.user.append_message(cmd.mailbox, cmd.message,
-                                                flag_list, cmd.when)
+            yield from self.session.append_message(cmd.mailbox, cmd.message,
+                                                   flag_list, cmd.when)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
         except AppendFailure as exc:
@@ -205,12 +205,12 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_subscribe(self, cmd):
-        yield from self.user.subscribe(cmd.mailbox)
+        yield from self.session.subscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'SUBSCRIBE completed.')
 
     @asyncio.coroutine
     def do_unsubscribe(self, cmd):
-        yield from self.user.unsubscribe(cmd.mailbox)
+        yield from self.session.unsubscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'UNSUBSCRIBE completed.')
 
     def _mailbox_matches(self, name, sep, ref_name, filter):
@@ -218,7 +218,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_list(self, cmd):
-        mailboxes = yield from self.user.list_mailboxes()
+        mailboxes = yield from self.session.list_mailboxes()
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for mbx in mailboxes:
             if self._mailbox_matches(mbx.name, mbx.sep,
@@ -229,7 +229,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_lsub(self, cmd):
-        mailboxes = yield from self.user.list_mailboxes(subscribed=True)
+        mailboxes = yield from self.session.list_mailboxes(subscribed=True)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for mbx in mailboxes:
             if self._mailbox_matches(mbx.name, mbx.sep,
@@ -336,10 +336,10 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_command(self, cmd):
-        if self.user and isinstance(cmd, CommandNonAuth):
+        if self.session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
             return ResponseBad(cmd.tag, msg)
-        elif not self.user and isinstance(cmd, CommandAuth):
+        elif not self.session and isinstance(cmd, CommandAuth):
             msg = cmd.command + b': Must authenticate first.'
             return ResponseBad(cmd.tag, msg)
         elif not self.selected and isinstance(cmd, CommandSelect):
@@ -352,6 +352,6 @@ class ConnectionState(object):
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         resp = yield from func(cmd)
-        if self.selected and pre_selected:
+        if self.selected == pre_selected:
             yield from self._check_mailbox_updates(cmd, resp)
         return resp
