@@ -35,14 +35,18 @@ class CommandMailboxArg(CommandAuth):
 
     def __init__(self, tag, mailbox):
         super().__init__(tag)
-        self.mailbox = mailbox
+        self.mailbox_obj = mailbox
+
+    @property
+    def mailbox(self):
+        return str(self.mailbox_obj)
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, mailbox.value), buf
+        return cls(tag, mailbox), buf
 
 
 class AppendCommand(CommandAuth):
@@ -50,10 +54,14 @@ class AppendCommand(CommandAuth):
 
     def __init__(self, tag, mailbox, message, flag_list=None, when=None):
         super().__init__(tag)
-        self.mailbox = mailbox
+        self.mailbox_obj = mailbox
         self.message = message
         self.flag_list = flag_list or []
         self.when = when or datetime.now()
+
+    @property
+    def mailbox(self):
+        return str(self.mailbox_obj)
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
@@ -80,8 +88,7 @@ class AppendCommand(CommandAuth):
             _, buf = Space.parse(buf)
         message, buf = LiteralString.parse(buf, **kwargs)
         _, buf = EndLine.parse(buf)
-        return cls(tag, mailbox.value, message.value,
-                   flag_list, date_time), buf
+        return cls(tag, mailbox, message.value, flag_list, date_time), buf
 
 CommandAuth.register_command(AppendCommand)
 
@@ -149,8 +156,16 @@ class RenameCommand(CommandAuth):
 
     def __init__(self, tag, from_mailbox, to_mailbox):
         super().__init__(tag)
-        self.from_mailbox = from_mailbox
-        self.to_mailbox = to_mailbox
+        self.from_mailbox_obj = from_mailbox
+        self.to_mailbox_obj = to_mailbox
+
+    @property
+    def from_mailbox(self):
+        return str(self.from_mailbox_obj)
+
+    @property
+    def to_mailbox(self):
+        return str(self.to_mailbox_obj)
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
@@ -159,7 +174,7 @@ class RenameCommand(CommandAuth):
         _, buf = Space.parse(buf)
         to_mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, from_mailbox.value, to_mailbox.value), buf
+        return cls(tag, from_mailbox, to_mailbox), buf
 
 CommandAuth.register_command(RenameCommand)
 
@@ -175,8 +190,12 @@ class StatusCommand(CommandAuth):
 
     def __init__(self, tag, mailbox, status_list):
         super().__init__(tag)
-        self.mailbox = mailbox
+        self.mailbox_obj = mailbox
         self.status_list = status_list
+
+    @property
+    def mailbox(self):
+        return str(self.mailbox_obj)
 
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
@@ -187,7 +206,7 @@ class StatusCommand(CommandAuth):
         if not status_list.value:
             raise NotParseable(buf)
         _, buf = EndLine.parse(after)
-        return cls(tag, mailbox.value, status_list.value), buf
+        return cls(tag, mailbox, status_list.value), buf
 
 CommandAuth.register_command(StatusCommand)
 

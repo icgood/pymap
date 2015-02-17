@@ -172,6 +172,7 @@ class ConnectionState(object):
             mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+        yield from mbx.poll()
         resp = ResponseOk(cmd.tag, b'STATUS completed.')
         status_list = List([])
         for status_item in cmd.status_list:
@@ -186,7 +187,7 @@ class ConnectionState(object):
                 status_list.value.append(Number(mbx.uid_validity))
             elif status_item.value == b'UNSEEN':
                 status_list.value.append(Number(mbx.unseen))
-        status = Response(b'*', b'STATUS ' + cmd.mailbox + b' ' +
+        status = Response(b'*', b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' +
                           bytes(status_list))
         resp.add_data(status)
         return resp
@@ -238,13 +239,6 @@ class ConnectionState(object):
         return resp
 
     @asyncio.coroutine
-    def _get_messages(self, messages, by_uid):
-        if by_uid:
-            return (yield from self.selected.get_messages_by_uid(messages))
-        else:
-            return (yield from self.selected.get_messages_by_seq(messages))
-
-    @asyncio.coroutine
     def do_check(self, cmd):
         return ResponseOk(cmd.tag, b'CHECK completed.')
 
@@ -269,9 +263,15 @@ class ConnectionState(object):
         return resp
 
     @asyncio.coroutine
+    def _get_messages(self, seq_set, by_uid):
+        if by_uid:
+            return (yield from self.selected.get_messages_by_uid(seq_set))
+        else:
+            return (yield from self.selected.get_messages_by_seq(seq_set))
+
+    @asyncio.coroutine
     def do_copy(self, cmd):
-        messages = yield from self._get_messages(cmd.sequence_set.sequences,
-                                                 cmd.uid)
+        messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
         try:
             yield from self.selected.copy(messages, cmd.mailbox)
         except MailboxNotFound:
@@ -280,8 +280,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_fetch(self, cmd):
-        messages = yield from self._get_messages(cmd.sequence_set.sequences,
-                                                 cmd.uid)
+        messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for msg in messages:
             fetch_data = yield from msg.fetch(cmd.attributes)
@@ -301,8 +300,7 @@ class ConnectionState(object):
 
     @asyncio.coroutine
     def do_store(self, cmd):
-        messages = yield from self._get_messages(cmd.sequence_set.sequences,
-                                                 cmd.uid)
+        messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
         flag_list = [flag.value for flag in cmd.flag_list.value]
         yield from self.selected.update_flags(messages, flag_list, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')

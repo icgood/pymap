@@ -223,6 +223,9 @@ class Mailbox(Special):
     def __bytes__(self):
         return self.encode_name(self.value)
 
+    def __str__(self):
+        return self.value
+
 
 class DateTime(Special):
     """Represents a date-time quoted string from an IMAP stream.
@@ -350,7 +353,7 @@ class SequenceSet(Special):
 
     def contains(self, num, max_value):
         for group in self.sequences:
-            if group == '*' and num == max_value:
+            if group == '*' and num <= max_value:
                 return True
             elif isinstance(group, tuple):
                 one, two = group

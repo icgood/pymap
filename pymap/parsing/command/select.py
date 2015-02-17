@@ -55,8 +55,12 @@ class CopyCommand(CommandSelect):
     def __init__(self, tag, seq_set, mailbox, uid=False):
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.mailbox = mailbox
+        self.mailbox_obj = mailbox
         self.uid = uid
+
+    @property
+    def mailbox(self):
+        return str(self.mailbox_obj)
 
     @classmethod
     def _parse(cls, tag, buf, uid=False, **kwargs):
@@ -65,7 +69,7 @@ class CopyCommand(CommandSelect):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set.sequences, mailbox.value, uid=uid), buf
+        return cls(tag, seq_set, mailbox, uid=uid), buf
 
 CommandSelect.register_command(CopyCommand)
 
@@ -114,15 +118,15 @@ class FetchCommand(CommandSelect):
         except NotParseable:
             pass
         else:
-            return cls(tag, seq_set.sequences, attrs), buf
+            return cls(tag, seq_set, attrs), buf
         try:
             attr, buf = FetchAttribute.parse(buf)
         except NotParseable:
             pass
         else:
-            return cls(tag, seq_set.sequences, [attr]), buf
+            return cls(tag, seq_set, [attr]), buf
         attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
-        return cls(tag, seq_set.sequences, attr_list.value, uid=uid), buf
+        return cls(tag, seq_set, attr_list.value, uid=uid), buf
 
 CommandSelect.register_command(FetchCommand)
 
@@ -179,7 +183,7 @@ class StoreCommand(CommandSelect):
         _, buf = Space.parse(buf)
         flag_list, buf = cls._parse_flag_list(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set.sequences, flag_list, uid=uid, **info), buf
+        return cls(tag, seq_set, flag_list, uid=uid, **info), buf
 
 CommandSelect.register_command(StoreCommand)
 
