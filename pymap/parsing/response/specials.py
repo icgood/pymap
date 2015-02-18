@@ -97,7 +97,7 @@ class FetchResponse(Response):
 
     def __init__(self, seq, data):
         seq_raw = bytes(str(seq), 'utf-8')
-        data_list = List(chain.from_iterable(data))
+        data_list = List(chain.from_iterable(data.items()))
         text = b' '.join((seq_raw, b'FETCH', bytes(data_list)))
         super().__init__(b'*', text)
 

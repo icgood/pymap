@@ -301,7 +301,7 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_store(self, cmd):
         messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
-        flag_list = [flag.value for flag in cmd.flag_list.value]
+        flag_list = [flag.value for flag in cmd.flag_list]
         yield from self.selected.update_flags(messages, flag_list, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         if not cmd.silent:
