@@ -191,14 +191,18 @@ CommandSelect.register_command(StoreCommand)
 class UidCommand(CommandSelect):
     command = b'UID'
 
+    _allowed_subcommands = {b'COPY': CopyCommand,
+                            b'FETCH': FetchCommand,
+                            b'STORE': StoreCommand}
+
     @classmethod
     def _parse(cls, tag, buf, **kwargs):
-        for cmd in [CopyCommand, FetchCommand, SearchCommand, StoreCommand]:
-            try:
-                return cmd._parse(tag, buf, uid=True, **kwargs)
-            except NotParseable:
-                pass
-        raise NotParseable(buf)
+        _, buf = Space.parse(buf)
+        atom, after = Atom.parse(buf)
+        cmd = cls._allowed_subcommands.get(atom.value.upper())
+        if not cmd:
+            raise NotParseable(buf)
+        return cmd._parse(tag, after, uid=True, **kwargs)
 
 CommandSelect.register_command(UidCommand)
 
