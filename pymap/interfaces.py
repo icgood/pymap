@@ -251,7 +251,7 @@ class MailboxInterface(object):
 class MessageInterface(object):
     """Corresponds to a single message, as it exists in a single mailbox."""
 
-    def __init__(self, seq, uid, guid):
+    def __init__(self, seq, uid):
         super().__init__()
 
         #: The message's sequence number in relation to other messages in the
@@ -260,10 +260,6 @@ class MessageInterface(object):
 
         #: The message's unique identifier in the mailbox.
         self.uid = uid
-
-        #: The message's globally unique identifier across all messages in all
-        #: of the user's mailboxes.
-        self.guid = guid
 
     @asyncio.coroutine
     def fetch(self, attributes):
