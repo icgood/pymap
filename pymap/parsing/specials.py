@@ -433,7 +433,7 @@ class FetchAttribute(Special):
 
     """
 
-    _attrname_pattern = re.compile(br' *([^ \[\<]+)')
+    _attrname_pattern = re.compile(br' *([^ \[\<\(\)]+)')
     _section_start_pattern = re.compile(br' *\[ *')
     _section_end_pattern = re.compile(br' *\] *')
     _partial_pattern = re.compile(br'\< *(\d+) *\. *(\d+) *\>')
