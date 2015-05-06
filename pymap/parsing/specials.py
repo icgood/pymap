@@ -221,7 +221,7 @@ class Mailbox(Special):
         return cls(cls.decode_name(mailbox)), buf
 
     def __bytes__(self):
-        return self.encode_name(self.value)
+        return bytes(AString(self.encode_name(self.value)))
 
     def __str__(self):
         return self.value
