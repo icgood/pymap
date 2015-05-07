@@ -288,6 +288,8 @@ class ConnectionState(object):
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for msg in messages:
             fetch_data = yield from msg.fetch(cmd.attributes)
+            if cmd.uid:
+                fetch_data[b'UID'] = Number(msg.uid)
             resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
@@ -311,6 +313,8 @@ class ConnectionState(object):
         if not cmd.silent:
             for msg in messages:
                 fetch_data = yield from msg.fetch([self.flags_attr])
+                if cmd.uid:
+                    fetch_data[b'UID'] = Number(msg.uid)
                 resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
