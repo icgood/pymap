@@ -237,6 +237,18 @@ class MailboxInterface(object):
         raise NotImplementedError
 
     @asyncio.coroutine
+    def get_unseen(self):
+        """Queries the mailbox for information on unseen messages, those
+        without the ``\\Seen`` flag. Returns the total number and the sequence
+        number of the first unseen message.
+
+        :returns: Tuple of the number of unseen messages and the sequence
+                  number of the first unseen message.
+
+        """
+        raise NotImplementedError
+
+    @asyncio.coroutine
     def poll(self):
         """Checks the mailbox for any changes. This first time this is called
         on the object, the ``exists`` and ``recent`` keys are always returned.
