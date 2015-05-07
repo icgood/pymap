@@ -449,13 +449,27 @@ class FetchAttribute(Special):
         self.partial = partial
         self._raw = raw
 
+    def copy(self, new_attribute=None):
+        attr = new_attribute or self.attribute
+        return FetchAttribute(attr, self.section, self.partial)
+
     @property
     def raw(self):
         if self._raw is not None:
             return self._raw
         parts = [self.attribute]
         if self.section:
-            parts += [b'[', self.section, b']']
+            parts.append(b'[')
+            if self.section[0]:
+                parts.append(b'.'.join(self.section[0]))
+                if self.self.section[1]:
+                    parts.append(b'.')
+            if self.section[1]:
+                parts.append(self.section[1])
+            if self.section[2]:
+                parts.append(b' ')
+                parts.append(bytes(List(self.section[2])))
+            parts.append(b']')
         if self.partial:
             parts += [b'<', self.parts[0], b'.', self.parts[1], b'>']
         self._raw = raw = b''.join(parts)
@@ -486,7 +500,8 @@ class FetchAttribute(Special):
             kwargs_copy = kwargs.copy()
             kwargs_copy['list_expected'] = [AString]
             header_list, buf = List.parse(after, **kwargs_copy)
-            header_list = [hdr.value.upper() for hdr in header_list.value]
+            header_list = frozenset([hdr.value.upper()
+                                     for hdr in header_list.value])
             if not header_list:
                 raise NotParseable(after)
             return (section_parts, sec_msgtext, header_list), buf
