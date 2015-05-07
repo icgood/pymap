@@ -110,11 +110,14 @@ class ConnectionState(object):
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         yield from mbx.poll()
+        _, first_unseen = yield from mbx.get_unseen()
         self.selected = mbx
         code, data = self._get_mailbox_response_data(mbx)
         resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
         for data_part in data:
             resp.add_data(data_part)
+        if first_unseen is not None:
+            resp.add_part(Unseen(first_unseen))
         return resp
 
     @asyncio.coroutine
@@ -186,7 +189,8 @@ class ConnectionState(object):
             elif status_item.value == b'UIDVALIDITY':
                 status_list.value.append(Number(mbx.uid_validity))
             elif status_item.value == b'UNSEEN':
-                status_list.value.append(Number(mbx.unseen))
+                count, _ = yield from mbx.get_unseen()
+                status_list.value.append(Number(count))
         status = Response(b'*', b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' +
                           bytes(status_list))
         resp.add_data(status)
