@@ -308,6 +308,9 @@ class ConnectionState(object):
         flag_list = [flag.value for flag in cmd.flag_list]
         yield from self.selected.update_flags(messages, flag_list, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
+        attr_list = [self.flags_attr]
+        if cmd.uid:
+            attr_list.append(FetchAttribute(b'UID'))
         if not cmd.silent:
             for msg in messages:
                 fetch_data = yield from msg.fetch([self.flags_attr])

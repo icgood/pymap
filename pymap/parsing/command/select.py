@@ -77,10 +77,10 @@ CommandSelect.register_command(CopyCommand)
 class FetchCommand(CommandSelect):
     command = b'FETCH'
 
-    def __init__(self, tag, seq_set, attr_list, uid=False):
+    def __init__(self, tag, seq_set, attr_set, uid=False):
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.attributes = attr_list
+        self.attributes = attr_set
         self.uid = uid
         self.no_expunge_response = not uid
 
@@ -89,22 +89,22 @@ class FetchCommand(CommandSelect):
         atom, after = Atom.parse(buf)
         macro = atom.value.upper()
         if macro == b'ALL':
-            attrs = [FetchAttribute(b'FLAGS'),
+            attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'Envelope')]
+                     FetchAttribute(b'Envelope')}
             return attrs, after
         elif macro == b'FULL':
-            attrs = [FetchAttribute(b'FLAGS'),
+            attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
-                     FetchAttribute(b'RFC822.SIZE')]
+                     FetchAttribute(b'RFC822.SIZE')}
             return attrs, after
         elif macro == b'FAST':
-            attrs = [FetchAttribute(b'FLAGS'),
+            attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
                      FetchAttribute(b'Envelope'),
-                     FetchAttribute(b'BODY')]
+                     FetchAttribute(b'BODY')}
             return attrs, after
         raise NotParseable(buf)
 
@@ -113,26 +113,22 @@ class FetchCommand(CommandSelect):
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf)
         _, buf = Space.parse(buf)
+        attr_set = set()
         try:
-            attrs, buf = cls._check_macros(buf)
+            attr_set, buf = cls._check_macros(buf)
         except NotParseable:
             pass
-        else:
-            return cls(tag, seq_set, attrs), buf
         try:
             attr, buf = FetchAttribute.parse(buf)
+            attr_set = {attr}
         except NotParseable:
             pass
-        else:
-            return cls(tag, seq_set, [attr]), buf
-        attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
+        if not attr_set:
+            attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
+            attr_set = set(attr_list.value)
         if uid:
-            for attr in attr_list.value:
-                if attr.attribute == b'UID':
-                    break
-            else:
-                attr_list.value.append(FetchAttribute(b'UID'))
-        return cls(tag, seq_set, attr_list.value, uid=uid), buf
+            attr_set.add(FetchAttribute(b'UID'))
+        return cls(tag, seq_set, attr_set, uid=uid), buf
 
 CommandSelect.register_command(FetchCommand)
 
