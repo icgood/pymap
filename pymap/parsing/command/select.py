@@ -126,6 +126,12 @@ class FetchCommand(CommandSelect):
         else:
             return cls(tag, seq_set, [attr]), buf
         attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
+        if uid:
+            for attr in attr_list.value:
+                if attr.attribute == b'UID':
+                    break
+            else:
+                attr_list.value.append(FetchAttribute(b'UID'))
         return cls(tag, seq_set, attr_list.value, uid=uid), buf
 
 CommandSelect.register_command(FetchCommand)
