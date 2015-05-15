@@ -19,10 +19,11 @@
 # THE SOFTWARE.
 #
 
+import re
 from datetime import datetime
 
 from .. import NotParseable, UnexpectedType, Space, EndLine
-from ..primitives import List, LiteralString
+from ..primitives import List, String, LiteralString
 from ..specials import InvalidContent, Mailbox, DateTime, Flag, StatusAttribute
 from . import CommandAuth
 
@@ -114,6 +115,9 @@ CommandAuth.register_command(ExamineCommand)
 class ListCommand(CommandAuth):
     command = b'LIST'
 
+    _list_mailbox_pattern = re.compile(br'[\x21\x23-\x27\x2A-\x5B'
+                                       br'\x5D-\x7A\x7C\x7E]+')
+
     def __init__(self, tag, ref_name, filter):
         super().__init__(tag)
         self.ref_name = ref_name
@@ -124,29 +128,22 @@ class ListCommand(CommandAuth):
         _, buf = Space.parse(buf)
         ref_name, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
-        filter, buf = Mailbox.parse(buf)
+        match = cls._list_mailbox_pattern.match(buf)
+        if match:
+            filter_raw = match.group(0)
+            buf = buf[match.end(0):]
+            filter = Mailbox.decode_name(filter_raw)
+        else:
+            filter_str, buf = String.parse(buf)
+            filter = Mailbox.decode_name(filter_str.value)
         _, buf = EndLine.parse(buf)
-        return cls(tag, ref_name.value, filter.value), buf
+        return cls(tag, ref_name.value, filter), buf
 
 CommandAuth.register_command(ListCommand)
 
 
-class LSubCommand(CommandAuth):
+class LSubCommand(ListCommand):
     command = b'LSUB'
-
-    def __init__(self, tag, ref_name, filter):
-        super().__init__(tag)
-        self.ref_name = ref_name
-        self.filter = filter
-
-    @classmethod
-    def _parse(cls, tag, buf, **kwargs):
-        _, buf = Space.parse(buf)
-        ref_name, buf = Mailbox.parse(buf)
-        _, buf = Space.parse(buf)
-        filter, buf = Mailbox.parse(buf)
-        _, buf = EndLine.parse(buf)
-        return cls(tag, ref_name.value, filter.value), buf
 
 CommandAuth.register_command(LSubCommand)
 
