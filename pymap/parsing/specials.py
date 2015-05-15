@@ -285,6 +285,9 @@ class Flag(Special):
     def __ne__(self, other):
         return not (self == other)
 
+    def __hash__(self):
+        return hash(self.value)
+
     @classmethod
     def parse(cls, buf, **kwargs):
         try:
@@ -434,7 +437,7 @@ class FetchAttribute(Special):
 
     """
 
-    _attrname_pattern = re.compile(br' *([^ \[\<\(\)]+)')
+    _attrname_pattern = re.compile(br' *([^\s\[\<\(\)]+)')
     _section_start_pattern = re.compile(br' *\[ *')
     _section_end_pattern = re.compile(br' *\] *')
     _partial_pattern = re.compile(br'\< *(\d+) *\. *(\d+) *\>')
@@ -479,6 +482,12 @@ class FetchAttribute(Special):
 
     def __hash__(self):
         return hash((self.attribute, self.section, self.partial))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return hash(self) != hash(other)
 
     @classmethod
     def _parse_section(cls, buf, **kwargs):
@@ -573,6 +582,15 @@ class SearchKey(Special):
         if self._raw is not None:
             return self._raw
         raise NotImplementedError
+
+    def __hash__(self):
+        return hash((self.key, self.filter, self.inverse))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return hash(self) != hash(other)
 
     @classmethod
     def _parse_astring_filter(cls, buf, charset, **kwargs):

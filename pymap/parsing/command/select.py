@@ -80,7 +80,7 @@ class FetchCommand(CommandSelect):
     def __init__(self, tag, seq_set, attr_set, uid=False):
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.attributes = attr_set
+        self.attributes = frozenset(attr_set)
         self.uid = uid
         self.no_expunge_response = not uid
 
@@ -92,7 +92,7 @@ class FetchCommand(CommandSelect):
             attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'Envelope')}
+                     FetchAttribute(b'ENVELOPE')}
             return attrs, after
         elif macro == b'FULL':
             attrs = {FetchAttribute(b'FLAGS'),
@@ -103,7 +103,7 @@ class FetchCommand(CommandSelect):
             attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'Envelope'),
+                     FetchAttribute(b'ENVELOPE'),
                      FetchAttribute(b'BODY')}
             return attrs, after
         raise NotParseable(buf)
@@ -128,6 +128,7 @@ class FetchCommand(CommandSelect):
             attr_set = set(attr_list.value)
         if uid:
             attr_set.add(FetchAttribute(b'UID'))
+        _, buf = EndLine.parse(buf)
         return cls(tag, seq_set, attr_set, uid=uid), buf
 
 CommandSelect.register_command(FetchCommand)
@@ -143,7 +144,7 @@ class StoreCommand(CommandSelect):
                  uid=False, mode='replace', silent=False):
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.flag_list = flag_list
+        self.flag_list = frozenset(flag_list)
         self.uid = uid
         self.mode = mode
         self.silent = silent
@@ -214,7 +215,7 @@ class SearchCommand(CommandSelect):
 
     def __init__(self, tag, keys, charset=None, uid=None):
         super().__init__(tag)
-        self.keys = keys
+        self.keys = frozenset(keys)
         self.charset = charset
         self.uid = uid
         self.no_expunge_response = not uid
@@ -251,8 +252,6 @@ class SearchCommand(CommandSelect):
                 if not search_keys:
                     raise
                 break
-            else:
-                continue
         return cls(tag, search_keys, charset=charset, uid=uid), buf
 
 CommandSelect.register_command(SearchCommand)
