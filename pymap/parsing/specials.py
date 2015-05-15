@@ -352,15 +352,16 @@ class SequenceSet(Special):
         self._raw = None
 
     def contains(self, num, max_value):
+        if num > max_value:
+            return False
         for group in self.sequences:
             if group == '*' and num <= max_value:
                 return True
             elif isinstance(group, tuple):
-                one, two = group
-                if one == '*':
-                    group = max_value, two
-                if two == '*':
-                    group = one, max_value
+                if group[0] == '*':
+                    group = max_value, group[1]
+                if group[1] == '*':
+                    group = group[0], max_value
                 high = max(*group)
                 low = min(*group)
                 if num >= low and num <= high:
@@ -440,7 +441,6 @@ class FetchAttribute(Special):
 
     _sec_part_pattern = \
         re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?', re.I)
-    _sec_msgtext_pattern = re.compile(br'')
 
     def __init__(self, attribute, section=None, partial=None, raw=None):
         super().__init__()
@@ -461,8 +461,10 @@ class FetchAttribute(Special):
         if self.section:
             parts.append(b'[')
             if self.section[0]:
-                parts.append(b'.'.join(self.section[0]))
-                if self.self.section[1]:
+                part_raw = b'.'.join([bytes(str(num), 'ascii')
+                                      for num in self.section[0]])
+                parts.append(part_raw)
+                if self.section[1]:
                     parts.append(b'.')
             if self.section[1]:
                 parts.append(self.section[1])
@@ -471,7 +473,7 @@ class FetchAttribute(Special):
                 parts.append(bytes(List(self.section[2])))
             parts.append(b']')
         if self.partial:
-            parts += [b'<', self.parts[0], b'.', self.parts[1], b'>']
+            parts += [b'<', self.partial[0], b'.', self.partial[1], b'>']
         self._raw = raw = b''.join(parts)
         return raw
 
@@ -587,8 +589,11 @@ class SearchKey(Special):
         return date, after
 
     @classmethod
-    def parse(cls, buf, charset=None, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf, charset=None, list_expected=None, **kwargs):
+        try:
+            _, buf = Space.parse(buf)
+        except NotParseable:
+            pass
         inverse = False
         match = cls._not_pattern.match(buf)
         if match:
