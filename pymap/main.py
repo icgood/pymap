@@ -34,7 +34,7 @@ from .core import __version__
 from .state import CloseConnection, ConnectionState
 from .parsing.command import BadCommand, Command
 from .parsing.response import (ResponseContinuation, ResponseBadCommand,
-                               ResponseBad, ResponseNo)
+                               ResponseBad, ResponseBye)
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from .parsing import RequiresContinuation
 
@@ -76,7 +76,7 @@ class IMAPServer(object):
             except IssueChallenge as exc:
                 chal_bytes = b64encode(exc.challenge.challenge.encode('utf-8'))
                 cont = ResponseContinuation(chal_bytes)
-                yield from cont.send_stream(self.writer)
+                yield from self.write_response(cont)
                 resp_bytes = yield from self.read_continuation(0)
                 exc.challenge.response = b64decode(resp_bytes).decode('utf-8')
                 responses.append(exc.challenge)
@@ -95,22 +95,28 @@ class IMAPServer(object):
                 cmd, _ = Command.parse(line, continuations=conts.copy())
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
-                yield from cont.send_stream(self.writer)
+                yield from self.write_response(cont)
                 ret = yield from self.read_continuation(req.literal_length)
                 conts.append(ret)
             else:
                 return cmd
 
     @asyncio.coroutine
+    def write_response(self, resp):
+        raw = bytes(resp)
+        self.writer.write(raw)
+        yield from self.writer.drain()
+
+    @asyncio.coroutine
     def run(self):
         state = ConnectionState(self.writer.transport, self.backend)
         greeting = yield from state.do_greeting()
-        yield from greeting.send_stream(self.writer)
+        yield from self.write_response(greeting)
         while True:
             try:
                 cmd = yield from self.read_command()
             except BadCommand as bad:
-                yield from ResponseBadCommand(bad).send_stream(self.writer)
+                yield from self.write_response(ResponseBadCommand(bad))
             except Disconnected:
                 break
             else:
@@ -125,20 +131,20 @@ class IMAPServer(object):
                         response = yield from state.do_command(cmd)
                 except AuthenticationError as exc:
                     resp = ResponseBad(cmd.tag, bytes(str(exc), 'utf-8'))
-                    yield from resp.send_stream(self.writer)
+                    yield from self.write_response(resp)
                 except CloseConnection as close:
-                    yield from close.response.send_stream(self.writer)
+                    yield from self.write_response(close.response)
                     break
                 except Exception:
-                    resp = ResponseNo(cmd.tag, b'Unhandled server error.')
+                    resp = ResponseBye(b'Unhandled server error.')
                     try:
-                        yield from resp.send_stream(self.writer)
+                        yield from self.write_response(resp)
                         self.writer.close()
                     except Exception:
                         pass
                     raise
                 else:
-                    yield from response.send_stream(self.writer)
+                    yield from self.write_response(response)
         self.writer.close()
 
 
