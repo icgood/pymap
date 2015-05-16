@@ -1,0 +1,8 @@
+\Seen
+From: me@example.com
+To: friend@example.com
+Subject: Re: Random question
+Content-Type: text/plain
+
+African or European?
+

@@ -1,0 +1,8 @@
+\Seen \Answered
+From: friend@example.com
+To: me@example.com
+Subject: Random question
+Content-Type: text/plain
+
+What is the average airspeed velocity of an unladen swallow?
+

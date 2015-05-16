@@ -1,0 +1,8 @@
+\Seen \Flagged
+From: corp@example.com
+To: me@example.com
+Subject: Important notice regarding your account
+Content-Type: text/plain
+
+This is some important stuff!
+
