@@ -101,8 +101,9 @@ class ConnectionState(object):
             perm_flags = mbx.permanent_flags
             data.append(ResponseOk(b'*', b'Flags permitted.',
                                    PermanentFlags(perm_flags)))
-        if mbx.first_unseen is not None:
-            data.append(Unseen(mbx.first_unseen))
+        if mbx.first_unseen:
+            data.append(ResponseOk(b'*', b'First unseen message.',
+                                   Unseen(mbx.first_unseen)))
         return code, data
 
     @asyncio.coroutine
