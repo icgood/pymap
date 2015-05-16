@@ -138,32 +138,32 @@ class MailboxInterface(object):
     #: The subset of :attr:`.flags` that may be changed permanently.
     permanent_flags = None
 
+    #: If ``True``, the mailbox is read-only.
+    readonly = False
+
+    #: Number of total messages in the mailbox.
+    exists = None
+
+    #: Number of recent messages in the mailbox.
+    recent = None
+
+    #: Number of unseen messages in the mailbox.
+    unseen = None
+
+    #: The sequence number of the first unseen message.
+    first_unseen = None
+
+    #: The predicted next message UID.
+    next_uid = None
+
+    #: The UID validity value.
+    uid_validity = None
+
     def __init__(self, name):
         super().__init__()
 
         #: The name of the mailbox.
         self.name = name
-
-        #: If ``True``, the mailbox is read-only.
-        self.readonly = False
-
-        #: Number of total messages in the mailbox.
-        self.exists = None
-
-        #: Number of recent messages in the mailbox.
-        self.recent = None
-
-        #: Number of unseen messages in the mailbox.
-        self.unseen = None
-
-        #: The sequence number of the first unseen message.
-        self.first_unseen = None
-
-        #: The predicted next message UID.
-        self.next_uid = None
-
-        #: The UID validity value.
-        self.uid_validity = None
 
     @asyncio.coroutine
     def get_messages_by_seq(self, seqs):
