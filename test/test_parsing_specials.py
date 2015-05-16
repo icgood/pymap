@@ -78,6 +78,7 @@ class TestMailbox(unittest.TestCase):
     def test_bytes(self):
         mbx = Mailbox('~peter/mail/&/台北/日本語')
         self.assertEqual(b'~peter/mail/&-/&U,BTFw-/&ZeVnLIqe-', bytes(mbx))
+        self.assertEqual(b'~peter/mail/&-/&U,BTFw-/&ZeVnLIqe-', bytes(mbx))
 
     def test_str(self):
         mbx = Mailbox('~peter/mail/&/台北/日本語')

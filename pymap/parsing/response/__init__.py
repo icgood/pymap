@@ -19,8 +19,6 @@
 # THE SOFTWARE.
 #
 
-import asyncio
-
 __all__ = ['Response', 'ResponseContinuation', 'ResponseBad',
            'ResponseBadCommand', 'ResponseNo', 'ResponseOk', 'ResponseBye']
 
@@ -44,13 +42,9 @@ class Response(object):
         self.data = []
         self._raw = None
 
-    @asyncio.coroutine
-    def send_stream(self, writer):
-        writer.write(bytes(self))
-        yield from writer.drain()
-
     def add_data(self, response):
         self.data.append(response)
+        self._raw = None
 
     def __bytes__(self):
         if self._raw is not None:

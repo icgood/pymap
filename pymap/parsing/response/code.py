@@ -57,10 +57,11 @@ class Capability(ResponseCode):
     def __init__(self, server_capabilities):
         super().__init__()
         self.capabilities = server_capabilities
+        self._raw = None
 
     @property
     def string(self):
-        if hasattr(self, '_raw'):
+        if self._raw is not None:
             return self._raw
         self._raw = raw = b' '.join([b'CAPABILITY', b'IMAP4rev1'] +
                                     self.capabilities)
@@ -69,8 +70,7 @@ class Capability(ResponseCode):
     def add(self, capability):
         if capability not in self.capabilities:
             self.capabilities.append(capability)
-            if hasattr(self, '_raw'):
-                del self._raw
+            self._raw = None
 
     def remove(self, capability):
         try:
@@ -78,8 +78,7 @@ class Capability(ResponseCode):
         except ValueError:
             pass
         else:
-            if hasattr(self, '_raw'):
-                del self._raw
+            self._raw = None
 
     def to_response(self):
         from . import Response
@@ -100,10 +99,11 @@ class PermanentFlags(ResponseCode):
 
     def __init__(self, flags):
         super().__init__()
-        self.flags = List(flags)
+        self.flags = flags
+        self._raw = b'[PERMANENTFLAGS ' + bytes(List(flags)) + b']'
 
     def __bytes__(self):
-        return b'[PERMANENTFLAGS ' + bytes(self.flags) + b']'
+        return self._raw
 
 
 class ReadOnly(ResponseCode):
@@ -135,10 +135,11 @@ class UidNext(ResponseCode):
 
     def __init__(self, next):
         super().__init__()
-        self.next = Number(next)
+        self.next = next
+        self._raw = b'[UIDNEXT ' + bytes(Number(next)) + b']'
 
     def __bytes__(self):
-        return b'[UIDNEXT ' + bytes(self.next) + b']'
+        return self._raw
 
 
 class UidValidity(ResponseCode):
@@ -146,10 +147,11 @@ class UidValidity(ResponseCode):
 
     def __init__(self, validity):
         super().__init__()
-        self.validity = Number(validity)
+        self.validity = validity
+        self._raw = b'[UIDVALIDITY ' + bytes(Number(validity)) + b']'
 
     def __bytes__(self):
-        return b'[UIDVALIDITY ' + bytes(self.validity) + b']'
+        return self._raw
 
 
 class Unseen(ResponseCode):
@@ -160,7 +162,8 @@ class Unseen(ResponseCode):
 
     def __init__(self, next):
         super().__init__()
-        self.next = Number(next)
+        self.next = next
+        self._raw = b'[UNSEEN ' + bytes(Number(next)) + b']'
 
     def __bytes__(self):
-        return b'[UNSEEN ' + bytes(self.next) + b']'
+        return self._raw

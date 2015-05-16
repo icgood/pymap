@@ -119,7 +119,10 @@ class Mailbox(Special):
 
     def __init__(self, mailbox):
         super().__init__()
+        if mailbox.upper() == 'INBOX':
+            mailbox = 'INBOX'
         self.value = mailbox
+        self._raw = None
 
     @classmethod
     def _modified_b64encode(cls, src):
@@ -221,7 +224,10 @@ class Mailbox(Special):
         return cls(cls.decode_name(mailbox)), buf
 
     def __bytes__(self):
-        return bytes(AString(self.encode_name(self.value)))
+        if self._raw is not None:
+            return self._raw
+        self._raw = raw = bytes(AString(self.encode_name(self.value)))
+        return raw
 
     def __str__(self):
         return self.value
