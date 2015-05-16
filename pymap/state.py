@@ -101,6 +101,8 @@ class ConnectionState(object):
             perm_flags = mbx.permanent_flags
             data.append(ResponseOk(b'*', b'Flags permitted.',
                                    PermanentFlags(perm_flags)))
+        if mbx.first_unseen is not None:
+            data.append(Unseen(mbx.first_unseen))
         return code, data
 
     @asyncio.coroutine
@@ -109,15 +111,12 @@ class ConnectionState(object):
             mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
-        yield from mbx.poll()
-        _, first_unseen = yield from mbx.get_unseen()
         self.selected = mbx
+        yield from mbx.poll()
         code, data = self._get_mailbox_response_data(mbx)
         resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
         for data_part in data:
             resp.add_data(data_part)
-        if first_unseen is not None:
-            resp.add_part(Unseen(first_unseen))
         return resp
 
     @asyncio.coroutine
@@ -126,6 +125,7 @@ class ConnectionState(object):
             mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+        self.selected = mbx
         yield from mbx.poll()
         code, data = self._get_mailbox_response_data(mbx, True)
         resp = ResponseOk(cmd.tag, b'Examined mailbox.', code)
@@ -184,13 +184,12 @@ class ConnectionState(object):
                 status_list.value.append(Number(mbx.exists))
             elif status_item.value == b'RECENT':
                 status_list.value.append(Number(mbx.recent))
+            elif status_item.value == b'UNSEEN':
+                status_list.value.append(Number(mbx.unseen))
             elif status_item.value == b'UIDNEXT':
                 status_list.value.append(Number(mbx.next_uid))
             elif status_item.value == b'UIDVALIDITY':
                 status_list.value.append(Number(mbx.uid_validity))
-            elif status_item.value == b'UNSEEN':
-                count, _ = yield from mbx.get_unseen()
-                status_list.value.append(Number(count))
         status = Response(b'*', b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' +
                           bytes(status_list))
         resp.add_data(status)
@@ -199,11 +198,12 @@ class ConnectionState(object):
     @asyncio.coroutine
     def do_append(self, cmd):
         try:
-            flag_list = [flag.value for flag in cmd.flag_list]
-            yield from self.session.append_message(cmd.mailbox, cmd.message,
-                                                   flag_list, cmd.when)
+            mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
+        try:
+            flag_list = [flag.value for flag in cmd.flag_list]
+            yield from mbx.append_message(cmd.message, flag_list, cmd.when)
         except AppendFailure as exc:
             return ResponseNo(cmd.tag, bytes(str(exc), 'utf-8'))
         return ResponseOk(cmd.tag, b'APPEND completed.')

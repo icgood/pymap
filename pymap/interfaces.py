@@ -103,24 +103,6 @@ class SessionInterface(object):
         raise NotImplementedError
 
     @asyncio.coroutine
-    def append_message(self, mailbox, message, flag_list=None, when=None):
-        """Appends a message to the end of the mailbox.
-
-        .. seealso: `RFC 3501 6.3.11
-        <https://tools.ietf.org/html/rfc3501#section-6.3.11>`_
-
-        :param str mailbox: The name of the mailbox.
-        :param bytes message: The contents of the message.
-        :param flag_list: List of flag bytestrings.
-        :param when: The internal time associated with the message.
-        :type when: :py:class:`~datetime.datetime`
-        :raises: :class:`~pymap.exceptions.MailboxNotFound`,
-                 :class:`~pymap.exceptions.AppendFailure`
-
-        """
-        raise NotImplementedError
-
-    @asyncio.coroutine
     def subscribe(self, name):
         """Mark the given folder name as subscribed, whether or not the given
         folder name currently exists.
@@ -200,6 +182,23 @@ class MailboxInterface(object):
         :param seqs: List of items, as described in
                      :class:`~pymap.parsing.specials.SequenceSet`.
         :returns: List of :class:`Message` objects.
+
+        """
+        raise NotImplementedError
+
+    @asyncio.coroutine
+    def append_message(self, message, flag_list=None, when=None):
+        """Appends a message to the end of the mailbox.
+
+        .. seealso: `RFC 3501 6.3.11
+        <https://tools.ietf.org/html/rfc3501#section-6.3.11>`_
+
+        :param bytes message: The contents of the message.
+        :param flag_list: List of flag bytestrings.
+        :param when: The internal time associated with the message.
+        :type when: :py:class:`~datetime.datetime`
+        :raises: :class:`~pymap.exceptions.MailboxNotFound`,
+                 :class:`~pymap.exceptions.AppendFailure`
 
         """
         raise NotImplementedError
