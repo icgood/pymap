@@ -156,6 +156,30 @@ class MailboxInterface(object):
         #: The name of the mailbox.
         self.name = name
 
+        #: If ``True``, the mailbox is read-only.
+        self.readonly = False
+
+        #: The flags defined in the mailbox.
+        self.flags = None
+
+        #: Number of total messages in the mailbox.
+        self.exists = None
+
+        #: Number of recent messages in the mailbox.
+        self.recent = None
+
+        #: Number of unseen messages in the mailbox.
+        self.unseen = None
+
+        #: The sequence number of the first unseen message.
+        self.first_unseen = None
+
+        #: The predicted next message UID.
+        self.next_uid = None
+
+        #: The UID validity value.
+        self.uid_validity = None
+
     @asyncio.coroutine
     def get_messages_by_seq(self, seqs):
         """Get a list of :class:`Message` objects corresponding to given
@@ -232,18 +256,6 @@ class MailboxInterface(object):
         :param flag_list: List of flag bytestrings.
         :param str mode: Update mode, can be ``replace``, ``add`` or
                          ``delete``.
-
-        """
-        raise NotImplementedError
-
-    @asyncio.coroutine
-    def get_unseen(self):
-        """Queries the mailbox for information on unseen messages, those
-        without the ``\\Seen`` flag. Returns the total number and the sequence
-        number of the first unseen message.
-
-        :returns: Tuple of the number of unseen messages and the sequence
-                  number of the first unseen message.
 
         """
         raise NotImplementedError
