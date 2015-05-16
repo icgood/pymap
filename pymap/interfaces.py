@@ -132,6 +132,12 @@ class SessionInterface(object):
 class MailboxInterface(object):
     """Corresponds to a mailbox available to the IMAP session."""
 
+    #: The flags defined in the mailbox.
+    flags = None
+
+    #: The subset of :attr:`.flags` that may be changed permanently.
+    permanent_flags = None
+
     def __init__(self, name):
         super().__init__()
 
@@ -140,9 +146,6 @@ class MailboxInterface(object):
 
         #: If ``True``, the mailbox is read-only.
         self.readonly = False
-
-        #: The flags defined in the mailbox.
-        self.flags = None
 
         #: Number of total messages in the mailbox.
         self.exists = None
