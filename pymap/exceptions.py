@@ -49,7 +49,7 @@ class MailboxConflict(MailboxError):
     pass
 
 
-class MailboxHasChildren(PymapError):
+class MailboxHasChildren(MailboxError):
     """The mailbox cannot be deleted because there are other inferior
     heirarchical mailboxes below it.
 
@@ -57,7 +57,7 @@ class MailboxHasChildren(PymapError):
     pass
 
 
-class MailboxReadOnly(PymapError):
+class MailboxReadOnly(MailboxError):
     """The mailbox is opened read-only and the requested operation is not
     allowed.
 
@@ -65,6 +65,6 @@ class MailboxReadOnly(PymapError):
     pass
 
 
-class AppendFailure(PymapError):
+class AppendFailure(MailboxError):
     """The mailbox append operation failed."""
     pass
