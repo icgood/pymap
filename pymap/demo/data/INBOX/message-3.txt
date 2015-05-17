@@ -1,8 +1,8 @@
-\Seen \Answered
-From: friend@example.com
+\Seen \Flagged
+From: corp@example.com
 To: me@example.com
-Subject: Random question
+Subject: Important notice regarding your account
 Content-Type: text/plain
 
-What is the average airspeed velocity of an unladen swallow?
+This is some important stuff!
 
