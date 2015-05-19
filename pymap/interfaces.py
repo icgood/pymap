@@ -287,17 +287,24 @@ class MessageInterface(object):
         #: The message's unique identifier in the mailbox.
         self.uid = uid
 
+        #: The :class:`~pymap.parsing.structure.MessageStructure` object
+        #: associated with the message.
+        self.structure = None
+
     @asyncio.coroutine
-    def fetch(self, attributes):
-        """Get the requested attributes associated with the message.
+    def fetch_internal_date(self):
+        """Returns the internal time associated with the message.
 
-        .. seealso: `RFC 3501 7.4.2
-        <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_
+        :rtype: datetime.datetime
 
-        :param attributes: List of
-                           :class:`~pymap.parsing.specials.FetchAttribute`
-                           objects.
-        :returns: Dictionary keyed on the requested attributes.
+        """
+        raise NotImplementedError
+
+    @asyncio.coroutine
+    def fetch_flags(self):
+        """Returns the flags associated with the message.
+
+        :returns: List of bytestrings.
 
         """
         raise NotImplementedError

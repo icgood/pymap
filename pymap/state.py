@@ -288,7 +288,20 @@ class ConnectionState(object):
         messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for msg in messages:
-            fetch_data = yield from msg.fetch(cmd.attributes)
+            fetch_data = {}
+            for attr in cmd.attributes:
+                if attr.attribute == b'UID':
+                    fetch_data[attr] = Number(msg.uid)
+                elif attr.attribute == b'FLAGS':
+                    fetch_data[attr] = yield from msg.fetch_flags()
+                elif attr.attribute == b'INTERNALDATE':
+                    fetch_data[attr] = yield from msg.fetch_internal_date()
+                elif attr.attribute == b'ENVELOPE':
+                    fetch_data[attr] = yield from \
+                        msg.structure.build_envelope_structure()
+                elif attr.attribute == b'BODYSTRUCTURE':
+                    fetch_data[attr] = yield from \
+                        msg.structure.build_body_structure()
             resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
