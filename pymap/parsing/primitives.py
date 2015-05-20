@@ -44,10 +44,6 @@ class Nil(Primitive):
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
-    def __init__(self):
-        super().__init__()
-        self.value = None
-
     @classmethod
     def parse(cls, buf, **kwargs):
         buf = memoryview(buf)

@@ -97,14 +97,14 @@ class FetchCommand(CommandSelect):
         elif macro == b'FULL':
             attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
-                     FetchAttribute(b'RFC822.SIZE')}
+                     FetchAttribute(b'RFC822.SIZE'),
+                     FetchAttribute(b'ENVELOPE'),
+                     FetchAttribute(b'BODY')}
             return attrs, after
         elif macro == b'FAST':
             attrs = {FetchAttribute(b'FLAGS'),
                      FetchAttribute(b'INTERNALDATE'),
-                     FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'ENVELOPE'),
-                     FetchAttribute(b'BODY')}
+                     FetchAttribute(b'RFC822.SIZE')}
             return attrs, after
         raise NotParseable(buf)
 

@@ -33,6 +33,9 @@ class FetchAttribute(Special):
     sequence set of a FETCH command on an IMAP stream.
 
     :param byte attribute: Fetch attribute name.
+    :param tuple section:
+    :param tuple partial:
+    :param bool peek:
 
     """
 
@@ -44,16 +47,20 @@ class FetchAttribute(Special):
     _sec_part_pattern = \
         re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?', re.I)
 
-    def __init__(self, attribute, section=None, partial=None, raw=None):
+    def __init__(self, attribute, section=None, partial=None):
         super().__init__()
         self.attribute = attribute.upper()
         self.section = section
         self.partial = partial
-        self._raw = raw
+        self._raw = None
 
-    def copy(self, new_attribute=None):
-        attr = new_attribute or self.attribute
-        return FetchAttribute(attr, self.section, self.partial)
+    @property
+    def set_seen(self):
+        if self.attribute == b'BODY' and self.section:
+            return True
+        elif self.attribute in (b'RFC822', b'RFC822.TEXT'):
+            return True
+        return False
 
     @property
     def raw(self):
@@ -75,7 +82,7 @@ class FetchAttribute(Special):
                 parts.append(bytes(List(self.section[2])))
             parts.append(b']')
         if self.partial:
-            parts += [b'<', self.partial[0], b'.', self.partial[1], b'>']
+            parts += [b'<', self.partial[0], b'>']
         self._raw = raw = b''.join(parts)
         return raw
 
@@ -93,7 +100,8 @@ class FetchAttribute(Special):
         section_parts = None
         match = cls._sec_part_pattern.match(buf)
         if match:
-            section_parts = [int(num) for num in match.group(1).split(b'.')]
+            section_parts = tuple(int(num) for num in
+                                  match.group(1).split(b'.'))
             buf = buf[match.end(0):]
             if not match.group(2):
                 return (section_parts, None, None), buf

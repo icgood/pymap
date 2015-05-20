@@ -113,6 +113,10 @@ class Parseable(object):
 
     _whitespace_pattern = re.compile(br' +')
 
+    def __init__(self):
+        super().__init__()
+        self.value = None
+
     @classmethod
     def _whitespace_length(cls, buf, start=0):
         match = cls._whitespace_pattern.match(buf, start)

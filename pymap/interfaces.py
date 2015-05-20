@@ -25,6 +25,8 @@
 
 import asyncio
 
+from pymap.structure import MessageStructure
+
 __all__ = ['SessionInterface', 'MailboxInterface', 'MessageInterface']
 
 
@@ -277,6 +279,10 @@ class MailboxInterface(object):
 class MessageInterface(object):
     """Corresponds to a single message, as it exists in a single mailbox."""
 
+    #: This class will be used to produce structural data about the message,
+    #: for FETCH responses. It may be overridden with this attribute.
+    structure_class = MessageStructure
+
     def __init__(self, seq, uid):
         super().__init__()
 
@@ -287,15 +293,27 @@ class MessageInterface(object):
         #: The message's unique identifier in the mailbox.
         self.uid = uid
 
-        #: The :class:`~pymap.parsing.structure.MessageStructure` object
-        #: associated with the message.
-        self.structure = None
+    @asyncio.coroutine
+    def get_message(self, full=True):
+        """Returns a :class:`~email.message.Message` object representation of
+        the message.
+
+        The result must have all MIME sub-part objects in place, i.e.
+        :meth:`~email.message.Message.get_payload` must work on all multiparts.
+        However, if ``full`` is False, non-multipart payloads are not needed.
+
+        :param bool full: If True, all message parts and sub-parts must have
+                          payloads.
+        :rtype: :class:`~email.message.Message`
+
+        """
+        raise NotImplementedError
 
     @asyncio.coroutine
     def fetch_internal_date(self):
         """Returns the internal time associated with the message.
 
-        :rtype: datetime.datetime
+        :rtype: :class:`~pymap.parsing.specials.DateTime`
 
         """
         raise NotImplementedError
@@ -305,6 +323,7 @@ class MessageInterface(object):
         """Returns the flags associated with the message.
 
         :returns: List of bytestrings.
+        :rtype: :class:`~pymap.parsing.primitives.List`
 
         """
         raise NotImplementedError

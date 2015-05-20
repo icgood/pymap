@@ -21,9 +21,10 @@
 
 import asyncio
 import email
-from email.message import EmailMessage
+from datetime import datetime, timezone
 
-from pymap.parsing.primitives import Number, LiteralString, List
+from pymap.parsing.primitives import *  # NOQA
+from pymap.parsing.specials import DateTime
 from pymap.interfaces import MessageInterface
 
 __all__ = ['Message']
@@ -35,39 +36,15 @@ class Message(MessageInterface):
         super().__init__(seq, uid)
         self.flags = flags
         self.data = email.message_from_bytes(data)
-        self.size = len(data)
-
-    def _get_headers(self, headers=None, inverse=False):
-        ret = EmailMessage()
-        for item, value in self.data.items():
-            item_bytes = bytes(item, 'utf-8').upper()
-            if not headers or inverse != (item_bytes in headers):
-                ret[item] = value
-        return bytes(ret)
 
     @asyncio.coroutine
-    def fetch(self, attributes):
-        ret = {}
-        for attr in attributes:
-            if attr.attribute == b'UID':
-                ret[attr] = Number(self.uid)
-            elif attr.attribute == b'FLAGS':
-                ret[attr] = List(self.flags)
-            elif attr.attribute == b'RFC822.SIZE':
-                ret[attr] = Number(self.size)
-            elif attr.attribute in (b'BODY.PEEK', b'BODY'):
-                if attr.attribute == b'BODY.PEEK':
-                    attr = attr.copy(b'BODY')
-                if not attr.section[1]:
-                    ret[attr] = LiteralString(bytes(self.data))
-                elif attr.section[1] == b'HEADER':
-                    ret[attr] = LiteralString(self._get_headers())
-                elif attr.section[1] == b'HEADER.FIELDS':
-                    ret[attr] = LiteralString(self._get_headers(
-                        attr.section[2]))
-                elif attr.section[1] == b'HEADER.FIELDS.NOT':
-                    ret[attr] = LiteralString(self._get_headers(
-                        attr.section[2]), True)
-                elif attr.section[1] == b'TEXT':
-                    ret[attr] = LiteralString(bytes(self.data))
-        return ret
+    def get_message(self, full=True):
+        return self.data
+
+    @asyncio.coroutine
+    def fetch_internal_date(self):
+        return DateTime(datetime.now(timezone.utc))
+
+    @asyncio.coroutine
+    def fetch_flags(self):
+        return List(self.flags)

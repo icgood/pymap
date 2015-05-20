@@ -287,21 +287,60 @@ class ConnectionState(object):
     def do_fetch(self, cmd):
         messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
+        set_seen = False
+        for attr in cmd.attributes:
+            if attr.set_seen:
+                set_seen = True
+                yield from self.selected.update_flags(
+                    messages, [br'\Seen'], 'add')
+                break
         for msg in messages:
+            structure = msg.structure_class(msg)
             fetch_data = {}
+            if set_seen:
+                fetch_data[self.flags_attr] = yield from msg.fetch_flags()
             for attr in cmd.attributes:
                 if attr.attribute == b'UID':
                     fetch_data[attr] = Number(msg.uid)
-                elif attr.attribute == b'FLAGS':
+                elif attr.attribute == b'FLAGS' and not set_seen:
                     fetch_data[attr] = yield from msg.fetch_flags()
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = yield from msg.fetch_internal_date()
                 elif attr.attribute == b'ENVELOPE':
                     fetch_data[attr] = yield from \
-                        msg.structure.build_envelope_structure()
+                        structure.build_envelope_structure()
                 elif attr.attribute == b'BODYSTRUCTURE':
                     fetch_data[attr] = yield from \
-                        msg.structure.build_body_structure()
+                        structure.build_body_structure(ext_data=True)
+                elif attr.attribute in (b'BODY', b'BODY.PEEK'):
+                    if not attr.section:
+                        fetch_data[attr] = yield from \
+                            structure.build_body_structure()
+                    elif not attr.section[1]:
+                        fetch_data[attr] = yield from \
+                            structure.get_body(attr.section[0])
+                    elif attr.section[1] == b'TEXT':
+                        fetch_data[attr] = yield from \
+                            structure.get_text(attr.section[0])
+                    elif attr.section[1] in (b'HEADER', b'MIME'):
+                        fetch_data[attr] = yield from \
+                            structure.get_headers(attr.section[0])
+                    elif attr.section[1] == b'HEADER.FIELDS':
+                        fetch_data[attr] = yield from \
+                            structure.get_headers(attr.section[0],
+                                                  attr.section[2])
+                    elif attr.section[1] == b'HEADER.FIELDS.NOT':
+                        fetch_data[attr] = yield from \
+                            structure.get_headers(attr.section[0],
+                                                  attr.section[2], True)
+                elif attr.attribute == b'RFC822':
+                    fetch_data[attr] = yield from structure.get_body()
+                elif attr.attribute == b'RFC822.HEADER':
+                    fetch_data[attr] = yield from structure.get_headers()
+                elif attr.attribute == b'RFC822.TEXT':
+                    fetch_data[attr] = yield from structure.get_text()
+                elif attr.attribute == b'RFC822.SIZE':
+                    fetch_data[attr] = yield from structure.get_size()
             resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
@@ -327,7 +366,7 @@ class ConnectionState(object):
             attr_list.append(FetchAttribute(b'UID'))
         if not cmd.silent:
             for msg in messages:
-                fetch_data = yield from msg.fetch([self.flags_attr])
+                fetch_data = {self.flags_attr: (yield from msg.fetch_flags())}
                 resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
