@@ -51,7 +51,9 @@ class TestFetchCommand(unittest.TestCase):
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
         self.assertSetEqual({FetchAttribute(b'FLAGS'),
                              FetchAttribute(b'INTERNALDATE'),
-                             FetchAttribute(b'RFC822.SIZE')}, ret.attributes)
+                             FetchAttribute(b'RFC822.SIZE'),
+                             FetchAttribute(b'ENVELOPE'),
+                             FetchAttribute(b'BODY')}, ret.attributes)
         self.assertEqual(b'  ', buf)
 
     def test_parse_macro_fast(self):
@@ -60,9 +62,7 @@ class TestFetchCommand(unittest.TestCase):
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
         self.assertSetEqual({FetchAttribute(b'FLAGS'),
                              FetchAttribute(b'INTERNALDATE'),
-                             FetchAttribute(b'RFC822.SIZE'),
-                             FetchAttribute(b'ENVELOPE'),
-                             FetchAttribute(b'BODY')}, ret.attributes)
+                             FetchAttribute(b'RFC822.SIZE')}, ret.attributes)
         self.assertEqual(b'  ', buf)
 
 

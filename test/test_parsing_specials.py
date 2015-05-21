@@ -205,13 +205,6 @@ class TestSequenceSet(unittest.TestCase):
 
 class TestFetchAttribute(unittest.TestCase):
 
-    def test_copy(self):
-        attr1 = FetchAttribute(b'TEST1', 'section123', 'partial456')
-        attr2 = attr1.copy(b'TEST2')
-        self.assertEqual(b'TEST2', attr2.attribute)
-        self.assertEqual('section123', attr2.section)
-        self.assertEqual('partial456', attr2.partial)
-
     def test_hash(self):
         attr1 = FetchAttribute(b'TEST')
         attr2 = FetchAttribute(b'TEST')
@@ -221,7 +214,7 @@ class TestFetchAttribute(unittest.TestCase):
         ret, buf = FetchAttribute.parse(
             b'body.peek[1.2.HEADER.FIELDS (A B)]<4.5>  ')
         self.assertEqual(b'BODY.PEEK', ret.attribute)
-        self.assertEqual(([1, 2], b'HEADER.FIELDS', {b'A', b'B'}), ret.section)
+        self.assertEqual(((1, 2), b'HEADER.FIELDS', {b'A', b'B'}), ret.section)
         self.assertEqual((4, 5), ret.partial)
         self.assertEqual(b'  ', buf)
 
@@ -238,11 +231,11 @@ class TestFetchAttribute(unittest.TestCase):
     def test_parse_sections(self):
         ret1, _ = FetchAttribute.parse(b'BODY[1.2]')
         self.assertEqual(b'BODY', ret1.attribute)
-        self.assertEqual(([1, 2], None, None), ret1.section)
+        self.assertEqual(((1, 2), None, None), ret1.section)
         self.assertIsNone(ret1.partial)
         ret2, _ = FetchAttribute.parse(b'BODY[1.2.MIME]')
         self.assertEqual(b'BODY', ret2.attribute)
-        self.assertEqual(([1, 2], b'MIME', None), ret2.section)
+        self.assertEqual(((1, 2), b'MIME', None), ret2.section)
         self.assertIsNone(ret2.partial)
         ret3, _ = FetchAttribute.parse(b'BODY[HEADER]')
         self.assertEqual(b'BODY', ret3.attribute)
@@ -270,9 +263,9 @@ class TestFetchAttribute(unittest.TestCase):
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         attr2 = FetchAttribute(b'BODY',
-                               ([1, 2], b'STUFF', [b'A', b'B']),
+                               ((1, 2), b'STUFF', [b'A', b'B']),
                                (b'4', b'5'))
-        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4.5>', bytes(attr2))
+        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4>', bytes(attr2))
 
 
 class TestSearchKey(unittest.TestCase):
