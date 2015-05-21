@@ -24,6 +24,7 @@ import random
 
 from pymap.interfaces import MailboxInterface
 from pymap.exceptions import *  # NOQA
+from .message import Message
 
 __all__ = ['Mailbox']
 
@@ -38,7 +39,7 @@ class Mailbox(MailboxInterface):
     def __init__(self, name):
         super().__init__(name)
         self.uid_validity = random.randint(1, 32768)
-        self.messages = None
+        self.messages = []
 
     @property
     def exists(self):
@@ -87,20 +88,35 @@ class Mailbox(MailboxInterface):
                 if uid_set.contains(msg.uid, max_uid)]
 
     @asyncio.coroutine
+    def append_message(self, message, flag_list=None, when=None):
+        msg = Message(self.exists, self.next_uid, flag_list, message)
+        self.messages.append(msg)
+
+    @asyncio.coroutine
     def expunge(self):
-        raise MailboxReadOnly(self.name)
+        new_messages = []
+        for msg in self.messages:
+            if br'\Deleted' not in msg.flags:
+                new_messages.append(msg)
+        self.messages = new_messages
 
     @asyncio.coroutine
     def copy(self, messages, mailbox):
-        raise MailboxReadOnly(self.name)
+        raise NotImplementedError
 
     @asyncio.coroutine
     def search(self, keys):
-        pass
+        raise NotImplementedError
 
     @asyncio.coroutine
     def update_flags(self, messages, flag_list, mode='replace'):
-        raise MailboxReadOnly(self.name)
+        for msg in messages:
+            if mode == 'add':
+                msg.flags = list(set(msg.flags) | set(flag_list))
+            elif mode == 'delete':
+                msg.flags = list(set(msg.flags) - set(flag_list))
+            else:
+                msg.flags = flag_list
 
     @asyncio.coroutine
     def get_unseen(self):
@@ -112,4 +128,4 @@ class Mailbox(MailboxInterface):
 
     @asyncio.coroutine
     def poll(self):
-        return {}
+        pass
