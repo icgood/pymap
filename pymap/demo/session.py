@@ -23,6 +23,7 @@ import asyncio
 
 from pymap.interfaces import SessionInterface
 from pymap.exceptions import *  # NOQA
+from .mailbox import Mailbox
 
 __all__ = ['Session']
 
@@ -52,19 +53,31 @@ class Session(SessionInterface):
 
     @asyncio.coroutine
     def create_mailbox(self, name):
-        pass
+        for mbx in self.mailboxes:
+            if mbx.name == name:
+                raise MailboxConflict(name)
+        self.mailboxes.append(Mailbox(name))
 
     @asyncio.coroutine
     def delete_mailbox(self, name):
-        pass
+        for i, mbx in enumerate(self.mailboxes):
+            if mbx.name == name:
+                self.mailboxes.pop(i)
+                break
+        else:
+            raise MailboxNotFound(name)
 
     @asyncio.coroutine
     def rename_mailbox(self, before_name, after_name):
-        pass
-
-    @asyncio.coroutine
-    def append_message(self, mailbox, message, flag_list=None, when=None):
-        raise MailboxReadOnly(mailbox)
+        for mbx in self.mailboxes:
+            if mbx.name == after_name:
+                raise MailboxConflict(after_name)
+        for mbx in self.mailboxes:
+            if mbx.name == before_name:
+                mbx.name = after_name
+                break
+        else:
+            raise MailboxNotFound(before_name)
 
     @asyncio.coroutine
     def subscribe(self, name):
