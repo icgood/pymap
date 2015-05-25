@@ -21,6 +21,8 @@
 
 import asyncio
 import random
+from copy import copy
+from weakref import WeakSet
 
 from pymap.interfaces import MailboxInterface
 from pymap.exceptions import *  # NOQA
@@ -36,19 +38,36 @@ class Mailbox(MailboxInterface):
              br'\Flagged']
     permanent_flags = flags
 
+    uid_validities = {}
+    messages = {}
+    instances = WeakSet()
+
     def __init__(self, name):
         super().__init__(name)
-        self.uid_validity = random.randint(1, 32768)
-        self.messages = []
+        self.instances.add(self)
+        self.uid_validity = self.uid_validities.setdefault(
+            name, random.randint(1, 32768))
+        self._reset_changes()
+
+    def _reset_changes(self):
+        self.changes = {'expunge': [], 'flags': []}
+
+    @property
+    def _messages(self):
+        return self.messages[self.name]
+
+    @_messages.setter
+    def _messages(self, messages):
+        self.messages[self.name] = messages
 
     @property
     def exists(self):
-        return len(self.messages)
+        return len(self._messages)
 
     @property
     def recent(self):
         recent = 0
-        for msg in self.messages:
+        for msg in self._messages:
             if br'\Recent' in msg.flags:
                 recent += 1
         return recent
@@ -56,21 +75,21 @@ class Mailbox(MailboxInterface):
     @property
     def unseen(self):
         unseen = 0
-        for msg in self.messages:
+        for msg in self._messages:
             if br'\Seen' not in msg.flags:
                 unseen += 1
         return unseen
 
     @property
     def first_unseen(self):
-        for msg in self.messages:
+        for i, msg in enumerate(self._messages):
             if br'\Seen' not in msg.flags:
-                return msg.seq
+                return i + 1
 
     @property
     def next_uid(self):
         max_uid = 0
-        for msg in self.messages:
+        for msg in self._messages:
             if msg.uid > max_uid:
                 max_uid = msg.uid
         return max_uid + 1
@@ -78,27 +97,32 @@ class Mailbox(MailboxInterface):
     @asyncio.coroutine
     def get_messages_by_seq(self, seq_set):
         max_seq = self.exists
-        return [msg for msg in self.messages
-                if seq_set.contains(msg.seq, max_seq)]
+        return [(i+1, msg) for i, msg in enumerate(self._messages)
+                if seq_set.contains(i+1, max_seq)]
 
     @asyncio.coroutine
     def get_messages_by_uid(self, uid_set):
         max_uid = self.next_uid - 1
-        return [msg for msg in self.messages
+        return [(i+1, msg) for i, msg in enumerate(self._messages)
                 if uid_set.contains(msg.uid, max_uid)]
 
     @asyncio.coroutine
-    def append_message(self, message, flag_list=None, when=None):
-        msg = Message(self.exists, self.next_uid, flag_list, message)
-        self.messages.append(msg)
+    def append_message(self, message, flag_set=None, when=None):
+        msg = Message(self.next_uid, flag_set, message)
+        self._messages.append(msg)
+        for instance in self.instances:
+            instance.changes['new_messages'] = True
 
     @asyncio.coroutine
     def expunge(self):
         new_messages = []
-        for msg in self.messages:
-            if br'\Deleted' not in msg.flags:
+        for i, msg in enumerate(self._messages):
+            if br'\Deleted' in msg.flags:
+                for instance in self.instances:
+                    instance.changes['expunge'].append(i+1)
+            else:
                 new_messages.append(msg)
-        self.messages = new_messages
+        self._messages = new_messages
 
     @asyncio.coroutine
     def copy(self, messages, mailbox):
@@ -109,23 +133,22 @@ class Mailbox(MailboxInterface):
         raise NotImplementedError
 
     @asyncio.coroutine
-    def update_flags(self, messages, flag_list, mode='replace'):
-        for msg in messages:
+    def update_flags(self, messages, flag_set, mode='replace', silent=False):
+        for msg_seq, msg in messages:
+            before_flags = copy(msg.flags)
             if mode == 'add':
-                msg.flags = list(set(msg.flags) | set(flag_list))
-            elif mode == 'delete':
-                msg.flags = list(set(msg.flags) - set(flag_list))
+                msg.flags = msg.flags | flag_set
+            elif mode == 'subtract':
+                msg.flags = msg.flags - flag_set
             else:
-                msg.flags = flag_list
-
-    @asyncio.coroutine
-    def get_unseen(self):
-        count = 0
-        for msg in self.messages:
-            if br'\Seen' not in msg.flags:
-                count += 1
-        return count
+                msg.flags = flag_set
+            if before_flags != msg.flags:
+                for instance in self.instances:
+                    if instance != self or not silent:
+                        instance.changes['flags'].append((msg_seq, msg))
 
     @asyncio.coroutine
     def poll(self):
-        pass
+        old_changes = self.changes
+        self._reset_changes()
+        return old_changes

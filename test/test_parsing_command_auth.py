@@ -2,8 +2,9 @@
 import unittest
 from datetime import datetime, timezone
 
+from pymap.flags import Flag
 from pymap.parsing import NotParseable
-from pymap.parsing.specials import Flag, StatusAttribute
+from pymap.parsing.specials import StatusAttribute
 from pymap.parsing.command import *  # NOQA
 from pymap.parsing.command.auth import *  # NOQA
 
@@ -26,7 +27,7 @@ class TestAppendCommand(unittest.TestCase):
         self.assertEqual(b'tag', ret.tag)
         self.assertEqual('INBOX', ret.mailbox)
         self.assertEqual(b'test test!', ret.message)
-        self.assertEqual([Flag(br'\Seen')], ret.flag_list)
+        self.assertEqual({Flag(br'\Seen')}, ret.flag_set)
         self.assertEqual(datetime(1970, 1, 1, 1, 1, tzinfo=timezone.utc),
                          ret.when)
         self.assertEqual(b'  ', buf)
@@ -37,7 +38,7 @@ class TestAppendCommand(unittest.TestCase):
         self.assertEqual(b'tag', ret.tag)
         self.assertEqual('INBOX', ret.mailbox)
         self.assertEqual(b'test test!', ret.message)
-        self.assertEqual([], ret.flag_list)
+        self.assertFalse(ret.flag_set)
         self.assertEqual(b'  ', buf)
 
 

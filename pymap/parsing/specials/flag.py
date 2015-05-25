@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 #
 
+from pymap.flags import Flag as FlagClass
 from .. import NotParseable, Space
 from ..primitives import Atom
 from . import Special
@@ -36,28 +37,7 @@ class Flag(Special):
 
     def __init__(self, flag):
         super().__init__()
-        self.value = self._capitalize(flag)
-
-    def _capitalize(self, value):
-        if value.startswith(b'\\'):
-            return b'\\' + value[1:].capitalize()
-        return value
-
-    def __eq__(self, other):
-        if isinstance(other, Flag):
-            return self.value == other.value
-        elif isinstance(other, bytes):
-            return self.value == self._capitalize(other)
-        elif isinstance(other, str):
-            other = bytes(other, 'ascii')
-            return self.value == self._capitalize(other)
-        return NotImplemented
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __hash__(self):
-        return hash(self.value)
+        self.value = FlagClass(flag)
 
     @classmethod
     def parse(cls, buf, **kwargs):

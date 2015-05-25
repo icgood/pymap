@@ -1,8 +1,9 @@
 
 import unittest
 
+from pymap.flags import Flag
 from pymap.parsing import NotParseable
-from pymap.parsing.specials import Flag, FetchAttribute, SearchKey
+from pymap.parsing.specials import FetchAttribute, SearchKey
 from pymap.parsing.command import *  # NOQA
 from pymap.parsing.command.select import *  # NOQA
 
@@ -73,7 +74,7 @@ class TestStoreCommand(unittest.TestCase):
             b'tag', b' 1,2,3 +FLAGS.SILENT (\\Seen)\n  ')
         self.assertEqual(b'tag', ret.tag)
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
-        self.assertSetEqual({Flag(br'\Seen')}, ret.flag_list)
+        self.assertSetEqual({Flag(br'\Seen')}, ret.flag_set)
         self.assertEqual('add', ret.mode)
         self.assertTrue(ret.silent)
         self.assertEqual(b'  ', buf)
@@ -82,7 +83,7 @@ class TestStoreCommand(unittest.TestCase):
         ret, buf = StoreCommand._parse(b'tag', b' 1,2,3 FLAGS \\Seen\n  ')
         self.assertEqual(b'tag', ret.tag)
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
-        self.assertSetEqual({Flag(br'\Seen')}, ret.flag_list)
+        self.assertSetEqual({Flag(br'\Seen')}, ret.flag_set)
         self.assertEqual('replace', ret.mode)
         self.assertFalse(ret.silent)
         self.assertEqual(b'  ', buf)

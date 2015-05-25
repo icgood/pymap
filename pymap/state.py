@@ -26,7 +26,7 @@ from pymap.exceptions import *  # NOQA
 
 from pymap.core import PymapError
 from pymap.parsing.primitives import List, Number
-from pymap.parsing.specials import FetchAttribute
+from pymap.parsing.specials import FetchAttribute, DateTime
 from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect
 from pymap.parsing.response import *  # NOQA
 from pymap.parsing.response.code import *  # NOQA
@@ -203,8 +203,7 @@ class ConnectionState(object):
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
         try:
-            flag_list = [flag.value for flag in cmd.flag_list]
-            yield from mbx.append_message(cmd.message, flag_list, cmd.when)
+            yield from mbx.append_message(cmd.message, cmd.flag_set, cmd.when)
         except AppendFailure as exc:
             return ResponseNo(cmd.tag, bytes(str(exc), 'utf-8'))
         return ResponseOk(cmd.tag, b'APPEND completed.')
@@ -290,16 +289,16 @@ class ConnectionState(object):
                 yield from self.selected.update_flags(
                     messages, [br'\Seen'], 'add')
                 break
-        for msg in messages:
+        for msg_seq, msg in messages:
             structure = msg.structure_class(msg)
             fetch_data = {}
             for attr in cmd.attributes:
                 if attr.attribute == b'UID':
                     fetch_data[attr] = Number(msg.uid)
                 elif attr.attribute == b'FLAGS':
-                    fetch_data[attr] = yield from msg.fetch_flags()
+                    fetch_data[attr] = List(msg.flags)
                 elif attr.attribute == b'INTERNALDATE':
-                    fetch_data[attr] = yield from msg.fetch_internal_date()
+                    fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
                     fetch_data[attr] = yield from \
                         structure.build_envelope_structure()
@@ -335,7 +334,7 @@ class ConnectionState(object):
                     fetch_data[attr] = yield from structure.get_text()
                 elif attr.attribute == b'RFC822.SIZE':
                     fetch_data[attr] = yield from structure.get_size()
-            resp.add_data(FetchResponse(msg.seq, fetch_data))
+            resp.add_data(FetchResponse(msg_seq, fetch_data))
         return resp
 
     @asyncio.coroutine
@@ -343,25 +342,21 @@ class ConnectionState(object):
         messages = yield from self.selected.search(cmd.keys)
         resp = ResponseOk(cmd.tag, b'SEARCH completed.')
         if cmd.uid:
-            seqs = [msg.uid for msg in messages]
+            seqs = [msg.uid for _, msg in messages]
         else:
-            seqs = [msg.seq for msg in messages]
+            seqs = [msg_seq for msg_seq, msg in messages]
         resp.add_data(SearchResponse(seqs))
         return resp
 
     @asyncio.coroutine
     def do_store(self, cmd):
         messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
-        flag_list = [flag.value for flag in cmd.flag_list]
-        yield from self.selected.update_flags(messages, flag_list, cmd.mode)
+        yield from self.selected.update_flags(messages, cmd.flag_set, cmd.mode,
+                                              silent=cmd.silent)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         attr_list = [self.flags_attr]
         if cmd.uid:
             attr_list.append(FetchAttribute(b'UID'))
-        if not cmd.silent:
-            for msg in messages:
-                fetch_data = {self.flags_attr: (yield from msg.fetch_flags())}
-                resp.add_data(FetchResponse(msg.seq, fetch_data))
         return resp
 
     @asyncio.coroutine
@@ -374,17 +369,16 @@ class ConnectionState(object):
     def _check_mailbox_updates(self, cmd, resp):
         send_expunge = not getattr(cmd, 'no_expunge_response', False)
         updates = yield from self.selected.poll()
-        if 'exists' in updates:
-            resp.add_data(ExistsResponse(updates['exists']))
-        if 'recent' in updates:
-            resp.add_data(RecentResponse(updates['recent']))
+        if updates.get('new_messages', False):
+            resp.add_data(ExistsResponse(self.selected.exists))
+            resp.add_data(RecentResponse(self.selected.recent))
         if 'expunge' in updates and send_expunge:
-            for seq in updates['expunge']:
-                resp.add_data(ExpungeResponse(seq))
-        if 'fetch' in updates:
-            for msg in updates['fetch']:
-                fetch_data = yield from msg.fetch([self.flags_attr])
-                resp.add_data(FetchResponse(msg.seq, fetch_data))
+            for msg_seq in updates['expunge']:
+                resp.add_data(ExpungeResponse(msg_seq))
+        if 'flags' in updates:
+            for msg_seq, msg in updates['flags']:
+                fetch_data = {self.flags_attr: List(msg.flags)}
+                resp.add_data(FetchResponse(msg_seq, fetch_data))
 
     @asyncio.coroutine
     def do_command(self, cmd):

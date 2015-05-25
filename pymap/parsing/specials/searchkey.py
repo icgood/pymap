@@ -22,9 +22,10 @@
 import re
 from datetime import datetime
 
+from pymap.flags import Flag
 from .. import Parseable, NotParseable, UnexpectedType, Space
 from ..primitives import Atom, Number, QuotedString, List
-from . import Special, AString, Flag, SequenceSet
+from . import Special, AString, SequenceSet
 
 __all__ = ['SearchKey']
 

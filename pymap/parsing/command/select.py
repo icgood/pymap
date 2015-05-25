@@ -144,7 +144,7 @@ class StoreCommand(CommandSelect):
                  uid=False, mode='replace', silent=False):
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.flag_list = frozenset(flag_list)
+        self.flag_set = frozenset(flag.value for flag in flag_list)
         self.uid = uid
         self.mode = mode
         self.silent = silent

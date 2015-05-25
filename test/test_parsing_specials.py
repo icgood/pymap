@@ -120,17 +120,6 @@ class TestFlag(unittest.TestCase):
         self.assertEqual(br'\Seen', ret2.value)
         self.assertEqual(b'  ', buf2)
 
-    def test_cmp(self):
-        f1 = Flag(br'\Flag1')
-        f2 = Flag(br'\Flag2')
-        f3 = Flag(br'\Flag1')
-        self.assertEqual(f1, f3)
-        self.assertEqual(f1, br'\Flag1')
-        self.assertNotEqual(f1, br'\Flag2')
-        self.assertEqual(f1, r'\Flag1')
-        self.assertNotEqual(f1, r'\Flag2')
-        self.assertNotEqual(f1, f2)
-
     def test_bytes(self):
         f1 = Flag(br'\testflag')
         self.assertEqual(br'\Testflag', bytes(f1))
@@ -321,7 +310,7 @@ class TestSearchKey(unittest.TestCase):
     def test_parse_filter_keyword(self):
         ret, buf = SearchKey.parse(b'keyword test')
         self.assertEqual(b'KEYWORD', ret.key)
-        self.assertEqual(Flag(b'test'), ret.filter)
+        self.assertEqual(b'test', ret.filter)
         self.assertFalse(ret.inverse)
 
     def test_parse_filter_number(self):

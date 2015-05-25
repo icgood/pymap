@@ -174,7 +174,8 @@ class MailboxInterface(object):
 
         :param seqs: List of items, as described in
                      :class:`~pymap.parsing.specials.SequenceSet`.
-        :returns: List of :class:`Message` objects.
+        :returns: List of two-tuples with the message sequence and
+                  :class:`MessageInterface` object.
 
         """
         raise NotImplementedError
@@ -186,20 +187,37 @@ class MailboxInterface(object):
 
         :param seqs: List of items, as described in
                      :class:`~pymap.parsing.specials.SequenceSet`.
-        :returns: List of :class:`Message` objects.
+        :returns: List of two-tuples with the message sequence and
+                  :class:`MessageInterface` object.
 
         """
         raise NotImplementedError
 
     @asyncio.coroutine
-    def append_message(self, message, flag_list=None, when=None):
+    def search(self, keys):
+        """Get the :class:`MessageInterface` objects in the current mailbox
+        that meet the given search criteria.
+
+        .. seealso: `RFC 3501 7.2.5
+        <https://tools.ietf.org/html/rfc3501#section-7.2.5>`_
+
+        :param list keys: List of :class:`~pymap.parsing.specials.SearchKey`
+                          objects specifying the search criteria.
+        :returns: List of two-tuples with the message sequence and
+                  :class:`MessageInterface` object.
+
+        """
+        raise NotImplementedError
+
+    @asyncio.coroutine
+    def append_message(self, message, flag_set=None, when=None):
         """Appends a message to the end of the mailbox.
 
         .. seealso: `RFC 3501 6.3.11
         <https://tools.ietf.org/html/rfc3501#section-6.3.11>`_
 
         :param bytes message: The contents of the message.
-        :param flag_list: List of flag bytestrings.
+        :param flag_set: Set of flag bytestrings.
         :param when: The internal time associated with the message.
         :type when: :py:class:`~datetime.datetime`
         :raises: :class:`~pymap.exceptions.MailboxNotFound`,
@@ -216,6 +234,7 @@ class MailboxInterface(object):
         .. seealso: `RFC 3501 6.4.3
         <https://tools.ietf.org/html/rfc3501#section-6.4.3>`_
 
+        :returns: List of :class:`MessageInterface` objects expunged.
         :raises: :class:`~pymap.exceptions.MailboxReadOnly`
 
         """
@@ -228,7 +247,8 @@ class MailboxInterface(object):
         .. seealso: `RFC 3501 6.4.7
         <https://tools.ietf.org/html/rfc3501#section-6.4.7>`_
 
-        :param messages: List of :class:`Message` objects.
+        :param list messages: List of two-tuples with the message sequence and
+                              :class:`MessageInterface` object.
         :param str name: Name of the mailbox to copy messages into.
         :raises: :class:`~pymap.exceptions.MailboxNotFound`
 
@@ -236,38 +256,35 @@ class MailboxInterface(object):
         raise NotImplementedError
 
     @asyncio.coroutine
-    def search(self, keys):
-        """Get a list of :class:`Message` objects in the current mailbox that
-        meet the given search criteria.
-
-        .. seealso: `RFC 3501 7.2.5
-        <https://tools.ietf.org/html/rfc3501#section-7.2.5>`_
-
-        :param list keys: List of :class:`~pymap.parsing.specials.SearchKey`
-                          objects specifying the search criteria.
-
-        """
-        raise NotImplementedError
-
-    @asyncio.coroutine
-    def update_flags(self, messages, flag_list, mode='replace'):
+    def update_flags(self, messages, flag_set, mode='replace', silent=False):
         """Update the flags for the given set of messages.
 
         .. seealso: `RFC 3501 6.4.6
         <https://tools.ietf.org/html/rfc3501#section-6.4.6>`_
 
-        :param messages: List of :class:`Message` objects.
-        :param flag_list: List of flag bytestrings.
+        :param list messages: List of two-tuples with the message sequence and
+                              :class:`MessageInterface` object.
+        :param flag_set: Set of flag bytestrings.
         :param str mode: Update mode, can be ``replace``, ``add`` or
                          ``delete``.
+        :param bool silent: If True, :meth:`.poll` on the current session will
+                            not return these flag updates.
 
         """
         raise NotImplementedError
 
     @asyncio.coroutine
     def poll(self):
-        """Checks the mailbox for any changes. This first time this is called
-        on the object, the ``exists`` and ``recent`` keys are always returned.
+        """Checks the mailbox for any changes. The following keys are allowed:
+
+         * ``new_messages``: If True, new messages in the mailbox have
+                             indicated a change in mailbox size. Should trigger
+                             an ``EXISTS`` or ``RECENT`` response.
+         * ``expunge``: A list of sequence numbers that have been removed from
+                        the mailbox by an ``EXPUNGE`` or ``CLOSE`` command.
+         * ``flags``: A list of messages that have have flag updates. Each list
+                      item is a two-tuple with the message sequence and
+                      :class:`MessageInterface` object.
 
         :returns: Dictionary with anything that has changed since the last
                   :meth:`.poll`.
@@ -283,15 +300,18 @@ class MessageInterface(object):
     #: for FETCH responses. It may be overridden with this attribute.
     structure_class = MessageStructure
 
-    def __init__(self, seq, uid):
+    def __init__(self, uid):
         super().__init__()
-
-        #: The message's sequence number in relation to other messages in the
-        #: mailbox.
-        self.seq = seq
 
         #: The message's unique identifier in the mailbox.
         self.uid = uid
+
+        #: The message's internal date, as a :class:`~datetime.datetime`
+        #: object.
+        self.internal_date = None
+
+        #: The message's set of flags.
+        self.flags = None
 
     @asyncio.coroutine
     def get_message(self, full=True):
@@ -305,25 +325,6 @@ class MessageInterface(object):
         :param bool full: If True, all message parts and sub-parts must have
                           payloads.
         :rtype: :class:`~email.message.Message`
-
-        """
-        raise NotImplementedError
-
-    @asyncio.coroutine
-    def fetch_internal_date(self):
-        """Returns the internal time associated with the message.
-
-        :rtype: :class:`~pymap.parsing.specials.DateTime`
-
-        """
-        raise NotImplementedError
-
-    @asyncio.coroutine
-    def fetch_flags(self):
-        """Returns the flags associated with the message.
-
-        :returns: List of bytestrings.
-        :rtype: :class:`~pymap.parsing.primitives.List`
 
         """
         raise NotImplementedError

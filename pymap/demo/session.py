@@ -30,15 +30,15 @@ __all__ = ['Session']
 
 class Session(SessionInterface):
 
-    def __init__(self, user, mailboxes):
+    def __init__(self, user):
         super().__init__(user)
-        self.mailboxes = mailboxes
+        self.mailboxes = [Mailbox(name) for name in Mailbox.messages.keys()]
 
     @classmethod
     @asyncio.coroutine
-    def login(cls, mailboxes, result):
+    def login(cls, result):
         if result.authcid == 'demouser' and result.check_secret('demopass'):
-            return cls(result.authcid, mailboxes)
+            return cls(result.authcid)
 
     @asyncio.coroutine
     def list_mailboxes(self, subscribed=False):

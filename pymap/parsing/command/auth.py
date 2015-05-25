@@ -57,7 +57,7 @@ class AppendCommand(CommandAuth):
         super().__init__(tag)
         self.mailbox_obj = mailbox
         self.message = message
-        self.flag_list = flag_list or []
+        self.flag_set = frozenset(flag.value for flag in (flag_list or []))
         self.when = when or datetime.now()
 
     @property

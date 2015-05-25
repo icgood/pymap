@@ -23,8 +23,6 @@ import asyncio
 import email
 from datetime import datetime, timezone
 
-from pymap.parsing.primitives import *  # NOQA
-from pymap.parsing.specials import DateTime
 from pymap.interfaces import MessageInterface
 
 __all__ = ['Message']
@@ -32,19 +30,12 @@ __all__ = ['Message']
 
 class Message(MessageInterface):
 
-    def __init__(self, seq, uid, flags, data):
-        super().__init__(seq, uid)
+    def __init__(self, uid, flags, data):
+        super().__init__(uid)
         self.flags = flags
+        self.internal_date = datetime.now(timezone.utc)
         self.data = email.message_from_bytes(data)
 
     @asyncio.coroutine
     def get_message(self, full=True):
         return self.data
-
-    @asyncio.coroutine
-    def fetch_internal_date(self):
-        return DateTime(datetime.now(timezone.utc))
-
-    @asyncio.coroutine
-    def fetch_flags(self):
-        return List(self.flags)

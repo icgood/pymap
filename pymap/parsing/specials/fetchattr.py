@@ -67,6 +67,10 @@ class FetchAttribute(Special):
         if self._raw is not None:
             return self._raw
         parts = [self.attribute]
+        if self.attribute == b'BODY.PEEK':
+            parts = [b'BODY']
+        else:
+            parts = [self.attribute]
         if self.section:
             parts.append(b'[')
             if self.section[0]:

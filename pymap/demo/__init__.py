@@ -23,11 +23,9 @@ import re
 import os.path
 from heapq import heappush
 from contextlib import closing
-from functools import partial
 
 from pkg_resources import resource_listdir, resource_stream
 
-from pymap.parsing.specials import Flag
 from .mailbox import Mailbox
 from .message import Message
 from .session import Session
@@ -36,10 +34,8 @@ __all__ = ['add_subparser', 'init']
 
 
 def _load_data():
-    mailboxes = []
     for mailbox_name in resource_listdir('pymap.demo', 'data'):
         mailbox_path = os.path.join('data', mailbox_name)
-        mailbox = Mailbox(mailbox_name)
         messages = []
         for message_name in resource_listdir('pymap.demo', mailbox_path):
             match = re.match(r'^message-(\d+)\.txt$', message_name)
@@ -50,13 +46,12 @@ def _load_data():
             message_stream = resource_stream('pymap.demo', message_path)
             with closing(message_stream):
                 flags_line = message_stream.readline()
-                message_flags = [Flag(flag) for flag in flags_line.split()]
+                message_flags = frozenset(flags_line.split())
                 message_data = message_stream.read()
             heappush(messages, (message_uid, message_flags, message_data))
-        mailbox.messages = [Message(i+1, *message_info)
-                            for i, message_info in enumerate(messages)]
-        mailboxes.append(mailbox)
-    return mailboxes
+        mailbox_data = [Message(uid, flags, data)
+                        for uid, flags, data in messages]
+        Mailbox.messages[mailbox_name] = mailbox_data
 
 
 def add_subparser(subparsers):
@@ -64,4 +59,5 @@ def add_subparser(subparsers):
 
 
 def init(args):
-    return partial(Session.login, _load_data())
+    _load_data()
+    return Session.login
