@@ -287,7 +287,7 @@ class ConnectionState(object):
         for attr in cmd.attributes:
             if attr.set_seen:
                 yield from self.selected.update_flags(
-                    messages, [br'\Seen'], 'add')
+                    messages, {br'\Seen'}, 'add')
                 break
         for msg_seq, msg in messages:
             structure = msg.structure_class(msg)
