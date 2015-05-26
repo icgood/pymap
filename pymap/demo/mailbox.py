@@ -108,7 +108,7 @@ class Mailbox(MailboxInterface):
 
     @asyncio.coroutine
     def append_message(self, message, flag_set=None, when=None):
-        msg = Message(self.next_uid, flag_set, message)
+        msg = Message(self.next_uid, flag_set, message, when=when)
         self._messages.append(msg)
         for instance in self.instances:
             instance.changes['new_messages'] = True

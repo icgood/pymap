@@ -372,13 +372,13 @@ class ConnectionState(object):
         if updates.get('new_messages', False):
             resp.add_data(ExistsResponse(self.selected.exists))
             resp.add_data(RecentResponse(self.selected.recent))
-        if 'expunge' in updates and send_expunge:
-            for msg_seq in updates['expunge']:
-                resp.add_data(ExpungeResponse(msg_seq))
         if 'flags' in updates:
             for msg_seq, msg in updates['flags']:
                 fetch_data = {self.flags_attr: List(msg.flags)}
                 resp.add_data(FetchResponse(msg_seq, fetch_data))
+        if 'expunge' in updates and send_expunge:
+            for msg_seq in updates['expunge']:
+                resp.add_data(ExpungeResponse(msg_seq))
 
     @asyncio.coroutine
     def do_command(self, cmd):

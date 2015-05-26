@@ -22,6 +22,7 @@
 import io
 import asyncio
 import email
+from email.message import Message
 from email.generator import BytesGenerator
 from email.policy import SMTP
 from email.charset import Charset
@@ -37,7 +38,7 @@ class ConcatenatedParseables(Parseable):
 
     def __init__(self, parseables):
         super().__init__()
-        self.parseables
+        self.parseables = parseables
         self._raw = None
 
     def __bytes__(self):
@@ -58,10 +59,14 @@ class TextOnlyBytesGenerator(BytesGenerator):
 
 
 class MessageStructure(object):
-    """Pulls the information from a :class:`~pymap.interface.MessageInterface`
+    """Pulls the information from a message object
     necessary to gather `message attributes
     <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the
     `FETCH responses <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_.
+
+    :param message: The message object.
+    :type message: :class:`~email.message.Message` or
+                   :class:`~pymap.interfaces.MessageInterface`
 
     """
 
@@ -69,10 +74,13 @@ class MessageStructure(object):
 
     def __init__(self, message):
         super().__init__()
-
-        #: The :class:`~email.message.Message` object to generate structure
-        #: for.
         self.message = message
+
+    @asyncio.coroutine
+    def _get_msg(self, full=False):
+        if isinstance(self.message, Message):
+            return self.message
+        return (yield from self.message.get_message(full=full))
 
     def _get_str_or_nil(self, value):
         if value is None:
@@ -145,7 +153,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = yield from self.message.get_message(False)
+        msg = yield from self._get_msg(False)
         if section:
             try:
                 msg = self._get_subpart(msg, section)
@@ -177,7 +185,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = yield from self.message.get_message()
+        msg = yield from self._get_msg()
         if section:
             try:
                 msg = self._get_subpart(msg, section)
@@ -197,7 +205,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = yield from self.message.get_message()
+        msg = yield from self._get_msg()
         if section:
             try:
                 msg = self._get_subpart(msg, section)
@@ -219,7 +227,7 @@ class MessageStructure(object):
         :type: :class:`pymap.parsing.primitives.Number`
 
         """
-        msg = msg or (yield from self.message.get_message())
+        msg = msg or (yield from self._get_msg())
         data = bytes(msg)
         size = len(data)
         if with_lines:
@@ -242,7 +250,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.List`
 
         """
-        msg = msg or (yield from self.message.get_message(False))
+        msg = msg or (yield from self._get_msg(False))
         return List([self._get_header_str_or_nil(msg, 'Date'),
                      self._get_header_str_or_nil(msg, 'Subject'),
                      self._get_header_addresses_or_nil(msg, 'From'),
@@ -270,7 +278,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.List`
 
         """
-        msg = msg or (yield from self.message.get_message())
+        msg = msg or (yield from self._get_msg())
         maintype = self._get_str_or_nil(msg.get_content_maintype())
         subtype = self._get_str_or_nil(msg.get_content_subtype())
         if maintype.value == b'multipart':

@@ -21,6 +21,7 @@
 
 import asyncio
 import email
+from email.policy import SMTP
 from datetime import datetime, timezone
 
 from pymap.interfaces import MessageInterface
@@ -30,11 +31,11 @@ __all__ = ['Message']
 
 class Message(MessageInterface):
 
-    def __init__(self, uid, flags, data):
+    def __init__(self, uid, flags, data, when=None):
         super().__init__(uid)
         self.flags = flags
-        self.internal_date = datetime.now(timezone.utc)
-        self.data = email.message_from_bytes(data)
+        self.internal_date = when or datetime.now(timezone.utc)
+        self.data = email.message_from_bytes(data, policy=SMTP)
 
     @asyncio.coroutine
     def get_message(self, full=True):

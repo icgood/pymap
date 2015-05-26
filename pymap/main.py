@@ -108,6 +108,15 @@ class IMAPServer(object):
         yield from self.writer.drain()
 
     @asyncio.coroutine
+    def send_error_disconnect(self):
+        resp = ResponseBye(b'Unhandled server error.')
+        try:
+            yield from self.write_response(resp)
+            self.writer.close()
+        except Exception:
+            pass
+
+    @asyncio.coroutine
     def run(self):
         state = ConnectionState(self.writer.transport, self.backend)
         greeting = yield from state.do_greeting()
@@ -117,8 +126,13 @@ class IMAPServer(object):
                 cmd = yield from self.read_command()
             except BadCommand as bad:
                 yield from self.write_response(ResponseBadCommand(bad))
+            except (ConnectionResetError, BrokenPipeError):
+                break
             except Disconnected:
                 break
+            except Exception:
+                yield from self.send_error_disconnect()
+                raise
             else:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
@@ -136,12 +150,7 @@ class IMAPServer(object):
                     yield from self.write_response(close.response)
                     break
                 except Exception:
-                    resp = ResponseBye(b'Unhandled server error.')
-                    try:
-                        yield from self.write_response(resp)
-                        self.writer.close()
-                    except Exception:
-                        pass
+                    yield from self.send_error_disconnect()
                     raise
                 else:
                     yield from self.write_response(response)
