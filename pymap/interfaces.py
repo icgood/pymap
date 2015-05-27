@@ -168,6 +168,14 @@ class MailboxInterface(object):
         self.name = name
 
     @asyncio.coroutine
+    def sync(self):
+        """Synchronize the object with the mailbox backend. Object attributes
+        should be accurate based on the most recent state of the mailbox.
+
+        """
+        raise NotImplementedError
+
+    @asyncio.coroutine
     def get_messages_by_seq(self, seqs):
         """Get a list of :class:`Message` objects corresponding to given
         sequence set.
@@ -277,9 +285,8 @@ class MailboxInterface(object):
     def poll(self):
         """Checks the mailbox for any changes. The following keys are allowed:
 
-         * ``new_messages``: If True, new messages in the mailbox have
-                             indicated a change in mailbox size. Should trigger
-                             an ``EXISTS`` or ``RECENT`` response.
+         * ``append``: If True, new messages in the mailbox have indicated a
+                       change in mailbox size.
          * ``expunge``: A list of sequence numbers that have been removed from
                         the mailbox by an ``EXPUNGE`` or ``CLOSE`` command.
          * ``flags``: A list of messages that have have flag updates. Each list

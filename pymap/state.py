@@ -61,6 +61,9 @@ class ConnectionState(object):
         self.backend = backend
         self.session = None
         self.selected = None
+        self.expunge_buffer = set()
+        self.before_exists = 0
+        self.before_recent = 0
         self.capability = Capability([])
 
     @asyncio.coroutine
@@ -113,7 +116,7 @@ class ConnectionState(object):
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         self.selected = mbx
-        yield from mbx.poll()
+        yield from mbx.sync()
         code, data = self._get_mailbox_response_data(mbx)
         resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
         for data_part in data:
@@ -127,7 +130,7 @@ class ConnectionState(object):
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         self.selected = mbx
-        yield from mbx.poll()
+        yield from mbx.sync()
         code, data = self._get_mailbox_response_data(mbx, True)
         resp = ResponseOk(cmd.tag, b'Examined mailbox.', code)
         for data_part in data:
@@ -176,7 +179,6 @@ class ConnectionState(object):
             mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
-        yield from mbx.poll()
         resp = ResponseOk(cmd.tag, b'STATUS completed.')
         status_list = List([])
         for status_item in cmd.status_list:
@@ -202,6 +204,7 @@ class ConnectionState(object):
             mbx = yield from self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
+        yield from mbx.sync()
         try:
             yield from mbx.append_message(cmd.message, cmd.flag_set, cmd.when)
         except AppendFailure as exc:
@@ -369,15 +372,23 @@ class ConnectionState(object):
     def _check_mailbox_updates(self, cmd, resp):
         send_expunge = not getattr(cmd, 'no_expunge_response', False)
         updates = yield from self.selected.poll()
-        if updates.get('new_messages', False):
-            resp.add_data(ExistsResponse(self.selected.exists))
+        expunge = updates.get('expunge', set())
+        fetch = updates.get('fetch', {})
+        self.expunge_buffer |= expunge
+        if self.selected.exists > self.before_exists:
+            exists = self.selected.exists + len(self.expunge_buffer)
+            resp.add_data(ExistsResponse(exists))
+            self.before_exists = self.selected.exists
+        if self.selected.recent != self.before_recent:
             resp.add_data(RecentResponse(self.selected.recent))
-        if 'flags' in updates:
-            for msg_seq, msg in updates['flags']:
-                fetch_data = {self.flags_attr: List(msg.flags)}
-                resp.add_data(FetchResponse(msg_seq, fetch_data))
-        if 'expunge' in updates and send_expunge:
-            for msg_seq in updates['expunge']:
+            self.before_recent = self.selected.recent
+        for msg_seq, msg_flags in fetch.items():
+            fetch_data = {self.flags_attr: List(msg_flags)}
+            resp.add_data(FetchResponse(msg_seq, fetch_data))
+        if send_expunge and self.expunge_buffer:
+            expunge_seqs = sorted(self.expunge_buffer, reverse=True)
+            self.expunge_buffer.clear()
+            for msg_seq in expunge_seqs:
                 resp.add_data(ExpungeResponse(msg_seq))
 
     @asyncio.coroutine
@@ -391,6 +402,8 @@ class ConnectionState(object):
         elif not self.selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
+        if self.selected and isinstance(cmd, CommandSelect):
+            yield from self.selected.sync()
         pre_selected = self.selected
         func_name = 'do_' + str(cmd.command, 'ascii').lower()
         try:

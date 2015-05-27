@@ -38,6 +38,7 @@ class Mailbox(MailboxInterface):
              br'\Flagged']
     permanent_flags = flags
 
+    next_uids = {}
     uid_validities = {}
     messages = {}
     instances = {}
@@ -48,17 +49,11 @@ class Mailbox(MailboxInterface):
         self.uid_validity = self.uid_validities.setdefault(
             name, random.randint(1, 32768))
         self._reset_changes()
+        self._new_messages = False
+        self._messages = copy(self.messages[self.name])
 
     def _reset_changes(self):
-        self.changes = {'expunge': [], 'flags': []}
-
-    @property
-    def _messages(self):
-        return self.messages[self.name]
-
-    @_messages.setter
-    def _messages(self, messages):
-        self.messages[self.name] = messages
+        self._changes = {'expunge': set(), 'fetch': {}}
 
     @property
     def _instances(self):
@@ -92,11 +87,18 @@ class Mailbox(MailboxInterface):
 
     @property
     def next_uid(self):
-        max_uid = 0
-        for msg in self._messages:
-            if msg.uid > max_uid:
-                max_uid = msg.uid
-        return max_uid + 1
+        return self.next_uids.setdefault(self.name, self.exists+1)
+
+    def _increment_next_uid(self):
+        next_uid = self.next_uid
+        self.next_uids[self.name] += 1
+        return next_uid
+
+    @asyncio.coroutine
+    def sync(self):
+        if self._new_messages:
+            self._messages = copy(self.messages[self.name])
+            self._new_messages = False
 
     @asyncio.coroutine
     def get_messages_by_seq(self, seq_set):
@@ -107,15 +109,19 @@ class Mailbox(MailboxInterface):
     @asyncio.coroutine
     def get_messages_by_uid(self, uid_set):
         max_uid = self.next_uid - 1
-        return [(i+1, msg) for i, msg in enumerate(self._messages)
+        return [(i+1, msg) for msg in enumerate(self._messages)
                 if uid_set.contains(msg.uid, max_uid)]
 
     @asyncio.coroutine
     def append_message(self, message, flag_set=None, when=None):
-        msg = Message(self.next_uid, flag_set, message, when=when)
+        msg_uid = self._increment_next_uid()
+        msg = Message(msg_uid, flag_set, message, when=when)
         self._messages.append(msg)
         for instance in self._instances:
-            instance.changes['new_messages'] = True
+            instance._changes['append'] = True
+            instance._new_messages = True
+        self.messages[self.name] = self._messages
+        self._new_messages = False
 
     @asyncio.coroutine
     def expunge(self):
@@ -123,11 +129,14 @@ class Mailbox(MailboxInterface):
         for i, msg in enumerate(self._messages):
             if br'\Deleted' in msg.flags:
                 for instance in self._instances:
-                    instance.changes['expunge'].append(i+1)
+                    instance._changes['expunge'].add(i+1)
+                    instance._new_messages = True
             else:
                 new_messages.append(msg)
-
-        self._messages = new_messages
+        if self._new_messages:
+            self._messages = new_messages
+            self.messages[self.name] = new_messages
+            self._new_messages = False
 
     @asyncio.coroutine
     def copy(self, messages, mailbox):
@@ -150,10 +159,10 @@ class Mailbox(MailboxInterface):
             if before_flags != msg.flags:
                 for instance in self._instances:
                     if instance != self or not silent:
-                        instance.changes['flags'].append((msg_seq, msg))
+                        instance._changes['fetch'][msg_seq] = msg.flags
 
     @asyncio.coroutine
     def poll(self):
-        old_changes = self.changes
+        old_changes = self._changes
         self._reset_changes()
         return old_changes

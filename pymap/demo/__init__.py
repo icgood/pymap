@@ -21,7 +21,7 @@
 
 import re
 import os.path
-from heapq import heappush
+from bisect import insort_left
 from contextlib import closing
 
 from pkg_resources import resource_listdir, resource_stream
@@ -48,7 +48,7 @@ def _load_data():
                 flags_line = message_stream.readline()
                 message_flags = frozenset(flags_line.split())
                 message_data = message_stream.read()
-            heappush(messages, (message_uid, message_flags, message_data))
+            insort_left(messages, (message_uid, message_flags, message_data))
         mailbox_data = [Message(uid, flags, data)
                         for uid, flags, data in messages]
         Mailbox.messages[mailbox_name] = mailbox_data
