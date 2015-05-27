@@ -40,11 +40,11 @@ class Mailbox(MailboxInterface):
 
     uid_validities = {}
     messages = {}
-    instances = WeakSet()
+    instances = {}
 
     def __init__(self, name):
         super().__init__(name)
-        self.instances.add(self)
+        self._instances.add(self)
         self.uid_validity = self.uid_validities.setdefault(
             name, random.randint(1, 32768))
         self._reset_changes()
@@ -59,6 +59,10 @@ class Mailbox(MailboxInterface):
     @_messages.setter
     def _messages(self, messages):
         self.messages[self.name] = messages
+
+    @property
+    def _instances(self):
+        return self.instances.setdefault(self.name, WeakSet())
 
     @property
     def exists(self):
@@ -110,7 +114,7 @@ class Mailbox(MailboxInterface):
     def append_message(self, message, flag_set=None, when=None):
         msg = Message(self.next_uid, flag_set, message, when=when)
         self._messages.append(msg)
-        for instance in self.instances:
+        for instance in self._instances:
             instance.changes['new_messages'] = True
 
     @asyncio.coroutine
@@ -118,10 +122,11 @@ class Mailbox(MailboxInterface):
         new_messages = []
         for i, msg in enumerate(self._messages):
             if br'\Deleted' in msg.flags:
-                for instance in self.instances:
+                for instance in self._instances:
                     instance.changes['expunge'].append(i+1)
             else:
                 new_messages.append(msg)
+
         self._messages = new_messages
 
     @asyncio.coroutine
@@ -143,7 +148,7 @@ class Mailbox(MailboxInterface):
             else:
                 msg.flags = flag_set
             if before_flags != msg.flags:
-                for instance in self.instances:
+                for instance in self._instances:
                     if instance != self or not silent:
                         instance.changes['flags'].append((msg_seq, msg))
 
