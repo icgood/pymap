@@ -94,26 +94,22 @@ class Mailbox(MailboxInterface):
         self.next_uids[self.name] += 1
         return next_uid
 
-    @asyncio.coroutine
-    def sync(self):
+    async def sync(self):
         if self._new_messages:
             self._messages = copy(self.messages[self.name])
             self._new_messages = False
 
-    @asyncio.coroutine
-    def get_messages_by_seq(self, seq_set):
+    async def get_messages_by_seq(self, seq_set):
         max_seq = self.exists
         return [(i+1, msg) for i, msg in enumerate(self._messages)
                 if seq_set.contains(i+1, max_seq)]
 
-    @asyncio.coroutine
-    def get_messages_by_uid(self, uid_set):
+    async def get_messages_by_uid(self, uid_set):
         max_uid = self.next_uid - 1
         return [(i+1, msg) for msg in enumerate(self._messages)
                 if uid_set.contains(msg.uid, max_uid)]
 
-    @asyncio.coroutine
-    def append_message(self, message, flag_set=None, when=None):
+    async def append_message(self, message, flag_set=None, when=None):
         msg_uid = self._increment_next_uid()
         msg = Message(msg_uid, flag_set, message, when=when)
         self._messages.append(msg)
@@ -123,8 +119,7 @@ class Mailbox(MailboxInterface):
         self.messages[self.name] = self._messages
         self._new_messages = False
 
-    @asyncio.coroutine
-    def expunge(self):
+    async def expunge(self):
         new_messages = []
         for i, msg in enumerate(self._messages):
             if br'\Deleted' in msg.flags:
@@ -138,16 +133,14 @@ class Mailbox(MailboxInterface):
             self.messages[self.name] = new_messages
             self._new_messages = False
 
-    @asyncio.coroutine
-    def copy(self, messages, mailbox):
+    async def copy(self, messages, mailbox):
         raise NotImplementedError
 
-    @asyncio.coroutine
-    def search(self, keys):
+    async def search(self, keys):
         raise NotImplementedError
 
-    @asyncio.coroutine
-    def update_flags(self, messages, flag_set, mode='replace', silent=False):
+    async def update_flags(self, messages, flag_set, mode='replace',
+                           silent=False):
         for msg_seq, msg in messages:
             before_flags = copy(msg.flags)
             if mode == 'add':
@@ -161,8 +154,7 @@ class Mailbox(MailboxInterface):
                     if instance != self or not silent:
                         instance._changes['fetch'][msg_seq] = msg.flags
 
-    @asyncio.coroutine
-    def poll(self):
+    async def poll(self):
         old_changes = self._changes
         self._reset_changes()
         return old_changes

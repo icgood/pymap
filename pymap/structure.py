@@ -76,11 +76,10 @@ class MessageStructure(object):
         super().__init__()
         self.message = message
 
-    @asyncio.coroutine
-    def _get_msg(self, full=False):
+    async def _get_msg(self, full=False):
         if isinstance(self.message, Message):
             return self.message
-        return (yield from self.message.get_message(full=full))
+        return (await self.message.get_message(full=full))
 
     def _get_str_or_nil(self, value):
         if value is None:
@@ -136,8 +135,7 @@ class MessageStructure(object):
                 raise IndexError(section)
         return subpart
 
-    @asyncio.coroutine
-    def get_headers(self, section=None, subset=None, inverse=False):
+    async def get_headers(self, section=None, subset=None, inverse=False):
         """Get the headers from the message.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -153,7 +151,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = yield from self._get_msg(False)
+        msg = await self._get_msg(False)
         if section:
             try:
                 msg = self._get_subpart(msg, section)
@@ -173,8 +171,7 @@ class MessageStructure(object):
                 ret[key] = value
         return LiteralString(bytes(ret))
 
-    @asyncio.coroutine
-    def get_body(self, section=None):
+    async def get_body(self, section=None):
         """Get the full body of the message part, including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -185,7 +182,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = yield from self._get_msg()
+        msg = await self._get_msg()
         if section:
             try:
                 msg = self._get_subpart(msg, section)
@@ -193,8 +190,7 @@ class MessageStructure(object):
                 return Nil()
         return LiteralString(bytes(msg))
 
-    @asyncio.coroutine
-    def get_text(self, section=None):
+    async def get_text(self, section=None):
         """Get the text of the message part, not including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -205,7 +201,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = yield from self._get_msg()
+        msg = await self._get_msg()
         if section:
             try:
                 msg = self._get_subpart(msg, section)
@@ -215,8 +211,7 @@ class MessageStructure(object):
         TextOnlyBytesGenerator(ofp, False, policy=SMTP).flatten(msg)
         return LiteralString(ofp.getvalue())
 
-    @asyncio.coroutine
-    def get_size(self, with_lines=False, msg=None):
+    async def get_size(self, with_lines=False, msg=None):
         """Return the size of the message, in octets.
 
         :param with_lines: Return a two-tuple of
@@ -227,7 +222,7 @@ class MessageStructure(object):
         :type: :class:`pymap.parsing.primitives.Number`
 
         """
-        msg = msg or (yield from self._get_msg())
+        msg = msg or (await self._get_msg())
         data = bytes(msg)
         size = len(data)
         if with_lines:
@@ -236,8 +231,7 @@ class MessageStructure(object):
         else:
             return Number(size)
 
-    @asyncio.coroutine
-    def build_envelope_structure(self, msg=None):
+    async def build_envelope_structure(self, msg=None):
         """Build and return the envelope structure.
 
         .. seealso::
@@ -250,7 +244,7 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.List`
 
         """
-        msg = msg or (yield from self._get_msg(False))
+        msg = msg or (await self._get_msg(False))
         return List([self._get_header_str_or_nil(msg, 'Date'),
                      self._get_header_str_or_nil(msg, 'Subject'),
                      self._get_header_addresses_or_nil(msg, 'From'),
@@ -263,8 +257,7 @@ class MessageStructure(object):
                      self._get_header_str_or_nil(msg, 'In-Reply-To'),
                      self._get_header_str_or_nil(msg, 'Message-Id')])
 
-    @asyncio.coroutine
-    def build_body_structure(self, msg=None, ext_data=False):
+    async def build_body_structure(self, msg=None, ext_data=False):
         """Build and return the body structure.
 
         .. seealso::
@@ -278,31 +271,30 @@ class MessageStructure(object):
         :rtype: :class:`pymap.parsing.primitives.List`
 
         """
-        msg = msg or (yield from self._get_msg())
+        msg = msg or (await self._get_msg())
         maintype = self._get_str_or_nil(msg.get_content_maintype())
         subtype = self._get_str_or_nil(msg.get_content_subtype())
         if maintype.value == b'multipart':
-            child_structs = self._get_subparts(msg)
-            child_data = ConcatenatedParseables(
-                [(yield from struct.build_body_structure())
-                 for struct in child_structs])
-            return List([child_data, subtype])
+            child_data = []
+            for struct in self._get_subparts(msg):
+                child_data.append(await struct.build_body_structure())
+            return List([ConcatenatedParseables(child_data), subtype])
         params = self._get_header_params(msg)
         id = self._get_header_str_or_nil(msg, 'Content-Id')
         desc = self._get_header_str_or_nil(msg, 'Content-Description')
         encoding = self._get_header_str_or_nil(
             msg, 'Content-Transfer-Encoding')
         if maintype.value == b'message' and subtype.value == b'rfc822':
-            size, lines = yield from self.get_size(True, msg)
+            size, lines = await self.get_size(True, msg)
             child_structs = self._get_subparts(msg)
             sub_message = child_structs[0]
-            sub_message_env = yield from sub_message.get_envelope_structure()
-            sub_message_body = yield from sub_message.get_body_structure()
+            sub_message_env = await sub_message.get_envelope_structure()
+            sub_message_body = await sub_message.get_body_structure()
             return List([maintype, subtype, params, id, desc, encoding, size,
                          sub_message_env, sub_message_body, lines])
         elif maintype.value == b'text':
-            size, lines = yield from self.get_size(True, msg)
+            size, lines = await self.get_size(True, msg)
             return List([maintype, subtype,
                          params, id, desc, encoding, size, lines])
-        size = yield from self.get_size(msg=msg)
+        size = await self.get_size(msg=msg)
         return List([maintype, subtype, params, id, desc, encoding, size])

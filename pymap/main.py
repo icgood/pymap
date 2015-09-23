@@ -52,23 +52,20 @@ class IMAPServer(object):
         self.writer = writer
 
     @classmethod
-    @asyncio.coroutine
-    def callback(cls, backend, reader, writer):
-        yield from cls(backend, reader, writer).run()
+    async def callback(cls, backend, reader, writer):
+        await cls(backend, reader, writer).run()
 
-    @asyncio.coroutine
-    def read_continuation(self, literal_length):
+    async def read_continuation(self, literal_length):
         try:
-            extra_literal = yield from self.reader.readexactly(literal_length)
+            extra_literal = await self.reader.readexactly(literal_length)
         except asyncio.IncompleteReadError:
             raise Disconnected
-        extra_line = yield from self.reader.readline()
+        extra_line = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
         return extra_literal + extra_line
 
-    @asyncio.coroutine
-    def authenticate(self, state, mech):
+    async def authenticate(self, state, mech):
         responses = []
         while True:
             try:
@@ -76,17 +73,16 @@ class IMAPServer(object):
             except IssueChallenge as exc:
                 chal_bytes = b64encode(exc.challenge.challenge.encode('utf-8'))
                 cont = ResponseContinuation(chal_bytes)
-                yield from self.write_response(cont)
-                resp_bytes = yield from self.read_continuation(0)
+                await self.write_response(cont)
+                resp_bytes = await self.read_continuation(0)
                 exc.challenge.response = b64decode(resp_bytes).decode('utf-8')
                 responses.append(exc.challenge)
             else:
                 break
         return result
 
-    @asyncio.coroutine
-    def read_command(self):
-        line = yield from self.reader.readline()
+    async def read_command(self):
+        line = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
         conts = []
@@ -95,65 +91,62 @@ class IMAPServer(object):
                 cmd, _ = Command.parse(line, continuations=conts.copy())
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
-                yield from self.write_response(cont)
-                ret = yield from self.read_continuation(req.literal_length)
+                await self.write_response(cont)
+                ret = await self.read_continuation(req.literal_length)
                 conts.append(ret)
             else:
                 return cmd
 
-    @asyncio.coroutine
-    def write_response(self, resp):
+    async def write_response(self, resp):
         raw = bytes(resp)
         self.writer.write(raw)
-        yield from self.writer.drain()
+        await self.writer.drain()
 
-    @asyncio.coroutine
-    def send_error_disconnect(self):
+    async def send_error_disconnect(self):
         resp = ResponseBye(b'Unhandled server error.')
         try:
-            yield from self.write_response(resp)
+            await self.write_response(resp)
             self.writer.close()
         except Exception:
             pass
 
-    @asyncio.coroutine
-    def run(self):
+    async def run(self):
         state = ConnectionState(self.writer.transport, self.backend)
-        greeting = yield from state.do_greeting()
-        yield from self.write_response(greeting)
+        greeting = await state.do_greeting()
+        await self.write_response(greeting)
         while True:
             try:
-                cmd = yield from self.read_command()
+                cmd = await self.read_command()
             except BadCommand as bad:
-                yield from self.write_response(ResponseBadCommand(bad))
+                await self.write_response(ResponseBadCommand(bad))
             except (ConnectionResetError, BrokenPipeError):
                 break
             except Disconnected:
                 break
             except Exception:
-                yield from self.send_error_disconnect()
+                await self.send_error_disconnect()
                 raise
             else:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
-                        auth = yield from self.authenticate(state, cmd.mech)
-                        response = yield from state.do_authenticate(cmd, auth)
+                        auth = await self.authenticate(state, cmd.mech)
+                        response = await state.do_authenticate(cmd, auth)
                     elif isinstance(cmd, LoginCommand):
                         auth = AuthenticationResult(cmd.userid, cmd.password)
-                        response = yield from state.do_authenticate(cmd, auth)
+                        response = await state.do_authenticate(cmd, auth)
                     else:
-                        response = yield from state.do_command(cmd)
+                        response = await state.do_command(cmd)
                 except AuthenticationError as exc:
                     resp = ResponseBad(cmd.tag, bytes(str(exc), 'utf-8'))
-                    yield from self.write_response(resp)
+                    await self.write_response(resp)
                 except CloseConnection as close:
-                    yield from self.write_response(close.response)
+                    await self.write_response(close.response)
                     break
                 except Exception:
-                    yield from self.send_error_disconnect()
+                    await self.send_error_disconnect()
                     raise
                 else:
-                    yield from self.write_response(response)
+                    await self.write_response(response)
         self.writer.close()
 
 

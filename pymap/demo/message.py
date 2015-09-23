@@ -37,6 +37,5 @@ class Message(MessageInterface):
         self.internal_date = when or datetime.now(timezone.utc)
         self.data = email.message_from_bytes(data, policy=SMTP)
 
-    @asyncio.coroutine
-    def get_message(self, full=True):
+    async def get_message(self, full=True):
         return self.data

@@ -66,25 +66,21 @@ class ConnectionState(object):
         self.before_recent = 0
         self.capability = Capability([])
 
-    @asyncio.coroutine
-    def do_greeting(self):
+    async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
-    @asyncio.coroutine
-    def do_authenticate(self, cmd, result):
-        self.session = user = yield from self.backend(result)
+    async def do_authenticate(self, cmd, result):
+        self.session = user = await self.backend(result)
         if user:
             return ResponseOk(cmd.tag, b'Authentication successful.')
         return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
 
-    @asyncio.coroutine
-    def do_capability(self, cmd):
+    async def do_capability(self, cmd):
         response = ResponseOk(cmd.tag, b'Capabilities listed.')
         response.add_data(self.capability.to_response())
         return response
 
-    @asyncio.coroutine
-    def do_noop(self, cmd):
+    async def do_noop(self, cmd):
         return ResponseOk(cmd.tag, b'NOOP completed.')
 
     def _get_mailbox_response_data(self, mbx, examine=False):
@@ -109,50 +105,46 @@ class ConnectionState(object):
                                    Unseen(mbx.first_unseen)))
         return code, data
 
-    @asyncio.coroutine
-    def do_select(self, cmd):
+    async def do_select(self, cmd):
         try:
-            mbx = yield from self.session.get_mailbox(cmd.mailbox)
+            mbx = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         self.selected = mbx
-        yield from mbx.sync()
+        await mbx.sync()
         code, data = self._get_mailbox_response_data(mbx)
         resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
         for data_part in data:
             resp.add_data(data_part)
         return resp
 
-    @asyncio.coroutine
-    def do_examine(self, cmd):
+    async def do_examine(self, cmd):
         try:
-            mbx = yield from self.session.get_mailbox(cmd.mailbox)
+            mbx = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         self.selected = mbx
-        yield from mbx.sync()
+        await mbx.sync()
         code, data = self._get_mailbox_response_data(mbx, True)
         resp = ResponseOk(cmd.tag, b'Examined mailbox.', code)
         for data_part in data:
             resp.add_data(data_part)
         return resp
 
-    @asyncio.coroutine
-    def do_create(self, cmd):
+    async def do_create(self, cmd):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot create INBOX.')
         try:
-            yield from self.session.create_mailbox(cmd.mailbox)
+            await self.session.create_mailbox(cmd.mailbox)
         except MailboxConflict:
             return ResponseNo(cmd.tag, b'Mailbox already exists.')
         return ResponseOk(cmd.tag, b'Mailbox created successfully.')
 
-    @asyncio.coroutine
-    def do_delete(self, cmd):
+    async def do_delete(self, cmd):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot delete INBOX.')
         try:
-            yield from self.session.delete_mailbox(cmd.mailbox)
+            await self.session.delete_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox not found.')
         except MailboxHasChildren:
@@ -160,23 +152,20 @@ class ConnectionState(object):
             return ResponseNo(cmd.tag, msg)
         return ResponseOk(cmd.tag, b'Mailbox deleted successfully.')
 
-    @asyncio.coroutine
-    def do_rename(self, cmd):
+    async def do_rename(self, cmd):
         if cmd.to_mailbox == b'INBOX':
             return ResponseNo(cmd.tag, b'Cannot rename to INBOX.')
         try:
-            yield from self.session.rename_mailbox(cmd.from_mailbox,
-                                                   cmd.to_mailbox)
+            await self.session.rename_mailbox(cmd.from_mailbox, cmd.to_mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox not found.')
         except MailboxConflict:
             return ResponseNo(cmd.tag, b'Mailbox already exists.')
         return ResponseOk(cmd.tag, b'Mailbox renamed successfully.')
 
-    @asyncio.coroutine
-    def do_status(self, cmd):
+    async def do_status(self, cmd):
         try:
-            mbx = yield from self.session.get_mailbox(cmd.mailbox)
+            mbx = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
         resp = ResponseOk(cmd.tag, b'STATUS completed.')
@@ -198,35 +187,31 @@ class ConnectionState(object):
         resp.add_data(status)
         return resp
 
-    @asyncio.coroutine
-    def do_append(self, cmd):
+    async def do_append(self, cmd):
         try:
-            mbx = yield from self.session.get_mailbox(cmd.mailbox)
+            mbx = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
-        yield from mbx.sync()
+        await mbx.sync()
         try:
-            yield from mbx.append_message(cmd.message, cmd.flag_set, cmd.when)
+            await mbx.append_message(cmd.message, cmd.flag_set, cmd.when)
         except AppendFailure as exc:
             return ResponseNo(cmd.tag, bytes(str(exc), 'utf-8'))
         return ResponseOk(cmd.tag, b'APPEND completed.')
 
-    @asyncio.coroutine
-    def do_subscribe(self, cmd):
-        yield from self.session.subscribe(cmd.mailbox)
+    async def do_subscribe(self, cmd):
+        await self.session.subscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'SUBSCRIBE completed.')
 
-    @asyncio.coroutine
-    def do_unsubscribe(self, cmd):
-        yield from self.session.unsubscribe(cmd.mailbox)
+    async def do_unsubscribe(self, cmd):
+        await self.session.unsubscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'UNSUBSCRIBE completed.')
 
     def _mailbox_matches(self, name, sep, ref_name, filter):
         return True
 
-    @asyncio.coroutine
-    def do_list(self, cmd):
-        mailboxes = yield from self.session.list_mailboxes()
+    async def do_list(self, cmd):
+        mailboxes = await self.session.list_mailboxes()
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for mbx in mailboxes:
             if self._mailbox_matches(mbx.name, mbx.sep,
@@ -235,9 +220,8 @@ class ConnectionState(object):
                                            marked=bool(mbx.recent)))
         return resp
 
-    @asyncio.coroutine
-    def do_lsub(self, cmd):
-        mailboxes = yield from self.session.list_mailboxes(subscribed=True)
+    async def do_lsub(self, cmd):
+        mailboxes = await self.session.list_mailboxes(subscribed=True)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for mbx in mailboxes:
             if self._mailbox_matches(mbx.name, mbx.sep,
@@ -245,52 +229,45 @@ class ConnectionState(object):
                 resp.add_data(LSubResponse(mbx.name, mbx.sep))
         return resp
 
-    @asyncio.coroutine
-    def do_check(self, cmd):
+    async def do_check(self, cmd):
         return ResponseOk(cmd.tag, b'CHECK completed.')
 
-    @asyncio.coroutine
-    def do_close(self, cmd):
+    async def do_close(self, cmd):
         try:
-            yield from self.selected.expunge()
+            await self.selected.expunge()
         except MailboxReadOnly:
             pass
         self.selected = None
         return ResponseOk(cmd.tag, b'CLOSE completed.')
 
-    @asyncio.coroutine
-    def do_expunge(self, cmd):
+    async def do_expunge(self, cmd):
         try:
-            yield from self.selected.expunge()
+            await self.selected.expunge()
         except MailboxReadOnly:
             return ResponseNo(cmd.tag, b'Mailbox is read-only.', ReadOnly())
         resp = ResponseOk(cmd.tag, b'EXPUNGE completed.')
         return resp
 
-    @asyncio.coroutine
-    def _get_messages(self, seq_set, by_uid):
+    async def _get_messages(self, seq_set, by_uid):
         if by_uid:
-            return (yield from self.selected.get_messages_by_uid(seq_set))
+            return (await self.selected.get_messages_by_uid(seq_set))
         else:
-            return (yield from self.selected.get_messages_by_seq(seq_set))
+            return (await self.selected.get_messages_by_seq(seq_set))
 
-    @asyncio.coroutine
-    def do_copy(self, cmd):
-        messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
+    async def do_copy(self, cmd):
+        messages = await self._get_messages(cmd.sequence_set, cmd.uid)
         try:
-            yield from self.selected.copy(messages, cmd.mailbox)
+            await self.selected.copy(messages, cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
         return ResponseOk(cmd.tag, b'COPY completed.')
 
-    @asyncio.coroutine
-    def do_fetch(self, cmd):
-        messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
+    async def do_fetch(self, cmd):
+        messages = await self._get_messages(cmd.sequence_set, cmd.uid)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for attr in cmd.attributes:
             if attr.set_seen:
-                yield from self.selected.update_flags(
-                    messages, {br'\Seen'}, 'add')
+                await self.selected.update_flags(messages, {br'\Seen'}, 'add')
                 break
         for msg_seq, msg in messages:
             structure = msg.structure_class(msg)
@@ -303,46 +280,45 @@ class ConnectionState(object):
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
-                    fetch_data[attr] = yield from \
+                    fetch_data[attr] = await \
                         structure.build_envelope_structure()
                 elif attr.attribute == b'BODYSTRUCTURE':
-                    fetch_data[attr] = yield from \
+                    fetch_data[attr] = await \
                         structure.build_body_structure(ext_data=True)
                 elif attr.attribute in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
-                        fetch_data[attr] = yield from \
+                        fetch_data[attr] = await \
                             structure.build_body_structure()
                     elif not attr.section[1]:
-                        fetch_data[attr] = yield from \
+                        fetch_data[attr] = await \
                             structure.get_body(attr.section[0])
                     elif attr.section[1] == b'TEXT':
-                        fetch_data[attr] = yield from \
+                        fetch_data[attr] = await \
                             structure.get_text(attr.section[0])
                     elif attr.section[1] in (b'HEADER', b'MIME'):
-                        fetch_data[attr] = yield from \
+                        fetch_data[attr] = await \
                             structure.get_headers(attr.section[0])
                     elif attr.section[1] == b'HEADER.FIELDS':
-                        fetch_data[attr] = yield from \
+                        fetch_data[attr] = await \
                             structure.get_headers(attr.section[0],
                                                   attr.section[2])
                     elif attr.section[1] == b'HEADER.FIELDS.NOT':
-                        fetch_data[attr] = yield from \
+                        fetch_data[attr] = await \
                             structure.get_headers(attr.section[0],
                                                   attr.section[2], True)
                 elif attr.attribute == b'RFC822':
-                    fetch_data[attr] = yield from structure.get_body()
+                    fetch_data[attr] = await structure.get_body()
                 elif attr.attribute == b'RFC822.HEADER':
-                    fetch_data[attr] = yield from structure.get_headers()
+                    fetch_data[attr] = await structure.get_headers()
                 elif attr.attribute == b'RFC822.TEXT':
-                    fetch_data[attr] = yield from structure.get_text()
+                    fetch_data[attr] = await structure.get_text()
                 elif attr.attribute == b'RFC822.SIZE':
-                    fetch_data[attr] = yield from structure.get_size()
+                    fetch_data[attr] = await structure.get_size()
             resp.add_data(FetchResponse(msg_seq, fetch_data))
         return resp
 
-    @asyncio.coroutine
-    def do_search(self, cmd):
-        messages = yield from self.selected.search(cmd.keys)
+    async def do_search(self, cmd):
+        messages = await self.selected.search(cmd.keys)
         resp = ResponseOk(cmd.tag, b'SEARCH completed.')
         if cmd.uid:
             seqs = [msg.uid for _, msg in messages]
@@ -351,27 +327,24 @@ class ConnectionState(object):
         resp.add_data(SearchResponse(seqs))
         return resp
 
-    @asyncio.coroutine
-    def do_store(self, cmd):
-        messages = yield from self._get_messages(cmd.sequence_set, cmd.uid)
-        yield from self.selected.update_flags(messages, cmd.flag_set, cmd.mode,
-                                              silent=cmd.silent)
+    async def do_store(self, cmd):
+        messages = await self._get_messages(cmd.sequence_set, cmd.uid)
+        await self.selected.update_flags(messages, cmd.flag_set, cmd.mode,
+                                         silent=cmd.silent)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         attr_list = [self.flags_attr]
         if cmd.uid:
             attr_list.append(FetchAttribute(b'UID'))
         return resp
 
-    @asyncio.coroutine
-    def do_logout(self, cmd):
+    async def do_logout(self, cmd):
         response = ResponseOk(cmd.tag, b'Logout successful.')
         response.add_data(ResponseBye(b'Logging out.'))
         raise CloseConnection(response)
 
-    @asyncio.coroutine
-    def _check_mailbox_updates(self, cmd, resp):
+    async def _check_mailbox_updates(self, cmd, resp):
         send_expunge = not getattr(cmd, 'no_expunge_response', False)
-        updates = yield from self.selected.poll()
+        updates = await self.selected.poll()
         expunge = updates.get('expunge', set())
         fetch = updates.get('fetch', {})
         self.expunge_buffer |= expunge
@@ -391,8 +364,7 @@ class ConnectionState(object):
             for msg_seq in expunge_seqs:
                 resp.add_data(ExpungeResponse(msg_seq))
 
-    @asyncio.coroutine
-    def do_command(self, cmd):
+    async def do_command(self, cmd):
         if self.session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
             return ResponseBad(cmd.tag, msg)
@@ -403,14 +375,14 @@ class ConnectionState(object):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
         if self.selected and isinstance(cmd, CommandSelect):
-            yield from self.selected.sync()
+            await self.selected.sync()
         pre_selected = self.selected
         func_name = 'do_' + str(cmd.command, 'ascii').lower()
         try:
             func = getattr(self, func_name)
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
-        resp = yield from func(cmd)
+        resp = await func(cmd)
         if self.selected and self.selected == pre_selected:
-            yield from self._check_mailbox_updates(cmd, resp)
+            await self._check_mailbox_updates(cmd, resp)
         return resp
