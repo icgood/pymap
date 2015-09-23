@@ -41,7 +41,7 @@ class FlagsResponse(Response):
     """
 
     def __init__(self, flags):
-        text = b'FLAGS ' + bytes(List(flags))
+        text = b'FLAGS %b' % List(flags)
         super().__init__(b'*', text)
 
 
@@ -54,7 +54,7 @@ class ExistsResponse(Response):
     """
 
     def __init__(self, num):
-        text = bytes(str(num), 'utf-8') + b' EXISTS'
+        text = b'%i EXISTS' % num
         super().__init__(b'*', text)
 
 
@@ -67,7 +67,7 @@ class RecentResponse(Response):
     """
 
     def __init__(self, num):
-        text = bytes(str(num), 'utf-8') + b' RECENT'
+        text = b'%i RECENT' % num
         super().__init__(b'*', text)
 
 
@@ -79,7 +79,7 @@ class ExpungeResponse(Response):
     """
 
     def __init__(self, seq):
-        text = bytes(str(seq), 'utf-8') + b' EXPUNGE'
+        text = b'%i EXPUNGE' % seq
         super().__init__(b'*', text)
 
 
@@ -96,9 +96,8 @@ class FetchResponse(Response):
     """
 
     def __init__(self, seq, data):
-        seq_raw = bytes(str(seq), 'utf-8')
         data_list = List(chain.from_iterable(data.items()))
-        text = b' '.join((seq_raw, b'FETCH', bytes(data_list)))
+        text = b'%i FETCH %b' % (seq, data_list)
         super().__init__(b'*', text)
 
 
@@ -110,7 +109,7 @@ class SearchResponse(Response):
     """
 
     def __init__(self, seqs):
-        seqs_raw = [bytes(str(seq), 'utf-8') for seq in seqs]
+        seqs_raw = [b'%i' % seq for seq in seqs]
         text = b' '.join([b'SEARCH'] + seqs_raw)
         super().__init__(b'*', text)
 
@@ -141,9 +140,8 @@ class ListResponse(Response):
             name_attrs.value.append(br'\Noinferior')
         if no_select:
             name_attrs.value.append(br'\Noselect')
-        sep_raw = bytes(QuotedString(sep))
-        name_raw = bytes(Mailbox(name))
-        text = b' '.join((self.name, bytes(name_attrs), sep_raw, name_raw))
+        text = b'%b %b %b %b' % (self.name, name_attrs, QuotedString(sep),
+                                 Mailbox(name))
         super().__init__(b'*', text)
 
 

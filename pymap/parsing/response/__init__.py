@@ -50,7 +50,7 @@ class Response(object):
         if self._raw is not None:
             return self._raw
         raw_lines = [bytes(data) for data in self.data]
-        raw_lines.append(b''.join((self.tag, b' ', self.text, b'\r\n')))
+        raw_lines.append(b'%b %b\r\n' % (self.tag, self.text))
         self._raw = b''.join(raw_lines)
         return self._raw
 
@@ -73,9 +73,9 @@ class ConditionResponse(Response):
 
     def __init__(self, tag, text, code):
         if code:
-            text = b' '.join((self.condition, bytes(code), text))
+            text = b'%b %b %b' % (self.condition, code, text)
         else:
-            text = b' '.join((self.condition, text))
+            text = b'%b %b' % (self.condition, text)
         super().__init__(tag, text)
 
 

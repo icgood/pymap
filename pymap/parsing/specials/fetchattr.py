@@ -74,8 +74,7 @@ class FetchAttribute(Special):
         if self.section:
             parts.append(b'[')
             if self.section[0]:
-                part_raw = b'.'.join([bytes(str(num), 'ascii')
-                                      for num in self.section[0]])
+                part_raw = b'.'.join([b'%i' % num for num in self.section[0]])
                 parts.append(part_raw)
                 if self.section[1]:
                     parts.append(b'.')

@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 #
 
-from ..primitives import Number, List
+from ..primitives import List
 
 __all__ = ['ResponseCode', 'Alert', 'BadCharset', 'Capability', 'Parse',
            'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
@@ -85,7 +85,7 @@ class Capability(ResponseCode):
         return Response(b'*', self.string)
 
     def __bytes__(self):
-        return b'[' + self.string + b']'
+        return b'[%b]' % self.string
 
 
 class Parse(ResponseCode):
@@ -100,7 +100,7 @@ class PermanentFlags(ResponseCode):
     def __init__(self, flags):
         super().__init__()
         self.flags = flags
-        self._raw = b'[PERMANENTFLAGS ' + bytes(List(flags)) + b']'
+        self._raw = b'[PERMANENTFLAGS %b]' % List(flags)
 
     def __bytes__(self):
         return self._raw
@@ -136,7 +136,7 @@ class UidNext(ResponseCode):
     def __init__(self, next):
         super().__init__()
         self.next = next
-        self._raw = b'[UIDNEXT ' + bytes(Number(next)) + b']'
+        self._raw = b'[UIDNEXT %i]' % next
 
     def __bytes__(self):
         return self._raw
@@ -148,7 +148,7 @@ class UidValidity(ResponseCode):
     def __init__(self, validity):
         super().__init__()
         self.validity = validity
-        self._raw = b'[UIDVALIDITY ' + bytes(Number(validity)) + b']'
+        self._raw = b'[UIDVALIDITY %i]' % validity
 
     def __bytes__(self):
         return self._raw
@@ -163,7 +163,7 @@ class Unseen(ResponseCode):
     def __init__(self, next):
         super().__init__()
         self.next = next
-        self._raw = b'[UNSEEN ' + bytes(Number(next)) + b']'
+        self._raw = b'[UNSEEN %i]' % next
 
     def __bytes__(self):
         return self._raw

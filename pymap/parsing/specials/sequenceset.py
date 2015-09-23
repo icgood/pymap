@@ -112,7 +112,7 @@ class SequenceSet(Special):
             if isinstance(group, tuple):
                 left = bytes(str(group[0]), 'ascii')
                 right = bytes(str(group[1]), 'ascii')
-                parts.append(left + b':' + right)
+                parts.append(b'%b:%b' % (left, right))
             else:
                 parts.append(bytes(str(group), 'ascii'))
         self._raw = raw = b','.join(parts)

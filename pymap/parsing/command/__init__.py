@@ -41,8 +41,8 @@ class BadCommand(NotParseable):
     def __bytes__(self):
         if hasattr(self, '_raw'):
             return self._raw
-        self._raw = raw = self.command.command + b': ' + \
-            super().__bytes__()
+        self._raw = raw = b'%b: %b' % (self.command.command,
+                                       super().__bytes__())
         return raw
 
     def __str__(self):
@@ -60,7 +60,7 @@ class CommandNotFound(BadCommand):
 
     def __bytes__(self):
         if self.command:
-            return b'Command Not Found: ' + self.command
+            return b'Command Not Found: %b' % self.command
         else:
             return b'Command Not Given'
 

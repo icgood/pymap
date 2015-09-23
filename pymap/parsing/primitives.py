@@ -186,7 +186,7 @@ class QuotedString(String):
             return b'\\' + match.group(0)
         pat = self._quoted_specials_pattern
         quoted_string = pat.sub(escape_quoted_specials, self.value)
-        self._raw = b'"' + quoted_string + b'"'
+        self._raw = b'"%b"' % quoted_string
         return self._raw
 
 
@@ -226,8 +226,7 @@ class LiteralString(String):
         if self._raw is not None:
             return bytes(self._raw)
         length_bytes = bytes(str(len(self.value)), 'ascii')
-        literal_header = b'{' + length_bytes + b'}\r\n'
-        self._raw = literal_header + self.value
+        self._raw = b'{%b}\r\n%b' % (length_bytes, self.value)
         return self._raw
 
 
@@ -266,4 +265,4 @@ class List(Primitive):
             items.append(item)
 
     def __bytes__(self):
-        return b'(' + b' '.join([bytes(item) for item in self.value]) + b')'
+        return b'(%b)' % b' '.join([bytes(item) for item in self.value])

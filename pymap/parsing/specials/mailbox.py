@@ -49,7 +49,7 @@ class Mailbox(Special):
     def _modified_b64decode(cls, src):
         # Inspired by Twisted Python's implementation:
         #   https://twistedmatrix.com/trac/browser/trunk/LICENSE
-        src_utf7 = b'+' + src.replace(b',', b'/') + b'-'
+        src_utf7 = b'+%b-' % src.replace(b',', b'/')
         return src_utf7.decode('utf-7')
 
     @classmethod

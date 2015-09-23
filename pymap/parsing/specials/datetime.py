@@ -52,4 +52,4 @@ class DateTime(Special):
         return cls(when, string.value), after
 
     def __bytes__(self):
-        return b'"' + self._raw + b'"'
+        return b'"%b"' % self._raw
