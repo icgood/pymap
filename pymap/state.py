@@ -22,15 +22,17 @@
 import asyncio
 from socket import getfqdn
 
-from pymap.exceptions import *  # NOQA
+from pysasl import SASLAuth
 
-from pymap.core import PymapError
-from pymap.parsing.primitives import List, Number
-from pymap.parsing.specials import FetchAttribute, DateTime
-from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect
-from pymap.parsing.response import *  # NOQA
-from pymap.parsing.response.code import *  # NOQA
-from pymap.parsing.response.specials import *  # NOQA
+from .exceptions import *  # NOQA
+
+from .core import PymapError
+from .parsing.primitives import List, Number
+from .parsing.specials import FetchAttribute, DateTime
+from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
+from .parsing.response import *  # NOQA
+from .parsing.response.code import *  # NOQA
+from .parsing.response.specials import *  # NOQA
 
 __all__ = ['CloseConnection', 'ConnectionState']
 
@@ -59,17 +61,21 @@ class ConnectionState(object):
         super().__init__()
         self.transport = transport
         self.backend = backend
+        self.auth = SASLAuth([b'PLAIN'])
         self.session = None
         self.selected = None
         self.expunge_buffer = set()
         self.before_exists = 0
         self.before_recent = 0
-        self.capability = Capability([])
+        self.capability = Capability([b'AUTH=%b' % mech.name
+                                      for mech in self.auth])
 
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
     async def do_authenticate(self, cmd, result):
+        if not result:
+            return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
         self.session = user = await self.backend(result)
         if user:
             return ResponseOk(cmd.tag, b'Authentication successful.')

@@ -24,11 +24,13 @@
 from functools import partial
 from base64 import b64encode, b64decode
 from argparse import ArgumentParser
+import binascii
 import asyncio
 
 from pkg_resources import iter_entry_points
 
-from pysasl import IssueChallenge, AuthenticationError, AuthenticationResult
+from pysasl import (ServerChallenge, AuthenticationError,
+                    AuthenticationCredentials)
 
 from .core import __version__
 from .state import CloseConnection, ConnectionState
@@ -65,18 +67,24 @@ class IMAPServer(object):
             raise Disconnected
         return extra_literal + extra_line
 
-    async def authenticate(self, state, mech):
+    async def authenticate(self, state, mech_name):
+        mech = state.auth.get(mech_name)
+        if not mech:
+            return
         responses = []
         while True:
             try:
                 result = mech.server_attempt(responses)
-            except IssueChallenge as exc:
-                chal_bytes = b64encode(exc.challenge.challenge.encode('utf-8'))
+            except ServerChallenge as exc:
+                chal_bytes = b64encode(exc.get_challenge())
                 cont = ResponseContinuation(chal_bytes)
                 await self.write_response(cont)
                 resp_bytes = await self.read_continuation(0)
-                exc.challenge.response = b64decode(resp_bytes).decode('utf-8')
-                responses.append(exc.challenge)
+                try:
+                    exc.set_response(b64decode(resp_bytes))
+                except binascii.Error as exc:
+                    raise AuthenticationError(exc)
+                responses.append(exc)
             else:
                 break
         return result
@@ -129,10 +137,12 @@ class IMAPServer(object):
             else:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
-                        auth = await self.authenticate(state, cmd.mech)
+                        auth = await self.authenticate(state, cmd.mech_name)
                         response = await state.do_authenticate(cmd, auth)
                     elif isinstance(cmd, LoginCommand):
-                        auth = AuthenticationResult(cmd.userid, cmd.password)
+                        auth = AuthenticationCredentials(
+                            cmd.userid.decode('utf-8'),
+                            cmd.password.decode('utf-8'))
                         response = await state.do_authenticate(cmd, auth)
                     else:
                         response = await state.do_command(cmd)
