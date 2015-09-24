@@ -84,6 +84,8 @@ class IMAPServer(object):
                     exc.set_response(b64decode(resp_bytes))
                 except binascii.Error as exc:
                     raise AuthenticationError(exc)
+                if resp_bytes.rstrip(b'\r\n') == b'*':
+                    raise AuthenticationError('Authentication canceled.')
                 responses.append(exc)
             else:
                 break
