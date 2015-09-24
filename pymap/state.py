@@ -68,7 +68,7 @@ class ConnectionState(object):
         self.before_exists = 0
         self.before_recent = 0
         self.capability = Capability([b'AUTH=%b' % mech.name
-                                      for mech in self.auth])
+                                      for mech in self.auth.server_mechanisms])
 
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
