@@ -74,7 +74,7 @@ class IMAPServer(object):
         responses = []
         while True:
             try:
-                result = mech.server_attempt(responses)
+                return mech.server_attempt(responses)
             except ServerChallenge as exc:
                 chal_bytes = b64encode(exc.get_challenge())
                 cont = ResponseContinuation(chal_bytes)
@@ -87,9 +87,6 @@ class IMAPServer(object):
                 if resp_bytes.rstrip(b'\r\n') == b'*':
                     raise AuthenticationError('Authentication canceled.')
                 responses.append(exc)
-            else:
-                break
-        return result
 
     async def read_command(self):
         line = await self.reader.readline()
