@@ -19,10 +19,10 @@
 # THE SOFTWARE.
 #
 
+from . import CommandNonAuth, CommandNoArgs
 from .. import Space, EndLine
 from ..primitives import Atom
 from ..specials import AString
-from . import CommandNonAuth, CommandNoArgs
 
 __all__ = ['AuthenticateCommand', 'LoginCommand', 'StartTLSCommand']
 

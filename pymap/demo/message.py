@@ -19,10 +19,9 @@
 # THE SOFTWARE.
 #
 
-import asyncio
 import email
-from email.policy import SMTP
 from datetime import datetime, timezone
+from email.policy import SMTP
 
 from pymap.interfaces import MessageInterface
 

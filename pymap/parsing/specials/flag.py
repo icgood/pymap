@@ -20,9 +20,9 @@
 #
 
 from pymap.flags import Flag as FlagClass
+from . import Special
 from .. import NotParseable, Space
 from ..primitives import Atom
-from . import Special
 
 __all__ = ['Flag']
 

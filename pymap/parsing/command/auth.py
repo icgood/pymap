@@ -22,10 +22,10 @@
 import re
 from datetime import datetime
 
+from . import CommandAuth
 from .. import NotParseable, UnexpectedType, Space, EndLine
 from ..primitives import List, String, LiteralString
 from ..specials import InvalidContent, Mailbox, DateTime, Flag, StatusAttribute
-from . import CommandAuth
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',

@@ -21,10 +21,9 @@
 
 from itertools import chain
 
+from . import Response
 from ..primitives import List, QuotedString
 from ..specials import Mailbox
-
-from . import Response
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',

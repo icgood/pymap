@@ -23,8 +23,6 @@
 
 """
 
-import asyncio
-
 from pymap.structure import MessageStructure
 
 __all__ = ['SessionInterface', 'MailboxInterface', 'MessageInterface']

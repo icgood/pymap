@@ -21,8 +21,8 @@
 
 import re
 
-from ..primitives import String, QuotedString
 from . import Special
+from ..primitives import String, QuotedString
 
 __all__ = ['AString']
 

@@ -19,13 +19,11 @@
 # THE SOFTWARE.
 #
 
-import asyncio
 import random
 from copy import copy
 from weakref import WeakSet
 
 from pymap.interfaces import MailboxInterface
-from pymap.exceptions import *  # NOQA
 from .message import Message
 
 __all__ = ['Mailbox']

@@ -19,8 +19,8 @@
 # THE SOFTWARE.
 #
 
-import re
 import os.path
+import re
 from bisect import insort_left
 from contextlib import closing
 

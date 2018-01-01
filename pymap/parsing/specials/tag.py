@@ -21,8 +21,8 @@
 
 import re
 
-from .. import NotParseable
 from . import Special
+from .. import NotParseable
 
 __all__ = ['Tag']
 

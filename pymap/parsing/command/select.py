@@ -21,11 +21,11 @@
 
 import re
 
+from . import CommandSelect, CommandNoArgs
 from .. import NotParseable, Space, EndLine
 from ..primitives import Atom, List
 from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
                         SearchKey)
-from . import CommandSelect, CommandNoArgs
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
            'FetchCommand', 'StoreCommand', 'UidCommand', 'SearchCommand']

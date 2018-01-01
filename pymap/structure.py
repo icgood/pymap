@@ -19,17 +19,16 @@
 # THE SOFTWARE.
 #
 
-import io
-import asyncio
 import email
-from email.message import Message
-from email.generator import BytesGenerator
-from email.policy import SMTP
+import io
 from email.charset import Charset
+from email.generator import BytesGenerator
+from email.message import Message
+from email.policy import SMTP
 from email.utils import getaddresses
 
 from .parsing import Parseable
-from .parsing.primitives import *  # NOQA
+from .parsing.primitives import Nil, QuotedString, List, LiteralString, Number
 
 __all__ = ['MessageStructure']
 
@@ -79,7 +78,7 @@ class MessageStructure(object):
     async def _get_msg(self, full=False):
         if isinstance(self.message, Message):
             return self.message
-        return (await self.message.get_message(full=full))
+        return await self.message.get_message(full=full)
 
     def _get_str_or_nil(self, value):
         if value is None:

@@ -21,24 +21,23 @@
 
 """IMAP server with pluggable Python backends."""
 
-from functools import partial
-from base64 import b64encode, b64decode
-from argparse import ArgumentParser
-import binascii
 import asyncio
+import binascii
+from argparse import ArgumentParser
+from base64 import b64encode, b64decode
+from functools import partial
 
 from pkg_resources import iter_entry_points
-
 from pysasl import (ServerChallenge, AuthenticationError,
                     AuthenticationCredentials)
 
 from .core import __version__
-from .state import CloseConnection, ConnectionState
+from .parsing import RequiresContinuation
 from .parsing.command import BadCommand, Command
+from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from .parsing.response import (ResponseContinuation, ResponseBadCommand,
                                ResponseBad, ResponseBye)
-from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
-from .parsing import RequiresContinuation
+from .state import CloseConnection, ConnectionState
 
 
 class Disconnected(Exception):

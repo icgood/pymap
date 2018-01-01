@@ -19,9 +19,9 @@
 # THE SOFTWARE.
 #
 
+from . import Special, InvalidContent
 from .. import NotParseable, Space
 from ..primitives import Atom
-from . import Special, InvalidContent
 
 __all__ = ['StatusAttribute']
 

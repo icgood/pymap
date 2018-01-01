@@ -21,9 +21,9 @@
 
 import re
 
+from . import Special, AString
 from .. import NotParseable
 from ..primitives import Atom, List
-from . import Special, AString
 
 __all__ = ['FetchAttribute']
 

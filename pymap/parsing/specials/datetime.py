@@ -21,8 +21,8 @@
 
 from datetime import datetime
 
-from ..primitives import QuotedString
 from . import Special, InvalidContent
+from ..primitives import QuotedString
 
 __all__ = ['DateTime']
 

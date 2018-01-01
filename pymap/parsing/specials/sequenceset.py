@@ -21,8 +21,8 @@
 
 import re
 
-from .. import NotParseable, Space
 from . import Special
+from .. import NotParseable, Space
 
 __all__ = ['SequenceSet']
 

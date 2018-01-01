@@ -21,8 +21,8 @@
 
 import asyncio
 
-from pymap.interfaces import SessionInterface
 from pymap.exceptions import *  # NOQA
+from pymap.interfaces import SessionInterface
 from .mailbox import Mailbox
 
 __all__ = ['Session']

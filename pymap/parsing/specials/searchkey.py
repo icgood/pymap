@@ -23,9 +23,9 @@ import re
 from datetime import datetime
 
 from pymap.flags import Flag
+from . import Special, AString, SequenceSet
 from .. import Parseable, NotParseable, UnexpectedType, Space
 from ..primitives import Atom, Number, QuotedString, List
-from . import Special, AString, SequenceSet
 
 __all__ = ['SearchKey']
 
