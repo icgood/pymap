@@ -39,7 +39,7 @@ from .parsing.response.specials import (FlagsResponse, ExistsResponse,
                                         LSubResponse, SearchResponse)
 from .parsing.specials import FetchAttribute, DateTime
 
-__all__ = ['ConnectionState']
+__all__ = ['CloseConnection', 'MailboxState', 'ConnectionState']
 
 fqdn = getfqdn().encode('ascii')
 
@@ -56,6 +56,26 @@ class CloseConnection(PymapError):
     def __init__(self, response):
         super().__init__()
         self.response = response
+
+
+class MailboxState(object):
+    """Used to track relevant information about a mailbox to correctly
+    report updates made by other clients.
+
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+        #: Tracks the sequence IDs that have been expunged by other clients
+        #: since last reported.
+        self.expunge = set()
+
+        #: Tracks the number of messages that exist in the mailbox.
+        self.exists = 0
+
+        #: Tracks the number of recent messages in the mailbox.
+        self.recent = 0
 
 
 class ConnectionState(object):
@@ -119,9 +139,8 @@ class ConnectionState(object):
             mbx = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
-        self.selected = mbx
-        await mbx.sync()
         code, data = self._get_mailbox_response_data(mbx)
+        self.selected = cmd.mailbox
         resp = ResponseOk(cmd.tag, b'Selected mailbox.', code)
         for data_part in data:
             resp.add_data(data_part)
@@ -132,9 +151,8 @@ class ConnectionState(object):
             mbx = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.')
-        self.selected = mbx
-        await mbx.sync()
         code, data = self._get_mailbox_response_data(mbx, True)
+        self.selected = cmd.mailbox
         resp = ResponseOk(cmd.tag, b'Examined mailbox.', code)
         for data_part in data:
             resp.add_data(data_part)
@@ -191,20 +209,17 @@ class ConnectionState(object):
                 status_list.value.append(Number(mbx.next_uid))
             elif status_item.value == b'UIDVALIDITY':
                 status_list.value.append(Number(mbx.uid_validity))
-        status = Response(b'*',
-                          b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' + bytes(
-                              status_list))
+        status = Response(b'*', b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' +
+                          bytes(status_list))
         resp.add_data(status)
         return resp
 
     async def do_append(self, cmd):
         try:
-            mbx = await self.session.get_mailbox(cmd.mailbox)
+            await self.session.append_message(
+                cmd.mailbox, cmd.message, cmd.flag_set, cmd.when)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
-        await mbx.sync()
-        try:
-            await mbx.append_message(cmd.message, cmd.flag_set, cmd.when)
         except AppendFailure as exc:
             return ResponseNo(cmd.tag, bytes(str(exc), 'utf-8'))
         return ResponseOk(cmd.tag, b'APPEND completed.')
@@ -217,34 +232,30 @@ class ConnectionState(object):
         await self.session.unsubscribe(cmd.mailbox)
         return ResponseOk(cmd.tag, b'UNSUBSCRIBE completed.')
 
-    def _mailbox_matches(self, name, sep, ref_name, filter):
-        return True
-
     async def do_list(self, cmd):
-        mailboxes = await self.session.list_mailboxes()
+        mailboxes = await self.session.list_mailboxes(
+            cmd.ref_name, cmd.filter)
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for mbx in mailboxes:
-            if self._mailbox_matches(mbx.name, mbx.sep, cmd.ref_name,
-                                     cmd.filter):
-                resp.add_data(
-                    ListResponse(mbx.name, mbx.sep, marked=bool(mbx.recent)))
+            resp.add_data(
+                ListResponse(mbx.name, mbx.sep, marked=bool(mbx.recent)))
         return resp
 
     async def do_lsub(self, cmd):
-        mailboxes = await self.session.list_mailboxes(subscribed=True)
+        mailboxes = await self.session.list_mailboxes(
+            cmd.ref_name, cmd.filter, subscribed=True)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for mbx in mailboxes:
-            if self._mailbox_matches(mbx.name, mbx.sep, cmd.ref_name,
-                                     cmd.filter):
-                resp.add_data(LSubResponse(mbx.name, mbx.sep))
+            resp.add_data(LSubResponse(mbx.name, mbx.sep))
         return resp
 
     async def do_check(self, cmd):
+        await self.session.check_mailbox(self.selected)
         return ResponseOk(cmd.tag, b'CHECK completed.')
 
     async def do_close(self, cmd):
         try:
-            await self.selected.expunge()
+            await self.session.expunge_mailbox(self.selected)
         except MailboxReadOnly:
             pass
         self.selected = None
@@ -252,35 +263,27 @@ class ConnectionState(object):
 
     async def do_expunge(self, cmd):
         try:
-            await self.selected.expunge()
+            ids = await self.session.expunge_mailbox(self.selected)
         except MailboxReadOnly:
             return ResponseNo(cmd.tag, b'Mailbox is read-only.', ReadOnly())
         resp = ResponseOk(cmd.tag, b'EXPUNGE completed.')
+        for id in ids:
+            resp.add_data(ExpungeResponse(id))
         return resp
 
-    async def _get_messages(self, seq_set, by_uid):
-        if by_uid:
-            return await self.selected.get_messages_by_uid(seq_set)
-        else:
-            return await self.selected.get_messages_by_seq(seq_set)
-
     async def do_copy(self, cmd):
-        messages = await self._get_messages(cmd.sequence_set, cmd.uid)
         try:
-            await self.selected.copy(messages, cmd.mailbox)
+            await self.session.copy_messages(
+                self.selected, cmd.sequence_set, cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
         return ResponseOk(cmd.tag, b'COPY completed.')
 
     async def do_fetch(self, cmd):
-        messages = await self._get_messages(cmd.sequence_set, cmd.uid)
+        messages = await self.session.fetch_messages(
+            self.selected, cmd.sequence_set, cmd.attributes)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
-        for attr in cmd.attributes:
-            if attr.set_seen:
-                await self.selected.update_flags(messages, {br'\Seen'}, 'add')
-                break
         for msg_seq, msg in messages:
-            structure = msg.structure_class(msg)
             fetch_data = {}
             for attr in cmd.attributes:
                 if attr.attribute == b'UID':
@@ -290,58 +293,48 @@ class ConnectionState(object):
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
-                    fetch_data[
-                        attr] = await structure.build_envelope_structure()
+                    fetch_data[attr] = msg.get_envelope_structure()
                 elif attr.attribute == b'BODYSTRUCTURE':
-                    fetch_data[attr] = await structure.build_body_structure(
-                        ext_data=True)
+                    fetch_data[attr] = msg.get_body_structure(ext_data=True)
                 elif attr.attribute in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
-                        fetch_data[
-                            attr] = await structure.build_body_structure()
+                        fetch_data[attr] = msg.get_body_structure()
                     elif not attr.section[1]:
-                        fetch_data[attr] = await structure.get_body(
-                            attr.section[0])
+                        fetch_data[attr] = msg.get_body(attr.section[0])
                     elif attr.section[1] == b'TEXT':
-                        fetch_data[attr] = await structure.get_text(
-                            attr.section[0])
+                        fetch_data[attr] = msg.get_text(attr.section[0])
                     elif attr.section[1] in (b'HEADER', b'MIME'):
-                        fetch_data[attr] = await structure.get_headers(
-                            attr.section[0])
+                        fetch_data[attr] = msg.get_headers(attr.section[0])
                     elif attr.section[1] == b'HEADER.FIELDS':
-                        fetch_data[attr] = await structure.get_headers(
+                        fetch_data[attr] = msg.get_headers(
                             attr.section[0], attr.section[2])
                     elif attr.section[1] == b'HEADER.FIELDS.NOT':
-                        fetch_data[attr] = await structure.get_headers(
+                        fetch_data[attr] = msg.get_headers(
                             attr.section[0], attr.section[2], True)
                 elif attr.attribute == b'RFC822':
-                    fetch_data[attr] = await structure.get_body()
+                    fetch_data[attr] = msg.get_body()
                 elif attr.attribute == b'RFC822.HEADER':
-                    fetch_data[attr] = await structure.get_headers()
+                    fetch_data[attr] = msg.get_headers()
                 elif attr.attribute == b'RFC822.TEXT':
-                    fetch_data[attr] = await structure.get_text()
+                    fetch_data[attr] = msg.get_text()
                 elif attr.attribute == b'RFC822.SIZE':
-                    fetch_data[attr] = await structure.get_size()
+                    fetch_data[attr] = msg.get_size()
             resp.add_data(FetchResponse(msg_seq, fetch_data))
         return resp
 
     async def do_search(self, cmd):
-        messages = await self.selected.search(cmd.keys)
+        seqs = await self.session.search(self.selected, cmd.keys)
         resp = ResponseOk(cmd.tag, b'SEARCH completed.')
-        if cmd.uid:
-            seqs = [msg.uid for _, msg in messages]
-        else:
-            seqs = [msg_seq for msg_seq, msg in messages]
         resp.add_data(SearchResponse(seqs))
         return resp
 
     async def do_store(self, cmd):
-        messages = await self._get_messages(cmd.sequence_set, cmd.uid)
-        await self.selected.update_flags(messages, cmd.flag_set, cmd.mode,
-                                         silent=cmd.silent)
+        await self.session.update_flags(self.selected, cmd.sequence_set,
+                                        cmd.flag_set, cmd.mode,
+                                        silent=cmd.silent)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         attr_list = [self.flags_attr]
-        if cmd.uid:
+        if cmd.sequence_set.uid:
             attr_list.append(FetchAttribute(b'UID'))
         return resp
 
@@ -350,9 +343,14 @@ class ConnectionState(object):
         response.add_data(ResponseBye(b'Logging out.'))
         raise CloseConnection(response)
 
+    def _process_updates(self, cmd, resp, mailbox):
+        if self.selected and self.selected.name == mailbox.name:
+            send_expunge = not getattr(cmd, 'no_expunge_response', False)
+        self.selected = mailbox
+
     async def _check_mailbox_updates(self, cmd, resp):
         send_expunge = not getattr(cmd, 'no_expunge_response', False)
-        updates = await self.selected.poll()
+        updates = await self.session.poll_mailbox(self.selected)
         expunge = updates.get('expunge', set())
         fetch = updates.get('fetch', {})
         self.expunge_buffer |= expunge
@@ -382,15 +380,9 @@ class ConnectionState(object):
         elif not self.selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
-        if self.selected and isinstance(cmd, CommandSelect):
-            await self.selected.sync()
-        pre_selected = self.selected
         func_name = 'do_' + str(cmd.command, 'ascii').lower()
         try:
             func = getattr(self, func_name)
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
-        resp = await func(cmd)
-        if self.selected and self.selected == pre_selected:
-            await self._check_mailbox_updates(cmd, resp)
-        return resp
+        return await func(cmd)

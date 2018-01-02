@@ -34,14 +34,16 @@ class SequenceSet(Special):
                            asterisk (``*``), or a two-item tuple where each
                            part is either a number or an asterisk. E.g.
                            ``[13, '*', ('*', 26), (50, '*')]``.
+    :param bool uid: True if the sequence IDs are UIDs.
 
     """
 
     _num_pattern = re.compile(br'\d+')
 
-    def __init__(self, sequences):
+    def __init__(self, sequences, uid=False):
         super().__init__()
         self.sequences = sequences
+        self.uid = uid
         self._raw = None
 
     def contains(self, num, max_value):
@@ -88,7 +90,7 @@ class SequenceSet(Special):
         return item1, buf
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf, uid=False, **_):
         try:
             _, buf = Space.parse(buf)
         except NotParseable:
@@ -102,7 +104,7 @@ class SequenceSet(Special):
             buf = buf[1:]
         if not sequences:
             raise NotParseable(buf)
-        return cls(sequences), buf
+        return cls(sequences, uid=uid), buf
 
     def __bytes__(self):
         if self._raw is not None:

@@ -46,11 +46,10 @@ class ExpungeCommand(CommandSelect, CommandNoArgs):
 class CopyCommand(CommandSelect):
     command = b'COPY'
 
-    def __init__(self, tag, seq_set, mailbox, uid=False):
+    def __init__(self, tag, seq_set, mailbox):
         super().__init__(tag)
         self.sequence_set = seq_set
         self.mailbox_obj = mailbox
-        self.uid = uid
 
     @property
     def mailbox(self):
@@ -59,22 +58,21 @@ class CopyCommand(CommandSelect):
     @classmethod
     def parse(cls, buf, tag=None, uid=False, **_):
         _, buf = Space.parse(buf)
-        seq_set, buf = SequenceSet.parse(buf)
+        seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, mailbox, uid=uid), buf
+        return cls(tag, seq_set, mailbox), buf
 
 
 class FetchCommand(CommandSelect):
     command = b'FETCH'
 
-    def __init__(self, tag, seq_set, attr_set, uid=False):
+    def __init__(self, tag, seq_set, attr_set):
         super().__init__(tag)
         self.sequence_set = seq_set
         self.attributes = frozenset(attr_set)
-        self.uid = uid
-        self.no_expunge_response = not uid
+        self.no_expunge_response = not seq_set.uid
 
     @classmethod
     def _check_macros(cls, buf):
@@ -99,7 +97,7 @@ class FetchCommand(CommandSelect):
     @classmethod
     def parse(cls, buf, tag=None, uid=False, **_):
         _, buf = Space.parse(buf)
-        seq_set, buf = SequenceSet.parse(buf)
+        seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
         attr_set = set()
         try:
@@ -117,7 +115,7 @@ class FetchCommand(CommandSelect):
         if uid:
             attr_set.add(FetchAttribute(b'UID'))
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, attr_set, uid=uid), buf
+        return cls(tag, seq_set, attr_set), buf
 
 
 class StoreCommand(CommandSelect):
@@ -126,15 +124,13 @@ class StoreCommand(CommandSelect):
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': 'replace', b'+': 'add', b'-': 'subtract'}
 
-    def __init__(self, tag, seq_set, flag_list, uid=False, mode='replace',
-                 silent=False):
+    def __init__(self, tag, seq_set, flag_list, mode='replace', silent=False):
         super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_set = frozenset(flag.value for flag in flag_list)
-        self.uid = uid
         self.mode = mode
         self.silent = silent
-        self.no_expunge_response = not uid
+        self.no_expunge_response = not seq_set.uid
 
     @classmethod
     def _parse_store_info(cls, buf):
@@ -164,21 +160,22 @@ class StoreCommand(CommandSelect):
                 return flag_list, buf
 
     @classmethod
-    def parse(cls, buf, tag=None, uid=False, **_):
+    def parse(cls, buf, tag=None, uid=False, **kwargs):
         _, buf = Space.parse(buf)
-        seq_set, buf = SequenceSet.parse(buf)
+        seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
         info, buf = cls._parse_store_info(buf)
         _, buf = Space.parse(buf)
         flag_list, buf = cls._parse_flag_list(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, flag_list, uid=uid, **info), buf
+        return cls(tag, seq_set, flag_list, **info), buf
 
 
 class UidCommand(CommandSelect):
     command = b'UID'
 
-    _allowed_subcommands = {b'COPY': CopyCommand, b'FETCH': FetchCommand,
+    _allowed_subcommands = {b'COPY': CopyCommand,
+                            b'FETCH': FetchCommand,
                             b'STORE': StoreCommand}
 
     @classmethod

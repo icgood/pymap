@@ -135,8 +135,8 @@ class SearchKey(Special):
             return cls(key, num.value, inverse), buf
         elif key == b'UID':
             _, buf = Space.parse(after)
-            seq_set, buf = SequenceSet.parse(buf)
-            return cls(key, seq_set, inverse), buf
+            seq_set, buf = SequenceSet.parse(buf, uid=True)
+            return cls(None, seq_set, inverse), buf
         elif key == b'HEADER':
             _, buf = Space.parse(after)
             header_field, buf = cls._parse_astring_filter(buf, charset)
