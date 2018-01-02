@@ -34,19 +34,13 @@ __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
 class CheckCommand(CommandSelect, CommandNoArgs):
     command = b'CHECK'
 
-CommandSelect.register_command(CheckCommand)
-
 
 class CloseCommand(CommandSelect, CommandNoArgs):
     command = b'CLOSE'
 
-CommandSelect.register_command(CloseCommand)
-
 
 class ExpungeCommand(CommandSelect, CommandNoArgs):
     command = b'EXPUNGE'
-
-CommandSelect.register_command(ExpungeCommand)
 
 
 class CopyCommand(CommandSelect):
@@ -63,15 +57,13 @@ class CopyCommand(CommandSelect):
         return str(self.mailbox_obj)
 
     @classmethod
-    def _parse(cls, tag, buf, uid=False, **kwargs):
+    def parse(cls, buf, tag=None, uid=False, **_):
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf)
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
         return cls(tag, seq_set, mailbox, uid=uid), buf
-
-CommandSelect.register_command(CopyCommand)
 
 
 class FetchCommand(CommandSelect):
@@ -89,27 +81,23 @@ class FetchCommand(CommandSelect):
         atom, after = Atom.parse(buf)
         macro = atom.value.upper()
         if macro == b'ALL':
-            attrs = {FetchAttribute(b'FLAGS'),
-                     FetchAttribute(b'INTERNALDATE'),
+            attrs = {FetchAttribute(b'FLAGS'), FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
                      FetchAttribute(b'ENVELOPE')}
             return attrs, after
         elif macro == b'FULL':
-            attrs = {FetchAttribute(b'FLAGS'),
-                     FetchAttribute(b'INTERNALDATE'),
+            attrs = {FetchAttribute(b'FLAGS'), FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'ENVELOPE'),
-                     FetchAttribute(b'BODY')}
+                     FetchAttribute(b'ENVELOPE'), FetchAttribute(b'BODY')}
             return attrs, after
         elif macro == b'FAST':
-            attrs = {FetchAttribute(b'FLAGS'),
-                     FetchAttribute(b'INTERNALDATE'),
+            attrs = {FetchAttribute(b'FLAGS'), FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE')}
             return attrs, after
         raise NotParseable(buf)
 
     @classmethod
-    def _parse(cls, tag, buf, uid=False, **kwargs):
+    def parse(cls, buf, tag=None, uid=False, **_):
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf)
         _, buf = Space.parse(buf)
@@ -131,8 +119,6 @@ class FetchCommand(CommandSelect):
         _, buf = EndLine.parse(buf)
         return cls(tag, seq_set, attr_set, uid=uid), buf
 
-CommandSelect.register_command(FetchCommand)
-
 
 class StoreCommand(CommandSelect):
     command = b'STORE'
@@ -140,8 +126,8 @@ class StoreCommand(CommandSelect):
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': 'replace', b'+': 'add', b'-': 'subtract'}
 
-    def __init__(self, tag, seq_set, flag_list,
-                 uid=False, mode='replace', silent=False):
+    def __init__(self, tag, seq_set, flag_list, uid=False, mode='replace',
+                 silent=False):
         super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_set = frozenset(flag.value for flag in flag_list)
@@ -178,7 +164,7 @@ class StoreCommand(CommandSelect):
                 return flag_list, buf
 
     @classmethod
-    def _parse(cls, tag, buf, uid=False, **kwargs):
+    def parse(cls, buf, tag=None, uid=False, **_):
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf)
         _, buf = Space.parse(buf)
@@ -188,26 +174,21 @@ class StoreCommand(CommandSelect):
         _, buf = EndLine.parse(buf)
         return cls(tag, seq_set, flag_list, uid=uid, **info), buf
 
-CommandSelect.register_command(StoreCommand)
-
 
 class UidCommand(CommandSelect):
     command = b'UID'
 
-    _allowed_subcommands = {b'COPY': CopyCommand,
-                            b'FETCH': FetchCommand,
+    _allowed_subcommands = {b'COPY': CopyCommand, b'FETCH': FetchCommand,
                             b'STORE': StoreCommand}
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **kwargs):
         _, buf = Space.parse(buf)
         atom, after = Atom.parse(buf)
         cmd = cls._allowed_subcommands.get(atom.value.upper())
         if not cmd:
             raise NotParseable(buf)
-        return cmd._parse(tag, after, uid=True, **kwargs)
-
-CommandSelect.register_command(UidCommand)
+        return cmd.parse(after, tag=tag, uid=True, **kwargs)
 
 
 class SearchCommand(CommandSelect):
@@ -240,7 +221,7 @@ class SearchCommand(CommandSelect):
         return 'US-ASCII', buf
 
     @classmethod
-    def _parse(cls, tag, buf, uid=False, **kwargs):
+    def parse(cls, buf, tag=None, uid=False, **kwargs):
         charset, buf = cls._parse_charset(buf, **kwargs)
         search_keys = []
         while True:
@@ -253,5 +234,3 @@ class SearchCommand(CommandSelect):
                     raise
                 break
         return cls(tag, search_keys, charset=charset, uid=uid), buf
-
-CommandSelect.register_command(SearchCommand)

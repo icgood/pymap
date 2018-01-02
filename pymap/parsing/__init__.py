@@ -125,8 +125,8 @@ class Parseable(object):
         return 0
 
     @classmethod
-    def parse(cls, buf, expected, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf, expected=None, **kwargs):
+        expected = expected or []
         for data_type in expected:
             try:
                 return data_type.parse(buf, **kwargs)

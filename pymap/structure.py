@@ -43,8 +43,8 @@ class ConcatenatedParseables(Parseable):
     def __bytes__(self):
         if self._raw is not None:
             return self._raw
-        self._raw = raw = b''.join([bytes(parseable)
-                                    for parseable in self.parseables])
+        self._raw = raw = b''.join(
+            [bytes(parseable) for parseable in self.parseables])
         return raw
 
 
@@ -120,14 +120,13 @@ class MessageStructure(object):
 
     def _get_subparts(self, msg):
         assert msg.is_multipart()
-        return [MessageStructure(subpart)
-                for subpart in msg.get_payload()]
+        return [MessageStructure(subpart) for subpart in msg.get_payload()]
 
     def _get_subpart(self, msg, section):
         subpart = msg
         for i in section:
             if msg.is_multipart():
-                subpart = subpart.get_payload(i-1)
+                subpart = subpart.get_payload(i - 1)
             elif i == 1:
                 pass
             else:
@@ -293,7 +292,7 @@ class MessageStructure(object):
                          sub_message_env, sub_message_body, lines])
         elif maintype.value == b'text':
             size, lines = await self.get_size(True, msg)
-            return List([maintype, subtype,
-                         params, id, desc, encoding, size, lines])
+            return List(
+                [maintype, subtype, params, id, desc, encoding, size, lines])
         size = await self.get_size(msg=msg)
         return List([maintype, subtype, params, id, desc, encoding, size])

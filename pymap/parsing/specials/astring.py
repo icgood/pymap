@@ -46,7 +46,6 @@ class AString(Special):
 
     @classmethod
     def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if match:

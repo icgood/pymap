@@ -33,8 +33,7 @@ class StatusAttribute(Special):
 
     """
 
-    _statuses = set([b'MESSAGES', b'RECENT', b'UIDNEXT', b'UIDVALIDITY',
-                     b'UNSEEN'])
+    _statuses = {b'MESSAGES', b'RECENT', b'UIDNEXT', b'UIDVALIDITY', b'UNSEEN'}
 
     def __init__(self, status):
         super().__init__()

@@ -19,9 +19,7 @@
 # THE SOFTWARE.
 #
 
-import asyncio
-
-from pymap.exceptions import *  # NOQA
+from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.interfaces import SessionInterface
 from .mailbox import Mailbox
 
@@ -35,31 +33,26 @@ class Session(SessionInterface):
         self.mailboxes = [Mailbox(name) for name in Mailbox.messages.keys()]
 
     @classmethod
-    @asyncio.coroutine
-    def login(cls, result):
+    async def login(cls, result):
         if result.authcid == 'demouser' and result.check_secret('demopass'):
             return cls(result.authcid)
 
-    @asyncio.coroutine
-    def list_mailboxes(self, subscribed=False):
+    async def list_mailboxes(self, subscribed=False):
         return self.mailboxes
 
-    @asyncio.coroutine
-    def get_mailbox(self, name):
+    async def get_mailbox(self, name):
         for mbx in self.mailboxes:
             if mbx.name == name:
                 return mbx
         raise MailboxNotFound(name)
 
-    @asyncio.coroutine
-    def create_mailbox(self, name):
+    async def create_mailbox(self, name):
         for mbx in self.mailboxes:
             if mbx.name == name:
                 raise MailboxConflict(name)
         self.mailboxes.append(Mailbox(name))
 
-    @asyncio.coroutine
-    def delete_mailbox(self, name):
+    async def delete_mailbox(self, name):
         for i, mbx in enumerate(self.mailboxes):
             if mbx.name == name:
                 self.mailboxes.pop(i)
@@ -67,8 +60,7 @@ class Session(SessionInterface):
         else:
             raise MailboxNotFound(name)
 
-    @asyncio.coroutine
-    def rename_mailbox(self, before_name, after_name):
+    async def rename_mailbox(self, before_name, after_name):
         for mbx in self.mailboxes:
             if mbx.name == after_name:
                 raise MailboxConflict(after_name)
@@ -79,10 +71,8 @@ class Session(SessionInterface):
         else:
             raise MailboxNotFound(before_name)
 
-    @asyncio.coroutine
-    def subscribe(self, name):
+    async def subscribe(self, name):
         pass
 
-    @asyncio.coroutine
-    def unsubscribe(self, name):
+    async def unsubscribe(self, name):
         pass

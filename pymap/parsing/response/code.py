@@ -63,8 +63,8 @@ class Capability(ResponseCode):
     def string(self):
         if self._raw is not None:
             return self._raw
-        self._raw = raw = b' '.join([b'CAPABILITY', b'IMAP4rev1'] +
-                                    self.capabilities)
+        self._raw = raw = b' '.join(
+            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)
         return raw
 
     def add(self, capability):

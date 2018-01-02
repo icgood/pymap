@@ -23,7 +23,9 @@ import re
 from datetime import datetime
 
 from pymap.flags import Flag
-from . import Special, AString, SequenceSet
+from . import Special
+from .astring import AString
+from .sequenceset import SequenceSet
 from .. import Parseable, NotParseable, UnexpectedType, Space
 from ..primitives import Atom, Number, QuotedString, List
 
@@ -33,9 +35,10 @@ __all__ = ['SearchKey']
 class SearchKey(Special):
     """Represents a search key given to the SEARCH command on an IMAP stream.
 
-    :param bytes key: The name of the search key. This value may be ``None`` if
+    :param key: The name of the search key. This value may be ``None`` if
                       the filter is a :class:`SequenceSet` or if the filter is
                       a list of :class:`SearchKey` objects.
+    :type key: bytes | None
     :param filter: A possible filter to narrow down the key. The search ``key``
                    dictates what the type of this value will be.
     :param bool inverse: If the ``NOT`` keyword was used to inverse the set.
@@ -44,7 +47,7 @@ class SearchKey(Special):
 
     _not_pattern = re.compile(br'NOT +', re.I)
 
-    def __init__(self, key, filter=None, inverse=False, raw=None):
+    def __init__(self, key, filter=None, inverse=False):
         super().__init__()
         self.key = key
         self.filter = filter
@@ -112,13 +115,13 @@ class SearchKey(Special):
                    b'RECENT', b'SEEN', b'UNANSWERED', b'UNDELETED',
                    b'UNFLAGGED', b'UNSEEN', b'DRAFT', b'UNDRAFT'):
             return cls(key, inverse=inverse), after
-        elif key in (b'BCC', b'BODY', b'CC', b'FROM', b'SUBJECT',
-                     b'TEXT', b'TO'):
+        elif key in (
+                b'BCC', b'BODY', b'CC', b'FROM', b'SUBJECT', b'TEXT', b'TO'):
             _, buf = Space.parse(after)
             filter, buf = cls._parse_astring_filter(buf, charset, **kwargs)
             return cls(key, filter, inverse), buf
-        elif key in (b'BEFORE', b'ON', b'SINCE',
-                     b'SENTBEFORE', b'SENTON', b'SENTSINCE'):
+        elif key in (b'BEFORE', b'ON', b'SINCE', b'SENTBEFORE', b'SENTON',
+                     b'SENTSINCE'):
             _, buf = Space.parse(after)
             filter, buf = cls._parse_date_filter(buf)
             return cls(key, filter, inverse), buf

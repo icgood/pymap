@@ -63,6 +63,7 @@ class Mailbox(Special):
         """
         ret = bytearray()
         is_usascii = True
+        encode_start = None
         for i, symbol in enumerate(mailbox):
             charpoint = ord(symbol)
             if is_usascii:
@@ -120,7 +121,7 @@ class Mailbox(Special):
                         to_decode = buf[:i].tobytes()
                         decoded = cls._modified_b64decode(to_decode)
                         parts.append(decoded)
-                        buf = buf[i+1:]
+                        buf = buf[i + 1:]
                         is_usascii = True
                         break
         if not is_usascii:

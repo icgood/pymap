@@ -21,7 +21,9 @@
 
 from .. import Parseable, NotParseable
 
-__all__ = ['Special', 'InvalidContent']
+__all__ = ['Special', 'InvalidContent', 'AString', 'DateTime',
+           'FetchAttribute', 'Flag', 'Mailbox', 'SearchKey', 'SequenceSet',
+           'StatusAttribute', 'Tag']
 
 
 class InvalidContent(NotParseable, ValueError):
@@ -39,38 +41,12 @@ class Special(Parseable):
     pass
 
 
-from .astring import __all__ as astring_all
-from .astring import *  # NOQA
-__all__.extend(astring_all)
-
-from .tag import __all__ as tag_all
-from .tag import *  # NOQA
-__all__.extend(tag_all)
-
-from .datetime import __all__ as datetime_all
-from .datetime import *  # NOQA
-__all__.extend(datetime_all)
-
-from .flag import __all__ as flag_all
-from .flag import *  # NOQA
-__all__.extend(flag_all)
-
-from .mailbox import __all__ as mailbox_all
-from .mailbox import *  # NOQA
-__all__.extend(mailbox_all)
-
-from .statusattr import __all__ as statusattr_all
-from .statusattr import *  # NOQA
-__all__.extend(statusattr_all)
-
-from .sequenceset import __all__ as sequenceset_all
-from .sequenceset import *  # NOQA
-__all__.extend(sequenceset_all)
-
-from .fetchattr import __all__ as fetchattr_all
-from .fetchattr import *  # NOQA
-__all__.extend(fetchattr_all)
-
-from .searchkey import __all__ as searchkey_all
-from .searchkey import *  # NOQA
-__all__.extend(searchkey_all)
+from .astring import AString  # NOQA
+from .datetime import DateTime  # NOQA
+from .fetchattr import FetchAttribute  # NOQA
+from .flag import Flag  # NOQA
+from .mailbox import Mailbox  # NOQA
+from .searchkey import SearchKey  # NOQA
+from .sequenceset import SequenceSet  # NOQA
+from .statusattr import StatusAttribute  # NOQA
+from .tag import Tag  # NOQA

@@ -43,7 +43,7 @@ class CommandMailboxArg(CommandAuth):
         return str(self.mailbox_obj)
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **_):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
@@ -65,7 +65,7 @@ class AppendCommand(CommandAuth):
         return str(self.mailbox_obj)
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **kwargs):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -91,25 +91,17 @@ class AppendCommand(CommandAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, mailbox, message.value, flag_list, date_time), buf
 
-CommandAuth.register_command(AppendCommand)
-
 
 class CreateCommand(CommandMailboxArg):
     command = b'CREATE'
-
-CommandAuth.register_command(CreateCommand)
 
 
 class DeleteCommand(CommandMailboxArg):
     command = b'DELETE'
 
-CommandAuth.register_command(DeleteCommand)
-
 
 class ExamineCommand(CommandMailboxArg):
     command = b'EXAMINE'
-
-CommandAuth.register_command(ExamineCommand)
 
 
 class ListCommand(CommandAuth):
@@ -124,7 +116,7 @@ class ListCommand(CommandAuth):
         self.filter = filter
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **_):
         _, buf = Space.parse(buf)
         ref_name, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -139,13 +131,9 @@ class ListCommand(CommandAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, ref_name.value, filter), buf
 
-CommandAuth.register_command(ListCommand)
-
 
 class LSubCommand(ListCommand):
     command = b'LSUB'
-
-CommandAuth.register_command(LSubCommand)
 
 
 class RenameCommand(CommandAuth):
@@ -165,7 +153,7 @@ class RenameCommand(CommandAuth):
         return str(self.to_mailbox_obj)
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **kwargs):
         _, buf = Space.parse(buf)
         from_mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -173,13 +161,9 @@ class RenameCommand(CommandAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, from_mailbox, to_mailbox), buf
 
-CommandAuth.register_command(RenameCommand)
-
 
 class SelectCommand(CommandMailboxArg):
     command = b'SELECT'
-
-CommandAuth.register_command(SelectCommand)
 
 
 class StatusCommand(CommandAuth):
@@ -195,7 +179,7 @@ class StatusCommand(CommandAuth):
         return str(self.mailbox_obj)
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **_):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -205,16 +189,10 @@ class StatusCommand(CommandAuth):
         _, buf = EndLine.parse(after)
         return cls(tag, mailbox, status_list.value), buf
 
-CommandAuth.register_command(StatusCommand)
-
 
 class SubscribeCommand(CommandMailboxArg):
     command = b'SUBSCRIBE'
 
-CommandAuth.register_command(SubscribeCommand)
-
 
 class UnsubscribeCommand(CommandMailboxArg):
     command = b'UNSUBSCRIBE'
-
-CommandAuth.register_command(UnsubscribeCommand)

@@ -70,6 +70,7 @@ class ResponseContinuation(Response):
 
 
 class ConditionResponse(Response):
+    condition = None
 
     def __init__(self, tag, text, code):
         if code:

@@ -58,8 +58,7 @@ class Flag(bytes):
         return hash(bytes(self))
 
     def __repr__(self):
-        return '<{0} value={1!r}>'.format(
-            self.__class__.__name__, bytes(self))
+        return '<{0} value={1!r}>'.format(self.__class__.__name__, bytes(self))
 
 
 class CustomFlag(Flag):

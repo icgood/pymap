@@ -28,7 +28,6 @@ import pkg_resources
 
 __all__ = ['PymapError']
 
-
 #: The version string.
 __version__ = pkg_resources.require("pymap")[0].version
 

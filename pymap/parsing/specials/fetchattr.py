@@ -35,17 +35,16 @@ class FetchAttribute(Special):
     :param byte attribute: Fetch attribute name.
     :param tuple section:
     :param tuple partial:
-    :param bool peek:
 
     """
 
-    _attrname_pattern = re.compile(br' *([^\s\[\<\(\)]+)')
+    _attrname_pattern = re.compile(br' *([^\s\[<()]+)')
     _section_start_pattern = re.compile(br' *\[ *')
     _section_end_pattern = re.compile(br' *\]')
-    _partial_pattern = re.compile(br'\< *(\d+) *\. *(\d+) *\>')
+    _partial_pattern = re.compile(br'< *(\d+) *\. *(\d+) *>')
 
-    _sec_part_pattern = \
-        re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?', re.I)
+    _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?',
+                                   re.I)
 
     def __init__(self, attribute, section=None, partial=None):
         super().__init__()
@@ -66,7 +65,6 @@ class FetchAttribute(Special):
     def raw(self):
         if self._raw is not None:
             return self._raw
-        parts = [self.attribute]
         if self.attribute == b'BODY.PEEK':
             parts = [b'BODY']
         else:
@@ -103,8 +101,8 @@ class FetchAttribute(Special):
         section_parts = None
         match = cls._sec_part_pattern.match(buf)
         if match:
-            section_parts = tuple(int(num) for num in
-                                  match.group(1).split(b'.'))
+            section_parts = tuple(
+                int(num) for num in match.group(1).split(b'.'))
             buf = buf[match.end(0):]
             if not match.group(2):
                 return (section_parts, None, None), buf
@@ -121,8 +119,8 @@ class FetchAttribute(Special):
             kwargs_copy = kwargs.copy()
             kwargs_copy['list_expected'] = [AString]
             header_list, buf = List.parse(after, **kwargs_copy)
-            header_list = frozenset([hdr.value.upper()
-                                     for hdr in header_list.value])
+            header_list = frozenset(
+                [hdr.value.upper() for hdr in header_list.value])
             if not header_list:
                 raise NotParseable(after)
             return (section_parts, sec_msgtext, header_list), buf
@@ -130,7 +128,6 @@ class FetchAttribute(Special):
 
     @classmethod
     def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
         match = cls._attrname_pattern.match(buf)
         if not match:
             raise NotParseable(buf)

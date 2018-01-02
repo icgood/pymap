@@ -27,16 +27,10 @@ __all__ = ['CapabilityCommand', 'LogoutCommand', 'NoOpCommand']
 class CapabilityCommand(CommandAny, CommandNoArgs):
     command = b'CAPABILITY'
 
-CommandAny.register_command(CapabilityCommand)
-
 
 class LogoutCommand(CommandAny, CommandNoArgs):
     command = b'LOGOUT'
 
-CommandAny.register_command(LogoutCommand)
-
 
 class NoOpCommand(CommandAny, CommandNoArgs):
     command = b'NOOP'
-
-CommandAny.register_command(NoOpCommand)

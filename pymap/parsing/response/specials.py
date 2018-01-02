@@ -96,7 +96,7 @@ class FetchResponse(Response):
 
     def __init__(self, seq, data):
         data_list = List(chain.from_iterable(data.items()))
-        text = b'%i FETCH %b' % (seq, data_list)
+        text = b'%i FETCH %b' % (seq, bytes(data_list))
         super().__init__(b'*', text)
 
 
@@ -139,8 +139,11 @@ class ListResponse(Response):
             name_attrs.value.append(br'\Noinferior')
         if no_select:
             name_attrs.value.append(br'\Noselect')
-        text = b'%b %b %b %b' % (self.name, name_attrs, QuotedString(sep),
-                                 Mailbox(name))
+        text = b'%b %b %b %b' % \
+               (bytes(self.name),
+                bytes(name_attrs),
+                bytes(QuotedString(sep)),
+                bytes(Mailbox(name)))
         super().__init__(b'*', text)
 
 

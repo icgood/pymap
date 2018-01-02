@@ -33,7 +33,7 @@ from pysasl import (ServerChallenge, AuthenticationError,
 
 from .core import __version__
 from .parsing import RequiresContinuation
-from .parsing.command import BadCommand, Command
+from .parsing.command import BadCommand, Commands
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from .parsing.response import (ResponseContinuation, ResponseBadCommand,
                                ResponseBad, ResponseBye)
@@ -46,15 +46,16 @@ class Disconnected(Exception):
 
 class IMAPServer(object):
 
-    def __init__(self, backend, reader, writer):
+    def __init__(self, reader, writer):
         super().__init__()
-        self.backend = backend
+        self.commands = Commands()
         self.reader = reader
         self.writer = writer
 
     @classmethod
-    async def callback(cls, backend, reader, writer):
-        await cls(backend, reader, writer).run()
+    async def callback(cls, login, reader, writer):
+        state = ConnectionState(writer.transport, login)
+        await cls(reader, writer).run(state)
 
     async def read_continuation(self, literal_length):
         try:
@@ -94,7 +95,7 @@ class IMAPServer(object):
         conts = []
         while True:
             try:
-                cmd, _ = Command.parse(line, continuations=conts.copy())
+                cmd, _ = self.commands.parse(line, continuations=conts.copy())
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
                 await self.write_response(cont)
@@ -116,8 +117,7 @@ class IMAPServer(object):
         except Exception:
             pass
 
-    async def run(self):
-        state = ConnectionState(self.writer.transport, self.backend)
+    async def run(self, state):
         greeting = await state.do_greeting()
         await self.write_response(greeting)
         while True:
@@ -159,16 +159,17 @@ class IMAPServer(object):
 
 
 def _load_backends():
-    return {entry_point.name: entry_point.load()
-            for entry_point in iter_entry_points('pymap.backend')}
+    return {entry_point.name: entry_point.load() for entry_point in
+            iter_entry_points('pymap.backend')}
 
 
 def main():
     backends = _load_backends()
 
     parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--port', action='store', type=int, default=1143)
     parser.add_argument('--version', action='version',
-                        version='%(prog)s'+__version__)
+                        version='%(prog)s' + __version__)
     subparsers = parser.add_subparsers(dest='backend',
                                        help='Which pymap backend to use.')
     for mod in backends.values():
@@ -179,10 +180,11 @@ def main():
         backend = backends[args.backend]
     except KeyError:
         parser.error('Expected backend name.')
+        return
 
     callback = partial(IMAPServer.callback, backend.init(args))
     loop = asyncio.get_event_loop()
-    coro = asyncio.start_server(callback, port=1143, loop=loop)
+    coro = asyncio.start_server(callback, port=args.port, loop=loop)
     server = loop.run_until_complete(coro)
 
     try:

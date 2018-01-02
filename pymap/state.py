@@ -24,17 +24,22 @@ from socket import getfqdn
 from pysasl import SASLAuth
 
 from .core import PymapError
-from .exceptions import MailboxNotFound, MailboxConflict, MailboxHasChildren, MailboxReadOnly, AppendFailure
+from .exceptions import (MailboxNotFound, MailboxConflict, MailboxHasChildren,
+                         MailboxReadOnly, AppendFailure)
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
 from .parsing.primitives import List, Number
-from .parsing.response import Response, ResponseOk, ResponseNo, ResponseBad, ResponseBye
-from .parsing.response.code import (Capability, PermanentFlags, ReadOnly, ReadWrite, UidNext, UidValidity, Unseen,
+from .parsing.response import (Response, ResponseOk, ResponseNo, ResponseBad,
+                               ResponseBye)
+from .parsing.response.code import (Capability, PermanentFlags, ReadOnly,
+                                    ReadWrite, UidNext, UidValidity, Unseen,
                                     TryCreate)
-from .parsing.response.specials import (FlagsResponse, ExistsResponse, RecentResponse, ExpungeResponse, FetchResponse,
-                                        ListResponse, LSubResponse, SearchResponse)
+from .parsing.response.specials import (FlagsResponse, ExistsResponse,
+                                        RecentResponse, ExpungeResponse,
+                                        FetchResponse, ListResponse,
+                                        LSubResponse, SearchResponse)
 from .parsing.specials import FetchAttribute, DateTime
 
-__all__ = ['CloseConnection', 'ConnectionState']
+__all__ = ['ConnectionState']
 
 fqdn = getfqdn().encode('ascii')
 
@@ -44,7 +49,7 @@ class CloseConnection(PymapError):
     the provided response.
 
     :param response: The response to send before closing the connection.
-    :type response: :class:`~pymap.parsing.response.Response`
+    :type response: pymap.parsing.response.Response
 
     """
 
@@ -54,21 +59,20 @@ class CloseConnection(PymapError):
 
 
 class ConnectionState(object):
-
     flags_attr = FetchAttribute(b'FLAGS')
 
-    def __init__(self, transport, backend):
+    def __init__(self, transport, login):
         super().__init__()
         self.transport = transport
-        self.backend = backend
+        self.login = login
         self.auth = SASLAuth([b'PLAIN'])
         self.session = None
         self.selected = None
         self.expunge_buffer = set()
         self.before_exists = 0
         self.before_recent = 0
-        self.capability = Capability([b'AUTH=%b' % mech.name
-                                      for mech in self.auth.server_mechanisms])
+        self.capability = Capability(
+            [b'AUTH=%b' % mech.name for mech in self.auth.server_mechanisms])
 
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
@@ -76,7 +80,7 @@ class ConnectionState(object):
     async def do_authenticate(self, cmd, result):
         if not result:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self.session = user = await self.backend(result)
+        self.session = user = await self.login(result)
         if user:
             return ResponseOk(cmd.tag, b'Authentication successful.')
         return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
@@ -90,8 +94,7 @@ class ConnectionState(object):
         return ResponseOk(cmd.tag, b'NOOP completed.')
 
     def _get_mailbox_response_data(self, mbx, examine=False):
-        data = [FlagsResponse(mbx.flags),
-                ExistsResponse(mbx.exists),
+        data = [FlagsResponse(mbx.flags), ExistsResponse(mbx.exists),
                 RecentResponse(mbx.recent),
                 ResponseOk(b'*', b'Predicted next UID.',
                            UidNext(mbx.next_uid)),
@@ -99,8 +102,8 @@ class ConnectionState(object):
                            UidValidity(mbx.uid_validity))]
         if mbx.readonly or examine:
             code = ReadOnly()
-            data.append(ResponseOk(b'*', b'Read-only mailbox.',
-                                   PermanentFlags([])))
+            data.append(
+                ResponseOk(b'*', b'Read-only mailbox.', PermanentFlags([])))
         else:
             code = ReadWrite()
             perm_flags = mbx.permanent_flags
@@ -188,8 +191,9 @@ class ConnectionState(object):
                 status_list.value.append(Number(mbx.next_uid))
             elif status_item.value == b'UIDVALIDITY':
                 status_list.value.append(Number(mbx.uid_validity))
-        status = Response(b'*', b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' +
-                          bytes(status_list))
+        status = Response(b'*',
+                          b'STATUS ' + bytes(cmd.mailbox_obj) + b' ' + bytes(
+                              status_list))
         resp.add_data(status)
         return resp
 
@@ -220,18 +224,18 @@ class ConnectionState(object):
         mailboxes = await self.session.list_mailboxes()
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for mbx in mailboxes:
-            if self._mailbox_matches(mbx.name, mbx.sep,
-                                     cmd.ref_name, cmd.filter):
-                resp.add_data(ListResponse(mbx.name, mbx.sep,
-                                           marked=bool(mbx.recent)))
+            if self._mailbox_matches(mbx.name, mbx.sep, cmd.ref_name,
+                                     cmd.filter):
+                resp.add_data(
+                    ListResponse(mbx.name, mbx.sep, marked=bool(mbx.recent)))
         return resp
 
     async def do_lsub(self, cmd):
         mailboxes = await self.session.list_mailboxes(subscribed=True)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for mbx in mailboxes:
-            if self._mailbox_matches(mbx.name, mbx.sep,
-                                     cmd.ref_name, cmd.filter):
+            if self._mailbox_matches(mbx.name, mbx.sep, cmd.ref_name,
+                                     cmd.filter):
                 resp.add_data(LSubResponse(mbx.name, mbx.sep))
         return resp
 
@@ -256,9 +260,9 @@ class ConnectionState(object):
 
     async def _get_messages(self, seq_set, by_uid):
         if by_uid:
-            return (await self.selected.get_messages_by_uid(seq_set))
+            return await self.selected.get_messages_by_uid(seq_set)
         else:
-            return (await self.selected.get_messages_by_seq(seq_set))
+            return await self.selected.get_messages_by_seq(seq_set)
 
     async def do_copy(self, cmd):
         messages = await self._get_messages(cmd.sequence_set, cmd.uid)
@@ -286,32 +290,30 @@ class ConnectionState(object):
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
-                    fetch_data[attr] = await \
-                        structure.build_envelope_structure()
+                    fetch_data[
+                        attr] = await structure.build_envelope_structure()
                 elif attr.attribute == b'BODYSTRUCTURE':
-                    fetch_data[attr] = await \
-                        structure.build_body_structure(ext_data=True)
+                    fetch_data[attr] = await structure.build_body_structure(
+                        ext_data=True)
                 elif attr.attribute in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
-                        fetch_data[attr] = await \
-                            structure.build_body_structure()
+                        fetch_data[
+                            attr] = await structure.build_body_structure()
                     elif not attr.section[1]:
-                        fetch_data[attr] = await \
-                            structure.get_body(attr.section[0])
+                        fetch_data[attr] = await structure.get_body(
+                            attr.section[0])
                     elif attr.section[1] == b'TEXT':
-                        fetch_data[attr] = await \
-                            structure.get_text(attr.section[0])
+                        fetch_data[attr] = await structure.get_text(
+                            attr.section[0])
                     elif attr.section[1] in (b'HEADER', b'MIME'):
-                        fetch_data[attr] = await \
-                            structure.get_headers(attr.section[0])
+                        fetch_data[attr] = await structure.get_headers(
+                            attr.section[0])
                     elif attr.section[1] == b'HEADER.FIELDS':
-                        fetch_data[attr] = await \
-                            structure.get_headers(attr.section[0],
-                                                  attr.section[2])
+                        fetch_data[attr] = await structure.get_headers(
+                            attr.section[0], attr.section[2])
                     elif attr.section[1] == b'HEADER.FIELDS.NOT':
-                        fetch_data[attr] = await \
-                            structure.get_headers(attr.section[0],
-                                                  attr.section[2], True)
+                        fetch_data[attr] = await structure.get_headers(
+                            attr.section[0], attr.section[2], True)
                 elif attr.attribute == b'RFC822':
                     fetch_data[attr] = await structure.get_body()
                 elif attr.attribute == b'RFC822.HEADER':

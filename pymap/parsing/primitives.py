@@ -23,8 +23,8 @@ import re
 
 from . import Parseable, NotParseable, RequiresContinuation
 
-__all__ = ['Primitive', 'Nil', 'Number', 'Atom', 'List',
-           'String', 'QuotedString', 'LiteralString']
+__all__ = ['Primitive', 'Nil', 'Number', 'Atom', 'List', 'String',
+           'QuotedString', 'LiteralString']
 
 
 class Primitive(Parseable):
@@ -156,7 +156,7 @@ class QuotedString(String):
     @classmethod
     def parse(cls, buf, **kwargs):
         start = cls._whitespace_length(buf)
-        if buf[start:start+1] != b'"':
+        if buf[start:start + 1] != b'"':
             raise NotParseable(buf)
         marker = start + 1
         unquoted = bytearray()
@@ -174,7 +174,7 @@ class QuotedString(String):
                 marker = match.end(0)
             else:
                 end = match.end(0)
-                quoted = buf[start:end+1]
+                quoted = buf[start:end + 1]
                 return cls(bytes(unquoted), quoted), buf[end:]
         raise NotParseable(buf)
 
@@ -184,6 +184,7 @@ class QuotedString(String):
 
         def escape_quoted_specials(match):
             return b'\\' + match.group(0)
+
         pat = self._quoted_specials_pattern
         quoted_string = pat.sub(escape_quoted_specials, self.value)
         self._raw = b'"%b"' % quoted_string
@@ -250,10 +251,10 @@ class List(Primitive):
     def parse(cls, buf, list_expected=None, **kwargs):
         buf = memoryview(buf)
         start = cls._whitespace_length(buf)
-        if buf[start:start+1] != b'(':
+        if buf[start:start + 1] != b'(':
             raise NotParseable(buf)
         items = []
-        buf = buf[start+1:]
+        buf = buf[start + 1:]
         while True:
             match = cls._end_pattern.match(buf)
             if match:

@@ -24,7 +24,8 @@ from ..primitives import Atom
 from ..specials import Tag
 
 __all__ = ['CommandNotFound', 'BadCommand', 'Command', 'CommandNoArgs',
-           'CommandAny', 'CommandAuth', 'CommandNonAuth', 'CommandSelect']
+           'CommandAny', 'CommandAuth', 'CommandNonAuth', 'CommandSelect',
+           'Commands']
 
 
 class BadCommand(NotParseable):
@@ -41,8 +42,8 @@ class BadCommand(NotParseable):
     def __bytes__(self):
         if hasattr(self, '_raw'):
             return self._raw
-        self._raw = raw = b'%b: %b' % (self.command.command,
-                                       super().__bytes__())
+        self._raw = raw = b'%b: %b' % \
+                          (self.command.command, super().__bytes__())
         return raw
 
     def __str__(self):
@@ -72,35 +73,9 @@ class Command(Parseable):
 
     """
 
-    _commands = {}
-
     def __init__(self, tag):
         super().__init__()
         self.tag = tag
-
-    @classmethod
-    def register_command(cls, command):
-        cls._commands[command.command] = command
-
-    @classmethod
-    def parse(cls, buf, **kwargs):
-        from . import any, auth, nonauth, select  # NOQA
-        buf = memoryview(buf)
-        tag = Tag(b'*')
-        try:
-            tag, buf = Tag.parse(buf)
-            _, buf = Space.parse(buf)
-            atom, buf = Atom.parse(buf)
-            command = atom.value.upper()
-        except NotParseable:
-            raise CommandNotFound(buf, tag.value)
-        cmd_type = cls._commands.get(command)
-        if cmd_type:
-            try:
-                return cmd_type._parse(tag.value, buf, **kwargs)
-            except NotParseable as exc:
-                raise BadCommand(exc.buf, tag.value, cmd_type)
-        raise CommandNotFound(buf, tag.value, command)
 
 
 class CommandNoArgs(Command):
@@ -110,7 +85,7 @@ class CommandNoArgs(Command):
     """
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **_):
         _, buf = EndLine.parse(buf)
         return cls(tag), buf
 
@@ -144,3 +119,38 @@ class CommandSelect(CommandAuth):
 
     """
     pass
+
+
+class Commands(Parseable):
+    """Contains the set of all known IMAP commands and the ability to parse
+
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.commands = {}
+        self._load_commands()
+
+    def _load_commands(self):
+        from . import any, auth, nonauth, select  # NOQA
+        for mod in (any, auth, nonauth, select):
+            for command_name in mod.__all__:
+                command = getattr(mod, command_name)
+                self.commands[command.command] = command
+
+    def parse(self, buf, **kwargs):
+        tag = Tag(b'*')
+        try:
+            tag, buf = Tag.parse(buf)
+            _, buf = Space.parse(buf)
+            atom, buf = Atom.parse(buf)
+            command = atom.value.upper()
+        except NotParseable:
+            raise CommandNotFound(buf, tag.value)
+        cmd_type = self.commands.get(command)
+        if cmd_type:
+            try:
+                return cmd_type.parse(buf, tag=tag.value, **kwargs)
+            except NotParseable as exc:
+                raise BadCommand(exc.buf, tag.value, cmd_type)
+        raise CommandNotFound(buf, tag.value, command)

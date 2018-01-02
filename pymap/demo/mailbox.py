@@ -30,7 +30,6 @@ __all__ = ['Mailbox']
 
 
 class Mailbox(MailboxInterface):
-
     sep = b'.'
     flags = [br'\Seen', br'\Recent', br'\Answered', br'\Deleted', br'\Draft',
              br'\Flagged']
@@ -85,7 +84,7 @@ class Mailbox(MailboxInterface):
 
     @property
     def next_uid(self):
-        return self.next_uids.setdefault(self.name, self.exists+1)
+        return self.next_uids.setdefault(self.name, self.exists + 1)
 
     def _increment_next_uid(self):
         next_uid = self.next_uid
@@ -99,12 +98,12 @@ class Mailbox(MailboxInterface):
 
     async def get_messages_by_seq(self, seq_set):
         max_seq = self.exists
-        return [(i+1, msg) for i, msg in enumerate(self._messages)
-                if seq_set.contains(i+1, max_seq)]
+        return [(i + 1, msg) for i, msg in enumerate(self._messages)
+                if seq_set.contains(i + 1, max_seq)]
 
     async def get_messages_by_uid(self, uid_set):
         max_uid = self.next_uid - 1
-        return [(i+1, msg) for msg in enumerate(self._messages)
+        return [(i + 1, msg) for i, msg in enumerate(self._messages)
                 if uid_set.contains(msg.uid, max_uid)]
 
     async def append_message(self, message, flag_set=None, when=None):
@@ -122,7 +121,7 @@ class Mailbox(MailboxInterface):
         for i, msg in enumerate(self._messages):
             if br'\Deleted' in msg.flags:
                 for instance in self._instances:
-                    instance._changes['expunge'].add(i+1)
+                    instance._changes['expunge'].add(i + 1)
                     instance._new_messages = True
             else:
                 new_messages.append(msg)

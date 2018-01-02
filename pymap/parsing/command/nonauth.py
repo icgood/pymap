@@ -35,13 +35,11 @@ class AuthenticateCommand(CommandNonAuth):
         self.mech_name = mech_name
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **_):
         _, buf = Space.parse(buf)
         atom, after = Atom.parse(buf)
         _, after = EndLine.parse(after)
         return cls(tag, atom.value.upper()), after
-
-CommandNonAuth.register_command(AuthenticateCommand)
 
 
 class LoginCommand(CommandNonAuth):
@@ -53,7 +51,7 @@ class LoginCommand(CommandNonAuth):
         self.password = password
 
     @classmethod
-    def _parse(cls, tag, buf, **kwargs):
+    def parse(cls, buf, tag=None, **kwargs):
         _, buf = Space.parse(buf)
         userid, buf = AString.parse(buf, **kwargs)
         _, buf = Space.parse(buf)
@@ -61,10 +59,6 @@ class LoginCommand(CommandNonAuth):
         _, buf = EndLine.parse(buf)
         return cls(tag, userid.value, password.value), buf
 
-CommandNonAuth.register_command(LoginCommand)
-
 
 class StartTLSCommand(CommandNonAuth, CommandNoArgs):
     command = b'STARTTLS'
-
-CommandNonAuth.register_command(StartTLSCommand)
