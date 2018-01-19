@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 #
 
+import datetime
 import email
 import io
 from email.charset import Charset
@@ -26,6 +27,7 @@ from email.generator import BytesGenerator
 from email.message import Message
 from email.policy import SMTP
 from email.utils import getaddresses
+from typing import Collection, Optional, Union, Tuple
 
 from .parsing import Parseable
 from .parsing.primitives import Nil, QuotedString, List, LiteralString, Number
@@ -57,28 +59,33 @@ class TextOnlyBytesGenerator(BytesGenerator):
         pass
 
 
-class MessageStructure(object):
+class MessageStructure:
     """Pulls the information from a message object
     necessary to gather `message attributes
     <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the
     `FETCH responses <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_.
 
+    :param uid: The UID of the message.
     :param message: The message object.
-    :type message: :class:`~email.message.Message` or
-                   :class:`~pymap.interfaces.MessageInterface`
 
     """
 
     _HEADER_CHARSET = Charset('utf-8')
 
-    def __init__(self, message):
+    def __init__(self, uid: int, message: Message):
         super().__init__()
+
+        #: The message's unique identifier in the mailbox.
+        self.uid = uid  # type: int
+
+        #: The MIME-parsed message object.
         self.message = message
 
-    async def _get_msg(self, full=False):
-        if isinstance(self.message, Message):
-            return self.message
-        return await self.message.get_message(full=full)
+        #: The message's internal date.
+        self.internal_date = None  # type: Optional[datetime.datetime]
+
+        #: The message's set of flags.
+        self.flags = None  # type: Optional[Collection[bytes]]
 
     def _get_str_or_nil(self, value):
         if value is None:
@@ -118,43 +125,48 @@ class MessageStructure(object):
             ret.append(self._get_str_or_nil(value))
         return List(ret)
 
-    def _get_subparts(self, msg):
-        assert msg.is_multipart()
-        return [MessageStructure(subpart) for subpart in msg.get_payload()]
+    @classmethod
+    def _get_subparts(cls, self):
+        assert self.message.is_multipart()
+        return [cls(self.uid, subpart)
+                for subpart in self.message.get_payload()]
 
-    def _get_subpart(self, msg, section):
-        subpart = msg
-        for i in section:
-            if msg.is_multipart():
-                subpart = subpart.get_payload(i - 1)
-            elif i == 1:
-                pass
-            else:
-                raise IndexError(section)
-        return subpart
+    @classmethod
+    def _get_subpart(cls, msg, section):
+        if section:
+            subpart = msg
+            for i in section:
+                if msg.is_multipart():
+                    subpart = subpart.get_payload(i - 1)
+                elif i == 1:
+                    pass
+                else:
+                    raise IndexError(section)
+            return subpart
+        else:
+            return msg
 
-    async def get_headers(self, section=None, subset=None, inverse=False):
+    def get_headers(self, section: Optional[Collection[int]] = None,
+                    subset: Collection[Union[str, bytes]] = None,
+                    inverse: bool = False) \
+            -> Union[LiteralString, Nil]:
         """Get the headers from the message.
 
         The ``section`` argument can index a nested sub-part of the message.
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
         then index it for its 3rd sub-part.
 
-        :param list section: Optional nested list of sub-part indexes.
-        :param list subset: Optional subset of headers to get. Each item should
-                            be an upper-cased string.
-        :param bool inverse: If ``subset`` is given, this flag will invert it
+        :param section: Optional nested list of sub-part indexes.
+        :param subset: Subset of headers to get.
+        :param inverse: If ``subset`` is given, this flag will invert it
                              so that the headers *not* in ``subset`` are
                              returned.
-        :rtype: :class:`pymap.parsing.primitives.LiteralString`
 
         """
-        msg = await self._get_msg(False)
-        if section:
-            try:
-                msg = self._get_subpart(msg, section)
-            except IndexError:
-                return Nil()
+        try:
+            msg = self._get_subpart(self.message, section)
+        except IndexError:
+            return Nil()
         ret = email.message.Message(SMTP)
         for key, value in msg.items():
             if subset is not None:
@@ -169,67 +181,60 @@ class MessageStructure(object):
                 ret[key] = value
         return LiteralString(bytes(ret))
 
-    async def get_body(self, section=None):
+    def get_body(self, section: Optional[Collection[int]] = None) \
+            -> Union[LiteralString, Nil]:
         """Get the full body of the message part, including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
         then index it for its 3rd sub-part.
 
-        :param list section: Optional nested list of sub-part indexes.
-        :rtype: :class:`pymap.parsing.primitives.LiteralString`
+        :param section: Optional nested list of sub-part indexes.
 
         """
-        msg = await self._get_msg()
-        if section:
-            try:
-                msg = self._get_subpart(msg, section)
-            except IndexError:
-                return Nil()
+        try:
+            msg = self._get_subpart(self.message, section)
+        except IndexError:
+            return Nil()
         return LiteralString(bytes(msg))
 
-    async def get_text(self, section=None):
+    def get_text(self, section: Optional[Collection[int]] = None) \
+            -> Union[LiteralString, Nil]:
         """Get the text of the message part, not including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
         then index it for its 3rd sub-part.
 
-        :param list section: Optional nested list of sub-part indexes.
-        :rtype: :class:`pymap.parsing.primitives.LiteralString`
+        :param section: Optional nested list of sub-part indexes.
 
         """
-        msg = await self._get_msg()
-        if section:
-            try:
-                msg = self._get_subpart(msg, section)
-            except IndexError:
-                return Nil()
+        try:
+            msg = self._get_subpart(self.message, section)
+        except IndexError:
+            return Nil()
         ofp = io.BytesIO()
         TextOnlyBytesGenerator(ofp, False, policy=SMTP).flatten(msg)
         return LiteralString(ofp.getvalue())
 
-    async def get_size(self, with_lines=False, msg=None):
-        """Return the size of the message, in octets.
-
-        :param with_lines: Return a two-tuple of
-                           :class:`~pymap.parsing.primitives.Number` objects
-                           with the message size and number of lines.
-        :param msg: Use the given object instead of querying :attr:`.message`.
-        :type msg: :class:`~email.message.Message`
-        :type: :class:`pymap.parsing.primitives.Number`
-
-        """
-        msg = msg or (await self._get_msg())
+    @classmethod
+    def _get_size(cls, msg: Message) -> Number:
         data = bytes(msg)
         size = len(data)
-        if with_lines:
-            lines = data.count(b'\n')
-            return Number(size), Number(lines)
-        else:
-            return Number(size)
+        return Number(size)
 
-    async def build_envelope_structure(self, msg=None):
+    @classmethod
+    def _get_size_with_lines(cls, msg: Message) -> Tuple[Number, Number]:
+        data = bytes(msg)
+        size = len(data)
+        lines = data.count(b'\n')
+        return Number(size), Number(lines)
+
+    def get_size(self) -> Number:
+        """Return the size of the message, in octets."""
+        return self._get_size(self.message)
+
+    async def get_envelope_structure(self) -> List:
         """Build and return the envelope structure.
 
         .. seealso::
@@ -237,12 +242,8 @@ class MessageStructure(object):
            `RFC 3501 2.3.5
            <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
 
-        :param msg: Use the given object instead of querying :attr:`.message`.
-        :type msg: :class:`~email.message.Message`
-        :rtype: :class:`pymap.parsing.primitives.List`
-
         """
-        msg = msg or (await self._get_msg(False))
+        msg = self.message
         return List([self._get_header_str_or_nil(msg, 'Date'),
                      self._get_header_str_or_nil(msg, 'Subject'),
                      self._get_header_addresses_or_nil(msg, 'From'),
@@ -255,7 +256,7 @@ class MessageStructure(object):
                      self._get_header_str_or_nil(msg, 'In-Reply-To'),
                      self._get_header_str_or_nil(msg, 'Message-Id')])
 
-    async def build_body_structure(self, msg=None, ext_data=False):
+    def get_body_structure(self) -> List:
         """Build and return the body structure.
 
         .. seealso::
@@ -263,36 +264,31 @@ class MessageStructure(object):
            `RFC 3501 2.3.6
            <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
 
-        :param msg: Use the given object instead of querying :attr:`.message`.
-        :type msg: :class:`~email.message.Messaege`
-        :param bool ext_data: Whether to include extension data in the result.
-        :rtype: :class:`pymap.parsing.primitives.List`
-
         """
-        msg = msg or (await self._get_msg())
+        msg = self.message
         maintype = self._get_str_or_nil(msg.get_content_maintype())
         subtype = self._get_str_or_nil(msg.get_content_subtype())
         if maintype.value == b'multipart':
             child_data = []
-            for struct in self._get_subparts(msg):
-                child_data.append(await struct.build_body_structure())
+            for struct in self._get_subparts(self):
+                child_data.append(struct.get_body_structure())
             return List([ConcatenatedParseables(child_data), subtype])
         params = self._get_header_params(msg)
-        id = self._get_header_str_or_nil(msg, 'Content-Id')
+        cid = self._get_header_str_or_nil(msg, 'Content-Id')
         desc = self._get_header_str_or_nil(msg, 'Content-Description')
         encoding = self._get_header_str_or_nil(
             msg, 'Content-Transfer-Encoding')
         if maintype.value == b'message' and subtype.value == b'rfc822':
-            size, lines = await self.get_size(True, msg)
-            child_structs = self._get_subparts(msg)
+            size, lines = self._get_size_with_lines(msg)
+            child_structs = self._get_subparts(self)
             sub_message = child_structs[0]
-            sub_message_env = await sub_message.get_envelope_structure()
-            sub_message_body = await sub_message.get_body_structure()
-            return List([maintype, subtype, params, id, desc, encoding, size,
+            sub_message_env = sub_message.get_envelope_structure()
+            sub_message_body = sub_message.get_body_structure()
+            return List([maintype, subtype, params, cid, desc, encoding, size,
                          sub_message_env, sub_message_body, lines])
         elif maintype.value == b'text':
-            size, lines = await self.get_size(True, msg)
+            size, lines = self._get_size_with_lines(msg)
             return List(
-                [maintype, subtype, params, id, desc, encoding, size, lines])
-        size = await self.get_size(msg=msg)
-        return List([maintype, subtype, params, id, desc, encoding, size])
+                [maintype, subtype, params, cid, desc, encoding, size, lines])
+        size = self._get_size(msg)
+        return List([maintype, subtype, params, cid, desc, encoding, size])

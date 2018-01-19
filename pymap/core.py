@@ -26,7 +26,7 @@ defines the package's version number in ``__version__``.
 
 import pkg_resources
 
-__all__ = ['PymapError']
+__all__ = ['__version__', 'PymapError']
 
 #: The version string.
 __version__ = pkg_resources.require("pymap")[0].version

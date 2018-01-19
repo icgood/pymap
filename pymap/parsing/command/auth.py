@@ -21,9 +21,10 @@
 
 import re
 from datetime import datetime
+from typing import Tuple, Sequence, FrozenSet
 
 from . import CommandAuth
-from .. import NotParseable, UnexpectedType, Space, EndLine
+from .. import NotParseable, UnexpectedType, Space, EndLine, Buffer
 from ..primitives import List, String, LiteralString
 from ..specials import InvalidContent, Mailbox, DateTime, Flag, StatusAttribute
 
@@ -36,14 +37,15 @@ class CommandMailboxArg(CommandAuth):
 
     def __init__(self, tag, mailbox):
         super().__init__(tag)
-        self.mailbox_obj = mailbox
+        self.mailbox_obj = mailbox  # type: Mailbox
 
     @property
-    def mailbox(self):
+    def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf, tag=None, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['CommandMailboxArg', bytes]:
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
@@ -53,19 +55,19 @@ class CommandMailboxArg(CommandAuth):
 class AppendCommand(CommandAuth):
     command = b'APPEND'
 
-    def __init__(self, tag, mailbox, message, flag_list=None, when=None):
+    def __init__(self, tag, mailbox, message, flags=None, when=None):
         super().__init__(tag)
-        self.mailbox_obj = mailbox
-        self.message = message
-        self.flag_set = frozenset(flag.value for flag in (flag_list or []))
-        self.when = when or datetime.now()
+        self.mailbox_obj = mailbox  # type: Mailbox
+        self.message = message  # type: bytes
+        self.flag_set = frozenset(flags)  # type: FrozenSet[Flag]
+        self.when = when or datetime.now()  # type: datetime
 
     @property
-    def mailbox(self):
+    def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf, tag=None, **kwargs):
+    def parse(cls, buf: Buffer, tag: bytes = None, **kwargs):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -74,9 +76,9 @@ class AppendCommand(CommandAuth):
         except UnexpectedType:
             raise
         except NotParseable:
-            flag_list = None
+            flags = []
         else:
-            flag_list = flag_list.value
+            flags = flag_list.value
             _, buf = Space.parse(buf)
         try:
             date_time, buf = DateTime.parse(buf)
@@ -89,7 +91,7 @@ class AppendCommand(CommandAuth):
             _, buf = Space.parse(buf)
         message, buf = LiteralString.parse(buf, **kwargs)
         _, buf = EndLine.parse(buf)
-        return cls(tag, mailbox, message.value, flag_list, date_time), buf
+        return cls(tag, mailbox, message.value, flags, date_time), buf
 
 
 class CreateCommand(CommandMailboxArg):
@@ -110,13 +112,14 @@ class ListCommand(CommandAuth):
     _list_mailbox_pattern = re.compile(br'[\x21\x23-\x27\x2A-\x5B'
                                        br'\x5D-\x7A\x7C\x7E]+')
 
-    def __init__(self, tag, ref_name, filter):
+    def __init__(self, tag, ref_name, filter_):
         super().__init__(tag)
-        self.ref_name = ref_name
-        self.filter = filter
+        self.ref_name = ref_name  # type: str
+        self.filter = filter_  # type: str
 
     @classmethod
-    def parse(cls, buf, tag=None, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['ListCommand', bytes]:
         _, buf = Space.parse(buf)
         ref_name, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -124,12 +127,12 @@ class ListCommand(CommandAuth):
         if match:
             filter_raw = match.group(0)
             buf = buf[match.end(0):]
-            filter = Mailbox.decode_name(filter_raw)
+            filter_ = Mailbox.decode_name(filter_raw)
         else:
             filter_str, buf = String.parse(buf)
-            filter = Mailbox.decode_name(filter_str.value)
+            filter_ = Mailbox.decode_name(filter_str.value)
         _, buf = EndLine.parse(buf)
-        return cls(tag, ref_name.value, filter), buf
+        return cls(tag, ref_name.value, filter_), buf
 
 
 class LSubCommand(ListCommand):
@@ -141,19 +144,20 @@ class RenameCommand(CommandAuth):
 
     def __init__(self, tag, from_mailbox, to_mailbox):
         super().__init__(tag)
-        self.from_mailbox_obj = from_mailbox
-        self.to_mailbox_obj = to_mailbox
+        self.from_mailbox_obj = from_mailbox  # type: Mailbox
+        self.to_mailbox_obj = to_mailbox  # type: Mailbox
 
     @property
-    def from_mailbox(self):
+    def from_mailbox(self) -> str:
         return str(self.from_mailbox_obj)
 
     @property
-    def to_mailbox(self):
+    def to_mailbox(self) -> str:
         return str(self.to_mailbox_obj)
 
     @classmethod
-    def parse(cls, buf, tag=None, **kwargs):
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['RenameCommand', bytes]:
         _, buf = Space.parse(buf)
         from_mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)
@@ -171,15 +175,16 @@ class StatusCommand(CommandAuth):
 
     def __init__(self, tag, mailbox, status_list):
         super().__init__(tag)
-        self.mailbox_obj = mailbox
-        self.status_list = status_list
+        self.mailbox_obj = mailbox  # type: Mailbox
+        self.status_list = status_list  # type: Sequence[StatusAttribute]
 
     @property
-    def mailbox(self):
+    def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf, tag=None, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['StatusCommand', bytes]:
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = Space.parse(buf)

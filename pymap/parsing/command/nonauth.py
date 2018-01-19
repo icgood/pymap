@@ -19,8 +19,10 @@
 # THE SOFTWARE.
 #
 
+from typing import Tuple
+
 from . import CommandNonAuth, CommandNoArgs
-from .. import Space, EndLine
+from .. import Space, EndLine, Buffer
 from ..primitives import Atom
 from ..specials import AString
 
@@ -32,10 +34,11 @@ class AuthenticateCommand(CommandNonAuth):
 
     def __init__(self, tag, mech_name):
         super().__init__(tag)
-        self.mech_name = mech_name
+        self.mech_name = mech_name  # type: bytes
 
     @classmethod
-    def parse(cls, buf, tag=None, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['AuthenticateCommand', bytes]:
         _, buf = Space.parse(buf)
         atom, after = Atom.parse(buf)
         _, after = EndLine.parse(after)
@@ -47,11 +50,12 @@ class LoginCommand(CommandNonAuth):
 
     def __init__(self, tag, userid, password):
         super().__init__(tag)
-        self.userid = userid
-        self.password = password
+        self.userid = userid  # type: bytes
+        self.password = password  # type: bytes
 
     @classmethod
-    def parse(cls, buf, tag=None, **kwargs):
+    def parse(cls, buf: Buffer, tag: bytes = None, **kwargs) \
+            -> Tuple['LoginCommand', bytes]:
         _, buf = Space.parse(buf)
         userid, buf = AString.parse(buf, **kwargs)
         _, buf = Space.parse(buf)

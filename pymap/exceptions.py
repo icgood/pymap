@@ -31,9 +31,9 @@ __all__ = ['MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
 
 class MailboxError(PymapError):
 
-    def __init__(self, mailbox):
+    def __init__(self, mailbox: str):
         super().__init__(mailbox)
-        self.mailbox = mailbox
+        self.mailbox = mailbox  # type: str
 
 
 class MailboxNotFound(MailboxError):

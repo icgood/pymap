@@ -19,19 +19,17 @@
 # THE SOFTWARE.
 #
 
+from typing import Tuple
+
 from . import Special, InvalidContent
-from .. import NotParseable, Space
+from .. import NotParseable, Space, Buffer
 from ..primitives import Atom
 
 __all__ = ['StatusAttribute']
 
 
 class StatusAttribute(Special):
-    """Represents a status attribute from an IMAP stream.
-
-    :param str status: The status attribute name.
-
-    """
+    """Represents a status attribute from an IMAP stream."""
 
     _statuses = {b'MESSAGES', b'RECENT', b'UIDNEXT', b'UIDVALIDITY', b'UNSEEN'}
 
@@ -39,10 +37,10 @@ class StatusAttribute(Special):
         super().__init__()
         if status not in self._statuses:
             raise ValueError(status)
-        self.value = status
+        self.value = status  # type: bytes
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf: Buffer, **_) -> Tuple['StatusAttribute', bytes]:
         try:
             _, buf = Space.parse(buf)
         except NotParseable:
@@ -52,6 +50,13 @@ class StatusAttribute(Special):
             return cls(atom.value.upper()), after
         except ValueError:
             raise InvalidContent(buf)
+
+    def __eq__(self, other):
+        if isinstance(other, StatusAttribute):
+            return self.value == other.value
+        elif isinstance(other, bytes):
+            return self.value == other
+        return NotImplemented
 
     def __bytes__(self):
         return self.value

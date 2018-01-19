@@ -19,19 +19,15 @@
 # THE SOFTWARE.
 #
 
-from ..primitives import List
+from typing import List as ListT
 
-__all__ = ['ResponseCode', 'Alert', 'BadCharset', 'Capability', 'Parse',
+from . import ResponseCode, Response
+from ..primitives import List
+from .. import MaybeBytes
+
+__all__ = ['Alert', 'BadCharset', 'Capability', 'Parse',
            'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
            'UidValidity', 'Unseen']
-
-
-class ResponseCode(object):
-    """Base class for response codes that may be returned along with IMAP
-    server responses.
-
-    """
-    pass
 
 
 class Alert(ResponseCode):
@@ -54,25 +50,25 @@ class BadCharset(ResponseCode):
 class Capability(ResponseCode):
     """Lists the capabilities the server advertises to the client."""
 
-    def __init__(self, server_capabilities):
+    def __init__(self, server_capabilities: ListT[MaybeBytes]):
         super().__init__()
-        self.capabilities = server_capabilities
+        self.capabilities = server_capabilities  # type: ListT[MaybeBytes]
         self._raw = None
 
     @property
-    def string(self):
+    def string(self) -> bytes:
         if self._raw is not None:
             return self._raw
         self._raw = raw = b' '.join(
             [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)
         return raw
 
-    def add(self, capability):
+    def add(self, capability: MaybeBytes):
         if capability not in self.capabilities:
             self.capabilities.append(capability)
             self._raw = None
 
-    def remove(self, capability):
+    def remove(self, capability: MaybeBytes):
         try:
             self.capabilities.remove(capability)
         except ValueError:
@@ -80,8 +76,7 @@ class Capability(ResponseCode):
         else:
             self._raw = None
 
-    def to_response(self):
-        from . import Response
+    def to_response(self) -> Response:
         return Response(b'*', self.string)
 
     def __bytes__(self):
@@ -97,9 +92,9 @@ class Parse(ResponseCode):
 
 class PermanentFlags(ResponseCode):
 
-    def __init__(self, flags):
+    def __init__(self, flags: ListT[MaybeBytes]):
         super().__init__()
-        self.flags = flags
+        self.flags = flags  # type: ListT[MaybeBytes]
         self._raw = b'[PERMANENTFLAGS %b]' % List(flags)
 
     def __bytes__(self):
@@ -133,10 +128,10 @@ class TryCreate(ResponseCode):
 class UidNext(ResponseCode):
     """Indicates the next unique identifier value of the mailbox."""
 
-    def __init__(self, next):
+    def __init__(self, next_: int):
         super().__init__()
-        self.next = next
-        self._raw = b'[UIDNEXT %i]' % next
+        self.next = next_  # type: int
+        self._raw = b'[UIDNEXT %i]' % next_
 
     def __bytes__(self):
         return self._raw
@@ -145,9 +140,9 @@ class UidNext(ResponseCode):
 class UidValidity(ResponseCode):
     """Indicates the mailbox unique identifier validity value."""
 
-    def __init__(self, validity):
+    def __init__(self, validity: int):
         super().__init__()
-        self.validity = validity
+        self.validity = validity  # type: int
         self._raw = b'[UIDVALIDITY %i]' % validity
 
     def __bytes__(self):
@@ -160,10 +155,10 @@ class Unseen(ResponseCode):
 
     """
 
-    def __init__(self, next):
+    def __init__(self, next_: int):
         super().__init__()
-        self.next = next
-        self._raw = b'[UNSEEN %i]' % next
+        self.next = next_  # type: int
+        self._raw = b'[UNSEEN %i]' % next_
 
     def __bytes__(self):
         return self._raw

@@ -27,48 +27,37 @@
 
 """
 
-__all__ = ['CustomFlag', 'Seen', 'Recent', 'Deleted', 'Flagged', 'Answered',
-           'Draft']
+import enum
+
+from .parsing.specials.flag import Flag
+
+__all__ = ['FlagOp', 'CustomFlag', 'Seen', 'Recent', 'Deleted', 'Flagged',
+           'Answered', 'Draft']
 
 
-class Flag(bytes):
+class FlagOp(enum.Enum):
+    """Types of operations when updating flags."""
 
-    def __new__(cls, value):
-        if not value:
-            raise ValueError(value)
-        return bytes.__new__(cls, cls._capitalize(value))
+    #: All existing flags should be replaced with the flag set.
+    REPLACE = enum.auto()
 
-    @classmethod
-    def _capitalize(cls, value):
-        if value.startswith(b'\\'):
-            return b'\\' + value[1:].capitalize()
-        return value
+    #: The flag set should be added to the existing set.
+    ADD = enum.auto()
 
-    def __eq__(self, other):
-        if isinstance(other, Flag):
-            return bytes(self) == bytes(other)
-        elif isinstance(other, bytes):
-            return bytes(self) == self._capitalize(other)
-        return NotImplemented
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __hash__(self):
-        return hash(bytes(self))
-
-    def __repr__(self):
-        return '<{0} value={1!r}>'.format(self.__class__.__name__, bytes(self))
+    #: The flag set should be removed from the existing set.
+    DELETE = enum.auto()
 
 
 class CustomFlag(Flag):
     """Base class for defining custom flag objects. All custom flags, whether
     they are instances or sub-classes, should use this class.
 
-    :param bytes value: The bytestring of the flag's value.
+    :param value: The bytes of the flag's value.
 
     """
-    pass
+
+    def __init__(self, value: bytes):
+        super().__init__(value)
 
 
 Seen = Flag(br'\Seen')

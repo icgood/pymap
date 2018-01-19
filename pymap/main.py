@@ -114,7 +114,7 @@ class IMAPServer(object):
         try:
             await self.write_response(resp)
             self.writer.close()
-        except Exception:
+        except IOError:
             pass
 
     async def run(self, state):

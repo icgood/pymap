@@ -150,32 +150,6 @@ class TestStatusAttribute(unittest.TestCase):
 
 class TestSequenceSet(unittest.TestCase):
 
-    def test_contains(self):
-        set1 = SequenceSet([12])
-        self.assertTrue(set1.contains(12, 100))
-        self.assertFalse(set1.contains(13, 100))
-        self.assertFalse(set1.contains(12, 10))
-        set2 = SequenceSet(['*'])
-        self.assertTrue(set2.contains(21, 100))
-        self.assertFalse(set2.contains(21, 20))
-        set3 = SequenceSet([(5, 10)])
-        self.assertTrue(set3.contains(7, 100))
-        self.assertFalse(set3.contains(7, 6))
-        self.assertFalse(set3.contains(11, 100))
-        self.assertFalse(set3.contains(4, 100))
-        set4 = SequenceSet([('*', 10)])
-        self.assertTrue(set4.contains(11, 100))
-        self.assertFalse(set4.contains(9, 100))
-        self.assertFalse(set4.contains(101, 100))
-        set5 = SequenceSet([(10, '*')])
-        self.assertTrue(set5.contains(11, 100))
-        self.assertFalse(set5.contains(9, 100))
-        self.assertFalse(set5.contains(101, 100))
-        set6 = SequenceSet([('*', '*')])
-        self.assertTrue(set6.contains(12, 12))
-        self.assertFalse(set6.contains(13, 12))
-        self.assertFalse(set6.contains(11, 12))
-
     def test_parse(self):
         ret, buf = SequenceSet.parse(b'12,*,1:*,*:1  ')
         self.assertEqual([12, '*', (1, '*'), ('*', 1)], ret.sequences)
@@ -185,11 +159,6 @@ class TestSequenceSet(unittest.TestCase):
         self.assertRaises(NotParseable, SequenceSet.parse, b'*,test')
         self.assertRaises(NotParseable, SequenceSet.parse, b'*:test')
         self.assertRaises(NotParseable, SequenceSet.parse, b'')
-
-    def test_bytes(self):
-        seq = SequenceSet([12, '*', (1, '*')])
-        self.assertEqual(b'12,*,1:*', bytes(seq))
-        self.assertEqual(b'12,*,1:*', bytes(seq))
 
 
 class TestFetchAttribute(unittest.TestCase):
@@ -321,7 +290,7 @@ class TestSearchKey(unittest.TestCase):
 
     def test_parse_filter_uid(self):
         ret, buf = SearchKey.parse(b'UID 1,2,3')
-        self.assertEqual(b'UID', ret.key)
+        self.assertIsNone(ret.key)
         self.assertIsInstance(ret.filter, SequenceSet)
         self.assertEqual([1, 2, 3], ret.filter.sequences)
         self.assertFalse(ret.inverse)

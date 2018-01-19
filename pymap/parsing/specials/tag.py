@@ -20,17 +20,16 @@
 #
 
 import re
+from typing import Tuple
 
 from . import Special
-from .. import NotParseable
+from .. import NotParseable, Buffer
 
 __all__ = ['Tag']
 
 
 class Tag(Special):
     """Represents the tag prefixed to every client command in an IMAP stream.
-
-    :param bytes tag: The contents of the tag.
 
     """
 
@@ -39,11 +38,10 @@ class Tag(Special):
 
     def __init__(self, tag):
         super().__init__()
-        self.value = tag
+        self.value = tag  # type: bytes
 
     @classmethod
-    def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer, **_) -> Tuple['Tag', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:

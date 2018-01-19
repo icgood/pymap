@@ -19,51 +19,103 @@
 # THE SOFTWARE.
 #
 
+import heapq
 import re
 
+import math
+from itertools import chain
+from typing import Iterable, Tuple, List
+
 from . import Special
-from .. import NotParseable, Space
+from .. import NotParseable, Space, Buffer
 
 __all__ = ['SequenceSet']
 
 
 class SequenceSet(Special):
-    """Represents a sequence set from an IMAP stream.
-
-    :param list sequences: List of items where each item is either a number, an
-                           asterisk (``*``), or a two-item tuple where each
-                           part is either a number or an asterisk. E.g.
-                           ``[13, '*', ('*', 26), (50, '*')]``.
-    :param bool uid: True if the sequence IDs are UIDs.
-
-    """
+    """Represents a sequence set from an IMAP stream."""
 
     _num_pattern = re.compile(br'\d+')
 
     def __init__(self, sequences, uid=False):
         super().__init__()
-        self.sequences = sequences
-        self.uid = uid
+        self.sequences = sequences  # type: List
+        self.uid = uid  # type: bool
+        self._flattened_cache = None
         self._raw = None
 
-    def contains(self, num, max_value):
+    @property
+    def _flattened(self):
+        if self._flattened_cache is None:
+            results = []
+            for group in self.sequences:
+                if isinstance(group, tuple):
+                    if group[0] == '*':
+                        group = math.inf, group[1]
+                    if group[1] == '*':
+                        group = group[0], math.inf
+                    high = max(*group)
+                    low = min(*group)
+                    heapq.heappush(results, (low, high))
+                elif group == '*':
+                    heapq.heappush(results, (math.inf, math.inf))
+                else:
+                    heapq.heappush(results, (group, group))
+            flattened = []
+            while results:
+                lowest_min, lowest_max = heapq.heappop(results)
+                while results:
+                    next_lowest_min, next_lowest_max = results[0]
+                    if lowest_max + 1 >= next_lowest_min:
+                        heapq.heappop(results)
+                        lowest_max = next_lowest_max
+                    else:
+                        break
+                flattened.append((lowest_min, lowest_max))
+            self._flattened_cache = flattened
+        return self._flattened_cache
+
+    def contains(self, num: int, max_value: int) -> bool:
+        """Check if the sequence set contains the given value, when bounded
+        by the given maximum value (in place of any ``'*'``).
+
+        """
         if num > max_value:
             return False
-        for group in self.sequences:
-            if group == '*' and num <= max_value:
-                return True
-            elif isinstance(group, tuple):
-                if group[0] == '*':
-                    group = max_value, group[1]
-                if group[1] == '*':
-                    group = group[0], max_value
-                high = max(*group)
-                low = min(*group)
-                if num >= low and num <= high:
-                    return True
-            elif num == group:
+        for low, high in self._flattened:
+            low = max_value if math.isinf(low) else low
+            high = max_value if math.isinf(high) else high
+            if num < low:
+                break
+            elif num <= high:
                 return True
         return False
+
+    def iter(self, max_value: int) -> Iterable:
+        """Iterates through the sequence numbers contained in the set, bounded
+        by the given maximum value (in place of any ``'*'``).
+
+        :param max_value: The maximum value of the set.
+
+        """
+        return chain.from_iterable(
+            [range(min(low, max_value), min(high, max_value) + 1)
+             for low, high in self._flattened
+             if min(low, max_value) <= max_value])
+
+    def __bytes__(self):
+        if self._raw is not None:
+            return self._raw
+        parts = []
+        for group in self.sequences:
+            if isinstance(group, tuple):
+                left = bytes(str(group[0]), 'ascii')
+                right = bytes(str(group[1]), 'ascii')
+                parts.append(b'%b:%b' % (left, right))
+            else:
+                parts.append(bytes(str(group), 'ascii'))
+        self._raw = raw = b','.join(parts)
+        return raw
 
     @classmethod
     def _parse_part(cls, buf):
@@ -90,7 +142,8 @@ class SequenceSet(Special):
         return item1, buf
 
     @classmethod
-    def parse(cls, buf, uid=False, **_):
+    def parse(cls, buf: Buffer, uid: bool = False, **_) \
+            -> Tuple['SequenceSet', bytes]:
         try:
             _, buf = Space.parse(buf)
         except NotParseable:
@@ -105,17 +158,3 @@ class SequenceSet(Special):
         if not sequences:
             raise NotParseable(buf)
         return cls(sequences, uid=uid), buf
-
-    def __bytes__(self):
-        if self._raw is not None:
-            return self._raw
-        parts = []
-        for group in self.sequences:
-            if isinstance(group, tuple):
-                left = bytes(str(group[0]), 'ascii')
-                right = bytes(str(group[1]), 'ascii')
-                parts.append(b'%b:%b' % (left, right))
-            else:
-                parts.append(bytes(str(group), 'ascii'))
-        self._raw = raw = b','.join(parts)
-        return raw

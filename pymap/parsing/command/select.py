@@ -20,15 +20,17 @@
 #
 
 import re
+from typing import Tuple, FrozenSet
 
+from pymap.flag import FlagOp
 from . import CommandSelect, CommandNoArgs
-from .. import NotParseable, Space, EndLine
+from .. import NotParseable, Space, EndLine, Buffer
 from ..primitives import Atom, List
 from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
                         SearchKey)
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
-           'FetchCommand', 'StoreCommand', 'UidCommand', 'SearchCommand']
+           'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand']
 
 
 class CheckCommand(CommandSelect, CommandNoArgs):
@@ -48,15 +50,20 @@ class CopyCommand(CommandSelect):
 
     def __init__(self, tag, seq_set, mailbox):
         super().__init__(tag)
-        self.sequence_set = seq_set
-        self.mailbox_obj = mailbox
+        self.sequence_set = seq_set  # type: SequenceSet
+        self.mailbox_obj = mailbox  # type: Mailbox
 
     @property
-    def mailbox(self):
+    def with_uid(self) -> bool:
+        return self.sequence_set.uid
+
+    @property
+    def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf, tag=None, uid=False, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False, **_) \
+            -> Tuple['CopyCommand', bytes]:
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
@@ -70,9 +77,15 @@ class FetchCommand(CommandSelect):
 
     def __init__(self, tag, seq_set, attr_set):
         super().__init__(tag)
-        self.sequence_set = seq_set
-        self.attributes = frozenset(attr_set)
-        self.no_expunge_response = not seq_set.uid
+        self.sequence_set = seq_set  # type: SequenceSet
+        self.no_expunge_response = not seq_set.uid  # type: bool
+        self.attributes = (
+                frozenset(attr_set)
+        ) # type: FrozenSet[FetchAttribute]
+
+    @property
+    def with_uid(self) -> bool:
+        return self.sequence_set.uid
 
     @classmethod
     def _check_macros(cls, buf):
@@ -95,7 +108,8 @@ class FetchCommand(CommandSelect):
         raise NotParseable(buf)
 
     @classmethod
-    def parse(cls, buf, tag=None, uid=False, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False, **_) \
+            -> Tuple['FetchCommand', bytes]:
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
@@ -124,13 +138,17 @@ class StoreCommand(CommandSelect):
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': 'replace', b'+': 'add', b'-': 'subtract'}
 
-    def __init__(self, tag, seq_set, flag_list, mode='replace', silent=False):
+    def __init__(self, tag, seq_set, flags, mode=FlagOp.REPLACE, silent=False):
         super().__init__(tag)
-        self.sequence_set = seq_set
-        self.flag_set = frozenset(flag.value for flag in flag_list)
-        self.mode = mode
-        self.silent = silent
-        self.no_expunge_response = not seq_set.uid
+        self.sequence_set = seq_set  # type: SequenceSet
+        self.flag_set = frozenset(flags)  # type: FrozenSet[Flag]
+        self.mode = mode  # type: FlagOp
+        self.silent = silent  # type: bool
+        self.no_expunge_response = not seq_set.uid  # type: bool
+
+    @property
+    def with_uid(self) -> bool:
+        return self.sequence_set.uid
 
     @classmethod
     def _parse_store_info(cls, buf):
@@ -160,7 +178,8 @@ class StoreCommand(CommandSelect):
                 return flag_list, buf
 
     @classmethod
-    def parse(cls, buf, tag=None, uid=False, **kwargs):
+    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False, **_) \
+            -> Tuple['StoreCommand', bytes]:
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
@@ -171,32 +190,19 @@ class StoreCommand(CommandSelect):
         return cls(tag, seq_set, flag_list, **info), buf
 
 
-class UidCommand(CommandSelect):
-    command = b'UID'
-
-    _allowed_subcommands = {b'COPY': CopyCommand,
-                            b'FETCH': FetchCommand,
-                            b'STORE': StoreCommand}
-
-    @classmethod
-    def parse(cls, buf, tag=None, **kwargs):
-        _, buf = Space.parse(buf)
-        atom, after = Atom.parse(buf)
-        cmd = cls._allowed_subcommands.get(atom.value.upper())
-        if not cmd:
-            raise NotParseable(buf)
-        return cmd.parse(after, tag=tag, uid=True, **kwargs)
-
-
 class SearchCommand(CommandSelect):
     command = b'SEARCH'
 
-    def __init__(self, tag, keys, charset=None, uid=None):
+    def __init__(self, tag, keys, charset=None, uid=False):
         super().__init__(tag)
-        self.keys = frozenset(keys)
-        self.charset = charset
-        self.uid = uid
-        self.no_expunge_response = not uid
+        self.keys = frozenset(keys)  # type: FrozenSet[SearchKey]
+        self.charset = charset  # type: str
+        self._with_uid = uid  # type: bool
+        self.no_expunge_response = not uid  # type: bool
+
+    @property
+    def with_uid(self) -> bool:
+        return self._with_uid
 
     @classmethod
     def _parse_charset(cls, buf, **kwargs):
@@ -218,7 +224,8 @@ class SearchCommand(CommandSelect):
         return 'US-ASCII', buf
 
     @classmethod
-    def parse(cls, buf, tag=None, uid=False, **kwargs):
+    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False,
+              **kwargs) -> Tuple['SearchCommand', bytes]:
         charset, buf = cls._parse_charset(buf, **kwargs)
         search_keys = []
         while True:
@@ -230,4 +237,24 @@ class SearchCommand(CommandSelect):
                 if not search_keys:
                     raise
                 break
+        _, buf = EndLine.parse(buf)
         return cls(tag, search_keys, charset=charset, uid=uid), buf
+
+
+class UidCommand(CommandSelect):
+    command = b'UID'
+
+    _allowed_subcommands = {b'COPY': CopyCommand,
+                            b'FETCH': FetchCommand,
+                            b'SEARCH': SearchCommand,
+                            b'STORE': StoreCommand}
+
+    @classmethod
+    def parse(cls, buf: Buffer, tag: bytes = None, **kwargs) \
+            -> Tuple[CommandSelect, bytes]:
+        _, buf = Space.parse(buf)
+        atom, after = Atom.parse(buf)
+        cmd = cls._allowed_subcommands.get(atom.value.upper())
+        if not cmd:
+            raise NotParseable(buf)
+        return cmd.parse(after, tag=tag, uid=True, **kwargs)

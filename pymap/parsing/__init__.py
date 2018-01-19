@@ -20,51 +20,56 @@
 #
 
 import re
+from typing import List, Type, Tuple, TypeVar, SupportsBytes
 
 from pymap.core import PymapError
 
 __all__ = ['RequiresContinuation', 'NotParseable', 'UnexpectedType',
-           'Parseable', 'Space', 'EndLine']
+           'Parseable', 'Space', 'EndLine', 'Buffer', 'MaybeBytes']
+
+Buffer = TypeVar('Buffer', bytes, memoryview)
+MaybeBytes = TypeVar('MaybeBytes', bytes, memoryview, SupportsBytes)
 
 
 class RequiresContinuation(PymapError):
     """Indicates that the buffer has been successfully parsed so far, but
     requires a continuation of the command from the client.
 
-    :param bytes message: The message from the server.
-    :param int literal_length: If the continuation is for a string literal,
-                               this is the byte length to expect.
+    :param message: The message from the server.
+    :param literal_length: If the continuation is for a string literal,
+                           this is the byte length to expect.
 
     """
 
-    def __init__(self, message, literal_length=0):
+    def __init__(self, message: bytes, literal_length: int = 0):
         super().__init__()
-        self.message = message
-        self.literal_length = literal_length
+        self.message = message  # type: bytes
+        self.literal_length = literal_length  # type: int
 
 
 class NotParseable(PymapError):
     """Indicates that the given buffer was not parseable by one or all of the
     data formats.
 
-    :param bytes buf: The buffer with the parsing error.
-    :param int where: The index where the parsing error started.
+    :param buf: The buffer with the parsing error.
 
     """
 
     error_indicator = b'[:ERROR:]'
 
-    def __init__(self, buf):
+    def __init__(self, buf: Buffer):
         super().__init__()
-        self.buf = buf
+        self.buf = buf  # type: bytes
+        self.offset = 0  # type: int
         if isinstance(buf, memoryview):
             self.offset = len(buf.obj) - buf.nbytes
-        else:
-            self.offset = 0
+        self._raw = None
+        self._before = None
+        self._after = None
 
     @property
-    def before(self):
-        if hasattr(self, '_before'):
+    def before(self) -> bytes:
+        if self._before is not None:
             return self._before
         buf = self.buf
         if isinstance(self.buf, memoryview):
@@ -73,8 +78,8 @@ class NotParseable(PymapError):
         return before
 
     @property
-    def after(self):
-        if hasattr(self, '_after'):
+    def after(self) -> bytes:
+        if self._after is not None:
             return self._after
         if isinstance(self.buf, memoryview):
             self._after = after = self.buf.tobytes()
@@ -83,7 +88,7 @@ class NotParseable(PymapError):
         return after
 
     def __bytes__(self):
-        if hasattr(self, '_raw'):
+        if self._raw is not None:
             return self._raw
         before = self.before
         after = self.after.rstrip(b'\r\n')
@@ -102,7 +107,7 @@ class UnexpectedType(NotParseable):
     pass
 
 
-class Parseable(object):
+class Parseable:
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
 
@@ -118,14 +123,18 @@ class Parseable(object):
         self.value = None
 
     @classmethod
-    def _whitespace_length(cls, buf, start=0):
+    def _whitespace_length(cls, buf, start=0) -> int:
         match = cls._whitespace_pattern.match(buf, start)
         if match:
             return match.end(0) - start
         return 0
 
+    def __bytes__(self):
+        raise NotImplementedError
+
     @classmethod
-    def parse(cls, buf, expected=None, **kwargs):
+    def parse(cls, buf: Buffer, expected: List[Type['Parseable']] = None,
+              **kwargs) -> Tuple['Parseable', bytes]:
         expected = expected or []
         for data_type in expected:
             try:
@@ -138,17 +147,14 @@ class Parseable(object):
 class Space(Parseable):
     """Represents at least one space character.
 
-    :param int length: The number of consecutive space characters.
-
     """
 
     def __init__(self, length):
         super().__init__()
-        self.length = length
+        self.length = length  # type: int
 
     @classmethod
-    def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer, **_) -> Tuple['Space', bytes]:
         ret = cls._whitespace_length(buf)
         if not ret:
             raise NotParseable(buf)
@@ -168,12 +174,11 @@ class EndLine(Parseable):
 
     def __init__(self, preceding_spaces=0, carriage_return=True):
         super().__init__()
-        self.preceding_spaces = preceding_spaces
-        self.carriage_return = carriage_return
+        self.preceding_spaces = preceding_spaces  # type: int
+        self.carriage_return = carriage_return  # type: bool
 
     @classmethod
-    def parse(cls, buf):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer, **_) -> Tuple['EndLine', bytes]:
         match = cls._pattern.match(buf)
         if not match:
             raise NotParseable(buf)

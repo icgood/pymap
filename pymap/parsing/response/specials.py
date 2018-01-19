@@ -20,26 +20,27 @@
 #
 
 from itertools import chain
+from typing import Collection, Dict, SupportsBytes
 
+from pymap.parsing.specials import FetchAttribute, StatusAttribute
 from . import Response
-from ..primitives import List, QuotedString
+from ..primitives import List, QuotedString, Number
 from ..specials import Mailbox
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
-           'ListResponse', 'LSubResponse']
+           'StatusResponse', 'ListResponse', 'LSubResponse']
 
 
 class FlagsResponse(Response):
     """Constructs the special FLAGS response used by the SELECT and EXAMINE
     commands.
 
-    :param list flags: List of bytestrings or
-                       :class:`~pymap.parsing.specials.Flag` objects.
+    :param flags: Flags in the response.
 
     """
 
-    def __init__(self, flags):
+    def __init__(self, flags: Collection[bytes]):
         text = b'FLAGS %b' % List(flags)
         super().__init__(b'*', text)
 
@@ -48,11 +49,11 @@ class ExistsResponse(Response):
     """Constructs the special EXISTS response used by the SELECT and EXAMINE
     commands.
 
-    :param int num: The number of messages existing in the mailbox.
+    :param num: The number of messages existing in the mailbox.
 
     """
 
-    def __init__(self, num):
+    def __init__(self, num: int):
         text = b'%i EXISTS' % num
         super().__init__(b'*', text)
 
@@ -61,11 +62,11 @@ class RecentResponse(Response):
     """Constructs the special RECENT response used by the SELECT and EXAMINE
     commands.
 
-    :param int num: The number of recent messages in the mailbox.
+    :param num: The number of recent messages in the mailbox.
 
     """
 
-    def __init__(self, num):
+    def __init__(self, num: int):
         text = b'%i RECENT' % num
         super().__init__(b'*', text)
 
@@ -73,11 +74,11 @@ class RecentResponse(Response):
 class ExpungeResponse(Response):
     """Constructs the special EXPUNGE response used by the EXPUNGE command.
 
-    :param int seq: The message sequence number.
+    :param seq: The message sequence number.
 
     """
 
-    def __init__(self, seq):
+    def __init__(self, seq: int):
         text = b'%i EXPUNGE' % seq
         super().__init__(b'*', text)
 
@@ -86,15 +87,12 @@ class FetchResponse(Response):
     """Constructs the special FETCH response used by the STORE and FETCH
     commands.
 
-    :param int seq: The message sequence number.
-    :param dict data: Dictionary where the keys are
-                      :class:`~pymap.parsing.specials.FetchAttribute` objects
-                      and the values are any object that converted to a
-                      bytestring.
+    :param seq: The message sequence number.
+    :param data: Dictionary mapping fetch attributes to their values.
 
     """
 
-    def __init__(self, seq, data):
+    def __init__(self, seq: int, data: Dict[FetchAttribute, SupportsBytes]):
         data_list = List(chain.from_iterable(data.items()))
         text = b'%i FETCH %b' % (seq, bytes(data_list))
         super().__init__(b'*', text)
@@ -103,33 +101,48 @@ class FetchResponse(Response):
 class SearchResponse(Response):
     """Constructs the special SEARCH response used by the SEARCH command.
 
-    :param list seqs: List of message sequence integers.
+    :param seqs: List of message sequence integers.
 
     """
 
-    def __init__(self, seqs):
+    def __init__(self, seqs: Collection[int]):
         seqs_raw = [b'%i' % seq for seq in seqs]
         text = b' '.join([b'SEARCH'] + seqs_raw)
+        super().__init__(b'*', text)
+
+
+class StatusResponse(Response):
+    """Constructs the special STATUS response used by the STATUS command.
+
+    :param name: The name of the mailbox.
+    :param data: Dictionary mapping status attributes to their values.
+
+    """
+
+    def __init__(self, name: str, data: Dict[StatusAttribute, Number]):
+        data_list = List(chain.from_iterable(data.items()))
+        text = b' '.join((b'STATUS', bytes(Mailbox(name)), bytes(data_list)))
         super().__init__(b'*', text)
 
 
 class ListResponse(Response):
     """Constructs the special LIST response used by the LIST command.
 
-    :param str name: The mailbox name.
-    :param bytes sep: The heirarchy separation character.
-    :param bool marked: If this mailbox is considered "interesting" by the
-                        server.
-    :param bool no_inferior: If the mailbox does not and cannot have inferior
-                             mailboxes in its heirarchy.
-    :param bool no_select: If the mailbox is not able to be selected.
+    :param name: The mailbox name.
+    :param sep: The heirarchy separation character.
+    :param marked: If this mailbox is considered "interesting" by the server.
+    :param no_inferior: If the mailbox does not and cannot have inferior
+                        mailboxes in its heirarchy.
+    :param no_select: If the mailbox is not able to be selected.
 
     """
 
-    name = b'LIST'
+    name = b'LIST'  # type: bytes
 
-    def __init__(self, name, sep, marked=False, no_inferior=False,
-                 no_select=False):
+    def __init__(self, name: str, sep: bytes,
+                 marked: bool = False,
+                 no_inferior: bool = False,
+                 no_select: bool = False):
         name_attrs = List([])
         if marked:
             name_attrs.value.append(br'\Marked')
@@ -139,11 +152,10 @@ class ListResponse(Response):
             name_attrs.value.append(br'\Noinferior')
         if no_select:
             name_attrs.value.append(br'\Noselect')
-        text = b'%b %b %b %b' % \
-               (bytes(self.name),
-                bytes(name_attrs),
-                bytes(QuotedString(sep)),
-                bytes(Mailbox(name)))
+        text = b' '.join((bytes(self.name),
+                          bytes(name_attrs),
+                          bytes(QuotedString(sep)),
+                          bytes(Mailbox(name))))
         super().__init__(b'*', text)
 
 

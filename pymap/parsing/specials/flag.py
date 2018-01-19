@@ -19,28 +19,49 @@
 # THE SOFTWARE.
 #
 
-from pymap.flags import Flag as FlagClass
+from typing import Tuple
+
 from . import Special
-from .. import NotParseable, Space
+from .. import NotParseable, Space, Buffer
 from ..primitives import Atom
 
 __all__ = ['Flag']
 
 
 class Flag(Special):
-    """Represents a message flag from an IMAP stream.
+    """Represents a message flag from an IMAP stream."""
 
-    :param str flag: The flag or keyword string. For system flags, this will
-                     start with a backslash (``\``).
-
-    """
-
-    def __init__(self, flag):
+    def __init__(self, value: bytes):
         super().__init__()
-        self.value = FlagClass(flag)
+        self.value = self._capitalize(value)  # type: bytes
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def _capitalize(cls, value):
+        if value.startswith(b'\\'):
+            return b'\\' + value[1:].capitalize()
+        return value
+
+    def __eq__(self, other):
+        if isinstance(other, Flag):
+            return bytes(self) == bytes(other)
+        elif isinstance(other, bytes):
+            return bytes(self) == self._capitalize(other)
+        return NotImplemented
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __hash__(self):
+        return hash(bytes(self))
+
+    def __repr__(self):
+        return '<{0} value={1!r}>'.format(self.__class__.__name__, bytes(self))
+
+    def __bytes__(self):
+        return self.value
+
+    @classmethod
+    def parse(cls, buf: Buffer, **_) -> Tuple['Flag', bytes]:
         try:
             _, buf = Space.parse(buf)
         except NotParseable:
@@ -51,6 +72,3 @@ class Flag(Special):
         else:
             atom, buf = Atom.parse(buf)
             return cls(atom.value), buf
-
-    def __bytes__(self):
-        return self.value

@@ -20,8 +20,10 @@
 #
 
 import re
+from typing import Tuple
 
 from . import Special
+from .. import Buffer
 from ..primitives import String, QuotedString
 
 __all__ = ['AString']
@@ -32,8 +34,6 @@ class AString(Special):
     not (like an atom).  Additionally allows the closing square bracket (``]``)
     character in the unquoted form.
 
-    :param bytes string: The parsed string.
-
     """
 
     _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B-\x5B'
@@ -41,11 +41,11 @@ class AString(Special):
 
     def __init__(self, string, raw=None):
         super().__init__()
-        self.value = string
+        self.value = string  # type: bytes
         self._raw = raw
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf: Buffer, **kwargs) -> Tuple['AString', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if match:
