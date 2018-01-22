@@ -22,12 +22,12 @@
 import re
 from typing import Tuple, FrozenSet
 
-from pymap.flag import FlagOp
 from . import CommandSelect, CommandNoArgs
 from .. import NotParseable, Space, EndLine, Buffer
 from ..primitives import Atom, List
 from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
                         SearchKey)
+from ...flag import FlagOp, Recent
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
            'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand']
@@ -81,7 +81,7 @@ class FetchCommand(CommandSelect):
         self.no_expunge_response = not seq_set.uid  # type: bool
         self.attributes = (
                 frozenset(attr_set)
-        ) # type: FrozenSet[FetchAttribute]
+        )  # type: FrozenSet[FetchAttribute]
 
     @property
     def with_uid(self) -> bool:
@@ -136,12 +136,12 @@ class StoreCommand(CommandSelect):
     command = b'STORE'
 
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
-    _modes = {b'': 'replace', b'+': 'add', b'-': 'subtract'}
+    _modes = {b'': FlagOp.REPLACE, b'+': FlagOp.ADD, b'-': FlagOp.DELETE}
 
     def __init__(self, tag, seq_set, flags, mode=FlagOp.REPLACE, silent=False):
         super().__init__(tag)
         self.sequence_set = seq_set  # type: SequenceSet
-        self.flag_set = frozenset(flags)  # type: FrozenSet[Flag]
+        self.flag_set = frozenset(flags) - {Recent}  # type: FrozenSet[Flag]
         self.mode = mode  # type: FlagOp
         self.silent = silent  # type: bool
         self.no_expunge_response = not seq_set.uid  # type: bool

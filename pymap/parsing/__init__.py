@@ -72,7 +72,7 @@ class NotParseable(PymapError):
         if self._before is not None:
             return self._before
         buf = self.buf
-        if isinstance(self.buf, memoryview):
+        if isinstance(buf, memoryview):
             buf = buf.obj
         self._before = before = buf[0:self.offset]
         return before

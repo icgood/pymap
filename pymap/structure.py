@@ -19,20 +19,26 @@
 # THE SOFTWARE.
 #
 
-import datetime
 import email
 import io
+from datetime import datetime
 from email.charset import Charset
 from email.generator import BytesGenerator
 from email.message import Message
 from email.policy import SMTP
 from email.utils import getaddresses
-from typing import Collection, Optional, Union, Tuple
+from typing import (TYPE_CHECKING, Optional, Union, Tuple, Iterable, Set,
+                    AbstractSet, FrozenSet)
 
+from .flag import SessionFlags
 from .parsing import Parseable
 from .parsing.primitives import Nil, QuotedString, List, LiteralString, Number
+from .parsing.specials import Flag
 
 __all__ = ['MessageStructure']
+
+if TYPE_CHECKING:  # avoid import cycles
+    from .interfaces import MailboxState
 
 
 class ConcatenatedParseables(Parseable):
@@ -67,25 +73,49 @@ class MessageStructure:
 
     :param uid: The UID of the message.
     :param message: The message object.
+    :param permanent_flags: Permanent flags for the message.
+    :param session_flags: Sessions flags for the message.
+    :param internal_date: The internal date of the message.
 
     """
 
     _HEADER_CHARSET = Charset('utf-8')
 
-    def __init__(self, uid: int, message: Message):
+    def __init__(self, uid: int, message: Message,
+                 permanent_flags: Iterable[Flag] = None,
+                 session_flags: SessionFlags = None,
+                 internal_date: datetime = None):
         super().__init__()
 
         #: The message's unique identifier in the mailbox.
         self.uid = uid  # type: int
 
         #: The MIME-parsed message object.
-        self.message = message
+        self.message = message  # type: Message
 
         #: The message's internal date.
-        self.internal_date = None  # type: Optional[datetime.datetime]
+        self.internal_date = internal_date  # type: Optional[datetime]
 
-        #: The message's set of flags.
-        self.flags = None  # type: Optional[Collection[bytes]]
+        #: The message's set of permanent flags.
+        self.permanent_flags = set(permanent_flags or [])  # type: Set[Flag]
+
+        #: The message's set of session flags.
+        self.session_flags = (
+            session_flags or SessionFlags()
+        )  # type: SessionFlags
+
+    def get_flags(self, selected: Optional['MailboxState']) -> FrozenSet[Flag]:
+        """Get the full set of permanent and session flags.
+
+        :param selected: The selected mailbox object, used to key the
+                        session flags.
+
+        """
+        if selected:
+            session_flags = self.session_flags.get(selected)
+        else:
+            session_flags = frozenset()
+        return frozenset(self.permanent_flags) | session_flags
 
     def _get_str_or_nil(self, value):
         if value is None:
@@ -141,13 +171,13 @@ class MessageStructure:
                 elif i == 1:
                     pass
                 else:
-                    raise IndexError(section)
+                    raise IndexError(i)
             return subpart
         else:
             return msg
 
-    def get_headers(self, section: Optional[Collection[int]] = None,
-                    subset: Collection[Union[str, bytes]] = None,
+    def get_headers(self, section: Optional[Iterable[int]] = None,
+                    subset: AbstractSet[bytes] = None,
                     inverse: bool = False) \
             -> Union[LiteralString, Nil]:
         """Get the headers from the message.
@@ -181,7 +211,7 @@ class MessageStructure:
                 ret[key] = value
         return LiteralString(bytes(ret))
 
-    def get_body(self, section: Optional[Collection[int]] = None) \
+    def get_body(self, section: Optional[Iterable[int]] = None) \
             -> Union[LiteralString, Nil]:
         """Get the full body of the message part, including headers.
 
@@ -198,7 +228,7 @@ class MessageStructure:
             return Nil()
         return LiteralString(bytes(msg))
 
-    def get_text(self, section: Optional[Collection[int]] = None) \
+    def get_text(self, section: Optional[Iterable[int]] = None) \
             -> Union[LiteralString, Nil]:
         """Get the text of the message part, not including headers.
 

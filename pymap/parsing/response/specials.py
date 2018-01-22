@@ -20,12 +20,12 @@
 #
 
 from itertools import chain
-from typing import Collection, Dict, SupportsBytes
+from typing import Iterable, Dict, SupportsBytes
 
-from pymap.parsing.specials import FetchAttribute, StatusAttribute
 from . import Response
+from .. import MaybeBytes
 from ..primitives import List, QuotedString, Number
-from ..specials import Mailbox
+from ..specials import Mailbox, FetchAttribute, StatusAttribute, Flag
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
@@ -40,7 +40,7 @@ class FlagsResponse(Response):
 
     """
 
-    def __init__(self, flags: Collection[bytes]):
+    def __init__(self, flags: Iterable[MaybeBytes]):
         text = b'FLAGS %b' % List(flags)
         super().__init__(b'*', text)
 
@@ -105,7 +105,7 @@ class SearchResponse(Response):
 
     """
 
-    def __init__(self, seqs: Collection[int]):
+    def __init__(self, seqs: Iterable[int]):
         seqs_raw = [b'%i' % seq for seq in seqs]
         text = b' '.join([b'SEARCH'] + seqs_raw)
         super().__init__(b'*', text)
@@ -131,6 +131,7 @@ class ListResponse(Response):
     :param name: The mailbox name.
     :param sep: The heirarchy separation character.
     :param marked: If this mailbox is considered "interesting" by the server.
+    :param unmarked: If this mailbox is not considered "interesting".
     :param no_inferior: If the mailbox does not and cannot have inferior
                         mailboxes in its heirarchy.
     :param no_select: If the mailbox is not able to be selected.
@@ -141,17 +142,18 @@ class ListResponse(Response):
 
     def __init__(self, name: str, sep: bytes,
                  marked: bool = False,
+                 unmarked: bool = False,
                  no_inferior: bool = False,
                  no_select: bool = False):
         name_attrs = List([])
         if marked:
-            name_attrs.value.append(br'\Marked')
-        else:
-            name_attrs.value.append(br'\Unmarked')
+            name_attrs.value.append(Flag(br'\Marked'))
+        elif unmarked:
+            name_attrs.value.append(Flag(br'\Unmarked'))
         if no_inferior:
-            name_attrs.value.append(br'\Noinferior')
+            name_attrs.value.append(Flag(br'\Noinferior'))
         if no_select:
-            name_attrs.value.append(br'\Noselect')
+            name_attrs.value.append(Flag(br'\Noselect'))
         text = b' '.join((bytes(self.name),
                           bytes(name_attrs),
                           bytes(QuotedString(sep)),

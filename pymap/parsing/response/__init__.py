@@ -127,7 +127,6 @@ class ResponseBad(ConditionResponse):
                       command.
     :param bytes text: The response text.
     :param code: Optional response code.
-    :type code: :class:`~pymap.parsing.response.codes.ResponseCode`
 
     """
 

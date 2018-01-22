@@ -36,12 +36,14 @@ __all__ = ['State']
 
 
 class _Mailbox:
+    sep = b'.'
 
     def __init__(self):
         self.next_uid = 1  # type: int
         self.uid_validity = random.randint(1, 32768)  # type: int
         self.messages = []  # type: List[Message]
         self.recent = deque()  # type: Deque[int]
+        self.updates = {}
 
 
 class State:
@@ -70,7 +72,7 @@ class State:
                     recent.append(message_uid)
                 message_info = (message_uid, message_flags, message_data)
                 insort_left(messages, message_info)
-            mailbox_data = [Message(uid, flags, data)
+            mailbox_data = [Message.parse(uid, data, flags)
                             for uid, flags, data in messages]
             cls.mailboxes[mailbox_name].messages = mailbox_data
             cls.mailboxes[mailbox_name].next_uid = len(mailbox_data) + 1

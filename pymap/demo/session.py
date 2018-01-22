@@ -19,15 +19,16 @@
 # THE SOFTWARE.
 #
 
+from collections import defaultdict
+from copy import copy
 from datetime import datetime
-from typing import Optional, Tuple, List, Dict, AbstractSet
+from typing import Optional, Tuple, List, AbstractSet, Dict
 
 from pymap.exceptions import MailboxNotFound, MailboxConflict
-from pymap.flag import FlagOp
+from pymap.flag import FlagOp, Recent, Deleted
 from pymap.interfaces import SessionInterface, MailboxState
-from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute
+from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute, Flag
 from pymap.structure import MessageStructure
-from pymap.updates import MailboxUpdates
 from .mailbox import Mailbox
 from .message import Message
 from .state import State
@@ -39,26 +40,32 @@ class Session(SessionInterface):
 
     def __init__(self, user: str):
         super().__init__()
-        self.mailboxes = (
-                {name: Mailbox(name) for name in State.mailboxes.keys()}
-        )  # type: Dict[str, Mailbox]
         self.user = user  # type: str
+        self.updates = defaultdict(lambda: {})
         State.sessions.add(self)
 
-    def _get_selected(self, selected: str) -> Mailbox:
-        if selected not in self.mailboxes:
-            raise MailboxNotFound(selected)
-        return self.mailboxes[selected]
+    @classmethod
+    def _check_selected(cls, selected: Mailbox):
+        if selected.name not in State.mailboxes:
+            raise MailboxNotFound(selected.name)
+        return selected
 
-    def _get_updates(self, selected: Optional[str]) \
-            -> Optional[MailboxUpdates]:
-        if selected is not None and selected in self.mailboxes:
-            updates = self.mailboxes[selected].updates
-            updates.add_recent(*State.mailboxes[selected].recent)
-            State.mailboxes[selected].recent.clear()
-            return updates
+    @classmethod
+    def _get_updates(cls, selected: Optional[Mailbox]) \
+            -> Optional[MailboxState]:
+        if selected is not None and selected.name in State.mailboxes:
+            return copy(selected)
         else:
             return None
+
+    @classmethod
+    def _del_mailbox(cls, name):
+        for session in State.sessions:
+            try:
+                del session.mailboxes[name]
+            except KeyError:
+                pass
+        del State.mailboxes[name]
 
     @classmethod
     async def login(cls, result):
@@ -68,56 +75,54 @@ class Session(SessionInterface):
     async def list_mailboxes(self, ref_name: str,
                              filter_: str,
                              subscribed: bool = False,
-                             selected: Optional[str] = None) \
-            -> Tuple[List[Tuple[str, bytes, MailboxState]],
-                     Optional[MailboxUpdates]]:
-        return [(name, mailbox.sep, mailbox)
-                for name, mailbox in self.mailboxes.items()], \
+                             selected: Optional[Mailbox] = None) \
+            -> Tuple[List[Tuple[str, bytes, Dict[str, bool]]],
+                     Optional[MailboxState]]:
+        return [(name, Mailbox.sep, {}) for name in State.mailboxes.keys()], \
                self._get_updates(selected)
 
-    async def get_mailbox(self, name: str, selected: Optional[str] = None) \
-            -> Tuple[MailboxState, Optional[MailboxUpdates]]:
-        if name in self.mailboxes:
-            return self.mailboxes[name], self._get_updates(selected)
+    async def get_mailbox(self, name: str,
+                          selected: Optional[Mailbox] = None) \
+            -> Tuple[MailboxState, Optional[MailboxState]]:
+        if name in State.mailboxes:
+            return Mailbox.load(name, self), self._get_updates(selected)
         raise MailboxNotFound(name)
 
-    async def create_mailbox(self, name: str, selected: Optional[str] = None) \
-            -> Optional[MailboxUpdates]:
+    async def create_mailbox(self, name: str,
+                             selected: Optional[Mailbox] = None) \
+            -> Optional[MailboxState]:
         if name in State.mailboxes:
             raise MailboxConflict(name)
-        for session in State.sessions:
-            session.mailboxes[name] = State.mailboxes[name]
+        _ = State.mailboxes[name]
         return self._get_updates(selected)
 
-    async def delete_mailbox(self, name: str, selected: Optional[str] = None) \
-            -> Optional[MailboxUpdates]:
+    async def delete_mailbox(self, name: str,
+                             selected: Optional[Mailbox] = None) \
+            -> Optional[MailboxState]:
         if name not in State.mailboxes:
             raise MailboxNotFound(name)
-        for session in State.sessions:
-            del session.mailboxes[name]
-        del State.mailboxes[name]
+        self._del_mailbox(name)
         return self._get_updates(selected)
 
     async def rename_mailbox(self, before_name: str, after_name: str,
-                             selected: Optional[str] = None) \
-            -> Optional[MailboxUpdates]:
+                             selected: Optional[Mailbox] = None) \
+            -> Optional[MailboxState]:
         if after_name in State.mailboxes:
             raise MailboxConflict(after_name)
         elif before_name not in State.mailboxes:
             raise MailboxNotFound(before_name)
-        for session in State.sessions:
-            session.mailboxes[after_name] = session.mailboxes[before_name]
-            del session.mailboxes[before_name]
         State.mailboxes[after_name] = State.mailboxes[before_name]
-        del State.mailboxes[before_name]
+        self._del_mailbox(before_name)
         return self._get_updates(selected)
 
-    async def subscribe(self, name: str, selected: Optional[str] = None) \
-            -> Optional[MailboxUpdates]:
+    async def subscribe(self, name: str,
+                        selected: Optional[Mailbox] = None) \
+            -> Optional[MailboxState]:
         return self._get_updates(selected)
 
-    async def unsubscribe(self, name: str, selected: Optional[str] = None) \
-            -> Optional[MailboxUpdates]:
+    async def unsubscribe(self, name: str,
+                          selected: Optional[Mailbox] = None) \
+            -> Optional[MailboxState]:
         return self._get_updates(selected)
 
     @classmethod
@@ -128,78 +133,82 @@ class Session(SessionInterface):
 
     async def append_message(self, name: str,
                              message: bytes,
-                             flag_set: AbstractSet[bytes],
+                             flag_set: AbstractSet[Flag],
                              when: Optional[datetime] = None,
-                             selected: Optional[str] = None) \
-            -> Optional[MailboxUpdates]:
-        if name not in self.mailboxes:
+                             selected: Optional[Mailbox] = None) \
+            -> Optional[MailboxState]:
+        if name not in State.mailboxes:
             raise MailboxNotFound(name)
+        mbx = Mailbox.load(name, self)
         msg_uid = self._increment_next_uid(name)
-        msg = Message(msg_uid, flag_set, message, when=when)
+        msg = Message.parse(msg_uid, message, flag_set & mbx.permanent_flags,
+                            internal_date=when)
+        msg.session_flags.update(self, flag_set & mbx.session_flags | {Recent})
         State.mailboxes[name].messages.append(msg)
         msg_seq = len(State.mailboxes[name].messages)
         for session in State.sessions:
             session.mailboxes[name].updates.add_fetch(
-                msg_seq, flag_set, msg_uid)
-        updates = self._get_updates(selected)
-        updates.add_recent(msg_uid)
-        return updates
-
-    async def check_mailbox(self, selected: str, housekeeping: bool = False) \
-            -> Optional[MailboxUpdates]:
+                msg_seq, msg_uid, flag_set)
         return self._get_updates(selected)
 
-    async def fetch_messages(self, selected: str,
+    async def check_mailbox(self, selected: Mailbox,
+                            housekeeping: bool = False) \
+            -> Optional[MailboxState]:
+        return self._get_updates(selected)
+
+    async def fetch_messages(self, selected: Mailbox,
                              sequences: SequenceSet,
                              attributes: AbstractSet[FetchAttribute]) \
             -> Tuple[List[Tuple[int, MessageStructure]],
-                     Optional[MailboxUpdates]]:
-        mbx = self._get_selected(selected)
-        updates = self._get_updates(selected)
-        return [(i, mbx.messages[i - 1])
-                for i in sequences.iter(mbx.exists)], updates
+                     Optional[MailboxState]]:
+        mbx = self._check_selected(selected)
+        messages = []
+        for msg_seq in sequences.iter(mbx.exists):
+            msg = mbx.messages[msg_seq - 1]
+            messages.append((msg_seq, msg))
+        return messages, self._get_updates(selected)
 
-    async def search_mailbox(self, selected: str,
+    async def search_mailbox(self, selected: Mailbox,
                              keys: List[SearchKey]) \
-            -> Tuple[List[int], Optional[MailboxUpdates]]:
+            -> Tuple[List[int], Optional[MailboxState]]:
         raise NotImplementedError
 
-    async def expunge_mailbox(self, selected: str) \
-            -> Optional[MailboxUpdates]:
-        mbx = self._get_selected(selected)
+    async def expunge_mailbox(self, selected: Mailbox) \
+            -> Optional[MailboxState]:
+        mbx = self._check_selected(selected)
         expunged = set()
         for i, msg in enumerate(mbx.messages):
-            if br'\Deleted' in msg.flags:
+            if Deleted in msg.get_flags(selected):
                 expunged.add(i + 1)
-                State.mailboxes[selected].messages[i:i + 1] = []
+                State.mailboxes[mbx.name].messages[i:i + 1] = []
         for session in State.sessions:
-            session.mailboxes[selected].updates.add_expunge(*expunged)
-            session.mailboxes[selected].reset_messages()
+            session.mailboxes[mbx.name].updates.add_expunge(*expunged)
+            session.mailboxes[mbx.name].reset_messages()
         return self._get_updates(selected)
 
-    async def copy_messages(self, selected: str,
+    async def copy_messages(self, selected: Mailbox,
                             sequences: SequenceSet,
                             mailbox: str) \
-            -> Optional[MailboxUpdates]:
+            -> Optional[MailboxState]:
         raise NotImplementedError
 
-    async def update_flags(self, selected: str,
+    async def update_flags(self, selected: Mailbox,
                            sequences: SequenceSet,
                            flag_set: AbstractSet[bytes],
                            mode: FlagOp = FlagOp.REPLACE,
                            silent: bool = False) \
-            -> Optional[MailboxUpdates]:
-        mbx = self._get_selected(selected)
-        for msg_seq, msg in enumerate(mbx.messages):
-            before_flags = msg.flags
-            if mode == 'add':
-                msg.flags = msg.flags | flag_set
-            elif mode == 'subtract':
-                msg.flags = msg.flags - flag_set
+            -> Optional[MailboxState]:
+        mbx = self._check_selected(selected)
+        for msg_seq in sequences.iter(mbx.exists):
+            msg = mbx.messages[msg_seq - 1]
+            before_flags = frozenset(msg.permanent_flags)
+            if mode == FlagOp.ADD:
+                msg.permanent_flags |= flag_set
+            elif mode == FlagOp.DELETE:
+                msg.permanent_flags -= flag_set
             else:
-                msg.flags = flag_set
-            if before_flags != msg.flags and not silent:
+                msg.permanent_flags = flag_set
+            if before_flags != msg.permanent_flags and not silent:
                 for session in State.sessions:
-                    updates = session.mailboxes[selected].updates
-                    updates.add_fetch(msg_seq, msg.flags, msg.uid)
+                    Mailbox(mbx.name, session).add_fetch(msg_seq, msg)
         return self._get_updates(selected)

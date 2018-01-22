@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+
 from typing import Dict, Type, Tuple
 
 from .. import Parseable, NotParseable, Space, EndLine, Buffer
@@ -151,9 +152,10 @@ class BadCommand(NotParseable):
         super().__init__(buf)
         self.tag = tag  # type: bytes
         self.command = command  # type: Type[Command]
+        self._raw = None
 
     def __bytes__(self):
-        if not hasattr(self, '_raw'):
+        if self._raw is None:
             self._raw = b': '.join((self.command.command, super().__bytes__()))
         return self._raw
 

@@ -20,37 +20,69 @@
 #
 
 from copy import copy
-from typing import List
+from typing import TYPE_CHECKING, List
 
+from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
 from pymap.interfaces import MailboxState
-from pymap.updates import MailboxUpdates
 from .message import Message
 from .state import State
 
 __all__ = ['Mailbox']
 
+if TYPE_CHECKING:
+    from .session import Session
+
+
+class _Unique:
+    pass
+
 
 class Mailbox(MailboxState):
-
     sep = b'.'
-    _FLAGS = {br'\Seen', br'\Recent', br'\Answered', br'\Deleted',
-              br'\Draft', br'\Flagged'}
+    _FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, session: 'Session', unique=None):
         super().__init__(
-            flags=self._FLAGS,
+            name=name,
             permanent_flags=self._FLAGS,
-            uid_validity=State.mailboxes[name].uid_validity,
-        )
-        self.name = name  # type: str
+            uid_validity=State.mailboxes[name].uid_validity)
+        self._unique = unique or _Unique()
+        self._session = session  # type: 'Session'
         self.messages = None  # type: List[Message]
-        self.updates = MailboxUpdates()  # type: MailboxUpdates
-        self.reset_messages()
+
+    @classmethod
+    def load(cls, name: str, session: 'Session'):
+        mbx = cls(name, session)
+        mbx.reset_messages()
+        return mbx
+
+    def __copy__(self):
+        copy_ = Mailbox(self.name, self._session, self._unique)
+        copy_.reset_messages()
+        return copy_
 
     def reset_messages(self):
         self.messages = copy(State.mailboxes[self.name].messages)
-        self.updates.exists = self.exists
-        self.updates.recent = frozenset(*State.mailboxes[self.name].recent)
+        recent = frozenset(State.mailboxes[self.name].recent)
+        State.mailboxes[self.name].recent.clear()
+        for i, msg in enumerate(self.messages):
+            if msg.uid in recent:
+                msg.session_flags.add_recent(self)
+
+    def _count_flag(self, flag):
+        count = 0
+        for msg in self.messages:
+            if flag in msg.get_flags(self):
+                count += 1
+        return count
+
+    @property
+    def updates(self):
+        return self._session.updates[self.name]
+
+    @property
+    def session(self):
+        return self._unique
 
     @property
     def exists(self) -> int:
@@ -58,20 +90,16 @@ class Mailbox(MailboxState):
 
     @property
     def recent(self) -> int:
-        return len(self.updates.recent)
+        return self._count_flag(Recent)
 
     @property
     def unseen(self) -> int:
-        unseen = 0
-        for msg in self.messages:
-            if br'\Seen' not in msg.flags:
-                unseen += 1
-        return unseen
+        return self.exists - self._count_flag(Seen)
 
     @property
     def first_unseen(self) -> int:
         for i, msg in enumerate(self.messages):
-            if br'\Seen' not in msg.flags:
+            if Seen not in msg.get_flags(self):
                 return i + 1
 
     @property

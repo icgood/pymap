@@ -19,15 +19,16 @@
 # THE SOFTWARE.
 #
 
+from copy import copy
 from socket import getfqdn
-from typing import Optional
+from typing import Optional, Callable
 
 from pysasl import SASLAuth
 
 from .core import PymapError
 from .exceptions import (MailboxNotFound, MailboxConflict, MailboxHasChildren,
                          MailboxReadOnly, AppendFailure)
-from .interfaces import SessionInterface, MailboxUpdates
+from .interfaces import MailboxState, SessionInterface
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
 from .parsing.primitives import List, Number
 from .parsing.response import (ResponseOk, ResponseNo, ResponseBad,
@@ -66,13 +67,12 @@ class ConnectionState(object):
     def __init__(self, transport, login):
         super().__init__()
         self.transport = transport
-        self.login = login
-        self.auth = SASLAuth([b'PLAIN'])
+        self.login = login  # type: Callable[..., Optional[SessionInterface]]
         self.session = None  # type: Optional[SessionInterface]
-        self.selected = None  # type: Optional[str]
-        self.updates = None  # type: Optional[MailboxUpdates]
+        self.selected = None  # type: Optional[MailboxState]
         self.capability = Capability(
-            [b'AUTH=%b' % mech.name for mech in self.auth.server_mechanisms])
+            [b'AUTH=%b' % mech.name for mech in
+             SASLAuth([b'PLAIN']).server_mechanisms])
 
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
@@ -96,13 +96,18 @@ class ConnectionState(object):
             updates = await self.session.check_mailbox(self.selected)
         return ResponseOk(cmd.tag, b'NOOP completed.'), updates
 
-    @classmethod
-    def _get_select_response(cls, tag, mailbox, examine):
+    async def _select_mailbox(self, cmd, examine):
+        try:
+            mailbox, updates = await self.session.get_mailbox(cmd.mailbox)
+        except MailboxNotFound:
+            return ResponseNo(cmd.tag, b'Mailbox does not exist.'), None
+        self.selected = mailbox
+        self.updates = copy(updates)
         if mailbox.readonly or examine:
-            resp = ResponseOk(tag, b'Selected mailbox.', ReadOnly())
+            resp = ResponseOk(cmd.tag, b'Selected mailbox.', ReadOnly())
             resp.add_untagged_ok(b'Read-only mailbox.', PermanentFlags([]))
         else:
-            resp = ResponseOk(tag, b'Selected mailbox.', ReadWrite())
+            resp = ResponseOk(cmd.tag, b'Selected mailbox.', ReadWrite())
             resp.add_untagged_ok(b'Flags permitted.',
                                  PermanentFlags(mailbox.permanent_flags))
         resp.add_untagged(FlagsResponse(mailbox.flags))
@@ -114,29 +119,17 @@ class ConnectionState(object):
         if mailbox.first_unseen:
             resp.add_untagged_ok(b'First unseen message.',
                                  Unseen(mailbox.first_unseen))
-        return resp, None
+        return resp, updates
 
     async def do_select(self, cmd):
-        try:
-            mailbox, _ = await self.session.get_mailbox(cmd.mailbox)
-        except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
-        self.selected = cmd.mailbox
-        self.updates = MailboxUpdates(mailbox.exists)
-        return self._get_select_response(cmd.tag, mailbox, False)
+        return await self._select_mailbox(cmd, False)
 
     async def do_examine(self, cmd):
-        try:
-            mailbox, _ = await self.session.get_mailbox(cmd.mailbox)
-        except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
-        self.selected = cmd.mailbox
-        self.updates = MailboxUpdates(mailbox.exists)
-        return self._get_select_response(cmd.tag, mailbox, True)
+        return await self._select_mailbox(cmd, True)
 
     async def do_create(self, cmd):
         if cmd.mailbox == 'INBOX':
-            return ResponseNo(cmd.tag, b'Cannot create INBOX.')
+            return ResponseNo(cmd.tag, b'Cannot create INBOX.'), None
         try:
             updates = await self.session.create_mailbox(
                 cmd.mailbox, selected=self.selected)
@@ -151,10 +144,10 @@ class ConnectionState(object):
             updates = await self.session.delete_mailbox(
                 cmd.mailbox, selected=self.selected)
         except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox not found.')
+            return ResponseNo(cmd.tag, b'Mailbox not found.'), None
         except MailboxHasChildren:
             msg = b'Mailbox has inferior hierarchical names.'
-            return ResponseNo(cmd.tag, msg)
+            return ResponseNo(cmd.tag, msg), None
         return ResponseOk(cmd.tag, b'Mailbox deleted successfully.'), updates
 
     async def do_rename(self, cmd):
@@ -164,9 +157,9 @@ class ConnectionState(object):
             updates = await self.session.rename_mailbox(
                 cmd.from_mailbox, cmd.to_mailbox, selected=self.selected)
         except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox not found.')
+            return ResponseNo(cmd.tag, b'Mailbox not found.'), None
         except MailboxConflict:
-            return ResponseNo(cmd.tag, b'Mailbox already exists.')
+            return ResponseNo(cmd.tag, b'Mailbox already exists.'), None
         return ResponseOk(cmd.tag, b'Mailbox renamed successfully.'), updates
 
     async def do_status(self, cmd):
@@ -174,19 +167,19 @@ class ConnectionState(object):
             mailbox, updates = await self.session.get_mailbox(
                 cmd.mailbox, selected=self.selected)
         except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.')
+            return ResponseNo(cmd.tag, b'Mailbox does not exist.'), None
         data = {}
         for attr in cmd.status_list:
             if attr == b'MESSAGES':
-                data[attr] = mailbox.exists
+                data[attr] = Number(mailbox.exists)
             elif attr == b'RECENT':
-                data[attr] = mailbox.recent
+                data[attr] = Number(mailbox.recent)
             elif attr == b'UNSEEN':
-                data[attr] = mailbox.unseen
+                data[attr] = Number(mailbox.unseen)
             elif attr == b'UIDNEXT':
-                data[attr] = mailbox.next_uid
+                data[attr] = Number(mailbox.next_uid)
             elif attr == b'UIDVALIDITY':
-                data[attr] = mailbox.uid_validity
+                data[attr] = Number(mailbox.uid_validity)
         resp = ResponseOk(cmd.tag, b'STATUS completed.')
         resp.add_untagged(StatusResponse(cmd.mailbox, data))
         return resp, updates
@@ -197,9 +190,10 @@ class ConnectionState(object):
                 cmd.mailbox, cmd.message, cmd.flag_set, cmd.when,
                 selected=self.selected)
         except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
+            return ResponseNo(cmd.tag, b'Mailbox does not exist.',
+                              TryCreate()), None
         except AppendFailure as exc:
-            return ResponseNo(cmd.tag, bytes(str(exc), 'utf-8'))
+            return ResponseNo(cmd.tag, bytes(str(exc), 'utf-8')), None
         return ResponseOk(cmd.tag, b'APPEND completed.'), updates
 
     async def do_subscribe(self, cmd):
@@ -216,17 +210,16 @@ class ConnectionState(object):
         mailboxes, updates = await self.session.list_mailboxes(
             cmd.ref_name, cmd.filter, selected=self.selected)
         resp = ResponseOk(cmd.tag, b'LIST completed.')
-        for name, sep, mbx in mailboxes:
-            resp.add_untagged(
-                ListResponse(name, sep, marked=bool(mbx.recent)))
+        for name, sep, attrs in mailboxes:
+            resp.add_untagged(ListResponse(name, sep, **attrs))
         return resp, updates
 
     async def do_lsub(self, cmd):
         mailboxes, updates = await self.session.list_mailboxes(
             cmd.ref_name, cmd.filter, subscribed=True, selected=self.selected)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
-        for name, sep, _ in mailboxes:
-            resp.add_untagged(LSubResponse(name, sep))
+        for name, sep, attrs in mailboxes:
+            resp.add_untagged(LSubResponse(name, sep, **attrs))
         return resp, updates
 
     async def do_check(self, cmd):
@@ -246,7 +239,8 @@ class ConnectionState(object):
         try:
             updates = await self.session.expunge_mailbox(self.selected)
         except MailboxReadOnly:
-            return ResponseNo(cmd.tag, b'Mailbox is read-only.', ReadOnly())
+            return ResponseNo(cmd.tag, b'Mailbox is read-only.',
+                              ReadOnly()), None
         resp = ResponseOk(cmd.tag, b'EXPUNGE completed.')
         return resp, updates
 
@@ -255,7 +249,8 @@ class ConnectionState(object):
             updates = await self.session.copy_messages(
                 self.selected, cmd.sequence_set, cmd.mailbox)
         except MailboxNotFound:
-            return ResponseNo(cmd.tag, b'Mailbox does not exist.', TryCreate())
+            return ResponseNo(cmd.tag, b'Mailbox does not exist.',
+                              TryCreate()), None
         return ResponseOk(cmd.tag, b'COPY completed.'), updates
 
     async def do_fetch(self, cmd):
@@ -268,7 +263,7 @@ class ConnectionState(object):
                 if attr.attribute == b'UID':
                     fetch_data[attr] = Number(msg.uid)
                 elif attr.attribute == b'FLAGS':
-                    fetch_data[attr] = List(msg.flags)
+                    fetch_data[attr] = List(msg.get_flags(self.selected))
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
@@ -336,7 +331,9 @@ class ConnectionState(object):
             func = getattr(self, func_name)
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
-        response, updates = await func(cmd)
-        for untagged in self.updates.process(updates):
-            response.add_untagged(untagged)
+        response, updated = await func(cmd)
+        if updated and self.selected:
+            for update in updated.get_responses(self.selected):
+                response.add_untagged(update)
+            self.selected = updated
         return response

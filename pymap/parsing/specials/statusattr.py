@@ -51,6 +51,9 @@ class StatusAttribute(Special):
         except ValueError:
             raise InvalidContent(buf)
 
+    def __hash__(self):
+        return hash(self.value)
+
     def __eq__(self, other):
         if isinstance(other, StatusAttribute):
             return self.value == other.value

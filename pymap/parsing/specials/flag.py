@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 #
 
-from typing import Tuple
+from typing import Tuple, Union
 
 from . import Special
 from .. import NotParseable, Space, Buffer
@@ -31,7 +31,7 @@ __all__ = ['Flag']
 class Flag(Special):
     """Represents a message flag from an IMAP stream."""
 
-    def __init__(self, value: bytes):
+    def __init__(self, value: Union['Flag', bytes]):
         super().__init__()
         self.value = self._capitalize(value)  # type: bytes
 

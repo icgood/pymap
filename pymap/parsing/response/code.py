@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 #
 
-from typing import List as ListT
+from typing import List as ListT, Iterable
 
 from . import ResponseCode, Response
 from ..primitives import List
@@ -50,9 +50,10 @@ class BadCharset(ResponseCode):
 class Capability(ResponseCode):
     """Lists the capabilities the server advertises to the client."""
 
-    def __init__(self, server_capabilities: ListT[MaybeBytes]):
+    def __init__(self, server_capabilities: Iterable[MaybeBytes]):
         super().__init__()
-        self.capabilities = server_capabilities  # type: ListT[MaybeBytes]
+        self.capabilities = list(
+            server_capabilities)  # type: ListT[MaybeBytes]
         self._raw = None
 
     @property
@@ -92,9 +93,9 @@ class Parse(ResponseCode):
 
 class PermanentFlags(ResponseCode):
 
-    def __init__(self, flags: ListT[MaybeBytes]):
+    def __init__(self, flags: Iterable[MaybeBytes]):
         super().__init__()
-        self.flags = flags  # type: ListT[MaybeBytes]
+        self.flags = list(flags)  # type: ListT[MaybeBytes]
         self._raw = b'[PERMANENTFLAGS %b]' % List(flags)
 
     def __bytes__(self):
