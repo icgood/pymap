@@ -1,7 +1,7 @@
 
 import unittest
 
-from pymap.sequenceset import SequenceSet
+from pymap.parsing.specials import SequenceSet
 
 
 class TestSequenceSet(unittest.TestCase):

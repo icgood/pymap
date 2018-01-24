@@ -20,7 +20,7 @@
 #
 
 import re
-from typing import Tuple, Optional, FrozenSet, List as ListT
+from typing import Tuple, Optional, FrozenSet, Collection, List as ListT
 
 from . import Special, AString
 from .. import NotParseable, Buffer
@@ -29,22 +29,21 @@ from ..primitives import Atom, List
 __all__ = ['FetchAttribute']
 
 
-class _Section:
-
-    def __init__(self, parts, msgtext, headers):
-        self.parts = parts  # type: Optional[ListT[int]]]
-        self.msgtext = msgtext  # type: Optional[bytes]
-        self.headers = headers  # type: Optional[FrozenSet[bytes]]
-
-    def __hash__(self):
-        return hash((self.parts, self.msgtext, self.headers))
-
-
 class FetchAttribute(Special):
     """Represents an attribute that should be fetched for each message in the
     sequence set of a FETCH command on an IMAP stream.
 
     """
+
+    class Section:
+
+        def __init__(self, parts, msgtext, headers):
+            self.parts = parts  # type: Optional[ListT[int]]]
+            self.msgtext = msgtext  # type: Optional[bytes]
+            self.headers = headers  # type: Optional[FrozenSet[bytes]]
+
+        def __hash__(self):
+            return hash((self.parts, self.msgtext, self.headers))
 
     _attrname_pattern = re.compile(br' *([^\s\[<()]+)')
     _section_start_pattern = re.compile(br' *\[ *')
@@ -57,9 +56,15 @@ class FetchAttribute(Special):
     def __init__(self, attribute, section=None, partial=None):
         super().__init__()
         self.attribute = attribute.upper()  # type: bytes
-        self.section = section  # type: Optional[_Section]
-        self.partial = partial  # type: Optional[Tuple[int, int]]
+        self.section = section  # type: Optional[FetchAttribute.Section]
+        self.partial = partial  # type: Optional[Collection[int]]
         self._raw = None
+
+    @property
+    def for_response(self) -> 'FetchAttribute':
+        if self.partial is None or len(self.partial) < 2:
+            return self
+        return FetchAttribute(self.attribute, self.section, self.partial[:1])
 
     @property
     def set_seen(self) -> bool:
@@ -92,7 +97,8 @@ class FetchAttribute(Special):
                 parts.append(bytes(List(self.section.headers)))
             parts.append(b']')
         if self.partial:
-            parts += [b'<%i.%i>' % self.partial]
+            partial = b'.'.join([b'%i' % p for p in self.partial])
+            parts += [b'<', partial, b'>']
         self._raw = raw = b''.join(parts)
         return raw
 
@@ -113,16 +119,16 @@ class FetchAttribute(Special):
             section_parts = [int(num) for num in match.group(1).split(b'.')]
             buf = buf[match.end(0):]
             if not match.group(2):
-                return _Section(section_parts, None, None), buf
+                return cls.Section(section_parts, None, None), buf
             elif match.group(3):
-                return _Section(section_parts, b'MIME', None), buf
+                return cls.Section(section_parts, b'MIME', None), buf
         try:
             atom, after = Atom.parse(buf)
         except NotParseable:
-            return _Section(section_parts, None, None), buf
+            return cls.Section(section_parts, None, None), buf
         sec_msgtext = atom.value.upper()
         if sec_msgtext in (b'HEADER', b'TEXT'):
-            return _Section(section_parts, sec_msgtext, None), after
+            return cls.Section(section_parts, sec_msgtext, None), after
         elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             kwargs_copy = kwargs.copy()
             kwargs_copy['list_expected'] = [AString]
@@ -131,7 +137,7 @@ class FetchAttribute(Special):
                 [hdr.value.upper() for hdr in header_list.value])
             if not header_list:
                 raise NotParseable(after)
-            return _Section(section_parts, sec_msgtext, header_list), buf
+            return cls.Section(section_parts, sec_msgtext, header_list), buf
         raise NotParseable(buf)
 
     @classmethod

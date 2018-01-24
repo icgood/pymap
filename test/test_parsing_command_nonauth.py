@@ -1,7 +1,6 @@
 
 import unittest
 
-from pymap.parsing.command import *  # NOQA
 from pymap.parsing.command.nonauth import *  # NOQA
 
 

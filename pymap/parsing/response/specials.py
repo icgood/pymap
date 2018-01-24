@@ -92,7 +92,7 @@ class FetchResponse(Response):
 
     """
 
-    def __init__(self, seq: int, data: Dict[FetchAttribute, SupportsBytes]):
+    def __init__(self, seq: int, data: Dict[FetchAttribute, MaybeBytes]):
         data_list = List(chain.from_iterable(data.items()))
         text = b'%i FETCH %b' % (seq, bytes(data_list))
         super().__init__(b'*', text)

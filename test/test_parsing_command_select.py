@@ -1,10 +1,9 @@
 
 import unittest
 
-from pymap.flag import Flag
+from pymap.flag import Flag, FlagOp
 from pymap.parsing import NotParseable
 from pymap.parsing.specials import FetchAttribute, SearchKey
-from pymap.parsing.command import *  # NOQA
 from pymap.parsing.command.select import *  # NOQA
 
 
@@ -67,7 +66,7 @@ class TestStoreCommand(unittest.TestCase):
         ret, buf = StoreCommand.parse(b' 1,2,3 +FLAGS.SILENT (\\Seen)\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
         self.assertSetEqual({Flag(br'\Seen')}, ret.flag_set)
-        self.assertEqual('add', ret.mode)
+        self.assertEqual(FlagOp.ADD, ret.mode)
         self.assertTrue(ret.silent)
         self.assertEqual(b'  ', buf)
 
@@ -75,7 +74,7 @@ class TestStoreCommand(unittest.TestCase):
         ret, buf = StoreCommand.parse(b' 1,2,3 FLAGS \\Seen\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
         self.assertSetEqual({Flag(br'\Seen')}, ret.flag_set)
-        self.assertEqual('replace', ret.mode)
+        self.assertEqual(FlagOp.REPLACE, ret.mode)
         self.assertFalse(ret.silent)
         self.assertEqual(b'  ', buf)
 
@@ -107,7 +106,7 @@ class TestUidCommand(unittest.TestCase):
     def test_parse_command_search(self):
         ret, buf = UidCommand.parse(b' SEARCH ALL\n  ')
         self.assertIsInstance(ret, SearchCommand)
-        self.assertTrue(ret.uid)
+        self.assertTrue(ret.with_uid)
         self.assertEqual(b'  ', buf)
 
     def test_parse_error(self):

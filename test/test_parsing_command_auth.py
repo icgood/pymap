@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from pymap.flag import Flag
 from pymap.parsing import NotParseable
 from pymap.parsing.specials import StatusAttribute
-from pymap.parsing.command import *  # NOQA
 from pymap.parsing.command.auth import *  # NOQA
 
 

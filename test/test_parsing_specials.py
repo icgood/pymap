@@ -2,7 +2,7 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 
-from pymap.parsing import NotParseable, UnexpectedType
+from pymap.parsing import *  # NOQA
 from pymap.parsing.specials import *  # NOQA
 
 
@@ -172,7 +172,9 @@ class TestFetchAttribute(unittest.TestCase):
         ret, buf = FetchAttribute.parse(
             b'body.peek[1.2.HEADER.FIELDS (A B)]<4.5>  ')
         self.assertEqual(b'BODY.PEEK', ret.attribute)
-        self.assertEqual(((1, 2), b'HEADER.FIELDS', {b'A', b'B'}), ret.section)
+        self.assertEqual([1, 2], ret.section.parts)
+        self.assertEqual(b'HEADER.FIELDS', ret.section.msgtext)
+        self.assertEqual({b'A', b'B'}, ret.section.headers)
         self.assertEqual((4, 5), ret.partial)
         self.assertEqual(b'  ', buf)
 
@@ -189,15 +191,21 @@ class TestFetchAttribute(unittest.TestCase):
     def test_parse_sections(self):
         ret1, _ = FetchAttribute.parse(b'BODY[1.2]')
         self.assertEqual(b'BODY', ret1.attribute)
-        self.assertEqual(((1, 2), None, None), ret1.section)
+        self.assertEqual([1, 2], ret1.section.parts)
+        self.assertIsNone(ret1.section.msgtext)
+        self.assertIsNone(ret1.section.headers)
         self.assertIsNone(ret1.partial)
         ret2, _ = FetchAttribute.parse(b'BODY[1.2.MIME]')
         self.assertEqual(b'BODY', ret2.attribute)
-        self.assertEqual(((1, 2), b'MIME', None), ret2.section)
+        self.assertEqual([1, 2], ret2.section.parts)
+        self.assertEqual(b'MIME', ret2.section.msgtext)
+        self.assertIsNone(ret2.section.headers)
         self.assertIsNone(ret2.partial)
         ret3, _ = FetchAttribute.parse(b'BODY[HEADER]')
         self.assertEqual(b'BODY', ret3.attribute)
-        self.assertEqual((None, b'HEADER', None), ret3.section)
+        self.assertIsNone(ret3.section.parts)
+        self.assertEqual(b'HEADER', ret3.section.msgtext)
+        self.assertIsNone(ret3.section.headers)
         self.assertIsNone(ret3.partial)
 
     def test_parse_error(self):
@@ -220,10 +228,12 @@ class TestFetchAttribute(unittest.TestCase):
         attr1 = FetchAttribute(b'ENVELOPE')
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         self.assertEqual(b'ENVELOPE', bytes(attr1))
-        attr2 = FetchAttribute(b'BODY',
-                               ((1, 2), b'STUFF', [b'A', b'B']),
-                               (b'4', b'5'))
-        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4>', bytes(attr2))
+        section = FetchAttribute.Section((1, 2), b'STUFF', [b'A', b'B'])
+        attr2 = FetchAttribute(b'BODY', section, (4, 5))
+        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4.5>', bytes(attr2))
+        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4>',
+                         bytes(attr2.for_response))
+
 
 
 class TestSearchKey(unittest.TestCase):

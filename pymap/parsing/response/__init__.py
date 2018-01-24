@@ -53,7 +53,7 @@ class Response:
     def __init__(self, tag: MaybeBytes, text: MaybeBytes = None):
         super().__init__()
         self.tag = bytes(tag)  # type: bytes
-        self.untagged = []  # type: List[Response]
+        self.untagged = []  # type: List[MaybeBytes]
         self._text = text  # type: Optional[MaybeBytes]
         self._raw = None  # type: Optional[bytes]
 
@@ -61,7 +61,7 @@ class Response:
     def text(self):
         return bytes(self._text)
 
-    def add_untagged(self, response: 'Response'):
+    def add_untagged(self, response: MaybeBytes):
         """Add an untagged response. These responses are shown before the
         parent response.
 
@@ -71,7 +71,8 @@ class Response:
         self.untagged.append(response)
         self._raw = None
 
-    def add_untagged_ok(self, text: MaybeBytes, code: ResponseCode = None):
+    def add_untagged_ok(self, text: MaybeBytes,
+                        code: Optional[ResponseCode] = None):
         """Add an untagged "OK" response.
 
         .. seealso:: :meth:`add_untagged`, :class:`ResponseOk`
