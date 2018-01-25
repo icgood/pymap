@@ -64,9 +64,8 @@ class CloseConnection(PymapError):
 class ConnectionState(object):
     flags_attr = FetchAttribute(b'FLAGS')
 
-    def __init__(self, transport, login):
+    def __init__(self, login):
         super().__init__()
-        self.transport = transport
         self.login = login  # type: Callable[..., Optional[SessionInterface]]
         self.session = None  # type: Optional[SessionInterface]
         self.selected = None  # type: Optional[MailboxState]

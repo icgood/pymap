@@ -41,7 +41,7 @@ class FlagsResponse(Response):
     """
 
     def __init__(self, flags: Iterable[MaybeBytes]):
-        text = b'FLAGS %b' % List(flags)
+        text = b'FLAGS %b' % List(sorted(flags))
         super().__init__(b'*', text)
 
 

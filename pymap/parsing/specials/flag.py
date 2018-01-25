@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 #
 
+from functools import total_ordering
 from typing import Tuple, Union
 
 from . import Special
@@ -28,6 +29,7 @@ from ..primitives import Atom
 __all__ = ['Flag']
 
 
+@total_ordering
 class Flag(Special):
     """Represents a message flag from an IMAP stream."""
 
@@ -50,6 +52,13 @@ class Flag(Special):
 
     def __ne__(self, other):
         return not (self == other)
+
+    def __lt__(self, other):
+        if isinstance(other, Flag):
+            return bytes(self) < bytes(other)
+        elif isinstance(other, bytes):
+            return bytes(self) < self._capitalize(other)
+        return NotImplemented
 
     def __hash__(self):
         return hash(bytes(self))
