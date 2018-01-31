@@ -31,5 +31,5 @@ def add_subparser(subparsers):
 
 
 def init(*_):
-    State.load()
+    State.init()
     return Session.login

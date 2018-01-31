@@ -67,6 +67,17 @@ class Session(SessionInterface):
                 pass
         del State.mailboxes[name]
 
+    def _get_mailbox(self, name: str, claim_recent: bool,
+                     selected: Optional[Mailbox]) \
+            -> Tuple[MailboxState, Optional[MailboxState]]:
+        if name not in State.mailboxes:
+            raise MailboxNotFound(name)
+        updates = self._get_updates(selected)
+        if selected and name == selected.name:
+            return selected, updates
+        else:
+            return Mailbox.load(name, self, claim_recent), updates
+
     @classmethod
     async def login(cls, result):
         if result.authcid == 'demouser' and result.check_secret('demopass'):
@@ -82,11 +93,10 @@ class Session(SessionInterface):
                self._get_updates(selected)
 
     async def get_mailbox(self, name: str,
+                          claim_recent: bool = False,
                           selected: Optional[Mailbox] = None) \
             -> Tuple[MailboxState, Optional[MailboxState]]:
-        if name in State.mailboxes:
-            return Mailbox.load(name, self), self._get_updates(selected)
-        raise MailboxNotFound(name)
+        return self._get_mailbox(name, claim_recent, selected)
 
     async def create_mailbox(self, name: str,
                              selected: Optional[Mailbox] = None) \
@@ -139,16 +149,16 @@ class Session(SessionInterface):
             -> Optional[MailboxState]:
         if name not in State.mailboxes:
             raise MailboxNotFound(name)
-        mbx = Mailbox.load(name, self)
+        mbx, _ = self._get_mailbox(name, False, selected)
         msg_uid = self._increment_next_uid(name)
         msg = Message.parse(msg_uid, message, flag_set & mbx.permanent_flags,
                             internal_date=when)
-        msg.session_flags.update(self, flag_set & mbx.session_flags | {Recent})
+        msg.session_flags.update(mbx.mailbox_session,
+                                 flag_set & mbx.session_flags | {Recent})
         State.mailboxes[name].messages.append(msg)
         msg_seq = len(State.mailboxes[name].messages)
         for session in State.sessions:
-            session.mailboxes[name].updates.add_fetch(
-                msg_seq, msg_uid, flag_set)
+            Mailbox(mbx.name, session).add_fetch(msg_seq, msg)
         return self._get_updates(selected)
 
     async def check_mailbox(self, selected: Mailbox,
@@ -178,7 +188,7 @@ class Session(SessionInterface):
         mbx = self._check_selected(selected)
         expunged = set()
         for i, msg in enumerate(mbx.messages):
-            if Deleted in msg.get_flags(selected):
+            if Deleted in mbx.get_flags(msg):
                 expunged.add(i + 1)
                 State.mailboxes[mbx.name].messages[i:i + 1] = []
         for session in State.sessions:
@@ -194,21 +204,17 @@ class Session(SessionInterface):
 
     async def update_flags(self, selected: Mailbox,
                            sequences: SequenceSet,
-                           flag_set: AbstractSet[bytes],
-                           mode: FlagOp = FlagOp.REPLACE,
-                           silent: bool = False) \
-            -> Optional[MailboxState]:
+                           flag_set: AbstractSet[Flag],
+                           mode: FlagOp = FlagOp.REPLACE) \
+            -> Tuple[List[Tuple[int, MessageStructure]],
+                     Optional[MailboxState]]:
         mbx = self._check_selected(selected)
+        results = []
         for msg_seq in sequences.iter(mbx.exists):
             msg = mbx.messages[msg_seq - 1]
-            before_flags = frozenset(msg.permanent_flags)
-            if mode == FlagOp.ADD:
-                msg.permanent_flags |= flag_set
-            elif mode == FlagOp.DELETE:
-                msg.permanent_flags -= flag_set
-            else:
-                msg.permanent_flags = flag_set
-            if before_flags != msg.permanent_flags and not silent:
-                for session in State.sessions:
+            mbx.update_flags(msg, flag_set, mode)
+            for session in State.sessions:
+                if self != session:
                     Mailbox(mbx.name, session).add_fetch(msg_seq, msg)
-        return self._get_updates(selected)
+            results.append((msg_seq, msg))
+        return results, self._get_updates(selected)

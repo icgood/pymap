@@ -21,11 +21,9 @@
 
 import os.path
 import random
-import re
-from bisect import insort_left
-from collections import defaultdict, deque
+from collections import defaultdict
 from contextlib import closing
-from typing import List, Dict, Set, Deque
+from typing import List, Dict, Set
 from weakref import WeakSet
 
 from pkg_resources import resource_listdir, resource_stream
@@ -39,11 +37,19 @@ class _Mailbox:
     sep = b'.'
 
     def __init__(self):
-        self.next_uid = 1  # type: int
+        self.next_uid = 100  # type: int
         self.uid_validity = random.randint(1, 32768)  # type: int
         self.messages = []  # type: List[Message]
-        self.recent = deque()  # type: Deque[int]
+        self.recent = set()  # type: Set[int]
         self.updates = {}
+
+    def claim_uid(self):
+        uid = self.next_uid
+        self.next_uid += 1
+        return uid
+
+    def add_message(self, message: Message):
+        self.messages.append(message)
 
 
 class State:
@@ -51,28 +57,25 @@ class State:
     sessions = WeakSet()  # type: Set['Session']
 
     @classmethod
-    def load(cls):
-        for mailbox_name in resource_listdir('pymap.demo', 'data'):
+    def init(cls):
+        cls.mailboxes.clear()
+        cls.sessions.clear()
+        resource = 'pymap.demo'
+        for mailbox_name in resource_listdir(resource, 'data'):
             mailbox_path = os.path.join('data', mailbox_name)
-            recent = cls.mailboxes[mailbox_name].recent
-            messages = []
-            for message_name in resource_listdir('pymap.demo', mailbox_path):
-                match = re.match(r'^message-(\d+)\.txt$', message_name)
-                if not match:
-                    continue
-                message_uid = int(match.group(1))
+            mailbox = cls.mailboxes[mailbox_name]
+            message_names = sorted(resource_listdir(resource, mailbox_path))
+            for message_name in message_names:
                 message_path = os.path.join(mailbox_path, message_name)
-                message_stream = resource_stream('pymap.demo', message_path)
+                message_stream = resource_stream(resource, message_path)
+                message_uid = mailbox.claim_uid()
                 with closing(message_stream):
                     flags_line = message_stream.readline()
                     message_flags = frozenset(flags_line.split())
                     message_data = message_stream.read()
                 if br'\Recent' in message_flags:
                     message_flags = message_flags - {br'\Recent'}
-                    recent.append(message_uid)
-                message_info = (message_uid, message_flags, message_data)
-                insort_left(messages, message_info)
-            mailbox_data = [Message.parse(uid, data, flags)
-                            for uid, flags, data in messages]
-            cls.mailboxes[mailbox_name].messages = mailbox_data
-            cls.mailboxes[mailbox_name].next_uid = len(mailbox_data) + 1
+                    mailbox.recent.add(message_uid)
+                message = Message.parse(message_uid, message_data,
+                                        message_flags)
+                mailbox.add_message(message)

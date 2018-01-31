@@ -20,6 +20,7 @@
 #
 
 import re
+from functools import total_ordering
 from typing import Tuple, Optional, FrozenSet, Collection, List as ListT
 
 from . import Special, AString
@@ -29,6 +30,7 @@ from ..primitives import Atom, List
 __all__ = ['FetchAttribute']
 
 
+@total_ordering
 class FetchAttribute(Special):
     """Represents an attribute that should be fetched for each message in the
     sequence set of a FETCH command on an IMAP stream.
@@ -59,12 +61,17 @@ class FetchAttribute(Special):
         self.section = section  # type: Optional[FetchAttribute.Section]
         self.partial = partial  # type: Optional[Collection[int]]
         self._raw = None
+        self._for_response = None
 
     @property
     def for_response(self) -> 'FetchAttribute':
-        if self.partial is None or len(self.partial) < 2:
-            return self
-        return FetchAttribute(self.attribute, self.section, self.partial[:1])
+        if self._for_response is None:
+            if self.partial is None or len(self.partial) < 2:
+                self._for_response = self
+            else:
+                self._for_response = FetchAttribute(
+                    self.attribute, self.section, self.partial[:1])
+        return self._for_response
 
     @property
     def set_seen(self) -> bool:
@@ -110,6 +117,9 @@ class FetchAttribute(Special):
 
     def __ne__(self, other):
         return hash(self) != hash(other)
+
+    def __lt__(self, other):
+        return bytes(self.for_response) < bytes(self.for_response)
 
     @classmethod
     def _parse_section(cls, buf, **kwargs):

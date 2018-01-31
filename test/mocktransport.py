@@ -20,6 +20,7 @@
 #
 
 import enum
+import inspect
 import re
 from collections import deque
 
@@ -41,26 +42,41 @@ class MockTransport:
         self.queue = deque()
         self.matches = {}
 
+    @classmethod
+    def _caller(cls, frame):
+        return '{0}:{1!s}'.format(*inspect.getframeinfo(frame))
+
     def push_readline(self, data: bytes) -> None:
-        self.queue.append((_Type.READLINE, data))
+        frame = inspect.currentframe().f_back
+        self.queue.append((_Type.READLINE, data, self._caller(frame)))
 
     def push_readexactly(self, data: bytes) -> None:
-        self.queue.append((_Type.READEXACTLY, data))
+        frame = inspect.currentframe().f_back
+        self.queue.append((_Type.READEXACTLY, data, self._caller(frame)))
 
     def push_write(self, *data) -> None:
-        self.queue.append((_Type.WRITE, data))
-        self.queue.append((_Type.DRAIN, None))
+        frame = inspect.currentframe().f_back
+        self.queue.append((_Type.WRITE, data, self._caller(frame)))
+        self.queue.append((_Type.DRAIN, None, self._caller(frame)))
 
     def push_read_eof(self):
-        self.queue.append((_Type.READ_EOF, None))
+        frame = inspect.currentframe().f_back
+        self.queue.append((_Type.READ_EOF, None, self._caller(frame)))
 
     def push_write_close(self):
-        self.queue.append((_Type.WRITE_CLOSE, None))
+        frame = inspect.currentframe().f_back
+        self.queue.append((_Type.WRITE_CLOSE, None, self._caller(frame)))
 
-    @classmethod
-    def _check_type(cls, expected, got):
-        assert expected == got, '\nExpected: ' + expected.value + \
-                                '\nGot:      ' + got.value
+    def _pop_expected(self, got):
+        try:
+            type_, data, where = self.queue.popleft()
+        except IndexError:
+            assert False, '\nExpected: <end>' + \
+                          '\nGot:      ' + got.value
+        assert type_ == got, '\nExpected: ' + type_.value + \
+                             '\nGot:      ' + got.value + \
+                             '\nWhere:    ' + where
+        return data
 
     def _match_write(self, expected, data):
         re_parts = []
@@ -81,32 +97,23 @@ class MockTransport:
         self.matches.update(match.groupdict())
 
     async def readline(self) -> bytes:
-        type_, expected = self.queue.popleft()
-        self._check_type(_Type.READLINE, type_)
-        return expected
+        return self._pop_expected(_Type.READLINE)
 
-    async def readexactly(self, _: int) -> bytes:
-        type_, expected = self.queue.popleft()
-        self._check_type(_Type.READEXACTLY, type_)
-        return expected
+    async def readexactly(self, size: int) -> bytes:
+        data = self._pop_expected(_Type.READEXACTLY)
+        assert size == len(data)
+        return data
 
     def write(self, data: bytes) -> None:
-        type_, expected = self.queue.popleft()
-        self._check_type(_Type.WRITE, type_)
+        expected = self._pop_expected(_Type.WRITE)
         self._match_write(expected, data)
 
     async def drain(self) -> None:
-        type_, _ = self.queue.popleft()
-        self._check_type(_Type.DRAIN, type_)
+        self._pop_expected(_Type.DRAIN)
 
     def at_eof(self):
-        expect = self.queue.popleft()
-        if expect[0] != _Type.READ_EOF:
-            self.queue.appendleft(expect)
-            return False
-        return True
+        return False
 
     def close(self) -> None:
-        type_, _ = self.queue.popleft()
-        self._check_type(_Type.WRITE_CLOSE, type_)
+        self._pop_expected(_Type.WRITE_CLOSE)
         assert 0 == len(self.queue)

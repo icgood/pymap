@@ -28,16 +28,13 @@
 """
 
 import enum
-from typing import AbstractSet, FrozenSet, TYPE_CHECKING
+from typing import AbstractSet, FrozenSet, Any
 from weakref import WeakKeyDictionary
 
 from .parsing.specials.flag import Flag
 
 __all__ = ['FlagOp', 'CustomFlag', 'SessionFlags', 'Seen', 'Recent',
            'Deleted', 'Flagged', 'Answered', 'Draft']
-
-if TYPE_CHECKING:
-    from .interfaces import MailboxState
 
 
 class FlagOp(enum.Enum):
@@ -71,42 +68,41 @@ class SessionFlags:
     def __init__(self):
         self._sessions = WeakKeyDictionary()
 
-    def get(self, mailbox: 'MailboxState') -> FrozenSet[Flag]:
+    def get(self, mailbox_session: Any) -> FrozenSet[Flag]:
         """Return the session flags for the mailbox session.
 
-        :param mailbox: The mailbox session to query.
+        :param mailbox_session: The mailbox session to query.
 
         """
-        return self._sessions.get(mailbox.session, frozenset())
+        return self._sessions.get(mailbox_session, frozenset())
 
-    def update(self, mailbox: 'MailboxState',
+    def update(self, mailbox_session: Any,
                flag_set: AbstractSet[Flag],
                op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
         """Update the flags for the session.
 
-        :param mailbox: The mailbox session to update.
+        :param mailbox_session: The mailbox session to update.
         :param flag_set: The set of flags for the update operation.
         :param op: The type of update.
 
         """
-        session = mailbox.session
-        session_flags = self._sessions.get(session, frozenset())
+        session_flags = self._sessions.get(mailbox_session, frozenset())
         if op == FlagOp.ADD:
             session_flags = session_flags | flag_set
         elif op == FlagOp.DELETE:
             session_flags = session_flags - flag_set
         else:  # op == FlagOp.REPLACE
             session_flags = frozenset(flag_set)
-        self._sessions[session] = session_flags
+        self._sessions[mailbox_session] = session_flags
         return session_flags
 
-    def add_recent(self, mailbox: 'MailboxState') -> FrozenSet[Flag]:
+    def add_recent(self, mailbox_session: Any) -> FrozenSet[Flag]:
         """Adds the ``\Recent`` flag to the flags for the session.
 
-        :param mailbox: The mailbox session to update.
+        :param mailbox_session: The mailbox session to update.
 
         """
-        return self.update(mailbox, {Recent}, FlagOp.ADD)
+        return self.update(mailbox_session, {Recent}, FlagOp.ADD)
 
 
 Seen = Flag(br'\Seen')

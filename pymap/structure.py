@@ -28,7 +28,7 @@ from email.message import Message
 from email.policy import SMTP
 from email.utils import getaddresses
 from typing import (TYPE_CHECKING, Optional, Union, Tuple, Iterable, Set,
-                    AbstractSet, FrozenSet)
+                    AbstractSet, FrozenSet, Any)
 
 from .flag import SessionFlags
 from .parsing import Parseable
@@ -81,41 +81,40 @@ class MessageStructure:
 
     _HEADER_CHARSET = Charset('utf-8')
 
-    def __init__(self, uid: int, message: Message,
+    def __init__(self, uid: Optional[int], message: Optional[Message],
                  permanent_flags: Iterable[Flag] = None,
                  session_flags: SessionFlags = None,
                  internal_date: datetime = None):
         super().__init__()
 
         #: The message's unique identifier in the mailbox.
-        self.uid = uid  # type: int
+        self.uid = uid  # type: Optional[int]
 
         #: The MIME-parsed message object.
-        self.message = message  # type: Message
+        self.contents = message  # type: Optional[Message]
 
         #: The message's internal date.
         self.internal_date = internal_date  # type: Optional[datetime]
 
         #: The message's set of permanent flags.
-        self.permanent_flags = set(permanent_flags or [])  # type: Set[Flag]
+        self.permanent_flags = (
+            frozenset(permanent_flags or [])
+        )  # type: FrozenSet[Flag]
 
         #: The message's set of session flags.
         self.session_flags = (
             session_flags or SessionFlags()
         )  # type: SessionFlags
 
-    def get_flags(self, selected: Optional['MailboxState']) -> FrozenSet[Flag]:
-        """Get the full set of permanent and session flags.
+    @property
+    def has_uid(self):
+        """True if the object has a loaded :attr:`.uid`."""
+        return self.uid is not None
 
-        :param selected: The selected mailbox object, used to key the
-                        session flags.
-
-        """
-        if selected:
-            session_flags = self.session_flags.get(selected)
-        else:
-            session_flags = frozenset()
-        return frozenset(self.permanent_flags) | session_flags
+    @property
+    def has_contents(self):
+        """True if the object has a loaded :attr:`.contents`."""
+        return self.contents is not None
 
     def _get_str_or_nil(self, value):
         if value is None:
@@ -194,7 +193,7 @@ class MessageStructure:
 
         """
         try:
-            msg = self._get_subpart(self.message, section)
+            msg = self._get_subpart(self.contents, section)
         except IndexError:
             return Nil()
         ret = email.message.Message(SMTP)
@@ -223,7 +222,7 @@ class MessageStructure:
 
         """
         try:
-            msg = self._get_subpart(self.message, section)
+            msg = self._get_subpart(self.contents, section)
         except IndexError:
             return Nil()
         return LiteralString(bytes(msg))
@@ -240,7 +239,7 @@ class MessageStructure:
 
         """
         try:
-            msg = self._get_subpart(self.message, section)
+            msg = self._get_subpart(self.contents, section)
         except IndexError:
             return Nil()
         ofp = io.BytesIO()
@@ -262,7 +261,7 @@ class MessageStructure:
 
     def get_size(self) -> Number:
         """Return the size of the message, in octets."""
-        return self._get_size(self.message)
+        return self._get_size(self.contents)
 
     async def get_envelope_structure(self) -> List:
         """Build and return the envelope structure.
@@ -273,7 +272,7 @@ class MessageStructure:
            <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
 
         """
-        msg = self.message
+        msg = self.contents
         return List([self._get_header_str_or_nil(msg, 'Date'),
                      self._get_header_str_or_nil(msg, 'Subject'),
                      self._get_header_addresses_or_nil(msg, 'From'),
@@ -295,7 +294,7 @@ class MessageStructure:
            <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
 
         """
-        msg = self.message
+        msg = self.contents
         maintype = self._get_str_or_nil(msg.get_content_maintype())
         subtype = self._get_str_or_nil(msg.get_content_subtype())
         if maintype.value == b'multipart':

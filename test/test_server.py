@@ -36,7 +36,7 @@ class TestServer:
 
     def _select(self, mailbox, exists, recent, uidnext, unseen):
         self.transport.push_readline(
-            b'. SELECT ' + mailbox + b'\r\n')
+            b'select1 SELECT ' + mailbox + b'\r\n')
         self.transport.push_write(
             b'* OK [PERMANENTFLAGS (\\Answered \\Deleted \\Draft \\Flagged '
             b'\\Seen)] Flags permitted.\r\n* FLAGS (\\Answered \\Deleted '
@@ -46,7 +46,7 @@ class TestServer:
             b'* OK [UIDNEXT ', b'%i' % uidnext, b'] Predicted next UID.\r\n'
             b'* OK [UIDVALIDITY ', (br'\d+', ), b'] Predicted next UID.\r\n'
             b'* OK [UNSEEN ', b'%i' % unseen, b'] First unseen message.\r\n'
-            b'. OK [READ-WRITE] Selected mailbox.\r\n')
+            b'select1 OK [READ-WRITE] Selected mailbox.\r\n')
 
     async def test_login_logout(self):
         self._login()
@@ -55,6 +55,68 @@ class TestServer:
 
     async def test_select(self):
         self._login()
-        self._select(b'INBOX', 4, 1, 5, 4)
+        self._select(b'INBOX', 4, 1, 104, 4)
+        self._logout()
+        await self.run()
+
+    async def test_select_clears_recent(self):
+        self._login()
+        self._select(b'INBOX', 4, 1, 104, 4)
+        self._select(b'INBOX', 4, 0, 104, 4)
+        self._logout()
+        await self.run()
+
+    async def test_list(self):
+        self._login()
+        self.transport.push_readline(
+            b'list1 LIST "" ""\r\n')
+        self.transport.push_write(
+            b'* LIST () "." INBOX\r\n'
+            b'* LIST () "." Sent\r\n'
+            b'list1 OK LIST completed.\r\n')
+        self._logout()
+        await self.run()
+
+    async def test_uid_fetch(self):
+        self._login()
+        self._select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_readline(
+            b'fetch1 UID FETCH 1:* (FLAGS)\r\n')
+        self.transport.push_write(
+            b'* 1 FETCH (FLAGS (\\Seen) UID 100)\r\n'
+            b'* 2 FETCH (FLAGS (\\Answered \\Seen) UID 101)\r\n'
+            b'* 3 FETCH (FLAGS (\\Flagged \\Seen) UID 102)\r\n'
+            b'* 4 FETCH (FLAGS (\\Recent) UID 103)\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        self._logout()
+        await self.run()
+
+    async def test_uid_store(self):
+        self._login()
+        self._select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_readline(
+            b'store1 UID STORE * +FlAGS (\\Seen)\r\n')
+        self.transport.push_write(
+            b'* 4 FETCH (FLAGS (\\Recent \\Seen) UID 103)\r\n'
+            b'store1 OK STORE completed.\r\n')
+        self._logout()
+        await self.run()
+
+    async def test_append(self):
+        message = b'test message\r\n'
+        self._login()
+        self._select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_readline(
+            b'append1 APPEND INBOX (\\Seen) {%i}\r\n' % len(message))
+        self.transport.push_write(
+            b'+ Literal string\r\n')
+        self.transport.push_readexactly(message)
+        self.transport.push_readline(
+            b'\r\n')
+        self.transport.push_write(
+            b'* 5 EXISTS\r\n'
+            b'* 2 RECENT\r\n'
+            b'* 5 FETCH (FLAGS (\\Recent \\Seen))\r\n'
+            b'append1 OK APPEND completed.\r\n')
         self._logout()
         await self.run()

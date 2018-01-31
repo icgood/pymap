@@ -21,25 +21,32 @@
 
 """Module defining the interfaces available to pymap backends."""
 
-import datetime
+from collections import OrderedDict
+from datetime import datetime
 from typing import Tuple, Optional, AbstractSet, FrozenSet, Any, \
     Iterable, Dict, List as ListT
 
-from pymap.parsing.response import Response
-from pymap.parsing.response.specials import ExpungeResponse, FetchResponse, \
-    ExistsResponse, RecentResponse
 from .flag import FlagOp, Recent
-from .parsing.primitives import List
+from .parsing.primitives import List, Number
+from .parsing.response import Response
+from .parsing.response.specials import ExpungeResponse, FetchResponse, \
+    ExistsResponse, RecentResponse
 from .parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from .structure import MessageStructure
 
 __all__ = ['MailboxUpdates', 'MailboxState', 'SessionInterface']
 
 
-class MailboxUpdates:
+class _Unique:
+    pass
 
-    def __init__(self):
+
+class MailboxUpdates:
+    """Manages updates to a mailbox from the current session or others."""
+
+    def __init__(self, mailbox_session: Any):
         super().__init__()
+        self._mailbox_session = mailbox_session or _Unique()
         self._updates = {}
 
     @property
@@ -47,7 +54,15 @@ class MailboxUpdates:
         return self._updates
 
     @property
+    def mailbox_session(self) -> Any:
+        """Hashable value used to key the session flags in the mailbox."""
+        return self._mailbox_session
+
+    @property
     def exists(self) -> int:
+        raise NotImplementedError
+
+    def get_flags(self, msg: MessageStructure):
         raise NotImplementedError
 
     @property
@@ -61,7 +76,8 @@ class MailboxUpdates:
     def add_fetch(self, seq: int, msg: MessageStructure):
         self.updates[seq] = ('fetch', msg)
 
-    def get_responses(self, before: 'MailboxState') -> Iterable[Response]:
+    def get_responses(self, before: 'MailboxUpdates', with_uid: bool = False) \
+            -> Iterable[Response]:
         if before.exists != self.exists:
             yield ExistsResponse(self.exists)
         if before.recent != self.recent:
@@ -75,7 +91,11 @@ class MailboxUpdates:
             if update_type == 'expunge':
                 yield ExpungeResponse(seq)
             elif update_type == 'fetch':
-                data = {FetchAttribute(b'FLAGS'): List(msg.get_flags(self))}
+                flags = sorted(self.get_flags(msg))
+                data = OrderedDict()
+                data[FetchAttribute(b'FLAGS')] = List(flags)
+                if with_uid and msg.has_uid:
+                    data[FetchAttribute(b'UID')] = Number(msg.uid)
                 yield FetchResponse(seq, data)
 
 
@@ -86,8 +106,9 @@ class MailboxState(MailboxUpdates):
                  permanent_flags: Optional[AbstractSet[Flag]] = None,
                  session_flags: Optional[AbstractSet[Flag]] = None,
                  readonly: bool = False,
-                 uid_validity: int = 0):
-        super().__init__()
+                 uid_validity: int = 0,
+                 mailbox_session: Any = None):
+        super().__init__(mailbox_session)
 
         #: The name of the mailbox.
         self.name = name  # type: str
@@ -112,10 +133,37 @@ class MailboxState(MailboxUpdates):
         #: The UID validity value.
         self.uid_validity = uid_validity  # type: int
 
-    @property
-    def session(self) -> Any:
-        """Hashable value used to key the session flags in the mailbox."""
-        return self
+    def get_flags(self, message: MessageStructure) -> FrozenSet[Flag]:
+        """Get the full set of permanent and session flags.
+
+        :param message: The message to get flags for.
+
+        """
+        session_flags = message.session_flags.get(self.mailbox_session)
+        return frozenset(message.permanent_flags) | session_flags
+
+    def update_flags(self, message: MessageStructure,
+                     flag_set: AbstractSet[Flag],
+                     flag_op: FlagOp = FlagOp.REPLACE) -> None:
+        """Update the flags on a message in the mailbox. After this call,
+        the ``message.permanent_flags`` set should be persisted by the
+        backend.
+
+        :param message: The message to set flags on.
+        :param flag_set: The set of flags for the update operation.
+        :param flag_op: fThe
+
+        """
+        permanent_flags = frozenset(flag_set & self.permanent_flags)
+        session_flags = frozenset(flag_set & self.session_flags)
+        if flag_op == FlagOp.ADD:
+            message.permanent_flags = message.permanent_flags | permanent_flags
+        elif flag_op == FlagOp.DELETE:
+            message.permanent_flags = message.permanent_flags - permanent_flags
+        else:  # flag_op == FlagOp.REPLACE
+            message.permanent_flags = permanent_flags
+        message.session_flags.update(self.mailbox_session,
+                                     session_flags, flag_op)
 
     @property
     def flags(self) -> FrozenSet[Flag]:
@@ -172,6 +220,7 @@ class SessionInterface:
         raise NotImplementedError
 
     async def get_mailbox(self, name: str,
+                          claim_recent: bool = False,
                           selected: Optional[MailboxState] = None) \
             -> Tuple[MailboxState, Optional[MailboxState]]:
         """Retrieves a :class:`MailboxState` object corresponding to an
@@ -179,6 +228,8 @@ class SessionInterface:
         mailbox does not yet exist.
 
         :param name: The name of the mailbox.
+        :param claim_recent: If True, the session should claim any pending
+                             ``\Recent`` flags in the mailbox.
         :param selected: If applicable, the currently selected mailbox name.
         :raises pymap.exceptions.MailboxNotFound:
 
@@ -266,7 +317,7 @@ class SessionInterface:
     async def append_message(self, name: str,
                              message: bytes,
                              flag_set: AbstractSet[bytes],
-                             when: Optional[datetime.datetime] = None,
+                             when: Optional[datetime] = None,
                              selected: Optional[MailboxState] = None) \
             -> Optional[MailboxState]:
         """Appends a message to the end of the mailbox.
@@ -367,9 +418,9 @@ class SessionInterface:
     async def update_flags(self, selected: MailboxState,
                            sequences: SequenceSet,
                            flag_set: AbstractSet[Flag],
-                           mode: FlagOp = FlagOp.REPLACE,
-                           silent: bool = False) \
-            -> Optional[MailboxState]:
+                           mode: FlagOp = FlagOp.REPLACE) \
+            -> Tuple[ListT[Tuple[int, MessageStructure]],
+                     Optional[MailboxState]]:
         """Update the flags for the given set of messages.
 
         .. seealso:: `RFC 3501 6.4.6
@@ -379,8 +430,6 @@ class SessionInterface:
         :param sequences: Sequence set of message sequences or UIDs.
         :param flag_set: Set of flags to update.
         :param mode: Update mode for the flag set.
-        :param silent: If True, flag changes should not be included in the
-                       returned mailbox updates.
 
         """
         raise NotImplementedError

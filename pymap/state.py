@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 #
 
+from collections import OrderedDict
 from copy import copy
 from socket import getfqdn
 from typing import Optional, Callable
@@ -97,7 +98,8 @@ class ConnectionState(object):
 
     async def _select_mailbox(self, cmd, examine):
         try:
-            mailbox, updates = await self.session.get_mailbox(cmd.mailbox)
+            mailbox, updates = await self.session.get_mailbox(
+                cmd.mailbox, claim_recent=True)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.'), None
         self.selected = mailbox
@@ -167,7 +169,7 @@ class ConnectionState(object):
                 cmd.mailbox, selected=self.selected)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.'), None
-        data = {}
+        data = OrderedDict()
         for attr in cmd.status_list:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
@@ -257,12 +259,13 @@ class ConnectionState(object):
             self.selected, cmd.sequence_set, cmd.attributes)
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for msg_seq, msg in messages:
-            fetch_data = {}
+            fetch_data = OrderedDict()
             for attr in cmd.attributes:
                 if attr.attribute == b'UID':
                     fetch_data[attr] = Number(msg.uid)
                 elif attr.attribute == b'FLAGS':
-                    fetch_data[attr] = List(msg.get_flags(self.selected))
+                    flags = sorted(self.selected.get_flags(msg))
+                    fetch_data[attr] = List(flags)
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
@@ -303,10 +306,16 @@ class ConnectionState(object):
         return resp, updates
 
     async def do_store(self, cmd):
-        updates = await self.session.update_flags(
-            self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode,
-            silent=cmd.silent)
+        messages, updates = await self.session.update_flags(
+            self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
+        if not cmd.silent:
+            for msg_seq, msg in messages:
+                msg_flags = sorted(self.selected.get_flags(msg))
+                fetch_data = {FetchAttribute(b'FLAGS'): List(msg_flags)}
+                if cmd.uid:
+                    fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
+                resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
     @classmethod

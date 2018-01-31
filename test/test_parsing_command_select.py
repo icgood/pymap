@@ -22,41 +22,41 @@ class TestFetchCommand(unittest.TestCase):
         ret, buf = FetchCommand.parse(b' 1,2,3 ENVELOPE\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
         self.assertEqual(1, len(ret.attributes))
-        self.assertSetEqual({FetchAttribute(b'ENVELOPE')}, ret.attributes)
+        self.assertListEqual([FetchAttribute(b'ENVELOPE')], ret.attributes)
         self.assertEqual(b'  ', buf)
 
     def test_parse_list(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 (FLAGS ENVELOPE)\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
-        self.assertSetEqual({FetchAttribute(b'FLAGS'),
-                             FetchAttribute(b'ENVELOPE')}, ret.attributes)
+        self.assertListEqual([FetchAttribute(b'FLAGS'),
+                              FetchAttribute(b'ENVELOPE')], ret.attributes)
         self.assertEqual(b'  ', buf)
 
     def test_parse_macro_all(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 ALL\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
-        self.assertSetEqual({FetchAttribute(b'FLAGS'),
-                             FetchAttribute(b'INTERNALDATE'),
-                             FetchAttribute(b'RFC822.SIZE'),
-                             FetchAttribute(b'ENVELOPE')}, ret.attributes)
+        self.assertListEqual([FetchAttribute(b'FLAGS'),
+                              FetchAttribute(b'INTERNALDATE'),
+                              FetchAttribute(b'RFC822.SIZE'),
+                              FetchAttribute(b'ENVELOPE')], ret.attributes)
         self.assertEqual(b'  ', buf)
 
     def test_parse_macro_full(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 FULL\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
-        self.assertSetEqual({FetchAttribute(b'FLAGS'),
-                             FetchAttribute(b'INTERNALDATE'),
-                             FetchAttribute(b'RFC822.SIZE'),
-                             FetchAttribute(b'ENVELOPE'),
-                             FetchAttribute(b'BODY')}, ret.attributes)
+        self.assertListEqual([FetchAttribute(b'FLAGS'),
+                              FetchAttribute(b'INTERNALDATE'),
+                              FetchAttribute(b'RFC822.SIZE'),
+                              FetchAttribute(b'ENVELOPE'),
+                              FetchAttribute(b'BODY')], ret.attributes)
         self.assertEqual(b'  ', buf)
 
     def test_parse_macro_fast(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 FAST\n  ')
         self.assertEqual([1, 2, 3], ret.sequence_set.sequences)
-        self.assertSetEqual({FetchAttribute(b'FLAGS'),
-                             FetchAttribute(b'INTERNALDATE'),
-                             FetchAttribute(b'RFC822.SIZE')}, ret.attributes)
+        self.assertListEqual([FetchAttribute(b'FLAGS'),
+                              FetchAttribute(b'INTERNALDATE'),
+                              FetchAttribute(b'RFC822.SIZE')], ret.attributes)
         self.assertEqual(b'  ', buf)
 
 

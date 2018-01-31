@@ -22,7 +22,7 @@
 import email
 from datetime import datetime, timezone
 from email.policy import SMTP
-from typing import Iterable
+from typing import Iterable, Optional
 
 from pymap.flag import SessionFlags
 from pymap.parsing.specials import Flag
@@ -34,7 +34,7 @@ __all__ = ['Message']
 class Message(MessageStructure):
 
     @classmethod
-    def parse(cls, uid: int, data: bytes,
+    def parse(cls, uid: Optional[int], data: bytes,
               permanent_flags: Iterable[Flag] = None,
               session_flags: SessionFlags = None,
               internal_date: datetime = None):
@@ -43,5 +43,5 @@ class Message(MessageStructure):
                    internal_date or datetime.now(timezone.utc))
 
     def __copy__(self) -> 'Message':
-        return Message(self.uid, self.message, self.permanent_flags,
+        return Message(self.uid, self.contents, self.permanent_flags,
                        self.session_flags, self.internal_date)

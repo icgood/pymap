@@ -20,7 +20,7 @@
 #
 
 import re
-from typing import Tuple, FrozenSet
+from typing import Tuple, FrozenSet, Sequence
 
 from . import CommandSelect, CommandNoArgs
 from .. import NotParseable, Space, EndLine, Buffer
@@ -48,14 +48,11 @@ class ExpungeCommand(CommandSelect, CommandNoArgs):
 class CopyCommand(CommandSelect):
     command = b'COPY'
 
-    def __init__(self, tag, seq_set, mailbox):
+    def __init__(self, tag, seq_set, mailbox, uid):
         super().__init__(tag)
         self.sequence_set = seq_set  # type: SequenceSet
         self.mailbox_obj = mailbox  # type: Mailbox
-
-    @property
-    def with_uid(self) -> bool:
-        return self.sequence_set.uid
+        self.uid = uid  # type: bool
 
     @property
     def mailbox(self) -> str:
@@ -69,41 +66,40 @@ class CopyCommand(CommandSelect):
         _, buf = Space.parse(buf)
         mailbox, buf = Mailbox.parse(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, mailbox), buf
+        return cls(tag, seq_set, mailbox, uid), buf
 
 
 class FetchCommand(CommandSelect):
     command = b'FETCH'
 
-    def __init__(self, tag, seq_set, attr_set):
+    def __init__(self, tag, seq_set, attr_list, uid):
         super().__init__(tag)
         self.sequence_set = seq_set  # type: SequenceSet
         self.no_expunge_response = not seq_set.uid  # type: bool
-        self.attributes = (
-                frozenset(attr_set)
-        )  # type: FrozenSet[FetchAttribute]
-
-    @property
-    def with_uid(self) -> bool:
-        return self.sequence_set.uid
+        self.attributes = attr_list  # type: Sequence[FetchAttribute]
+        self.uid = uid  # type: bool
 
     @classmethod
     def _check_macros(cls, buf):
         atom, after = Atom.parse(buf)
         macro = atom.value.upper()
         if macro == b'ALL':
-            attrs = {FetchAttribute(b'FLAGS'), FetchAttribute(b'INTERNALDATE'),
+            attrs = [FetchAttribute(b'FLAGS'),
+                     FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'ENVELOPE')}
+                     FetchAttribute(b'ENVELOPE')]
             return attrs, after
         elif macro == b'FULL':
-            attrs = {FetchAttribute(b'FLAGS'), FetchAttribute(b'INTERNALDATE'),
+            attrs = [FetchAttribute(b'FLAGS'),
+                     FetchAttribute(b'INTERNALDATE'),
                      FetchAttribute(b'RFC822.SIZE'),
-                     FetchAttribute(b'ENVELOPE'), FetchAttribute(b'BODY')}
+                     FetchAttribute(b'ENVELOPE'),
+                     FetchAttribute(b'BODY')]
             return attrs, after
         elif macro == b'FAST':
-            attrs = {FetchAttribute(b'FLAGS'), FetchAttribute(b'INTERNALDATE'),
-                     FetchAttribute(b'RFC822.SIZE')}
+            attrs = [FetchAttribute(b'FLAGS'),
+                     FetchAttribute(b'INTERNALDATE'),
+                     FetchAttribute(b'RFC822.SIZE')]
             return attrs, after
         raise NotParseable(buf)
 
@@ -113,23 +109,23 @@ class FetchCommand(CommandSelect):
         _, buf = Space.parse(buf)
         seq_set, buf = SequenceSet.parse(buf, uid=uid)
         _, buf = Space.parse(buf)
-        attr_set = set()
+        attr_list = None
         try:
-            attr_set, buf = cls._check_macros(buf)
+            attr_list, buf = cls._check_macros(buf)
         except NotParseable:
             pass
         try:
             attr, buf = FetchAttribute.parse(buf)
-            attr_set = {attr}
+            attr_list = [attr]
         except NotParseable:
             pass
-        if not attr_set:
+        if not attr_list:
             attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
-            attr_set = set(attr_list.value)
+            attr_list = attr_list.value
         if uid:
-            attr_set.add(FetchAttribute(b'UID'))
+            attr_list.append(FetchAttribute(b'UID'))
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, attr_set), buf
+        return cls(tag, seq_set, attr_list, uid), buf
 
 
 class StoreCommand(CommandSelect):
@@ -138,17 +134,13 @@ class StoreCommand(CommandSelect):
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': FlagOp.REPLACE, b'+': FlagOp.ADD, b'-': FlagOp.DELETE}
 
-    def __init__(self, tag, seq_set, flags, mode=FlagOp.REPLACE, silent=False):
+    def __init__(self, tag, seq_set, flags, mode, silent, uid):
         super().__init__(tag)
         self.sequence_set = seq_set  # type: SequenceSet
         self.flag_set = frozenset(flags) - {Recent}  # type: FrozenSet[Flag]
         self.mode = mode  # type: FlagOp
         self.silent = silent  # type: bool
-        self.no_expunge_response = not seq_set.uid  # type: bool
-
-    @property
-    def with_uid(self) -> bool:
-        return self.sequence_set.uid
+        self.uid = uid  # type: bool
 
     @classmethod
     def _parse_store_info(cls, buf):
@@ -187,7 +179,7 @@ class StoreCommand(CommandSelect):
         _, buf = Space.parse(buf)
         flag_list, buf = cls._parse_flag_list(buf)
         _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, flag_list, **info), buf
+        return cls(tag, seq_set, flag_list, uid=uid, **info), buf
 
 
 class SearchCommand(CommandSelect):
@@ -198,11 +190,7 @@ class SearchCommand(CommandSelect):
         self.keys = frozenset(keys)  # type: FrozenSet[SearchKey]
         self.charset = charset  # type: str
         self._with_uid = uid  # type: bool
-        self.no_expunge_response = not uid  # type: bool
-
-    @property
-    def with_uid(self) -> bool:
-        return self._with_uid
+        self.uid = uid  # type: bool
 
     @classmethod
     def _parse_charset(cls, buf, **kwargs):
@@ -238,7 +226,7 @@ class SearchCommand(CommandSelect):
                     raise
                 break
         _, buf = EndLine.parse(buf)
-        return cls(tag, search_keys, charset=charset, uid=uid), buf
+        return cls(tag, search_keys, charset, uid), buf
 
 
 class UidCommand(CommandSelect):
