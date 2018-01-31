@@ -89,24 +89,27 @@ class TestUidCommand(unittest.TestCase):
         ret, buf = UidCommand.parse(b' COPY * mbx\n  ')
         self.assertIsInstance(ret, CopyCommand)
         self.assertTrue(ret.sequence_set.uid)
+        self.assertTrue(ret.uid)
         self.assertEqual(b'  ', buf)
 
     def test_parse_command_fetch(self):
         ret, buf = UidCommand.parse(b' FETCH * ENVELOPE\n  ')
         self.assertIsInstance(ret, FetchCommand)
         self.assertTrue(ret.sequence_set.uid)
+        self.assertTrue(ret.uid)
         self.assertEqual(b'  ', buf)
 
     def test_parse_command_store(self):
         ret, buf = UidCommand.parse(b' STORE * FLAGS \\Seen\n  ')
         self.assertIsInstance(ret, StoreCommand)
         self.assertTrue(ret.sequence_set.uid)
+        self.assertTrue(ret.uid)
         self.assertEqual(b'  ', buf)
 
     def test_parse_command_search(self):
         ret, buf = UidCommand.parse(b' SEARCH ALL\n  ')
         self.assertIsInstance(ret, SearchCommand)
-        self.assertTrue(ret.with_uid)
+        self.assertTrue(ret.uid)
         self.assertEqual(b'  ', buf)
 
     def test_parse_error(self):
