@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 
 
 setup(name='pymap',
-      version='0.0.0',
+      version='0.1.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP/POP3 serving in Python.',
