@@ -100,8 +100,7 @@ class ConnectionState(object):
 
     async def _select_mailbox(self, cmd, examine):
         try:
-            mailbox, updates = await self.session.get_mailbox(
-                cmd.mailbox, claim_recent=True)
+            mailbox, updates = await self.session.get_mailbox(cmd.mailbox)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.'), None
         self.selected = mailbox
@@ -168,7 +167,7 @@ class ConnectionState(object):
     async def do_status(self, cmd):
         try:
             mailbox, updates = await self.session.get_mailbox(
-                cmd.mailbox, selected=self.selected)
+                cmd.mailbox, snapshot=True, selected=self.selected)
         except MailboxNotFound:
             return ResponseNo(cmd.tag, b'Mailbox does not exist.'), None
         data = OrderedDict()

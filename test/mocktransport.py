@@ -38,9 +38,9 @@ class _Type(enum.Enum):
 
 class MockTransport:
 
-    def __init__(self):
+    def __init__(self, matches):
         self.queue = deque()
-        self.matches = {}
+        self.matches = matches
 
     @classmethod
     def _caller(cls, frame):

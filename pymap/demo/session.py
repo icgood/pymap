@@ -94,14 +94,16 @@ class Session(SessionInterface):
                              selected: Optional[Mailbox] = None) \
             -> Tuple[List[Tuple[str, bytes, Dict[str, bool]]],
                      Optional[Mailbox]]:
-        return [(name, Mailbox.sep, {}) for name in State.mailboxes.keys()], \
+        return [(name, Mailbox.SEP, {}) for name in State.mailboxes.keys()], \
                self._get_updates(selected)
 
-    async def get_mailbox(self, name: str,
-                          claim_recent: bool = False,
+    async def get_mailbox(self, name: str, snapshot: bool = False,
                           selected: Optional[Mailbox] = None) \
             -> Tuple[Mailbox, Optional[Mailbox]]:
-        return self._get_mailbox(name, claim_recent, selected)
+        if snapshot:
+            return Mailbox.get_snapshot(name), self._get_updates(selected)
+        else:
+            return self._get_mailbox(name, True, selected)
 
     async def create_mailbox(self, name: str,
                              selected: Optional[Mailbox] = None) \
@@ -162,6 +164,8 @@ class Session(SessionInterface):
                                  flag_set & mbx.session_flags | {Recent})
         State.mailboxes[name].messages.append(msg)
         msg_seq = len(State.mailboxes[name].messages)
+        if mbx != selected:
+            State.mailboxes[name].recent.add(msg_uid)
         for session in State.sessions:
             Mailbox(mbx.name, session).add_fetch(msg_seq, msg)
         return self._get_updates(selected)

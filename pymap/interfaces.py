@@ -24,7 +24,6 @@
 from datetime import datetime
 from typing import Tuple, Optional, AbstractSet, FrozenSet, Any, Dict, Iterable
 
-from .parsing.response import Response
 from .flag import FlagOp
 from .parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from .structure import MessageStructure, UpdateType
@@ -56,16 +55,6 @@ class MailboxInterface:
         :param message: The message to set flags on.
         :param flag_set: The set of flags for the update operation.
         :param flag_op: fThe
-
-        """
-        raise NotImplementedError
-
-    def get_updates(self, before: 'MailboxInterface') -> Iterable[Response]:
-        """Compare the current state to a previous state and return the
-        update responses.
-
-        :param before: The previous state of the mailbox.
-        :return: Untagged responses to prepend.
 
         """
         raise NotImplementedError
@@ -120,7 +109,7 @@ class MailboxInterface:
         raise NotImplementedError
 
     @property
-    def first_unseen(self) -> int:
+    def first_unseen(self) -> Optional[int]:
         """The sequence number of the first unseen message."""
         raise NotImplementedError
 
@@ -158,8 +147,7 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def get_mailbox(self, name: str,
-                          claim_recent: bool = False,
+    async def get_mailbox(self, name: str, snapshot: bool = False,
                           selected: Optional[MailboxInterface] = None) \
             -> Tuple[MailboxInterface, Optional[MailboxInterface]]:
         """Retrieves a :class:`MailboxInterface` object corresponding to an
@@ -167,8 +155,8 @@ class SessionInterface:
         mailbox does not yet exist.
 
         :param name: The name of the mailbox.
-        :param claim_recent: If True, the session should claim any pending
-                             ``\Recent`` flags in the mailbox.
+        :param snapshot: If ``True``, the returned mailbox should be a snapshot
+                         of its current status, without modification.
         :param selected: If applicable, the currently selected mailbox name.
         :raises pymap.exceptions.MailboxNotFound:
 

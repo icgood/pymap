@@ -13,7 +13,8 @@ pytestmark = pytest.mark.asyncio
 class TestServer:
 
     def setup_method(self):
-        self.transport = MockTransport()
+        self.matches = {}
+        self.transport = MockTransport(self.matches)
         self.run = partial(IMAPServer.callback,
             init(), self.transport, self.transport)
 
@@ -77,6 +78,27 @@ class TestServer:
         self._logout()
         await self.run()
 
+    async def test_status(self):
+        self._login()
+        self.transport.push_readline(
+            b'status1 STATUS INBOX '
+            b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
+        self.transport.push_write(
+            b'* STATUS INBOX (MESSAGES 4 RECENT 1 UIDNEXT 104 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval1'), b' UNSEEN 1)\r\n'
+            b'status1 OK STATUS completed.\r\n')
+        self._select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_readline(
+            b'status2 STATUS INBOX '
+            b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
+        self.transport.push_write(
+            b'* STATUS INBOX (MESSAGES 4 RECENT 0 UIDNEXT 104 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval2'), b' UNSEEN 1)\r\n'
+            b'status2 OK STATUS completed.\r\n')
+        self._logout()
+        await self.run()
+        assert self.matches['uidval1'] == self.matches['uidval2']
+
     async def test_uid_fetch(self):
         self._login()
         self._select(b'INBOX', 4, 1, 104, 4)
@@ -103,6 +125,22 @@ class TestServer:
         await self.run()
 
     async def test_append(self):
+        message = b'test message\r\n'
+        self._login()
+        self.transport.push_readline(
+            b'append1 APPEND INBOX (\\Seen) {%i}\r\n' % len(message))
+        self.transport.push_write(
+            b'+ Literal string\r\n')
+        self.transport.push_readexactly(message)
+        self.transport.push_readline(
+            b'\r\n')
+        self.transport.push_write(
+            b'append1 OK APPEND completed.\r\n')
+        self._select(b'INBOX', 5, 2, 105, 4)
+        self._logout()
+        await self.run()
+
+    async def test_append_selected(self):
         message = b'test message\r\n'
         self._login()
         self._select(b'INBOX', 4, 1, 104, 4)

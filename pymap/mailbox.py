@@ -130,7 +130,7 @@ class BaseMailbox(MailboxInterface):
         raise NotImplementedError
 
     @property
-    def first_unseen(self) -> int:
+    def first_unseen(self) -> Optional[int]:
         """The sequence number of the first unseen message."""
         raise NotImplementedError
 

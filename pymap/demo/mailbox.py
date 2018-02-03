@@ -20,7 +20,7 @@
 #
 
 from copy import copy
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
 from pymap.mailbox import BaseMailbox
@@ -38,13 +38,13 @@ class _Unique:
 
 
 class Mailbox(BaseMailbox):
-    sep = b'.'
-    _FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
+    SEP = b'.'
+    FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
 
     def __init__(self, name: str, session: 'Session', mailbox_session=None):
         super().__init__(
             name=name,
-            permanent_flags=self._FLAGS,
+            permanent_flags=self.FLAGS,
             uid_validity=State.mailboxes[name].uid_validity,
             mailbox_session=mailbox_session)
         self.session = session  # type: 'Session'
@@ -61,6 +61,10 @@ class Mailbox(BaseMailbox):
                     msg.session_flags.add_recent(mbx.mailbox_session)
             recent.clear()
         return mbx
+
+    @classmethod
+    def get_snapshot(cls, name: str):
+        return _MailboxSnapshot(name)
 
     def __copy__(self):
         copy_ = Mailbox(self.name, self.session, self.mailbox_session)
@@ -94,7 +98,7 @@ class Mailbox(BaseMailbox):
         return self.exists - self._count_flag(Seen)
 
     @property
-    def first_unseen(self) -> int:
+    def first_unseen(self) -> Optional[int]:
         for i, msg in enumerate(self.messages):
             if Seen not in self.get_flags(msg):
                 return i + 1
@@ -102,3 +106,47 @@ class Mailbox(BaseMailbox):
     @property
     def next_uid(self) -> int:
         return State.mailboxes[self.name].next_uid
+
+
+class _MailboxSnapshot(BaseMailbox):
+
+    def __init__(self, name: str):
+        super().__init__(
+            name=name,
+            readonly=True,
+            permanent_flags=Mailbox.FLAGS,
+            uid_validity=State.mailboxes[name].uid_validity)
+        messages = copy(State.mailboxes[name].messages)
+        self._exists = len(messages)
+        self._recent = len(State.mailboxes[name].recent)
+        self._unseen = 0
+        self._first_unseen = 0
+        for msg_seq, msg in enumerate(messages):
+            if Seen not in msg.permanent_flags:
+                self._unseen += 1
+                self._first_unseen = self._first_unseen or (msg_seq + 1)
+        self._next_uid = State.mailboxes[self.name].next_uid
+
+    @property
+    def exists(self):
+        return self._exists
+
+    @property
+    def recent(self):
+        return self._recent
+
+    @property
+    def unseen(self):
+        return self._unseen
+
+    @property
+    def first_unseen(self):
+        return self._first_unseen
+
+    @property
+    def next_uid(self):
+        return self._next_uid
+
+    @property
+    def updates(self):
+        return {}
