@@ -26,10 +26,11 @@ from typing import Optional, Callable
 
 from pysasl import SASLAuth
 
+from pymap.structure import UpdateType
 from .core import PymapError
 from .exceptions import (MailboxNotFound, MailboxConflict, MailboxHasChildren,
                          MailboxReadOnly, AppendFailure)
-from .interfaces import MailboxState, SessionInterface
+from .interfaces import MailboxInterface, SessionInterface
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
 from .parsing.primitives import List, Number
 from .parsing.response import (ResponseOk, ResponseNo, ResponseBad,
@@ -40,7 +41,8 @@ from .parsing.response.code import (Capability, PermanentFlags, ReadOnly,
 from .parsing.response.specials import (FlagsResponse, ExistsResponse,
                                         RecentResponse, FetchResponse,
                                         ListResponse, LSubResponse,
-                                        SearchResponse, StatusResponse)
+                                        SearchResponse, StatusResponse,
+                                        ExpungeResponse)
 from .parsing.specials import FetchAttribute, DateTime
 
 __all__ = ['CloseConnection', 'ConnectionState']
@@ -69,7 +71,7 @@ class ConnectionState(object):
         super().__init__()
         self.login = login  # type: Callable[..., Optional[SessionInterface]]
         self.session = None  # type: Optional[SessionInterface]
-        self.selected = None  # type: Optional[MailboxState]
+        self.selected = None  # type: Optional[MailboxInterface]
         self.capability = Capability(
             [b'AUTH=%b' % mech.name for mech in
              SASLAuth([b'PLAIN']).server_mechanisms])
@@ -238,11 +240,13 @@ class ConnectionState(object):
 
     async def do_expunge(self, cmd):
         try:
-            updates = await self.session.expunge_mailbox(self.selected)
+            seqs, updates = await self.session.expunge_mailbox(self.selected)
         except MailboxReadOnly:
             return ResponseNo(cmd.tag, b'Mailbox is read-only.',
                               ReadOnly()), None
         resp = ResponseOk(cmd.tag, b'EXPUNGE completed.')
+        for msg_seq in seqs:
+            resp.add_untagged(ExpungeResponse(msg_seq))
         return resp, updates
 
     async def do_copy(self, cmd):
@@ -324,6 +328,26 @@ class ConnectionState(object):
         response.add_untagged(ResponseBye(b'Logging out.'))
         raise CloseConnection(response)
 
+    @classmethod
+    def get_updates(cls, before: 'MailboxInterface',
+                    after: 'MailboxInterface'):
+        if before.exists != after.exists:
+            yield ExistsResponse(after.exists)
+        if before.recent != after.recent:
+            yield RecentResponse(after.recent)
+        all_updates = before.updates.copy()
+        all_updates.update(after.updates)
+        before.updates.clear()
+        after.updates.clear()
+        for seq in sorted(all_updates.keys()):
+            update_type, msg = all_updates[seq]
+            if update_type == UpdateType.EXPUNGE:
+                yield ExpungeResponse(seq)
+            elif update_type == UpdateType.FETCH:
+                flags = sorted(after.get_flags(msg))
+                data = {FetchAttribute(b'FLAGS'): List(flags)}
+                yield FetchResponse(seq, data)
+
     async def do_command(self, cmd):
         if self.session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
@@ -341,7 +365,7 @@ class ConnectionState(object):
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         response, updated = await func(cmd)
         if updated and self.selected:
-            for update in updated.get_responses(self.selected):
+            for update in self.get_updates(self.selected, updated):
                 response.add_untagged(update)
             self.selected = updated
         return response

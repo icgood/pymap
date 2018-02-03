@@ -23,7 +23,7 @@ from copy import copy
 from typing import TYPE_CHECKING, List
 
 from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
-from pymap.interfaces import MailboxState, MailboxUpdates
+from pymap.mailbox import BaseMailbox
 from .message import Message
 from .state import State
 
@@ -37,7 +37,7 @@ class _Unique:
     pass
 
 
-class Mailbox(MailboxState):
+class Mailbox(BaseMailbox):
     sep = b'.'
     _FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
 

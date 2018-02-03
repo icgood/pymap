@@ -21,117 +21,22 @@
 
 """Module defining the interfaces available to pymap backends."""
 
-from collections import OrderedDict
 from datetime import datetime
-from typing import Tuple, Optional, AbstractSet, FrozenSet, Any, \
-    Iterable, Dict, List as ListT
+from typing import Tuple, Optional, AbstractSet, FrozenSet, Any, Dict, Iterable
 
-from .flag import FlagOp, Recent
-from .parsing.primitives import List, Number
 from .parsing.response import Response
-from .parsing.response.specials import ExpungeResponse, FetchResponse, \
-    ExistsResponse, RecentResponse
+from .flag import FlagOp
 from .parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
-from .structure import MessageStructure
+from .structure import MessageStructure, UpdateType
 
-__all__ = ['MailboxUpdates', 'MailboxState', 'SessionInterface']
-
-
-class _Unique:
-    pass
+__all__ = ['MailboxInterface', 'SessionInterface']
 
 
-class MailboxUpdates:
-    """Manages updates to a mailbox from the current session or others."""
+class MailboxInterface:
+    """Corresponds to a mailbox state on an IMAP session, since the last
+    update from the backend.
 
-    def __init__(self, mailbox_session: Any):
-        super().__init__()
-        self._mailbox_session = mailbox_session or _Unique()
-        self._updates = {}
-
-    @property
-    def updates(self):
-        return self._updates
-
-    @property
-    def mailbox_session(self) -> Any:
-        """Hashable value used to key the session flags in the mailbox."""
-        return self._mailbox_session
-
-    @property
-    def exists(self) -> int:
-        raise NotImplementedError
-
-    def get_flags(self, msg: MessageStructure):
-        raise NotImplementedError
-
-    @property
-    def recent(self) -> int:
-        raise NotImplementedError
-
-    def add_expunge(self, *seqs: int):
-        for seq in seqs:
-            self.updates[seq] = ('expunge', None)
-
-    def add_fetch(self, seq: int, msg: MessageStructure):
-        self.updates[seq] = ('fetch', msg)
-
-    def get_responses(self, before: 'MailboxUpdates', with_uid: bool = False) \
-            -> Iterable[Response]:
-        if before.exists != self.exists:
-            yield ExistsResponse(self.exists)
-        if before.recent != self.recent:
-            yield RecentResponse(self.recent)
-        all_updates = before.updates.copy()
-        all_updates.update(self.updates)
-        before.updates.clear()
-        self.updates.clear()
-        for seq in sorted(all_updates.keys()):
-            update_type, msg = all_updates[seq]
-            if update_type == 'expunge':
-                yield ExpungeResponse(seq)
-            elif update_type == 'fetch':
-                flags = sorted(self.get_flags(msg))
-                data = OrderedDict()
-                data[FetchAttribute(b'FLAGS')] = List(flags)
-                if with_uid and msg.has_uid:
-                    data[FetchAttribute(b'UID')] = Number(msg.uid)
-                yield FetchResponse(seq, data)
-
-
-class MailboxState(MailboxUpdates):
-    """Corresponds to a mailbox available to the IMAP session."""
-
-    def __init__(self, name: str,
-                 permanent_flags: Optional[AbstractSet[Flag]] = None,
-                 session_flags: Optional[AbstractSet[Flag]] = None,
-                 readonly: bool = False,
-                 uid_validity: int = 0,
-                 mailbox_session: Any = None):
-        super().__init__(mailbox_session)
-
-        #: The name of the mailbox.
-        self.name = name  # type: str
-
-        if not permanent_flags:
-            #: The permanent flags defined in the mailbox.
-            self.permanent_flags = frozenset()  # type: FrozenSet[Flag]
-        else:
-            self.permanent_flags = frozenset(permanent_flags - {Recent})
-
-        if not session_flags:
-            #: The session flags defined in the mailbox.
-            self.session_flags = frozenset({Recent})  # type: FrozenSet[Flag]
-        else:
-            self.session_flags = frozenset(
-                (session_flags - self.permanent_flags) | {Recent}
-            )
-
-        #: If ``True``, the mailbox is read-only.
-        self.readonly = readonly  # type: bool
-
-        #: The UID validity value.
-        self.uid_validity = uid_validity  # type: int
+    """
 
     def get_flags(self, message: MessageStructure) -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags.
@@ -139,8 +44,7 @@ class MailboxState(MailboxUpdates):
         :param message: The message to get flags for.
 
         """
-        session_flags = message.session_flags.get(self.mailbox_session)
-        return frozenset(message.permanent_flags) | session_flags
+        raise NotImplementedError
 
     def update_flags(self, message: MessageStructure,
                      flag_set: AbstractSet[Flag],
@@ -154,21 +58,51 @@ class MailboxState(MailboxUpdates):
         :param flag_op: fThe
 
         """
-        permanent_flags = frozenset(flag_set & self.permanent_flags)
-        session_flags = frozenset(flag_set & self.session_flags)
-        if flag_op == FlagOp.ADD:
-            message.permanent_flags = message.permanent_flags | permanent_flags
-        elif flag_op == FlagOp.DELETE:
-            message.permanent_flags = message.permanent_flags - permanent_flags
-        else:  # flag_op == FlagOp.REPLACE
-            message.permanent_flags = permanent_flags
-        message.session_flags.update(self.mailbox_session,
-                                     session_flags, flag_op)
+        raise NotImplementedError
+
+    def get_updates(self, before: 'MailboxInterface') -> Iterable[Response]:
+        """Compare the current state to a previous state and return the
+        update responses.
+
+        :param before: The previous state of the mailbox.
+        :return: Untagged responses to prepend.
+
+        """
+        raise NotImplementedError
+
+    @property
+    def name(self) -> str:
+        """The name of the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def readonly(self) -> bool:
+        """Whether the mailbox is read-only or read-write."""
+        raise NotImplementedError
+
+    @property
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags allowed in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def session_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags allowed in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def updates(self) -> Dict[int, Tuple[UpdateType, MessageStructure]]:
+        raise NotImplementedError
+
+    @property
+    def mailbox_session(self) -> Any:
+        """Hashable value used to key the session flags in the mailbox."""
+        raise NotImplementedError
 
     @property
     def flags(self) -> FrozenSet[Flag]:
         """Set of all permanent and session flags available on the mailbox."""
-        return self.session_flags | self.permanent_flags
+        raise NotImplementedError
 
     @property
     def exists(self) -> int:
@@ -195,6 +129,11 @@ class MailboxState(MailboxUpdates):
         """The predicted next message UID."""
         raise NotImplementedError
 
+    @property
+    def uid_validity(self) -> int:
+        """The mailbox UID validity value."""
+        raise NotImplementedError
+
 
 class SessionInterface:
     """Corresponds to a single, authenticated IMAP session."""
@@ -202,9 +141,9 @@ class SessionInterface:
     async def list_mailboxes(self, ref_name: str,
                              filter_: str,
                              subscribed: bool = False,
-                             selected: Optional[MailboxState] = None) \
-            -> Tuple[ListT[Tuple[str, bytes, Dict[str, bool]]],
-                     Optional[MailboxState]]:
+                             selected: Optional[MailboxInterface] = None) \
+            -> Tuple[Iterable[Tuple[str, bytes, Dict[str, bool]]],
+                     Optional[MailboxInterface]]:
         """List the mailboxes owned by the user.
 
         .. seealso:: `RFC 3501 6.3.8
@@ -221,9 +160,9 @@ class SessionInterface:
 
     async def get_mailbox(self, name: str,
                           claim_recent: bool = False,
-                          selected: Optional[MailboxState] = None) \
-            -> Tuple[MailboxState, Optional[MailboxState]]:
-        """Retrieves a :class:`MailboxState` object corresponding to an
+                          selected: Optional[MailboxInterface] = None) \
+            -> Tuple[MailboxInterface, Optional[MailboxInterface]]:
+        """Retrieves a :class:`MailboxInterface` object corresponding to an
         existing mailbox owned by the user. Raises an exception if the
         mailbox does not yet exist.
 
@@ -237,8 +176,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def create_mailbox(self, name: str,
-                             selected: Optional[MailboxState] = None) \
-            -> Optional[MailboxState]:
+                             selected: Optional[MailboxInterface] = None) \
+            -> Optional[MailboxInterface]:
         """Creates a new mailbox owned by the user.
 
         .. seealso:: `RFC 3501 6.3.3
@@ -252,8 +191,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def delete_mailbox(self, name: str,
-                             selected: Optional[MailboxState] = None) \
-            -> Optional[MailboxState]:
+                             selected: Optional[MailboxInterface] = None) \
+            -> Optional[MailboxInterface]:
         """Deletes the mailbox owned by the user.
 
         .. seealso:: `RFC 3501 6.3.4
@@ -268,8 +207,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def rename_mailbox(self, before_name: str, after_name: str,
-                             selected: Optional[MailboxState] = None) \
-            -> Optional[MailboxState]:
+                             selected: Optional[MailboxInterface] = None) \
+            -> Optional[MailboxInterface]:
         """Renames the mailbox owned by the user.
 
         .. seealso:: `RFC 3501 6.3.5
@@ -285,8 +224,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def subscribe(self, name: str,
-                        selected: Optional[MailboxState] = None) \
-            -> Optional[MailboxState]:
+                        selected: Optional[MailboxInterface] = None) \
+            -> Optional[MailboxInterface]:
         """Mark the given folder name as subscribed, whether or not the given
         folder name currently exists.
 
@@ -300,8 +239,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def unsubscribe(self, name: str,
-                          selected: Optional[MailboxState] = None) \
-            -> Optional[MailboxState]:
+                          selected: Optional[MailboxInterface] = None) \
+            -> Optional[MailboxInterface]:
         """Remove the given folder name from the subscription list, whether or
         not the given folder name currently exists.
 
@@ -318,8 +257,8 @@ class SessionInterface:
                              message: bytes,
                              flag_set: AbstractSet[bytes],
                              when: Optional[datetime] = None,
-                             selected: Optional[MailboxState] = None) \
-            -> Optional[MailboxState]:
+                             selected: Optional[MailboxInterface] = None) \
+            -> Optional[MailboxInterface]:
         """Appends a message to the end of the mailbox.
 
         .. seealso:: `RFC 3501 6.3.11
@@ -336,9 +275,9 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def check_mailbox(self, selected: MailboxState,
+    async def check_mailbox(self, selected: MailboxInterface,
                             housekeeping: bool = False) \
-            -> Optional[MailboxState]:
+            -> Optional[MailboxInterface]:
         """Checks for any updates in the mailbox. Optionally performs any
         house-keeping necessary by the mailbox backend, which may be a
         slower operation.
@@ -354,11 +293,11 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def fetch_messages(self, selected: MailboxState,
+    async def fetch_messages(self, selected: MailboxInterface,
                              sequences: SequenceSet,
                              attributes: AbstractSet[FetchAttribute]) \
-            -> Tuple[ListT[Tuple[int, MessageStructure]],
-                     Optional[MailboxState]]:
+            -> Tuple[Iterable[Tuple[int, MessageStructure]],
+                     Optional[MailboxInterface]]:
         """Get a list of :class:`MessageStructure` objects corresponding to
         given sequence set.
 
@@ -369,9 +308,9 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def search_mailbox(self, selected: MailboxState,
-                             keys: ListT[SearchKey]) \
-            -> Tuple[ListT[int], Optional[MailboxState]]:
+    async def search_mailbox(self, selected: MailboxInterface,
+                             keys: FrozenSet[SearchKey]) \
+            -> Tuple[Iterable[int], Optional[MailboxInterface]]:
         """Get the :class:`MessageInterface` objects in the current mailbox
         that meet the given search criteria.
 
@@ -384,8 +323,8 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def expunge_mailbox(self, selected: MailboxState) \
-            -> Optional[MailboxState]:
+    async def expunge_mailbox(self, selected: MailboxInterface) \
+            -> Tuple[Iterable[int], Optional[MailboxInterface]]:
         """All messages that are marked as deleted are immediately expunged
         from the mailbox.
 
@@ -398,10 +337,10 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def copy_messages(self, selected: MailboxState,
+    async def copy_messages(self, selected: MailboxInterface,
                             sequences: SequenceSet,
                             mailbox: str) \
-            -> Optional[MailboxState]:
+            -> Optional[MailboxInterface]:
         """Copy a set of messages into the given mailbox.
 
         .. seealso:: `RFC 3501 6.4.7
@@ -415,12 +354,12 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def update_flags(self, selected: MailboxState,
+    async def update_flags(self, selected: MailboxInterface,
                            sequences: SequenceSet,
                            flag_set: AbstractSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[ListT[Tuple[int, MessageStructure]],
-                     Optional[MailboxState]]:
+            -> Tuple[Iterable[Tuple[int, MessageStructure]],
+                     Optional[MailboxInterface]]:
         """Update the flags for the given set of messages.
 
         .. seealso:: `RFC 3501 6.4.6

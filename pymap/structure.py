@@ -20,6 +20,7 @@
 #
 
 import email
+import enum
 import io
 from datetime import datetime
 from email.charset import Charset
@@ -35,7 +36,7 @@ from .parsing import Parseable
 from .parsing.primitives import Nil, QuotedString, List, LiteralString, Number
 from .parsing.specials import Flag
 
-__all__ = ['MessageStructure']
+__all__ = ['UpdateType', 'MessageStructure']
 
 if TYPE_CHECKING:  # avoid import cycles
     from .interfaces import MailboxState
@@ -63,6 +64,16 @@ class TextOnlyBytesGenerator(BytesGenerator):
 
     def _write_headers(self, *args, **kwargs):
         pass
+
+
+class UpdateType(enum.Enum):
+    """Type of update reported by another connection from the server."""
+
+    #: Indicates an ```EXPUNGE``` update.
+    EXPUNGE = enum.auto()
+
+    #: Indicates a ``` FETCH``` update.
+    FETCH = enum.auto()
 
 
 class MessageStructure:
