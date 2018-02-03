@@ -10,9 +10,9 @@ class TestResponse(unittest.TestCase):
         resp = Response(b'tag', b'response test')
         self.assertEqual(b'tag response test\r\n', bytes(resp))
         self.assertEqual(b'tag response test\r\n', bytes(resp))
-        resp.add_data(b'test data 1\r\n')
+        resp.add_untagged(b'test data 1\r\n')
         self.assertEqual(b'test data 1\r\ntag response test\r\n', bytes(resp))
-        resp.add_data(b'test data 2\r\n')
+        resp.add_untagged(b'test data 2\r\n')
         self.assertEqual(b'test data 1\r\ntest data 2\r\n'
                          b'tag response test\r\n', bytes(resp))
 

@@ -19,46 +19,44 @@
 # THE SOFTWARE.
 #
 
+from typing import Tuple
+
 from . import Special, AString
+from .. import Buffer
 
 __all__ = ['Mailbox']
 
 
 class Mailbox(Special):
-    """Represents a mailbox data object from an IMAP stream.
-
-    :param str mailbox: The mailbox string.
-
-    """
+    """Represents a mailbox data object from an IMAP stream."""
 
     def __init__(self, mailbox):
         super().__init__()
         if mailbox.upper() == 'INBOX':
             mailbox = 'INBOX'
-        self.value = mailbox
+        self.value = mailbox  # type: str
         self._raw = None
 
     @classmethod
-    def _modified_b64encode(cls, src):
+    def _modified_b64encode(cls, src: str) -> bytes:
         # Inspired by Twisted Python's implementation:
         #   https://twistedmatrix.com/trac/browser/trunk/LICENSE
         src_utf7 = src.encode('utf-7')
         return src_utf7[1:-1].replace(b'/', b',')
 
     @classmethod
-    def _modified_b64decode(cls, src):
+    def _modified_b64decode(cls, src: bytes) -> str:
         # Inspired by Twisted Python's implementation:
         #   https://twistedmatrix.com/trac/browser/trunk/LICENSE
         src_utf7 = b'+%b-' % src.replace(b',', b'/')
         return src_utf7.decode('utf-7')
 
     @classmethod
-    def encode_name(cls, mailbox):
+    def encode_name(cls, mailbox: str) -> bytes:
         """Encode the mailbox name using the modified UTF-7 specification for
         IMAP.
 
-        :param str mailbox: The name of the mailbox to encode.
-        :rtype: bytes
+        :param mailbox: The name of the mailbox to encode.
 
         """
         ret = bytearray()
@@ -69,13 +67,13 @@ class Mailbox(Special):
             if is_usascii:
                 if charpoint == 0x26:
                     ret.extend(b'&-')
-                elif charpoint >= 0x20 and charpoint <= 0x7e:
+                elif 0x20 <= charpoint <= 0x7e:
                     ret.append(charpoint)
                 else:
                     encode_start = i
                     is_usascii = False
             else:
-                if charpoint >= 0x20 and charpoint <= 0x7e:
+                if 0x20 <= charpoint <= 0x7e:
                     to_encode = mailbox[encode_start:i]
                     encoded = cls._modified_b64encode(to_encode)
                     ret.append(0x26)
@@ -91,13 +89,11 @@ class Mailbox(Special):
         return bytes(ret)
 
     @classmethod
-    def decode_name(cls, encoded_mailbox):
+    def decode_name(cls, encoded_mailbox: bytes) -> str:
         """Decode the mailbox name using the modified UTF-7 specification for
         IMAP.
 
-        :param bytes encoded_mailbox: The encoded name of the mailbox to
-                                      decode.
-        :rtype: str
+        :param encoded_mailbox: The encoded name of the mailbox to decode.
 
         """
         parts = []
@@ -131,7 +127,7 @@ class Mailbox(Special):
         return ''.join(parts)
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf: Buffer, **kwargs) -> Tuple['Mailbox', bytes]:
         atom, buf = AString.parse(buf, **kwargs)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':

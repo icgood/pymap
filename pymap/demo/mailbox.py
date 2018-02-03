@@ -19,139 +19,134 @@
 # THE SOFTWARE.
 #
 
-import random
 from copy import copy
-from weakref import WeakSet
+from typing import TYPE_CHECKING, List, Optional
 
-from pymap.interfaces import MailboxInterface
+from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
+from pymap.mailbox import BaseMailbox
 from .message import Message
+from .state import State
 
 __all__ = ['Mailbox']
 
+if TYPE_CHECKING:
+    from .session import Session
 
-class Mailbox(MailboxInterface):
-    sep = b'.'
-    flags = [br'\Seen', br'\Recent', br'\Answered', br'\Deleted', br'\Draft',
-             br'\Flagged']
-    permanent_flags = flags
 
-    next_uids = {}
-    uid_validities = {}
-    messages = {}
-    instances = {}
+class _Unique:
+    pass
 
-    def __init__(self, name):
-        super().__init__(name)
-        self._instances.add(self)
-        self.uid_validity = self.uid_validities.setdefault(
-            name, random.randint(1, 32768))
-        self._reset_changes()
-        self._new_messages = False
-        self._messages = copy(self.messages[self.name])
 
-    def _reset_changes(self):
-        self._changes = {'expunge': set(), 'fetch': {}}
+class Mailbox(BaseMailbox):
+    SEP = b'.'
+    FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
+
+    def __init__(self, name: str, session: 'Session', mailbox_session=None):
+        super().__init__(
+            name=name,
+            permanent_flags=self.FLAGS,
+            uid_validity=State.mailboxes[name].uid_validity,
+            mailbox_session=mailbox_session)
+        self.session = session  # type: 'Session'
+        self.messages = None  # type: List[Message]
+
+    @classmethod
+    def load(cls, name: str, session: 'Session', claim_recent: bool):
+        mbx = cls(name, session)
+        mbx.reset_messages()
+        if claim_recent:
+            recent = State.mailboxes[name].recent
+            for msg in mbx.messages:
+                if msg.uid in recent:
+                    msg.session_flags.add_recent(mbx.mailbox_session)
+            recent.clear()
+        return mbx
+
+    @classmethod
+    def get_snapshot(cls, name: str):
+        return _MailboxSnapshot(name)
+
+    def __copy__(self):
+        copy_ = Mailbox(self.name, self.session, self.mailbox_session)
+        copy_.reset_messages()
+        return copy_
+
+    def reset_messages(self):
+        self.messages = copy(State.mailboxes[self.name].messages)
+
+    def _count_flag(self, flag):
+        count = 0
+        for msg in self.messages:
+            if flag in self.get_flags(msg):
+                count += 1
+        return count
 
     @property
-    def _instances(self):
-        return self.instances.setdefault(self.name, WeakSet())
+    def updates(self):
+        return self.session.updates[self.name]
 
     @property
-    def exists(self):
-        return len(self._messages)
+    def exists(self) -> int:
+        return len(self.messages)
 
     @property
-    def recent(self):
-        recent = 0
-        for msg in self._messages:
-            if br'\Recent' in msg.flags:
-                recent += 1
-        return recent
+    def recent(self) -> int:
+        return self._count_flag(Recent)
 
     @property
-    def unseen(self):
-        unseen = 0
-        for msg in self._messages:
-            if br'\Seen' not in msg.flags:
-                unseen += 1
-        return unseen
+    def unseen(self) -> int:
+        return self.exists - self._count_flag(Seen)
 
     @property
-    def first_unseen(self):
-        for i, msg in enumerate(self._messages):
-            if br'\Seen' not in msg.flags:
+    def first_unseen(self) -> Optional[int]:
+        for i, msg in enumerate(self.messages):
+            if Seen not in self.get_flags(msg):
                 return i + 1
 
     @property
+    def next_uid(self) -> int:
+        return State.mailboxes[self.name].next_uid
+
+
+class _MailboxSnapshot(BaseMailbox):
+
+    def __init__(self, name: str):
+        super().__init__(
+            name=name,
+            readonly=True,
+            permanent_flags=Mailbox.FLAGS,
+            uid_validity=State.mailboxes[name].uid_validity)
+        messages = copy(State.mailboxes[name].messages)
+        self._exists = len(messages)
+        self._recent = len(State.mailboxes[name].recent)
+        self._unseen = 0
+        self._first_unseen = 0
+        for msg_seq, msg in enumerate(messages):
+            if Seen not in msg.permanent_flags:
+                self._unseen += 1
+                self._first_unseen = self._first_unseen or (msg_seq + 1)
+        self._next_uid = State.mailboxes[self.name].next_uid
+
+    @property
+    def exists(self):
+        return self._exists
+
+    @property
+    def recent(self):
+        return self._recent
+
+    @property
+    def unseen(self):
+        return self._unseen
+
+    @property
+    def first_unseen(self):
+        return self._first_unseen
+
+    @property
     def next_uid(self):
-        return self.next_uids.setdefault(self.name, self.exists + 1)
+        return self._next_uid
 
-    def _increment_next_uid(self):
-        next_uid = self.next_uid
-        self.next_uids[self.name] += 1
-        return next_uid
-
-    async def sync(self):
-        if self._new_messages:
-            self._messages = copy(self.messages[self.name])
-            self._new_messages = False
-
-    async def get_messages_by_seq(self, seq_set):
-        max_seq = self.exists
-        return [(i + 1, msg) for i, msg in enumerate(self._messages)
-                if seq_set.contains(i + 1, max_seq)]
-
-    async def get_messages_by_uid(self, uid_set):
-        max_uid = self.next_uid - 1
-        return [(i + 1, msg) for i, msg in enumerate(self._messages)
-                if uid_set.contains(msg.uid, max_uid)]
-
-    async def append_message(self, message, flag_set=None, when=None):
-        msg_uid = self._increment_next_uid()
-        msg = Message(msg_uid, flag_set, message, when=when)
-        self._messages.append(msg)
-        for instance in self._instances:
-            instance._changes['append'] = True
-            instance._new_messages = True
-        self.messages[self.name] = self._messages
-        self._new_messages = False
-
-    async def expunge(self):
-        new_messages = []
-        for i, msg in enumerate(self._messages):
-            if br'\Deleted' in msg.flags:
-                for instance in self._instances:
-                    instance._changes['expunge'].add(i + 1)
-                    instance._new_messages = True
-            else:
-                new_messages.append(msg)
-        if self._new_messages:
-            self._messages = new_messages
-            self.messages[self.name] = new_messages
-            self._new_messages = False
-
-    async def copy(self, messages, mailbox):
-        raise NotImplementedError
-
-    async def search(self, keys):
-        raise NotImplementedError
-
-    async def update_flags(self, messages, flag_set, mode='replace',
-                           silent=False):
-        for msg_seq, msg in messages:
-            before_flags = copy(msg.flags)
-            if mode == 'add':
-                msg.flags = msg.flags | flag_set
-            elif mode == 'subtract':
-                msg.flags = msg.flags - flag_set
-            else:
-                msg.flags = flag_set
-            if before_flags != msg.flags:
-                for instance in self._instances:
-                    if instance != self or not silent:
-                        instance._changes['fetch'][msg_seq] = msg.flags
-
-    async def poll(self):
-        old_changes = self._changes
-        self._reset_changes()
-        return old_changes
+    @property
+    def updates(self):
+        return {}

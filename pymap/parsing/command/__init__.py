@@ -19,7 +19,9 @@
 # THE SOFTWARE.
 #
 
-from .. import Parseable, NotParseable, Space, EndLine
+from typing import Dict, Type, Tuple
+
+from .. import Parseable, NotParseable, Space, EndLine, Buffer
 from ..primitives import Atom
 from ..specials import Tag
 
@@ -28,54 +30,33 @@ __all__ = ['CommandNotFound', 'BadCommand', 'Command', 'CommandNoArgs',
            'Commands']
 
 
-class BadCommand(NotParseable):
-    """Error indicating the data was not parseable because the command had
-    invalid arguments.
-
-    """
-
-    def __init__(self, buf, tag, command):
-        super().__init__(buf)
-        self.tag = tag
-        self.command = command
-
-    def __bytes__(self):
-        if hasattr(self, '_raw'):
-            return self._raw
-        self._raw = raw = b'%b: %b' % \
-                          (self.command.command, super().__bytes__())
-        return raw
-
-    def __str__(self):
-        return str(bytes(self), 'ascii', 'replace')
-
-
-class CommandNotFound(BadCommand):
-    """Error indicating the data was not parseable because the command was not
-    found.
-
-    """
-
-    def __init__(self, buf, tag, command=None):
-        super().__init__(buf, tag, command)
-
-    def __bytes__(self):
-        if self.command:
-            return b'Command Not Found: %b' % self.command
-        else:
-            return b'Command Not Given'
-
-
 class Command(Parseable):
     """Base class to represent the commands available to clients.
 
-    :param bytes tag: The tag parsed from the beginning of the command line.
+    :param tag: The tag parsed from the beginning of the command line.
 
     """
 
-    def __init__(self, tag):
+    #: The command key, e.g. ``b'NOOP'``.
+    command = None  # type: bytes
+
+    def __init__(self, tag: bytes):
         super().__init__()
-        self.tag = tag
+
+        #: The tag parsed from the beginning of the command line.
+        self.tag = tag  # type: bytes
+
+    @classmethod
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['Command', bytes]:
+        raise RuntimeError
+
+    @property
+    def with_uid(self) -> bool:
+        return False
+
+    def __bytes__(self):
+        return b' '.join((self.tag, self.command))
 
 
 class CommandNoArgs(Command):
@@ -85,7 +66,8 @@ class CommandNoArgs(Command):
     """
 
     @classmethod
-    def parse(cls, buf, tag=None, **_):
+    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+            -> Tuple['CommandNoArgs', bytes]:
         _, buf = EndLine.parse(buf)
         return cls(tag), buf
 
@@ -128,7 +110,7 @@ class Commands(Parseable):
 
     def __init__(self):
         super().__init__()
-        self.commands = {}
+        self.commands = {}  # type: Dict[bytes, Type[Command]]
         self._load_commands()
 
     def _load_commands(self):
@@ -138,7 +120,8 @@ class Commands(Parseable):
                 command = getattr(mod, command_name)
                 self.commands[command.command] = command
 
-    def parse(self, buf, **kwargs):
+    def parse(self, buf, **kwargs) -> Tuple[Command, bytes]:
+        buf = memoryview(buf)
         tag = Tag(b'*')
         try:
             tag, buf = Tag.parse(buf)
@@ -154,3 +137,43 @@ class Commands(Parseable):
             except NotParseable as exc:
                 raise BadCommand(exc.buf, tag.value, cmd_type)
         raise CommandNotFound(buf, tag.value, command)
+
+    def __bytes__(self):
+        raise NotImplementedError
+
+
+class BadCommand(NotParseable):
+    """Error indicating the data was not parseable because the command had
+    invalid arguments.
+
+    """
+
+    def __init__(self, buf, tag, command):
+        super().__init__(buf)
+        self.tag = tag  # type: bytes
+        self.command = command  # type: Type[Command]
+        self._raw = None
+
+    def __bytes__(self):
+        if self._raw is None:
+            self._raw = b': '.join((self.command.command, super().__bytes__()))
+        return self._raw
+
+    def __str__(self):
+        return str(bytes(self), 'ascii', 'replace')
+
+
+class CommandNotFound(BadCommand):
+    """Error indicating the data was not parseable because the command was not
+    found.
+
+    """
+
+    def __init__(self, buf, tag, command=None):
+        super().__init__(buf, tag, command)
+
+    def __bytes__(self):
+        if self.command:
+            return b'Command Not Found: %b' % self.command
+        else:
+            return b'Command Not Given'

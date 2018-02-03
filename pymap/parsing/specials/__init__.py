@@ -35,10 +35,10 @@ class InvalidContent(NotParseable, ValueError):
 
 
 class Special(Parseable):
-    """Base class for special data objects in an IMAP stream.
+    """Base class for special data objects in an IMAP stream."""
 
-    """
-    pass
+    def __bytes__(self):
+        raise NotImplementedError
 
 
 from .astring import AString  # NOQA

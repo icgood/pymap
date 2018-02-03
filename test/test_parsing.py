@@ -35,8 +35,8 @@ class TestParseable(unittest.TestCase):
         self.assertIsInstance(atom, Atom)
         qstr, _ = Parseable.parse(b'"test"', [String])
         self.assertIsInstance(qstr, QuotedString)
-        list, _ = Parseable.parse(b'()', [List])
-        self.assertIsInstance(list, List)
+        list_, _ = Parseable.parse(b'()', [List])
+        self.assertIsInstance(list_, List)
 
     def test_parse_expectation_failure(self):
         with self.assertRaises(NotParseable):

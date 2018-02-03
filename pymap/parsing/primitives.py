@@ -20,8 +20,9 @@
 #
 
 import re
+from typing import Tuple, List as ListT, Type, SupportsBytes
 
-from . import Parseable, NotParseable, RequiresContinuation
+from . import Parseable, NotParseable, RequiresContinuation, Buffer
 
 __all__ = ['Primitive', 'Nil', 'Number', 'Atom', 'List', 'String',
            'QuotedString', 'LiteralString']
@@ -36,17 +37,17 @@ class Primitive(Parseable):
     _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
                                br'-\x5B\x5E-\x7A\x7C\x7E]+')
 
+    def __bytes__(self):
+        raise NotImplementedError
+
 
 class Nil(Primitive):
-    """Represents a NIL object from an IMAP stream.
-
-    """
+    """Represents a NIL object from an IMAP stream."""
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
     @classmethod
-    def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer, **_) -> Tuple['Nil', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -61,22 +62,17 @@ class Nil(Primitive):
 
 
 class Number(Primitive):
-    """Represents a number object from an IMAP stream.
-
-    :param int num: The number for the datum.
-
-    """
+    """Represents a number object from an IMAP stream."""
 
     _num_pattern = re.compile(b'^\d+$')
 
     def __init__(self, num):
         super().__init__()
-        self.value = num
+        self.value = num  # type: int
         self._raw = bytes(str(self.value), 'ascii')
 
     @classmethod
-    def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer, **kwargs) -> Tuple['Number', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -91,17 +87,14 @@ class Number(Primitive):
 
 
 class Atom(Primitive):
-    """Represents an atom object from an IMAP stream.
-
-    """
+    """Represents an atom object from an IMAP stream."""
 
     def __init__(self, value):
         super().__init__()
-        self.value = value
+        self.value = value  # type: bytes
 
     @classmethod
-    def parse(cls, buf, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer, **kwargs) -> Tuple['Atom', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -113,17 +106,14 @@ class Atom(Primitive):
         return bytes(self.value)
 
 
-class String(Primitive):
+class String(Primitive, SupportsBytes):
     """Represents a string object from an IMAP string. This object may not be
-    instantiated directly, use one of its derivitives instead.
+    instantiated directly, use one of its derivatives instead.
 
     """
 
-    def __init__(self):
-        raise NotImplementedError()
-
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf: Buffer, **kwargs) -> Tuple['String', bytes]:
         try:
             return QuotedString.parse(buf, **kwargs)
         except NotParseable:
@@ -134,15 +124,13 @@ class String(Primitive):
             pass
         raise NotParseable(buf)
 
+    def __bytes__(self):
+        raise NotImplementedError
+
 
 class QuotedString(String):
     """Represents a string object from an IMAP stream that was encased in
     double-quotes.
-
-    :param bytes string: The raw string for the datum.
-    :param bytes raw: When parsed from an IMAP stream, this contains a copy of
-                      the double-quoted and escaped version of the string for
-                      reuse.
 
     """
 
@@ -150,11 +138,12 @@ class QuotedString(String):
     _quoted_specials_pattern = re.compile(br'[\"\\]')
 
     def __init__(self, string, raw=None):
-        self.value = string
+        super().__init__()
+        self.value = string  # type: bytes
         self._raw = raw
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf: Buffer, **kwargs) -> Tuple['QuotedString', bytes]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'"':
             raise NotParseable(buf)
@@ -195,21 +184,19 @@ class LiteralString(String):
     """Represents a string object from an IMAP stream that used the literal
     syntax.
 
-    :param bytes string: The raw string for the datum.
-    :param bytes raw: When parsed from an IMAP stream, this contains a copy of
-                      the double-quoted and escaped version of the string for
-                      reuse.
-
     """
 
     _literal_pattern = re.compile(br'{(\d+)}\r?\n$')
 
     def __init__(self, string):
-        self.value = string
+        super().__init__()
+        self.value = string  # type: bytes
         self._raw = None
 
     @classmethod
-    def parse(cls, buf, continuations=None, **kwargs):
+    def parse(cls, buf: Buffer,
+              continuations: ListT[bytes] = None,
+              **kwargs) -> Tuple['LiteralString', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._literal_pattern.match(buf, start)
         if not match:
@@ -232,24 +219,21 @@ class LiteralString(String):
 
 
 class List(Primitive):
-    """Represents a list of :class:`Parseable` objects from an IMAP stream.
-
-    :param items: Iterable of items, collected into a list, that make up the
-                  datum.
-    :type items: collections.abc.Iterable
-
-    """
+    """Represents a list of :class:`Parseable` objects from an IMAP stream."""
 
     _end_pattern = re.compile(br' *\)')
 
     def __init__(self, items):
         super().__init__()
-        self.value = items
-        self.__iter__ = lambda: iter(items)
+        self.value = items  # type: ListT[Parseable]
+
+    def __iter__(self):
+        return iter(self.value)
 
     @classmethod
-    def parse(cls, buf, list_expected=None, **kwargs):
-        buf = memoryview(buf)
+    def parse(cls, buf: Buffer,
+              list_expected: ListT[Type[Parseable]] = None,
+              **kwargs) -> Tuple['List', bytes]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)

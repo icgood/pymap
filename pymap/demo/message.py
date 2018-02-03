@@ -22,19 +22,26 @@
 import email
 from datetime import datetime, timezone
 from email.policy import SMTP
+from typing import Iterable, Optional
 
-from pymap.interfaces import MessageInterface
+from pymap.flag import SessionFlags
+from pymap.parsing.specials import Flag
+from pymap.structure import MessageStructure
 
 __all__ = ['Message']
 
 
-class Message(MessageInterface):
+class Message(MessageStructure):
 
-    def __init__(self, uid, flags, data, when=None):
-        super().__init__(uid)
-        self.flags = flags
-        self.internal_date = when or datetime.now(timezone.utc)
-        self.data = email.message_from_bytes(data, policy=SMTP)
+    @classmethod
+    def parse(cls, uid: Optional[int], data: bytes,
+              permanent_flags: Iterable[Flag] = None,
+              session_flags: SessionFlags = None,
+              internal_date: datetime = None):
+        msg = email.message_from_bytes(data, policy=SMTP)
+        return cls(uid, msg, permanent_flags, session_flags,
+                   internal_date or datetime.now(timezone.utc))
 
-    async def get_message(self, full=True):
-        return self.data
+    def __copy__(self) -> 'Message':
+        return Message(self.uid, self.contents, self.permanent_flags,
+                       self.session_flags, self.internal_date)

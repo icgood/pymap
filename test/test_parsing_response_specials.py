@@ -1,6 +1,7 @@
 
 import unittest
 
+from pymap.parsing.specials import *  # NOQA
 from pymap.parsing.response.specials import *  # NOQA
 
 
@@ -35,7 +36,7 @@ class TestExpungeResponse(unittest.TestCase):
 class TestFetchResponse(unittest.TestCase):
 
     def test_bytes(self):
-        resp = FetchResponse(56, {b'KEY1': b'VAL1'})
+        resp = FetchResponse(56, {FetchAttribute(b'KEY1'): b'VAL1'})
         self.assertEqual(b'* 56 FETCH (KEY1 VAL1)\r\n', bytes(resp))
 
 
@@ -50,8 +51,8 @@ class TestListResponse(unittest.TestCase):
 
     def test_bytes(self):
         resp1 = ListResponse('inbox', b'.')
-        self.assertEqual(b'* LIST (\\Unmarked) "." INBOX\r\n', bytes(resp1))
-        resp2 = ListResponse('Other.Stuff', b'.', True, True, True)
+        self.assertEqual(b'* LIST () "." INBOX\r\n', bytes(resp1))
+        resp2 = ListResponse('Other.Stuff', b'.', True, False, True, True)
         self.assertEqual(b'* LIST (\\Marked \\Noinferior \\Noselect) '
                          b'"." Other.Stuff\r\n', bytes(resp2))
 
@@ -60,7 +61,7 @@ class TestLSubResponse(unittest.TestCase):
 
     def test_bytes(self):
         resp1 = LSubResponse('inbox', b'.')
-        self.assertEqual(b'* LSUB (\\Unmarked) "." INBOX\r\n', bytes(resp1))
-        resp2 = LSubResponse('Other.Stuff', b'.', True, True, True)
+        self.assertEqual(b'* LSUB () "." INBOX\r\n', bytes(resp1))
+        resp2 = LSubResponse('Other.Stuff', b'.', True, False, True, True)
         self.assertEqual(b'* LSUB (\\Marked \\Noinferior \\Noselect) '
                          b'"." Other.Stuff\r\n', bytes(resp2))

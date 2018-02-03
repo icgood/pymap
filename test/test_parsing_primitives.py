@@ -62,10 +62,6 @@ class TestAtom(unittest.TestCase):
 
 class TestString(unittest.TestCase):
 
-    def test_instantiate(self):
-        with self.assertRaises(NotImplementedError):
-            String()
-
     def test_quoted_parse(self):
         ret, buf = String.parse(br'  "one\"two\\three"  ')
         self.assertIsInstance(ret, QuotedString)

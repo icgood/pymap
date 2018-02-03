@@ -20,29 +20,25 @@
 #
 
 from datetime import datetime
+from typing import Tuple
 
 from . import Special, InvalidContent
+from .. import Buffer
 from ..primitives import QuotedString
 
 __all__ = ['DateTime']
 
 
 class DateTime(Special):
-    """Represents a date-time quoted string from an IMAP stream.
-
-    :param datetime when: The resulting :py:class:`~datetime.datetime` object.
-    :param bytes raw: Provide the pre-computed bytes representation of
-                      ``when``.
-
-    """
+    """Represents a date-time quoted string from an IMAP stream."""
 
     def __init__(self, when, raw=None):
         super().__init__()
-        self.when = when
+        self.when = when  # type: datetime
         self._raw = raw or bytes(when.strftime('%d-%b-%Y %X %z'), 'ascii')
 
     @classmethod
-    def parse(cls, buf, **kwargs):
+    def parse(cls, buf: Buffer, **_) -> Tuple['DateTime', bytes]:
         string, after = QuotedString.parse(buf)
         try:
             when_str = str(string.value, 'ascii')
