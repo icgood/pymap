@@ -33,7 +33,7 @@ from .interfaces.mailbox import MailboxInterface
 from .interfaces.message import UpdateType
 from .interfaces.session import SessionInterface
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
-from .parsing.primitives import List, Number
+from .parsing.primitives import List, Number, String
 from .parsing.response import (ResponseOk, ResponseNo, ResponseBad,
                                ResponseBye)
 from .parsing.response.code import (Capability, PermanentFlags, ReadOnly,
@@ -280,25 +280,28 @@ class ConnectionState(object):
                     if not attr.section:
                         fetch_data[attr] = msg.get_body_structure()
                     elif not attr.section[1]:
-                        fetch_data[attr] = msg.get_body(attr.section[0])
+                        fetch_data[attr] = String.build(msg.get_body(
+                            attr.section[0]))
                     elif attr.section[1] == b'TEXT':
-                        fetch_data[attr] = msg.get_text(attr.section[0])
+                        fetch_data[attr] = String.build(msg.get_text(
+                            attr.section[0]))
                     elif attr.section[1] in (b'HEADER', b'MIME'):
-                        fetch_data[attr] = msg.get_headers(attr.section[0])
+                        fetch_data[attr] = String.build(msg.get_headers(
+                            attr.section[0]))
                     elif attr.section[1] == b'HEADER.FIELDS':
-                        fetch_data[attr] = msg.get_headers(
-                            attr.section[0], attr.section[2])
+                        fetch_data[attr] = String.build(msg.get_headers(
+                            attr.section[0], attr.section[2]))
                     elif attr.section[1] == b'HEADER.FIELDS.NOT':
-                        fetch_data[attr] = msg.get_headers(
-                            attr.section[0], attr.section[2], True)
+                        fetch_data[attr] = String.build(msg.get_headers(
+                            attr.section[0], attr.section[2], True))
                 elif attr.attribute == b'RFC822':
-                    fetch_data[attr] = msg.get_body()
+                    fetch_data[attr] = String.build(msg.get_body())
                 elif attr.attribute == b'RFC822.HEADER':
-                    fetch_data[attr] = msg.get_headers()
+                    fetch_data[attr] = String.build(msg.get_headers())
                 elif attr.attribute == b'RFC822.TEXT':
-                    fetch_data[attr] = msg.get_text()
+                    fetch_data[attr] = String.build(msg.get_text())
                 elif attr.attribute == b'RFC822.SIZE':
-                    fetch_data[attr] = msg.get_size()
+                    fetch_data[attr] = Number(msg.get_size())
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 

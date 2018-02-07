@@ -162,7 +162,7 @@ class String(Primitive, SupportsBytes):
         raise NotParseable(buf)
 
     @classmethod
-    def build(cls, value: Optional[str]) -> Union[Nil, 'String']:
+    def build(cls, value: Optional[Union[str, bytes]]) -> Union[Nil, 'String']:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
@@ -176,13 +176,14 @@ class String(Primitive, SupportsBytes):
             return QuotedString(b'')
         try:
             ascii_ = bytes(value, 'ascii')
+        except TypeError:
+            ascii_ = value
         except UnicodeEncodeError:
             return LiteralString(bytes(value, 'utf-8'))
+        if len(ascii_) < 32 and b'\n' not in ascii_:
+            return QuotedString(ascii_)
         else:
-            if len(ascii_) < 32 and b'\n' not in ascii_:
-                return QuotedString(ascii_)
-            else:
-                return LiteralString(ascii_)
+            return LiteralString(ascii_)
 
     def __bytes__(self):
         raise NotImplementedError
