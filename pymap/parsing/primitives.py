@@ -20,7 +20,10 @@
 #
 
 import re
-from typing import Tuple, List as ListT, Type, SupportsBytes
+from collections.abc import Sequence
+from functools import total_ordering
+from typing import Tuple, List as ListT, Type, SupportsBytes, Collection, \
+    Union, Optional
 
 from . import Parseable, NotParseable, RequiresContinuation, Buffer
 
@@ -60,7 +63,16 @@ class Nil(Primitive):
     def __bytes__(self):
         return b'NIL'
 
+    def __hash__(self):
+        return hash(Nil)
 
+    def __eq__(self, other):
+        if isinstance(other, Nil):
+            return True
+        return NotImplemented
+
+
+@total_ordering
 class Number(Primitive):
     """Represents a number object from an IMAP stream."""
 
@@ -85,6 +97,23 @@ class Number(Primitive):
     def __bytes__(self):
         return self._raw
 
+    def __hash__(self):
+        return hash((Number, self.value))
+
+    def __eq__(self, other):
+        if isinstance(other, Number):
+            return self.value == other.value
+        elif isinstance(other, int):
+            return self.value == other
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, Number):
+            return self.value < other.value
+        elif isinstance(other, int):
+            return self.value < other
+        return NotImplemented
+
 
 class Atom(Primitive):
     """Represents an atom object from an IMAP stream."""
@@ -105,6 +134,14 @@ class Atom(Primitive):
     def __bytes__(self):
         return bytes(self.value)
 
+    def __hash__(self):
+        return hash((Atom, self.value))
+
+    def __eq__(self, other):
+        if isinstance(other, Atom):
+            return self.value == other.value
+        return NotImplemented
+
 
 class String(Primitive, SupportsBytes):
     """Represents a string object from an IMAP string. This object may not be
@@ -124,8 +161,39 @@ class String(Primitive, SupportsBytes):
             pass
         raise NotParseable(buf)
 
+    @classmethod
+    def build(cls, value: Optional[str]) -> Union[Nil, 'String']:
+        """Produce either a :class:`QuotedString` or :class:`LiteralString`
+        based on the contents of ``data``. This is useful to improve
+        readability of response data.
+
+        :param value: The string to serialize.
+
+        """
+        if value is None:
+            return Nil()
+        elif not value:
+            return QuotedString(b'')
+        try:
+            ascii_ = bytes(value, 'ascii')
+        except UnicodeEncodeError:
+            return LiteralString(bytes(value, 'utf-8'))
+        else:
+            if len(ascii_) < 32 and b'\n' not in ascii_:
+                return QuotedString(ascii_)
+            else:
+                return LiteralString(ascii_)
+
     def __bytes__(self):
         raise NotImplementedError
+
+    def __hash__(self):
+        return hash((String, self.value))
+
+    def __eq__(self, other):
+        if isinstance(other, String):
+            return self.value == other.value
+        return NotImplemented
 
 
 class QuotedString(String):
@@ -223,9 +291,11 @@ class List(Primitive):
 
     _end_pattern = re.compile(br' *\)')
 
-    def __init__(self, items):
+    def __init__(self, items, sort=False):
         super().__init__()
-        self.value = items  # type: ListT[Parseable]
+        self.value = items  # type: Collection[Parseable]
+        if sort:
+            self.value = sorted(items)
 
     def __iter__(self):
         return iter(self.value)
@@ -251,3 +321,18 @@ class List(Primitive):
 
     def __bytes__(self):
         return b'(%b)' % b' '.join([bytes(item) for item in self.value])
+
+    def __hash__(self):
+        return hash((List, self.value))
+
+    def __eq__(self, other):
+        if isinstance(other, List):
+            return self.__eq__(other.value)
+        elif isinstance(other, Sequence):
+            if len(self.value) != len(other):
+                return False
+            for i, val in enumerate(self.value):
+                if val != other[i]:
+                    return False
+            return True
+        return NotImplemented

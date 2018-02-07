@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
+# Copyright (c) 20148an C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,22 +19,114 @@
 # THE SOFTWARE.
 #
 
-"""Provides a basic implementation of the mailbox interface."""
+"""Module defining the interfaces available to pymap backends."""
 
-from typing import Any, Optional, AbstractSet, FrozenSet, Dict, Tuple
+from typing import Tuple, Optional, AbstractSet, FrozenSet, Any, Dict
 
-from .flag import Recent, FlagOp
-from .interfaces import MailboxInterface
-from .parsing.specials import Flag
-from .structure import MessageStructure, UpdateType
+from .message import UpdateType, Message
+from ..flag import FlagOp, Recent
+from ..parsing.specials import Flag
 
-__all__ = ['BaseMailbox']
+__all__ = ['MailboxInterface', 'BaseMailbox']
 
-_Updates = Dict[int, Tuple[UpdateType, MessageStructure]]
+_Updates = Dict[int, Tuple[UpdateType, Message]]
 
 
 class _Unique:
     pass
+
+
+class MailboxInterface:
+    """Corresponds to a mailbox state on an IMAP session, since the last
+    update from the backend.
+
+    """
+
+    def get_flags(self, message: Message) -> FrozenSet[Flag]:
+        """Get the full set of permanent and session flags.
+
+        :param message: The message to get flags for.
+
+        """
+        raise NotImplementedError
+
+    def update_flags(self, message: Message,
+                     flag_set: AbstractSet[Flag],
+                     flag_op: FlagOp = FlagOp.REPLACE) -> None:
+        """Update the flags on a message in the mailbox. After this call,
+        the ``message.permanent_flags`` set should be persisted by the
+        backend.
+
+        :param message: The message to set flags on.
+        :param flag_set: The set of flags for the update operation.
+        :param flag_op: fThe
+
+        """
+        raise NotImplementedError
+
+    @property
+    def name(self) -> str:
+        """The name of the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def readonly(self) -> bool:
+        """Whether the mailbox is read-only or read-write."""
+        raise NotImplementedError
+
+    @property
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags allowed in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def session_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags allowed in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def updates(self) -> Dict[int, Tuple['UpdateType', Message]]:
+        raise NotImplementedError
+
+    @property
+    def mailbox_session(self) -> Any:
+        """Hashable value used to key the session flags in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def flags(self) -> FrozenSet[Flag]:
+        """Set of all permanent and session flags available on the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def exists(self) -> int:
+        """Number of total messages in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def recent(self) -> int:
+        """Number of recent messages in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def unseen(self) -> int:
+        """Number of unseen messages in the mailbox."""
+        raise NotImplementedError
+
+    @property
+    def first_unseen(self) -> Optional[int]:
+        """The sequence number of the first unseen message."""
+        raise NotImplementedError
+
+    @property
+    def next_uid(self) -> int:
+        """The predicted next message UID."""
+        raise NotImplementedError
+
+    @property
+    def uid_validity(self) -> int:
+        """The mailbox UID validity value."""
+        raise NotImplementedError
 
 
 class BaseMailbox(MailboxInterface):
@@ -76,100 +168,99 @@ class BaseMailbox(MailboxInterface):
 
     @property
     def name(self) -> str:
-        """The name of the mailbox."""
         return self._name
 
     @property
     def readonly(self) -> bool:
-        """If ``True``, the mailbox is read-only."""
         return self._readonly
 
     @property
     def permanent_flags(self) -> FrozenSet[Flag]:
-        """The permanent flags defined in the mailbox."""
         return self._permanent_flags
 
     @property
     def session_flags(self) -> FrozenSet[Flag]:
-        """The session flags defined in the mailbox."""
         return self._session_flags
 
     @property
     def uid_validity(self) -> int:
-        """The UID validity value for mailbox consistency."""
         return self._uid_validity
 
     @property
     def mailbox_session(self) -> Any:
-        """Hashable value used to key the session flags in the mailbox."""
         return self._mailbox_session
 
     @property
     def flags(self) -> FrozenSet[Flag]:
-        """All permanent and session flags defined in the mailbox."""
         return self.session_flags | self.permanent_flags
 
     @property
     def updates(self) -> _Updates:
-        """Updates waiting to be reported to the client."""
         raise self._updates
 
     @property
     def exists(self) -> int:
-        """Number of total messages in the mailbox."""
+        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.exists`
+
+        :raises NotImplementedError: Must be implemented by sub-class.
+
+        """
         raise NotImplementedError
 
     @property
     def recent(self) -> int:
-        """Number of recent messages in the mailbox."""
+        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.recent`
+
+        :raises NotImplementedError: Must be implemented by sub-class.
+
+        """
         raise NotImplementedError
 
     @property
     def unseen(self) -> int:
-        """Number of unseen messages in the mailbox."""
+        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.unseen`
+
+        :raises NotImplementedError: Must be implemented by sub-class.
+
+        """
         raise NotImplementedError
 
     @property
     def first_unseen(self) -> Optional[int]:
-        """The sequence number of the first unseen message."""
+        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.first_unseen`
+
+        :raises NotImplementedError: Must be implemented by sub-class.
+
+        """
         raise NotImplementedError
 
     @property
     def next_uid(self) -> int:
-        """The predicted next message UID."""
-        raise NotImplementedError
+        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.next_uid`
 
-    def get_flags(self, message: MessageStructure) -> FrozenSet[Flag]:
-        """Get the full set of permanent and session flags.
-
-        :param message: The message to get flags for.
+        :raises NotImplementedError: Must be implemented by sub-class.
 
         """
+        raise NotImplementedError
+
+    def get_flags(self, message: Message) -> FrozenSet[Flag]:
         session_flags = message.session_flags.get(self.mailbox_session)
         return frozenset(message.permanent_flags) | session_flags
 
-    def update_flags(self, message: MessageStructure,
+    def update_flags(self, message: Message,
                      flag_set: AbstractSet[Flag],
                      flag_op: FlagOp = FlagOp.REPLACE) -> None:
-        """Update the flags on a message in the mailbox. After this call,
-        the ``message.permanent_flags`` set should be persisted by the
-        backend.
-
-        :param message: The message to set flags on.
-        :param flag_set: The set of flags for the update operation.
-        :param flag_op: Update mode for the flag set.
-
-        """
         permanent_flags = frozenset(flag_set & self.permanent_flags)
         session_flags = frozenset(flag_set & self.session_flags)
         if flag_op == FlagOp.ADD:
-            message.permanent_flags = message.permanent_flags | permanent_flags
+            message.permanent_flags.update(permanent_flags)
         elif flag_op == FlagOp.DELETE:
-            message.permanent_flags = message.permanent_flags - permanent_flags
+            message.permanent_flags.difference_update(permanent_flags)
         else:  # flag_op == FlagOp.REPLACE
-            message.permanent_flags = permanent_flags
-        message.session_flags.update(self.mailbox_session,
-                                     session_flags, flag_op)
+            message.permanent_flags.clear()
+            message.permanent_flags.update(permanent_flags)
+        message.session_flags.update(
+            self.mailbox_session, session_flags, flag_op)
 
     def add_expunge(self, seq: int) -> None:
         """Add EXPUNGE update for the given sequence ID, indicating it has
@@ -180,7 +271,7 @@ class BaseMailbox(MailboxInterface):
         """
         self.updates[seq] = (UpdateType.EXPUNGE, None)
 
-    def add_fetch(self, seq: int, msg: MessageStructure) -> None:
+    def add_fetch(self, seq: int, msg: Message) -> None:
         """Add FETCH update for the given message, indicating it has a
         different set of flags.
 

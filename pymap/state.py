@@ -26,11 +26,12 @@ from typing import Optional, Callable
 
 from pysasl import SASLAuth
 
-from pymap.structure import UpdateType
 from .core import PymapError
 from .exceptions import (MailboxNotFound, MailboxConflict, MailboxHasChildren,
                          MailboxReadOnly, AppendFailure)
-from .interfaces import MailboxInterface, SessionInterface
+from .interfaces.mailbox import MailboxInterface
+from .interfaces.message import UpdateType
+from .interfaces.session import SessionInterface
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
 from .parsing.primitives import List, Number
 from .parsing.response import (ResponseOk, ResponseNo, ResponseBad,
@@ -267,8 +268,8 @@ class ConnectionState(object):
                 if attr.attribute == b'UID':
                     fetch_data[attr] = Number(msg.uid)
                 elif attr.attribute == b'FLAGS':
-                    flags = sorted(self.selected.get_flags(msg))
-                    fetch_data[attr] = List(flags)
+                    flags = self.selected.get_flags(msg)
+                    fetch_data[attr] = List(flags, sort=True)
                 elif attr.attribute == b'INTERNALDATE':
                     fetch_data[attr] = DateTime(msg.internal_date)
                 elif attr.attribute == b'ENVELOPE':
@@ -314,8 +315,8 @@ class ConnectionState(object):
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         if not cmd.silent:
             for msg_seq, msg in messages:
-                msg_flags = sorted(self.selected.get_flags(msg))
-                fetch_data = {FetchAttribute(b'FLAGS'): List(msg_flags)}
+                msg_flags = List(self.selected.get_flags(msg), sort=True)
+                fetch_data = {FetchAttribute(b'FLAGS'): msg_flags}
                 if cmd.uid:
                     fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
                 resp.add_untagged(FetchResponse(msg_seq, fetch_data))

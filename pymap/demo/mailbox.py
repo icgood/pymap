@@ -23,7 +23,7 @@ from copy import copy
 from typing import TYPE_CHECKING, List, Optional
 
 from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
-from pymap.mailbox import BaseMailbox
+from pymap.interfaces.mailbox import BaseMailbox
 from .message import Message
 from .state import State
 

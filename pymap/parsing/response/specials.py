@@ -20,7 +20,7 @@
 #
 
 from itertools import chain
-from typing import Iterable, Dict, SupportsBytes
+from typing import Iterable, Dict
 
 from . import Response
 from .. import MaybeBytes
@@ -41,7 +41,7 @@ class FlagsResponse(Response):
     """
 
     def __init__(self, flags: Iterable[MaybeBytes]):
-        text = b'FLAGS %b' % List(sorted(flags))
+        text = b'FLAGS %b' % List(flags, sort=True)
         super().__init__(b'*', text)
 
 

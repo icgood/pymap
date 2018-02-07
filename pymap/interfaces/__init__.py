@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,30 +18,3 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-
-import email
-from datetime import datetime, timezone
-from email.policy import SMTP
-from typing import Iterable, Optional
-
-from pymap.flag import SessionFlags
-from pymap.interfaces.message import LoadedMessage
-from pymap.parsing.specials import Flag
-
-__all__ = ['Message']
-
-
-class Message(LoadedMessage):
-
-    @classmethod
-    def parse(cls, uid: Optional[int], data: bytes,
-              permanent_flags: Iterable[Flag] = None,
-              session_flags: SessionFlags = None,
-              internal_date: datetime = None):
-        msg = email.message_from_bytes(data, policy=SMTP)
-        return cls(uid, msg, permanent_flags, session_flags,
-                   internal_date or datetime.now(timezone.utc))
-
-    def __copy__(self) -> 'Message':
-        return Message(self.uid, self.contents, self.permanent_flags,
-                       self.session_flags, self.internal_date)

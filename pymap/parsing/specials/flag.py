@@ -50,9 +50,6 @@ class Flag(Special):
             return bytes(self) == self._capitalize(other)
         return NotImplemented
 
-    def __ne__(self, other):
-        return not (self == other)
-
     def __lt__(self, other):
         if isinstance(other, Flag):
             return bytes(self) < bytes(other)

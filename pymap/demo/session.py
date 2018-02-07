@@ -26,9 +26,9 @@ from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet
 
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flag import FlagOp, Recent, Deleted
-from pymap.interfaces import SessionInterface
+from pymap.interfaces.message import Message, LoadedMessage
+from pymap.interfaces.session import SessionInterface
 from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute, Flag
-from pymap.structure import MessageStructure
 from .mailbox import Mailbox
 from .message import Message
 from .state import State
@@ -178,7 +178,7 @@ class Session(SessionInterface):
     async def fetch_messages(self, selected: Mailbox,
                              sequences: SequenceSet,
                              attributes: AbstractSet[FetchAttribute]) \
-            -> Tuple[List[Tuple[int, MessageStructure]],
+            -> Tuple[List[Tuple[int, LoadedMessage]],
                      Optional[Mailbox]]:
         mbx = self._check_selected(selected)
         messages = []
@@ -215,7 +215,7 @@ class Session(SessionInterface):
                            sequences: SequenceSet,
                            flag_set: AbstractSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[List[Tuple[int, MessageStructure]],
+            -> Tuple[List[Tuple[int, Message]],
                      Optional[Mailbox]]:
         mbx = self._check_selected(selected)
         results = []
