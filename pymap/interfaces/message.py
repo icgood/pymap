@@ -25,9 +25,9 @@ import enum
 import io
 from datetime import datetime
 from email.generator import BytesGenerator
-from email.message import Message as EmailMessage
+from email.message import EmailMessage
 from email.policy import SMTP
-from typing import Tuple, Optional, Iterable, Set, Container
+from typing import Tuple, Optional, Iterable, Set, Container, Dict
 
 from ..flag import SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure, \
@@ -250,24 +250,36 @@ class LoadedMessage(Message):
     def _get_envelope_structure(cls, msg: EmailMessage) -> EnvelopeStructure:
         return EnvelopeStructure(msg.get('Date'),
                                  msg.get('Subject'),
-                                 msg.get_all('From', []),
-                                 msg.get_all('Sender', []),
-                                 msg.get_all('Reply-To', []),
-                                 msg.get_all('To', []),
-                                 msg.get_all('Cc', []),
-                                 msg.get_all('Bcc', []),
+                                 msg.get_all('From'),
+                                 msg.get_all('Sender'),
+                                 msg.get_all('Reply-To'),
+                                 msg.get_all('To'),
+                                 msg.get_all('Cc'),
+                                 msg.get_all('Bcc'),
                                  msg.get('In-Reply-To'),
                                  msg.get('Message-Id'))
+
+    @classmethod
+    def _get_params(cls, msg: EmailMessage) -> Dict[str, str]:
+        content_type = msg.get('Content-Type')
+        if content_type:
+            return content_type.params
+        else:
+            return {}
 
     @classmethod
     def _get_body_structure(cls, msg: EmailMessage) -> BodyStructure:
         maintype = msg.get_content_maintype()
         subtype = msg.get_content_subtype()
+        params = cls._get_params(msg)
+        disposition = msg.get('Content-Disposition')
+        language = msg.get('Content-Language')
+        location = msg.get('Content-Location')
         if maintype == 'multipart':
             sub_body_structs = [cls._get_body_structure(part)
                                 for part in msg.get_payload()]
-            return MultipartBodyStructure(subtype, sub_body_structs)
-        params = msg.get('Content-Type').params
+            return MultipartBodyStructure(subtype, params, disposition,
+                                          language, location, sub_body_structs)
         content_id = msg.get('Content-Id')
         content_desc = msg.get('Content-Description')
         content_encoding = msg.get('Content-Transfer-Encoding')
@@ -276,13 +288,16 @@ class LoadedMessage(Message):
             sub_env_struct = cls._get_envelope_structure(sub_msg)
             sub_body_struct = cls._get_body_structure(sub_msg)
             size, lines = cls._get_size_with_lines(msg)
-            return MessageBodyStructure(params, content_id, content_desc,
-                                        content_encoding, size, lines,
+            return MessageBodyStructure(params, disposition, language,
+                                        location, content_id, content_desc,
+                                        content_encoding, None, size, lines,
                                         sub_env_struct, sub_body_struct)
         elif maintype == 'text':
             size, lines = cls._get_size_with_lines(msg)
-            return TextBodyStructure(subtype, params, content_id, content_desc,
-                                     content_encoding, size, lines)
+            return TextBodyStructure(subtype, params, disposition, language,
+                                     location, content_id, content_desc,
+                                     content_encoding, None, size, lines)
         size = cls._get_size(msg)
-        return ContentBodyStructure(maintype, subtype, params, content_id,
-                                    content_desc, content_encoding, size)
+        return ContentBodyStructure(maintype, subtype, params, disposition,
+                                    language, location, content_id,
+                                    content_desc, content_encoding, None, size)

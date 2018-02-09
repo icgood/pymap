@@ -1,3 +1,4 @@
+from email.headerregistry import ContentDispositionHeader
 
 import pytest
 
@@ -7,6 +8,8 @@ pytestmark = pytest.mark.asyncio
 
 
 class TestFetch(TestBase):
+
+    ContentDispositionHeader
 
     async def test_uid_fetch(self):
         self.login()
@@ -37,6 +40,18 @@ class TestFetch(TestBase):
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "me" "example.com")) NIL NIL NIL NIL) '
             b'BODY ("text" "plain" NIL NIL NIL NIL 2014 37))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        self.logout()
+        await self.run()
+
+    async def test_fetch_bodystructure(self):
+        self.login()
+        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_readline(
+            b'fetch1 FETCH * (BODYSTRUCTURE)\r\n')
+        self.transport.push_write(
+            b'* 4 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL NIL '
+            b'2014 37 NIL NIL NIL NIL))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.logout()
         await self.run()

@@ -275,7 +275,7 @@ class ConnectionState(object):
                 elif attr.attribute == b'ENVELOPE':
                     fetch_data[attr] = msg.get_envelope_structure()
                 elif attr.attribute == b'BODYSTRUCTURE':
-                    fetch_data[attr] = msg.get_body_structure()
+                    fetch_data[attr] = msg.get_body_structure().extended
                 elif attr.attribute in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
                         fetch_data[attr] = msg.get_body_structure()
