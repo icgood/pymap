@@ -63,7 +63,7 @@ class IMAPServer(object):
         if not lines[-1]:
             lines = lines[:-1]
         for line in lines:
-            line_str = str(line, 'utf-8')
+            line_str = str(line, 'utf-8', 'replace')
             print(prefix, line_str)
 
     @classmethod

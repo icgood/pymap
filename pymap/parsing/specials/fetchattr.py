@@ -21,7 +21,7 @@
 
 import re
 from functools import total_ordering
-from typing import Tuple, Optional, FrozenSet, Collection, List as ListT
+from typing import Tuple, Optional, FrozenSet, Collection
 
 from . import Special, AString
 from .. import NotParseable, Buffer
@@ -39,8 +39,8 @@ class FetchAttribute(Special):
 
     class Section:
 
-        def __init__(self, parts, msgtext, headers):
-            self.parts = parts  # type: Optional[ListT[int]]]
+        def __init__(self, parts, msgtext=None, headers=None):
+            self.parts = parts  # type: Optional[FrozenSet[int]]]
             self.msgtext = msgtext  # type: Optional[bytes]
             self.headers = headers  # type: Optional[FrozenSet[bytes]]
 
@@ -126,19 +126,20 @@ class FetchAttribute(Special):
         section_parts = None
         match = cls._sec_part_pattern.match(buf)
         if match:
-            section_parts = [int(num) for num in match.group(1).split(b'.')]
+            section_parts = frozenset(int(num) for num in
+                                      match.group(1).split(b'.'))
             buf = buf[match.end(0):]
             if not match.group(2):
-                return cls.Section(section_parts, None, None), buf
+                return cls.Section(section_parts), buf
             elif match.group(3):
-                return cls.Section(section_parts, b'MIME', None), buf
+                return cls.Section(section_parts, b'MIME'), buf
         try:
             atom, after = Atom.parse(buf)
         except NotParseable:
-            return cls.Section(section_parts, None, None), buf
+            return cls.Section(section_parts), buf
         sec_msgtext = atom.value.upper()
         if sec_msgtext in (b'HEADER', b'TEXT'):
-            return cls.Section(section_parts, sec_msgtext, None), after
+            return cls.Section(section_parts, sec_msgtext), after
         elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             kwargs_copy = kwargs.copy()
             kwargs_copy['list_expected'] = [AString]
