@@ -12,7 +12,7 @@ class TestBase:
         self.matches = {}
         self.transport = MockTransport(self.matches)
         self.run = partial(IMAPServer.callback,
-            init(), self.transport, self.transport)
+            init(), True, self.transport, self.transport)
 
     def login(self):
         self.transport.push_write(

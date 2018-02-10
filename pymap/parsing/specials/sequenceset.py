@@ -75,16 +75,24 @@ class SequenceSet(Special):
             self._flattened_cache = flattened
         return self._flattened_cache
 
+    def _get_flattened_bounded(self, max_value: int):
+        for low, high in self._flattened:
+            low = max_value if math.isinf(low) else low
+            high = max_value if math.isinf(high) else high
+            if low > max_value:
+                break
+            elif high > max_value:
+                yield (low, max_value)
+                break
+            else:
+                yield (low, high)
+
     def contains(self, num: int, max_value: int) -> bool:
         """Check if the sequence set contains the given value, when bounded
         by the given maximum value (in place of any ``'*'``).
 
         """
-        if num > max_value:
-            return False
-        for low, high in self._flattened:
-            low = max_value if math.isinf(low) else low
-            high = max_value if math.isinf(high) else high
+        for low, high in self._get_flattened_bounded(max_value):
             if num < low:
                 break
             elif num <= high:
@@ -100,8 +108,7 @@ class SequenceSet(Special):
         """
         return chain.from_iterable(
             [range(min(low, max_value), min(high, max_value) + 1)
-             for low, high in self._flattened
-             if min(low, max_value) <= max_value])
+             for low, high in self._get_flattened_bounded(max_value)])
 
     def __bytes__(self):
         if self._raw is not None:

@@ -21,6 +21,7 @@
 
 import asyncio
 import binascii
+import re
 from base64 import b64encode, b64decode
 
 from pysasl import (ServerChallenge, AuthenticationError,
@@ -42,16 +43,31 @@ class Disconnected(Exception):
 
 class IMAPServer(object):
 
-    def __init__(self, reader, writer):
+    def __init__(self, debug, reader, writer):
         super().__init__()
         self.commands = Commands()
         self.reader = reader
         self.writer = writer
+        if not debug:
+            self._print = self._noop_print
 
     @classmethod
-    async def callback(cls, login, reader, writer):
+    async def callback(cls, login, debug, reader, writer):
         state = ConnectionState(login)
-        await cls(reader, writer).run(state)
+        await cls(debug, reader, writer).run(state)
+
+    @classmethod
+    def _print(cls, prefix: str, output: bytes):
+        lines = re.split(br'\r?\n', output)
+        if not lines[-1]:
+            lines = lines[:-1]
+        for line in lines:
+            line_str = str(line, 'utf-8')
+            print(prefix, line_str)
+
+    @classmethod
+    def _noop_print(cls, prefix: str, output: bytes):
+        pass
 
     async def read_continuation(self, literal_length):
         try:
@@ -61,7 +77,9 @@ class IMAPServer(object):
         extra_line = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
-        return extra_literal + extra_line
+        extra = extra_literal + extra_line
+        self._print('C->|', extra)
+        return extra
 
     async def authenticate(self, state, mech_name):
         mech = state.auth.get(mech_name)
@@ -88,6 +106,7 @@ class IMAPServer(object):
         line = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
+        self._print('C->|', line)
         conts = []
         while True:
             try:
@@ -104,6 +123,7 @@ class IMAPServer(object):
         raw = bytes(resp)
         self.writer.write(raw)
         await self.writer.drain()
+        self._print('<-S|', raw)
 
     async def send_error_disconnect(self):
         resp = ResponseBye(b'Unhandled server error.')
@@ -151,4 +171,5 @@ class IMAPServer(object):
                     raise
                 else:
                     await self.write_response(response)
+        self._print('---', b'')
         self.writer.close()

@@ -25,3 +25,19 @@ class TestSession(TestBase):
         self.select(b'INBOX', 4, 0, 104, 4)
         self.logout()
         await self.run()
+
+    async def test_auth_plain(self):
+        self.transport.push_write(
+            b'* OK [CAPABILITY IMAP4rev1 AUTH=PLAIN] Server ready ',
+            (br'\S+',), b'\r\n')
+        self.transport.push_readline(
+            b'auth1 AUTHENTICATE PLAIN\r\n')
+        self.transport.push_write(
+            b'+ \r\n')
+        self.transport.push_readexactly(b'')
+        self.transport.push_readline(
+            b'AGRlbW91c2VyAGRlbW9wYXNz\r\n')
+        self.transport.push_write(
+            b'auth1 OK Authentication successful.\r\n')
+        self.logout()
+        await self.run()

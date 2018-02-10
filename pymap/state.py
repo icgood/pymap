@@ -73,9 +73,10 @@ class ConnectionState(object):
         self.login = login  # type: Callable[..., Optional[SessionInterface]]
         self.session = None  # type: Optional[SessionInterface]
         self.selected = None  # type: Optional[MailboxInterface]
+        self.auth = SASLAuth([b'PLAIN'])
         self.capability = Capability(
             [b'AUTH=%b' % mech.name for mech in
-             SASLAuth([b'PLAIN']).server_mechanisms])
+             self.auth.server_mechanisms])
 
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
@@ -279,21 +280,21 @@ class ConnectionState(object):
                 elif attr.attribute in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
                         fetch_data[attr] = msg.get_body_structure()
-                    elif not attr.section[1]:
+                    elif not attr.section.msgtext:
                         fetch_data[attr] = String.build(msg.get_body(
-                            attr.section[0]))
-                    elif attr.section[1] == b'TEXT':
+                            attr.section.parts))
+                    elif attr.section.msgtext == b'TEXT':
                         fetch_data[attr] = String.build(msg.get_text(
-                            attr.section[0]))
-                    elif attr.section[1] in (b'HEADER', b'MIME'):
+                            attr.section.parts))
+                    elif attr.section.msgtext in (b'HEADER', b'MIME'):
                         fetch_data[attr] = String.build(msg.get_headers(
-                            attr.section[0]))
-                    elif attr.section[1] == b'HEADER.FIELDS':
+                            attr.section.parts))
+                    elif attr.section.msgtext == b'HEADER.FIELDS':
                         fetch_data[attr] = String.build(msg.get_headers(
-                            attr.section[0], attr.section[2]))
-                    elif attr.section[1] == b'HEADER.FIELDS.NOT':
+                            attr.section.parts, attr.section.headers))
+                    elif attr.section.msgtext == b'HEADER.FIELDS.NOT':
                         fetch_data[attr] = String.build(msg.get_headers(
-                            attr.section[0], attr.section[2], True))
+                            attr.section.parts, attr.section.headers, True))
                 elif attr.attribute == b'RFC822':
                     fetch_data[attr] = String.build(msg.get_body())
                 elif attr.attribute == b'RFC822.HEADER':

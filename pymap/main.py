@@ -40,6 +40,7 @@ def main():
     backends = _load_backends()
 
     parser = ArgumentParser(description=__doc__)
+    parser.add_argument('--debug', action='store_true')
     parser.add_argument('--port', action='store', type=int, default=1143)
     parser.add_argument('--version', action='version',
                         version='%(prog)s' + __version__)
@@ -55,7 +56,7 @@ def main():
         parser.error('Expected backend name.')
         return
 
-    callback = partial(IMAPServer.callback, backend.init(args))
+    callback = partial(IMAPServer.callback, backend.init(args), args.debug)
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(callback, port=args.port, loop=loop)
     server = loop.run_until_complete(coro)

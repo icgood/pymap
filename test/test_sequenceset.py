@@ -54,6 +54,8 @@ class TestSequenceSet(unittest.TestCase):
         self.assertEqual(list(range(10, 101)), list(set9.iter(100)))
         set10 = SequenceSet([(10, 1000)])
         self.assertEqual(list(range(10, 101)), list(set10.iter(100)))
+        set11 = SequenceSet([(1000, 1000)])
+        self.assertEqual([], list(set11.iter(100)))
 
     def test_bytes(self):
         seq = SequenceSet([12, '*', (1, '*')])

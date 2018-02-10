@@ -22,7 +22,8 @@
 from collections import defaultdict
 from copy import copy
 from datetime import datetime
-from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet
+from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet, \
+    Iterable
 
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flag import FlagOp, Recent, Deleted
@@ -67,6 +68,20 @@ class Session(SessionInterface):
             return copy(selected), updates
         else:
             return Mailbox.load(name, self, claim_recent), updates
+
+    @classmethod
+    def _iter_messages(cls, mbx: Mailbox, sequences: SequenceSet) \
+            -> Iterable[Tuple[int, Message]]:
+        if sequences.uid:
+            for msg_uid in sequences.iter(mbx.highest_uid):
+                msg_idx = mbx.uid_to_idx.get(msg_uid)
+                if msg_idx is not None:
+                    msg = mbx.messages[msg_idx]
+                    yield (msg_idx + 1, msg)
+        else:
+            for msg_seq in sequences.iter(mbx.exists):
+                msg = mbx.messages[msg_seq - 1]
+                yield (msg_seq, msg)
 
     @classmethod
     def _del_mailbox(cls, name):
@@ -181,10 +196,7 @@ class Session(SessionInterface):
             -> Tuple[List[Tuple[int, LoadedMessage]],
                      Optional[Mailbox]]:
         mbx = self._check_selected(selected)
-        messages = []
-        for msg_seq in sequences.iter(mbx.exists):
-            msg = mbx.messages[msg_seq - 1]
-            messages.append((msg_seq, msg))
+        messages = list(self._iter_messages(mbx, sequences))
         return messages, self._get_updates(selected)
 
     async def search_mailbox(self, selected: Mailbox,
@@ -219,8 +231,7 @@ class Session(SessionInterface):
                      Optional[Mailbox]]:
         mbx = self._check_selected(selected)
         results = []
-        for msg_seq in sequences.iter(mbx.exists):
-            msg = mbx.messages[msg_seq - 1]
+        for msg_seq, msg in self._iter_messages(mbx, sequences):
             mbx.update_flags(msg, flag_set, mode)
             for session in self._other_sessions:
                 Mailbox(mbx.name, session).add_fetch(msg_seq, msg)

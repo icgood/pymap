@@ -20,7 +20,7 @@
 #
 
 from copy import copy
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Dict
 
 from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
 from pymap.interfaces.mailbox import BaseMailbox
@@ -49,6 +49,8 @@ class Mailbox(BaseMailbox):
             mailbox_session=mailbox_session)
         self.session = session  # type: 'Session'
         self.messages = None  # type: List[Message]
+        self.uid_to_idx = None  # type: Dict[int, int]
+        self.highest_uid = None  # type: int
 
     @classmethod
     def load(cls, name: str, session: 'Session', claim_recent: bool):
@@ -73,6 +75,8 @@ class Mailbox(BaseMailbox):
 
     def reset_messages(self):
         self.messages = copy(State.mailboxes[self.name].messages)
+        self.uid_to_idx = {msg.uid: i for i, msg in enumerate(self.messages)}
+        self.highest_uid = max(self.uid_to_idx.keys())
 
     def _count_flag(self, flag):
         count = 0
