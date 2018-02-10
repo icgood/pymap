@@ -109,7 +109,8 @@ class Session(SessionInterface):
                              selected: Optional[Mailbox] = None) \
             -> Tuple[List[Tuple[str, bytes, Dict[str, bool]]],
                      Optional[Mailbox]]:
-        return [(name, Mailbox.SEP, {}) for name in State.mailboxes.keys()], \
+        return [(name, Mailbox.SEP, {})
+                for name in sorted(State.mailboxes.keys())], \
                self._get_updates(selected)
 
     async def get_mailbox(self, name: str, snapshot: bool = False,
