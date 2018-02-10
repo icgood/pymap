@@ -27,12 +27,13 @@ from base64 import b64encode, b64decode
 from pysasl import (ServerChallenge, AuthenticationError,
                     AuthenticationCredentials)
 
+from .exceptions import ResponseError, CloseConnection
 from .parsing import RequiresContinuation
 from .parsing.command import BadCommand, Commands
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from .parsing.response import (ResponseContinuation, ResponseBadCommand,
                                ResponseBad, ResponseBye)
-from .state import CloseConnection, ConnectionState
+from .state import ConnectionState
 
 __all__ = ['Disconnected', 'IMAPServer']
 
@@ -56,8 +57,8 @@ class IMAPServer(object):
         state = ConnectionState(login)
         await cls(debug, reader, writer).run(state)
 
-    @classmethod
-    def _print(cls, prefix: str, output: bytes):
+    def _print(self, prefix: str, output: bytes):
+        prefix = prefix % self.writer.get_extra_info('socket').fileno()
         lines = re.split(br'\r?\n', output)
         if not lines[-1]:
             lines = lines[:-1]
@@ -78,7 +79,7 @@ class IMAPServer(object):
         if self.reader.at_eof():
             raise Disconnected
         extra = extra_literal + extra_line
-        self._print('C->|', extra)
+        self._print('%d -->|', extra)
         return extra
 
     async def authenticate(self, state, mech_name):
@@ -106,7 +107,7 @@ class IMAPServer(object):
         line = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
-        self._print('C->|', line)
+        self._print('%d -->|', line)
         conts = []
         while True:
             try:
@@ -123,7 +124,7 @@ class IMAPServer(object):
         raw = bytes(resp)
         self.writer.write(raw)
         await self.writer.drain()
-        self._print('<-S|', raw)
+        self._print('%d <--|', raw)
 
     async def send_error_disconnect(self):
         resp = ResponseBye(b'Unhandled server error.')
@@ -134,6 +135,7 @@ class IMAPServer(object):
             pass
 
     async def run(self, state):
+        self._print('%d +++|', b'<connected>')
         greeting = await state.do_greeting()
         await self.write_response(greeting)
         while True:
@@ -160,16 +162,18 @@ class IMAPServer(object):
                         response = await state.do_authenticate(cmd, auth)
                     else:
                         response = await state.do_command(cmd)
+                except ResponseError as exc:
+                    resp = exc.get_response(cmd.tag)
+                    await self.write_response(resp)
+                    if isinstance(exc, CloseConnection):
+                        break
                 except AuthenticationError as exc:
                     resp = ResponseBad(cmd.tag, bytes(str(exc), 'utf-8'))
                     await self.write_response(resp)
-                except CloseConnection as close:
-                    await self.write_response(close.response)
-                    break
                 except Exception:
                     await self.send_error_disconnect()
                     raise
                 else:
                     await self.write_response(response)
-        self._print('---', b'')
+        self._print('%d ---|', b'<disconnected>')
         self.writer.close()

@@ -36,11 +36,21 @@ class _Type(enum.Enum):
     WRITE_CLOSE = "writer.close()"
 
 
+class _Socket:
+
+    def __init__(self, fd: int):
+        self.fd = fd
+
+    def fileno(self):
+        return self.fd
+
+
 class MockTransport:
 
     def __init__(self, matches):
         self.queue = deque()
         self.matches = matches
+        self.socket = _Socket(1)
 
     @classmethod
     def _caller(cls, frame):
@@ -95,6 +105,10 @@ class MockTransport:
                       '\nGot:      ' + repr((data, )) + \
                       '\nRegex:    ' + str(full_regex, 'ascii')
         self.matches.update(match.groupdict())
+
+    def get_extra_info(self, name: str):
+        if name == 'socket':
+            return self.socket
 
     async def readline(self) -> bytes:
         return self._pop_expected(_Type.READLINE)

@@ -22,8 +22,6 @@
 import re
 from typing import List, Type, Tuple, TypeVar, SupportsBytes
 
-from pymap.core import PymapError
-
 __all__ = ['RequiresContinuation', 'NotParseable', 'UnexpectedType',
            'Parseable', 'Space', 'EndLine', 'Buffer', 'MaybeBytes']
 
@@ -31,7 +29,7 @@ Buffer = TypeVar('Buffer', bytes, memoryview)
 MaybeBytes = TypeVar('MaybeBytes', bytes, memoryview, SupportsBytes)
 
 
-class RequiresContinuation(PymapError):
+class RequiresContinuation(Exception):
     """Indicates that the buffer has been successfully parsed so far, but
     requires a continuation of the command from the client.
 
@@ -47,7 +45,7 @@ class RequiresContinuation(PymapError):
         self.literal_length = literal_length  # type: int
 
 
-class NotParseable(PymapError):
+class NotParseable(Exception):
     """Indicates that the given buffer was not parseable by one or all of the
     data formats.
 

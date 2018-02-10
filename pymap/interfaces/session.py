@@ -22,8 +22,7 @@
 """Module defining the interfaces available to pymap backends."""
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Tuple, Optional, AbstractSet, FrozenSet, \
-    Dict, Iterable
+from typing import TYPE_CHECKING, Tuple, Optional, FrozenSet, Dict, Iterable
 
 from ..flag import FlagOp
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
@@ -154,7 +153,7 @@ class SessionInterface:
 
     async def append_message(self, name: str,
                              message: bytes,
-                             flag_set: AbstractSet[bytes],
+                             flag_set: FrozenSet[Flag],
                              when: Optional[datetime] = None,
                              selected: Optional['MailboxInterface'] = None) \
             -> Optional['MailboxInterface']:
@@ -194,7 +193,7 @@ class SessionInterface:
 
     async def fetch_messages(self, selected: 'MailboxInterface',
                              sequences: SequenceSet,
-                             attributes: AbstractSet[FetchAttribute]) \
+                             attributes: FrozenSet[FetchAttribute]) \
             -> Tuple[Iterable[Tuple[int, 'LoadedMessage']],
                      Optional['MailboxInterface']]:
         """Get a list of :class:`MessageStructure` objects corresponding to
@@ -255,7 +254,7 @@ class SessionInterface:
 
     async def update_flags(self, selected: 'MailboxInterface',
                            sequences: SequenceSet,
-                           flag_set: AbstractSet[Flag],
+                           flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
             -> Tuple[Iterable[Tuple[int, 'Message']],
                      Optional['MailboxInterface']]:

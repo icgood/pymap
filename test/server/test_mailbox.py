@@ -15,6 +15,7 @@ class TestMailbox(TestBase):
         self.transport.push_write(
             b'* LIST () "." INBOX\r\n'
             b'* LIST () "." Sent\r\n'
+            b'* LIST () "." Trash\r\n'
             b'list1 OK LIST completed.\r\n')
         self.logout()
         await self.run()

@@ -76,7 +76,10 @@ class Mailbox(BaseMailbox):
     def reset_messages(self):
         self.messages = copy(State.mailboxes[self.name].messages)
         self.uid_to_idx = {msg.uid: i for i, msg in enumerate(self.messages)}
-        self.highest_uid = max(self.uid_to_idx.keys())
+        try:
+            self.highest_uid = max(self.uid_to_idx.keys())
+        except ValueError:
+            self.highest_uid = None
 
     def _count_flag(self, flag):
         count = 0

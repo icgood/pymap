@@ -79,3 +79,4 @@ class State:
                 message = Message.parse(message_uid, message_data,
                                         message_flags)
                 mailbox.add_message(message)
+        cls.mailboxes['Trash'] = _Mailbox()

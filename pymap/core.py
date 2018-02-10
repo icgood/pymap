@@ -19,19 +19,13 @@
 # THE SOFTWARE.
 #
 
-"""Module containing :class:`PymapError`, the package's base exception. Also
-defines the package's version number in ``__version__``.
+"""Contains the project's version number in ``__version__``.
 
 """
 
 import pkg_resources
 
-__all__ = ['__version__', 'PymapError']
+__all__ = ['__version__']
 
 #: The version string.
 __version__ = pkg_resources.require("pymap")[0].version
-
-
-class PymapError(Exception):
-    """The base exception for all custom errors in :mod:`pymap`."""
-    pass
