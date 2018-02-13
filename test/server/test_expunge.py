@@ -9,8 +9,8 @@ pytestmark = pytest.mark.asyncio
 class TestServer(TestBase):
 
     async def test_expunge(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'store1 STORE * +FlAGS (\\Deleted)\r\n')
         self.transport.push_write(
@@ -23,6 +23,6 @@ class TestServer(TestBase):
             b'* 3 EXISTS\r\n'
             b'* 0 RECENT\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
 

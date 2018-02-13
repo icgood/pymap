@@ -47,46 +47,78 @@ class _Socket:
 
 class MockTransport:
 
-    def __init__(self, matches):
+    def __init__(self, matches, fd):
         self.queue = deque()
         self.matches = matches
-        self.socket = _Socket(1)
+        self.socket = _Socket(fd)
 
     @classmethod
     def _caller(cls, frame):
         return '{0}:{1!s}'.format(*inspect.getframeinfo(frame))
 
-    def push_readline(self, data: bytes) -> None:
-        frame = inspect.currentframe().f_back
-        self.queue.append((_Type.READLINE, data, self._caller(frame)))
+    def push_readline(self, data: bytes, wait=None, set=None) -> None:
+        where = self._caller(inspect.currentframe().f_back)
+        self.queue.append((_Type.READLINE, where, data, wait, set))
 
-    def push_readexactly(self, data: bytes) -> None:
-        frame = inspect.currentframe().f_back
-        self.queue.append((_Type.READEXACTLY, data, self._caller(frame)))
+    def push_readexactly(self, data: bytes, wait=None, set=None) -> None:
+        where = self._caller(inspect.currentframe().f_back)
+        self.queue.append((_Type.READEXACTLY, where, data, wait, set))
 
-    def push_write(self, *data) -> None:
-        frame = inspect.currentframe().f_back
-        self.queue.append((_Type.WRITE, data, self._caller(frame)))
-        self.queue.append((_Type.DRAIN, None, self._caller(frame)))
+    def push_write(self, *data, wait=None, set=None) -> None:
+        where = self._caller(inspect.currentframe().f_back)
+        self.queue.append((_Type.WRITE, where, data, None, None))
+        self.queue.append((_Type.DRAIN, where, None, wait, set))
 
-    def push_read_eof(self):
-        frame = inspect.currentframe().f_back
-        self.queue.append((_Type.READ_EOF, None, self._caller(frame)))
+    def push_read_eof(self, wait=None, set=None):
+        where = self._caller(inspect.currentframe().f_back)
+        self.queue.append((_Type.READ_EOF, where, None, wait, set))
 
-    def push_write_close(self):
-        frame = inspect.currentframe().f_back
-        self.queue.append((_Type.WRITE_CLOSE, None, self._caller(frame)))
+    def push_write_close(self, set=None):
+        where = self._caller(inspect.currentframe().f_back)
+        self.queue.append((_Type.WRITE_CLOSE, where, None, None, set))
+
+    def push_login(self, wait=None, set=None):
+        self.push_write(
+            b'* OK [CAPABILITY IMAP4rev1 AUTH=PLAIN] Server ready ',
+            (br'\S+', ), b'\r\n', wait=wait)
+        self.push_readline(
+            b'login1 LOGIN demouser demopass\r\n')
+        self.push_write(
+            b'login1 OK Authentication successful.\r\n', set=set)
+
+    def push_logout(self, wait=None, set=None):
+        self.push_readline(
+            b'logout1 LOGOUT\r\n', wait=wait)
+        self.push_write(
+            b'* BYE Logging out.\r\n'
+            b'logout1 OK Logout successful.\r\n')
+        self.push_write_close(set=set)
+
+    def push_select(self, mailbox, exists, recent, uidnext, unseen,
+                    wait=None, set=None):
+        self.push_readline(
+            b'select1 SELECT ' + mailbox + b'\r\n', wait=wait)
+        self.push_write(
+            b'* OK [PERMANENTFLAGS (\\Answered \\Deleted \\Draft \\Flagged '
+            b'\\Seen)] Flags permitted.\r\n* FLAGS (\\Answered \\Deleted '
+            b'\\Draft \\Flagged \\Recent \\Seen)\r\n'
+            b'* ', b'%i' % exists, b' EXISTS\r\n'
+            b'* ', b'%i' % recent, b' RECENT\r\n'
+            b'* OK [UIDNEXT ', b'%i' % uidnext, b'] Predicted next UID.\r\n'
+            b'* OK [UIDVALIDITY ', (br'\d+', ), b'] Predicted next UID.\r\n'
+            b'* OK [UNSEEN ', b'%i' % unseen, b'] First unseen message.\r\n'
+            b'select1 OK [READ-WRITE] Selected mailbox.\r\n', set=set)
 
     def _pop_expected(self, got):
         try:
-            type_, data, where = self.queue.popleft()
+            type_, where, data, wait, set = self.queue.popleft()
         except IndexError:
             assert False, '\nExpected: <end>' + \
                           '\nGot:      ' + got.value
         assert type_ == got, '\nExpected: ' + type_.value + \
                              '\nGot:      ' + got.value + \
                              '\nWhere:    ' + where
-        return data
+        return data, wait, set
 
     def _match_write(self, expected, data):
         re_parts = []
@@ -111,23 +143,38 @@ class MockTransport:
             return self.socket
 
     async def readline(self) -> bytes:
-        return self._pop_expected(_Type.READLINE)
+        data, wait, set = self._pop_expected(_Type.READLINE)
+        if set:
+            set.set()
+        if wait:
+            await wait.wait()
+        return data
 
     async def readexactly(self, size: int) -> bytes:
-        data = self._pop_expected(_Type.READEXACTLY)
+        data, wait, set = self._pop_expected(_Type.READEXACTLY)
         assert size == len(data)
+        if set:
+            set.set()
+        if wait:
+            await wait.wait()
         return data
 
     def write(self, data: bytes) -> None:
-        expected = self._pop_expected(_Type.WRITE)
+        expected, _, _ = self._pop_expected(_Type.WRITE)
         self._match_write(expected, data)
 
     async def drain(self) -> None:
-        self._pop_expected(_Type.DRAIN)
+        _, wait, set = self._pop_expected(_Type.DRAIN)
+        if set:
+            set.set()
+        if wait:
+            await wait.wait()
 
     def at_eof(self):
         return False
 
     def close(self) -> None:
-        self._pop_expected(_Type.WRITE_CLOSE)
+        _, _, set = self._pop_expected(_Type.WRITE_CLOSE)
         assert 0 == len(self.queue)
+        if set:
+            set.set()

@@ -9,22 +9,42 @@ pytestmark = pytest.mark.asyncio
 class TestSession(TestBase):
 
     async def test_login_logout(self):
-        self.login()
-        self.logout()
+        self.transport.push_login()
+        self.transport.push_logout()
         await self.run()
 
     async def test_select(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
-        self.logout()
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_logout()
         await self.run()
 
     async def test_select_clears_recent(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
-        self.select(b'INBOX', 4, 0, 104, 4)
-        self.logout()
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 0, 104, 4)
+        self.transport.push_logout()
         await self.run()
+
+    async def test_concurrent_select_clears_recent(self):
+        concurrent = self.new_transport()
+        event1, event2 = self.new_events(2)
+
+        concurrent.push_login()
+        concurrent.push_readline(
+            b'status1 STATUS INBOX (MESSAGES RECENT)\r\n')
+        concurrent.push_write(
+            b'* STATUS INBOX (MESSAGES 4 RECENT 1)\r\n'
+            b'status1 OK STATUS completed.\r\n', set=event1)
+        concurrent.push_select(b'INBOX', 4, 0, 104, 4, wait=event2)
+        concurrent.push_logout()
+
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4,
+                                   wait=event1, set=event2)
+        self.transport.push_logout()
+
+        await self.run(concurrent)
 
     async def test_auth_plain(self):
         self.transport.push_write(
@@ -39,5 +59,5 @@ class TestSession(TestBase):
             b'AGRlbW91c2VyAGRlbW9wYXNz\r\n')
         self.transport.push_write(
             b'auth1 OK Authentication successful.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()

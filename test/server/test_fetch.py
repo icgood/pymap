@@ -9,11 +9,9 @@ pytestmark = pytest.mark.asyncio
 
 class TestFetch(TestBase):
 
-    ContentDispositionHeader
-
     async def test_uid_fetch(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'fetch1 UID FETCH 1:* (FLAGS)\r\n')
         self.transport.push_write(
@@ -22,12 +20,12 @@ class TestFetch(TestBase):
             b'* 3 FETCH (FLAGS (\\Flagged \\Seen) UID 102)\r\n'
             b'* 4 FETCH (FLAGS (\\Recent) UID 103)\r\n'
             b'fetch1 OK FETCH completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
 
     async def test_fetch_full(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'fetch1 FETCH * FULL\r\n')
         self.transport.push_write(
@@ -41,24 +39,24 @@ class TestFetch(TestBase):
             b'(("" NIL "me" "example.com")) NIL NIL NIL NIL) '
             b'BODY ("text" "plain" NIL NIL NIL NIL 2014 37))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
 
     async def test_fetch_bodystructure(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'fetch1 FETCH * (BODYSTRUCTURE)\r\n')
         self.transport.push_write(
             b'* 4 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL NIL '
             b'2014 37 NIL NIL NIL NIL))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
 
     async def test_fetch_rfc822(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822)\r\n')
         self.transport.push_write(
@@ -71,12 +69,12 @@ class TestFetch(TestBase):
             b'*AAAAAGGGGGHHHHHH*\r\n\r\n'
             b')\r\n'
             b'fetch1 OK FETCH completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
 
     async def test_fetch_rfc822_header(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822.HEADER)\r\n')
         self.transport.push_write(
@@ -87,12 +85,12 @@ class TestFetch(TestBase):
             b'Content-Type: text/plain\r\n\r\n'
             b')\r\n'
             b'fetch1 OK FETCH completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
 
     async def test_fetch_rfc822_text(self):
-        self.login()
-        self.select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822.TEXT)\r\n')
         self.transport.push_write(
@@ -101,5 +99,5 @@ class TestFetch(TestBase):
             b'*AAAAAGGGGGHHHHHH*\r\n\r\n'
             b')\r\n'
             b'fetch1 OK FETCH completed.\r\n')
-        self.logout()
+        self.transport.push_logout()
         await self.run()
