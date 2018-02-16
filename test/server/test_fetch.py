@@ -1,4 +1,3 @@
-from email.headerregistry import ContentDispositionHeader
 
 import pytest
 
@@ -11,7 +10,7 @@ class TestFetch(TestBase):
 
     async def test_uid_fetch(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX')
         self.transport.push_readline(
             b'fetch1 UID FETCH 1:* (FLAGS)\r\n')
         self.transport.push_write(
@@ -25,7 +24,7 @@ class TestFetch(TestBase):
 
     async def test_fetch_full(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX')
         self.transport.push_readline(
             b'fetch1 FETCH * FULL\r\n')
         self.transport.push_write(
@@ -44,7 +43,7 @@ class TestFetch(TestBase):
 
     async def test_fetch_bodystructure(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX')
         self.transport.push_readline(
             b'fetch1 FETCH * (BODYSTRUCTURE)\r\n')
         self.transport.push_write(
@@ -56,7 +55,7 @@ class TestFetch(TestBase):
 
     async def test_fetch_rfc822(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX')
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822)\r\n')
         self.transport.push_write(
@@ -74,7 +73,7 @@ class TestFetch(TestBase):
 
     async def test_fetch_rfc822_header(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX')
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822.HEADER)\r\n')
         self.transport.push_write(
@@ -90,7 +89,7 @@ class TestFetch(TestBase):
 
     async def test_fetch_rfc822_text(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX')
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822.TEXT)\r\n')
         self.transport.push_write(

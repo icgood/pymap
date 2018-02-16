@@ -94,19 +94,19 @@ class MockTransport:
             b'logout1 OK Logout successful.\r\n')
         self.push_write_close(set=set)
 
-    def push_select(self, mailbox, exists, recent, uidnext, unseen,
-                    wait=None, set=None):
+    def push_select(self, mailbox, exists=None, recent=None, uidnext=None,
+                    unseen=None, wait=None, set=None):
         self.push_readline(
             b'select1 SELECT ' + mailbox + b'\r\n', wait=wait)
         self.push_write(
             b'* OK [PERMANENTFLAGS (\\Answered \\Deleted \\Draft \\Flagged '
             b'\\Seen)] Flags permitted.\r\n* FLAGS (\\Answered \\Deleted '
             b'\\Draft \\Flagged \\Recent \\Seen)\r\n'
-            b'* ', b'%i' % exists, b' EXISTS\r\n'
-            b'* ', b'%i' % recent, b' RECENT\r\n'
-            b'* OK [UIDNEXT ', b'%i' % uidnext, b'] Predicted next UID.\r\n'
+            b'* ', exists, b' EXISTS\r\n'
+            b'* ', recent, b' RECENT\r\n'
+            b'* OK [UIDNEXT ', uidnext, b'] Predicted next UID.\r\n'
             b'* OK [UIDVALIDITY ', (br'\d+', ), b'] Predicted next UID.\r\n'
-            b'* OK [UNSEEN ', b'%i' % unseen, b'] First unseen message.\r\n'
+            b'* OK [UNSEEN ', unseen, b'] First unseen message.\r\n'
             b'select1 OK [READ-WRITE] Selected mailbox.\r\n', set=set)
 
     def _pop_expected(self, got):
@@ -125,8 +125,12 @@ class MockTransport:
         for part in expected:
             if isinstance(part, bytes):
                 re_parts.append(re.escape(part))
+            elif isinstance(part, int):
+                re_parts.append(b'%i' % part)
             else:
-                if len(part) == 1:
+                if part is None:
+                    re_parts.append(br'.*?')
+                elif len(part) == 1:
                     re_parts.append(part[0])
                 else:
                     regex, name = part
