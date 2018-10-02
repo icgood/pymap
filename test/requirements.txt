@@ -1,4 +1,8 @@
+mypy
+twine
+pycodestyle
 pytest
-pytest-cov
 pytest-asyncio
-flake8
+pytest-cov
+pytest-mypy
+pytest-codestyle

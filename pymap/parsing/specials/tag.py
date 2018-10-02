@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,12 @@
 import re
 from typing import Tuple
 
-from . import Special
-from .. import NotParseable, Buffer
+from .. import NotParseable, Params, Special
 
 __all__ = ['Tag']
 
 
-class Tag(Special):
+class Tag(Special[bytes]):
     """Represents the tag prefixed to every client command in an IMAP stream.
 
     """
@@ -36,12 +35,12 @@ class Tag(Special):
     _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2C-\x5B'
                           br'\x5D\x5E-\x7A\x7C\x7E]+')
 
-    def __init__(self, tag):
+    def __init__(self, tag: bytes) -> None:
         super().__init__()
-        self.value = tag  # type: bytes
+        self.value = tag
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['Tag', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Tag', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:

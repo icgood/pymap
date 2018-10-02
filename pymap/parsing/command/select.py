@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
 #
 
 import re
-from typing import Tuple, FrozenSet, Sequence
+from typing import Tuple, Sequence, List, Iterable, cast
 
 from . import CommandSelect, CommandNoArgs
-from .. import NotParseable, Space, EndLine, Buffer
-from ..primitives import Atom, List
+from .. import NotParseable, Space, EndLine, Params
+from ..primitives import Atom, ListP
 from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
                         SearchKey)
 from ...flag import FlagOp, Recent
@@ -48,40 +48,41 @@ class ExpungeCommand(CommandSelect, CommandNoArgs):
 class CopyCommand(CommandSelect):
     command = b'COPY'
 
-    def __init__(self, tag, seq_set, mailbox, uid):
+    def __init__(self, tag: bytes, seq_set: SequenceSet,
+                 mailbox: Mailbox, uid: bool) -> None:
         super().__init__(tag)
-        self.sequence_set = seq_set  # type: SequenceSet
-        self.mailbox_obj = mailbox  # type: Mailbox
-        self.uid = uid  # type: bool
+        self.sequence_set = seq_set
+        self.mailbox_obj = mailbox
+        self.uid = uid
 
     @property
     def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False, **_) \
-            -> Tuple['CopyCommand', bytes]:
-        _, buf = Space.parse(buf)
-        seq_set, buf = SequenceSet.parse(buf, uid=uid)
-        _, buf = Space.parse(buf)
-        mailbox, buf = Mailbox.parse(buf)
-        _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, mailbox, uid), buf
+    def parse(cls, buf: bytes, params: Params) -> Tuple['CopyCommand', bytes]:
+        _, buf = Space.parse(buf, params)
+        seq_set, buf = SequenceSet.parse(buf, params)
+        _, buf = Space.parse(buf, params)
+        mailbox, buf = Mailbox.parse(buf, params)
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, seq_set, mailbox, params.uid), buf
 
 
 class FetchCommand(CommandSelect):
     command = b'FETCH'
 
-    def __init__(self, tag, seq_set, attr_list, uid):
+    def __init__(self, tag: bytes, seq_set: SequenceSet,
+                 attr_list: Sequence[FetchAttribute], uid: bool) -> None:
         super().__init__(tag)
-        self.sequence_set = seq_set  # type: SequenceSet
-        self.no_expunge_response = not seq_set.uid  # type: bool
-        self.attributes = attr_list  # type: Sequence[FetchAttribute]
-        self.uid = uid  # type: bool
+        self.sequence_set = seq_set
+        self.no_expunge_response = not seq_set.uid
+        self.attributes = attr_list
+        self.uid = uid
 
     @classmethod
-    def _check_macros(cls, buf):
-        atom, after = Atom.parse(buf)
+    def _check_macros(cls, buf: bytes, params: Params):
+        atom, after = Atom.parse(buf, params)
         macro = atom.value.upper()
         if macro == b'ALL':
             attrs = [FetchAttribute(b'FLAGS'),
@@ -104,28 +105,28 @@ class FetchCommand(CommandSelect):
         raise NotParseable(buf)
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False, **_) \
-            -> Tuple['FetchCommand', bytes]:
-        _, buf = Space.parse(buf)
-        seq_set, buf = SequenceSet.parse(buf, uid=uid)
-        _, buf = Space.parse(buf)
-        attr_list = None
+    def parse(cls, buf: bytes, params: Params) -> Tuple['FetchCommand', bytes]:
+        _, buf = Space.parse(buf, params)
+        seq_set, buf = SequenceSet.parse(buf, params)
+        _, buf = Space.parse(buf, params)
+        attr_list: List[FetchAttribute] = []
         try:
-            attr_list, buf = cls._check_macros(buf)
+            attr_list, buf = cls._check_macros(buf, params)
         except NotParseable:
             pass
         try:
-            attr, buf = FetchAttribute.parse(buf)
+            attr, buf = FetchAttribute.parse(buf, params)
             attr_list = [attr]
         except NotParseable:
             pass
         if not attr_list:
-            attr_list, buf = List.parse(buf, list_expected=[FetchAttribute])
-            attr_list = attr_list.value
-        if uid:
+            params_copy = params.copy(list_expected=[FetchAttribute])
+            attr_list_p, buf = ListP.parse(buf, params_copy)
+            attr_list = cast(List[FetchAttribute], attr_list_p.value)
+        if params.uid:
             attr_list.append(FetchAttribute(b'UID'))
-        _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, attr_list, uid), buf
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, seq_set, attr_list, params.uid), buf
 
 
 class StoreCommand(CommandSelect):
@@ -134,17 +135,19 @@ class StoreCommand(CommandSelect):
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': FlagOp.REPLACE, b'+': FlagOp.ADD, b'-': FlagOp.DELETE}
 
-    def __init__(self, tag, seq_set, flags, mode, silent, uid):
+    def __init__(self, tag: bytes, seq_set: SequenceSet,
+                 flags: Iterable[Flag], mode: FlagOp,
+                 silent: bool, uid: bool) -> None:
         super().__init__(tag)
-        self.sequence_set = seq_set  # type: SequenceSet
-        self.flag_set = frozenset(flags) - {Recent}  # type: FrozenSet[Flag]
-        self.mode = mode  # type: FlagOp
-        self.silent = silent  # type: bool
-        self.uid = uid  # type: bool
+        self.sequence_set = seq_set
+        self.flag_set = frozenset(flags) - {Recent}
+        self.mode = mode
+        self.silent = silent
+        self.uid = uid
 
     @classmethod
-    def _parse_store_info(cls, buf):
-        info, after = Atom.parse(buf)
+    def _parse_store_info(cls, buf: bytes, params: Params):
+        info, after = Atom.parse(buf, params)
         match = cls._info_pattern.match(info.value)
         if not match:
             raise NotParseable(buf)
@@ -153,56 +156,59 @@ class StoreCommand(CommandSelect):
         return {'mode': mode, 'silent': silent}, after
 
     @classmethod
-    def _parse_flag_list(cls, buf):
+    def _parse_flag_list(cls, buf: bytes, params: Params) \
+            -> Tuple[Sequence[Flag], bytes]:
+        flag_list: List[Flag] = []
         try:
-            flag_list, buf = List.parse(buf, list_expected=[Flag])
+            params_copy = params.copy(list_expected=[Flag])
+            flag_list_p, buf = ListP.parse(buf, params_copy)
         except NotParseable:
             pass
         else:
-            return flag_list.value, buf
-        flag_list = []
+            flag_list = cast(List[Flag], flag_list_p.value)
+            return flag_list, buf
         while True:
             try:
-                flag, buf = Flag.parse(buf)
+                flag, buf = Flag.parse(buf, params)
                 flag_list.append(flag)
-                _, buf = Space.parse(buf)
+                _, buf = Space.parse(buf, params)
             except NotParseable:
                 return flag_list, buf
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False, **_) \
-            -> Tuple['StoreCommand', bytes]:
-        _, buf = Space.parse(buf)
-        seq_set, buf = SequenceSet.parse(buf, uid=uid)
-        _, buf = Space.parse(buf)
-        info, buf = cls._parse_store_info(buf)
-        _, buf = Space.parse(buf)
-        flag_list, buf = cls._parse_flag_list(buf)
-        _, buf = EndLine.parse(buf)
-        return cls(tag, seq_set, flag_list, uid=uid, **info), buf
+    def parse(cls, buf: bytes, params: Params) -> Tuple['StoreCommand', bytes]:
+        _, buf = Space.parse(buf, params)
+        seq_set, buf = SequenceSet.parse(buf, params)
+        _, buf = Space.parse(buf, params)
+        info, buf = cls._parse_store_info(buf, params)
+        _, buf = Space.parse(buf, params)
+        flag_list, buf = cls._parse_flag_list(buf, params)
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, seq_set, flag_list, uid=params.uid, **info), buf
 
 
 class SearchCommand(CommandSelect):
     command = b'SEARCH'
 
-    def __init__(self, tag, keys, charset=None, uid=False):
+    def __init__(self, tag: bytes, keys: Iterable[SearchKey],
+                 charset: str = None, uid: bool = False) -> None:
         super().__init__(tag)
-        self.keys = frozenset(keys)  # type: FrozenSet[SearchKey]
-        self.charset = charset  # type: str
-        self._with_uid = uid  # type: bool
-        self.uid = uid  # type: bool
+        self.keys = frozenset(keys)
+        self.charset = charset
+        self.uid = uid
 
     @classmethod
-    def _parse_charset(cls, buf, **kwargs):
+    def _parse_charset(cls, buf: bytes, params: Params) \
+            -> Tuple[str, bytes]:
         try:
-            _, after = Space.parse(buf)
-            atom, after = Atom.parse(after)
+            _, after = Space.parse(buf, params)
+            atom, after = Atom.parse(after, params)
         except NotParseable:
             pass
         else:
             if atom.value.upper() == b'CHARSET':
-                _, after = Space.parse(after)
-                string, after = AString.parse(after, **kwargs)
+                _, after = Space.parse(after, params)
+                string, after = AString.parse(after, params)
                 charset = str(string.value, 'ascii')
                 try:
                     b' '.decode(charset)
@@ -212,21 +218,21 @@ class SearchCommand(CommandSelect):
         return 'US-ASCII', buf
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, uid: bool = False,
-              **kwargs) -> Tuple['SearchCommand', bytes]:
-        charset, buf = cls._parse_charset(buf, **kwargs)
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['SearchCommand', bytes]:
+        charset, buf = cls._parse_charset(buf, params)
         search_keys = []
         while True:
             try:
-                _, buf = Space.parse(buf)
-                key, buf = SearchKey.parse(buf, charset=charset, **kwargs)
+                _, buf = Space.parse(buf, params)
+                key, buf = SearchKey.parse(buf, params.copy(charset=charset))
                 search_keys.append(key)
             except NotParseable:
                 if not search_keys:
                     raise
                 break
-        _, buf = EndLine.parse(buf)
-        return cls(tag, search_keys, charset, uid), buf
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, search_keys, charset, params.uid), buf
 
 
 class UidCommand(CommandSelect):
@@ -238,11 +244,14 @@ class UidCommand(CommandSelect):
                             b'STORE': StoreCommand}
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, **kwargs) \
-            -> Tuple[CommandSelect, bytes]:
-        _, buf = Space.parse(buf)
-        atom, after = Atom.parse(buf)
-        cmd = cls._allowed_subcommands.get(atom.value.upper())
+    def _get_cmd(cls, name: bytes):
+        return cls._allowed_subcommands.get(name.upper())
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple[CommandSelect, bytes]:
+        _, buf = Space.parse(buf, params)
+        atom, after = Atom.parse(buf, params)
+        cmd = cls._get_cmd(atom.value)
         if not cmd:
             raise NotParseable(buf)
-        return cmd.parse(after, tag=tag, uid=True, **kwargs)
+        return cmd.parse(after, params.copy(uid=True))

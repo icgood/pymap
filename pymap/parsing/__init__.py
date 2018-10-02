@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,13 @@
 #
 
 import re
-from typing import List, Type, Tuple, TypeVar, SupportsBytes
+from typing import Tuple, Optional, Generic, Sequence, Dict, Any, List, Type
 
-__all__ = ['RequiresContinuation', 'NotParseable', 'UnexpectedType',
-           'Parseable', 'Space', 'EndLine', 'Buffer', 'MaybeBytes']
+from .typing import ParseableType
 
-Buffer = TypeVar('Buffer', bytes, memoryview)
-MaybeBytes = TypeVar('MaybeBytes', bytes, memoryview, SupportsBytes)
+__all__ = ['RequiresContinuation', 'NotParseable', 'InvalidContent',
+           'UnexpectedType', 'Parseable', 'Space', 'EndLine', 'Primitive',
+           'Special', 'Params']
 
 
 class RequiresContinuation(Exception):
@@ -39,10 +39,10 @@ class RequiresContinuation(Exception):
 
     """
 
-    def __init__(self, message: bytes, literal_length: int = 0):
+    def __init__(self, message: bytes, literal_length: int = 0) -> None:
         super().__init__()
-        self.message = message  # type: bytes
-        self.literal_length = literal_length  # type: int
+        self.message = message
+        self.literal_length = literal_length
 
 
 class NotParseable(Exception):
@@ -55,15 +55,17 @@ class NotParseable(Exception):
 
     error_indicator = b'[:ERROR:]'
 
-    def __init__(self, buf: Buffer):
+    def __init__(self, buf: bytes) -> None:
         super().__init__()
-        self.buf = buf  # type: bytes
-        self.offset = 0  # type: int
-        if isinstance(buf, memoryview):
-            self.offset = len(buf.obj) - buf.nbytes
+        self.buf = buf
         self._raw = None
-        self._before = None
-        self._after = None
+        self._before: Optional[bytes] = None
+        self._after: Optional[bytes] = None
+        self.offset: int = 0
+        if isinstance(buf, memoryview):
+            obj = getattr(buf, 'obj')
+            nbytes = getattr(buf, 'nbytes')
+            self.offset = len(obj) - nbytes
 
     @property
     def before(self) -> bytes:
@@ -71,7 +73,7 @@ class NotParseable(Exception):
             return self._before
         buf = self.buf
         if isinstance(buf, memoryview):
-            buf = buf.obj
+            buf = getattr(buf, 'obj')
         self._before = before = buf[0:self.offset]
         return before
 
@@ -97,6 +99,14 @@ class NotParseable(Exception):
         return str(bytes(self), 'ascii', 'replace')
 
 
+class InvalidContent(NotParseable, ValueError):
+    """Indicates the type of the parsed content was correct, but something
+    about the content did not fit what was expected by the special type.
+
+    """
+    pass
+
+
 class UnexpectedType(NotParseable):
     """Indicates that a generic parseable that was given a sub-type expectation
     failed to meet that expectation.
@@ -105,7 +115,51 @@ class UnexpectedType(NotParseable):
     pass
 
 
-class Parseable:
+class Params:
+    """Parameters used and passed around among the :meth:`~Parseable.parse`
+    methods.
+
+    """
+
+    __slots__ = ['continuations', 'expected', 'list_expected',
+                 'uid', 'charset', 'tag']
+
+    def __init__(self, continuations: List[bytes] = None,
+                 expected: Sequence[Type['Parseable']] = None,
+                 list_expected: Sequence[Type['Parseable']] = None,
+                 uid: bool = False,
+                 charset: str = None,
+                 tag: bytes = None) -> None:
+        self.continuations = continuations or []
+        self.expected = expected or []
+        self.list_expected = list_expected or []
+        self.uid = uid
+        self.charset = charset
+        self.tag = tag or b'.'
+
+    def _set_if_none(self, kwargs, attr, value):
+        if value is not None:
+            kwargs[attr] = value
+        else:
+            kwargs[attr] = getattr(self, attr)
+
+    def copy(self, continuations: Sequence['Parseable'] = None,
+             expected: Sequence[Type['Parseable']] = None,
+             list_expected: Sequence[Type['Parseable']] = None,
+             uid: bool = None,
+             charset: str = None,
+             tag: bytes = None) -> 'Params':
+        kwargs: Dict[str, Any] = {}
+        self._set_if_none(kwargs, 'continuations', continuations)
+        self._set_if_none(kwargs, 'expected', expected)
+        self._set_if_none(kwargs, 'list_expected', list_expected)
+        self._set_if_none(kwargs, 'uid', uid)
+        self._set_if_none(kwargs, 'charset', charset)
+        self._set_if_none(kwargs, 'tag', tag)
+        return Params(**kwargs)
+
+
+class Parseable(Generic[ParseableType]):
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
 
@@ -118,7 +172,7 @@ class Parseable:
 
     def __init__(self):
         super().__init__()
-        self.value = None
+        self.value: ParseableType = None
 
     @classmethod
     def _whitespace_length(cls, buf, start=0) -> int:
@@ -131,28 +185,26 @@ class Parseable:
         raise NotImplementedError
 
     @classmethod
-    def parse(cls, buf: Buffer, expected: List[Type['Parseable']] = None,
-              **kwargs) -> Tuple['Parseable', bytes]:
-        expected = expected or []
-        for data_type in expected:
+    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
+        for data_type in params.expected:
             try:
-                return data_type.parse(buf, **kwargs)
+                return data_type.parse(buf, params)
             except NotParseable:
                 pass
         raise UnexpectedType(buf)
 
 
-class Space(Parseable):
+class Space(Parseable[None]):
     """Represents at least one space character.
 
     """
 
-    def __init__(self, length):
+    def __init__(self, length: int) -> None:
         super().__init__()
-        self.length = length  # type: int
+        self.length = length
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['Space', bytes]:
+    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Space', bytes]:
         ret = cls._whitespace_length(buf)
         if not ret:
             raise NotParseable(buf)
@@ -162,7 +214,7 @@ class Space(Parseable):
         return b' ' * self.length
 
 
-class EndLine(Parseable):
+class EndLine(Parseable[None]):
     """Represents the end of a parsed line. This will only parse if the buffer
     has zero or more space characters followed by a new-line sequence.
 
@@ -170,13 +222,14 @@ class EndLine(Parseable):
 
     _pattern = re.compile(br' *(\r?)\n')
 
-    def __init__(self, preceding_spaces=0, carriage_return=True):
+    def __init__(self, preceding_spaces: int = 0,
+                 carriage_return: bool = True) -> None:
         super().__init__()
-        self.preceding_spaces = preceding_spaces  # type: int
-        self.carriage_return = carriage_return  # type: bool
+        self.preceding_spaces = preceding_spaces
+        self.carriage_return = carriage_return
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['EndLine', bytes]:
+    def parse(cls, buf: bytes, params: 'Params') -> Tuple['EndLine', bytes]:
         match = cls._pattern.match(buf)
         if not match:
             raise NotParseable(buf)
@@ -187,3 +240,23 @@ class EndLine(Parseable):
     def __bytes__(self):
         endl = b'\r\n' if self.carriage_return else b'\n'
         return b' ' * self.preceding_spaces + endl
+
+
+class Primitive(Parseable[ParseableType]):
+    """Represents a primitive data object from an IMAP stream. The sub-classes
+    implement the different primitive formats.
+
+    """
+
+    _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
+                               br'-\x5B\x5E-\x7A\x7C\x7E]+')
+
+    def __bytes__(self):
+        raise NotImplementedError
+
+
+class Special(Parseable[ParseableType]):
+    """Base class for special data objects in an IMAP stream."""
+
+    def __bytes__(self):
+        raise NotImplementedError

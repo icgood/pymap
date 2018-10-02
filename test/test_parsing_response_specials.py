@@ -1,8 +1,10 @@
 
 import unittest
 
-from pymap.parsing.specials import *  # NOQA
-from pymap.parsing.response.specials import *  # NOQA
+from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
+    RecentResponse, ExpungeResponse, FetchResponse, SearchResponse, \
+    ListResponse, LSubResponse
+from pymap.parsing.specials import FetchAttribute
 
 
 class TestFlagsResponse(unittest.TestCase):

@@ -38,7 +38,7 @@ class _Type(enum.Enum):
 
 class _Socket:
 
-    def __init__(self, fd: int):
+    def __init__(self, fd: int) -> None:
         self.fd = fd
 
     def fileno(self):
@@ -54,27 +54,29 @@ class MockTransport:
 
     @classmethod
     def _caller(cls, frame):
-        return '{0}:{1!s}'.format(*inspect.getframeinfo(frame))
+        frame = frame.f_back if frame else None
+        file, line = inspect.getframeinfo(frame) if frame else '?', '?'
+        return '{0}:{1!s}'.format(file, line)
 
     def push_readline(self, data: bytes, wait=None, set=None) -> None:
-        where = self._caller(inspect.currentframe().f_back)
+        where = self._caller(inspect.currentframe())
         self.queue.append((_Type.READLINE, where, data, wait, set))
 
     def push_readexactly(self, data: bytes, wait=None, set=None) -> None:
-        where = self._caller(inspect.currentframe().f_back)
+        where = self._caller(inspect.currentframe())
         self.queue.append((_Type.READEXACTLY, where, data, wait, set))
 
     def push_write(self, *data, wait=None, set=None) -> None:
-        where = self._caller(inspect.currentframe().f_back)
+        where = self._caller(inspect.currentframe())
         self.queue.append((_Type.WRITE, where, data, None, None))
         self.queue.append((_Type.DRAIN, where, None, wait, set))
 
     def push_read_eof(self, wait=None, set=None):
-        where = self._caller(inspect.currentframe().f_back)
+        where = self._caller(inspect.currentframe())
         self.queue.append((_Type.READ_EOF, where, None, wait, set))
 
     def push_write_close(self, set=None):
-        where = self._caller(inspect.currentframe().f_back)
+        where = self._caller(inspect.currentframe())
         self.queue.append((_Type.WRITE_CLOSE, where, None, None, set))
 
     def push_login(self, wait=None, set=None):

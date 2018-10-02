@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +19,11 @@
 # THE SOFTWARE.
 #
 
-"""Contains the project's version number in ``__version__``.
-
-"""
+"""Contains the project's version number in ``__version__``."""
 
 import pkg_resources
 
 __all__ = ['__version__']
 
 #: The version string.
-__version__ = pkg_resources.require("pymap")[0].version
+__version__: str = pkg_resources.require("pymap")[0].version

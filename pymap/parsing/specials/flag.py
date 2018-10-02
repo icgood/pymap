@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +20,24 @@
 #
 
 from functools import total_ordering
-from typing import Tuple, Union
+from typing import Tuple
 
-from . import Special
-from .. import NotParseable, Space, Buffer
+from .. import NotParseable, Space, Params, Special
 from ..primitives import Atom
 
 __all__ = ['Flag']
 
 
 @total_ordering
-class Flag(Special):
+class Flag(Special[bytes]):
     """Represents a message flag from an IMAP stream."""
 
-    def __init__(self, value: Union['Flag', bytes]):
+    def __init__(self, value: bytes) -> None:
         super().__init__()
-        self.value = self._capitalize(value)  # type: bytes
+        self.value = self._capitalize(value)
 
     @classmethod
-    def _capitalize(cls, value):
+    def _capitalize(cls, value: bytes) -> bytes:
         if value.startswith(b'\\'):
             return b'\\' + value[1:].capitalize()
         return value
@@ -67,14 +66,14 @@ class Flag(Special):
         return self.value
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['Flag', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Flag', bytes]:
         try:
-            _, buf = Space.parse(buf)
+            _, buf = Space.parse(buf, params)
         except NotParseable:
             pass
         if buf and buf[0] == 0x5c:
-            atom, buf = Atom.parse(buf[1:])
+            atom, buf = Atom.parse(buf[1:], params)
             return cls(b'\\' + atom.value), buf
         else:
-            atom, buf = Atom.parse(buf)
+            atom, buf = Atom.parse(buf, params)
             return cls(atom.value), buf

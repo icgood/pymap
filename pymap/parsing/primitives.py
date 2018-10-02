@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,37 +20,24 @@
 #
 
 import re
-from collections.abc import Sequence
+from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import Tuple, List as ListT, Type, SupportsBytes, Collection, \
-    Union, Optional
+from typing import Tuple, List, Union, Iterable, Any, Sequence
 
-from . import Parseable, NotParseable, RequiresContinuation, Buffer
+from . import Parseable, NotParseable, RequiresContinuation, Primitive, Params
+from .typing import ParseableListType
 
-__all__ = ['Primitive', 'Nil', 'Number', 'Atom', 'List', 'String',
+__all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
 
 
-class Primitive(Parseable):
-    """Represents a primitive data object from an IMAP stream. The sub-classes
-    implement the different primitive formats.
-
-    """
-
-    _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
-                               br'-\x5B\x5E-\x7A\x7C\x7E]+')
-
-    def __bytes__(self):
-        raise NotImplementedError
-
-
-class Nil(Primitive):
+class Nil(Primitive[None]):
     """Represents a NIL object from an IMAP stream."""
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['Nil', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Nil', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -73,18 +60,18 @@ class Nil(Primitive):
 
 
 @total_ordering
-class Number(Primitive):
+class Number(Primitive[int]):
     """Represents a number object from an IMAP stream."""
 
-    _num_pattern = re.compile(b'^\d+$')
+    _num_pattern = re.compile(br'^\d+$')
 
-    def __init__(self, num):
+    def __init__(self, num: int) -> None:
         super().__init__()
-        self.value = num  # type: int
+        self.value = num
         self._raw = bytes(str(self.value), 'ascii')
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['Number', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Number', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -115,15 +102,15 @@ class Number(Primitive):
         return NotImplemented
 
 
-class Atom(Primitive):
+class Atom(Primitive[bytes]):
     """Represents an atom object from an IMAP stream."""
 
-    def __init__(self, value):
+    def __init__(self, value: bytes) -> None:
         super().__init__()
-        self.value = value  # type: bytes
+        self.value = value
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['Atom', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Atom', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -143,26 +130,26 @@ class Atom(Primitive):
         return NotImplemented
 
 
-class String(Primitive, SupportsBytes):
+class String(Primitive[bytes]):
     """Represents a string object from an IMAP string. This object may not be
     instantiated directly, use one of its derivatives instead.
 
     """
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['String', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['String', bytes]:
         try:
-            return QuotedString.parse(buf, **kwargs)
+            return QuotedString.parse(buf, params)
         except NotParseable:
             pass
         try:
-            return LiteralString.parse(buf, **kwargs)
+            return LiteralString.parse(buf, params)
         except NotParseable:
             pass
         raise NotParseable(buf)
 
     @classmethod
-    def build(cls, value: Optional[Union[str, bytes]]) -> Union[Nil, 'String']:
+    def build(cls, value: Any) -> Union[Nil, 'String']:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
@@ -175,11 +162,12 @@ class String(Primitive, SupportsBytes):
         elif not value:
             return QuotedString(b'')
         try:
-            ascii_ = bytes(value, 'ascii')
+            ascii_ = bytes(value, 'ascii')  # type: ignore
         except TypeError:
-            ascii_ = value
+            ascii_ = value  # type: ignore
         except UnicodeEncodeError:
-            return LiteralString(bytes(value, 'utf-8'))
+            ascii_ = bytes(value, 'utf-8')  # type: ignore
+            return LiteralString(ascii_)
         if len(ascii_) < 32 and b'\n' not in ascii_:
             return QuotedString(ascii_)
         else:
@@ -206,13 +194,13 @@ class QuotedString(String):
     _quoted_pattern = re.compile(br'(\r|\n|\\.|\")')
     _quoted_specials_pattern = re.compile(br'[\"\\]')
 
-    def __init__(self, string, raw=None):
+    def __init__(self, string: bytes, raw: bytes = None) -> None:
         super().__init__()
-        self.value = string  # type: bytes
+        self.value = string
         self._raw = raw
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['QuotedString', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['QuotedString', bytes]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'"':
             raise NotParseable(buf)
@@ -257,23 +245,22 @@ class LiteralString(String):
 
     _literal_pattern = re.compile(br'{(\d+)}\r?\n$')
 
-    def __init__(self, string):
+    def __init__(self, string: bytes) -> None:
         super().__init__()
-        self.value = string  # type: bytes
+        self.value = string
         self._raw = None
 
     @classmethod
-    def parse(cls, buf: Buffer,
-              continuations: ListT[bytes] = None,
-              **kwargs) -> Tuple['LiteralString', bytes]:
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['LiteralString', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._literal_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
         literal_length = int(match.group(1))
-        if not continuations:
+        if not params.continuations:
             raise RequiresContinuation(b'Literal string', literal_length)
-        buf = continuations.pop(0)
+        buf = params.continuations.pop(0)
         literal = buf[0:literal_length]
         if len(literal) != literal_length:
             raise NotParseable(buf)
@@ -287,28 +274,29 @@ class LiteralString(String):
         return self._raw
 
 
-class List(Primitive):
+class ListP(Primitive[Sequence[ParseableListType]]):
     """Represents a list of :class:`Parseable` objects from an IMAP stream."""
 
     _end_pattern = re.compile(br' *\)')
 
-    def __init__(self, items, sort=False):
+    def __init__(self, items: Iterable[ParseableListType],
+                 sort: bool = False) -> None:
         super().__init__()
-        self.value = items  # type: Collection[Parseable]
         if sort:
             self.value = sorted(items)
+        else:
+            self.value = list(items)
 
     def __iter__(self):
         return iter(self.value)
 
     @classmethod
-    def parse(cls, buf: Buffer,
-              list_expected: ListT[Type[Parseable]] = None,
-              **kwargs) -> Tuple['List', bytes]:
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['ListP[Parseable]', bytes]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)
-        items = []
+        items: List[Parseable] = []
         buf = buf[start + 1:]
         while True:
             match = cls._end_pattern.match(buf)
@@ -316,20 +304,20 @@ class List(Primitive):
                 return cls(items), buf[match.end(0):]
             elif items and not cls._whitespace_length(buf):
                 raise NotParseable(buf)
-            item, buf = Parseable.parse(buf, expected=list_expected,
-                                        list_expected=list_expected, **kwargs)
+            params_copy = params.copy(expected=params.list_expected)
+            item, buf = Parseable.parse(buf, params_copy)
             items.append(item)
 
     def __bytes__(self):
         return b'(%b)' % b' '.join([bytes(item) for item in self.value])
 
     def __hash__(self):
-        return hash((List, self.value))
+        return hash((ListP, self.value))
 
     def __eq__(self, other):
-        if isinstance(other, List):
+        if isinstance(other, ListP):
             return self.__eq__(other.value)
-        elif isinstance(other, Sequence):
+        elif isinstance(other, SequenceABC):
             if len(self.value) != len(other):
                 return False
             for i, val in enumerate(self.value):

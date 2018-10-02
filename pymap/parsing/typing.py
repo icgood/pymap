@@ -19,16 +19,10 @@
 # THE SOFTWARE.
 #
 
-from .session import Session
-from .state import State
+from typing import SupportsBytes, Union, TypeVar
 
-__all__ = ['add_subparser', 'init']
+__all__ = ['MaybeBytes', 'ParseableType', 'ParseableListType']
 
-
-def add_subparser(subparsers):
-    subparsers.add_parser('demo')
-
-
-def init(*_):
-    State.init()
-    return Session.login
+MaybeBytes = Union[bytes, SupportsBytes]
+ParseableType = TypeVar('ParseableType')
+ParseableListType = TypeVar('ParseableListType', bound=MaybeBytes)

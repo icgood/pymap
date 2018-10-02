@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,17 +21,17 @@
 
 import re
 from functools import total_ordering
-from typing import Tuple, Optional, FrozenSet, Collection
+from typing import Tuple, Optional, Sequence, Iterable
 
-from . import Special, AString
-from .. import NotParseable, Buffer
-from ..primitives import Atom, List
+from . import AString
+from .. import NotParseable, Params, Special
+from ..primitives import Atom, ListP
 
 __all__ = ['FetchAttribute']
 
 
 @total_ordering
-class FetchAttribute(Special):
+class FetchAttribute(Special[bytes]):
     """Represents an attribute that should be fetched for each message in the
     sequence set of a FETCH command on an IMAP stream.
 
@@ -39,10 +39,12 @@ class FetchAttribute(Special):
 
     class Section:
 
-        def __init__(self, parts, msgtext=None, headers=None):
-            self.parts = parts  # type: Optional[FrozenSet[int]]]
-            self.msgtext = msgtext  # type: Optional[bytes]
-            self.headers = headers  # type: Optional[FrozenSet[bytes]]
+        def __init__(self, parts: Optional[Iterable[int]],
+                     msgtext: bytes = None,
+                     headers: Iterable[bytes] = None) -> None:
+            self.parts = parts
+            self.msgtext = msgtext
+            self.headers = headers
 
         def __hash__(self):
             return hash((self.parts, self.msgtext, self.headers))
@@ -55,13 +57,15 @@ class FetchAttribute(Special):
     _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?',
                                    re.I)
 
-    def __init__(self, attribute, section=None, partial=None):
+    def __init__(self, attribute: bytes,
+                 section: Section = None,
+                 partial: Sequence[int] = None) -> None:
         super().__init__()
-        self.attribute = attribute.upper()  # type: bytes
-        self.section = section  # type: Optional[FetchAttribute.Section]
-        self.partial = partial  # type: Optional[Collection[int]]
-        self._raw = None
-        self._for_response = None
+        self.value = attribute.upper()
+        self.section = section
+        self.partial = partial
+        self._raw: Optional[bytes] = None
+        self._for_response: Optional['FetchAttribute'] = None
 
     @property
     def for_response(self) -> 'FetchAttribute':
@@ -70,14 +74,14 @@ class FetchAttribute(Special):
                 self._for_response = self
             else:
                 self._for_response = FetchAttribute(
-                    self.attribute, self.section, self.partial[:1])
+                    self.value, self.section, self.partial[:1])
         return self._for_response
 
     @property
     def set_seen(self) -> bool:
-        if self.attribute == b'BODY' and self.section:
+        if self.value == b'BODY' and self.section:
             return True
-        elif self.attribute in (b'RFC822', b'RFC822.TEXT'):
+        elif self.value in (b'RFC822', b'RFC822.TEXT'):
             return True
         return False
 
@@ -85,10 +89,10 @@ class FetchAttribute(Special):
     def raw(self) -> bytes:
         if self._raw is not None:
             return self._raw
-        if self.attribute == b'BODY.PEEK':
+        if self.value == b'BODY.PEEK':
             parts = [b'BODY']
         else:
-            parts = [self.attribute]
+            parts = [self.value]
         if self.section:
             parts.append(b'[')
             if self.section.parts:
@@ -101,7 +105,7 @@ class FetchAttribute(Special):
                 parts.append(self.section.msgtext)
             if self.section.headers:
                 parts.append(b' ')
-                parts.append(bytes(List(self.section.headers)))
+                parts.append(bytes(ListP(self.section.headers)))
             parts.append(b']')
         if self.partial:
             partial = b'.'.join([b'%i' % p for p in self.partial])
@@ -110,7 +114,7 @@ class FetchAttribute(Special):
         return raw
 
     def __hash__(self):
-        return hash((self.attribute, self.section, self.partial))
+        return hash((self.value, self.section, self.partial))
 
     def __eq__(self, other):
         return hash(self) == hash(other)
@@ -122,7 +126,7 @@ class FetchAttribute(Special):
         return bytes(self.for_response) < bytes(self.for_response)
 
     @classmethod
-    def _parse_section(cls, buf, **kwargs):
+    def _parse_section(cls, buf: bytes, params: Params):
         section_parts = None
         match = cls._sec_part_pattern.match(buf)
         if match:
@@ -134,25 +138,25 @@ class FetchAttribute(Special):
             elif match.group(3):
                 return cls.Section(section_parts, b'MIME'), buf
         try:
-            atom, after = Atom.parse(buf)
+            atom, after = Atom.parse(buf, params)
         except NotParseable:
             return cls.Section(section_parts), buf
         sec_msgtext = atom.value.upper()
         if sec_msgtext in (b'HEADER', b'TEXT'):
             return cls.Section(section_parts, sec_msgtext), after
         elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
-            kwargs_copy = kwargs.copy()
-            kwargs_copy['list_expected'] = [AString]
-            header_list, buf = List.parse(after, **kwargs_copy)
+            params = params.copy(list_expected=[AString])
+            header_list_p, buf = ListP.parse(after, params)
             header_list = frozenset(
-                [hdr.value.upper() for hdr in header_list.value])
+                [bytes(hdr).upper() for hdr in header_list_p.value])
             if not header_list:
                 raise NotParseable(after)
             return cls.Section(section_parts, sec_msgtext, header_list), buf
         raise NotParseable(buf)
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['FetchAttribute', bytes]:
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['FetchAttribute', bytes]:
         match = cls._attrname_pattern.match(buf)
         if not match:
             raise NotParseable(buf)
@@ -171,7 +175,7 @@ class FetchAttribute(Special):
                 return cls(attr), buf
             else:
                 raise NotParseable(buf)
-        section, buf = cls._parse_section(buf[match.end(0):], **kwargs)
+        section, buf = cls._parse_section(buf[match.end(0):], params)
         match = cls._section_end_pattern.match(buf)
         if not match:
             raise NotParseable(buf)

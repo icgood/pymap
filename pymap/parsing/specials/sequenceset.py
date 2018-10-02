@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,27 +20,30 @@
 #
 
 import heapq
-import re
-
 import math
+import re
 from itertools import chain
-from typing import Iterable, Tuple, List
+from typing import TYPE_CHECKING, Iterable, Tuple, Union, Sequence
 
-from . import Special
-from .. import NotParseable, Space, Buffer
+from .. import NotParseable, Space, Params, Special
 
 __all__ = ['SequenceSet']
 
+if TYPE_CHECKING:
+    _SeqIdx = Union[None, str, int]
+    _SeqElem = Union[_SeqIdx, Tuple[_SeqIdx, _SeqIdx]]
 
-class SequenceSet(Special):
+
+class SequenceSet(Special[Sequence['_SeqElem']]):
     """Represents a sequence set from an IMAP stream."""
 
     _num_pattern = re.compile(br'\d+')
 
-    def __init__(self, sequences, uid=False):
+    def __init__(self, sequences: Sequence['_SeqElem'],
+                 uid: bool = False) -> None:
         super().__init__()
-        self.sequences = sequences  # type: List
-        self.uid = uid  # type: bool
+        self.value = sequences
+        self.uid = uid
         self._flattened_cache = None
         self._raw = None
 
@@ -48,14 +51,15 @@ class SequenceSet(Special):
     def _flattened(self):
         if self._flattened_cache is None:
             results = []
-            for group in self.sequences:
+            for group in self.value:
                 if isinstance(group, tuple):
-                    if group[0] == '*':
-                        group = math.inf, group[1]
-                    if group[1] == '*':
-                        group = group[0], math.inf
-                    high = max(*group)
-                    low = min(*group)
+                    group_left, group_right = group
+                    if group_left == '*':
+                        group_left = math.inf
+                    if group_right == '*':
+                        group_right = math.inf
+                    high = max(group_left, group_right)
+                    low = min(group_left, group_right)
                     heapq.heappush(results, (low, high))
                 elif group == '*':
                     heapq.heappush(results, (math.inf, math.inf))
@@ -114,7 +118,7 @@ class SequenceSet(Special):
         if self._raw is not None:
             return self._raw
         parts = []
-        for group in self.sequences:
+        for group in self.value:
             if isinstance(group, tuple):
                 left = bytes(str(group[0]), 'ascii')
                 right = bytes(str(group[1]), 'ascii')
@@ -125,18 +129,17 @@ class SequenceSet(Special):
         return raw
 
     @classmethod
-    def _parse_part(cls, buf):
-        item1 = None
+    def _parse_part(cls, buf: bytes) -> Tuple['_SeqElem', bytes]:
         if buf and buf[0] == 0x2a:
-            item1 = '*'
+            item1: _SeqIdx = '*'
             buf = buf[1:]
         else:
             match = cls._num_pattern.match(buf)
             if match:
                 buf = buf[match.end(0):]
                 item1 = int(match.group(0))
-        if item1 is None:
-            raise NotParseable(buf)
+            else:
+                raise NotParseable(buf)
         if buf and buf[0] == 0x3a:
             buf = buf[1:]
             if buf and buf[0] == 0x2a:
@@ -149,10 +152,9 @@ class SequenceSet(Special):
         return item1, buf
 
     @classmethod
-    def parse(cls, buf: Buffer, uid: bool = False, **_) \
-            -> Tuple['SequenceSet', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['SequenceSet', bytes]:
         try:
-            _, buf = Space.parse(buf)
+            _, buf = Space.parse(buf, params)
         except NotParseable:
             pass
         sequences = []
@@ -164,4 +166,4 @@ class SequenceSet(Special):
             buf = buf[1:]
         if not sequences:
             raise NotParseable(buf)
-        return cls(sequences, uid=uid), buf
+        return cls(sequences, uid=params.uid), buf

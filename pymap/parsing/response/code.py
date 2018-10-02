@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,11 +19,11 @@
 # THE SOFTWARE.
 #
 
-from typing import List as ListT, Iterable
+from typing import Iterable, Optional, Sequence
 
 from . import ResponseCode, Response
-from ..primitives import List
-from .. import MaybeBytes
+from ..primitives import ListP
+from ..typing import MaybeBytes
 
 __all__ = ['Alert', 'BadCharset', 'Capability', 'Parse',
            'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
@@ -50,18 +50,17 @@ class BadCharset(ResponseCode):
 class Capability(ResponseCode):
     """Lists the capabilities the server advertises to the client."""
 
-    def __init__(self, server_capabilities: Iterable[MaybeBytes]):
+    def __init__(self, server_capabilities: Iterable[MaybeBytes]) -> None:
         super().__init__()
-        self.capabilities = list(
-            server_capabilities)  # type: ListT[MaybeBytes]
-        self._raw = None
+        self.capabilities = list(server_capabilities)
+        self._raw: Optional[bytes] = None
 
     @property
     def string(self) -> bytes:
         if self._raw is not None:
             return self._raw
         self._raw = raw = b' '.join(
-            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)
+            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)  # type: ignore
         return raw
 
     def add(self, capability: MaybeBytes):
@@ -93,10 +92,10 @@ class Parse(ResponseCode):
 
 class PermanentFlags(ResponseCode):
 
-    def __init__(self, flags: Iterable[MaybeBytes]):
+    def __init__(self, flags: Iterable[MaybeBytes]) -> None:
         super().__init__()
-        self.flags = sorted(flags)  # type: ListT[MaybeBytes]
-        self._raw = b'[PERMANENTFLAGS %b]' % List(self.flags)
+        self.flags: Sequence[MaybeBytes] = sorted(flags)
+        self._raw = b'[PERMANENTFLAGS %b]' % ListP(self.flags)  # type: ignore
 
     def __bytes__(self):
         return self._raw
@@ -129,9 +128,9 @@ class TryCreate(ResponseCode):
 class UidNext(ResponseCode):
     """Indicates the next unique identifier value of the mailbox."""
 
-    def __init__(self, next_: int):
+    def __init__(self, next_: int) -> None:
         super().__init__()
-        self.next = next_  # type: int
+        self.next = next_
         self._raw = b'[UIDNEXT %i]' % next_
 
     def __bytes__(self):
@@ -141,9 +140,9 @@ class UidNext(ResponseCode):
 class UidValidity(ResponseCode):
     """Indicates the mailbox unique identifier validity value."""
 
-    def __init__(self, validity: int):
+    def __init__(self, validity: int) -> None:
         super().__init__()
-        self.validity = validity  # type: int
+        self.validity = validity
         self._raw = b'[UIDVALIDITY %i]' % validity
 
     def __bytes__(self):
@@ -152,13 +151,13 @@ class UidValidity(ResponseCode):
 
 class Unseen(ResponseCode):
     """Indicates the unique identifier of the first message without the
-    ``\Seen`` flag.
+    ``\\Seen`` flag.
 
     """
 
-    def __init__(self, next_: int):
+    def __init__(self, next_: int) -> None:
         super().__init__()
-        self.next = next_  # type: int
+        self.next = next_
         self._raw = b'[UNSEEN %i]' % next_
 
     def __bytes__(self):

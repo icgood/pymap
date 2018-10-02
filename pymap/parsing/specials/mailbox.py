@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,20 +21,20 @@
 
 from typing import Tuple
 
-from . import Special, AString
-from .. import Buffer
+from . import AString
+from .. import Params, Special
 
 __all__ = ['Mailbox']
 
 
-class Mailbox(Special):
+class Mailbox(Special[str]):
     """Represents a mailbox data object from an IMAP stream."""
 
-    def __init__(self, mailbox):
+    def __init__(self, mailbox: str) -> None:
         super().__init__()
         if mailbox.upper() == 'INBOX':
             mailbox = 'INBOX'
-        self.value = mailbox  # type: str
+        self.value = mailbox
         self._raw = None
 
     @classmethod
@@ -127,8 +127,8 @@ class Mailbox(Special):
         return ''.join(parts)
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['Mailbox', bytes]:
-        atom, buf = AString.parse(buf, **kwargs)
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Mailbox', bytes]:
+        atom, buf = AString.parse(buf, params)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':
             return cls('INBOX'), buf

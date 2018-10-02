@@ -28,6 +28,8 @@ from weakref import WeakSet
 
 from pkg_resources import resource_listdir, resource_stream
 
+from pymap.mailbox import MailboxSession
+from pymap.message import BaseMessage
 from .message import Message
 
 __all__ = ['State']
@@ -37,29 +39,25 @@ class _Mailbox:
     sep = b'.'
 
     def __init__(self):
-        self.next_uid = 100  # type: int
-        self.uid_validity = random.randint(1, 32768)  # type: int
-        self.messages = []  # type: List[Message]
-        self.recent = set()  # type: Set[int]
-        self.updates = {}
+        self.next_uid: int = 100
+        self.uid_validity: int = random.randint(1, 32768)
+        self.messages: List[BaseMessage] = []
+        self.recent: Set[int] = set()
+        self.sessions: Set[MailboxSession] = WeakSet()
+        self.subscribed = False
 
     def claim_uid(self):
         uid = self.next_uid
         self.next_uid += 1
         return uid
 
-    def add_message(self, message: Message):
-        self.messages.append(message)
-
 
 class State:
-    mailboxes = defaultdict(lambda: _Mailbox())  # type: Dict[str, _Mailbox]
-    sessions = WeakSet()  # type: Set['Session']
+    mailboxes: Dict[str, _Mailbox] = defaultdict(lambda: _Mailbox())
 
     @classmethod
     def init(cls):
         cls.mailboxes.clear()
-        cls.sessions.clear()
         resource = 'pymap.demo'
         for mailbox_name in resource_listdir(resource, 'data'):
             mailbox_path = os.path.join('data', mailbox_name)
@@ -78,5 +76,5 @@ class State:
                     mailbox.recent.add(message_uid)
                 message = Message.parse(message_uid, message_data,
                                         message_flags)
-                mailbox.add_message(message)
+                mailbox.messages.append(message)
         cls.mailboxes['Trash'] = _Mailbox()
