@@ -30,10 +30,9 @@
 import enum
 from typing import AbstractSet, FrozenSet, Dict
 
-from .parsing.specials.flag import Flag
+from .parsing.specials.flag import Flag, Recent
 
-__all__ = ['FlagOp', 'Flag', 'CustomFlag', 'SessionFlags', 'Seen', 'Recent',
-           'Deleted', 'Flagged', 'Answered', 'Draft']
+__all__ = ['FlagOp', 'SessionFlags']
 
 
 class FlagOp(enum.Enum):
@@ -47,18 +46,6 @@ class FlagOp(enum.Enum):
 
     #: The flag set should be removed from the existing set.
     DELETE = enum.auto()
-
-
-class CustomFlag(Flag):
-    """Base class for defining custom flag objects. All custom flags, whether
-    they are instances or sub-classes, should use this class.
-
-    :param value: The bytes of the flag's value.
-
-    """
-
-    def __init__(self, value: bytes) -> None:
-        super().__init__(value)
 
 
 class SessionFlags:
@@ -121,11 +108,3 @@ class SessionFlags:
             if Recent in flags:
                 count += 1
         return count
-
-
-Seen = Flag(br'\Seen')
-Recent = Flag(br'\Recent')
-Deleted = Flag(br'\Deleted')
-Flagged = Flag(br'\Flagged')
-Answered = Flag(br'\Answered')
-Draft = Flag(br'\Draft')

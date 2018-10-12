@@ -1,11 +1,11 @@
 
 import unittest
 
-from pymap.flag import Flag, FlagOp
+from pymap.flags import FlagOp
 from pymap.parsing import NotParseable, Params
 from pymap.parsing.command.select import CopyCommand, FetchCommand, \
     StoreCommand, UidCommand, SearchCommand
-from pymap.parsing.specials import FetchAttribute, SearchKey
+from pymap.parsing.specials import FetchAttribute, SearchKey, Flag
 
 
 class TestCopyCommand(unittest.TestCase):

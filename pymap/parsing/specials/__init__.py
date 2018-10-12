@@ -19,15 +19,16 @@
 # THE SOFTWARE.
 #
 
-__all__ = ['AString', 'DateTime', 'FetchAttribute', 'Flag', 'Mailbox',
-           'SearchKey', 'SequenceSet', 'StatusAttribute', 'Tag']
+__all__ = ['AString', 'DateTime', 'FetchAttribute', 'Flag', 'SystemFlag',
+           'Keyword', 'Mailbox', 'SearchKey', 'SequenceSet',
+           'StatusAttribute', 'Tag']
 
-from .astring import AString  # NOQA
-from .datetime_ import DateTime  # NOQA
-from .fetchattr import FetchAttribute  # NOQA
-from .flag import Flag  # NOQA
-from .mailbox import Mailbox  # NOQA
-from .searchkey import SearchKey  # NOQA
-from .sequenceset import SequenceSet  # NOQA
-from .statusattr import StatusAttribute  # NOQA
-from .tag import Tag  # NOQA
+from .astring import AString
+from .datetime_ import DateTime
+from .fetchattr import FetchAttribute
+from .flag import Flag, SystemFlag, Keyword
+from .mailbox import Mailbox
+from .searchkey import SearchKey
+from .sequenceset import SequenceSet
+from .statusattr import StatusAttribute
+from .tag import Tag

@@ -27,9 +27,9 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
 from .parsing.response.code import TryCreate, ReadOnly
 
-__all__ = ['ResponseError', 'CloseConnection', 'MailboxNotFound',
-           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
-           'AppendFailure']
+__all__ = ['ResponseError', 'CloseConnection', 'MailboxError',
+           'SearchNotAllowed', 'MailboxNotFound', 'MailboxConflict',
+           'MailboxHasChildren', 'MailboxReadOnly', 'AppendFailure']
 
 
 class ResponseError(Exception):
@@ -57,6 +57,25 @@ class CloseConnection(ResponseError):
         response = ResponseOk(tag, b'Logout successful.')
         response.add_untagged(ResponseBye(b'Logging out.'))
         return response
+
+
+class SearchNotAllowed(ResponseError):
+    """A ``SEARCH`` command contained a search key that could not be
+    executed by the mailbox.
+
+    :param key: The search key that failed.
+
+    """
+
+    def __init__(self, key: bytes = None) -> None:
+        super().__init__()
+        if key is None:
+            self.msg = b'SEARCH not allowed.'
+        else:
+            self.msg = b'SEARCH %b not allowed.' % key
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, self.msg)
 
 
 class MailboxError(ResponseError):

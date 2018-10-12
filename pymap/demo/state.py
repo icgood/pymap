@@ -23,6 +23,7 @@ import os.path
 import random
 from collections import defaultdict
 from contextlib import closing
+from datetime import datetime
 from typing import List, Dict, Set
 from weakref import WeakSet
 
@@ -69,12 +70,15 @@ class State:
                 message_uid = mailbox.claim_uid()
                 with closing(message_stream):
                     flags_line = message_stream.readline()
+                    timestamp = float(message_stream.readline())
                     message_flags = frozenset(flags_line.split())
+                    message_dt = datetime.utcfromtimestamp(timestamp)
                     message_data = message_stream.read()
                 if br'\Recent' in message_flags:
                     message_flags = message_flags - {br'\Recent'}
                     mailbox.recent.add(message_uid)
                 message = Message.parse(message_uid, message_data,
-                                        message_flags)
+                                        message_flags,
+                                        internal_date=message_dt)
                 mailbox.messages.append(message)
         cls.mailboxes['Trash'] = _Mailbox()

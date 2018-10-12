@@ -21,10 +21,10 @@
 
 import re
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Tuple, Union, Mapping, Sequence
+from typing import TYPE_CHECKING, cast, Tuple, Union, Sequence
 
-from pymap.parsing.specials import Flag
 from .astring import AString
+from .flag import Keyword
 from .sequenceset import SequenceSet
 from .. import Parseable, NotParseable, UnexpectedType, Space, Params, Special
 from ..primitives import Atom, Number, QuotedString, ListP
@@ -32,19 +32,19 @@ from ..primitives import Atom, Number, QuotedString, ListP
 __all__ = ['SearchKey']
 
 if TYPE_CHECKING:
-    _FilterType = Union[Tuple['SearchKey', 'SearchKey'],
-                        Mapping[str, str], Sequence[Parseable],
-                        SequenceSet, Flag, datetime, int, str]
+    _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
+                        Sequence['SearchKey'], SequenceSet, Keyword,
+                        datetime, int, str]
 
 
-class SearchKey(Special[Optional[bytes]]):
+class SearchKey(Special[bytes]):
     """Represents a search key given to the SEARCH command on an IMAP stream.
 
     """
 
     _not_pattern = re.compile(br'NOT +', re.I)
 
-    def __init__(self, key: Optional[bytes],
+    def __init__(self, key: bytes,
                  filter_: '_FilterType' = None,
                  inverse: bool = False) -> None:
         super().__init__()
@@ -74,8 +74,9 @@ class SearchKey(Special[Optional[bytes]]):
     def _parse_date_filter(cls, buf: bytes, params: Params):
         params_copy = params.copy(expected=[Atom, QuotedString])
         atom, after = Parseable.parse(buf, params_copy)
+        date_str = str(atom.value, 'ascii', 'ignore')
         try:
-            date = datetime.strptime(str(atom.value, 'ascii'), '%d-%b-%Y')
+            date = datetime.strptime(date_str, '%d-%b-%Y')
         except ValueError:
             raise NotParseable(buf)
         return date, after
@@ -96,16 +97,17 @@ class SearchKey(Special[Optional[bytes]]):
         except NotParseable:
             pass
         else:
-            return cls(None, seq_set, inverse), buf
+            return cls(b'SEQSET', seq_set, inverse), buf
         try:
             params_copy = params.copy(list_expected=[SearchKey])
-            key_list, buf = ListP.parse(buf, params_copy)
+            key_list_p, buf = ListP.parse(buf, params_copy)
         except UnexpectedType:
             raise
         except NotParseable:
             pass
         else:
-            return cls(None, key_list.value, inverse), buf
+            key_list = cast(Sequence[SearchKey], key_list_p.value)
+            return cls(b'KEYSET', key_list, inverse), buf
         atom, after = Atom.parse(buf, params)
         key = atom.value.upper()
         if key in (b'ALL', b'ANSWERED', b'DELETED', b'FLAGGED', b'NEW', b'OLD',
@@ -124,8 +126,8 @@ class SearchKey(Special[Optional[bytes]]):
             return cls(key, filter_, inverse), buf
         elif key in (b'KEYWORD', b'UNKEYWORD'):
             _, buf = Space.parse(after, params)
-            atom, buf = Atom.parse(buf, params)
-            return cls(key, Flag(atom.value), inverse), buf
+            keyword, buf = Keyword.parse(buf, params)
+            return cls(key, keyword, inverse), buf
         elif key in (b'LARGER', b'SMALLER'):
             _, buf = Space.parse(after, params)
             num, buf = Number.parse(buf, params)
@@ -133,13 +135,13 @@ class SearchKey(Special[Optional[bytes]]):
         elif key == b'UID':
             _, buf = Space.parse(after, params)
             seq_set, buf = SequenceSet.parse(buf, params.copy(uid=True))
-            return cls(None, seq_set, inverse), buf
+            return cls(b'SEQSET', seq_set, inverse), buf
         elif key == b'HEADER':
             _, buf = Space.parse(after, params)
             header_field, buf = cls._parse_astring_filter(buf, params)
             _, buf = Space.parse(buf, params)
             header_value, buf = cls._parse_astring_filter(buf, params)
-            return cls(key, {header_field: header_value}, inverse), buf
+            return cls(key, (header_field, header_value), inverse), buf
         elif key == b'OR':
             _, buf = Space.parse(after, params)
             or1, buf = SearchKey.parse(buf, params)

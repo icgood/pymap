@@ -161,13 +161,19 @@ class String(Primitive[bytes]):
             return Nil()
         elif not value:
             return QuotedString(b'')
-        try:
-            ascii_ = bytes(value, 'ascii')  # type: ignore
-        except TypeError:
-            ascii_ = value  # type: ignore
-        except UnicodeEncodeError:
-            ascii_ = bytes(value, 'utf-8')  # type: ignore
-            return LiteralString(ascii_)
+        elif isinstance(value, bytes):
+            ascii_ = value
+        elif hasattr(value, '__bytes__'):
+            ascii_ = bytes(value)
+        elif isinstance(value, str) or hasattr(value, '__str__'):
+            value = str(value)
+            try:
+                ascii_ = bytes(value, 'ascii')
+            except UnicodeEncodeError:
+                ascii_ = bytes(value, 'utf-8')
+                return LiteralString(ascii_)
+        else:
+            raise TypeError(value)
         if len(ascii_) < 32 and b'\n' not in ascii_:
             return QuotedString(ascii_)
         else:

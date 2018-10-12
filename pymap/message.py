@@ -22,10 +22,11 @@
 import io
 from datetime import datetime
 from email.generator import BytesGenerator
+from email.headerregistry import BaseHeader
 from email.message import EmailMessage
 from email.policy import SMTP
 from typing import TYPE_CHECKING, cast, Tuple, Optional, Iterable, Set, \
-    Dict, FrozenSet
+    Dict, FrozenSet, Sequence, Union
 
 from .interfaces.message import Message, LoadedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
@@ -129,6 +130,16 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         else:
             return msg.contents
 
+    def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
+        """Get the values of a header from the message.
+
+        :param name: The name of the header.
+
+        """
+        name_str = str(name, 'ascii', 'ignore')
+        values = self.contents.get_all(name_str, [])
+        return cast(Sequence[Union[str, BaseHeader]], values)
+
     def get_headers(self, section: Optional[Iterable[int]] = None,
                     subset: Iterable[bytes] = None,
                     inverse: bool = False) \
@@ -162,7 +173,10 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
                         ret[key] = value
             else:
                 ret[key] = value
-        return bytes(ret)
+        if len(ret) > 0:
+            return bytes(ret)
+        else:
+            return None
 
     def get_body(self, section: Optional[Iterable[int]] = None) \
             -> Optional[bytes]:

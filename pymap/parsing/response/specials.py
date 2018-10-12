@@ -109,7 +109,10 @@ class SearchResponse(Response):
 
     def __init__(self, seqs: Iterable[int]) -> None:
         seqs_raw = [b'%i' % seq for seq in seqs]
-        text = b' '.join([b'SEARCH'] + seqs_raw)
+        if seqs_raw:
+            text = b' '.join([b'SEARCH'] + seqs_raw)
+        else:
+            text = b'SEARCH'
         super().__init__(b'*', text)
 
 

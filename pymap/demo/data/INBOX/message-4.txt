@@ -1,8 +1,10 @@
 \Recent
+1262304000
 From: friend@example.com
 To: me@example.com
 Subject: Hello, World!
 Content-Type: text/plain
+Date: 01-Jan-2010 01:01:00 +0000
 
                                _
                             ==(W{==========-      /===-

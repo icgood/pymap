@@ -1,4 +1,5 @@
 \Seen
+0.0
 From: me@example.com
 To: friend@example.com
 Subject: Re: Random question
