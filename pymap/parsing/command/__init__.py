@@ -50,10 +50,6 @@ class Command(Parseable[Any]):
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise RuntimeError
 
-    @property
-    def with_uid(self) -> bool:
-        return False
-
     def __bytes__(self):
         return b' '.join((self.tag, self.command))
 

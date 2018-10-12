@@ -25,11 +25,12 @@ from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet, \
     Iterable, Collection
 
 from pymap.exceptions import MailboxNotFound, MailboxConflict
-from pymap.flag import FlagOp, Deleted
+from pymap.flags import FlagOp
 from pymap.interfaces.session import SessionInterface
 from pymap.mailbox import MailboxSession
-from pymap.message import BaseLoadedMessage
 from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute, Flag
+from pymap.parsing.specials.flag import Deleted
+from pymap.search import SearchParams, SearchCriteriaSet
 from .mailbox import Mailbox
 from .message import Message
 from .state import State
@@ -209,8 +210,17 @@ class Session(SessionInterface):
 
     async def search_mailbox(self, selected: MailboxSession,
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[int], MailboxSession]:
-        raise NotImplementedError
+            -> Tuple[Iterable[Tuple[int, Message]], 'MailboxSession']:
+        mbx, selected = self._check_selected(selected)
+        matching: List[Tuple[int, Message]] = []
+        params = SearchParams(selected, max_seq=mbx.highest_seq,
+                              max_uid=mbx.highest_uid)
+        search = SearchCriteriaSet(keys, params)
+        for msg_idx, msg in enumerate(mbx.messages):
+            msg_seq = msg_idx + 1
+            if search.matches(msg_seq, msg):
+                matching.append((msg_seq, msg))
+        return matching, selected
 
     async def expunge_mailbox(self, selected: MailboxSession) \
             -> MailboxSession:
@@ -237,8 +247,8 @@ class Session(SessionInterface):
         results = []
         for msg_seq, msg in self._iter_messages(mbx, sequences):
             dest_uid = self._increment_next_uid(mailbox)
-            dest_msg = BaseLoadedMessage(dest_uid, msg.contents,
-                                         internal_date=msg.internal_date)
+            dest_msg = Message(dest_uid, msg.contents,
+                               internal_date=msg.internal_date)
             dest_flags = msg.get_flags(selected)
             dest.update_flags(selected, dest_msg, dest_flags, FlagOp.REPLACE)
             State.mailboxes[mailbox].recent.add(dest_uid)

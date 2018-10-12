@@ -22,14 +22,15 @@
 from typing import TYPE_CHECKING, Union, Dict, Optional, Iterable, \
     AbstractSet, FrozenSet
 
-from pymap.flag import SessionFlags, Recent, FlagOp
-from pymap.interfaces.mailbox import MailboxInterface
-from pymap.interfaces.message import Message
-from pymap.parsing.primitives import ListP
-from pymap.parsing.response import Response
-from pymap.parsing.response.specials import ExistsResponse, RecentResponse, \
+from .flags import SessionFlags, FlagOp
+from .interfaces.mailbox import MailboxInterface
+from .interfaces.message import Message
+from .parsing.primitives import ListP
+from .parsing.response import Response
+from .parsing.response.specials import ExistsResponse, RecentResponse, \
     FetchResponse, ExpungeResponse
-from pymap.parsing.specials import Flag, FetchAttribute
+from .parsing.specials import Flag, FetchAttribute
+from .parsing.specials.flag import Recent
 
 __all__ = ['MailboxSession', 'BaseMailbox']
 

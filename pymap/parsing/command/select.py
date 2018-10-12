@@ -27,7 +27,8 @@ from .. import NotParseable, Space, EndLine, Params
 from ..primitives import Atom, ListP
 from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
                         SearchKey)
-from ...flag import FlagOp, Recent
+from ..specials.flag import Recent
+from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
            'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand']

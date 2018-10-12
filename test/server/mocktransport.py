@@ -55,8 +55,8 @@ class MockTransport:
     @classmethod
     def _caller(cls, frame):
         frame = frame.f_back if frame else None
-        file, line = inspect.getframeinfo(frame) if frame else '?', '?'
-        return '{0}:{1!s}'.format(file, line)
+        fields = inspect.getframeinfo(frame) if frame else ('?', '?')
+        return '{0}:{1!s}'.format(fields[0], fields[1])
 
     def push_readline(self, data: bytes, wait=None, set=None) -> None:
         where = self._caller(inspect.currentframe())
@@ -120,9 +120,9 @@ class MockTransport:
         assert type_ == got, '\nExpected: ' + type_.value + \
                              '\nGot:      ' + got.value + \
                              '\nWhere:    ' + where
-        return data, wait, set
+        return where, data, wait, set
 
-    def _match_write(self, expected, data):
+    def _match_write(self, where, expected, data):
         re_parts = []
         for part in expected:
             if isinstance(part, bytes):
@@ -141,7 +141,8 @@ class MockTransport:
         match = re.search(full_regex, data)
         assert match, '\nExpected: ' + repr(expected) + \
                       '\nGot:      ' + repr((data, )) + \
-                      '\nRegex:    ' + str(full_regex, 'ascii')
+                      '\nRegex:    ' + str(full_regex, 'ascii') + \
+                      '\nWhere:    ' + where
         self.matches.update(match.groupdict())
 
     def get_extra_info(self, name: str):
@@ -149,7 +150,7 @@ class MockTransport:
             return self.socket
 
     async def readline(self) -> bytes:
-        data, wait, set = self._pop_expected(_Type.READLINE)
+        _, data, wait, set = self._pop_expected(_Type.READLINE)
         if set:
             set.set()
         if wait:
@@ -157,8 +158,10 @@ class MockTransport:
         return data
 
     async def readexactly(self, size: int) -> bytes:
-        data, wait, set = self._pop_expected(_Type.READEXACTLY)
-        assert size == len(data)
+        where, data, wait, set = self._pop_expected(_Type.READEXACTLY)
+        assert size == len(data), '\nExpected: ' + repr(len(data)) + \
+                                  '\nGot:      ' + repr(size) + \
+                                  '\nWhere:    ' + where
         if set:
             set.set()
         if wait:
@@ -166,11 +169,11 @@ class MockTransport:
         return data
 
     def write(self, data: bytes) -> None:
-        expected, _, _ = self._pop_expected(_Type.WRITE)
-        self._match_write(expected, data)
+        where, expected, _, _ = self._pop_expected(_Type.WRITE)
+        self._match_write(where, expected, data)
 
     async def drain(self) -> None:
-        _, wait, set = self._pop_expected(_Type.DRAIN)
+        _, _, wait, set = self._pop_expected(_Type.DRAIN)
         if set:
             set.set()
         if wait:
@@ -180,7 +183,7 @@ class MockTransport:
         return False
 
     def close(self) -> None:
-        _, _, set = self._pop_expected(_Type.WRITE_CLOSE)
-        assert 0 == len(self.queue)
+        _, _, _, set = self._pop_expected(_Type.WRITE_CLOSE)
+        assert 0 == len(self.queue), 'Items left on queue: ' + repr(self.queue)
         if set:
             set.set()

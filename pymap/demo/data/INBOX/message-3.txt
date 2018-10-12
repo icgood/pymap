@@ -1,8 +1,11 @@
 \Seen \Flagged
+946684800.0
 From: corp@example.com
 To: me@example.com
 Subject: Important notice regarding your account
+Priority: high
 Content-Type: text/plain
+Date: 01-Jan-2000 01:01:00 +0000
 
 This is some important stuff!
 

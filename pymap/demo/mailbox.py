@@ -22,9 +22,10 @@
 from copy import copy
 from typing import TYPE_CHECKING, List, Optional, Dict, Tuple
 
-from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged, \
-    SessionFlags
+from pymap.flags import SessionFlags
 from pymap.mailbox import MailboxSession, BaseMailbox
+from pymap.parsing.specials.flag import Seen, Recent, Answered, Deleted, \
+    Draft, Flagged
 from .message import Message
 from .state import State
 
@@ -55,7 +56,8 @@ class Mailbox(BaseMailbox):
         self.session = session
         self.messages: List[Message] = []
         self.uid_to_idx: Dict[int, int] = {}
-        self.highest_uid: int = -1
+        self.highest_seq: int = 0
+        self.highest_uid: int = 0
 
     @classmethod
     def load(cls, name: str, session: 'Session', readonly: bool) \
@@ -80,9 +82,11 @@ class Mailbox(BaseMailbox):
         self.messages = copy(State.mailboxes[self.name].messages)
         self.uid_to_idx = {msg.uid: i for i, msg in enumerate(self.messages)}
         try:
+            self.highest_seq = len(self.messages)
             self.highest_uid = max(self.uid_to_idx.keys())
         except ValueError:
-            self.highest_uid = None
+            self.highest_seq = 0
+            self.highest_uid = 0
 
     def _count_flag(self, flag):
         count = 0

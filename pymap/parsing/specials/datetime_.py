@@ -34,7 +34,7 @@ class DateTime(Special[datetime]):
     def __init__(self, when: datetime, raw: bytes = None) -> None:
         super().__init__()
         self.value = when
-        self._raw = raw or bytes(when.strftime('%d-%b-%Y %X %z'), 'ascii')
+        self._raw = raw
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['DateTime', bytes]:
@@ -47,4 +47,10 @@ class DateTime(Special[datetime]):
         return cls(when, string.value), after
 
     def __bytes__(self):
+        if self._raw is None:
+            if self.value.tzinfo is None:
+                raw_str = self.value.strftime('%d-%b-%Y %X')
+            else:
+                raw_str = self.value.strftime('%d-%b-%Y %X %z')
+            self._raw = bytes(raw_str, 'ascii')
         return b'"%b"' % self._raw

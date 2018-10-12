@@ -1,8 +1,10 @@
 \Seen \Answered
+631152000.0
 From: friend@example.com
 To: me@example.com
 Subject: Random question
 Content-Type: text/plain
+Date: 01-Jan-1990 01:01:00 +0000
 
 What is the average airspeed velocity of an unladen swallow?
 

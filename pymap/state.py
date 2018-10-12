@@ -278,10 +278,14 @@ class ConnectionState(object):
         return resp, updates
 
     async def do_search(self, cmd: 'SearchCommand'):
-        seqs, updates = await self.session.search_mailbox(
+        messages, updates = await self.session.search_mailbox(
             self.selected, cmd.keys)
         resp = ResponseOk(cmd.tag, b'SEARCH completed.')
-        resp.add_untagged(SearchResponse(seqs))
+        if cmd.uid:
+            msg_ids = [msg.uid for _, msg in messages]
+        else:
+            msg_ids = [msg_seq for msg_seq, _ in messages]
+        resp.add_untagged(SearchResponse(msg_ids))
         return resp, updates
 
     async def do_store(self, cmd: 'StoreCommand'):

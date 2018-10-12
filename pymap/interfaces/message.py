@@ -20,7 +20,9 @@
 #
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Iterable, Set, FrozenSet
+from email.headerregistry import BaseHeader
+from typing import TYPE_CHECKING, Optional, Iterable, Set, FrozenSet, \
+    Sequence, Union
 
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
@@ -84,6 +86,14 @@ class LoadedMessage(Message):
     def get_flags(self, session: Optional['MailboxSession']) \
             -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message."""
+        raise NotImplementedError
+
+    def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
+        """Get the values of a header from the message.
+
+        :param name: The name of the header.
+
+        """
         raise NotImplementedError
 
     def get_headers(self, section: Optional[Iterable[int]] = None,

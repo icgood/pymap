@@ -2,11 +2,10 @@
 import unittest
 from datetime import datetime, timezone
 
-from pymap.flag import Flag
 from pymap.parsing import NotParseable, Params
 from pymap.parsing.command.auth import CreateCommand, AppendCommand, \
     ListCommand, RenameCommand, StatusCommand
-from pymap.parsing.specials import StatusAttribute
+from pymap.parsing.specials import StatusAttribute, Flag
 
 
 class TestCommandMailboxArg(unittest.TestCase):

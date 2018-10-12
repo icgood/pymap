@@ -22,7 +22,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Tuple, Optional, FrozenSet, Dict, Iterable
 
-from ..flag import FlagOp
+from ..flags import FlagOp
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 
 __all__ = ['SessionInterface']
@@ -205,7 +205,7 @@ class SessionInterface:
                              sequences: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
             -> Tuple[Iterable[Tuple[int, 'LoadedMessage']], 'MailboxSession']:
-        """Get a list of :class:`MessageStructure` objects corresponding to
+        """Get a list of :class:`LoadedMessage` objects corresponding to
         given sequence set.
 
         :param selected: The name of the selected mailbox.
@@ -217,9 +217,9 @@ class SessionInterface:
 
     async def search_mailbox(self, selected: 'MailboxSession',
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[int], 'MailboxSession']:
-        """Get the :class:`MessageInterface` objects in the current mailbox
-        that meet the given search criteria.
+            -> Tuple[Iterable[Tuple[int, 'Message']], 'MailboxSession']:
+        """Get the messages in the current mailbox that meet all of the
+        given search criteria.
 
         .. seealso:: `RFC 3501 7.2.5
         <https://tools.ietf.org/html/rfc3501#section-7.2.5>`_

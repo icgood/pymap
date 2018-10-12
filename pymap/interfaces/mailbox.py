@@ -22,7 +22,7 @@
 from typing import TYPE_CHECKING, Optional, AbstractSet, FrozenSet
 
 from .message import Message
-from ..flag import FlagOp
+from ..flags import FlagOp
 from ..parsing.specials import Flag
 
 __all__ = ['MailboxInterface']

@@ -254,22 +254,22 @@ class TestSearchKey(unittest.TestCase):
 
     def test_parse_seqset(self):
         ret, buf = SearchKey.parse(b'NOT 1,2,3', Params())
-        self.assertIsNone(ret.value)
+        self.assertEqual(b'SEQSET', ret.value)
         self.assertIsInstance(ret.filter, SequenceSet)
         self.assertEqual([1, 2, 3], ret.filter.value)
         self.assertTrue(ret.inverse)
 
     def test_parse_list(self):
         ret, buf = SearchKey.parse(b'(4,5,6 NOT 1,2,3)', Params())
-        self.assertIsNone(ret.value)
+        self.assertEqual(b'KEYSET', ret.value)
         self.assertIsInstance(ret.filter, list)
         self.assertEqual(2, len(ret.filter))
-        self.assertIsNone(ret.filter[0].value)
+        self.assertEqual(b'SEQSET', ret.filter[0].value)
         self.assertIsInstance(ret.filter[0].filter, SequenceSet)
         self.assertEqual([4, 5, 6],
                          ret.filter[0].filter.value)
         self.assertFalse(ret.filter[0].inverse)
-        self.assertIsNone(ret.filter[1].value)
+        self.assertEqual(b'SEQSET', ret.filter[1].value)
         self.assertIsInstance(ret.filter[1].filter, SequenceSet)
         self.assertEqual([1, 2, 3],
                          ret.filter[1].filter.value)
@@ -307,7 +307,7 @@ class TestSearchKey(unittest.TestCase):
 
     def test_parse_filter_uid(self):
         ret, buf = SearchKey.parse(b'UID 1,2,3', Params())
-        self.assertIsNone(ret.value)
+        self.assertEqual(b'SEQSET', ret.value)
         self.assertIsInstance(ret.filter, SequenceSet)
         self.assertEqual([1, 2, 3], ret.filter.value)
         self.assertFalse(ret.inverse)
@@ -316,7 +316,7 @@ class TestSearchKey(unittest.TestCase):
         ret, buf = SearchKey.parse(
             b'HEADER "From" "test@example.com"', Params())
         self.assertEqual(b'HEADER', ret.value)
-        self.assertEqual({'From': 'test@example.com'}, ret.filter)
+        self.assertEqual(('From', 'test@example.com'), ret.filter)
         self.assertFalse(ret.inverse)
 
     def test_parse_filter_or(self):

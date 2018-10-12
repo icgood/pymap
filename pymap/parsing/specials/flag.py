@@ -25,7 +25,8 @@ from typing import Tuple
 from .. import NotParseable, Space, Params, Special
 from ..primitives import Atom
 
-__all__ = ['Flag']
+__all__ = ['Flag', 'SystemFlag', 'Keyword', 'Seen', 'Recent', 'Deleted',
+           'Flagged', 'Answered', 'Draft']
 
 
 @total_ordering
@@ -68,6 +69,20 @@ class Flag(Special[bytes]):
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Flag', bytes]:
         try:
+            flag, buf = SystemFlag.parse(buf, params)
+        except NotParseable:
+            pass
+        else:
+            return flag, buf
+        return Keyword.parse(buf, params)
+
+
+class SystemFlag(Flag):
+    """Base class for system flags defined by the IMAP RFC."""
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Flag', bytes]:
+        try:
             _, buf = Space.parse(buf, params)
         except NotParseable:
             pass
@@ -75,5 +90,31 @@ class Flag(Special[bytes]):
             atom, buf = Atom.parse(buf[1:], params)
             return cls(b'\\' + atom.value), buf
         else:
+            raise NotParseable(buf)
+
+
+class Keyword(Flag):
+    """Base class for defining custom flag objects. All custom flags, whether
+    they are instances or sub-classes, should use this class.
+
+    """
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Keyword', bytes]:
+        try:
+            _, buf = Space.parse(buf, params)
+        except NotParseable:
+            pass
+        if buf and buf[0] != 0x5c:
             atom, buf = Atom.parse(buf, params)
             return cls(atom.value), buf
+        else:
+            raise NotParseable(buf)
+
+
+Seen = SystemFlag(br'\Seen')
+Recent = SystemFlag(br'\Recent')
+Deleted = SystemFlag(br'\Deleted')
+Flagged = SystemFlag(br'\Flagged')
+Answered = SystemFlag(br'\Answered')
+Draft = SystemFlag(br'\Draft')
