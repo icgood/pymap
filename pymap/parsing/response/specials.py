@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,12 @@
 #
 
 from itertools import chain
-from typing import Iterable, Dict
+from typing import Iterable, List, Mapping
 
 from . import Response
-from .. import MaybeBytes
-from ..primitives import List, QuotedString, Number
+from ..primitives import ListP, QuotedString, Number
 from ..specials import Mailbox, FetchAttribute, StatusAttribute, Flag
+from ..typing import MaybeBytes
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
@@ -40,8 +40,8 @@ class FlagsResponse(Response):
 
     """
 
-    def __init__(self, flags: Iterable[MaybeBytes]):
-        text = b'FLAGS %b' % List(flags, sort=True)
+    def __init__(self, flags: Iterable[MaybeBytes]) -> None:
+        text = b'FLAGS %b' % ListP(flags, sort=True)  # type: ignore
         super().__init__(b'*', text)
 
 
@@ -53,7 +53,7 @@ class ExistsResponse(Response):
 
     """
 
-    def __init__(self, num: int):
+    def __init__(self, num: int) -> None:
         text = b'%i EXISTS' % num
         super().__init__(b'*', text)
 
@@ -66,7 +66,7 @@ class RecentResponse(Response):
 
     """
 
-    def __init__(self, num: int):
+    def __init__(self, num: int) -> None:
         text = b'%i RECENT' % num
         super().__init__(b'*', text)
 
@@ -78,7 +78,7 @@ class ExpungeResponse(Response):
 
     """
 
-    def __init__(self, seq: int):
+    def __init__(self, seq: int) -> None:
         text = b'%i EXPUNGE' % seq
         super().__init__(b'*', text)
 
@@ -92,8 +92,10 @@ class FetchResponse(Response):
 
     """
 
-    def __init__(self, seq: int, data: Dict[FetchAttribute, MaybeBytes]):
-        data_list = List(chain.from_iterable(data.items()))
+    def __init__(self, seq: int, data: Mapping[FetchAttribute, MaybeBytes]) \
+            -> None:
+        items: Iterable[Iterable] = data.items()
+        data_list = ListP(chain.from_iterable(items))
         text = b'%i FETCH %b' % (seq, bytes(data_list))
         super().__init__(b'*', text)
 
@@ -105,7 +107,7 @@ class SearchResponse(Response):
 
     """
 
-    def __init__(self, seqs: Iterable[int]):
+    def __init__(self, seqs: Iterable[int]) -> None:
         seqs_raw = [b'%i' % seq for seq in seqs]
         text = b' '.join([b'SEARCH'] + seqs_raw)
         super().__init__(b'*', text)
@@ -119,8 +121,10 @@ class StatusResponse(Response):
 
     """
 
-    def __init__(self, name: str, data: Dict[StatusAttribute, Number]):
-        data_list = List(chain.from_iterable(data.items()))
+    def __init__(self, name: str,
+                 data: Mapping[StatusAttribute, Number]) -> None:
+        items: Iterable[Iterable] = data.items()
+        data_list = ListP(chain.from_iterable(items))
         text = b' '.join((b'STATUS', bytes(Mailbox(name)), bytes(data_list)))
         super().__init__(b'*', text)
 
@@ -138,24 +142,24 @@ class ListResponse(Response):
 
     """
 
-    name = b'LIST'  # type: bytes
+    name: bytes = b'LIST'
 
     def __init__(self, name: str, sep: bytes,
                  marked: bool = False,
                  unmarked: bool = False,
                  no_inferior: bool = False,
-                 no_select: bool = False):
-        name_attrs = List([])
+                 no_select: bool = False) -> None:
+        name_attrs: List[Flag] = []
         if marked:
-            name_attrs.value.append(Flag(br'\Marked'))
+            name_attrs.append(Flag(br'\Marked'))
         elif unmarked:
-            name_attrs.value.append(Flag(br'\Unmarked'))
+            name_attrs.append(Flag(br'\Unmarked'))
         if no_inferior:
-            name_attrs.value.append(Flag(br'\Noinferior'))
+            name_attrs.append(Flag(br'\Noinferior'))
         if no_select:
-            name_attrs.value.append(Flag(br'\Noselect'))
+            name_attrs.append(Flag(br'\Noselect'))
         text = b' '.join((bytes(self.name),
-                          bytes(name_attrs),
+                          bytes(ListP(name_attrs)),
                           bytes(QuotedString(sep)),
                           bytes(Mailbox(name))))
         super().__init__(b'*', text)

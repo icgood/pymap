@@ -1,12 +1,12 @@
 
-import pytest
+import pytest  # type: ignore
 
 from .base import TestBase
 
 pytestmark = pytest.mark.asyncio
 
 
-class TestServer(TestBase):
+class TestExpunge(TestBase):
 
     async def test_expunge(self):
         self.transport.push_login()
@@ -19,9 +19,9 @@ class TestServer(TestBase):
         self.transport.push_readline(
             b'expunge1 EXPUNGE\r\n')
         self.transport.push_write(
-            b'* 4 EXPUNGE\r\n'
             b'* 3 EXISTS\r\n'
             b'* 0 RECENT\r\n'
+            b'* 4 EXPUNGE\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -51,10 +51,9 @@ class TestServer(TestBase):
         self.transport.push_readline(
             b'expunge1 EXPUNGE\r\n', set=event2)
         self.transport.push_write(
-            b'* 4 EXPUNGE\r\n'
             b'* 3 EXISTS\r\n'
+            b'* 4 EXPUNGE\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
         self.transport.push_logout()
 
         await self.run(concurrent)
-

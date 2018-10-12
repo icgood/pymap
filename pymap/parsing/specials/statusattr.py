@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,31 @@
 
 from typing import Tuple
 
-from . import Special, InvalidContent
-from .. import NotParseable, Space, Buffer
+from .. import NotParseable, Space, Params, Special, InvalidContent
 from ..primitives import Atom
 
 __all__ = ['StatusAttribute']
 
 
-class StatusAttribute(Special):
+class StatusAttribute(Special[bytes]):
     """Represents a status attribute from an IMAP stream."""
 
     _statuses = {b'MESSAGES', b'RECENT', b'UIDNEXT', b'UIDVALIDITY', b'UNSEEN'}
 
-    def __init__(self, status):
+    def __init__(self, status: bytes) -> None:
         super().__init__()
         if status not in self._statuses:
             raise ValueError(status)
-        self.value = status  # type: bytes
+        self.value = status
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['StatusAttribute', bytes]:
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['StatusAttribute', bytes]:
         try:
-            _, buf = Space.parse(buf)
+            _, buf = Space.parse(buf, params)
         except NotParseable:
             pass
-        atom, after = Atom.parse(buf)
+        atom, after = Atom.parse(buf, params)
         try:
             return cls(atom.value.upper()), after
         except ValueError:

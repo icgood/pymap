@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,9 +19,9 @@
 # THE SOFTWARE.
 #
 
-from typing import Dict, Type, Tuple
+from typing import Dict, Type, Tuple, Any
 
-from .. import Parseable, NotParseable, Space, EndLine, Buffer
+from .. import Parseable, NotParseable, Space, EndLine, Params
 from ..primitives import Atom
 from ..specials import Tag
 
@@ -30,7 +30,7 @@ __all__ = ['CommandNotFound', 'BadCommand', 'Command', 'CommandNoArgs',
            'Commands']
 
 
-class Command(Parseable):
+class Command(Parseable[Any]):
     """Base class to represent the commands available to clients.
 
     :param tag: The tag parsed from the beginning of the command line.
@@ -38,17 +38,16 @@ class Command(Parseable):
     """
 
     #: The command key, e.g. ``b'NOOP'``.
-    command = None  # type: bytes
+    command: bytes = b''
 
-    def __init__(self, tag: bytes):
+    def __init__(self, tag: bytes) -> None:
         super().__init__()
 
         #: The tag parsed from the beginning of the command line.
-        self.tag = tag  # type: bytes
+        self.tag = tag
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
-            -> Tuple['Command', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise RuntimeError
 
     @property
@@ -66,10 +65,10 @@ class CommandNoArgs(Command):
     """
 
     @classmethod
-    def parse(cls, buf: Buffer, tag: bytes = None, **_) \
+    def parse(cls, buf: bytes, params: Params) \
             -> Tuple['CommandNoArgs', bytes]:
-        _, buf = EndLine.parse(buf)
-        return cls(tag), buf
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag), buf
 
 
 class CommandAny(Command):
@@ -103,14 +102,12 @@ class CommandSelect(CommandAuth):
     pass
 
 
-class Commands(Parseable):
-    """Contains the set of all known IMAP commands and the ability to parse
-
-    """
+class Commands:
+    """Contains the set of all known IMAP commands and the ability to parse."""
 
     def __init__(self):
         super().__init__()
-        self.commands = {}  # type: Dict[bytes, Type[Command]]
+        self.commands: Dict[bytes, Type[Command]] = {}
         self._load_commands()
 
     def _load_commands(self):
@@ -120,20 +117,20 @@ class Commands(Parseable):
                 command = getattr(mod, command_name)
                 self.commands[command.command] = command
 
-    def parse(self, buf, **kwargs) -> Tuple[Command, bytes]:
-        buf = memoryview(buf)
+    def parse(self, buf: bytes, params: Params) -> Tuple[Command, bytes]:
         tag = Tag(b'*')
         try:
-            tag, buf = Tag.parse(buf)
-            _, buf = Space.parse(buf)
-            atom, buf = Atom.parse(buf)
+            tag, buf = Tag.parse(buf, params)
+            _, buf = Space.parse(buf, params)
+            atom, buf = Atom.parse(buf, params)
             command = atom.value.upper()
         except NotParseable:
             raise CommandNotFound(buf, tag.value)
         cmd_type = self.commands.get(command)
+        params = params.copy(tag=tag.value)
         if cmd_type:
             try:
-                return cmd_type.parse(buf, tag=tag.value, **kwargs)
+                return cmd_type.parse(buf, params)
             except NotParseable as exc:
                 raise BadCommand(exc.buf, tag.value, cmd_type)
         raise CommandNotFound(buf, tag.value, command)
@@ -148,10 +145,10 @@ class BadCommand(NotParseable):
 
     """
 
-    def __init__(self, buf, tag, command):
+    def __init__(self, buf: bytes, tag: bytes, command: Type[Command]) -> None:
         super().__init__(buf)
-        self.tag = tag  # type: bytes
-        self.command = command  # type: Type[Command]
+        self.tag = tag
+        self.command = command
         self._raw = None
 
     def __bytes__(self):
@@ -159,18 +156,17 @@ class BadCommand(NotParseable):
             self._raw = b': '.join((self.command.command, super().__bytes__()))
         return self._raw
 
-    def __str__(self):
-        return str(bytes(self), 'ascii', 'replace')
 
-
-class CommandNotFound(BadCommand):
+class CommandNotFound(NotParseable):
     """Error indicating the data was not parseable because the command was not
     found.
 
     """
 
-    def __init__(self, buf, tag, command=None):
-        super().__init__(buf, tag, command)
+    def __init__(self, buf: bytes, tag: bytes, command: bytes = None) -> None:
+        super().__init__(buf)
+        self.tag = tag
+        self.command = command
 
     def __bytes__(self):
         if self.command:

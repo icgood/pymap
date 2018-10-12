@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +19,11 @@
 # THE SOFTWARE.
 #
 
-from .. import Parseable, NotParseable
-
-__all__ = ['Special', 'InvalidContent', 'AString', 'DateTime',
-           'FetchAttribute', 'Flag', 'Mailbox', 'SearchKey', 'SequenceSet',
-           'StatusAttribute', 'Tag']
-
-
-class InvalidContent(NotParseable, ValueError):
-    """Indicates the type of the parsed content was correct, but something
-    about the content did not fit what was expected by the special type.
-
-    """
-    pass
-
-
-class Special(Parseable):
-    """Base class for special data objects in an IMAP stream."""
-
-    def __bytes__(self):
-        raise NotImplementedError
-
+__all__ = ['AString', 'DateTime', 'FetchAttribute', 'Flag', 'Mailbox',
+           'SearchKey', 'SequenceSet', 'StatusAttribute', 'Tag']
 
 from .astring import AString  # NOQA
-from .datetime import DateTime  # NOQA
+from .datetime_ import DateTime  # NOQA
 from .fetchattr import FetchAttribute  # NOQA
 from .flag import Flag  # NOQA
 from .mailbox import Mailbox  # NOQA

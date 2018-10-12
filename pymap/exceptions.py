@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ class MailboxError(ResponseError):
     """
 
     def __init__(self, mailbox: str, message: bytes,
-                 code: Optional[ResponseCode] = None):
+                 code: Optional[ResponseCode] = None) -> None:
         super().__init__()
         self.mailbox = mailbox
         self.message = message
@@ -87,7 +87,7 @@ class MailboxNotFound(MailboxError):
 
     """
 
-    def __init__(self, mailbox: str, try_create: bool = False):
+    def __init__(self, mailbox: str, try_create: bool = False) -> None:
         super().__init__(mailbox, b'Mailbox does not exist.',
                          TryCreate() if try_create else None)
 
@@ -100,7 +100,7 @@ class MailboxConflict(MailboxError):
 
     """
 
-    def __init__(self, mailbox: str):
+    def __init__(self, mailbox: str) -> None:
         super().__init__(mailbox, b'Mailbox already exists.')
 
 
@@ -112,7 +112,7 @@ class MailboxHasChildren(MailboxError):
 
     """
 
-    def __init__(self, mailbox: str):
+    def __init__(self, mailbox: str) -> None:
         super().__init__(mailbox, b'Mailbox has inferior hierarchical names.')
 
 
@@ -124,7 +124,7 @@ class MailboxReadOnly(MailboxError):
 
     """
 
-    def __init__(self, mailbox: str):
+    def __init__(self, mailbox: str) -> None:
         super().__init__(mailbox, b'Mailbox is read-only.', ReadOnly())
 
 

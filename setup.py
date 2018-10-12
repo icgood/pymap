@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 #
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages  # type: ignore
 
 
 setup(name='pymap',
@@ -44,4 +44,4 @@ setup(name='pymap',
                    'Intended Audience :: Information Technology',
                    'License :: OSI Approved :: MIT License',
                    'Programming Language :: Python',
-                   'Programming Language :: Python :: 3.6'])
+                   'Programming Language :: Python :: 3.7'])

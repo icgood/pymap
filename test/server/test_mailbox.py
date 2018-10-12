@@ -1,5 +1,5 @@
 
-import pytest
+import pytest  # type: ignore
 
 from .base import TestBase
 
@@ -17,6 +17,56 @@ class TestMailbox(TestBase):
             b'* LIST () "." Sent\r\n'
             b'* LIST () "." Trash\r\n'
             b'list1 OK LIST completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_create(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'create1 CREATE "test mailbox"\r\n')
+        self.transport.push_write(
+            b'create1 OK Mailbox created successfully.\r\n')
+        self.transport.push_readline(
+            b'list1 LIST "" ""\r\n')
+        self.transport.push_write(
+            b'* LIST () "." INBOX\r\n'
+            b'* LIST () "." Sent\r\n'
+            b'* LIST () "." Trash\r\n'
+            b'* LIST () "." "test mailbox"\r\n'
+            b'list1 OK LIST completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_lsub(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'lsub1 LSUB "" ""\r\n')
+        self.transport.push_write(
+            b'* LSUB () "." INBOX\r\n'
+            b'lsub1 OK LSUB completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_subscribe_unsubscribe(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'subscribe1 SUBSCRIBE "Sent"\r\n')
+        self.transport.push_write(
+            b'subscribe1 OK SUBSCRIBE completed.\r\n')
+        self.transport.push_readline(
+            b'subscribe2 SUBSCRIBE "Trash"\r\n')
+        self.transport.push_write(
+            b'subscribe2 OK SUBSCRIBE completed.\r\n')
+        self.transport.push_readline(
+            b'unsubscribe1 UNSUBSCRIBE "Trash"\r\n')
+        self.transport.push_write(
+            b'unsubscribe1 OK UNSUBSCRIBE completed.\r\n')
+        self.transport.push_readline(
+            b'lsub1 LSUB "" ""\r\n')
+        self.transport.push_write(
+            b'* LSUB () "." INBOX\r\n'
+            b'* LSUB () "." Sent\r\n'
+            b'lsub1 OK LSUB completed.\r\n')
         self.transport.push_logout()
         await self.run()
 
@@ -75,4 +125,3 @@ class TestMailbox(TestBase):
             b'append1 OK APPEND completed.\r\n')
         self.transport.push_logout()
         await self.run()
-

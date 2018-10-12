@@ -19,20 +19,21 @@
 # THE SOFTWARE.
 #
 
-import asyncio
 import binascii
 import re
+from asyncio import IncompleteReadError, StreamReader, StreamWriter
 from base64 import b64encode, b64decode
+from typing import Any, List
 
-from pysasl import (ServerChallenge, AuthenticationError,
+from pysasl import (ServerChallenge, AuthenticationError,  # type: ignore
                     AuthenticationCredentials)
 
 from .exceptions import ResponseError, CloseConnection
-from .parsing import RequiresContinuation
-from .parsing.command import BadCommand, Commands
+from .parsing import RequiresContinuation, Params
+from .parsing.command import BadCommand, Commands, Command
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
 from .parsing.response import (ResponseContinuation, ResponseBadCommand,
-                               ResponseBad, ResponseBye)
+                               ResponseBad, ResponseBye, Response)
 from .state import ConnectionState
 
 __all__ = ['Disconnected', 'IMAPServer']
@@ -42,22 +43,25 @@ class Disconnected(Exception):
     pass
 
 
-class IMAPServer(object):
+class IMAPServer:
 
-    def __init__(self, debug, reader, writer):
+    def __init__(self, debug: bool,
+                 reader: StreamReader,
+                 writer: StreamWriter) -> None:
         super().__init__()
         self.commands = Commands()
         self.reader = reader
         self.writer = writer
-        if not debug:
-            self._print = self._noop_print
+        self._print = self._real_print if debug else self._noop_print
 
     @classmethod
-    async def callback(cls, login, debug, reader, writer):
+    async def callback(cls, login, debug: bool,
+                       reader: StreamReader,
+                       writer: StreamWriter) -> None:
         state = ConnectionState(login)
         await cls(debug, reader, writer).run(state)
 
-    def _print(self, prefix: str, output: bytes):
+    def _real_print(self, prefix: str, output: bytes) -> None:
         prefix = prefix % self.writer.get_extra_info('socket').fileno()
         lines = re.split(br'\r?\n', output)
         if not lines[-1]:
@@ -67,51 +71,53 @@ class IMAPServer(object):
             print(prefix, line_str)
 
     @classmethod
-    def _noop_print(cls, prefix: str, output: bytes):
+    def _noop_print(cls, prefix: str, output: bytes) -> None:
         pass
 
-    async def read_continuation(self, literal_length):
+    async def read_continuation(self, literal_length: int) -> bytes:
         try:
             extra_literal = await self.reader.readexactly(literal_length)
-        except asyncio.IncompleteReadError:
+        except IncompleteReadError:
             raise Disconnected
-        extra_line = await self.reader.readline()
+        extra_line: bytes = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
         extra = extra_literal + extra_line
         self._print('%d -->|', extra)
         return extra
 
-    async def authenticate(self, state, mech_name):
+    async def authenticate(self, state: ConnectionState,
+                           mech_name: bytes) -> Any:
         mech = state.auth.get(mech_name)
         if not mech:
             return
-        responses = []
+        responses: List[ServerChallenge] = []
         while True:
             try:
                 return mech.server_attempt(responses)
-            except ServerChallenge as exc:
-                chal_bytes = b64encode(exc.get_challenge())
+            except ServerChallenge as chal:
+                chal_bytes = b64encode(chal.get_challenge())
                 cont = ResponseContinuation(chal_bytes)
                 await self.write_response(cont)
                 resp_bytes = await self.read_continuation(0)
                 try:
-                    exc.set_response(b64decode(resp_bytes))
+                    chal.set_response(b64decode(resp_bytes))
                 except binascii.Error as exc:
                     raise AuthenticationError(exc)
                 if resp_bytes.rstrip(b'\r\n') == b'*':
                     raise AuthenticationError('Authentication canceled.')
-                responses.append(exc)
+                responses.append(chal)
 
-    async def read_command(self):
+    async def read_command(self) -> Command:
         line = await self.reader.readline()
         if self.reader.at_eof():
             raise Disconnected
         self._print('%d -->|', line)
-        conts = []
+        conts: List[bytes] = []
         while True:
             try:
-                cmd, _ = self.commands.parse(line, continuations=conts.copy())
+                cmd, _ = self.commands.parse(
+                    line, Params(continuations=conts.copy()))
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
                 await self.write_response(cont)
@@ -120,13 +126,13 @@ class IMAPServer(object):
             else:
                 return cmd
 
-    async def write_response(self, resp):
+    async def write_response(self, resp: Response) -> None:
         raw = bytes(resp)
         self.writer.write(raw)
         await self.writer.drain()
         self._print('%d <--|', raw)
 
-    async def send_error_disconnect(self):
+    async def send_error_disconnect(self) -> None:
         resp = ResponseBye(b'Unhandled server error.')
         try:
             await self.write_response(resp)
@@ -134,7 +140,7 @@ class IMAPServer(object):
         except IOError:
             pass
 
-    async def run(self, state):
+    async def run(self, state: ConnectionState) -> None:
         self._print('%d +++|', b'<connected>')
         greeting = await state.do_greeting()
         await self.write_response(greeting)

@@ -1,5 +1,5 @@
 
-import pytest
+import pytest  # type: ignore
 
 from .base import TestBase
 

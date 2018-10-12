@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,13 @@
 import re
 from typing import Tuple
 
-from . import Special
-from .. import Buffer
+from .. import Params, Special
 from ..primitives import String, QuotedString
 
 __all__ = ['AString']
 
 
-class AString(Special):
+class AString(Special[bytes]):
     """Represents a string that may have quotes (like a quoted-string) or may
     not (like an atom).  Additionally allows the closing square bracket (``]``)
     character in the unquoted form.
@@ -39,19 +38,19 @@ class AString(Special):
     _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B-\x5B'
                           br'\x5D\x5E-\x7A\x7C\x7E]+')
 
-    def __init__(self, string, raw=None):
+    def __init__(self, string: bytes, raw: bytes = None) -> None:
         super().__init__()
-        self.value = string  # type: bytes
+        self.value = string
         self._raw = raw
 
     @classmethod
-    def parse(cls, buf: Buffer, **kwargs) -> Tuple['AString', bytes]:
+    def parse(cls, buf: bytes, params: Params) -> Tuple['AString', bytes]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if match:
             buf = buf[match.end(0):]
             return cls(match.group(0), match.group(0)), buf
-        string, buf = String.parse(buf, **kwargs)
+        string, buf = String.parse(buf, params)
         return cls(string.value, bytes(string)), buf
 
     def __bytes__(self):

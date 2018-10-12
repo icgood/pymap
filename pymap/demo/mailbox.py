@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,11 @@
 #
 
 from copy import copy
-from typing import TYPE_CHECKING, List, Optional, Dict
+from typing import TYPE_CHECKING, List, Optional, Dict, Tuple
 
-from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged
-from pymap.interfaces.mailbox import BaseMailbox
+from pymap.flag import Seen, Recent, Answered, Deleted, Draft, Flagged, \
+    SessionFlags
+from pymap.mailbox import MailboxSession, BaseMailbox
 from .message import Message
 from .state import State
 
@@ -33,45 +34,47 @@ if TYPE_CHECKING:
     from .session import Session
 
 
-class _Unique:
-    pass
+class _MailboxSession(MailboxSession):
+
+    def __init__(self, name: str, *args, **kwargs) -> None:
+        super().__init__(name, *args, **kwargs)
+        State.mailboxes[name].sessions.add(self)
+
+    def __copy__(self) -> 'MailboxSession':
+        State.mailboxes[self.name].sessions.discard(self)
+        return super().__copy__()
 
 
 class Mailbox(BaseMailbox):
     SEP = b'.'
     FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
 
-    def __init__(self, name: str, session: 'Session', mailbox_session=None):
-        super().__init__(
-            name=name,
-            permanent_flags=self.FLAGS,
-            uid_validity=State.mailboxes[name].uid_validity,
-            mailbox_session=mailbox_session)
-        self.session = session  # type: 'Session'
-        self.messages = None  # type: List[Message]
-        self.uid_to_idx = None  # type: Dict[int, int]
-        self.highest_uid = None  # type: int
+    def __init__(self, name: str, session: 'Session') -> None:
+        super().__init__(name, permanent_flags=self.FLAGS,
+                         uid_validity=State.mailboxes[name].uid_validity)
+        self.session = session
+        self.messages: List[Message] = []
+        self.uid_to_idx: Dict[int, int] = {}
+        self.highest_uid: int = -1
 
     @classmethod
-    def load(cls, name: str, session: 'Session', claim_recent: bool):
+    def load(cls, name: str, session: 'Session', readonly: bool) \
+            -> Tuple['Mailbox', MailboxSession]:
         mbx = cls(name, session)
         mbx.reset_messages()
-        if claim_recent:
+        readonly = mbx.readonly or readonly
+        session_flags = SessionFlags()
+        if not readonly:
             recent = State.mailboxes[name].recent
             for msg in mbx.messages:
                 if msg.uid in recent:
-                    msg.session_flags.add_recent(mbx.mailbox_session)
+                    session_flags.add_recent(msg.uid)
             recent.clear()
-        return mbx
+        return mbx, _MailboxSession(name, mbx.exists, readonly, session_flags)
 
     @classmethod
     def get_snapshot(cls, name: str):
         return _MailboxSnapshot(name)
-
-    def __copy__(self):
-        copy_ = Mailbox(self.name, self.session, self.mailbox_session)
-        copy_.reset_messages()
-        return copy_
 
     def reset_messages(self):
         self.messages = copy(State.mailboxes[self.name].messages)
@@ -84,13 +87,9 @@ class Mailbox(BaseMailbox):
     def _count_flag(self, flag):
         count = 0
         for msg in self.messages:
-            if flag in self.get_flags(msg):
+            if flag in msg.permanent_flags:
                 count += 1
         return count
-
-    @property
-    def updates(self):
-        return self.session.updates[self.name]
 
     @property
     def exists(self) -> int:
@@ -107,8 +106,9 @@ class Mailbox(BaseMailbox):
     @property
     def first_unseen(self) -> Optional[int]:
         for i, msg in enumerate(self.messages):
-            if Seen not in self.get_flags(msg):
+            if Seen not in msg.permanent_flags:
                 return i + 1
+        return None
 
     @property
     def next_uid(self) -> int:
@@ -117,7 +117,7 @@ class Mailbox(BaseMailbox):
 
 class _MailboxSnapshot(BaseMailbox):
 
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         super().__init__(
             name=name,
             readonly=True,

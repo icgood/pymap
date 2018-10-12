@@ -1,7 +1,9 @@
 
 import unittest
 
-from pymap.parsing.response.code import *  # NOQA
+from pymap.parsing.response.code import Alert, BadCharset, Capability, Parse, \
+    PermanentFlags, ReadOnly, ReadWrite, TryCreate, UidNext, UidValidity, \
+    Unseen
 
 
 class TestAlert(unittest.TestCase):

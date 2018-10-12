@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +21,8 @@
 
 from typing import SupportsBytes, List, Optional
 
-from pymap.parsing.command import BadCommand
-from .. import MaybeBytes
+from ..command import BadCommand
+from ..typing import MaybeBytes
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
            'ResponseBadCommand', 'ResponseNo', 'ResponseOk', 'ResponseBye']
@@ -50,12 +50,12 @@ class Response:
 
     """
 
-    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None):
+    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None) -> None:
         super().__init__()
-        self.tag = bytes(tag)  # type: bytes
-        self.untagged = []  # type: List[MaybeBytes]
-        self._text = text  # type: Optional[MaybeBytes]
-        self._raw = None  # type: Optional[bytes]
+        self.tag = bytes(tag)
+        self.untagged: List[MaybeBytes] = []
+        self._text = text
+        self._raw = None
 
     @property
     def text(self):
@@ -103,20 +103,20 @@ class ResponseContinuation(Response):
 
     """
 
-    def __init__(self, text: MaybeBytes):
+    def __init__(self, text: MaybeBytes) -> None:
         super().__init__(b'+', text)
 
 
 class ConditionResponse(Response):
 
-    condition = None  # type: bytes
+    condition: Optional[bytes] = None
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[MaybeBytes]):
+                 code: Optional[MaybeBytes]) -> None:
         if code:
-            text = b'%b %b %b' % (self.condition, code, text)
+            text = b'%b %b %b' % (self.condition, code, text)  # type: ignore
         else:
-            text = b'%b %b' % (self.condition, text)
+            text = b'%b %b' % (self.condition, text)  # type: ignore
         super().__init__(tag, text)
 
 
@@ -134,7 +134,7 @@ class ResponseBad(ConditionResponse):
     condition = b'BAD'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None):
+                 code: Optional[MaybeBytes] = None) -> None:
         super().__init__(tag, text, code)
 
 
@@ -150,7 +150,8 @@ class ResponseBadCommand(ResponseBad):
 
     condition = b'BAD'
 
-    def __init__(self, exc: BadCommand, code: Optional[ResponseCode] = None):
+    def __init__(self, exc: BadCommand, code: Optional[MaybeBytes] = None) \
+            -> None:
         super().__init__(exc.tag, bytes(exc), code)
 
 
@@ -167,7 +168,7 @@ class ResponseNo(ConditionResponse):
     condition = b'NO'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None):
+                 code: Optional[MaybeBytes] = None) -> None:
         super().__init__(tag, text, code)
 
 
@@ -184,7 +185,7 @@ class ResponseOk(ConditionResponse):
     condition = b'OK'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None):
+                 code: Optional[MaybeBytes] = None) -> None:
         super().__init__(tag, text, code)
 
 
@@ -199,5 +200,5 @@ class ResponseBye(ConditionResponse):
 
     condition = b'BYE'
 
-    def __init__(self, text: MaybeBytes):
+    def __init__(self, text: MaybeBytes) -> None:
         super().__init__(b'*', text, None)

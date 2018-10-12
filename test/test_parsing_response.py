@@ -1,7 +1,10 @@
 
 import unittest
 
-from pymap.parsing.response import *  # NOQA
+from pymap.parsing.command import BadCommand
+from pymap.parsing.command.any import NoOpCommand
+from pymap.parsing.response import Response, ResponseContinuation, \
+    ResponseBad, ResponseBadCommand, ResponseNo, ResponseOk, ResponseBye
 
 
 class TestResponse(unittest.TestCase):
@@ -35,15 +38,10 @@ class TestResponseBad(unittest.TestCase):
 
 class TestResponseBadCommand(unittest.TestCase):
 
-    class FakeBadCommand:
-        tag = b'tag'
-
-        def __bytes__(self):
-            return b'bad command'
-
     def test_bytes(self):
-        resp = ResponseBadCommand(self.FakeBadCommand())
-        self.assertEqual(b'tag BAD bad command\r\n', bytes(resp))
+        cmd = BadCommand(b'bad', b'tag', NoOpCommand)
+        resp = ResponseBadCommand(cmd)
+        self.assertEqual(b'tag BAD NOOP: [:ERROR:]bad\r\n', bytes(resp))
 
 
 class TestResponseNo(unittest.TestCase):

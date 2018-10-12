@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,23 @@
 from datetime import datetime
 from typing import Tuple
 
-from . import Special, InvalidContent
-from .. import Buffer
+from .. import Params, Special, InvalidContent
 from ..primitives import QuotedString
 
 __all__ = ['DateTime']
 
 
-class DateTime(Special):
+class DateTime(Special[datetime]):
     """Represents a date-time quoted string from an IMAP stream."""
 
-    def __init__(self, when, raw=None):
+    def __init__(self, when: datetime, raw: bytes = None) -> None:
         super().__init__()
-        self.when = when  # type: datetime
+        self.value = when
         self._raw = raw or bytes(when.strftime('%d-%b-%Y %X %z'), 'ascii')
 
     @classmethod
-    def parse(cls, buf: Buffer, **_) -> Tuple['DateTime', bytes]:
-        string, after = QuotedString.parse(buf)
+    def parse(cls, buf: bytes, params: Params) -> Tuple['DateTime', bytes]:
+        string, after = QuotedString.parse(buf, params)
         try:
             when_str = str(string.value, 'ascii')
             when = datetime.strptime(when_str, '%d-%b-%Y %X %z')

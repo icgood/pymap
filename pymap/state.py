@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,27 @@
 from collections import OrderedDict
 from copy import copy
 from socket import getfqdn
-from typing import TYPE_CHECKING, Optional, Callable, Union
+from typing import TYPE_CHECKING, Optional, Callable, Union, Tuple, \
+    Awaitable, Any, Dict
 
-from pysasl import SASLAuth, AuthenticationCredentials
+from pysasl import SASLAuth  # type: ignore
 
 from .exceptions import CloseConnection
-from .interfaces.mailbox import MailboxInterface
-from .interfaces.message import UpdateType
 from .interfaces.session import SessionInterface
-from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect
-from .parsing.primitives import List, Number, String
-from .parsing.response import ResponseOk, ResponseNo, ResponseBad
+from .mailbox import MailboxSession
+from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
+    Command
+from .parsing.primitives import ListP, Number, String, Nil
+from .parsing.response import ResponseOk, ResponseNo, ResponseBad, Response
 from .parsing.response.code import (Capability, PermanentFlags, ReadOnly,
                                     UidNext, UidValidity, Unseen,
                                     ReadWrite)
 from .parsing.response.specials import (FlagsResponse, ExistsResponse,
                                         RecentResponse, FetchResponse,
                                         ListResponse, LSubResponse,
-                                        SearchResponse, StatusResponse,
-                                        ExpungeResponse)
+                                        SearchResponse, StatusResponse)
 from .parsing.specials import FetchAttribute, DateTime
+from .parsing.typing import MaybeBytes
 
 __all__ = ['ConnectionState']
 
@@ -51,9 +52,10 @@ if TYPE_CHECKING:
     from .parsing.command.auth import *
     from .parsing.command.select import *
 
-    _LoginFunc = Callable[AuthenticationCredentials,
-                          Optional[SessionInterface]]
     _AuthCommands = Union[AuthenticateCommand, LoginCommand]
+    _LoginFunc = Callable[[Any], Awaitable[Optional[SessionInterface]]]
+    _CommandFunc = Callable[[Command],
+                            Awaitable[Tuple[Response, MailboxSession]]]
 
 fqdn = getfqdn().encode('ascii')
 
@@ -61,25 +63,36 @@ fqdn = getfqdn().encode('ascii')
 class ConnectionState(object):
     flags_attr = FetchAttribute(b'FLAGS')
 
-    def __init__(self, login):
+    def __init__(self, login: '_LoginFunc') -> None:
         super().__init__()
-        self.login = login  # type: _LoginFunc
-        self.session = None  # type: Optional[SessionInterface]
-        self.selected = None  # type: Optional[MailboxInterface]
+        self.login = login
+        self._session: Optional[SessionInterface] = None
+        self._selected: Optional[MailboxSession] = None
         self.auth = SASLAuth([b'PLAIN'])
         self.capability = Capability(
             [b'AUTH=%b' % mech.name for mech in
              self.auth.server_mechanisms])
 
+    @property
+    def session(self) -> SessionInterface:
+        if self._session is None:
+            raise RuntimeError()  # State checking should prevent this.
+        return self._session
+
+    @property
+    def selected(self) -> MailboxSession:
+        if self._selected is None:
+            raise RuntimeError()  # State checking should prevent this.
+        return self._selected
+
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
-    async def do_authenticate(self, cmd: '_AuthCommands',
-                              creds: AuthenticationCredentials):
+    async def do_authenticate(self, cmd: '_AuthCommands', creds: Any):
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self.session = await self.login(creds)
-        if self.session:
+        self._session = await self.login(creds)
+        if self._session:
             return ResponseOk(cmd.tag, b'Authentication successful.')
         return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
 
@@ -90,15 +103,15 @@ class ConnectionState(object):
 
     async def do_noop(self, cmd: 'NoOpCommand'):
         updates = None
-        if self.selected:
+        if self._selected and self._session:
             updates = await self.session.check_mailbox(self.selected)
         return ResponseOk(cmd.tag, b'NOOP completed.'), updates
 
-    async def _select_mailbox(self, cmd, examine):
-        mailbox, updates = await self.session.get_mailbox(cmd.mailbox)
-        self.selected = mailbox
-        self.updates = copy(updates)
-        if mailbox.readonly or examine:
+    async def _select_mailbox(self, cmd: 'SelectCommand', examine: bool):
+        self._selected = None
+        mailbox, updates = await self.session.select_mailbox(
+            cmd.mailbox, examine)
+        if updates.readonly:
             resp = ResponseOk(cmd.tag, b'Selected mailbox.', ReadOnly())
             resp.add_untagged_ok(b'Read-only mailbox.', PermanentFlags([]))
         else:
@@ -106,8 +119,8 @@ class ConnectionState(object):
             resp.add_untagged_ok(b'Flags permitted.',
                                  PermanentFlags(mailbox.permanent_flags))
         resp.add_untagged(FlagsResponse(mailbox.flags))
-        resp.add_untagged(ExistsResponse(mailbox.exists))
-        resp.add_untagged(RecentResponse(mailbox.recent))
+        resp.add_untagged(ExistsResponse(updates.exists))
+        resp.add_untagged(RecentResponse(updates.recent))
         resp.add_untagged_ok(b'Predicted next UID.', UidNext(mailbox.next_uid))
         resp.add_untagged_ok(b'Predicted next UID.',
                              UidValidity(mailbox.uid_validity))
@@ -126,27 +139,27 @@ class ConnectionState(object):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot create INBOX.'), None
         updates = await self.session.create_mailbox(
-            cmd.mailbox, selected=self.selected)
+            cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'Mailbox created successfully.'), updates
 
     async def do_delete(self, cmd: 'DeleteCommand'):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot delete INBOX.')
         updates = await self.session.delete_mailbox(
-            cmd.mailbox, selected=self.selected)
+            cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'Mailbox deleted successfully.'), updates
 
     async def do_rename(self, cmd: 'RenameCommand'):
         if cmd.to_mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot rename to INBOX.')
         updates = await self.session.rename_mailbox(
-            cmd.from_mailbox, cmd.to_mailbox, selected=self.selected)
+            cmd.from_mailbox, cmd.to_mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'Mailbox renamed successfully.'), updates
 
     async def do_status(self, cmd: 'StatusCommand'):
         mailbox, updates = await self.session.get_mailbox(
-            cmd.mailbox, snapshot=True, selected=self.selected)
-        data = OrderedDict()
+            cmd.mailbox, selected=self._selected)
+        data = OrderedDict()  # type: ignore
         for attr in cmd.status_list:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
@@ -165,22 +178,22 @@ class ConnectionState(object):
     async def do_append(self, cmd: 'AppendCommand'):
         updates = await self.session.append_message(
             cmd.mailbox, cmd.message, cmd.flag_set, cmd.when,
-            selected=self.selected)
+            selected=self._selected)
         return ResponseOk(cmd.tag, b'APPEND completed.'), updates
 
     async def do_subscribe(self, cmd: 'SubscribeCommand'):
         updates = await self.session.subscribe(
-            cmd.mailbox, selected=self.selected)
+            cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'SUBSCRIBE completed.'), updates
 
     async def do_unsubscribe(self, cmd: 'UnsubscribeCommand'):
         updates = await self.session.unsubscribe(
-            cmd.mailbox, selected=self.selected)
+            cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'UNSUBSCRIBE completed.'), updates
 
     async def do_list(self, cmd: 'ListCommand'):
         mailboxes, updates = await self.session.list_mailboxes(
-            cmd.ref_name, cmd.filter, selected=self.selected)
+            cmd.ref_name, cmd.filter, selected=self._selected)
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for name, sep, attrs in mailboxes:
             resp.add_untagged(ListResponse(name, sep, **attrs))
@@ -188,7 +201,7 @@ class ConnectionState(object):
 
     async def do_lsub(self, cmd: 'LSubCommand'):
         mailboxes, updates = await self.session.list_mailboxes(
-            cmd.ref_name, cmd.filter, subscribed=True, selected=self.selected)
+            cmd.ref_name, cmd.filter, subscribed=True, selected=self._selected)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for name, sep, attrs in mailboxes:
             resp.add_untagged(LSubResponse(name, sep, **attrs))
@@ -201,14 +214,12 @@ class ConnectionState(object):
 
     async def do_close(self, cmd: 'CloseCommand'):
         await self.session.expunge_mailbox(self.selected)
-        self.selected = None
+        self._selected = None
         return ResponseOk(cmd.tag, b'CLOSE completed.'), None
 
     async def do_expunge(self, cmd: 'ExpungeCommand'):
-        seqs, updates = await self.session.expunge_mailbox(self.selected)
+        updates = await self.session.expunge_mailbox(self.selected)
         resp = ResponseOk(cmd.tag, b'EXPUNGE completed.')
-        for msg_seq in seqs:
-            resp.add_untagged(ExpungeResponse(msg_seq))
         return resp, updates
 
     async def do_copy(self, cmd: 'CopyCommand'):
@@ -221,20 +232,23 @@ class ConnectionState(object):
             self.selected, cmd.sequence_set, frozenset(cmd.attributes))
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
         for msg_seq, msg in messages:
-            fetch_data = OrderedDict()
+            fetch_data = OrderedDict()  # type: ignore
             for attr in cmd.attributes:
-                if attr.attribute == b'UID':
+                if attr.value == b'UID':
                     fetch_data[attr] = Number(msg.uid)
-                elif attr.attribute == b'FLAGS':
-                    flags = self.selected.get_flags(msg)
-                    fetch_data[attr] = List(flags, sort=True)
-                elif attr.attribute == b'INTERNALDATE':
-                    fetch_data[attr] = DateTime(msg.internal_date)
-                elif attr.attribute == b'ENVELOPE':
+                elif attr.value == b'FLAGS':
+                    flags = msg.get_flags(self.selected)
+                    fetch_data[attr] = ListP(flags, sort=True)
+                elif attr.value == b'INTERNALDATE':
+                    if msg.internal_date:
+                        fetch_data[attr] = DateTime(msg.internal_date)
+                    else:
+                        fetch_data[attr] = Nil()
+                elif attr.value == b'ENVELOPE':
                     fetch_data[attr] = msg.get_envelope_structure()
-                elif attr.attribute == b'BODYSTRUCTURE':
+                elif attr.value == b'BODYSTRUCTURE':
                     fetch_data[attr] = msg.get_body_structure().extended
-                elif attr.attribute in (b'BODY', b'BODY.PEEK'):
+                elif attr.value in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
                         fetch_data[attr] = msg.get_body_structure()
                     elif not attr.section.msgtext:
@@ -252,13 +266,13 @@ class ConnectionState(object):
                     elif attr.section.msgtext == b'HEADER.FIELDS.NOT':
                         fetch_data[attr] = String.build(msg.get_headers(
                             attr.section.parts, attr.section.headers, True))
-                elif attr.attribute == b'RFC822':
+                elif attr.value == b'RFC822':
                     fetch_data[attr] = String.build(msg.get_body())
-                elif attr.attribute == b'RFC822.HEADER':
+                elif attr.value == b'RFC822.HEADER':
                     fetch_data[attr] = String.build(msg.get_headers())
-                elif attr.attribute == b'RFC822.TEXT':
+                elif attr.value == b'RFC822.TEXT':
                     fetch_data[attr] = String.build(msg.get_text())
-                elif attr.attribute == b'RFC822.SIZE':
+                elif attr.value == b'RFC822.SIZE':
                     fetch_data[attr] = Number(msg.get_size())
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
@@ -276,8 +290,9 @@ class ConnectionState(object):
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         if not cmd.silent:
             for msg_seq, msg in messages:
-                msg_flags = List(self.selected.get_flags(msg), sort=True)
-                fetch_data = {FetchAttribute(b'FLAGS'): msg_flags}
+                fetch_data: Dict[FetchAttribute, MaybeBytes] = OrderedDict()
+                fetch_data[FetchAttribute(b'FLAGS')] = ListP(
+                    msg.get_flags(self.selected), sort=True)
                 if cmd.uid:
                     fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
                 resp.add_untagged(FetchResponse(msg_seq, fetch_data))
@@ -287,44 +302,24 @@ class ConnectionState(object):
     async def do_logout(cls, cmd: 'LogoutCommand'):
         raise CloseConnection()
 
-    @classmethod
-    def get_updates(cls, before: 'MailboxInterface',
-                    after: 'MailboxInterface'):
-        if before.exists != after.exists:
-            yield ExistsResponse(after.exists)
-        if before.recent != after.recent:
-            yield RecentResponse(after.recent)
-        all_updates = before.updates.copy()
-        all_updates.update(after.updates)
-        before.updates.clear()
-        after.updates.clear()
-        for seq in sorted(all_updates.keys()):
-            update_type, msg = all_updates[seq]
-            if update_type == UpdateType.EXPUNGE:
-                yield ExpungeResponse(seq)
-            elif update_type == UpdateType.FETCH:
-                flags = sorted(after.get_flags(msg))
-                data = {FetchAttribute(b'FLAGS'): List(flags)}
-                yield FetchResponse(seq, data)
-
-    async def do_command(self, cmd):
-        if self.session and isinstance(cmd, CommandNonAuth):
+    async def do_command(self, cmd: Command):
+        if self._session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
             return ResponseBad(cmd.tag, msg)
-        elif not self.session and isinstance(cmd, CommandAuth):
+        elif not self._session and isinstance(cmd, CommandAuth):
             msg = cmd.command + b': Must authenticate first.'
             return ResponseBad(cmd.tag, msg)
-        elif not self.selected and isinstance(cmd, CommandSelect):
+        elif not self._selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
         func_name = 'do_' + str(cmd.command, 'ascii').lower()
         try:
-            func = getattr(self, func_name)
+            func: '_CommandFunc' = getattr(self, func_name)
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
-        response, updated = await func(cmd)
-        if updated and self.selected:
-            for update in self.get_updates(self.selected, updated):
+        response, selected = await func(cmd)
+        if selected:
+            for update in selected.drain_updates():
                 response.add_untagged(update)
-            self.selected = updated
+        self._selected = copy(selected)
         return response
