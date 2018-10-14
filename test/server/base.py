@@ -1,17 +1,22 @@
 
 import asyncio
-from functools import partial
+
+from pysasl import SASLAuth
 
 from pymap.demo import init
 from pymap.server import IMAPServer
+from pymap.state import ConnectionState
 from .mocktransport import MockTransport
+
+ConnectionState.DEFAULT_CAPABILITY = []
+ConnectionState.DEFAULT_AUTH = SASLAuth([b'PLAIN'])
 
 
 class TestBase:
 
     def setup_method(self):
         self._fd = 1
-        self._run = partial(IMAPServer.callback, init(), True)
+        self._run = IMAPServer(init(), None, True)
         self.matches = {}
         self.transport = self.new_transport()
 

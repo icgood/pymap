@@ -22,13 +22,14 @@
 from collections import OrderedDict
 from copy import copy
 from socket import getfqdn
+from ssl import SSLContext
 from typing import TYPE_CHECKING, Optional, Callable, Union, Tuple, \
-    Awaitable, Any, Dict
+    Awaitable, Dict
 
-from pysasl import SASLAuth  # type: ignore
+from pysasl import SASLAuth, AuthenticationCredentials
 
-from .exceptions import CloseConnection
-from .interfaces.session import SessionInterface
+from .exceptions import CloseConnection, CommandNotAllowed
+from .interfaces.session import LoginFunc, SessionInterface
 from .mailbox import MailboxSession
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
@@ -53,7 +54,6 @@ if TYPE_CHECKING:
     from .parsing.command.select import *
 
     _AuthCommands = Union[AuthenticateCommand, LoginCommand]
-    _LoginFunc = Callable[[Any], Awaitable[Optional[SessionInterface]]]
     _CommandFunc = Callable[[Command],
                             Awaitable[Tuple[Response, MailboxSession]]]
 
@@ -61,17 +61,20 @@ fqdn = getfqdn().encode('ascii')
 
 
 class ConnectionState(object):
-    flags_attr = FetchAttribute(b'FLAGS')
 
-    def __init__(self, login: '_LoginFunc') -> None:
+    DEFAULT_CAPABILITY = [b'STARTTLS', b'LOGINDISABLED']
+    DEFAULT_AUTH = SASLAuth.secure()
+    DEFAULT_AUTH_STARTTLS = SASLAuth()
+
+    def __init__(self, login: 'LoginFunc',
+                 ssl_context: Optional[SSLContext]) -> None:
         super().__init__()
         self.login = login
+        self.ssl_context = ssl_context
         self._session: Optional[SessionInterface] = None
         self._selected: Optional[MailboxSession] = None
-        self.auth = SASLAuth([b'PLAIN'])
-        self.capability = Capability(
-            [b'AUTH=%b' % mech.name for mech in
-             self.auth.server_mechanisms])
+        self._capability = copy(self.DEFAULT_CAPABILITY)
+        self.auth = self.DEFAULT_AUTH
 
     @property
     def session(self) -> SessionInterface:
@@ -85,16 +88,43 @@ class ConnectionState(object):
             raise RuntimeError()  # State checking should prevent this.
         return self._selected
 
+    @property
+    def capability(self) -> Capability:
+        return Capability(self._capability +
+                          [b'AUTH=%b' % mech.name for mech in
+                           self.auth.server_mechanisms])
+
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
-    async def do_authenticate(self, cmd: '_AuthCommands', creds: Any):
+    async def do_authenticate(self, cmd: '_AuthCommands',
+                              creds: AuthenticationCredentials):
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
         self._session = await self.login(creds)
         if self._session:
             return ResponseOk(cmd.tag, b'Authentication successful.')
         return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
+
+    async def do_login(self, cmd: 'LoginCommand',
+                       creds: AuthenticationCredentials):
+        if b'LOGINDISABLED' in self.capability:
+            raise CommandNotAllowed(cmd.command)
+        return await self.do_authenticate(cmd, creds)
+
+    async def do_starttls(self, cmd: 'StartTLSCommand'):
+        if self.ssl_context is None:
+            raise CommandNotAllowed(cmd.command)
+        try:
+            self._capability.remove(b'STARTTLS')
+        except ValueError:
+            raise CommandNotAllowed(cmd.command)
+        try:
+            self._capability.remove(b'LOGINDISABLED')
+        except ValueError:
+            pass
+        self.auth = self.DEFAULT_AUTH_STARTTLS
+        return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 
     async def do_capability(self, cmd: 'CapabilityCommand'):
         response = ResponseOk(cmd.tag, b'Capabilities listed.')
