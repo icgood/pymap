@@ -81,7 +81,9 @@ class MockTransport:
 
     def push_login(self, wait=None, set=None):
         self.push_write(
-            b'* OK [CAPABILITY IMAP4rev1 AUTH=PLAIN] Server ready ',
+            b'* OK [CAPABILITY IMAP4rev1',
+            (br'(?:\s+[a-zA-Z0-9=-]+)*', ),
+            b'] Server ready ',
             (br'\S+', ), b'\r\n', wait=wait)
         self.push_readline(
             b'login1 LOGIN demouser demopass\r\n')

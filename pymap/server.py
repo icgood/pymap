@@ -19,24 +19,28 @@
 # THE SOFTWARE.
 #
 
+import asyncio
 import binascii
 import re
 from asyncio import IncompleteReadError, StreamReader, StreamWriter
 from base64 import b64encode, b64decode
-from typing import Any, List
+from ssl import SSLContext
+from typing import Any, List, Optional
 
-from pysasl import (ServerChallenge, AuthenticationError,  # type: ignore
+from pysasl import (ServerChallenge, AuthenticationError,
                     AuthenticationCredentials)
 
 from .exceptions import ResponseError, CloseConnection
+from .interfaces.session import LoginFunc
 from .parsing import RequiresContinuation, Params
 from .parsing.command import BadCommand, Commands, Command
-from .parsing.command.nonauth import AuthenticateCommand, LoginCommand
+from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
+    StartTLSCommand
 from .parsing.response import (ResponseContinuation, ResponseBadCommand,
-                               ResponseBad, ResponseBye, Response)
+                               ResponseBad, ResponseBye, Response, ResponseOk)
 from .state import ConnectionState
 
-__all__ = ['Disconnected', 'IMAPServer']
+__all__ = ['Disconnected', 'IMAPServer', 'IMAPConnection']
 
 
 class Disconnected(Exception):
@@ -44,6 +48,22 @@ class Disconnected(Exception):
 
 
 class IMAPServer:
+
+    def __init__(self, login: LoginFunc, debug: bool = False,
+                 ssl_context: SSLContext = None) -> None:
+        super().__init__()
+        self.login = login
+        self.ssl_context = ssl_context
+        self.debug = debug
+
+    async def __call__(self, reader: StreamReader,
+                       writer: StreamWriter) -> None:
+        conn = IMAPConnection(self.debug, reader, writer)
+        state = ConnectionState(self.login, self.ssl_context)
+        await conn.run(state)
+
+
+class IMAPConnection:
 
     def __init__(self, debug: bool,
                  reader: StreamReader,
@@ -54,12 +74,9 @@ class IMAPServer:
         self.writer = writer
         self._print = self._real_print if debug else self._noop_print
 
-    @classmethod
-    async def callback(cls, login, debug: bool,
-                       reader: StreamReader,
-                       writer: StreamWriter) -> None:
-        state = ConnectionState(login)
-        await cls(debug, reader, writer).run(state)
+    def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
+        self.reader = reader
+        self.writer = writer
 
     def _real_print(self, prefix: str, output: bytes) -> None:
         prefix = prefix % self.writer.get_extra_info('socket').fileno()
@@ -88,7 +105,7 @@ class IMAPServer:
 
     async def authenticate(self, state: ConnectionState,
                            mech_name: bytes) -> Any:
-        mech = state.auth.get(mech_name)
+        mech = state.auth.get_server(mech_name)
         if not mech:
             return
         responses: List[ServerChallenge] = []
@@ -132,6 +149,17 @@ class IMAPServer:
         await self.writer.drain()
         self._print('%d <--|', raw)
 
+    async def start_tls(self, ssl_context: Optional[SSLContext]) -> None:
+        loop = asyncio.get_event_loop()
+        transport = self.writer.transport
+        protocol = transport.get_protocol()  # type: ignore
+        new_transport = await loop.start_tls(  # type: ignore
+            transport, protocol, ssl_context, server_side=True)
+        protocol._stream_reader = StreamReader(loop=loop)
+        protocol._client_connected_cb = self._reset_streams
+        protocol.connection_made(new_transport)
+        self._print('%d <->|', b'<TLS handshake>')
+
     async def send_error_disconnect(self) -> None:
         resp = ResponseBye(b'Unhandled server error.')
         try:
@@ -165,7 +193,7 @@ class IMAPServer:
                         auth = AuthenticationCredentials(
                             cmd.userid.decode('utf-8'),
                             cmd.password.decode('utf-8'))
-                        response = await state.do_authenticate(cmd, auth)
+                        response = await state.do_login(cmd, auth)
                     else:
                         response = await state.do_command(cmd)
                 except ResponseError as exc:
@@ -181,5 +209,8 @@ class IMAPServer:
                     raise
                 else:
                     await self.write_response(response)
+                    if isinstance(cmd, StartTLSCommand) \
+                            and isinstance(response, ResponseOk):
+                        await self.start_tls(state.ssl_context)
         self._print('%d ---|', b'<disconnected>')
         self.writer.close()

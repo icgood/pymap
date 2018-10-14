@@ -20,17 +20,24 @@
 #
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Tuple, Optional, FrozenSet, Dict, Iterable
+from typing import TYPE_CHECKING, Tuple, Optional, FrozenSet, Dict, Iterable, \
+    Callable, Awaitable
+
+from pysasl import AuthenticationCredentials
 
 from ..flags import FlagOp
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 
-__all__ = ['SessionInterface']
+__all__ = ['LoginFunc', 'SessionInterface']
 
 if TYPE_CHECKING:
     from .message import Message, LoadedMessage
     from .mailbox import MailboxInterface
     from ..mailbox import MailboxSession
+
+#: Defines the function type that backends use to initialize a new session.
+LoginFunc = Callable[[AuthenticationCredentials],
+                     Awaitable[Optional['SessionInterface']]]
 
 
 class SessionInterface:

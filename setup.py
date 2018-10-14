@@ -22,11 +22,17 @@
 from setuptools import setup, find_packages  # type: ignore
 
 
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
+
+
 setup(name='pymap',
       version='0.1.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       license='MIT',
       url='http://github.com/icgood/pymap/',
       packages=find_packages(),

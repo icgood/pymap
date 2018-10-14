@@ -27,9 +27,10 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
 from .parsing.response.code import TryCreate, ReadOnly
 
-__all__ = ['ResponseError', 'CloseConnection', 'MailboxError',
-           'SearchNotAllowed', 'MailboxNotFound', 'MailboxConflict',
-           'MailboxHasChildren', 'MailboxReadOnly', 'AppendFailure']
+__all__ = ['ResponseError', 'CloseConnection', 'CommandNotAllowed',
+           'SearchNotAllowed', 'MailboxError', 'MailboxNotFound',
+           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
+           'AppendFailure']
 
 
 class ResponseError(Exception):
@@ -59,8 +60,25 @@ class CloseConnection(ResponseError):
         return response
 
 
-class SearchNotAllowed(ResponseError):
-    """A ``SEARCH`` command contained a search key that could not be
+class CommandNotAllowed(ResponseError):
+    """The command is syntactically valid, but not allowed.
+
+    :param command: The name of the command.
+    :param code: Optional response code for the error.
+
+    """
+
+    def __init__(self, command: bytes, code: ResponseCode = None) -> None:
+        super().__init__()
+        self.command = command
+        self.code = code
+
+    def get_response(self, tag: bytes) -> Response:
+        return ResponseNo(tag, self.command + b' not allowed.', self.code)
+
+
+class SearchNotAllowed(CommandNotAllowed):
+    """The ``SEARCH`` command contained a search key that could not be
     executed by the mailbox.
 
     :param key: The search key that failed.
@@ -68,14 +86,8 @@ class SearchNotAllowed(ResponseError):
     """
 
     def __init__(self, key: bytes = None) -> None:
-        super().__init__()
-        if key is None:
-            self.msg = b'SEARCH not allowed.'
-        else:
-            self.msg = b'SEARCH %b not allowed.' % key
-
-    def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, self.msg)
+        command = b'SEARCH ' + key if key else b'SEARCH'
+        super().__init__(command)
 
 
 class MailboxError(ResponseError):

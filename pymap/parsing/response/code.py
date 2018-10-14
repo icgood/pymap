@@ -52,7 +52,7 @@ class Capability(ResponseCode):
 
     def __init__(self, server_capabilities: Iterable[MaybeBytes]) -> None:
         super().__init__()
-        self.capabilities = list(server_capabilities)
+        self.capabilities = [bytes(cap) for cap in server_capabilities]
         self._raw: Optional[bytes] = None
 
     @property
@@ -63,18 +63,8 @@ class Capability(ResponseCode):
             [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)  # type: ignore
         return raw
 
-    def add(self, capability: MaybeBytes):
-        if capability not in self.capabilities:
-            self.capabilities.append(capability)
-            self._raw = None
-
-    def remove(self, capability: MaybeBytes):
-        try:
-            self.capabilities.remove(capability)
-        except ValueError:
-            pass
-        else:
-            self._raw = None
+    def __contains__(self, capability: MaybeBytes) -> bool:
+        return capability in self.capabilities
 
     def to_response(self) -> Response:
         return Response(b'*', self.string)

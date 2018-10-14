@@ -24,6 +24,8 @@ from datetime import datetime
 from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet, \
     Iterable, Collection
 
+from pysasl import AuthenticationCredentials
+
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.session import SessionInterface
@@ -91,9 +93,11 @@ class Session(SessionInterface):
                 yield (msg_seq, msg)
 
     @classmethod
-    async def login(cls, result):
+    async def login(cls, result: AuthenticationCredentials) \
+            -> Optional['Session']:
         if result.authcid == 'demouser' and result.check_secret('demopass'):
             return cls(result.authcid)
+        return None
 
     async def list_mailboxes(self, ref_name: str,
                              filter_: str,

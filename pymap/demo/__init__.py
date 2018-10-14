@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 #
 
+from pymap.interfaces.session import LoginFunc
 from .session import Session
 from .state import State
 
@@ -29,6 +30,6 @@ def add_subparser(subparsers):
     subparsers.add_parser('demo')
 
 
-def init(*_):
+def init(*_) -> LoginFunc:
     State.init()
     return Session.login

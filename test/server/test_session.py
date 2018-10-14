@@ -48,7 +48,11 @@ class TestSession(TestBase):
 
     async def test_auth_plain(self):
         self.transport.push_write(
-            b'* OK [CAPABILITY IMAP4rev1 AUTH=PLAIN] Server ready ',
+            b'* OK [CAPABILITY IMAP4rev1',
+            (br'(?:\s+[a-zA-Z0-9=-]+)*', ),
+            b' AUTH=PLAIN',
+            (br'(?:\s+[a-zA-Z0-9=-]+)*',),
+            b'] Server ready ',
             (br'\S+',), b'\r\n')
         self.transport.push_readline(
             b'auth1 AUTHENTICATE PLAIN\r\n')

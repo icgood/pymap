@@ -23,14 +23,12 @@ class TestBadCharset(unittest.TestCase):
 class TestCapability(unittest.TestCase):
 
     def test_bytes(self):
+        code = Capability([])
+        self.assertEqual(b'[CAPABILITY IMAP4rev1]', bytes(code))
         code = Capability([b'TEST'])
         self.assertEqual(b'[CAPABILITY IMAP4rev1 TEST]', bytes(code))
-        code.add(b'STUFF')
+        code = Capability([b'TEST', b'STUFF'])
         self.assertEqual(b'[CAPABILITY IMAP4rev1 TEST STUFF]', bytes(code))
-        code.remove(b'TEST')
-        self.assertEqual(b'[CAPABILITY IMAP4rev1 STUFF]', bytes(code))
-        code.remove(b'IMAP4rev1')
-        self.assertEqual(b'[CAPABILITY IMAP4rev1 STUFF]', bytes(code))
 
     def test_response(self):
         code = Capability([b'TEST'])

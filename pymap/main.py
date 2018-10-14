@@ -22,8 +22,9 @@
 """IMAP server with pluggable Python backends."""
 
 import asyncio
+import os.path
+import ssl
 from argparse import ArgumentParser
-from functools import partial
 
 from pkg_resources import iter_entry_points
 
@@ -42,6 +43,8 @@ def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--port', action='store', type=int, default=1143)
+    parser.add_argument('--cert', action='store')
+    parser.add_argument('--key', action='store')
     parser.add_argument('--version', action='version',
                         version='%(prog)s' + __version__)
     subparsers = parser.add_subparsers(dest='backend',
@@ -56,7 +59,15 @@ def main():
         parser.error('Expected backend name.')
         return
 
-    callback = partial(IMAPServer.callback, backend.init(args), args.debug)
+    if args.cert:
+        cert = os.path.realpath(args.cert)
+        key = os.path.realpath(args.key or args.cert)
+        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_context.load_cert_chain(cert, key)
+    else:
+        ssl_context = None
+
+    callback = IMAPServer(backend.init(args), args.debug, ssl_context)
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(callback, port=args.port, loop=loop)
     server = loop.run_until_complete(coro)
