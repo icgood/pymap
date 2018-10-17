@@ -3,6 +3,7 @@ from typing import Tuple
 
 from .. import Params, Special, InvalidContent
 from ..primitives import QuotedString
+from ..util import BytesFormat
 
 __all__ = ['DateTime']
 
@@ -43,4 +44,4 @@ class DateTime(Special[datetime]):
             else:
                 raw_str = self.value.strftime('%d-%b-%Y %X %z')
             self._raw = bytes(raw_str, 'ascii')
-        return b'"%b"' % self._raw
+        return BytesFormat(b'"%b"') % (self._raw, )

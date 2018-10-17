@@ -3,6 +3,7 @@ from typing import Iterable, Optional, Sequence
 from . import ResponseCode
 from ..primitives import ListP
 from ..typing import MaybeBytes
+from ..util import BytesFormat
 
 __all__ = ['Alert', 'BadCharset', 'Capability', 'Parse',
            'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
@@ -47,12 +48,12 @@ class Capability(ResponseCode):
         """The capabilities string without the enclosing square brackets."""
         if self._raw is not None:
             return self._raw
-        self._raw = raw = b' '.join(
-            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)  # type: ignore
+        self._raw = raw = BytesFormat(b' ').join(
+            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)
         return raw
 
     def __bytes__(self) -> bytes:
-        return b'[%b]' % self.string
+        return BytesFormat(b'[%b]') % self.string
 
 
 class Parse(ResponseCode):
@@ -73,7 +74,7 @@ class PermanentFlags(ResponseCode):
     def __init__(self, flags: Iterable[MaybeBytes]) -> None:
         super().__init__()
         self.flags: Sequence[MaybeBytes] = sorted(flags)
-        self._raw = b'[PERMANENTFLAGS %b]' % ListP(self.flags)  # type: ignore
+        self._raw = BytesFormat(b'[PERMANENTFLAGS %b]') % ListP(self.flags)
 
     def __bytes__(self) -> bytes:
         return self._raw

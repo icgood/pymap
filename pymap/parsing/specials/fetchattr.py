@@ -5,6 +5,7 @@ from typing import Tuple, Optional, Union, Sequence, FrozenSet
 from . import AString
 from .. import NotParseable, Params, Special
 from ..primitives import Atom, ListP
+from ..util import BytesFormat
 
 __all__ = ['FetchAttribute']
 
@@ -97,7 +98,7 @@ class FetchAttribute(Special[bytes]):
         if self.section:
             parts.append(b'[')
             if self.section.parts:
-                part_raw = b'.'.join(
+                part_raw = BytesFormat(b'.').join(
                     [b'%i' % num for num in self.section.parts])
                 parts.append(part_raw)
                 if self.section.specifier:
@@ -109,7 +110,8 @@ class FetchAttribute(Special[bytes]):
                     parts.append(bytes(ListP(self.section.headers, sort=True)))
             parts.append(b']')
         if self.partial:
-            partial = b'.'.join([b'%i' % p for p in self.partial])
+            partial = BytesFormat(b'.').join(
+                [b'%i' % num for num in self.partial])
             parts += [b'<', partial, b'>']
         self._raw = raw = b''.join(parts)
         return raw

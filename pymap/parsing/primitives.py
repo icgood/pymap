@@ -4,11 +4,12 @@ import re
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
 from typing import Tuple, List, Union, Iterable, Any, Sequence, Optional, \
-    Iterator, Generic
+    Iterator
 
 from . import Parseable, ExpectedParseable, NotParseable, \
     RequiresContinuation, Primitive, Params
 from .typing import MaybeBytes
+from .util import BytesFormat
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
@@ -265,7 +266,7 @@ class QuotedString(String):
 
         pat = self._quoted_specials_pattern
         quoted_string = pat.sub(escape_quoted_specials, self.value)
-        self._raw = b'"%b"' % quoted_string
+        self._raw = BytesFormat(b'"%b"') % (quoted_string, )
         return self._raw
 
 
@@ -303,7 +304,7 @@ class LiteralString(String):
         if self._raw is not None:
             return bytes(self._raw)
         length_bytes = bytes(str(len(self.value)), 'ascii')
-        self._raw = b'{%b}\r\n%b' % (length_bytes, self.value)
+        self._raw = BytesFormat(b'{%b}\r\n%b') % (length_bytes, self.value)
         return self._raw
 
 
@@ -354,7 +355,8 @@ class ListP(Primitive[Sequence[MaybeBytes]]):
             items.append(item)
 
     def __bytes__(self) -> bytes:
-        return b'(%b)' % b' '.join([bytes(item) for item in self.items])
+        raw_items = BytesFormat(b' ').join(self.items)
+        return BytesFormat(b'(%b)') % (raw_items, )
 
     def __hash__(self) -> int:
         return hash((ListP, self.value))

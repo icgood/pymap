@@ -1,8 +1,6 @@
 from datetime import datetime
 from typing import Tuple, Optional, FrozenSet, Dict, Iterable
 
-from pysasl import AuthenticationCredentials
-
 from .message import Message, LoadedMessage
 from .mailbox import MailboxInterface
 from ..flags import FlagOp

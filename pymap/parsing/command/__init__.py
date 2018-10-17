@@ -1,4 +1,4 @@
-from typing import Dict, Type, Tuple
+from typing import Dict, Type, Tuple, ClassVar
 
 from .. import Parseable, NotParseable, Space, EndLine, Params
 from ..primitives import Atom
@@ -18,7 +18,7 @@ class Command(Parseable[bytes]):
     """
 
     #: The command key, e.g. ``b'NOOP'``.
-    command: bytes = b''
+    command: ClassVar[bytes] = b''
 
     def __init__(self, tag: bytes) -> None:
         super().__init__()
