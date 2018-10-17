@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING, Optional, AbstractSet, FrozenSet
+from typing import Optional, AbstractSet, FrozenSet
 
 from .message import Message
 from ..flags import FlagOp
 from ..parsing.specials import Flag
+from ..selected import SelectedMailbox
 
 __all__ = ['MailboxInterface']
-
-if TYPE_CHECKING:
-    from ..mailbox import MailboxSession
 
 
 class MailboxInterface:
@@ -16,7 +14,7 @@ class MailboxInterface:
 
     """
 
-    def update_flags(self, session: 'MailboxSession', message: Message,
+    def update_flags(self, selected: SelectedMailbox, message: Message,
                      flag_set: AbstractSet[Flag],
                      flag_op: FlagOp = FlagOp.REPLACE) \
             -> FrozenSet[Flag]:
@@ -25,7 +23,7 @@ class MailboxInterface:
         backend.
 
         Args:
-            session: The mailbox session.
+            selected: The active mailbox session.
             message: The message to set flags on.
             flag_set: The set of flags for the update operation.
             flag_op: The mode to change the flags.

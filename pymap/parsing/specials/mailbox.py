@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 from . import AString
 from .. import Params, Special
@@ -19,7 +19,7 @@ class Mailbox(Special[str]):
             mailbox = 'INBOX'
         super().__init__()
         self.mailbox = mailbox
-        self._raw = None
+        self._raw: Optional[bytes] = None
 
     @property
     def value(self) -> str:
@@ -125,11 +125,11 @@ class Mailbox(Special[str]):
             return cls('INBOX'), buf
         return cls(cls.decode_name(mailbox)), buf
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         self._raw = raw = bytes(AString(self.encode_name(self.value)))
         return raw
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value

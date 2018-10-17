@@ -8,8 +8,8 @@ from weakref import WeakSet
 
 from pkg_resources import resource_listdir, resource_stream
 
-from pymap.mailbox import MailboxSession
 from pymap.message import BaseMessage
+from pymap.selected import SelectedMailbox
 from .message import Message
 
 __all__ = ['State']
@@ -23,7 +23,7 @@ class _Mailbox:
         self.uid_validity: int = random.randint(1, 32768)
         self.messages: List[BaseMessage] = []
         self.recent: Set[int] = set()
-        self.sessions: Set[MailboxSession] = WeakSet()
+        self.sessions: Set[SelectedMailbox] = WeakSet()
         self.subscribed = False
 
     def claim_uid(self):

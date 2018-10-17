@@ -1,14 +1,11 @@
 """Defines type hints used by parseable objects."""
 
-from typing import SupportsBytes, Union, TypeVar
+from typing import ByteString, SupportsBytes, Union, TypeVar
 
-__all__ = ['MaybeBytes', 'ParseableType', 'ParseableListType']
+__all__ = ['MaybeBytes', 'ParseableType']
 
 #: A bytes object or an object with a ``__bytes__`` method.
-MaybeBytes = Union[bytes, SupportsBytes]
+MaybeBytes = Union[ByteString, SupportsBytes]
 
 #: The generic type parsed from a buffer.
 ParseableType = TypeVar('ParseableType')
-
-#: The generic type parsed from a list primitive.
-ParseableListType = TypeVar('ParseableListType', bound=MaybeBytes)

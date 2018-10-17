@@ -43,15 +43,15 @@ class StatusAttribute(Special[bytes]):
         except ValueError:
             raise InvalidContent(buf)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.value)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, StatusAttribute):
             return self.value == other.value
         elif isinstance(other, bytes):
             return self.value == other
         return NotImplemented
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self.value

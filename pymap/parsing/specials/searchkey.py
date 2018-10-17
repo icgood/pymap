@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import TYPE_CHECKING, cast, Tuple, Union, Sequence
+from typing import cast, Tuple, Union, Sequence
 
 from .astring import AString
 from .flag import Keyword
@@ -11,10 +11,9 @@ from ..primitives import Atom, Number, QuotedString, ListP
 
 __all__ = ['SearchKey']
 
-if TYPE_CHECKING:
-    _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
-                        Sequence['SearchKey'], SequenceSet, Keyword,
-                        datetime, int, str]
+_FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
+                    Sequence['SearchKey'], SequenceSet, Keyword,
+                    datetime, int, str]
 
 
 class SearchKey(Special[bytes]):
@@ -34,7 +33,7 @@ class SearchKey(Special[bytes]):
     _not_pattern = re.compile(br'NOT +', re.I)
 
     def __init__(self, key: bytes,
-                 filter_: '_FilterType' = None,
+                 filter_: _FilterType = None,
                  inverse: bool = False) -> None:
         super().__init__()
         self.key = key
@@ -51,16 +50,20 @@ class SearchKey(Special[bytes]):
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.value, self.filter, self.inverse))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, SearchKey):
+            return NotImplemented
         return hash(self) == hash(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
+        if not isinstance(other, SearchKey):
+            return NotImplemented
         return hash(self) != hash(other)
 
     @classmethod

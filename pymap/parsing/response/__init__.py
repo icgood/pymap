@@ -1,19 +1,20 @@
-from typing import SupportsBytes, List, Optional
+from typing import List, Optional, ClassVar
 
 from ..command import BadCommand
 from ..typing import MaybeBytes
+from ..util import BytesFormat
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
            'ResponseBadCommand', 'ResponseNo', 'ResponseOk', 'ResponseBye']
 
 
-class ResponseCode(SupportsBytes):
+class ResponseCode:
     """Base class for response codes that may be returned along with IMAP
     server responses.
 
     """
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
 
@@ -39,7 +40,7 @@ class Response:
         self.tag = bytes(tag)
         self.untagged: List[MaybeBytes] = []
         self._text = text or b''
-        self._raw = None
+        self._raw: Optional[bytes] = None
 
     @property
     def text(self) -> bytes:
@@ -72,12 +73,11 @@ class Response:
         response = ResponseOk(b'*', text, code)
         self.add_untagged(response)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
-        raw_lines = [bytes(data) for data in self.untagged]
-        raw_lines.append(b'%b %b\r\n' % (self.tag, self.text))
-        self._raw = b''.join(raw_lines)
+        resp_line = BytesFormat(b'%b %b\r\n') % (self.tag, self.text)
+        self._raw = BytesFormat(b'').join(self.untagged + [resp_line])
         return self._raw
 
 
@@ -98,14 +98,14 @@ class ResponseContinuation(Response):
 
 class ConditionResponse(Response):
 
-    condition: Optional[bytes] = None
+    condition: ClassVar[bytes] = b''
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[MaybeBytes]) -> None:
+                 code: Optional[ResponseCode]) -> None:
         if code:
-            text = b'%b %b %b' % (self.condition, code, text)  # type: ignore
+            text = BytesFormat(b'%b %b %b') % (self.condition, code, text)
         else:
-            text = b'%b %b' % (self.condition, text)  # type: ignore
+            text = BytesFormat(b'%b %b') % (self.condition, text)
         super().__init__(tag, text)
 
 
@@ -123,7 +123,7 @@ class ResponseBad(ConditionResponse):
     condition = b'BAD'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[MaybeBytes] = None) -> None:
+                 code: Optional[ResponseCode] = None) -> None:
         super().__init__(tag, text, code)
 
 
@@ -140,7 +140,7 @@ class ResponseBadCommand(ResponseBad):
 
     condition = b'BAD'
 
-    def __init__(self, exc: BadCommand, code: Optional[MaybeBytes] = None) \
+    def __init__(self, exc: BadCommand, code: Optional[ResponseCode] = None) \
             -> None:
         super().__init__(exc.tag, bytes(exc), code)
 
@@ -159,7 +159,7 @@ class ResponseNo(ConditionResponse):
     condition = b'NO'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[MaybeBytes] = None) -> None:
+                 code: Optional[ResponseCode] = None) -> None:
         super().__init__(tag, text, code)
 
 
@@ -177,7 +177,7 @@ class ResponseOk(ConditionResponse):
     condition = b'OK'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[MaybeBytes] = None) -> None:
+                 code: Optional[ResponseCode] = None) -> None:
         super().__init__(tag, text, code)
 
 

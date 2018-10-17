@@ -1,4 +1,4 @@
-from typing import Dict, Type, Tuple
+from typing import Dict, Type, Tuple, ClassVar
 
 from .. import Parseable, NotParseable, Space, EndLine, Params
 from ..primitives import Atom
@@ -18,7 +18,7 @@ class Command(Parseable[bytes]):
     """
 
     #: The command key, e.g. ``b'NOOP'``.
-    command: bytes = b''
+    command: ClassVar[bytes] = b''
 
     def __init__(self, tag: bytes) -> None:
         super().__init__()
@@ -35,7 +35,7 @@ class Command(Parseable[bytes]):
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise NotImplementedError
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b' '.join((self.tag, self.command))
 
 
@@ -98,7 +98,7 @@ class CommandSelect(CommandAuth):
 class Commands:
     """Contains the set of all known IMAP commands and the ability to parse."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.commands: Dict[bytes, Type[Command]] = {}
         self._load_commands()
@@ -128,7 +128,7 @@ class Commands:
                 raise BadCommand(exc.buf, tag.value, cmd_type)
         raise CommandNotFound(buf, tag.value, command)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
 
@@ -149,7 +149,7 @@ class BadCommand(NotParseable):
         self.command = command
         self._raw = None
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is None:
             self._raw = b': '.join((self.command.command, super().__bytes__()))
         return self._raw
@@ -171,7 +171,7 @@ class CommandNotFound(NotParseable):
         self.tag = tag
         self.command = command
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self.command:
             return b'Command Not Found: %b' % self.command
         else:

@@ -1,22 +1,13 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, Tuple, Optional, FrozenSet, Dict, Iterable, \
-    Callable, Awaitable
+from typing import Tuple, Optional, FrozenSet, Dict, Iterable
 
-from pysasl import AuthenticationCredentials
-
+from .message import Message, LoadedMessage
+from .mailbox import MailboxInterface
 from ..flags import FlagOp
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
+from ..selected import SelectedMailbox
 
-__all__ = ['LoginFunc', 'SessionInterface']
-
-if TYPE_CHECKING:
-    from .message import Message, LoadedMessage
-    from .mailbox import MailboxInterface
-    from ..mailbox import MailboxSession
-
-#: Defines the function type that backends use to initialize a new session.
-LoginFunc = Callable[[AuthenticationCredentials],
-                     Awaitable[Optional['SessionInterface']]]
+__all__ = ['SessionInterface']
 
 
 class SessionInterface:
@@ -25,9 +16,9 @@ class SessionInterface:
     async def list_mailboxes(self, ref_name: str,
                              filter_: str,
                              subscribed: bool = False,
-                             selected: 'MailboxSession' = None) \
+                             selected: SelectedMailbox = None) \
             -> Tuple[Iterable[Tuple[str, bytes, Dict[str, bool]]],
-                     Optional['MailboxSession']]:
+                     Optional[SelectedMailbox]]:
         """List the mailboxes owned by the user.
 
         See Also:
@@ -46,8 +37,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def get_mailbox(self, name: str,
-                          selected: 'MailboxSession' = None) \
-            -> Tuple['MailboxInterface', Optional['MailboxSession']]:
+                          selected: SelectedMailbox = None) \
+            -> Tuple[MailboxInterface, Optional[SelectedMailbox]]:
         """Retrieves a :class:`'MailboxInterface'` object corresponding to an
         existing mailbox owned by the user. Raises an exception if the
         mailbox does not yet exist.
@@ -63,8 +54,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def create_mailbox(self, name: str,
-                             selected: 'MailboxSession' = None) \
-            -> Optional['MailboxSession']:
+                             selected: SelectedMailbox = None) \
+            -> Optional[SelectedMailbox]:
         """Creates a new mailbox owned by the user.
 
         See Also:
@@ -82,8 +73,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def delete_mailbox(self, name: str,
-                             selected: 'MailboxSession' = None) \
-            -> Optional['MailboxSession']:
+                             selected: SelectedMailbox = None) \
+            -> Optional[SelectedMailbox]:
         """Deletes the mailbox owned by the user.
 
         See Also:
@@ -102,8 +93,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def rename_mailbox(self, before_name: str, after_name: str,
-                             selected: 'MailboxSession' = None) \
-            -> Optional['MailboxSession']:
+                             selected: SelectedMailbox = None) \
+            -> Optional[SelectedMailbox]:
         """Renames the mailbox owned by the user.
 
         See Also:
@@ -123,8 +114,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def subscribe(self, name: str,
-                        selected: 'MailboxSession' = None) \
-            -> Optional['MailboxSession']:
+                        selected: SelectedMailbox = None) \
+            -> Optional[SelectedMailbox]:
         """Mark the given folder name as subscribed, whether or not the given
         folder name currently exists.
 
@@ -143,8 +134,8 @@ class SessionInterface:
         raise NotImplementedError
 
     async def unsubscribe(self, name: str,
-                          selected: 'MailboxSession' = None) \
-            -> Optional['MailboxSession']:
+                          selected: SelectedMailbox = None) \
+            -> Optional[SelectedMailbox]:
         """Remove the given folder name from the subscription list, whether or
         not the given folder name currently exists.
 
@@ -166,8 +157,8 @@ class SessionInterface:
                              message: bytes,
                              flag_set: FrozenSet[Flag],
                              when: Optional[datetime] = None,
-                             selected: 'MailboxSession' = None) \
-            -> Optional['MailboxSession']:
+                             selected: SelectedMailbox = None) \
+            -> Optional[SelectedMailbox]:
         """Appends a message to the end of the mailbox.
 
         See Also:
@@ -189,7 +180,7 @@ class SessionInterface:
         raise NotImplementedError
 
     async def select_mailbox(self, name: str, readonly: bool = False) \
-            -> Tuple['MailboxInterface', 'MailboxSession']:
+            -> Tuple['MailboxInterface', SelectedMailbox]:
         """Selects a :class:`MailboxInterface` object corresponding to an
         existing mailbox owned by the user. The returned session is then
         used as the ``selected`` argument to other methods to fetch mailbox
@@ -211,8 +202,8 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def check_mailbox(self, selected: 'MailboxSession',
-                            housekeeping: bool = False) -> 'MailboxSession':
+    async def check_mailbox(self, selected: SelectedMailbox,
+                            housekeeping: bool = False) -> SelectedMailbox:
         """Checks for any updates in the mailbox. Optionally performs any
         house-keeping necessary by the mailbox backend, which may be a
         slower operation.
@@ -224,7 +215,7 @@ class SessionInterface:
             <https://tools.ietf.org/html/rfc3501#section-6.4.1>`_
 
         Args:
-            selected: The name of the selected mailbox.
+            selected: The selected mailbox session.
             housekeeping: If True, the backend may perform additional
                 housekeeping operations if necessary.
 
@@ -234,15 +225,15 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def fetch_messages(self, selected: 'MailboxSession',
+    async def fetch_messages(self, selected: SelectedMailbox,
                              sequences: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
-            -> Tuple[Iterable[Tuple[int, 'LoadedMessage']], 'MailboxSession']:
+            -> Tuple[Iterable[Tuple[int, LoadedMessage]], SelectedMailbox]:
         """Get a list of :class:`LoadedMessage` objects corresponding to
         given sequence set.
 
         Args:
-            selected: The name of the selected mailbox.
+            selected: The selected mailbox session.
             sequences: Sequence set of message sequences or UIDs.
             attributes: Fetch attributes for the messages.
 
@@ -252,9 +243,9 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def search_mailbox(self, selected: 'MailboxSession',
+    async def search_mailbox(self, selected: SelectedMailbox,
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[Tuple[int, 'Message']], 'MailboxSession']:
+            -> Tuple[Iterable[Tuple[int, Message]], SelectedMailbox]:
         """Get the messages in the current mailbox that meet all of the
         given search criteria.
 
@@ -263,7 +254,7 @@ class SessionInterface:
             <https://tools.ietf.org/html/rfc3501#section-7.2.5>`_
 
         Args:
-            selected: The name of the selected mailbox.
+            selected: The selected mailbox session.
             keys: Search keys specifying the message criteria.
 
         Raises:
@@ -272,8 +263,8 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def expunge_mailbox(self, selected: 'MailboxSession') \
-            -> 'MailboxSession':
+    async def expunge_mailbox(self, selected: SelectedMailbox) \
+            -> SelectedMailbox:
         """All messages that are marked as deleted are immediately expunged
         from the mailbox.
 
@@ -282,7 +273,7 @@ class SessionInterface:
             <https://tools.ietf.org/html/rfc3501#section-6.4.3>`_
 
         Args:
-            selected: The name of the selected mailbox.
+            selected: The selected mailbox session.
 
         Raises:
             MailboxNotFound: The currently selected mailbox no longer exists.
@@ -291,9 +282,9 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def copy_messages(self, selected: 'MailboxSession',
+    async def copy_messages(self, selected: SelectedMailbox,
                             sequences: SequenceSet,
-                            mailbox: str) -> 'MailboxSession':
+                            mailbox: str) -> SelectedMailbox:
         """Copy a set of messages into the given mailbox.
 
         See Also:
@@ -301,7 +292,7 @@ class SessionInterface:
             <https://tools.ietf.org/html/rfc3501#section-6.4.7>`_
 
         Args:
-            selected: The name of the selected mailbox.
+            selected: The selected mailbox session.
             sequences: Sequence set of message sequences or UIDs.
             mailbox: Name of the mailbox to copy messages into.
 
@@ -314,11 +305,11 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def update_flags(self, selected: 'MailboxSession',
+    async def update_flags(self, selected: SelectedMailbox,
                            sequences: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[Iterable[Tuple[int, 'Message']], 'MailboxSession']:
+            -> Tuple[Iterable[Tuple[int, Message]], SelectedMailbox]:
         """Update the flags for the given set of messages.
 
         See Also:
@@ -326,7 +317,7 @@ class SessionInterface:
             <https://tools.ietf.org/html/rfc3501#section-6.4.6>`_
 
         Args:
-            selected: The name of the selected mailbox.
+            selected: The selected mailbox session.
             sequences: Sequence set of message sequences or UIDs.
             flag_set: Set of flags to update.
             mode: Update mode for the flag set.

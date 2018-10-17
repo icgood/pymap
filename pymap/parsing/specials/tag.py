@@ -34,5 +34,5 @@ class Tag(Special[bytes]):
             raise NotParseable(buf)
         return cls(match.group(0)), buf[match.end(0):]
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self.value

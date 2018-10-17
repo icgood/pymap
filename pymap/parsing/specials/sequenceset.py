@@ -2,18 +2,17 @@ import heapq
 import math
 import re
 from itertools import chain
-from typing import TYPE_CHECKING, Iterable, Tuple, Union, Sequence
+from typing import Iterable, Tuple, Union, Sequence, Optional
 
 from .. import NotParseable, Space, Params, Special
 
 __all__ = ['SequenceSet']
 
-if TYPE_CHECKING:
-    _SeqIdx = Union[None, str, int]
-    _SeqElem = Union[_SeqIdx, Tuple[_SeqIdx, _SeqIdx]]
+_SeqIdx = Union[None, str, int]
+_SeqElem = Union[_SeqIdx, Tuple[_SeqIdx, _SeqIdx]]
 
 
-class SequenceSet(Special[Sequence['_SeqElem']]):
+class SequenceSet(Special[Sequence[_SeqElem]]):
     """Represents a sequence set from an IMAP stream.
 
     Args:
@@ -27,16 +26,16 @@ class SequenceSet(Special[Sequence['_SeqElem']]):
 
     _num_pattern = re.compile(br'\d+')
 
-    def __init__(self, sequences: Sequence['_SeqElem'],
+    def __init__(self, sequences: Sequence[_SeqElem],
                  uid: bool = False) -> None:
         super().__init__()
         self.sequences = sequences
         self.uid = uid
         self._flattened_cache = None
-        self._raw = None
+        self._raw: Optional[bytes] = None
 
     @property
-    def value(self) -> Sequence['_SeqElem']:
+    def value(self) -> Sequence[_SeqElem]:
         """The sequence set data."""
         return self.sequences
 
@@ -108,7 +107,7 @@ class SequenceSet(Special[Sequence['_SeqElem']]):
             [range(min(low, max_value), min(high, max_value) + 1)
              for low, high in self._get_flattened_bounded(max_value)])
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         parts = []
@@ -123,7 +122,7 @@ class SequenceSet(Special[Sequence['_SeqElem']]):
         return raw
 
     @classmethod
-    def _parse_part(cls, buf: bytes) -> Tuple['_SeqElem', bytes]:
+    def _parse_part(cls, buf: bytes) -> Tuple[_SeqElem, bytes]:
         if buf and buf[0] == 0x2a:
             item1: _SeqIdx = '*'
             buf = buf[1:]

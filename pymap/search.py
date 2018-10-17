@@ -5,10 +5,10 @@ from typing import cast, FrozenSet, Tuple, Optional, Iterable
 
 from .exceptions import SearchNotAllowed
 from .interfaces.message import Message, LoadedMessage
-from .mailbox import MailboxSession
 from .parsing.specials import SearchKey, SequenceSet
 from .parsing.specials.flag import Flag, Keyword, Answered, Deleted, Draft, \
     Flagged, Recent, Seen
+from .selected import SelectedMailbox
 
 __all__ = ['SearchParams', 'SearchCriteria', 'SearchCriteriaSet']
 
@@ -19,17 +19,17 @@ class SearchParams:
     implemented, any search keys that require it will fail.
 
     Args:
-        session: The active mailbox session.
+        selected: The active mailbox session.
         max_seq: The highest message sequence ID in the mailbox.
         max_uid: The highest message UID in the mailbox.
         disabled: Search keys that should be disabled.
 
     """
 
-    def __init__(self, session: MailboxSession,
+    def __init__(self, selected: SelectedMailbox,
                  max_seq: int = None, max_uid: int = None,
                  disabled: Iterable[bytes] = None) -> None:
-        self.session = session
+        self.selected = selected
         if max_seq is not None:
             self._max_seq = max_seq
         if max_uid is not None:
@@ -258,7 +258,7 @@ class HasFlagSearchCriteria(SearchCriteria):
         self.expected = expected
 
     def matches(self, msg_seq: int, msg: Message) -> bool:
-        has_flag = self.flag in msg.get_flags(self.params.session)
+        has_flag = self.flag in msg.get_flags(self.params.selected)
         expected = self.expected
         return (has_flag and expected) or (not expected and not has_flag)
 
@@ -267,7 +267,7 @@ class NewSearchCriteria(SearchCriteria):
     """Matches if the message is considered "new", i.e. recent and unseen."""
 
     def matches(self, msg_seq: int, msg: Message) -> bool:
-        flags = msg.get_flags(self.params.session)
+        flags = msg.get_flags(self.params.selected)
         return Recent in flags and Seen not in flags
 
 

@@ -1,4 +1,4 @@
-"""Utilities for managing a IMAP messages."""
+"""Base implementations of the :mod:`pymap.interfaces.message` interfaces."""
 
 import io
 from datetime import datetime
@@ -6,19 +6,17 @@ from email.generator import BytesGenerator
 from email.headerregistry import BaseHeader
 from email.message import EmailMessage
 from email.policy import SMTP
-from typing import TYPE_CHECKING, cast, Tuple, Optional, Iterable, Set, \
-    Dict, FrozenSet, Sequence, Union
+from typing import cast, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
+    Sequence, Union
 
 from .interfaces.message import Message, LoadedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
 from .parsing.specials import Flag
+from .selected import SelectedMailbox
 
 __all__ = ['BaseMessage', 'BaseLoadedMessage']
-
-if TYPE_CHECKING:
-    from .mailbox import MailboxSession
 
 
 class _BodyOnlyBytesGenerator(BytesGenerator):
@@ -66,7 +64,7 @@ class BaseMessage(Message):
         """The message's internal date."""
         return self._internal_date
 
-    def get_flags(self, session: Optional['MailboxSession']) \
+    def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message."""
         if session:

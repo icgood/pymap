@@ -32,27 +32,27 @@ class Flag(Special[bytes]):
             return b'\\' + value[1:].capitalize()
         return value
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Flag):
             return bytes(self) == bytes(other)
         elif isinstance(other, bytes):
             return bytes(self) == self._capitalize(other)
         return NotImplemented
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if isinstance(other, Flag):
             return bytes(self) < bytes(other)
         elif isinstance(other, bytes):
             return bytes(self) < self._capitalize(other)
         return NotImplemented
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(bytes(self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<{0} value={1!r}>'.format(self.__class__.__name__, bytes(self))
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self.value
 
     @classmethod

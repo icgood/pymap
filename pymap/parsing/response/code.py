@@ -3,6 +3,7 @@ from typing import Iterable, Optional, Sequence
 from . import ResponseCode
 from ..primitives import ListP
 from ..typing import MaybeBytes
+from ..util import BytesFormat
 
 __all__ = ['Alert', 'BadCharset', 'Capability', 'Parse',
            'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
@@ -15,14 +16,14 @@ class Alert(ResponseCode):
 
     """
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[ALERT]'
 
 
 class BadCharset(ResponseCode):
     """A ``SEARCH`` command requested an invalid charset."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[BADCHARSET]'
 
 
@@ -47,18 +48,18 @@ class Capability(ResponseCode):
         """The capabilities string without the enclosing square brackets."""
         if self._raw is not None:
             return self._raw
-        self._raw = raw = b' '.join(
-            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)  # type: ignore
+        self._raw = raw = BytesFormat(b' ').join(
+            [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)
         return raw
 
-    def __bytes__(self):
-        return b'[%b]' % self.string
+    def __bytes__(self) -> bytes:
+        return BytesFormat(b'[%b]') % self.string
 
 
 class Parse(ResponseCode):
     """Indicates the server failed to parse the headers in a message."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[PARSE]'
 
 
@@ -73,23 +74,23 @@ class PermanentFlags(ResponseCode):
     def __init__(self, flags: Iterable[MaybeBytes]) -> None:
         super().__init__()
         self.flags: Sequence[MaybeBytes] = sorted(flags)
-        self._raw = b'[PERMANENTFLAGS %b]' % ListP(self.flags)  # type: ignore
+        self._raw = BytesFormat(b'[PERMANENTFLAGS %b]') % ListP(self.flags)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
 
 class ReadOnly(ResponseCode):
     """Indicates the currently selected mailbox is opened read-only."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[READ-ONLY]'
 
 
 class ReadWrite(ResponseCode):
     """Indicates the currently selected mailbox is opened read-write."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[READ-WRITE]'
 
 
@@ -99,7 +100,7 @@ class TryCreate(ResponseCode):
 
     """
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[TRYCREATE]'
 
 
@@ -116,7 +117,7 @@ class UidNext(ResponseCode):
         self.next = next_
         self._raw = b'[UIDNEXT %i]' % next_
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
 

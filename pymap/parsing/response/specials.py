@@ -5,6 +5,7 @@ from . import Response
 from ..primitives import ListP, QuotedString, Number
 from ..specials import Mailbox, FetchAttribute, StatusAttribute, Flag
 from ..typing import MaybeBytes
+from ..util import BytesFormat
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
@@ -21,7 +22,7 @@ class FlagsResponse(Response):
     """
 
     def __init__(self, flags: Iterable[MaybeBytes]) -> None:
-        text = b'FLAGS %b' % ListP(flags, sort=True)  # type: ignore
+        text = BytesFormat(b'FLAGS %b') % ListP(flags, sort=True)
         super().__init__(b'*', text)
 
 
@@ -80,7 +81,7 @@ class FetchResponse(Response):
             -> None:
         items: Iterable[Iterable] = data.items()
         data_list = ListP(chain.from_iterable(items))
-        text = b'%i FETCH %b' % (seq, bytes(data_list))
+        text = BytesFormat(b'%b FETCH %b') % (b'%i' % seq, data_list)
         super().__init__(b'*', text)
 
 
@@ -93,9 +94,9 @@ class SearchResponse(Response):
     """
 
     def __init__(self, seqs: Iterable[int]) -> None:
-        seqs_raw = [b'%i' % seq for seq in seqs]
-        if seqs_raw:
-            text = b' '.join([b'SEARCH'] + seqs_raw)
+        if seqs:
+            text = BytesFormat(b' ').join(
+                [b'SEARCH'] + [b'%i' % seq for seq in seqs])
         else:
             text = b'SEARCH'
         super().__init__(b'*', text)

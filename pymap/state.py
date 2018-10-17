@@ -14,21 +14,20 @@ from typing import TYPE_CHECKING, Optional, Callable, Union, Tuple, \
 from pysasl import SASLAuth, AuthenticationCredentials
 
 from .exceptions import CloseConnection, CommandNotAllowed
-from .interfaces.session import LoginFunc, SessionInterface
-from .mailbox import MailboxSession
+from .interfaces.login import LoginProtocol
+from .interfaces.session import SessionInterface
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
 from .parsing.primitives import ListP, Number, String, Nil
 from .parsing.response import ResponseOk, ResponseNo, ResponseBad, Response
-from .parsing.response.code import (Capability, PermanentFlags, ReadOnly,
-                                    UidNext, UidValidity, Unseen,
-                                    ReadWrite)
-from .parsing.response.specials import (FlagsResponse, ExistsResponse,
-                                        RecentResponse, FetchResponse,
-                                        ListResponse, LSubResponse,
-                                        SearchResponse, StatusResponse)
+from .parsing.response.code import Capability, PermanentFlags, ReadOnly, \
+    UidNext, UidValidity, Unseen, ReadWrite
+from .parsing.response.specials import FlagsResponse, ExistsResponse, \
+    RecentResponse, FetchResponse, ListResponse, LSubResponse, \
+    SearchResponse, StatusResponse
 from .parsing.specials import FetchAttribute, DateTime
 from .parsing.typing import MaybeBytes
+from .selected import SelectedMailbox
 
 __all__ = ['ConnectionState']
 
@@ -40,7 +39,7 @@ if TYPE_CHECKING:
 
     _AuthCommands = Union[AuthenticateCommand, LoginCommand]
     _CommandFunc = Callable[[Command],
-                            Awaitable[Tuple[Response, MailboxSession]]]
+                            Awaitable[Tuple[Response, SelectedMailbox]]]
 
 fqdn = getfqdn().encode('ascii')
 
@@ -57,13 +56,13 @@ class ConnectionState:
     #: The auth object used by connections after ``STARTTLS``.
     DEFAULT_AUTH_STARTTLS = SASLAuth()
 
-    def __init__(self, login: 'LoginFunc',
+    def __init__(self, login: LoginProtocol,
                  ssl_context: Optional[SSLContext]) -> None:
         super().__init__()
         self.login = login
         self.ssl_context = ssl_context
         self._session: Optional[SessionInterface] = None
-        self._selected: Optional[MailboxSession] = None
+        self._selected: Optional[SelectedMailbox] = None
         self._capability = copy(self.DEFAULT_CAPABILITY)
         self.auth = self.DEFAULT_AUTH
 
@@ -74,7 +73,7 @@ class ConnectionState:
         return self._session
 
     @property
-    def selected(self) -> MailboxSession:
+    def selected(self) -> SelectedMailbox:
         if self._selected is None:
             raise RuntimeError()  # State checking should prevent this.
         return self._selected
