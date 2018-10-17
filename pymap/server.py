@@ -1,23 +1,7 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+"""Defines socket interaction, accepting connections and handling a basic
+command/response flow.
+
+"""
 
 import asyncio
 import binascii
@@ -40,36 +24,57 @@ from .parsing.response import (ResponseContinuation, ResponseBadCommand,
                                ResponseBad, ResponseBye, Response, ResponseOk)
 from .state import ConnectionState
 
-__all__ = ['Disconnected', 'IMAPServer', 'IMAPConnection']
+__all__ = ['IMAPServer', 'IMAPConnection']
 
 
 class Disconnected(Exception):
+    """Thrown if the remote socket closes when the server expected input."""
     pass
 
 
 class IMAPServer:
+    """Callable object that creates and runs :class:`IMAPConnection` objects
+    when :meth:`asyncio.start_server` receives a new connection.
+
+    Args:
+        login: Login coroutine that takes authentication credentials and
+            returns a :class:`~.interfaces.session.SessionInterface` object.
+        debug: If true, prints all socket activity to stdout.
+        ssl_context: SSL context that will be used for opportunistic TLS.
+
+    """
 
     def __init__(self, login: LoginFunc, debug: bool = False,
                  ssl_context: SSLContext = None) -> None:
         super().__init__()
+        self.commands = Commands()
         self.login = login
         self.ssl_context = ssl_context
         self.debug = debug
 
     async def __call__(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
-        conn = IMAPConnection(self.debug, reader, writer)
+        conn = IMAPConnection(self.commands, self.debug, reader, writer)
         state = ConnectionState(self.login, self.ssl_context)
         await conn.run(state)
 
 
 class IMAPConnection:
+    """Runs a single IMAP connection from start to finish.
 
-    def __init__(self, debug: bool,
+    Args:
+        commands: Defines the IMAP commands available to the connection.
+        debug: If true, prints all socket activity to stdout.
+        reader: The input stream for the socket.
+        writer: The output stream for the socket.
+
+    """
+
+    def __init__(self, commands: Commands, debug: bool,
                  reader: StreamReader,
                  writer: StreamWriter) -> None:
         super().__init__()
-        self.commands = Commands()
+        self.commands = commands
         self.reader = reader
         self.writer = writer
         self._print = self._real_print if debug else self._noop_print

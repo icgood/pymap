@@ -30,11 +30,6 @@ class TestCapability(unittest.TestCase):
         code = Capability([b'TEST', b'STUFF'])
         self.assertEqual(b'[CAPABILITY IMAP4rev1 TEST STUFF]', bytes(code))
 
-    def test_response(self):
-        code = Capability([b'TEST'])
-        resp = code.to_response()
-        self.assertEqual(b'* CAPABILITY IMAP4rev1 TEST\r\n', bytes(resp))
-
 
 class TestParse(unittest.TestCase):
 

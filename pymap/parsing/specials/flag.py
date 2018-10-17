@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from functools import total_ordering
 from typing import Tuple
 
@@ -31,11 +10,21 @@ __all__ = ['Flag', 'SystemFlag', 'Keyword', 'Seen', 'Recent', 'Deleted',
 
 @total_ordering
 class Flag(Special[bytes]):
-    """Represents a message flag from an IMAP stream."""
+    """Represents a message flag from an IMAP stream.
+
+    Args:
+        value: The flag or keyword value.
+
+    """
 
     def __init__(self, value: bytes) -> None:
         super().__init__()
-        self.value = self._capitalize(value)
+        self._value = self._capitalize(value)
+
+    @property
+    def value(self) -> bytes:
+        """The flag or keyword value."""
+        return self._value
 
     @classmethod
     def _capitalize(cls, value: bytes) -> bytes:
@@ -112,9 +101,20 @@ class Keyword(Flag):
             raise NotParseable(buf)
 
 
+#: The ``\\Seen`` system flag.
 Seen = SystemFlag(br'\Seen')
+
+#: The ``\\Recent`` system flag.
 Recent = SystemFlag(br'\Recent')
+
+#: The ``\\Deleted`` system flag.
 Deleted = SystemFlag(br'\Deleted')
+
+#: The ``\\Flagged`` system flag.
 Flagged = SystemFlag(br'\Flagged')
+
+#: The ``\\Answered`` system flag.
 Answered = SystemFlag(br'\Answered')
+
+#: The ``\\Draft`` system flag.
 Draft = SystemFlag(br'\Draft')

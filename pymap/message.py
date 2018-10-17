@@ -1,23 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+"""Utilities for managing a IMAP messages."""
 
 import io
 from datetime import datetime
@@ -56,9 +37,10 @@ class BaseMessage(Message):
     """Message metadata such as UID, permanent flags, and when the message
     was added to the system.
 
-    :param uid: The UID of the message.
-    :param permanent_flags: Permanent flags for the message.
-    :param internal_date: The internal date of the message.
+    Args:
+        uid: The UID of the message.
+        permanent_flags: Permanent flags for the message.
+        internal_date: The internal date of the message.
 
     """
 
@@ -100,10 +82,14 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
     <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the
     `FETCH responses <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_.
 
-    :param uid: The UID of the message.
-    :param contents: The contents of the message.
-    :param permanent_flags: Permanent flags for the message.
-    :param internal_date: The internal date of the message.
+    Args:
+        uid: The UID of the message.
+        contents: The contents of the message.
+        permanent_flags: Permanent flags for the message.
+        internal_date: The internal date of the message.
+
+    Attributes:
+        contents: The MIME-parsed message object.
 
     """
 
@@ -111,8 +97,6 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
                  permanent_flags: Iterable[Flag] = None,
                  internal_date: Optional[datetime] = None) -> None:
         super().__init__(uid, permanent_flags, internal_date)
-
-        #: The MIME-parsed message object.
         self.contents: EmailMessage = contents
 
     @classmethod
@@ -133,7 +117,8 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
     def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
         """Get the values of a header from the message.
 
-        :param name: The name of the header.
+        Args:
+            name: The name of the header.
 
         """
         name_str = str(name, 'ascii', 'ignore')
@@ -150,11 +135,11 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
         then index it for its 3rd sub-part.
 
-        :param section: Optional nested list of sub-part indexes.
-        :param subset: Subset of headers to get.
-        :param inverse: If ``subset`` is given, this flag will invert it
-                             so that the headers *not* in ``subset`` are
-                             returned.
+        Args:
+            section: Optional nested list of sub-part indexes.
+            subset: Subset of headers to get.
+            inverse: If ``subset`` is given, this flag will invert it so
+                that the headers *not* in ``subset`` are returned.
 
         """
         try:
@@ -186,7 +171,8 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
         then index it for its 3rd sub-part.
 
-        :param section: Optional nested list of sub-part indexes.
+        Args:
+            section: Optional nested list of sub-part indexes.
 
         """
         try:
@@ -203,7 +189,8 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
         then index it for its 3rd sub-part.
 
-        :param section: Optional nested list of sub-part indexes.
+        Args:
+            section: Optional nested list of sub-part indexes.
 
         """
         try:
@@ -234,10 +221,9 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
     def get_envelope_structure(self) -> EnvelopeStructure:
         """Build and return the envelope structure.
 
-        .. seealso::
-
-           `RFC 3501 2.3.5
-           <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
+        See Also:
+            `RFC 3501 2.3.5
+            <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
 
         """
         return self._get_envelope_structure(self.contents)
@@ -245,10 +231,9 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
     def get_body_structure(self) -> BodyStructure:
         """Build and return the body structure.
 
-        .. seealso::
-
-           `RFC 3501 2.3.6
-           <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
+        See Also:
+            `RFC 3501 2.3.6
+            <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
 
         """
         return self._get_body_structure(self.contents)

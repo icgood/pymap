@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 import re
 from typing import Tuple, Sequence, List, Iterable, cast
 
@@ -34,19 +13,56 @@ __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
            'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand']
 
 
-class CheckCommand(CommandSelect, CommandNoArgs):
+class CheckCommand(CommandNoArgs, CommandSelect):
+    """The ``CHECK`` command initiates an implementation-specific backend
+    synchronization for the selected mailbox.
+
+    See Also:
+       `RFC 3501 6.4.1. <https://tools.ietf.org/html/rfc3501#section-6.4.1>`_
+
+    """
+
     command = b'CHECK'
 
 
-class CloseCommand(CommandSelect, CommandNoArgs):
+class CloseCommand(CommandNoArgs, CommandSelect):
+    """The ``CLOSE`` command closes a selected mailbox.
+
+    See Also:
+        `RFC 3501 6.4.2. <https://tools.ietf.org/html/rfc3501#section-6.4.2>`_
+
+    """
+
     command = b'CLOSE'
 
 
-class ExpungeCommand(CommandSelect, CommandNoArgs):
+class ExpungeCommand(CommandNoArgs, CommandSelect):
+    """The ``EXPUNGE`` command permanently erases all messages in the selected
+    mailbox that contain the ``\\Deleted`` flag.
+
+    See Also:
+        `RFC 3501 6.4.3. <https://tools.ietf.org/html/rfc3501#section-6.4.3>`_
+
+    """
+
     command = b'EXPUNGE'
 
 
 class CopyCommand(CommandSelect):
+    """The ``COPY`` command copies messages from the selected mailbox to the
+    end of the destination mailbox.
+
+    See Also:
+        `RFC 3501 6.4.7. <https://tools.ietf.org/html/rfc3501#section-6.4.7>`_
+
+    Args:
+        tag: The command tag.
+        seq_set: The sequence set of the messages to copy.
+        mailbox: The destination mailbox.
+        uid: True if the command should use message UIDs.
+
+    """
+
     command = b'COPY'
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
@@ -71,6 +87,21 @@ class CopyCommand(CommandSelect):
 
 
 class FetchCommand(CommandSelect):
+    """The ``FETCH`` command fetches message data from the selected mailbox.
+    What data is fetched can be controlled in depth by a set of fetch
+    attributes given in the command.
+
+    See Also:
+        `RFC 3501 6.4.5. <https://tools.ietf.org/html/rfc3501#section-6.4.5>`_
+
+    Args:
+        tag: The command tag.
+        seq_set: The sequence set of the messages to fetch.
+        attr_list: The message attributes to fetch.
+        uid: True if the command should use message UIDs.
+
+    """
+
     command = b'FETCH'
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
@@ -131,6 +162,21 @@ class FetchCommand(CommandSelect):
 
 
 class StoreCommand(CommandSelect):
+    """The ``STORE`` command updates the flags of a set of messages in the
+    selected mailbox.
+
+    See Also:
+        `RFC 3501 6.4.6. <https://tools.ietf.org/html/rfc3501#section-6.4.6>`_
+
+    Args:
+        tag: The command tag.
+        seq_set: The sequence set of the messages to fetch.
+        flags: The flag set operand.
+        mode: The type of update operation.
+        uid: True if the command should use message UIDs.
+
+    """
+
     command = b'STORE'
 
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
@@ -189,6 +235,20 @@ class StoreCommand(CommandSelect):
 
 
 class SearchCommand(CommandSelect):
+    """The ``SEARCH`` command searches the messages in the selected mailbox
+    based on a set of search criteria.
+
+    See Also:
+        `RFC 3501 6.4.4. <https://tools.ietf.org/html/rfc3501#section-6.4.4>`_
+
+    Args:
+        tag: The command tag.
+        keys: The search keys.
+        charset: The charset in use by the search keys.
+        uid: True if the command should use message UIDs.
+
+    """
+
     command = b'SEARCH'
 
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
@@ -237,6 +297,16 @@ class SearchCommand(CommandSelect):
 
 
 class UidCommand(CommandSelect):
+    """The ``UID`` command precedes one of the ``COPY``, ``FETCH``, ``SEARCH``,
+    or ``STORE`` commands and indicates that the command interacts with message
+    UIDs instead of sequence numbers. Refer to the RFC section for a complete
+    description.
+
+    See Also:
+        `RFC 3501 6.4.8. <https://tools.ietf.org/html/rfc3501#section-6.4.8>`_
+
+    """
+
     command = b'UID'
 
     _allowed_subcommands = {b'COPY': CopyCommand,

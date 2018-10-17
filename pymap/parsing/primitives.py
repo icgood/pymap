@@ -1,30 +1,12 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+"""Primitive parseable objects in the IMAP protocol."""
 
 import re
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import Tuple, List, Union, Iterable, Any, Sequence
+from typing import Tuple, List, Union, Iterable, Any, Sequence, Optional
 
-from . import Parseable, NotParseable, RequiresContinuation, Primitive, Params
+from . import Parseable, ExpectedParseable, NotParseable, \
+    RequiresContinuation, Primitive, Params
 from .typing import ParseableListType
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
@@ -32,20 +14,17 @@ __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
 
 
 class Nil(Primitive[None]):
-    """Represents a NIL object from an IMAP stream."""
+    """Represents a ``NIL`` object from an IMAP stream."""
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
-    @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Nil', bytes]:
-        start = cls._whitespace_length(buf)
-        match = cls._atom_pattern.match(buf, start)
-        if not match:
-            raise NotParseable(buf)
-        atom = match.group(0)
-        if not cls._nil_pattern.match(atom):
-            raise NotParseable(buf)
-        return cls(), buf[match.end(0):]
+    def __init__(self):
+        super().__init__()
+
+    @property
+    def value(self) -> None:
+        """Always returns ``None``."""
+        return None
 
     def __bytes__(self):
         return b'NIL'
@@ -58,17 +37,38 @@ class Nil(Primitive[None]):
             return True
         return NotImplemented
 
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Nil', bytes]:
+        start = cls._whitespace_length(buf)
+        match = cls._atom_pattern.match(buf, start)
+        if not match:
+            raise NotParseable(buf)
+        atom = match.group(0)
+        if not cls._nil_pattern.match(atom):
+            raise NotParseable(buf)
+        return cls(), buf[match.end(0):]
+
 
 @total_ordering
 class Number(Primitive[int]):
-    """Represents a number object from an IMAP stream."""
+    """Represents a number object from an IMAP stream.
+
+    Args:
+        num: The integer value.
+
+    """
 
     _num_pattern = re.compile(br'^\d+$')
 
     def __init__(self, num: int) -> None:
         super().__init__()
-        self.value = num
+        self.num = num
         self._raw = bytes(str(self.value), 'ascii')
+
+    @property
+    def value(self) -> int:
+        """The integer value."""
+        return self.num
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Number', bytes]:
@@ -103,11 +103,21 @@ class Number(Primitive[int]):
 
 
 class Atom(Primitive[bytes]):
-    """Represents an atom object from an IMAP stream."""
+    """Represents an atom object from an IMAP stream.
+
+    Args:
+        value: The atom bytestring.
+
+    """
 
     def __init__(self, value: bytes) -> None:
         super().__init__()
-        self.value = value
+        self._value = value
+
+    @property
+    def value(self) -> bytes:
+        """The atom bytestring."""
+        return self._value
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Atom', bytes]:
@@ -134,7 +144,20 @@ class String(Primitive[bytes]):
     """Represents a string object from an IMAP string. This object may not be
     instantiated directly, use one of its derivatives instead.
 
+    Attributes:
+        string: The string value.
+
     """
+
+    def __init__(self, string: bytes, raw: Optional[bytes]) -> None:
+        super().__init__()
+        self.string = string
+        self._raw = raw
+
+    @property
+    def value(self) -> bytes:
+        """The string value."""
+        return self.string
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['String', bytes]:
@@ -154,7 +177,8 @@ class String(Primitive[bytes]):
         based on the contents of ``data``. This is useful to improve
         readability of response data.
 
-        :param value: The string to serialize.
+        Args:
+            value: The string to serialize.
 
         """
         if value is None:
@@ -195,15 +219,16 @@ class QuotedString(String):
     """Represents a string object from an IMAP stream that was encased in
     double-quotes.
 
+    Args:
+        string: The string value.
+
     """
 
     _quoted_pattern = re.compile(br'(\r|\n|\\.|\")')
     _quoted_specials_pattern = re.compile(br'[\"\\]')
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:
-        super().__init__()
-        self.value = string
-        self._raw = raw
+        super().__init__(string, raw)
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['QuotedString', bytes]:
@@ -247,14 +272,15 @@ class LiteralString(String):
     """Represents a string object from an IMAP stream that used the literal
     syntax.
 
+    Args:
+        string: The string value.
+
     """
 
     _literal_pattern = re.compile(br'{(\d+)}\r?\n$')
 
     def __init__(self, string: bytes) -> None:
-        super().__init__()
-        self.value = string
-        self._raw = None
+        super().__init__(string, None)
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) \
@@ -281,17 +307,25 @@ class LiteralString(String):
 
 
 class ListP(Primitive[Sequence[ParseableListType]]):
-    """Represents a list of :class:`Parseable` objects from an IMAP stream."""
+    """Represents a list of :class:`Parseable` objects from an IMAP stream.
+
+    Args:
+        items: The list of parsed objects.
+        sort: If True, the list of items is sorted.
+
+    """
 
     _end_pattern = re.compile(br' *\)')
 
     def __init__(self, items: Iterable[ParseableListType],
                  sort: bool = False) -> None:
         super().__init__()
-        if sort:
-            self.value = sorted(items)
-        else:
-            self.value = list(items)
+        self.items = sorted(items) if sort else list(items)
+
+    @property
+    def value(self) -> Sequence[ParseableListType]:
+        """The list of parsed objects."""
+        return self.items
 
     def __iter__(self):
         return iter(self.value)
@@ -311,7 +345,7 @@ class ListP(Primitive[Sequence[ParseableListType]]):
             elif items and not cls._whitespace_length(buf):
                 raise NotParseable(buf)
             params_copy = params.copy(expected=params.list_expected)
-            item, buf = Parseable.parse(buf, params_copy)
+            item, buf = ExpectedParseable.parse(buf, params_copy)
             items.append(item)
 
     def __bytes__(self):

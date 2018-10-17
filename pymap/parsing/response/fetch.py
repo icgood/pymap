@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from email.headerregistry import Address, AddressHeader, UnstructuredHeader, \
     DateHeader, ContentDispositionHeader
 from itertools import chain
@@ -91,16 +70,17 @@ class EnvelopeStructure:
     <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_ FETCH ENVELOPE
     request.
 
-    :param date: Original date of the message.
-    :param subject: ``Subject:`` header.
-    :param from_: ``From:`` headers.
-    :param sender: ``Sender:`` headers.
-    :param reply_to: ``Reply-To:`` headers.
-    :param to: ``To:`` headers.
-    :param cc: ``Cc:`` headers.
-    :param bcc: ``Bcc`` headers.
-    :param in_reply_to: ``In-Reply-To:`` header.
-    :param message_id: ``Message-Id:`` header.
+    Args:
+        date: Original date of the message.
+        subject: ``Subject:`` header.
+        from_: ``From:`` headers.
+        sender: ``Sender:`` headers.
+        reply_to: ``Reply-To:`` headers.
+        to: ``To:`` headers.
+        cc: ``Cc:`` headers.
+        bcc: ``Bcc`` headers.
+        in_reply_to: ``In-Reply-To:`` header.
+        message_id: ``Message-Id:`` header.
 
     """
 
@@ -157,12 +137,13 @@ class BodyStructure:
     <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_ FETCH BODYSTRUCTURE
     request. This class should not be used directly.
 
-    :param maintype: Main-type of the ``Content-Type:`` header.
-    :param subtype: Sub-type of the ``Content-Type:`` header.
-    :param content_type_params: Parameters from the ``Content-Type:`` header.
-    :param content_disposition: ``Content-Disposition:`` header.
-    :param content_language: ``Content-Language:`` header.
-    :param content_location: ``Content-Location:`` header.
+    Args:
+        maintype: Main-type of the ``Content-Type:`` header.
+        subtype: Sub-type of the ``Content-Type:`` header.
+        content_type_params: Parameters from the ``Content-Type:`` header.
+        content_disposition: ``Content-Disposition:`` header.
+        content_language: ``Content-Language:`` header.
+        content_location: ``Content-Location:`` header.
 
     """
 
@@ -196,12 +177,13 @@ class MultipartBodyStructure(BodyStructure):
     """:class:`BodyStructure` sub-class for ``multipart/*`` messages. The
     response is made up of the BODYSTRUCTUREs of all sub-parts.
 
-    :param subtype: Sub-type of the ``Content-Type:`` header.
-    :param content_type_params: Parameters from the ``Content-Type:`` header.
-    :param content_disposition: ``Content-Disposition:`` header.
-    :param content_language: ``Content-Language:`` header.
-    :param content_location: ``Content-Location:`` header.
-    :param parts: Sub-part body structure objects.
+    Args:
+        subtype: Sub-type of the ``Content-Type:`` header.
+        content_type_params: Parameters from the ``Content-Type:`` header.
+        content_disposition: ``Content-Disposition:`` header.
+        content_language: ``Content-Language:`` header.
+        content_location: ``Content-Location:`` header.
+        parts: Sub-part body structure objects.
 
     """
 
@@ -235,17 +217,18 @@ class ContentBodyStructure(BodyStructure):
     """:class:`BodyStructure` sub-class for any content type that does not
     fit the other sub-classes.
 
-    :param maintype: Main-type of the ``Content-Type:`` header.
-    :param subtype: Sub-type of the ``Content-Type:`` header.
-    :param content_type_params: Parameters from the ``Content-Type:`` header.
-    :param content_disposition: ``Content-Disposition:`` header.
-    :param content_language: ``Content-Language:`` header.
-    :param content_location: ``Content-Location:`` header.
-    :param content_id: ``Content-Id:`` header.
-    :param content_description: ``Content-Description:`` header.
-    :param content_transfer_encoding: ``Content-Transfer-Encoding:`` header.
-    :param body_md5: MD5 hash of the body content.
-    :param size: Size of the message body, in bytes.
+    Args:
+        maintype: Main-type of the ``Content-Type:`` header.
+        subtype: Sub-type of the ``Content-Type:`` header.
+        content_type_params: Parameters from the ``Content-Type:`` header.
+        content_disposition: ``Content-Disposition:`` header.
+        content_language: ``Content-Language:`` header.
+        content_location: ``Content-Location:`` header.
+        content_id: ``Content-Id:`` header.
+        content_description: ``Content-Description:`` header.
+        content_transfer_encoding: ``Content-Transfer-Encoding:`` header.
+        body_md5: MD5 hash of the body content.
+        size: Size of the message body, in bytes.
 
     """
 
@@ -295,17 +278,18 @@ class ContentBodyStructure(BodyStructure):
 class TextBodyStructure(ContentBodyStructure):
     """:class:`BodyStructure` sub-class for ``text/*`` messages.
 
-    :param subtype: Sub-type of the ``Content-Type:`` header.
-    :param content_type_params: Parameters from the ``Content-Type:`` header.
-    :param content_disposition: ``Content-Disposition:`` header.
-    :param content_language: ``Content-Language:`` header.
-    :param content_location: ``Content-Location:`` header.
-    :param content_id: ``Content-Id:`` header.
-    :param content_description: ``Content-Description:`` header.
-    :param content_transfer_encoding: ``Content-Transfer-Encoding:`` header.
-    :param body_md5: MD5 hash of the body content.
-    :param size: Size of the message body, in bytes.
-    :param lines: Length of the message body, in lines.
+    Args:
+        subtype: Sub-type of the ``Content-Type:`` header.
+        content_type_params: Parameters from the ``Content-Type:`` header.
+        content_disposition: ``Content-Disposition:`` header.
+        content_language: ``Content-Language:`` header.
+        content_location: ``Content-Location:`` header.
+        content_id: ``Content-Id:`` header.
+        content_description: ``Content-Description:`` header.
+        content_transfer_encoding: ``Content-Transfer-Encoding:`` header.
+        body_md5: MD5 hash of the body content.
+        size: Size of the message body, in bytes.
+        lines: Length of the message body, in lines.
 
     """
 
@@ -352,18 +336,19 @@ class TextBodyStructure(ContentBodyStructure):
 class MessageBodyStructure(ContentBodyStructure):
     """:class:`BodyStructure` sub-class for ``message/rfc822`` messages.
 
-    :param content_type_params: Parameters from the ``Content-Type:`` header.
-    :param content_disposition: ``Content-Disposition:`` header.
-    :param content_language: ``Content-Language:`` header.
-    :param content_location: ``Content-Location:`` header.
-    :param content_id: ``Content-Id:`` header.
-    :param content_description: ``Content-Description:`` header.
-    :param content_transfer_encoding: ``Content-Transfer-Encoding:`` header.
-    :param body_md5: MD5 hash of the body content.
-    :param size: Size of the message body, in bytes.
-    :param lines: Length of the message body, in lines.
-    :param envelope_structure: Contained message's envelope structure.
-    :param body_structure: Contained message's body structure.
+    Args:
+        content_type_params: Parameters from the ``Content-Type:`` header.
+        content_disposition: ``Content-Disposition:`` header.
+        content_language: ``Content-Language:`` header.
+        content_location: ``Content-Location:`` header.
+        content_id: ``Content-Id:`` header.
+        content_description: ``Content-Description:`` header.
+        content_transfer_encoding: ``Content-Transfer-Encoding:`` header.
+        body_md5: MD5 hash of the body content.
+        size: Size of the message body, in bytes.
+        lines: Length of the message body, in lines.
+        envelope_structure: Contained message's envelope structure.
+        body_structure: Contained message's body structure.
 
     """
 

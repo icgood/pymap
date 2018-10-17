@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from typing import TYPE_CHECKING, Optional, AbstractSet, FrozenSet
 
 from .message import Message
@@ -32,8 +11,8 @@ if TYPE_CHECKING:
 
 
 class MailboxInterface:
-    """Corresponds to a mailbox state on an IMAP session, since the last
-    update from the backend.
+    """Describes a mailbox as it exists in an IMAP backend, whether or not it
+    is currently selected.
 
     """
 
@@ -45,10 +24,14 @@ class MailboxInterface:
         the ``message.permanent_flags`` set should be persisted by the
         backend.
 
-        :param session: The mailbox session.
-        :param message: The message to set flags on.
-        :param flag_set: The set of flags for the update operation.
-        :param flag_op: The mode to change the flags.
+        Args:
+            session: The mailbox session.
+            message: The message to set flags on.
+            flag_set: The set of flags for the update operation.
+            flag_op: The mode to change the flags.
+
+        Returns:
+            The resulting set of flags on the message.
 
         """
         raise NotImplementedError

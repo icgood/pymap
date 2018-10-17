@@ -1,7 +1,8 @@
 
 import unittest
 
-from pymap.parsing import Params, NotParseable, Parseable, Space, EndLine
+from pymap.parsing import Params, NotParseable, Parseable, ExpectedParseable, \
+    Space, EndLine
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
     ListP
 
@@ -25,28 +26,28 @@ class TestNotParseable(unittest.TestCase):
         self.assertEqual('one [:ERROR:]two three', str(exc))
 
 
-class TestParseable(unittest.TestCase):
+class TestExpectedParseable(unittest.TestCase):
 
     def test_parse(self):
-        nil, _ = Parseable.parse(b'nil', Params(expected=[Nil]))
+        nil, _ = ExpectedParseable.parse(b'nil', Params(expected=[Nil]))
         self.assertIsInstance(nil, Nil)
-        num, _ = Parseable.parse(b'123', Params(expected=[Number]))
+        num, _ = ExpectedParseable.parse(b'123', Params(expected=[Number]))
         self.assertIsInstance(num, Number)
-        atom, _ = Parseable.parse(b'ATOM', Params(expected=[Atom]))
+        atom, _ = ExpectedParseable.parse(b'ATOM', Params(expected=[Atom]))
         self.assertIsInstance(atom, Atom)
-        qstr, _ = Parseable.parse(b'"test"', Params(expected=[String]))
+        qstr, _ = ExpectedParseable.parse(b'"test"', Params(expected=[String]))
         self.assertIsInstance(qstr, QuotedString)
-        list_, _ = Parseable.parse(b'()', Params(expected=[ListP]))
+        list_, _ = ExpectedParseable.parse(b'()', Params(expected=[ListP]))
         self.assertIsInstance(list_, ListP)
 
     def test_parse_expectation_failure(self):
         with self.assertRaises(NotParseable):
-            Parseable.parse(b'ATOM', Params(expected=[Number, Nil]))
+            ExpectedParseable.parse(b'ATOM', Params(expected=[Number, Nil]))
 
     def test_parse_expectation_casting(self):
-        num, _ = Parseable.parse(b'123', Params(expected=[Atom]))
+        num, _ = ExpectedParseable.parse(b'123', Params(expected=[Atom]))
         self.assertIsInstance(num, Atom)
-        nil, _ = Parseable.parse(b'nil', Params(expected=[Atom]))
+        nil, _ = ExpectedParseable.parse(b'nil', Params(expected=[Atom]))
         self.assertIsInstance(num, Atom)
 
 

@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 import re
 from typing import Tuple
 
@@ -33,6 +12,13 @@ class AString(Special[bytes]):
     not (like an atom).  Additionally allows the closing square bracket (``]``)
     character in the unquoted form.
 
+    Args:
+        string: The string value.
+        raw: The raw bytestring from IMAP parsing.
+
+    Attributes:
+        string: The string value.
+
     """
 
     _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B-\x5B'
@@ -40,8 +26,13 @@ class AString(Special[bytes]):
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:
         super().__init__()
-        self.value = string
+        self.string = string
         self._raw = raw
+
+    @property
+    def value(self) -> bytes:
+        """The string value."""
+        return self.string
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['AString', bytes]:
