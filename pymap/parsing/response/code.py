@@ -15,14 +15,14 @@ class Alert(ResponseCode):
 
     """
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[ALERT]'
 
 
 class BadCharset(ResponseCode):
     """A ``SEARCH`` command requested an invalid charset."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[BADCHARSET]'
 
 
@@ -51,14 +51,14 @@ class Capability(ResponseCode):
             [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)  # type: ignore
         return raw
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[%b]' % self.string
 
 
 class Parse(ResponseCode):
     """Indicates the server failed to parse the headers in a message."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[PARSE]'
 
 
@@ -75,21 +75,21 @@ class PermanentFlags(ResponseCode):
         self.flags: Sequence[MaybeBytes] = sorted(flags)
         self._raw = b'[PERMANENTFLAGS %b]' % ListP(self.flags)  # type: ignore
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
 
 class ReadOnly(ResponseCode):
     """Indicates the currently selected mailbox is opened read-only."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[READ-ONLY]'
 
 
 class ReadWrite(ResponseCode):
     """Indicates the currently selected mailbox is opened read-write."""
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[READ-WRITE]'
 
 
@@ -99,7 +99,7 @@ class TryCreate(ResponseCode):
 
     """
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'[TRYCREATE]'
 
 
@@ -116,7 +116,7 @@ class UidNext(ResponseCode):
         self.next = next_
         self._raw = b'[UIDNEXT %i]' % next_
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
 

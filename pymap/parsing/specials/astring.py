@@ -44,7 +44,7 @@ class AString(Special[bytes]):
         string, buf = String.parse(buf, params)
         return cls(string.value, bytes(string)), buf
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         match = self._pattern.fullmatch(self.value)

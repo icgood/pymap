@@ -50,16 +50,20 @@ class SearchKey(Special[bytes]):
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.value, self.filter, self.inverse))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, SearchKey):
+            return NotImplemented
         return hash(self) == hash(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
+        if not isinstance(other, SearchKey):
+            return NotImplemented
         return hash(self) != hash(other)
 
     @classmethod

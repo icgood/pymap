@@ -36,7 +36,7 @@ class DateTime(Special[datetime]):
             raise InvalidContent(buf)
         return cls(when, string.value), after
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is None:
             if self.value.tzinfo is None:
                 raw_str = self.value.strftime('%d-%b-%Y %X')

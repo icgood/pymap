@@ -72,10 +72,11 @@ class Session(SessionInterface):
                 yield (msg_seq, msg)
 
     @classmethod
-    async def login(cls, result: AuthenticationCredentials) \
+    async def login(cls, credentials: AuthenticationCredentials) \
             -> Optional['Session']:
-        if result.authcid == 'demouser' and result.check_secret('demopass'):
-            return cls(result.authcid)
+        if credentials.authcid == 'demouser' \
+                and credentials.check_secret('demopass'):
+            return cls(credentials.authcid)
         return None
 
     async def list_mailboxes(self, ref_name: str,

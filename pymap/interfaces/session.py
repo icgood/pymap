@@ -1,6 +1,5 @@
 from datetime import datetime
-from typing import Tuple, Optional, FrozenSet, Dict, Iterable, \
-    Callable, Awaitable
+from typing import Tuple, Optional, FrozenSet, Dict, Iterable
 
 from pysasl import AuthenticationCredentials
 
@@ -10,7 +9,7 @@ from ..flags import FlagOp
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from ..selected import SelectedMailbox
 
-__all__ = ['SessionInterface', 'LoginFunc']
+__all__ = ['SessionInterface']
 
 
 class SessionInterface:
@@ -331,8 +330,3 @@ class SessionInterface:
 
         """
         raise NotImplementedError
-
-
-#: Defines the function type that backends use to initialize a new session.
-LoginFunc = Callable[[AuthenticationCredentials],
-                     Awaitable[Optional[SessionInterface]]]

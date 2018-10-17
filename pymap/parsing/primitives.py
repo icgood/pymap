@@ -3,11 +3,12 @@
 import re
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import Tuple, List, Union, Iterable, Any, Sequence, Optional
+from typing import Tuple, List, Union, Iterable, Any, Sequence, Optional, \
+    Iterator, Generic
 
 from . import Parseable, ExpectedParseable, NotParseable, \
     RequiresContinuation, Primitive, Params
-from .typing import ParseableListType
+from .typing import MaybeBytes
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
@@ -18,7 +19,7 @@ class Nil(Primitive[None]):
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     @property
@@ -26,13 +27,13 @@ class Nil(Primitive[None]):
         """Always returns ``None``."""
         return None
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b'NIL'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(Nil)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Nil):
             return True
         return NotImplemented
@@ -81,20 +82,20 @@ class Number(Primitive[int]):
             raise NotParseable(buf)
         return cls(int(match.group(0))), buf[match.end(0):]
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((Number, self.value))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Number):
             return self.value == other.value
         elif isinstance(other, int):
             return self.value == other
         return NotImplemented
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if isinstance(other, Number):
             return self.value < other.value
         elif isinstance(other, int):
@@ -128,13 +129,13 @@ class Atom(Primitive[bytes]):
         atom = match.group(0)
         return cls(atom), buf[match.end(0):]
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return bytes(self.value)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((Atom, self.value))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Atom):
             return self.value == other.value
         return NotImplemented
@@ -203,13 +204,13 @@ class String(Primitive[bytes]):
         else:
             return LiteralString(ascii_)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((String, self.value))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, String):
             return self.value == other.value
         return NotImplemented
@@ -255,7 +256,7 @@ class QuotedString(String):
                 return cls(bytes(unquoted), quoted), buf[end:]
         raise NotParseable(buf)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return bytes(self._raw)
 
@@ -298,7 +299,7 @@ class LiteralString(String):
             raise NotParseable(buf)
         return cls(literal), buf[literal_length:]
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return bytes(self._raw)
         length_bytes = bytes(str(len(self.value)), 'ascii')
@@ -306,7 +307,7 @@ class LiteralString(String):
         return self._raw
 
 
-class ListP(Primitive[Sequence[ParseableListType]]):
+class ListP(Primitive[Sequence[MaybeBytes]]):
     """Represents a list of :class:`Parseable` objects from an IMAP stream.
 
     Args:
@@ -317,22 +318,26 @@ class ListP(Primitive[Sequence[ParseableListType]]):
 
     _end_pattern = re.compile(br' *\)')
 
-    def __init__(self, items: Iterable[ParseableListType],
+    def __init__(self, items: Iterable[MaybeBytes],
                  sort: bool = False) -> None:
         super().__init__()
-        self.items = sorted(items) if sort else list(items)
+        self.items: Sequence[MaybeBytes] = \
+            sorted(items) if sort else list(items)
 
     @property
-    def value(self) -> Sequence[ParseableListType]:
+    def value(self) -> Sequence[MaybeBytes]:
         """The list of parsed objects."""
         return self.items
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[MaybeBytes]:
         return iter(self.value)
+
+    def __len__(self) -> int:
+        return len(self.value)
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['ListP[Parseable]', bytes]:
+            -> Tuple['ListP', bytes]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)
@@ -348,13 +353,13 @@ class ListP(Primitive[Sequence[ParseableListType]]):
             item, buf = ExpectedParseable.parse(buf, params_copy)
             items.append(item)
 
-    def __bytes__(self):
-        return b'(%b)' % b' '.join([bytes(item) for item in self.value])
+    def __bytes__(self) -> bytes:
+        return b'(%b)' % b' '.join([bytes(item) for item in self.items])
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((ListP, self.value))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, ListP):
             return self.__eq__(other.value)
         elif isinstance(other, SequenceABC):

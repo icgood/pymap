@@ -1,5 +1,5 @@
 mypy
-twine
+typing-extensions
 pycodestyle
 pytest
 pytest-asyncio

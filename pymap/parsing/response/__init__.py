@@ -13,7 +13,7 @@ class ResponseCode(SupportsBytes):
 
     """
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
 
@@ -39,7 +39,7 @@ class Response:
         self.tag = bytes(tag)
         self.untagged: List[MaybeBytes] = []
         self._text = text or b''
-        self._raw = None
+        self._raw: Optional[bytes] = None
 
     @property
     def text(self) -> bytes:
@@ -72,7 +72,7 @@ class Response:
         response = ResponseOk(b'*', text, code)
         self.add_untagged(response)
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         raw_lines = [bytes(data) for data in self.untagged]

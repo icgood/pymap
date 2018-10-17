@@ -16,7 +16,7 @@ class _Concatenated:
         super().__init__()
         self.parts = parts
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b''.join([bytes(part) for part in self.parts])
 
 
@@ -42,7 +42,7 @@ class _AddressList:
         else:
             return Nil()
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return bytes(self._value)
 
 
@@ -61,7 +61,7 @@ class _ParamsList:
         else:
             return Nil()
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return bytes(self._value)
 
 
@@ -128,7 +128,7 @@ class EnvelopeStructure:
                       String.build(self.in_reply_to),
                       String.build(self.message_id)])
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return bytes(self._value)
 
 
@@ -161,14 +161,14 @@ class BodyStructure:
         self.content_location = content_location
 
     @property
-    def _value(self) -> ListP[SupportsBytes]:
+    def _value(self) -> ListP:
         raise NotImplementedError
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return bytes(self._value)
 
     @property
-    def extended(self) -> ListP[SupportsBytes]:
+    def extended(self) -> ListP:
         """The body structure attributes with extension data."""
         raise NotImplementedError
 
@@ -199,11 +199,11 @@ class MultipartBodyStructure(BodyStructure):
         self.parts = parts
 
     @property
-    def _value(self) -> ListP[SupportsBytes]:
+    def _value(self) -> ListP:
         return ListP([_Concatenated(self.parts), String.build(self.subtype)])
 
     @property
-    def extended(self) -> ListP[SupportsBytes]:
+    def extended(self) -> ListP:
         """The body structure attributes with extension data."""
         parts = [part.extended for part in self.parts]
         return ListP([_Concatenated(parts), String.build(self.subtype),
@@ -252,7 +252,7 @@ class ContentBodyStructure(BodyStructure):
         self.size = size
 
     @property
-    def _value(self) -> ListP[SupportsBytes]:
+    def _value(self) -> ListP:
         return ListP([String.build(self.maintype), String.build(self.subtype),
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
@@ -261,7 +261,7 @@ class ContentBodyStructure(BodyStructure):
                       Number(self.size)])
 
     @property
-    def extended(self) -> ListP[SupportsBytes]:
+    def extended(self) -> ListP:
         """The body structure attributes with extension data."""
         return ListP([String.build(self.maintype), String.build(self.subtype),
                       _ParamsList(self.content_type_params),
@@ -310,7 +310,7 @@ class TextBodyStructure(ContentBodyStructure):
         self.lines = lines
 
     @property
-    def _value(self) -> ListP[SupportsBytes]:
+    def _value(self) -> ListP:
         return ListP([String.build(self.maintype), String.build(self.subtype),
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
@@ -319,7 +319,7 @@ class TextBodyStructure(ContentBodyStructure):
                       Number(self.size), Number(self.lines)])
 
     @property
-    def extended(self) -> ListP[SupportsBytes]:
+    def extended(self) -> ListP:
         """The body structure attributes with extension data."""
         return ListP([String.build(self.maintype), String.build(self.subtype),
                       _ParamsList(self.content_type_params),
@@ -372,7 +372,7 @@ class MessageBodyStructure(ContentBodyStructure):
         self.body_structure = body_structure
 
     @property
-    def _value(self) -> ListP[SupportsBytes]:
+    def _value(self) -> ListP:
         return ListP([String.build(self.maintype), String.build(self.subtype),
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
@@ -384,7 +384,7 @@ class MessageBodyStructure(ContentBodyStructure):
                       Number(self.lines)])
 
     @property
-    def extended(self) -> ListP[SupportsBytes]:
+    def extended(self) -> ListP:
         """The body structure attributes with extension data."""
         return ListP([String.build(self.maintype), String.build(self.subtype),
                       _ParamsList(self.content_type_params),

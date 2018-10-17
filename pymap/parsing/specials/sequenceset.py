@@ -2,7 +2,7 @@ import heapq
 import math
 import re
 from itertools import chain
-from typing import Iterable, Tuple, Union, Sequence
+from typing import Iterable, Tuple, Union, Sequence, Optional
 
 from .. import NotParseable, Space, Params, Special
 
@@ -32,7 +32,7 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
         self.sequences = sequences
         self.uid = uid
         self._flattened_cache = None
-        self._raw = None
+        self._raw: Optional[bytes] = None
 
     @property
     def value(self) -> Sequence[_SeqElem]:
@@ -107,7 +107,7 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
             [range(min(low, max_value), min(high, max_value) + 1)
              for low, high in self._get_flattened_bounded(max_value)])
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         parts = []

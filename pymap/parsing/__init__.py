@@ -41,7 +41,7 @@ class NotParseable(Exception):
     def __init__(self, buf: bytes) -> None:
         super().__init__()
         self.buf = buf
-        self._raw = None
+        self._raw: Optional[bytes] = None
         self._before: Optional[bytes] = None
         self._after: Optional[bytes] = None
         self.offset: int = 0
@@ -72,7 +72,7 @@ class NotParseable(Exception):
             self._after = after = self.buf
         return after
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         before = self.before
@@ -80,7 +80,7 @@ class NotParseable(Exception):
         self._raw = raw = self.error_indicator.join((before, after))
         return raw
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(bytes(self), 'ascii', 'replace')
 
 
@@ -130,7 +130,7 @@ class Params:
         self.charset = charset
         self.tag = tag or b'.'
 
-    def _set_if_none(self, kwargs, attr, value):
+    def _set_if_none(self, kwargs: Dict[str, Any], attr: str, value) -> None:
         if value is not None:
             kwargs[attr] = value
         else:
@@ -176,7 +176,7 @@ class Parseable(Generic[ParseableType]):
             return match.end(0) - start
         return 0
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
     @classmethod
@@ -205,7 +205,7 @@ class ExpectedParseable(Parseable[None]):
     def value(self) -> None:
         raise NotImplementedError
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
     @classmethod
@@ -251,7 +251,7 @@ class Space(Parseable[int]):
             raise NotParseable(buf)
         return cls(ret), buf[ret:]
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b' ' * self.length
 
 
@@ -291,7 +291,7 @@ class EndLine(Parseable[bytes]):
         carriage_return = bool(match.group(1))
         return cls(preceding_spaces, carriage_return), buf[match.end(0):]
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return b' ' * self.preceding_spaces + self.value
 
 
@@ -308,7 +308,7 @@ class Primitive(Parseable[ParseableType]):
     def value(self) -> ParseableType:
         raise NotImplementedError
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
     @classmethod
@@ -323,7 +323,7 @@ class Special(Parseable[ParseableType]):
     def value(self) -> ParseableType:
         raise NotImplementedError
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         raise NotImplementedError
 
     @classmethod

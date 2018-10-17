@@ -15,7 +15,7 @@ from pysasl import (ServerChallenge, AuthenticationError,
                     AuthenticationCredentials)
 
 from .exceptions import ResponseError, CloseConnection
-from .interfaces.session import LoginFunc
+from .interfaces.login import LoginProtocol
 from .parsing import RequiresContinuation, Params
 from .parsing.command import BadCommand, Commands, Command
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
@@ -37,7 +37,7 @@ class IMAPServer:
     when :meth:`asyncio.start_server` receives a new connection.
 
     Args:
-        login: Login coroutine that takes authentication credentials and
+        login: Login callback that takes authentication credentials and
             returns a :class:`~pymap.interfaces.session.SessionInterface`
             object.
         debug: If true, prints all socket activity to stdout.
@@ -45,7 +45,7 @@ class IMAPServer:
 
     """
 
-    def __init__(self, login: LoginFunc, debug: bool = False,
+    def __init__(self, login: LoginProtocol, debug: bool = False,
                  ssl_context: SSLContext = None) -> None:
         super().__init__()
         self.commands = Commands()
