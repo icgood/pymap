@@ -8,3 +8,5 @@ Lightweight, asynchronous IMAP serving in Python.
 [![PyPI](https://img.shields.io/pypi/v/pymap.svg)](https://pypi.python.org/pypi/pymap)
 [![PyPI](https://img.shields.io/pypi/pyversions/pymap.svg)](https://pypi.python.org/pypi/pymap)
 [![PyPI](https://img.shields.io/pypi/l/pymap.svg)](https://pypi.python.org/pypi/pymap)
+
+#### [API Documentation](https://pymap-docs.readthedocs.io/)

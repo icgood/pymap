@@ -2,6 +2,12 @@
 ``pymap.interfaces``
 ====================
 
+``pymap.interfaces.login``
+----------------------------
+
+.. automodule:: pymap.interfaces.login
+   :members:
+
 ``pymap.interfaces.message``
 ----------------------------
 
