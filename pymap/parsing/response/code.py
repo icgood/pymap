@@ -1,27 +1,6 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from typing import Iterable, Optional, Sequence
 
-from . import ResponseCode, Response
+from . import ResponseCode
 from ..primitives import ListP
 from ..typing import MaybeBytes
 
@@ -48,26 +27,29 @@ class BadCharset(ResponseCode):
 
 
 class Capability(ResponseCode):
-    """Lists the capabilities the server advertises to the client."""
+    """Lists the capabilities the server advertises to the client.
+
+    Args:
+        server_capabilities: The list of capabilities to advertise.
+
+    """
 
     def __init__(self, server_capabilities: Iterable[MaybeBytes]) -> None:
         super().__init__()
         self.capabilities = [bytes(cap) for cap in server_capabilities]
         self._raw: Optional[bytes] = None
 
+    def __contains__(self, capability: MaybeBytes) -> bool:
+        return capability in self.capabilities
+
     @property
     def string(self) -> bytes:
+        """The capabilities string without the enclosing square brackets."""
         if self._raw is not None:
             return self._raw
         self._raw = raw = b' '.join(
             [b'CAPABILITY', b'IMAP4rev1'] + self.capabilities)  # type: ignore
         return raw
-
-    def __contains__(self, capability: MaybeBytes) -> bool:
-        return capability in self.capabilities
-
-    def to_response(self) -> Response:
-        return Response(b'*', self.string)
 
     def __bytes__(self):
         return b'[%b]' % self.string
@@ -81,6 +63,12 @@ class Parse(ResponseCode):
 
 
 class PermanentFlags(ResponseCode):
+    """Indicates the permanent flags available in a mailbox.
+
+    Args:
+        flags: The flags to return.
+
+    """
 
     def __init__(self, flags: Iterable[MaybeBytes]) -> None:
         super().__init__()
@@ -116,7 +104,12 @@ class TryCreate(ResponseCode):
 
 
 class UidNext(ResponseCode):
-    """Indicates the next unique identifier value of the mailbox."""
+    """Indicates the next unique identifier value of the mailbox.
+
+    Args:
+        next_: The next available message UID.
+
+    """
 
     def __init__(self, next_: int) -> None:
         super().__init__()
@@ -128,7 +121,12 @@ class UidNext(ResponseCode):
 
 
 class UidValidity(ResponseCode):
-    """Indicates the mailbox unique identifier validity value."""
+    """Indicates the mailbox unique identifier validity value.
+
+    Args:
+        validity: The UID validity value.
+
+    """
 
     def __init__(self, validity: int) -> None:
         super().__init__()
@@ -140,8 +138,11 @@ class UidValidity(ResponseCode):
 
 
 class Unseen(ResponseCode):
-    """Indicates the unique identifier of the first message without the
+    """Indicates the message sequence ID of the first message without the
     ``\\Seen`` flag.
+
+    Args:
+        next_: The sequence ID of the message.
 
     """
 

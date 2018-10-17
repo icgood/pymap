@@ -1,23 +1,8 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+"""Defines the state flow of the IMAP connection. Determines if a command
+can be processed at that point in the connection, and interacts with the
+backend plugin.
+
+"""
 
 from collections import OrderedDict
 from copy import copy
@@ -60,10 +45,16 @@ if TYPE_CHECKING:
 fqdn = getfqdn().encode('ascii')
 
 
-class ConnectionState(object):
+class ConnectionState:
+    """Defines the interaction with the backend plugin."""
 
+    #: The non-auth capabilities advertised by new connections.
     DEFAULT_CAPABILITY = [b'STARTTLS', b'LOGINDISABLED']
+
+    #: The auth object used by new connections.
     DEFAULT_AUTH = SASLAuth.secure()
+
+    #: The auth object used by connections after ``STARTTLS``.
     DEFAULT_AUTH_STARTTLS = SASLAuth()
 
     def __init__(self, login: 'LoginFunc',
@@ -128,7 +119,7 @@ class ConnectionState(object):
 
     async def do_capability(self, cmd: 'CapabilityCommand'):
         response = ResponseOk(cmd.tag, b'Capabilities listed.')
-        response.add_untagged(self.capability.to_response())
+        response.add_untagged(Response(b'*', self.capability.string))
         return response, None
 
     async def do_noop(self, cmd: 'NoOpCommand'):
@@ -281,19 +272,19 @@ class ConnectionState(object):
                 elif attr.value in (b'BODY', b'BODY.PEEK'):
                     if not attr.section:
                         fetch_data[attr] = msg.get_body_structure()
-                    elif not attr.section.msgtext:
+                    elif not attr.section.specifier:
                         fetch_data[attr] = String.build(msg.get_body(
                             attr.section.parts))
-                    elif attr.section.msgtext == b'TEXT':
+                    elif attr.section.specifier == b'TEXT':
                         fetch_data[attr] = String.build(msg.get_text(
                             attr.section.parts))
-                    elif attr.section.msgtext in (b'HEADER', b'MIME'):
+                    elif attr.section.specifier in (b'HEADER', b'MIME'):
                         fetch_data[attr] = String.build(msg.get_headers(
                             attr.section.parts))
-                    elif attr.section.msgtext == b'HEADER.FIELDS':
+                    elif attr.section.specifier == b'HEADER.FIELDS':
                         fetch_data[attr] = String.build(msg.get_headers(
                             attr.section.parts, attr.section.headers))
-                    elif attr.section.msgtext == b'HEADER.FIELDS.NOT':
+                    elif attr.section.specifier == b'HEADER.FIELDS.NOT':
                         fetch_data[attr] = String.build(msg.get_headers(
                             attr.section.parts, attr.section.headers, True))
                 elif attr.value == b'RFC822':

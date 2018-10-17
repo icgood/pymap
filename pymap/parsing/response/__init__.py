@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from typing import SupportsBytes, List, Optional
 
 from ..command import BadCommand
@@ -43,10 +22,15 @@ class Response:
     responses may be sent unsolicited (e.g. idle timeouts) or in response to a
     tagged command from the client.
 
-    :param tag: The tag bytestring of the associated command, a plus
-                (``+``) to indicate a continuation requirement, or an
-                asterisk (``*``) to indicate an untagged response.
-    :param text: The response text.
+    Args:
+        tag: The tag bytestring of the associated command, a plus (``+``) to
+            indicate a continuation requirement, or an asterisk (``*``) to
+            indicate an untagged response.
+        text: The response text.
+
+    Attributes:
+        tag: The tag bytestring.
+        untagged: The list of added untagged responses.
 
     """
 
@@ -54,31 +38,35 @@ class Response:
         super().__init__()
         self.tag = bytes(tag)
         self.untagged: List[MaybeBytes] = []
-        self._text = text
+        self._text = text or b''
         self._raw = None
 
     @property
-    def text(self):
+    def text(self) -> bytes:
+        """The response text."""
         return bytes(self._text)
 
-    def add_untagged(self, response: MaybeBytes):
+    def add_untagged(self, response: MaybeBytes) -> None:
         """Add an untagged response. These responses are shown before the
         parent response.
 
-        :param response: The untagged response to add.
+        Args:
+            response: The untagged response to add.
 
         """
         self.untagged.append(response)
         self._raw = None
 
     def add_untagged_ok(self, text: MaybeBytes,
-                        code: Optional[ResponseCode] = None):
+                        code: Optional[ResponseCode] = None) -> None:
         """Add an untagged "OK" response.
 
-        .. seealso:: :meth:`add_untagged`, :class:`ResponseOk`
+        See Also:
+            :meth:`.add_untagged`, :class:`ResponseOk`
 
-        :param bytes text: The response text.
-        :param code: Optional response code.
+        Args:
+            text: The response text.
+            code: Optional response code.
 
         """
         response = ResponseOk(b'*', text, code)
@@ -99,7 +87,8 @@ class ResponseContinuation(Response):
     finish handling the command. The ``AUTHENTICATE`` command and any command
     that uses a literal string argument will send this response as needed.
 
-    :param text: The continuation text.
+    Args:
+        text: The continuation text.
 
     """
 
@@ -121,13 +110,13 @@ class ConditionResponse(Response):
 
 
 class ResponseBad(ConditionResponse):
-    """Class used for responses that indicate the server encountered a
-    protocol-related error in responding to the command.
+    """``BAD`` response indicating the server encountered a protocol-related
+    error in responding to the command.
 
-    :param bytes tag: The tag bytestring to associate the response to a
-                      command.
-    :param bytes text: The response text.
-    :param code: Optional response code.
+    Args:
+        tag: The tag bytestring to associate the response to a command.
+        text: The response text.
+        code: Optional response code.
 
     """
 
@@ -139,12 +128,13 @@ class ResponseBad(ConditionResponse):
 
 
 class ResponseBadCommand(ResponseBad):
-    """Class used for responses that indicate the server was not able to parse
-    the given command from the client. The server promises that the state of
-    the connection or mailbox will not be changed as a result.
+    """``BAD`` response indicating the server was not able to parse the given
+    command from the client. The server promises that the state of the
+    connection or mailbox will not be changed as a result.
 
-    :param exc: The exception that was raised during command parsing.
-    :param code: Optional response code.
+    Args:
+        exc: The exception that was raised during command parsing.
+        code: Optional response code.
 
     """
 
@@ -156,12 +146,13 @@ class ResponseBadCommand(ResponseBad):
 
 
 class ResponseNo(ConditionResponse):
-    """Response indicating the server successfully parsed the command but
-    failed to execute it successfully..
+    """``NO`` response indicating the server successfully parsed the command
+    but failed to execute it successfully.
 
-    :param tag: The tag bytestring to associate the response to a command.
-    :param text: The response text.
-    :param code: Optional response code.
+    Args:
+        tag: The tag bytestring to associate the response to a command.
+        text: The response text.
+        code: Optional response code.
 
     """
 
@@ -173,12 +164,13 @@ class ResponseNo(ConditionResponse):
 
 
 class ResponseOk(ConditionResponse):
-    """Response indicating the server successfully parsed and executed the
-    command.
+    """``OK`` response indicating the server successfully parsed and executed
+    the command.
 
-    :param tag: The tag bytestring to associate the response to a command.
-    :param text: The response text.
-    :param code: Optional response code.
+    Args:
+        tag: The tag bytestring to associate the response to a command.
+        text: The response text.
+        code: Optional response code.
 
     """
 
@@ -190,11 +182,12 @@ class ResponseOk(ConditionResponse):
 
 
 class ResponseBye(ConditionResponse):
-    """Response indicating that the server will be closing the connection
-    immediately after sending the response is sent. This may be sent in
-    response to a command (e.g. ``LOGOUT``) or unsolicited.
+    """``BYE`` response indicating that the server will be closing the
+    connection immediately after sending the response is sent. This may be sent
+    in response to a command (e.g. ``LOGOUT``) or unsolicited.
 
-    :param text: The reason for disconnection.
+    Args:
+        text: The reason for disconnection.
 
     """
 

@@ -135,8 +135,6 @@ class TestStatusAttribute(unittest.TestCase):
     def test_valueerror(self):
         with self.assertRaises(ValueError):
             StatusAttribute(b'TEST')
-        with self.assertRaises(ValueError):
-            StatusAttribute(b'messages')
         StatusAttribute(b'MESSAGES')
 
     def test_parse(self):
@@ -180,8 +178,8 @@ class TestFetchAttribute(unittest.TestCase):
         ret, buf = FetchAttribute.parse(
             b'body.peek[1.2.HEADER.FIELDS (A B)]<4.5>  ', Params())
         self.assertEqual(b'BODY.PEEK', ret.value)
-        self.assertEqual({1, 2}, ret.section.parts)
-        self.assertEqual(b'HEADER.FIELDS', ret.section.msgtext)
+        self.assertEqual([1, 2], ret.section.parts)
+        self.assertEqual(b'HEADER.FIELDS', ret.section.specifier)
         self.assertEqual({b'A', b'B'}, ret.section.headers)
         self.assertEqual((4, 5), ret.partial)
         self.assertEqual(b'  ', buf)
@@ -199,20 +197,20 @@ class TestFetchAttribute(unittest.TestCase):
     def test_parse_sections(self):
         ret1, _ = FetchAttribute.parse(b'BODY[1.2]', Params())
         self.assertEqual(b'BODY', ret1.value)
-        self.assertEqual({1, 2}, ret1.section.parts)
-        self.assertIsNone(ret1.section.msgtext)
+        self.assertEqual([1, 2], ret1.section.parts)
+        self.assertIsNone(ret1.section.specifier)
         self.assertIsNone(ret1.section.headers)
         self.assertIsNone(ret1.partial)
         ret2, _ = FetchAttribute.parse(b'BODY[1.2.MIME]', Params())
         self.assertEqual(b'BODY', ret2.value)
-        self.assertEqual({1, 2}, ret2.section.parts)
-        self.assertEqual(b'MIME', ret2.section.msgtext)
+        self.assertEqual([1, 2], ret2.section.parts)
+        self.assertEqual(b'MIME', ret2.section.specifier)
         self.assertIsNone(ret2.section.headers)
         self.assertIsNone(ret2.partial)
         ret3, _ = FetchAttribute.parse(b'BODY[HEADER]', Params())
         self.assertEqual(b'BODY', ret3.value)
-        self.assertIsNone(ret3.section.parts)
-        self.assertEqual(b'HEADER', ret3.section.msgtext)
+        self.assertEqual([], ret3.section.parts)
+        self.assertEqual(b'HEADER', ret3.section.specifier)
         self.assertIsNone(ret3.section.headers)
         self.assertIsNone(ret3.partial)
 
@@ -236,7 +234,8 @@ class TestFetchAttribute(unittest.TestCase):
         attr1 = FetchAttribute(b'ENVELOPE')
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         self.assertEqual(b'ENVELOPE', bytes(attr1))
-        section = FetchAttribute.Section((1, 2), b'STUFF', [b'A', b'B'])
+        section = FetchAttribute.Section((1, 2), b'STUFF',
+                                         frozenset({b'A', b'B'}))
         attr2 = FetchAttribute(b'BODY', section, (4, 5))
         self.assertEqual(b'BODY[1.2.STUFF (A B)]<4.5>', bytes(attr2))
         self.assertEqual(b'BODY[1.2.STUFF (A B)]<4>',

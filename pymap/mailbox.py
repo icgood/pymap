@@ -1,23 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+"""Utilities for managing a IMAP mailboxes."""
 
 from typing import TYPE_CHECKING, Union, Dict, Optional, Iterable, \
     AbstractSet, FrozenSet
@@ -43,11 +24,12 @@ class MailboxSession:
     """Manages the updates to the current selected mailbox from other
     concurrent sessions.
 
-    :param name: The name of the selected mailbox.
-    :param exists: The total number of messages in the mailbox.
-    :param readonly: Indicates the mailbox is selected as read-only.
-    :param session_flags: Session-only flags for the mailbox.
-    :param updates: Update responses for the mailbox.
+    Args:
+        name: The name of the selected mailbox.
+        exists: The total number of messages in the mailbox.
+        readonly: Indicates the mailbox is selected as read-only.
+        session_flags: Session-only flags for the mailbox.
+        updates: Update responses for the mailbox.
 
     """
 
@@ -111,8 +93,9 @@ class MailboxSession:
     def add_fetch(self, msg_seq: int, flag_set: AbstractSet[Flag]) -> None:
         """Adds a ``FETCH`` response to the next :meth:`.get_updates` call.
 
-        :param msg_seq: The sequence ID of the updated message.
-        :param flag_set: The flags associated with the message.
+        Args:
+            msg_seq: The sequence ID of the updated message.
+            flag_set: The flags associated with the message.
 
         """
         flags = sorted(flag_set)
@@ -123,9 +106,10 @@ class MailboxSession:
                     flag_set: AbstractSet[Flag]) -> None:
         """Update the session to indicate a newly delivered message.
 
-        :param msg_seq: The sequence ID of the new message.
-        :param msg_uid: The UID of the new message.
-        :param flag_set: The flags associated with the message.
+        Args:
+            msg_seq: The sequence ID of the new message.
+            msg_uid: The UID of the new message.
+            flag_set: The flags associated with the message.
 
         """
         self.session_flags.add_recent(msg_uid)
@@ -136,8 +120,9 @@ class MailboxSession:
     def remove_message(self, msg_seq: int, msg_uid: int) -> None:
         """Update the session to indicate an expunged message.
 
-        :param msg_seq: The sequence ID of the new message.
-        :param msg_uid: The UID of the new message.
+        Args:
+            msg_seq: The sequence ID of the new message.
+            msg_uid: The UID of the new message.
 
         """
         self._updates[msg_seq] = ExpungeResponse(msg_seq)
@@ -150,11 +135,12 @@ class BaseMailbox(MailboxInterface):
     """Implements some of the basic functionality of a mailbox, for backends
     that wish to save themselves some trouble.
 
-    :param name: The name of the mailbox.
-    :param permanent_flags: The permanent flags defined in the mailbox.
-    :param session_flags: The session flags defined in the mailbox.
-    :param readonly: If ``True``, the mailbox is read-only.
-    :param uid_validity: The UID validity value for mailbox consistency.
+    Args:
+        name: The name of the mailbox.
+        permanent_flags: The permanent flags defined in the mailbox.
+        session_flags: The session flags defined in the mailbox.
+        readonly: If ``True``, the mailbox is read-only.
+        uid_validity: The UID validity value for mailbox consistency.
 
     """
 
@@ -216,45 +202,50 @@ class BaseMailbox(MailboxInterface):
 
     @property
     def exists(self) -> int:
-        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.exists`
+        """Number of total messages in the mailbox.
 
-        :raises NotImplementedError: Must be implemented by sub-class.
+        Raises:
+            NotImplementedError: Must be implemented by sub-class.
 
         """
         raise NotImplementedError
 
     @property
     def recent(self) -> int:
-        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.recent`
+        """Number of recent messages in the mailbox.
 
-        :raises NotImplementedError: Must be implemented by sub-class.
+        Raises:
+            NotImplementedError: Must be implemented by sub-class.
 
         """
         raise NotImplementedError
 
     @property
     def unseen(self) -> int:
-        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.unseen`
+        """Number of unseen messages in the mailbox.
 
-        :raises NotImplementedError: Must be implemented by sub-class.
+        Raises:
+            NotImplementedError: Must be implemented by sub-class.
 
         """
         raise NotImplementedError
 
     @property
     def first_unseen(self) -> Optional[int]:
-        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.first_unseen`
+        """The sequence number of the first unseen message.
 
-        :raises NotImplementedError: Must be implemented by sub-class.
+        Raises:
+            NotImplementedError: Must be implemented by sub-class.
 
         """
         raise NotImplementedError
 
     @property
     def next_uid(self) -> int:
-        """.. seealso:: :attr:`~pymap.interfaces.MailboxInterface.next_uid`
+        """The predicted next message UID.
 
-        :raises NotImplementedError: Must be implemented by sub-class.
+        Raises:
+            NotImplementedError: Must be implemented by sub-class.
 
         """
         raise NotImplementedError

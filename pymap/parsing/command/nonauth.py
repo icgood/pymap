@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from typing import Tuple
 
 from . import CommandNonAuth, CommandNoArgs
@@ -30,6 +9,15 @@ __all__ = ['AuthenticateCommand', 'LoginCommand', 'StartTLSCommand']
 
 
 class AuthenticateCommand(CommandNonAuth):
+    """The ``AUTHENTICATE`` command authenticates an IMAP session using a SASL
+    mechanism.
+
+    Args:
+        tag: The command tag.
+        mech_name: The SASL mechanism name.
+
+    """
+
     command = b'AUTHENTICATE'
 
     def __init__(self, tag: bytes, mech_name: bytes) -> None:
@@ -46,6 +34,16 @@ class AuthenticateCommand(CommandNonAuth):
 
 
 class LoginCommand(CommandNonAuth):
+    """The ``LOGIN`` command authenticates an IMAP session using a basic user
+    ID and password credentials in clear-text.
+
+    Args:
+        tag: The command tag.
+        userid: The user ID bytestring.
+        password: The password bytestring.
+
+    """
+
     command = b'LOGIN'
 
     def __init__(self, tag: bytes, userid: bytes, password: bytes) -> None:
@@ -63,5 +61,12 @@ class LoginCommand(CommandNonAuth):
         return cls(params.tag, userid.value, password.value), buf
 
 
-class StartTLSCommand(CommandNonAuth, CommandNoArgs):
+class StartTLSCommand(CommandNoArgs, CommandNonAuth):
+    """The ``STARTTLS`` command attempts to encrypt a non-encrypted IMAP
+    session using opportunistic TLS. The client/server handshake should take
+    place immediately after the server issues a
+    :class:`~pymap.parsing.response.ResponseOk`.
+
+    """
+
     command = b'STARTTLS'

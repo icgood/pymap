@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 import re
 from datetime import datetime
 from typing import cast, Tuple, Sequence, Iterable
@@ -54,6 +33,17 @@ class CommandMailboxArg(CommandAuth):
 
 
 class AppendCommand(CommandAuth):
+    """The ``APPEND`` command adds a new message to a mailbox.
+
+    Args:
+        tag: The command tag.
+        mailbox: The mailbox name.
+        message: The raw message bytestring, including headers.
+        flags: The flags to assign to the message.
+        when: The internal timestamp to assign to the message.
+
+    """
+
     command = b'APPEND'
 
     def __init__(self, tag: bytes, mailbox: Mailbox, message: bytes,
@@ -80,9 +70,9 @@ class AppendCommand(CommandAuth):
         except UnexpectedType:
             raise
         except NotParseable:
-            flags = []  # type: ignore
+            flags: Sequence[Flag] = []
         else:
-            flags = flag_list.value
+            flags = cast(Sequence[Flag], flag_list.value)
             _, buf = Space.parse(buf, params)
         try:
             date_time_p, buf = DateTime.parse(buf, params)
@@ -99,14 +89,27 @@ class AppendCommand(CommandAuth):
 
 
 class CreateCommand(CommandMailboxArg):
+    """The ``CREATE`` command creates a new mailbox."""
+
     command = b'CREATE'
 
 
 class DeleteCommand(CommandMailboxArg):
+    """The ``DELETE`` command deletes a mailbox."""
+
     command = b'DELETE'
 
 
 class ListCommand(CommandAuth):
+    """The ``LIST`` command lists existing mailboxes.
+
+    Args:
+        tag: The command tag.
+        ref_name: The mailbox reference name.
+        filter_: The mailbox filter string.
+
+    """
+
     command = b'LIST'
 
     _list_mailbox_pattern = re.compile(br'[\x21\x23-\x27\x2A-\x5B'
@@ -135,10 +138,21 @@ class ListCommand(CommandAuth):
 
 
 class LSubCommand(ListCommand):
+    """The ``LSUB`` command lists subscribed mailboxes."""
+
     command = b'LSUB'
 
 
 class RenameCommand(CommandAuth):
+    """The ``RENAME`` command renames an existing mailbox.
+
+    Args:
+        tag: The command tag.
+        from_mailbox: The existing mailbox name.
+        to_mailbox: The desired mailbox name.
+
+    """
+
     command = b'RENAME'
 
     def __init__(self, tag: bytes, from_mailbox: Mailbox,
@@ -167,25 +181,40 @@ class RenameCommand(CommandAuth):
 
 
 class SelectCommand(CommandMailboxArg):
+    """The ``SELECT`` command selects a mailbox for querying, updates, and
+    state changes.
+
+    """
+
     command = b'SELECT'
 
 
 class ExamineCommand(SelectCommand):
+    """The ``EXAMINE`` command selects a mailbox as read-only for querying and
+    statechanges.
+
+    """
+
     command = b'EXAMINE'
 
 
-class StatusCommand(CommandAuth):
+class StatusCommand(CommandMailboxArg):
+    """The ``STATUS`` command returns information about a mailbox without
+    selecting it.
+
+    Args:
+        tag: The command tag.
+        mailbox: The mailbox name.
+        status_list: The status attributes to return.
+
+    """
+
     command = b'STATUS'
 
     def __init__(self, tag: bytes, mailbox: Mailbox,
                  status_list: Sequence[StatusAttribute]) -> None:
-        super().__init__(tag)
-        self.mailbox_obj = mailbox
+        super().__init__(tag, mailbox)
         self.status_list = status_list
-
-    @property
-    def mailbox(self) -> str:
-        return str(self.mailbox_obj)
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) \
@@ -203,8 +232,12 @@ class StatusCommand(CommandAuth):
 
 
 class SubscribeCommand(CommandMailboxArg):
+    """The ``SUBSCRIBE`` command subscribes to an existing mailbox."""
+
     command = b'SUBSCRIBE'
 
 
 class UnsubscribeCommand(CommandMailboxArg):
+    """The ``UNSUBSCRIBE`` command unsubscribes from a subscribed mailbox."""
+
     command = b'UNSUBSCRIBE'

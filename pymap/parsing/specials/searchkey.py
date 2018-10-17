@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 import re
 from datetime import datetime
 from typing import TYPE_CHECKING, cast, Tuple, Union, Sequence
@@ -26,7 +5,8 @@ from typing import TYPE_CHECKING, cast, Tuple, Union, Sequence
 from .astring import AString
 from .flag import Keyword
 from .sequenceset import SequenceSet
-from .. import Parseable, NotParseable, UnexpectedType, Space, Params, Special
+from .. import ExpectedParseable, NotParseable, UnexpectedType, Space, \
+    Params, Special
 from ..primitives import Atom, Number, QuotedString, ListP
 
 __all__ = ['SearchKey']
@@ -40,6 +20,15 @@ if TYPE_CHECKING:
 class SearchKey(Special[bytes]):
     """Represents a search key given to the SEARCH command on an IMAP stream.
 
+    Args:
+        key: The search key.
+        filter_: The filter object, used by most search keys.
+        inverse: If the search key was inverted with ``NOT``.
+
+    Args:
+        filter_: The filter object, used by most search keys.
+        inverse: If the search key was inverted with ``NOT``.
+
     """
 
     _not_pattern = re.compile(br'NOT +', re.I)
@@ -48,11 +37,20 @@ class SearchKey(Special[bytes]):
                  filter_: '_FilterType' = None,
                  inverse: bool = False) -> None:
         super().__init__()
-        self.value = key
+        self.key = key
         self.filter = filter_
         self.inverse = inverse
 
     @property
+    def value(self) -> bytes:
+        """The search key."""
+        return self.key
+
+    @property
+    def not_inverse(self) -> 'SearchKey':
+        """Return a copy of the search key with :attr:`.inverse` flipped."""
+        return SearchKey(self.value, self.filter, not self.inverse)
+
     def __bytes__(self):
         raise NotImplementedError
 
@@ -73,7 +71,7 @@ class SearchKey(Special[bytes]):
     @classmethod
     def _parse_date_filter(cls, buf: bytes, params: Params):
         params_copy = params.copy(expected=[Atom, QuotedString])
-        atom, after = Parseable.parse(buf, params_copy)
+        atom, after = ExpectedParseable.parse(buf, params_copy)
         date_str = str(atom.value, 'ascii', 'ignore')
         try:
             date = datetime.strptime(date_str, '%d-%b-%Y')

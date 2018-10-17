@@ -1,27 +1,6 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 import re
 from functools import total_ordering
-from typing import Tuple, Optional, Sequence, Iterable
+from typing import Tuple, Optional, Union, Sequence, FrozenSet
 
 from . import AString
 from .. import NotParseable, Params, Special
@@ -35,37 +14,59 @@ class FetchAttribute(Special[bytes]):
     """Represents an attribute that should be fetched for each message in the
     sequence set of a FETCH command on an IMAP stream.
 
+    Args:
+        attribute: The attribute name.
+        section: The attribute section.
+        partial: The attribute partial range.
+
+    Attributes:
+        section: The attribute section.
+        partial: The attribute partial range.
+
     """
 
     class Section:
+        """Represents a fetch attribute section, which typically comes after
+        the attribute name within square brackets, e.g. ``BODY[0.TEXT]``.
 
-        def __init__(self, parts: Optional[Iterable[int]],
-                     msgtext: bytes = None,
-                     headers: Iterable[bytes] = None) -> None:
+        Attributes:
+            parts: The nested MIME part identifiers.
+            specifier: The MIME part specifier.
+            headers: The MIME part specifier headers.
+
+        """
+
+        def __init__(self, parts: Sequence[int],
+                     specifier: bytes = None,
+                     headers: FrozenSet[bytes] = None) -> None:
             self.parts = parts
-            self.msgtext = msgtext
+            self.specifier = specifier
             self.headers = headers
 
         def __hash__(self):
-            return hash((self.parts, self.msgtext, self.headers))
+            return hash((self.parts, self.specifier, self.headers))
 
     _attrname_pattern = re.compile(br' *([^\s\[<()]+)')
     _section_start_pattern = re.compile(br' *\[ *')
     _section_end_pattern = re.compile(br' *\]')
     _partial_pattern = re.compile(br'< *(\d+) *\. *(\d+) *>')
 
-    _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *(MIME)?',
-                                   re.I)
+    _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *')
 
     def __init__(self, attribute: bytes,
                  section: Section = None,
-                 partial: Sequence[int] = None) -> None:
+                 partial: Union[Tuple[int, int], Tuple[int]] = None) -> None:
         super().__init__()
-        self.value = attribute.upper()
+        self.attribute = attribute.upper()
         self.section = section
         self.partial = partial
         self._raw: Optional[bytes] = None
         self._for_response: Optional['FetchAttribute'] = None
+
+    @property
+    def value(self) -> bytes:
+        """The attribute name."""
+        return self.attribute
 
     @property
     def for_response(self) -> 'FetchAttribute':
@@ -74,7 +75,7 @@ class FetchAttribute(Special[bytes]):
                 self._for_response = self
             else:
                 self._for_response = FetchAttribute(
-                    self.value, self.section, self.partial[:1])
+                    self.value, self.section, (self.partial[0], ))
         return self._for_response
 
     @property
@@ -99,13 +100,13 @@ class FetchAttribute(Special[bytes]):
                 part_raw = b'.'.join(
                     [b'%i' % num for num in self.section.parts])
                 parts.append(part_raw)
-                if self.section.msgtext:
+                if self.section.specifier:
                     parts.append(b'.')
-            if self.section.msgtext:
-                parts.append(self.section.msgtext)
-            if self.section.headers:
-                parts.append(b' ')
-                parts.append(bytes(ListP(self.section.headers)))
+            if self.section.specifier:
+                parts.append(self.section.specifier)
+                if self.section.headers:
+                    parts.append(b' ')
+                    parts.append(bytes(ListP(self.section.headers, sort=True)))
             parts.append(b']')
         if self.partial:
             partial = b'.'.join([b'%i' % p for p in self.partial])
@@ -127,31 +128,28 @@ class FetchAttribute(Special[bytes]):
 
     @classmethod
     def _parse_section(cls, buf: bytes, params: Params):
-        section_parts = None
+        section_parts: Sequence[int] = []
         match = cls._sec_part_pattern.match(buf)
         if match:
-            section_parts = frozenset(int(num) for num in
-                                      match.group(1).split(b'.'))
+            section_parts = [int(num) for num in match.group(1).split(b'.')]
             buf = buf[match.end(0):]
-            if not match.group(2):
-                return cls.Section(section_parts), buf
-            elif match.group(3):
-                return cls.Section(section_parts, b'MIME'), buf
         try:
             atom, after = Atom.parse(buf, params)
         except NotParseable:
             return cls.Section(section_parts), buf
-        sec_msgtext = atom.value.upper()
-        if sec_msgtext in (b'HEADER', b'TEXT'):
-            return cls.Section(section_parts, sec_msgtext), after
-        elif sec_msgtext in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
+        specifier = atom.value.upper()
+        if section_parts and specifier == b'MIME':
+            return cls.Section(section_parts, specifier), after
+        elif specifier in (b'HEADER', b'TEXT'):
+            return cls.Section(section_parts, specifier), after
+        elif specifier in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             params = params.copy(list_expected=[AString])
             header_list_p, buf = ListP.parse(after, params)
             header_list = frozenset(
                 [bytes(hdr).upper() for hdr in header_list_p.value])
             if not header_list:
                 raise NotParseable(after)
-            return cls.Section(section_parts, sec_msgtext, header_list), buf
+            return cls.Section(section_parts, specifier, header_list), buf
         raise NotParseable(buf)
 
     @classmethod

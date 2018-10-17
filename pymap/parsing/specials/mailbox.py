@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from typing import Tuple
 
 from . import AString
@@ -28,14 +7,24 @@ __all__ = ['Mailbox']
 
 
 class Mailbox(Special[str]):
-    """Represents a mailbox data object from an IMAP stream."""
+    """Represents a mailbox data object from an IMAP stream.
+
+    Args:
+        mailbox: The mailbox name.
+
+    """
 
     def __init__(self, mailbox: str) -> None:
-        super().__init__()
         if mailbox.upper() == 'INBOX':
             mailbox = 'INBOX'
-        self.value = mailbox
+        super().__init__()
+        self.mailbox = mailbox
         self._raw = None
+
+    @property
+    def value(self) -> str:
+        """The mailbox name."""
+        return self.mailbox
 
     @classmethod
     def _modified_b64encode(cls, src: str) -> bytes:
@@ -56,7 +45,8 @@ class Mailbox(Special[str]):
         """Encode the mailbox name using the modified UTF-7 specification for
         IMAP.
 
-        :param mailbox: The name of the mailbox to encode.
+        Args:
+            mailbox: The name of the mailbox to encode.
 
         """
         ret = bytearray()
@@ -93,7 +83,8 @@ class Mailbox(Special[str]):
         """Decode the mailbox name using the modified UTF-7 specification for
         IMAP.
 
-        :param encoded_mailbox: The encoded name of the mailbox to decode.
+        Args:
+            encoded_mailbox: The encoded name of the mailbox to decode.
 
         """
         parts = []

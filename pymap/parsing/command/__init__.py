@@ -1,25 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
-from typing import Dict, Type, Tuple, Any
+from typing import Dict, Type, Tuple
 
 from .. import Parseable, NotParseable, Space, EndLine, Params
 from ..primitives import Atom
@@ -30,10 +9,11 @@ __all__ = ['CommandNotFound', 'BadCommand', 'Command', 'CommandNoArgs',
            'Commands']
 
 
-class Command(Parseable[Any]):
+class Command(Parseable[bytes]):
     """Base class to represent the commands available to clients.
 
-    :param tag: The tag parsed from the beginning of the command line.
+    Args:
+        tag: The tag parsed from the beginning of the command line.
 
     """
 
@@ -46,9 +26,14 @@ class Command(Parseable[Any]):
         #: The tag parsed from the beginning of the command line.
         self.tag = tag
 
+    @property
+    def value(self) -> bytes:
+        """The command name."""
+        return self.command
+
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
-        raise RuntimeError
+        raise NotImplementedError
 
     def __bytes__(self):
         return b' '.join((self.tag, self.command))
@@ -71,7 +56,10 @@ class CommandAny(Command):
     """Represents a command available at any stage of the IMAP session.
 
     """
-    pass
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+        raise NotImplementedError
 
 
 class CommandAuth(Command):
@@ -79,7 +67,10 @@ class CommandAuth(Command):
     authenticated.
 
     """
-    pass
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+        raise NotImplementedError
 
 
 class CommandNonAuth(Command):
@@ -87,7 +78,10 @@ class CommandNonAuth(Command):
     authenticated.
 
     """
-    pass
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+        raise NotImplementedError
 
 
 class CommandSelect(CommandAuth):
@@ -95,7 +89,10 @@ class CommandSelect(CommandAuth):
     authenticated and a mailbox has been selected.
 
     """
-    pass
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+        raise NotImplementedError
 
 
 class Commands:
@@ -139,6 +136,11 @@ class BadCommand(NotParseable):
     """Error indicating the data was not parseable because the command had
     invalid arguments.
 
+    Args:
+        buf: The parsing buffer.
+        tag: The command tag value.
+        command: The command class.
+
     """
 
     def __init__(self, buf: bytes, tag: bytes, command: Type[Command]) -> None:
@@ -156,6 +158,11 @@ class BadCommand(NotParseable):
 class CommandNotFound(NotParseable):
     """Error indicating the data was not parseable because the command was not
     found.
+
+    Args:
+        buf: The parsing buffer.
+        tag: The command tag value.
+        command: The command name.
 
     """
 

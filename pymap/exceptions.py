@@ -1,25 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
-"""Module containing the exceptions that may be used by pymap plugins."""
+"""Module containing the general exceptions that may be used by pymap."""
 
 from typing import Optional
 
@@ -42,7 +21,8 @@ class ResponseError(Exception):
     def get_response(self, tag: bytes) -> Response:
         """Build an IMAP response for the error.
 
-        :param tag: The command tag that generated the error.
+        Args:
+            tag: The command tag that generated the error.
 
         """
         raise NotImplementedError
@@ -63,8 +43,9 @@ class CloseConnection(ResponseError):
 class CommandNotAllowed(ResponseError):
     """The command is syntactically valid, but not allowed.
 
-    :param command: The name of the command.
-    :param code: Optional response code for the error.
+    Args:
+        command: The name of the command.
+        code: Optional response code for the error.
 
     """
 
@@ -81,7 +62,8 @@ class SearchNotAllowed(CommandNotAllowed):
     """The ``SEARCH`` command contained a search key that could not be
     executed by the mailbox.
 
-    :param key: The search key that failed.
+    Args:
+        key: The search key that failed.
 
     """
 
@@ -93,9 +75,10 @@ class SearchNotAllowed(CommandNotAllowed):
 class MailboxError(ResponseError):
     """Parent exception for errors related to a mailbox.
 
-    :param mailbox: The name of the mailbox.
-    :param message: The response message for the error.
-    :param code: Optional response code for the error.
+    Args:
+        mailbox: The name of the mailbox.
+        message: The response message for the error.
+        code: Optional response code for the error.
 
     """
 
@@ -113,8 +96,9 @@ class MailboxError(ResponseError):
 class MailboxNotFound(MailboxError):
     """The requested mailbox was not found.
 
-    :param mailbox: The name of the mailbox
-    :param try_create: Whether to include ``[TRYCREATE]`` in the error.
+    Args:
+        mailbox: The name of the mailbox
+        try_create: Whether to include ``[TRYCREATE]`` in the error.
 
     """
 
@@ -127,7 +111,8 @@ class MailboxConflict(MailboxError):
     """The mailbox cannot be created or renamed because of a naming conflict
     with another mailbox.
 
-    :param mailbox: The name of the mailbox.
+    Args:
+        mailbox: The name of the mailbox.
 
     """
 
@@ -139,7 +124,8 @@ class MailboxHasChildren(MailboxError):
     """The mailbox cannot be deleted because there are other inferior
     heirarchical mailboxes below it.
 
-    :param mailbox: The name of the mailbox.
+    Args:
+        mailbox: The name of the mailbox.
 
     """
 
@@ -151,7 +137,8 @@ class MailboxReadOnly(MailboxError):
     """The mailbox is opened read-only and the requested operation is not
     allowed.
 
-    :param mailbox: The name of the mailbox.
+    Args:
+        mailbox: The name of the mailbox.
 
     """
 

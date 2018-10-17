@@ -1,24 +1,3 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 from itertools import chain
 from typing import Iterable, List, Mapping
 
@@ -36,7 +15,8 @@ class FlagsResponse(Response):
     """Constructs the special FLAGS response used by the SELECT and EXAMINE
     commands.
 
-    :param flags: Flags in the response.
+    Args:
+        flags: Flags in the response.
 
     """
 
@@ -49,7 +29,8 @@ class ExistsResponse(Response):
     """Constructs the special EXISTS response used by the SELECT and EXAMINE
     commands.
 
-    :param num: The number of messages existing in the mailbox.
+    Args:
+        num: The number of messages existing in the mailbox.
 
     """
 
@@ -62,7 +43,8 @@ class RecentResponse(Response):
     """Constructs the special RECENT response used by the SELECT and EXAMINE
     commands.
 
-    :param num: The number of recent messages in the mailbox.
+    Args:
+        num: The number of recent messages in the mailbox.
 
     """
 
@@ -74,7 +56,8 @@ class RecentResponse(Response):
 class ExpungeResponse(Response):
     """Constructs the special EXPUNGE response used by the EXPUNGE command.
 
-    :param seq: The message sequence number.
+    Args:
+        seq: The message sequence number.
 
     """
 
@@ -87,8 +70,9 @@ class FetchResponse(Response):
     """Constructs the special FETCH response used by the STORE and FETCH
     commands.
 
-    :param seq: The message sequence number.
-    :param data: Dictionary mapping fetch attributes to their values.
+    Args:
+        seq: The message sequence number.
+        data: Dictionary mapping fetch attributes to their values.
 
     """
 
@@ -103,7 +87,8 @@ class FetchResponse(Response):
 class SearchResponse(Response):
     """Constructs the special SEARCH response used by the SEARCH command.
 
-    :param seqs: List of message sequence integers.
+    Args:
+        seqs: List of message sequence integers.
 
     """
 
@@ -119,8 +104,9 @@ class SearchResponse(Response):
 class StatusResponse(Response):
     """Constructs the special STATUS response used by the STATUS command.
 
-    :param name: The name of the mailbox.
-    :param data: Dictionary mapping status attributes to their values.
+    Args:
+        name: The name of the mailbox.
+        data: Dictionary mapping status attributes to their values.
 
     """
 
@@ -135,13 +121,14 @@ class StatusResponse(Response):
 class ListResponse(Response):
     """Constructs the special LIST response used by the LIST command.
 
-    :param name: The mailbox name.
-    :param sep: The heirarchy separation character.
-    :param marked: If this mailbox is considered "interesting" by the server.
-    :param unmarked: If this mailbox is not considered "interesting".
-    :param no_inferior: If the mailbox does not and cannot have inferior
+    Args:
+        name: The mailbox name.
+        sep: The heirarchy separation character.
+        marked: If this mailbox is considered "interesting" by the server.
+        unmarked: If this mailbox is not considered "interesting".
+        no_inferior: If the mailbox does not and cannot have inferior
                         mailboxes in its heirarchy.
-    :param no_select: If the mailbox is not able to be selected.
+        no_select: If the mailbox is not able to be selected.
 
     """
 

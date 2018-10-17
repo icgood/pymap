@@ -1,23 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+"""Package defining all the IMAP parsing and response classes."""
 
 import re
 from typing import Tuple, Optional, Generic, Sequence, Dict, Any, List, Type
@@ -25,17 +6,18 @@ from typing import Tuple, Optional, Generic, Sequence, Dict, Any, List, Type
 from .typing import ParseableType
 
 __all__ = ['RequiresContinuation', 'NotParseable', 'InvalidContent',
-           'UnexpectedType', 'Parseable', 'Space', 'EndLine', 'Primitive',
-           'Special', 'Params']
+           'UnexpectedType', 'Parseable', 'ExpectedParseable', 'Space',
+           'EndLine', 'Primitive', 'Special', 'Params']
 
 
 class RequiresContinuation(Exception):
     """Indicates that the buffer has been successfully parsed so far, but
     requires a continuation of the command from the client.
 
-    :param message: The message from the server.
-    :param literal_length: If the continuation is for a string literal,
-                           this is the byte length to expect.
+    Args:
+        message: The message from the server.
+        literal_length: If the continuation is for a string literal, this is
+            the byte length to expect.
 
     """
 
@@ -49,7 +31,8 @@ class NotParseable(Exception):
     """Indicates that the given buffer was not parseable by one or all of the
     data formats.
 
-    :param buf: The buffer with the parsing error.
+    Args:
+        buf: The buffer with the parsing error.
 
     """
 
@@ -69,6 +52,7 @@ class NotParseable(Exception):
 
     @property
     def before(self) -> bytes:
+        """The bytes before the parsing error was encountered."""
         if self._before is not None:
             return self._before
         buf = self.buf
@@ -79,6 +63,7 @@ class NotParseable(Exception):
 
     @property
     def after(self) -> bytes:
+        """The bytes after the parsing error was encountered."""
         if self._after is not None:
             return self._after
         if isinstance(self.buf, memoryview):
@@ -119,6 +104,14 @@ class Params:
     """Parameters used and passed around among the :meth:`~Parseable.parse`
     methods.
 
+    Attributes:
+        continuations: The continuation buffers remaining for parsing.
+        expected: The types that are expected in the next parsed object.
+        list_expected: The types that are expect in a parsed list.
+        uid: The next parsed command came after a ``UID`` command.
+        charset: Strings should be decoded using this character set.
+        tag: The next parsed command uses this tag bytestring.
+
     """
 
     __slots__ = ['continuations', 'expected', 'list_expected',
@@ -149,6 +142,7 @@ class Params:
              uid: bool = None,
              charset: str = None,
              tag: bytes = None) -> 'Params':
+        """Copy the parameters, possibly replacing a subset."""
         kwargs: Dict[str, Any] = {}
         self._set_if_none(kwargs, 'continuations', continuations)
         self._set_if_none(kwargs, 'expected', expected)
@@ -170,9 +164,10 @@ class Parseable(Generic[ParseableType]):
 
     _whitespace_pattern = re.compile(br' +')
 
-    def __init__(self):
-        super().__init__()
-        self.value: ParseableType = None
+    @property
+    def value(self) -> ParseableType:
+        """The primary value associated with the parsed data."""
+        raise NotImplementedError
 
     @classmethod
     def _whitespace_length(cls, buf, start=0) -> int:
@@ -186,6 +181,44 @@ class Parseable(Generic[ParseableType]):
 
     @classmethod
     def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
+        """Implemented by sub-classes to define how to parse the given buffer.
+
+        Args:
+            buf: The bytes containing the data to be parsed.
+            params: The parameters used by some parseable types.
+
+        """
+        raise NotImplementedError
+
+
+class ExpectedParseable(Parseable[None]):
+    """Non-instantiable class, used to parse a buffer from a list of
+    expected types.
+
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        raise NotImplementedError
+
+    @property
+    def value(self) -> None:
+        raise NotImplementedError
+
+    def __bytes__(self):
+        raise NotImplementedError
+
+    @classmethod
+    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
+        """Parses the given buffer by attempting to parse the list of
+        :attr:`~Params.expected` types until one of them succeeds,
+        then returns the parsed object.
+
+        Args:
+            buf: The bytes containing the data to be parsed.
+            params: The parameters used by some parseable types.
+
+        """
         for data_type in params.expected:
             try:
                 return data_type.parse(buf, params)
@@ -194,14 +227,22 @@ class Parseable(Generic[ParseableType]):
         raise UnexpectedType(buf)
 
 
-class Space(Parseable[None]):
+class Space(Parseable[int]):
     """Represents at least one space character.
+
+    Args:
+        length: The number of spaces parsed.
 
     """
 
     def __init__(self, length: int) -> None:
         super().__init__()
         self.length = length
+
+    @property
+    def value(self) -> int:
+        """The number of spaces parsed."""
+        return self.length
 
     @classmethod
     def parse(cls, buf: bytes, params: 'Params') -> Tuple['Space', bytes]:
@@ -214,9 +255,17 @@ class Space(Parseable[None]):
         return b' ' * self.length
 
 
-class EndLine(Parseable[None]):
+class EndLine(Parseable[bytes]):
     """Represents the end of a parsed line. This will only parse if the buffer
     has zero or more space characters followed by a new-line sequence.
+
+    Args:
+        preceding_spaces: The number of space characteres before the newline.
+        carriage_return: Whether the newline included a carriage return.
+
+    Attributes:
+        preceding_spaces: The number of space characteres before the newline.
+        carriage_return: Whether the newline included a carriage return.
 
     """
 
@@ -228,6 +277,11 @@ class EndLine(Parseable[None]):
         self.preceding_spaces = preceding_spaces
         self.carriage_return = carriage_return
 
+    @property
+    def value(self) -> bytes:
+        """The endline bytestring."""
+        return b'\r\n' if self.carriage_return else b'\n'
+
     @classmethod
     def parse(cls, buf: bytes, params: 'Params') -> Tuple['EndLine', bytes]:
         match = cls._pattern.match(buf)
@@ -238,25 +292,40 @@ class EndLine(Parseable[None]):
         return cls(preceding_spaces, carriage_return), buf[match.end(0):]
 
     def __bytes__(self):
-        endl = b'\r\n' if self.carriage_return else b'\n'
-        return b' ' * self.preceding_spaces + endl
+        return b' ' * self.preceding_spaces + self.value
 
 
 class Primitive(Parseable[ParseableType]):
-    """Represents a primitive data object from an IMAP stream. The sub-classes
-    implement the different primitive formats.
+    """Base class for primitive data objects from an IMAP stream. The
+    sub-classes implement the different primitive formats.
 
     """
 
     _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
                                br'-\x5B\x5E-\x7A\x7C\x7E]+')
 
+    @property
+    def value(self) -> ParseableType:
+        raise NotImplementedError
+
     def __bytes__(self):
+        raise NotImplementedError
+
+    @classmethod
+    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
         raise NotImplementedError
 
 
 class Special(Parseable[ParseableType]):
     """Base class for special data objects in an IMAP stream."""
 
+    @property
+    def value(self) -> ParseableType:
+        raise NotImplementedError
+
     def __bytes__(self):
+        raise NotImplementedError
+
+    @classmethod
+    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
         raise NotImplementedError
