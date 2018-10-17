@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import TYPE_CHECKING, cast, Tuple, Union, Sequence
+from typing import cast, Tuple, Union, Sequence
 
 from .astring import AString
 from .flag import Keyword
@@ -11,10 +11,9 @@ from ..primitives import Atom, Number, QuotedString, ListP
 
 __all__ = ['SearchKey']
 
-if TYPE_CHECKING:
-    _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
-                        Sequence['SearchKey'], SequenceSet, Keyword,
-                        datetime, int, str]
+_FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
+                    Sequence['SearchKey'], SequenceSet, Keyword,
+                    datetime, int, str]
 
 
 class SearchKey(Special[bytes]):
@@ -34,7 +33,7 @@ class SearchKey(Special[bytes]):
     _not_pattern = re.compile(br'NOT +', re.I)
 
     def __init__(self, key: bytes,
-                 filter_: '_FilterType' = None,
+                 filter_: _FilterType = None,
                  inverse: bool = False) -> None:
         super().__init__()
         self.key = key

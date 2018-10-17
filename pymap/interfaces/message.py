@@ -1,15 +1,12 @@
 from datetime import datetime
 from email.headerregistry import BaseHeader
-from typing import TYPE_CHECKING, Optional, Iterable, Set, FrozenSet, \
-    Sequence, Union
+from typing import Optional, Iterable, Set, FrozenSet, Sequence, Union
 
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
+from ..selected import SelectedMailbox
 
 __all__ = ['Message', 'LoadedMessage']
-
-if TYPE_CHECKING:
-    from ..mailbox import MailboxSession
 
 
 class Message:
@@ -33,7 +30,7 @@ class Message:
         """The message's internal date."""
         raise NotImplementedError
 
-    def get_flags(self, session: Optional['MailboxSession']) \
+    def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message."""
         raise NotImplementedError
@@ -62,7 +59,7 @@ class LoadedMessage(Message):
         """The message's internal date."""
         raise NotImplementedError
 
-    def get_flags(self, session: Optional['MailboxSession']) \
+    def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message."""
         raise NotImplementedError

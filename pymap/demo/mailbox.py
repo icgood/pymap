@@ -2,9 +2,10 @@ from copy import copy
 from typing import TYPE_CHECKING, List, Optional, Dict, Tuple
 
 from pymap.flags import SessionFlags
-from pymap.mailbox import MailboxSession, BaseMailbox
+from pymap.mailbox import BaseMailbox
 from pymap.parsing.specials.flag import Seen, Recent, Answered, Deleted, \
     Draft, Flagged
+from pymap.selected import SelectedMailbox
 from .message import Message
 from .state import State
 
@@ -14,13 +15,13 @@ if TYPE_CHECKING:
     from .session import Session
 
 
-class _MailboxSession(MailboxSession):
+class _SelectedMailbox(SelectedMailbox):
 
     def __init__(self, name: str, *args, **kwargs) -> None:
         super().__init__(name, *args, **kwargs)
         State.mailboxes[name].sessions.add(self)
 
-    def __copy__(self) -> 'MailboxSession':
+    def __copy__(self) -> 'SelectedMailbox':
         State.mailboxes[self.name].sessions.discard(self)
         return super().__copy__()
 
@@ -40,7 +41,7 @@ class Mailbox(BaseMailbox):
 
     @classmethod
     def load(cls, name: str, session: 'Session', readonly: bool) \
-            -> Tuple['Mailbox', MailboxSession]:
+            -> Tuple['Mailbox', _SelectedMailbox]:
         mbx = cls(name, session)
         mbx.reset_messages()
         readonly = mbx.readonly or readonly
@@ -51,7 +52,7 @@ class Mailbox(BaseMailbox):
                 if msg.uid in recent:
                     session_flags.add_recent(msg.uid)
             recent.clear()
-        return mbx, _MailboxSession(name, mbx.exists, readonly, session_flags)
+        return mbx, _SelectedMailbox(name, mbx.exists, readonly, session_flags)
 
     @classmethod
     def get_snapshot(cls, name: str):

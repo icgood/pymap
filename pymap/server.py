@@ -38,7 +38,8 @@ class IMAPServer:
 
     Args:
         login: Login coroutine that takes authentication credentials and
-            returns a :class:`~.interfaces.session.SessionInterface` object.
+            returns a :class:`~pymap.interfaces.session.SessionInterface`
+            object.
         debug: If true, prints all socket activity to stdout.
         ssl_context: SSL context that will be used for opportunistic TLS.
 
