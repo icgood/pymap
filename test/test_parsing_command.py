@@ -2,30 +2,35 @@
 import unittest
 
 from pymap.parsing import Params
-from pymap.parsing.command import Command, BadCommand, CommandNotFound, \
-    CommandNoArgs, Commands
+from pymap.parsing.command import Command, CommandNoArgs
+from pymap.parsing.commands import Commands
+from pymap.parsing.exceptions import CommandNotFound, CommandInvalid, \
+    NotParseable
 
 
-class TestBadCommand(unittest.TestCase):
+class TestCommandInvalid(unittest.TestCase):
 
     def test_bytes(self):
-        class TestCmd(Command):
-            command = b'TEST'
-        exc = BadCommand(b'abc TEST stuff\r\n', b'abc', TestCmd)
-        self.assertEqual(b'abc', exc.tag)
-        self.assertEqual(TestCmd, exc.command)
-        self.assertEqual(b'TEST: [:ERROR:]abc TEST stuff', bytes(exc))
-        self.assertEqual('TEST: [:ERROR:]abc TEST stuff', str(exc))
+        try:
+            try:
+                raise NotParseable(b'abc TEST stuff')
+            except NotParseable as cause:
+                raise CommandInvalid(b'abc', b'TEST') from cause
+        except CommandInvalid as exc:
+            self.assertEqual(b'abc', exc.tag)
+            self.assertEqual(b'TEST', exc.command)
+            self.assertEqual(b'TEST: [:ERROR:]abc TEST stuff', bytes(exc))
+            self.assertEqual('TEST: [:ERROR:]abc TEST stuff', str(exc))
 
 
 class TestCommandNotFound(unittest.TestCase):
 
     def test_bytes(self):
-        exc = CommandNotFound(b'', None, b'TEST')
+        exc = CommandNotFound(b'', b'TEST')
         self.assertEqual(b'Command Not Found: TEST', bytes(exc))
 
     def test_no_command(self):
-        exc = CommandNotFound(b'', None)
+        exc = CommandNotFound(b'')
         self.assertEqual(b'Command Not Given', bytes(exc))
         self.assertEqual('Command Not Given', str(exc))
 

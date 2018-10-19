@@ -3,21 +3,24 @@ import asyncio
 
 from pysasl import SASLAuth
 
+from pymap.config import IMAPConfig
 from pymap.demo import init
 from pymap.server import IMAPServer
 from pymap.state import ConnectionState
 from .mocktransport import MockTransport
 
-ConnectionState.DEFAULT_CAPABILITY = []
-ConnectionState.DEFAULT_AUTH = SASLAuth([b'PLAIN'])
+
+config = IMAPConfig(starttls_enabled=False,
+                    reject_insecure_auth=False)
 
 
 class TestBase:
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         self._fd = 1
-        self._run = IMAPServer(init(), None, True)
-        self.matches = {}
+        login, _ = init()
+        self._run = IMAPServer(login, config)
+        self.matches = {}  # type: ignore
         self.transport = self.new_transport()
 
     def _incr_fd(self):

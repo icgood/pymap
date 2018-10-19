@@ -2,7 +2,9 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 
-from pymap.parsing import Params, NotParseable, UnexpectedType, InvalidContent
+from pymap.parsing import Params
+from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
+    InvalidContent
 from pymap.parsing.specials import AString, Tag, Mailbox, DateTime, Flag, \
     StatusAttribute, SequenceSet, FetchAttribute, SearchKey
 

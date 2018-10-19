@@ -5,9 +5,8 @@ from ..primitives import ListP
 from ..typing import MaybeBytes
 from ..util import BytesFormat
 
-__all__ = ['Alert', 'BadCharset', 'Capability', 'Parse',
-           'PermanentFlags', 'ReadOnly', 'ReadWrite', 'TryCreate', 'UidNext',
-           'UidValidity', 'Unseen']
+__all__ = ['Alert', 'Capability', 'Parse', 'PermanentFlags', 'ReadOnly',
+           'ReadWrite', 'TryCreate', 'UidNext', 'UidValidity', 'Unseen']
 
 
 class Alert(ResponseCode):
@@ -18,13 +17,6 @@ class Alert(ResponseCode):
 
     def __bytes__(self) -> bytes:
         return b'[ALERT]'
-
-
-class BadCharset(ResponseCode):
-    """A ``SEARCH`` command requested an invalid charset."""
-
-    def __bytes__(self) -> bytes:
-        return b'[BADCHARSET]'
 
 
 class Capability(ResponseCode):
@@ -134,7 +126,7 @@ class UidValidity(ResponseCode):
         self.validity = validity
         self._raw = b'[UIDVALIDITY %i]' % validity
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
 

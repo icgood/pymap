@@ -1,10 +1,9 @@
 
 import unittest
 
-from pymap.parsing.command import BadCommand
-from pymap.parsing.command.any import NoOpCommand
 from pymap.parsing.response import Response, ResponseContinuation, \
-    ResponseBad, ResponseBadCommand, ResponseNo, ResponseOk, ResponseBye
+    ResponseBad, ResponseNo, ResponseOk, ResponseBye
+from pymap.parsing.response.code import Alert
 
 
 class TestResponse(unittest.TestCase):
@@ -32,16 +31,8 @@ class TestResponseBad(unittest.TestCase):
     def test_bytes(self):
         resp1 = ResponseBad(b'tag', b'bad response')
         self.assertEqual(b'tag BAD bad response\r\n', bytes(resp1))
-        resp2 = ResponseBad(b'tag', b'bad response', b'STUFF')
-        self.assertEqual(b'tag BAD STUFF bad response\r\n', bytes(resp2))
-
-
-class TestResponseBadCommand(unittest.TestCase):
-
-    def test_bytes(self):
-        cmd = BadCommand(b'bad', b'tag', NoOpCommand)
-        resp = ResponseBadCommand(cmd)
-        self.assertEqual(b'tag BAD NOOP: [:ERROR:]bad\r\n', bytes(resp))
+        resp2 = ResponseBad(b'tag', b'bad response', Alert())
+        self.assertEqual(b'tag BAD [ALERT] bad response\r\n', bytes(resp2))
 
 
 class TestResponseNo(unittest.TestCase):
@@ -49,8 +40,8 @@ class TestResponseNo(unittest.TestCase):
     def test_bytes(self):
         resp1 = ResponseNo(b'tag', b'invalid response')
         self.assertEqual(b'tag NO invalid response\r\n', bytes(resp1))
-        resp2 = ResponseNo(b'tag', b'invalid response', b'STUFF')
-        self.assertEqual(b'tag NO STUFF invalid response\r\n', bytes(resp2))
+        resp2 = ResponseNo(b'tag', b'invalid response', Alert())
+        self.assertEqual(b'tag NO [ALERT] invalid response\r\n', bytes(resp2))
 
 
 class TestResponseOk(unittest.TestCase):
@@ -58,8 +49,8 @@ class TestResponseOk(unittest.TestCase):
     def test_bytes(self):
         resp1 = ResponseOk(b'tag', b'ok response')
         self.assertEqual(b'tag OK ok response\r\n', bytes(resp1))
-        resp2 = ResponseOk(b'tag', b'ok response', b'STUFF')
-        self.assertEqual(b'tag OK STUFF ok response\r\n', bytes(resp2))
+        resp2 = ResponseOk(b'tag', b'ok response', Alert())
+        self.assertEqual(b'tag OK [ALERT] ok response\r\n', bytes(resp2))
 
 
 class TestResponseBye(unittest.TestCase):

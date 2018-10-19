@@ -1,6 +1,7 @@
 from typing import Tuple
 
-from .. import NotParseable, Space, Params, Special, InvalidContent
+from .. import NotParseable, Space, Params, Special
+from ..exceptions import InvalidContent
 from ..primitives import Atom
 
 __all__ = ['StatusAttribute']

@@ -44,18 +44,18 @@ class CommandNotAllowed(ResponseError):
     """The command is syntactically valid, but not allowed.
 
     Args:
-        command: The name of the command.
+        message: The message to display in the response.
         code: Optional response code for the error.
 
     """
 
-    def __init__(self, command: bytes, code: ResponseCode = None) -> None:
+    def __init__(self, message: bytes, code: ResponseCode = None) -> None:
         super().__init__()
-        self.command = command
+        self.message = message
         self.code = code
 
     def get_response(self, tag: bytes) -> Response:
-        return ResponseNo(tag, self.command + b' not allowed.', self.code)
+        return ResponseNo(tag, self.message, self.code)
 
 
 class SearchNotAllowed(CommandNotAllowed):
@@ -69,7 +69,7 @@ class SearchNotAllowed(CommandNotAllowed):
 
     def __init__(self, key: bytes = None) -> None:
         command = b'SEARCH ' + key if key else b'SEARCH'
-        super().__init__(command)
+        super().__init__(command + b' not allowed.')
 
 
 class MailboxError(ResponseError):

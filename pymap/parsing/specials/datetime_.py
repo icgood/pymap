@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Tuple
 
-from .. import Params, Special, InvalidContent
+from .. import Params, Special
+from ..exceptions import InvalidContent
 from ..primitives import QuotedString
 from ..util import BytesFormat
 
