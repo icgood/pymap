@@ -102,3 +102,27 @@ class TestFetch(TestBase):
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
+
+    async def test_append_fetch_binary(self):
+        message = b'test\x00message\r\n'
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'append1 APPEND INBOX (\\Seen) ~{%i}\r\n' % len(message))
+        self.transport.push_write(
+            b'+ Literal string\r\n')
+        self.transport.push_readexactly(message)
+        self.transport.push_readline(
+            b'\r\n')
+        self.transport.push_write(
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104]'
+            b' APPEND completed.\r\n')
+        self.transport.push_select(b'INBOX', 5, 2, 105, 4)
+        self.transport.push_readline(
+            b'fetch1 FETCH 5 (BINARY[] BINARY.SIZE[])\r\n')
+        self.transport.push_write(
+            b'* 5 FETCH (BINARY[] ~{16}\r\n'
+            b'\r\ntest\x00message\r\n'
+            b' BINARY.SIZE[] 16)\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        self.transport.push_logout()
+        await self.run()

@@ -1,10 +1,11 @@
-from datetime import datetime
-from typing import Tuple, Optional, FrozenSet, Dict, Iterable
+from typing import Tuple, Optional, FrozenSet, Dict, Iterable, Sequence
 
 from .message import Message, LoadedMessage
 from .mailbox import MailboxInterface
 from ..flags import FlagOp
+from ..parsing.command import AppendMessage
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
+from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
 
 __all__ = ['SessionInterface']
@@ -153,12 +154,10 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def append_message(self, name: str,
-                             message: bytes,
-                             flag_set: FrozenSet[Flag],
-                             when: Optional[datetime] = None,
-                             selected: SelectedMailbox = None) \
-            -> Optional[SelectedMailbox]:
+    async def append_messages(self, name: str,
+                              messages: Sequence[AppendMessage],
+                              selected: SelectedMailbox = None) \
+            -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         """Appends a message to the end of the mailbox.
 
         See Also:
@@ -167,9 +166,7 @@ class SessionInterface:
 
         Args:
             name: The name of the mailbox.
-            message: The contents of the message.
-            flag_set: Set of flag bytestrings.
-            when: The internal time associated with the message.
+            messages: The messages to append.
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
@@ -263,17 +260,19 @@ class SessionInterface:
         """
         raise NotImplementedError
 
-    async def expunge_mailbox(self, selected: SelectedMailbox) \
-            -> SelectedMailbox:
+    async def expunge_mailbox(self, selected: SelectedMailbox,
+                              uid_set: SequenceSet = None) -> SelectedMailbox:
         """All messages that are marked as deleted are immediately expunged
         from the mailbox.
 
         See Also:
             `RFC 3501 6.4.3.
             <https://tools.ietf.org/html/rfc3501#section-6.4.3>`_
+            `RFC 4315 2.1 <https://tools.ietf.org/html/rfc4315#section-2.1>`_
 
         Args:
             selected: The selected mailbox session.
+            uid_set: Only the messages in the given UID set should be expunged.
 
         Raises:
             MailboxNotFound: The currently selected mailbox no longer exists.
@@ -284,7 +283,8 @@ class SessionInterface:
 
     async def copy_messages(self, selected: SelectedMailbox,
                             sequences: SequenceSet,
-                            mailbox: str) -> SelectedMailbox:
+                            mailbox: str) \
+            -> Tuple[Optional[CopyUid], SelectedMailbox]:
         """Copy a set of messages into the given mailbox.
 
         See Also:

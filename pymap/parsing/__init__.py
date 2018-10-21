@@ -91,7 +91,7 @@ class Parseable(Generic[ParseableType]):
         raise NotImplementedError
 
     @classmethod
-    def _whitespace_length(cls, buf, start=0) -> int:
+    def _whitespace_length(cls, buf: bytes, start: int = 0) -> int:
         match = cls._whitespace_pattern.match(buf, start)
         if match:
             return match.end(0) - start
@@ -99,6 +99,11 @@ class Parseable(Generic[ParseableType]):
 
     def __bytes__(self) -> bytes:
         raise NotImplementedError
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, bytes):
+            return bytes(self) == other
+        return NotImplemented
 
     @classmethod
     def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:

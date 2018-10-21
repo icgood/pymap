@@ -3,7 +3,7 @@ import unittest
 
 from pymap.parsing.response.code import Alert, Capability, Parse, \
     PermanentFlags, ReadOnly, ReadWrite, TryCreate, UidNext, UidValidity, \
-    Unseen
+    Unseen, AppendUid, CopyUid
 
 
 class TestAlert(unittest.TestCase):
@@ -78,3 +78,17 @@ class TestUnseen(unittest.TestCase):
     def test_bytes(self):
         code = Unseen(3)
         self.assertEqual(b'[UNSEEN 3]', bytes(code))
+
+
+class TestAppendUid(unittest.TestCase):
+
+    def test_bytes(self):
+        code = AppendUid(12345, [1, 2, 3, 5])
+        self.assertEqual(b'[APPENDUID 12345 1:3,5]', bytes(code))
+
+
+class TestCopyUid(unittest.TestCase):
+
+    def test_bytes(self):
+        code = CopyUid(12345, [1, 2, 3, 5], [100, 101, 102, 103])
+        self.assertEqual(b'[COPYUID 12345 1:3,5 100:103]', bytes(code))

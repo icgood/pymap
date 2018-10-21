@@ -61,3 +61,18 @@ class TestSequenceSet(unittest.TestCase):
         seq = SequenceSet([12, '*', (1, '*')])
         self.assertEqual(b'12,*,1:*', bytes(seq))
         self.assertEqual(b'12,*,1:*', bytes(seq))
+
+    def test_build(self):
+        seq = SequenceSet.build([1])
+        self.assertEqual(b'1', bytes(seq))
+        seq = SequenceSet.build([1, 1, 1])
+        self.assertEqual(b'1', bytes(seq))
+        seq = SequenceSet.build([1, 2, 3, 4, 5])
+        self.assertEqual(b'1:5', bytes(seq))
+        seq = SequenceSet.build([1, 2, 4, 5])
+        self.assertEqual(b'1:2,4:5', bytes(seq))
+        seq = SequenceSet.build([1, 2, 4, 6])
+        self.assertEqual(b'1:2,4,6', bytes(seq))
+        seq = SequenceSet.build([1, 3, 5])
+        self.assertEqual(b'1,3,5', bytes(seq))
+        seq = SequenceSet.build([1, 2, 3, 4, 5])

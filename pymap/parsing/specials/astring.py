@@ -44,11 +44,16 @@ class AString(Special[bytes]):
         string, buf = String.parse(buf, params)
         return cls(string.value, bytes(string)), buf
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, AString):
+            return self.string == other.string
+        return super().__eq__(other)
+
     def __bytes__(self) -> bytes:
-        if self._raw is not None:
-            return self._raw
-        match = self._pattern.fullmatch(self.value)
-        if match:
-            return self.value
-        else:
-            return bytes(QuotedString(self.value))
+        if self._raw is None:
+            match = self._pattern.fullmatch(self.value)
+            if match:
+                self._raw = self.value
+            else:
+                self._raw = bytes(QuotedString(self.value))
+        return self._raw

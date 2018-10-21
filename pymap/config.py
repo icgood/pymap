@@ -62,15 +62,15 @@ class IMAPConfig:
                           cert_file=args.cert,
                           key_file=args.key)
 
-    @overload
+    @overload  # noqa
     def get_extra(self, key: str, fallback: None) -> Optional[str]:
         ...
 
-    @overload
+    @overload  # noqa
     def get_extra(self, key: str, fallback: str) -> str:
         ...
 
-    def get_extra(self, key, fallback):
+    def get_extra(self, key, fallback):  # noqa
         return self._extra.get(key, fallback)
 
     @property
@@ -112,7 +112,7 @@ class IMAPConfig:
 
     @property
     def static_capability(self) -> Sequence[bytes]:
-        ret = []
+        ret = [b'BINARY', b'UIDPLUS', b'MULTIAPPEND']
         if self._max_append_len is not None:
             ret.append(b'APPENDLIMIT=%i' % self._max_append_len)
         return ret

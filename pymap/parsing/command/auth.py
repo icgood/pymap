@@ -1,16 +1,20 @@
 import re
 from datetime import datetime
-from typing import cast, Tuple, Sequence, Iterable
+from typing import cast, Tuple, Sequence, Iterable, Optional, List
 
-from . import CommandAuth
+from . import CommandAuth, AppendMessage
 from .. import NotParseable, UnexpectedType, Space, EndLine, Params
 from ..exceptions import InvalidContent
 from ..primitives import ListP, String, LiteralString
-from ..specials import Mailbox, DateTime, Flag, StatusAttribute
+from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
+    ExtensionOption, ExtensionOptions
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',
            'StatusCommand', 'SubscribeCommand', 'UnsubscribeCommand']
+
+_AppendMsgArg = Tuple[bytes, Iterable[Flag], Optional[datetime],
+                      ExtensionOptions]
 
 
 class CommandMailboxArg(CommandAuth):
@@ -35,34 +39,36 @@ class CommandMailboxArg(CommandAuth):
 class AppendCommand(CommandAuth):
     """The ``APPEND`` command adds a new message to a mailbox.
 
+    See Also:
+        `RFC 3502 6.3.11.
+        <https://tools.ietf.org/html/rfc3502#section-6.3.11>`_
+
     Args:
         tag: The command tag.
         mailbox: The mailbox name.
-        message: The raw message bytestring, including headers.
-        flags: The flags to assign to the message.
-        when: The internal timestamp to assign to the message.
+        messages: List of tuples containing the raw messages bytes, the
+            flags, and the internal timestamp to assign to the message.
 
     """
 
     command = b'APPEND'
 
-    def __init__(self, tag: bytes, mailbox: Mailbox, message: bytes,
-                 flags: Iterable[Flag] = None, when: datetime = None) -> None:
+    def __init__(self, tag: bytes, mailbox: Mailbox,
+                 messages: Sequence[_AppendMsgArg]) -> None:
         super().__init__(tag)
         self.mailbox_obj = mailbox
-        self.message = message
-        self.flag_set = frozenset(flags or [])
-        self.when: datetime = when or datetime.now()
+        self.messages: Sequence[AppendMessage] = \
+            [AppendMessage(message, frozenset(flags),
+                           when or datetime.now(), options)
+             for message, flags, when, options in messages]
 
     @property
     def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['AppendCommand', bytes]:
-        _, buf = Space.parse(buf, params)
-        mailbox, buf = Mailbox.parse(buf, params)
+    def _parse_msg(cls, buf: bytes, params: Params) \
+            -> Tuple['_AppendMsgArg', bytes]:
         _, buf = Space.parse(buf, params)
         try:
             params_copy = params.copy(list_expected=[Flag])
@@ -83,15 +89,61 @@ class AppendCommand(CommandAuth):
         else:
             date_time = date_time_p.value
             _, buf = Space.parse(buf, params)
-        message, buf = LiteralString.parse(buf, params)
+        options_list: List[ExtensionOption] = []
+        while True:
+            try:
+                option, buf = ExtensionOption.parse(buf, params)
+            except NotParseable:
+                break
+            else:
+                options_list.append(option)
+        options = ExtensionOptions(options_list)
+        try:
+            message, buf = LiteralString.parse(buf, params)
+        except NotParseable as exc:
+            if options:
+                return (b'', flags, date_time, options), buf
+            else:
+                raise exc
+        else:
+            return (message.value, flags, date_time, options), buf
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['AppendCommand', bytes]:
+        _, buf = Space.parse(buf, params)
+        mailbox, buf = Mailbox.parse(buf, params)
+        first_msg, buf = cls._parse_msg(buf, params)
+        messages = [first_msg]
+        while True:
+            try:
+                next_msg, buf = cls._parse_msg(buf, params)
+            except NotParseable:
+                break
+            else:
+                messages.append(next_msg)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, mailbox, message.value, flags, date_time), buf
+        return cls(params.tag, mailbox, messages), buf
 
 
 class CreateCommand(CommandMailboxArg):
     """The ``CREATE`` command creates a new mailbox."""
 
     command = b'CREATE'
+
+    def __init__(self, tag: bytes, mailbox: Mailbox,
+                 options: ExtensionOptions) -> None:
+        super().__init__(tag, mailbox)
+        self.options = options
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['CreateCommand', bytes]:
+        _, buf = Space.parse(buf, params)
+        mailbox, buf = Mailbox.parse(buf, params)
+        options, buf = ExtensionOptions.parse(buf, params)
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, mailbox, options), buf
 
 
 class DeleteCommand(CommandMailboxArg):
@@ -156,10 +208,11 @@ class RenameCommand(CommandAuth):
     command = b'RENAME'
 
     def __init__(self, tag: bytes, from_mailbox: Mailbox,
-                 to_mailbox: Mailbox) -> None:
+                 to_mailbox: Mailbox, options: ExtensionOptions) -> None:
         super().__init__(tag)
         self.from_mailbox_obj = from_mailbox
         self.to_mailbox_obj = to_mailbox
+        self.options = options
 
     @property
     def from_mailbox(self) -> str:
@@ -176,8 +229,9 @@ class RenameCommand(CommandAuth):
         from_mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
         to_mailbox, buf = Mailbox.parse(buf, params)
+        options, buf = ExtensionOptions.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, from_mailbox, to_mailbox), buf
+        return cls(params.tag, from_mailbox, to_mailbox, options), buf
 
 
 class SelectCommand(CommandMailboxArg):
@@ -187,6 +241,20 @@ class SelectCommand(CommandMailboxArg):
     """
 
     command = b'SELECT'
+
+    def __init__(self, tag: bytes, mailbox: Mailbox,
+                 options: ExtensionOptions) -> None:
+        super().__init__(tag, mailbox)
+        self.options = options
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['SelectCommand', bytes]:
+        _, buf = Space.parse(buf, params)
+        mailbox, buf = Mailbox.parse(buf, params)
+        options, buf = ExtensionOptions.parse(buf, params)
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, mailbox, options), buf
 
 
 class ExamineCommand(SelectCommand):

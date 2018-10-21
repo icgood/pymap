@@ -102,8 +102,48 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'\r\n')
         self.transport.push_write(
-            b'append1 OK APPEND completed.\r\n')
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104]'
+            b' APPEND completed.\r\n')
         self.transport.push_select(b'INBOX', 5, 2, 105, 4)
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_append_empty(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'append1 APPEND INBOX {0}\r\n')
+        self.transport.push_write(
+            b'+ Literal string\r\n')
+        self.transport.push_readexactly(
+            b'')
+        self.transport.push_readline(
+            b'\r\n')
+        self.transport.push_write(
+            b'append1 NO APPEND cancelled.\r\n')
+        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_append_multi(self):
+        message_1 = b'test message\r\n'
+        message_2 = b'test message\r\n'
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'append1 APPEND INBOX (\\Seen) {%i}\r\n' % len(message_1))
+        self.transport.push_write(
+            b'+ Literal string\r\n')
+        self.transport.push_readexactly(message_1)
+        self.transport.push_readline(
+            b' {%i}\r\n' % len(message_2))
+        self.transport.push_write(
+            b'+ Literal string\r\n')
+        self.transport.push_readexactly(message_2)
+        self.transport.push_readline(
+            b'\r\n')
+        self.transport.push_write(
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104:105]'
+            b' APPEND completed.\r\n')
+        self.transport.push_select(b'INBOX', 6, 3, 106, 4)
         self.transport.push_logout()
         await self.run()
 
@@ -122,6 +162,7 @@ class TestMailbox(TestBase):
             b'* 5 EXISTS\r\n'
             b'* 2 RECENT\r\n'
             b'* 5 FETCH (FLAGS (\\Recent \\Seen))\r\n'
-            b'append1 OK APPEND completed.\r\n')
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104]'
+            b' APPEND completed.\r\n')
         self.transport.push_logout()
         await self.run()

@@ -1,7 +1,7 @@
 
 import unittest
 
-from pymap.parsing import Params, NotParseable, Parseable, ExpectedParseable, \
+from pymap.parsing import Params, NotParseable, ExpectedParseable, \
     Space, EndLine
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
     ListP

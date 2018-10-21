@@ -6,7 +6,7 @@ from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
     InvalidContent
 from pymap.parsing.specials import AString, Tag, Mailbox, DateTime, Flag, \
-    StatusAttribute, SequenceSet, FetchAttribute, SearchKey
+    StatusAttribute, SequenceSet, FetchAttribute, SearchKey, ExtensionOptions
 
 
 class TestAString(unittest.TestCase):
@@ -332,3 +332,53 @@ class TestSearchKey(unittest.TestCase):
             SearchKey.parse(b'test', Params())
         with self.assertRaises(NotParseable):
             SearchKey.parse(b'before stuff', Params())
+
+
+class TestExtensionOptions(unittest.TestCase):
+
+    def test_parse_empty(self):
+        ret, buf = ExtensionOptions.parse(b'()', Params())
+        self.assertEqual({}, ret.value)
+        self.assertEqual(b'', buf)
+        ret, buf = ExtensionOptions.parse(b'', Params())
+        self.assertEqual({}, ret.value)
+        self.assertEqual(b'', buf)
+
+    def test_parse(self):
+        ret, buf = ExtensionOptions.parse(b'(one two)abc', Params())
+        self.assertEqual({b'ONE': [], b'TWO': []}, ret.value)
+        self.assertEqual(b'abc', buf)
+
+    def test_parse_num(self):
+        ret, buf = ExtensionOptions.parse(b'(one 1 two 2)abc', Params())
+        self.assertEqual({b'ONE': [b'1'], b'TWO': [b'2']}, ret.value)
+        self.assertEqual(b'abc', buf)
+
+    def test_parse_seqset(self):
+        ret, buf = ExtensionOptions.parse(b'(one 1:3 two 2)abc', Params())
+        self.assertEqual({b'ONE': [b'1:3'], b'TWO': [b'2']}, ret.value)
+        self.assertEqual(b'abc', buf)
+
+    def test_parse_string(self):
+        ret, buf = ExtensionOptions.parse(b'(one (two) three)abc', Params())
+        self.assertEqual({b'ONE': [b'two'], b'THREE': []}, ret.value)
+        self.assertEqual(b'abc', buf)
+
+    def test_parse_nested(self):
+        ret, buf = ExtensionOptions.parse(b'(one (two (three)))abc', Params())
+        self.assertEqual({b'ONE': [b'two', [b'three']]}, ret.value)
+        self.assertEqual(b'abc', buf)
+
+    def test_bytes(self):
+        ret, _ = ExtensionOptions.parse(b'()', Params())
+        self.assertEqual(b'()', bytes(ret))
+        ret, _ = ExtensionOptions.parse(b'(one two)', Params())
+        self.assertEqual(b'(ONE TWO)', bytes(ret))
+        ret, _ = ExtensionOptions.parse(b'(one 1 two 2)', Params())
+        self.assertEqual(b'(ONE 1 TWO 2)', bytes(ret))
+        ret, _ = ExtensionOptions.parse(b'(one 1:3 two 2)', Params())
+        self.assertEqual(b'(ONE 1:3 TWO 2)', bytes(ret))
+        ret, _ = ExtensionOptions.parse(b'(one (two) three)', Params())
+        self.assertEqual(b'(ONE (two) THREE)', bytes(ret))
+        ret, _ = ExtensionOptions.parse(b'(one (two (three)))', Params())
+        self.assertEqual(b'(ONE (two (three)))', bytes(ret))

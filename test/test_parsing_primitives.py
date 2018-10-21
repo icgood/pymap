@@ -97,6 +97,7 @@ class TestString(unittest.TestCase):
             b'{5}\r\n', Params(continuations=[b'test\x01abc']))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'test\x01', ret.value)
+        self.assertFalse(ret.binary)
         self.assertEqual(b'abc', buf)
 
     def test_literal_parse_empty(self):
@@ -104,6 +105,14 @@ class TestString(unittest.TestCase):
             b'{0}\r\n', Params(continuations=[b'abc']))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'', ret.value)
+        self.assertEqual(b'abc', buf)
+
+    def test_literal_binary(self):
+        ret, buf = String.parse(
+            b'~{3}\r\n', Params(continuations=[b'\x00\x01\02abc']))
+        self.assertIsInstance(ret, LiteralString)
+        self.assertEqual(b'\x00\x01\x02', ret.value)
+        self.assertTrue(ret.binary)
         self.assertEqual(b'abc', buf)
 
     def test_literal_parse_failure(self):
@@ -128,6 +137,12 @@ class TestString(unittest.TestCase):
         self.assertEqual(b'{8}\r\none\r\ntwo', bytes(qstring1))
         qstring2 = LiteralString(b'')
         self.assertEqual(b'{0}\r\n', bytes(qstring2))
+
+    def test_build_binary(self):
+        ret = String.build(b'\x00\x01', True)
+        self.assertEqual(b'\x00\x01', ret.value)
+        self.assertTrue(ret.binary)
+        self.assertEqual(b'~{2}\r\n\x00\x01', bytes(ret))
 
 
 class TestList(unittest.TestCase):

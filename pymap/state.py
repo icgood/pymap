@@ -32,12 +32,12 @@ from .selected import SelectedMailbox
 __all__ = ['ConnectionState']
 
 if TYPE_CHECKING:
-    from .parsing.command.any import *
-    from .parsing.command.nonauth import *
-    from .parsing.command.auth import *
-    from .parsing.command.select import *
+    from .parsing.command.any import *  # noqa
+    from .parsing.command.nonauth import *  # noqa
+    from .parsing.command.auth import *  # noqa
+    from .parsing.command.select import *  # noqa
 
-    _AuthCommands = Union[AuthenticateCommand, LoginCommand]
+    _AuthCommands = Union['AuthenticateCommand', 'LoginCommand']
     _CommandFunc = Callable[[Command],
                             Awaitable[Tuple[Response, SelectedMailbox]]]
 
@@ -157,14 +157,14 @@ class ConnectionState:
 
     async def do_delete(self, cmd: 'DeleteCommand'):
         if cmd.mailbox == 'INBOX':
-            return ResponseNo(cmd.tag, b'Cannot delete INBOX.')
+            return ResponseNo(cmd.tag, b'Cannot delete INBOX.'), None
         updates = await self.session.delete_mailbox(
             cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'Mailbox deleted successfully.'), updates
 
     async def do_rename(self, cmd: 'RenameCommand'):
         if cmd.to_mailbox == 'INBOX':
-            return ResponseNo(cmd.tag, b'Cannot rename to INBOX.')
+            return ResponseNo(cmd.tag, b'Cannot rename to INBOX.'), None
         updates = await self.session.rename_mailbox(
             cmd.from_mailbox, cmd.to_mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, b'Mailbox renamed successfully.'), updates
@@ -189,10 +189,12 @@ class ConnectionState:
         return resp, updates
 
     async def do_append(self, cmd: 'AppendCommand'):
-        updates = await self.session.append_message(
-            cmd.mailbox, cmd.message, cmd.flag_set, cmd.when,
-            selected=self._selected)
-        return ResponseOk(cmd.tag, b'APPEND completed.'), updates
+        for msg in cmd.messages:
+            if msg.message == b'':
+                return ResponseNo(cmd.tag, b'APPEND cancelled.'), None
+        append_uid, updates = await self.session.append_messages(
+            cmd.mailbox, cmd.messages, selected=self._selected)
+        return ResponseOk(cmd.tag, b'APPEND completed.', append_uid), updates
 
     async def do_subscribe(self, cmd: 'SubscribeCommand'):
         updates = await self.session.subscribe(
@@ -231,14 +233,15 @@ class ConnectionState:
         return ResponseOk(cmd.tag, b'CLOSE completed.'), None
 
     async def do_expunge(self, cmd: 'ExpungeCommand'):
-        updates = await self.session.expunge_mailbox(self.selected)
+        updates = await self.session.expunge_mailbox(
+            self.selected, cmd.uid_set)
         resp = ResponseOk(cmd.tag, b'EXPUNGE completed.')
         return resp, updates
 
     async def do_copy(self, cmd: 'CopyCommand'):
-        updates = await self.session.copy_messages(
+        copy_uid, updates = await self.session.copy_messages(
             self.selected, cmd.sequence_set, cmd.mailbox)
-        return ResponseOk(cmd.tag, b'COPY completed.'), updates
+        return ResponseOk(cmd.tag, b'COPY completed.', copy_uid), updates
 
     async def do_fetch(self, cmd: 'FetchCommand'):
         messages, updates = await self.session.fetch_messages(
@@ -287,6 +290,13 @@ class ConnectionState:
                     fetch_data[attr] = String.build(msg.get_text())
                 elif attr.value == b'RFC822.SIZE':
                     fetch_data[attr] = Number(msg.get_size())
+                elif attr.value in (b'BINARY', b'BINARY.PEEK'):
+                    parts = attr.section.parts if attr.section else None
+                    fetch_data[attr] = String.build(
+                        msg.get_body(parts, True), True)
+                elif attr.value == b'BINARY.SIZE':
+                    parts = attr.section.parts if attr.section else None
+                    fetch_data[attr] = Number(msg.get_size(parts, True))
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
@@ -338,5 +348,5 @@ class ConnectionState:
         if selected:
             for update in selected.drain_updates():
                 response.add_untagged(update)
-        self._selected = copy(selected)
+            self._selected = copy(selected)
         return response

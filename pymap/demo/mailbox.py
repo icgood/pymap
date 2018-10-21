@@ -1,5 +1,5 @@
 from copy import copy
-from typing import TYPE_CHECKING, List, Optional, Dict, Tuple
+from typing import List, Optional, Dict, Tuple
 
 from pymap.flags import SessionFlags
 from pymap.mailbox import BaseMailbox
@@ -10,9 +10,6 @@ from .message import Message
 from .state import State
 
 __all__ = ['Mailbox']
-
-if TYPE_CHECKING:
-    from .session import Session
 
 
 class _SelectedMailbox(SelectedMailbox):
@@ -30,19 +27,18 @@ class Mailbox(BaseMailbox):
     SEP = b'.'
     FLAGS = {Seen, Recent, Answered, Deleted, Draft, Flagged}
 
-    def __init__(self, name: str, session: 'Session') -> None:
+    def __init__(self, name: str) -> None:
         super().__init__(name, permanent_flags=self.FLAGS,
                          uid_validity=State.mailboxes[name].uid_validity)
-        self.session = session
         self.messages: List[Message] = []
         self.uid_to_idx: Dict[int, int] = {}
         self.highest_seq: int = 0
         self.highest_uid: int = 0
 
     @classmethod
-    def load(cls, name: str, session: 'Session', readonly: bool) \
+    def load(cls, name: str, readonly: bool) \
             -> Tuple['Mailbox', _SelectedMailbox]:
-        mbx = cls(name, session)
+        mbx = cls(name)
         mbx.reset_messages()
         readonly = mbx.readonly or readonly
         session_flags = SessionFlags()

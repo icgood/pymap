@@ -2,7 +2,7 @@ import heapq
 import math
 import re
 from itertools import chain
-from typing import Iterable, Tuple, Union, Sequence, Optional
+from typing import Iterable, Tuple, Union, Sequence, Optional, List
 
 from .. import NotParseable, Space, Params, Special
 
@@ -87,6 +87,10 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
         """Check if the sequence set contains the given value, when bounded
         by the given maximum value (in place of any ``'*'``).
 
+        Args:
+            num: The number to check.
+            max_value: The maximum value of the set.
+
         """
         for low, high in self._get_flattened_bounded(max_value):
             if num < low:
@@ -121,6 +125,15 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
         self._raw = raw = b','.join(parts)
         return raw
 
+    def __eq__(self, other) -> bool:
+        if isinstance(other, SequenceSet):
+            return self.uid == other.uid \
+                and self._flattened == other._flattened
+        return super().__eq__(other)
+
+    def __hash__(self) -> int:
+        return hash((tuple(self.sequences), self.uid))
+
     @classmethod
     def _parse_part(cls, buf: bytes) -> Tuple[_SeqElem, bytes]:
         if buf and buf[0] == 0x2a:
@@ -143,6 +156,36 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
                 return (item1, int(match.group(0))), buf
             raise NotParseable(buf)
         return item1, buf
+
+    @classmethod
+    def build(cls, seqs: Iterable[int], uid: bool = False) -> 'SequenceSet':
+        """Build a new sequence set that contains the given values using as
+        few groups as possible.
+
+        Args:
+            seqs: The sequence values to build.
+            uid: True if the sequences refer to message UIDs.
+
+        """
+        seqs_list = sorted(set(seqs))
+        groups: List[Union[int, Tuple[int, int]]] = []
+        group: Union[int, Tuple[int, int]] = seqs_list[0]
+        for i in range(1, len(seqs_list)):
+            group_i = seqs_list[i]
+            if isinstance(group, int):
+                if group_i == group + 1:
+                    group = (group, group_i)
+                else:
+                    groups.append(group)
+                    group = group_i
+            elif isinstance(group, tuple):
+                if group_i == group[1] + 1:
+                    group = (group[0], group_i)
+                else:
+                    groups.append(group)
+                    group = group_i
+        groups.append(group)
+        return SequenceSet(groups, uid)
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['SequenceSet', bytes]:

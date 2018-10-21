@@ -1,12 +1,9 @@
 
 import asyncio
 
-from pysasl import SASLAuth
-
 from pymap.config import IMAPConfig
 from pymap.demo import init
 from pymap.server import IMAPServer
-from pymap.state import ConnectionState
 from .mocktransport import MockTransport
 
 

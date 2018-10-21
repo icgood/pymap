@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Iterable, List, Mapping
+from typing import Iterable, List, Mapping, Optional
 
 from . import Response
 from ..primitives import ListP, QuotedString, Number
@@ -9,7 +9,8 @@ from ..util import BytesFormat
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
-           'StatusResponse', 'ListResponse', 'LSubResponse']
+           'ESearchResponse', 'StatusResponse', 'ListResponse',
+           'LSubResponse']
 
 
 class FlagsResponse(Response):
@@ -100,6 +101,33 @@ class SearchResponse(Response):
         else:
             text = b'SEARCH'
         super().__init__(b'*', text)
+
+
+class ESearchResponse(Response):
+    """Constructs the special ESEARCH response used by extended SEARCH
+    commands. This response should be mutually exclusive with SEARCH responses.
+
+    See Also:
+        `RFC 4466 2.6.2. <https://tools.ietf.org/html/rfc4466#section-2.6.2>`_
+
+    Args:
+        tag: The command tag, if issued in response to a command.
+        uid: True if the response refers to message UIDs.
+        data: The returned search data pairs.
+
+    """
+
+    def __init__(self, tag: Optional[bytes], uid: bool,
+                 data: Mapping[bytes, MaybeBytes]) -> None:
+        if tag is not None:
+            tag_prefix = BytesFormat(b'(TAG "%b") ') % tag
+        else:
+            tag_prefix = b''
+        uid_prefix = b'UID ' if uid else b''
+        parts = [(item.upper(), bytes(value))
+                 for item, value in sorted(data.items())]
+        text = BytesFormat(b' ').join(*parts)
+        super().__init__(b'*', tag_prefix + uid_prefix + text)
 
 
 class StatusResponse(Response):

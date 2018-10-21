@@ -37,7 +37,7 @@ class Nil(Primitive[None]):
     def __eq__(self, other) -> bool:
         if isinstance(other, Nil):
             return True
-        return NotImplemented
+        return super().__eq__(other)
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Nil', bytes]:
@@ -94,7 +94,7 @@ class Number(Primitive[int]):
             return self.value == other.value
         elif isinstance(other, int):
             return self.value == other
-        return NotImplemented
+        return super().__eq__(other)
 
     def __lt__(self, other) -> bool:
         if isinstance(other, Number):
@@ -139,7 +139,7 @@ class Atom(Primitive[bytes]):
     def __eq__(self, other) -> bool:
         if isinstance(other, Atom):
             return self.value == other.value
-        return NotImplemented
+        return super().__eq__(other)
 
 
 class String(Primitive[bytes]):
@@ -148,6 +148,7 @@ class String(Primitive[bytes]):
 
     Attributes:
         string: The string value.
+        binary: True if the string should be transmitted as binary.
 
     """
 
@@ -156,6 +157,7 @@ class String(Primitive[bytes]):
     def __init__(self, string: bytes, raw: Optional[bytes]) -> None:
         super().__init__()
         self.string = string
+        self.binary = False
         self._raw = raw
 
     @property
@@ -172,13 +174,14 @@ class String(Primitive[bytes]):
         return LiteralString.parse(buf, params)
 
     @classmethod
-    def build(cls, value: Any) -> Union[Nil, 'String']:
+    def build(cls, value: Any, binary: bool = False) -> Union[Nil, 'String']:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
 
         Args:
             value: The string to serialize.
+            binary: True if the string should be transmitted as binary.
 
         """
         if value is None:
@@ -195,15 +198,15 @@ class String(Primitive[bytes]):
                 ascii_ = bytes(value, 'ascii')
             except UnicodeEncodeError:
                 ascii_ = bytes(value, 'utf-8')
-                return LiteralString(ascii_)
+                return LiteralString(ascii_, binary)
         else:
             raise TypeError(value)
-        if len(ascii_) > cls._MAX_LEN:
-            raise ValueError(value)
-        elif len(ascii_) < 32 and b'\n' not in ascii_:
+        if not binary and len(ascii_) < 64 \
+                and b'\n' not in ascii_ \
+                and b'\x00' not in ascii_:
             return QuotedString(ascii_)
         else:
-            return LiteralString(ascii_)
+            return LiteralString(ascii_, binary)
 
     def __bytes__(self) -> bytes:
         raise NotImplementedError
@@ -214,7 +217,7 @@ class String(Primitive[bytes]):
     def __eq__(self, other) -> bool:
         if isinstance(other, String):
             return self.value == other.value
-        return NotImplemented
+        return super().__eq__(other)
 
 
 class QuotedString(String):
@@ -279,10 +282,11 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(br'{(\d+)}\r?\n')
+    _literal_pattern = re.compile(br'(~?){(\d+)}\r?\n')
 
-    def __init__(self, string: bytes) -> None:
+    def __init__(self, string: bytes, binary: bool = False) -> None:
         super().__init__(string, None)
+        self.binary = binary
 
     @classmethod
     def _check_too_big(cls, params: Params, length: int) -> bool:
@@ -299,7 +303,8 @@ class LiteralString(String):
         match = cls._literal_pattern.match(buf, start)
         if not match:
             raise NotParseable(buf)
-        literal_length = int(match.group(1))
+        binary = match.group(1) == b'~'
+        literal_length = int(match.group(2))
         if len(buf) > match.end(0):
             raise NotParseable(buf[match.end(0):])
         elif cls._check_too_big(params, literal_length):
@@ -310,13 +315,15 @@ class LiteralString(String):
         literal = buf[0:literal_length]
         if len(literal) != literal_length:
             raise NotParseable(buf)
-        return cls(literal), buf[literal_length:]
+        return cls(literal, binary), buf[literal_length:]
 
     def __bytes__(self) -> bytes:
         if self._raw is not None:
             return bytes(self._raw)
+        binary_prefix = b'~' if self.binary else b''
         length_bytes = bytes(str(len(self.value)), 'ascii')
-        self._raw = BytesFormat(b'{%b}\r\n%b') % (length_bytes, self.value)
+        self._raw = BytesFormat(b'%b{%b}\r\n%b') \
+            % (binary_prefix, length_bytes, self.value)
         return self._raw
 
 
@@ -383,4 +390,4 @@ class ListP(Primitive[Sequence[MaybeBytes]]):
                 if val != other[i]:
                     return False
             return True
-        return NotImplemented
+        return super().__eq__(other)
