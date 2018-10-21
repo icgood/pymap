@@ -27,7 +27,7 @@ with open('README.md', 'r') as fh:
 
 
 setup(name='pymap',
-      version='0.1.0',
+      version='0.2.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',
