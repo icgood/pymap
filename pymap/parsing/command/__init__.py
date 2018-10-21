@@ -1,9 +1,11 @@
-from typing import Tuple, ClassVar
+from datetime import datetime
+from typing import Tuple, ClassVar, NamedTuple, FrozenSet
 
 from .. import Parseable, EndLine, Params
+from ..specials import Flag, ExtensionOptions
 
 __all__ = ['Command', 'CommandNoArgs', 'CommandAny', 'CommandAuth',
-           'CommandNonAuth', 'CommandSelect']
+           'CommandNonAuth', 'CommandSelect', 'AppendMessage']
 
 
 class Command(Parseable[bytes]):
@@ -90,3 +92,20 @@ class CommandSelect(CommandAuth):
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise NotImplementedError
+
+
+class AppendMessage(NamedTuple):
+    """A single message from the APPEND command.
+
+    Attributes:
+        message: The raw message bytes.
+        flag_set: The flags to assign to the message.
+        when: The internal timestamp to assign to the message.
+        options: The extension options in use for the message.
+
+    """
+
+    message: bytes
+    flag_set: FrozenSet[Flag]
+    when: datetime
+    options: ExtensionOptions

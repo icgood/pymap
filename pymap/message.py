@@ -19,13 +19,21 @@ from .selected import SelectedMailbox
 __all__ = ['BaseMessage', 'BaseLoadedMessage']
 
 
+class _FullBytesGenerator(BytesGenerator):
+
+    def __init__(self, ofp, binary):
+        policy = SMTP if binary else SMTP.clone(cte_type='7bit')
+        super().__init__(ofp, False, policy=policy)
+
+
 class _BodyOnlyBytesGenerator(BytesGenerator):
     # This should produce a bytestring of a email.message.Message object
     # without including any headers, by exploiting the internal _write_headers
     # method.
 
-    def __init__(self, ofp):
-        super().__init__(ofp, False, policy=SMTP)
+    def __init__(self, ofp, binary):
+        policy = SMTP if binary else SMTP.clone(cte_type='7bit')
+        super().__init__(ofp, False, policy=policy)
 
     def _write_headers(self, *args, **kwargs):
         pass
@@ -51,22 +59,18 @@ class BaseMessage(Message):
 
     @property
     def uid(self) -> int:
-        """The message's unique identifier in the mailbox."""
         return self._uid
 
     @property
     def permanent_flags(self) -> Set[Flag]:
-        """The message's set of permanent flags."""
         return self._permanent_flags
 
     @property
     def internal_date(self) -> Optional[datetime]:
-        """The message's internal date."""
         return self._internal_date
 
     def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
-        """Get the full set of permanent and session flags for the message."""
         if session:
             session_flags = session.session_flags.get(self.uid)
             return frozenset(self.permanent_flags | session_flags)
@@ -113,12 +117,6 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
             return msg.contents
 
     def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
-        """Get the values of a header from the message.
-
-        Args:
-            name: The name of the header.
-
-        """
         name_str = str(name, 'ascii', 'ignore')
         values = self.contents.get_all(name_str, [])
         return cast(Sequence[Union[str, BaseHeader]], values)
@@ -127,19 +125,6 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
                     subset: Iterable[bytes] = None,
                     inverse: bool = False) \
             -> Optional[bytes]:
-        """Get the headers from the message.
-
-        The ``section`` argument can index a nested sub-part of the message.
-        For example, ``[2, 3]`` would get the 2nd sub-part of the message and
-        then index it for its 3rd sub-part.
-
-        Args:
-            section: Optional nested list of sub-part indexes.
-            subset: Subset of headers to get.
-            inverse: If ``subset`` is given, this flag will invert it so
-                that the headers *not* in ``subset`` are returned.
-
-        """
         try:
             msg = self._get_subpart(self, section)
         except IndexError:
@@ -161,79 +146,55 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         else:
             return None
 
-    def get_body(self, section: Optional[Iterable[int]] = None) \
-            -> Optional[bytes]:
-        """Get the full body of the message part, including headers.
-
-        The ``section`` argument can index a nested sub-part of the message.
-        For example, ``[2, 3]`` would get the 2nd sub-part of the message and
-        then index it for its 3rd sub-part.
-
-        Args:
-            section: Optional nested list of sub-part indexes.
-
-        """
+    def get_body(self, section: Optional[Iterable[int]] = None,
+                 binary: bool = False) -> Optional[bytes]:
         try:
             msg = self._get_subpart(self, section)
         except IndexError:
             return None
-        return bytes(msg)
+        return self._get_bytes(msg, binary)
 
-    def get_text(self, section: Optional[Iterable[int]] = None) \
-            -> Optional[bytes]:
-        """Get the text of the message part, not including headers.
-
-        The ``section`` argument can index a nested sub-part of the message.
-        For example, ``[2, 3]`` would get the 2nd sub-part of the message and
-        then index it for its 3rd sub-part.
-
-        Args:
-            section: Optional nested list of sub-part indexes.
-
-        """
+    def get_text(self, section: Optional[Iterable[int]] = None,
+                 binary: bool = False) -> Optional[bytes]:
         try:
             msg = self._get_subpart(self, section)
         except IndexError:
             return None
         ofp = io.BytesIO()
-        _BodyOnlyBytesGenerator(ofp).flatten(msg)
+        _BodyOnlyBytesGenerator(ofp, binary).flatten(msg)
         return ofp.getvalue()
 
     @classmethod
-    def _get_size(cls, msg: 'EmailMessage') -> int:
-        data = bytes(msg)
+    def _get_bytes(cls, msg: 'EmailMessage', binary: bool = False) -> bytes:
+        ofp = io.BytesIO()
+        _FullBytesGenerator(ofp, binary).flatten(msg)
+        return ofp.getvalue()
+
+    @classmethod
+    def _get_size(cls, msg: 'EmailMessage', binary: bool = False) -> int:
+        data = cls._get_bytes(msg, binary)
         size = len(data)
         return size
 
     @classmethod
     def _get_size_with_lines(cls, msg: 'EmailMessage') -> Tuple[int, int]:
-        data = bytes(msg)
+        data = cls._get_bytes(msg)
         size = len(data)
         lines = data.count(b'\n')
         return size, lines
 
-    def get_size(self) -> int:
-        """Return the size of the message, in octets."""
-        return self._get_size(self.contents)
+    def get_size(self, section: Iterable[int] = None,
+                 binary: bool = False) -> int:
+        try:
+            msg = self._get_subpart(self, section)
+        except IndexError:
+            return 0
+        return self._get_size(msg, binary)
 
     def get_envelope_structure(self) -> EnvelopeStructure:
-        """Build and return the envelope structure.
-
-        See Also:
-            `RFC 3501 2.3.5
-            <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
-
-        """
         return self._get_envelope_structure(self.contents)
 
     def get_body_structure(self) -> BodyStructure:
-        """Build and return the body structure.
-
-        See Also:
-            `RFC 3501 2.3.6
-            <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
-
-        """
         return self._get_body_structure(self.contents)
 
     @classmethod

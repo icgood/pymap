@@ -92,7 +92,8 @@ class LoadedMessage(Message):
         """
         raise NotImplementedError
 
-    def get_body(self, section: Iterable[int] = None) -> Optional[bytes]:
+    def get_body(self, section: Iterable[int] = None,
+                 binary: bool = False) -> Optional[bytes]:
         """Get the full body of the message part, including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -101,11 +102,13 @@ class LoadedMessage(Message):
 
         Args:
             section: Optional nested list of sub-part indexes.
+            binary: True if the result uses 8-bit encoding.
 
         """
         raise NotImplementedError
 
-    def get_text(self, section: Iterable[int] = None) -> Optional[bytes]:
+    def get_text(self, section: Iterable[int] = None,
+                 binary: bool = False) -> Optional[bytes]:
         """Get the text of the message part, not including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -114,12 +117,20 @@ class LoadedMessage(Message):
 
         Args:
             section: Optional nested list of sub-part indexes.
+            binary: True if the result uses 8-bit encoding.
 
         """
         raise NotImplementedError
 
-    def get_size(self) -> int:
-        """Return the size of the message, in octets."""
+    def get_size(self, section: Iterable[int] = None,
+                 binary: bool = False) -> int:
+        """Return the size of the message, in octets.
+
+        Args:
+            section: Optional nested list of sub-part indexes.
+            binary: True if the result uses 8-bit encoding.
+
+        """
         raise NotImplementedError
 
     def get_envelope_structure(self) -> EnvelopeStructure:

@@ -24,10 +24,12 @@ class TestAppendCommand(unittest.TestCase):
             b' inbox (\\Seen) "01-Jan-1970 01:01:00 +0000" {10}\n',
             Params(continuations=[b'test test!\n  ']))
         self.assertEqual('INBOX', ret.mailbox)
-        self.assertEqual(b'test test!', ret.message)
-        self.assertEqual({Flag(br'\Seen')}, ret.flag_set)
+        self.assertEqual(1, len(ret.messages))
+        msg_0 = ret.messages[0]
+        self.assertEqual(b'test test!', msg_0.message)
+        self.assertEqual({Flag(br'\Seen')}, msg_0.flag_set)
         self.assertEqual(datetime(1970, 1, 1, 1, 1, tzinfo=timezone.utc),
-                         ret.when)
+                         msg_0.when)
         self.assertEqual(b'  ', buf)
 
     def test_parse_simple(self):
@@ -35,8 +37,21 @@ class TestAppendCommand(unittest.TestCase):
             b' inbox {10}\n',
             Params(continuations=[b'test test!\n  ']))
         self.assertEqual('INBOX', ret.mailbox)
-        self.assertEqual(b'test test!', ret.message)
-        self.assertFalse(ret.flag_set)
+        self.assertEqual(1, len(ret.messages))
+        msg_0 = ret.messages[0]
+        self.assertEqual(b'test test!', msg_0.message)
+        self.assertFalse(msg_0.flag_set)
+        self.assertEqual(b'  ', buf)
+
+    def test_parse_multi(self):
+        ret, buf = AppendCommand.parse(
+            b' inbox {10}\n',
+            Params(continuations=[b'test test! {15}\n',
+                                  b'test test test!\n  ']))
+        self.assertEqual('INBOX', ret.mailbox)
+        self.assertEqual(2, len(ret.messages))
+        self.assertEqual(b'test test!', ret.messages[0].message)
+        self.assertEqual(b'test test test!', ret.messages[1].message)
         self.assertEqual(b'  ', buf)
 
     def test_parse_toobig(self):

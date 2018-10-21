@@ -7,7 +7,7 @@ install:
   - travis_retry pip install -r test/requirements.txt
   - travis_retry pip install coveralls
   - travis_retry pip install -e .
-script: py.test --codestyle --mypy --cov=pymap
+script: py.test --flake8 --mypy --cov=pymap
 after_success:
   - coveralls
 branches:

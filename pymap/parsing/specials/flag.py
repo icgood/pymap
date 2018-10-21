@@ -37,7 +37,7 @@ class Flag(Special[bytes]):
             return bytes(self) == bytes(other)
         elif isinstance(other, bytes):
             return bytes(self) == self._capitalize(other)
-        return NotImplemented
+        return super().__eq__(other)
 
     def __lt__(self, other) -> bool:
         if isinstance(other, Flag):

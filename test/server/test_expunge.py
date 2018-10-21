@@ -26,6 +26,28 @@ class TestExpunge(TestBase):
         self.transport.push_logout()
         await self.run()
 
+    async def test_expunge_uid(self):
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX')
+        self.transport.push_readline(
+            b'store1 UID STORE * +FlAGS (\\Deleted)\r\n')
+        self.transport.push_write(
+            b'* 4 FETCH (FLAGS (\\Deleted \\Recent) UID 103)\r\n'
+            b'store1 OK STORE completed.\r\n')
+        self.transport.push_readline(
+            b'expunge1 UID EXPUNGE 100:102\r\n')
+        self.transport.push_write(
+            b'expunge1 OK EXPUNGE completed.\r\n')
+        self.transport.push_readline(
+            b'expunge1 UID EXPUNGE 100:*\r\n')
+        self.transport.push_write(
+            b'* 3 EXISTS\r\n'
+            b'* 0 RECENT\r\n'
+            b'* 4 EXPUNGE\r\n'
+            b'expunge1 OK EXPUNGE completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
     async def test_concurrent_expunge_responses(self):
         concurrent = self.new_transport()
         event1, event2 = self.new_events(2)

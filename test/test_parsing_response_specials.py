@@ -3,7 +3,7 @@ import unittest
 
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, ExpungeResponse, FetchResponse, SearchResponse, \
-    ListResponse, LSubResponse
+    ESearchResponse, ListResponse, LSubResponse
 from pymap.parsing.specials import FetchAttribute
 
 
@@ -47,6 +47,13 @@ class TestSearchResponse(unittest.TestCase):
     def test_bytes(self):
         resp = SearchResponse([4, 8, 15, 16, 23, 42])
         self.assertEqual(b'* SEARCH 4 8 15 16 23 42\r\n', bytes(resp))
+
+
+class TestESearchResponse(unittest.TestCase):
+
+    def test_bytes(self):
+        resp = ESearchResponse(b'tag', True, {b'one': b'2', b'three': b'4'})
+        self.assertEqual(b'* (TAG "tag") UID ONE 2 THREE 4\r\n', bytes(resp))
 
 
 class TestListResponse(unittest.TestCase):

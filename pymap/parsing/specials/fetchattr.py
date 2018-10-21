@@ -45,14 +45,14 @@ class FetchAttribute(Special[bytes]):
             self.headers = headers
 
         def __hash__(self) -> int:
-            return hash((self.parts, self.specifier, self.headers))
+            return hash((tuple(self.parts), self.specifier, self.headers))
 
     _attrname_pattern = re.compile(br' *([^\s\[<()]+)')
     _section_start_pattern = re.compile(br' *\[ *')
     _section_end_pattern = re.compile(br' *\]')
     _partial_pattern = re.compile(br'< *(\d+) *\. *(\d+) *>')
 
-    _sec_part_pattern = re.compile(br'(\d+ *(?:\. *\d+)*) *(\.)? *')
+    _sec_part_pattern = re.compile(br'([1-9]\d* *(?:\. *[1-9]\d*)*) *(\.)? *')
 
     def __init__(self, attribute: bytes,
                  section: Section = None,
@@ -120,14 +120,14 @@ class FetchAttribute(Special[bytes]):
         return hash((self.value, self.section, self.partial))
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, FetchAttribute):
-            return NotImplemented
-        return hash(self) == hash(other)
+        if isinstance(other, FetchAttribute):
+            return hash(self) == hash(other)
+        return super().__eq__(other)
 
     def __ne__(self, other) -> bool:
-        if not isinstance(other, FetchAttribute):
-            return NotImplemented
-        return hash(self) != hash(other)
+        if isinstance(other, FetchAttribute):
+            return hash(self) != hash(other)
+        return super().__ne__(other)
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, FetchAttribute):
@@ -136,11 +136,12 @@ class FetchAttribute(Special[bytes]):
 
     @classmethod
     def _parse_section(cls, buf: bytes, params: Params):
-        section_parts: Sequence[int] = []
         match = cls._sec_part_pattern.match(buf)
         if match:
             section_parts = [int(num) for num in match.group(1).split(b'.')]
             buf = buf[match.end(0):]
+        else:
+            section_parts = []
         try:
             atom, after = Atom.parse(buf, params)
         except NotParseable:
@@ -172,7 +173,8 @@ class FetchAttribute(Special[bytes]):
                     b'RFC822.HEADER', b'RFC822.SIZE', b'RFC822.TEXT',
                     b'BODYSTRUCTURE'):
             return cls(attr), after
-        elif attr not in (b'BODY', b'BODY.PEEK'):
+        elif attr not in (b'BODY', b'BODY.PEEK',
+                          b'BINARY', b'BINARY.PEEK', b'BINARY.SIZE'):
             raise NotParseable(buf)
         buf = after
         match = cls._section_start_pattern.match(buf)
@@ -181,13 +183,18 @@ class FetchAttribute(Special[bytes]):
                 return cls(attr), buf
             else:
                 raise NotParseable(buf)
-        section, buf = cls._parse_section(buf[match.end(0):], params)
-        match = cls._section_end_pattern.match(buf)
-        if not match:
-            raise NotParseable(buf)
         buf = buf[match.end(0):]
+        section, buf_s = cls._parse_section(buf, params)
+        if section.specifier and attr.startswith(b'BINARY'):
+            raise NotParseable(buf)
+        match = cls._section_end_pattern.match(buf_s)
+        if not match:
+            raise NotParseable(buf_s)
+        buf = buf_s[match.end(0):]
         match = cls._partial_pattern.match(buf)
         if match:
+            if attr == b'BINARY.SIZE':
+                raise NotParseable(buf)
             from_, to = int(match.group(1)), int(match.group(2))
             if from_ < 0 or to <= 0 or from_ > to:
                 raise NotParseable(buf)

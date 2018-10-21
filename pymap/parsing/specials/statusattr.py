@@ -50,9 +50,7 @@ class StatusAttribute(Special[bytes]):
     def __eq__(self, other) -> bool:
         if isinstance(other, StatusAttribute):
             return self.value == other.value
-        elif isinstance(other, bytes):
-            return self.value == other
-        return NotImplemented
+        return super().__eq__(other)
 
     def __bytes__(self) -> bytes:
         return self.value

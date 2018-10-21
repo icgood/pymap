@@ -1,11 +1,11 @@
 import re
-from typing import Tuple, Sequence, List, Iterable, cast
+from typing import Tuple, Sequence, List, Iterable, cast, Optional
 
 from . import CommandSelect, CommandNoArgs
 from .. import NotParseable, Space, EndLine, Params
 from ..primitives import Atom, ListP
-from ..specials import (AString, Mailbox, SequenceSet, Flag, FetchAttribute,
-                        SearchKey)
+from ..specials import AString, Mailbox, SequenceSet, Flag, FetchAttribute, \
+    SearchKey, ExtensionOptions
 from ..specials.flag import Recent
 from ...flags import FlagOp
 
@@ -36,16 +36,34 @@ class CloseCommand(CommandNoArgs, CommandSelect):
     command = b'CLOSE'
 
 
-class ExpungeCommand(CommandNoArgs, CommandSelect):
+class ExpungeCommand(CommandSelect):
     """The ``EXPUNGE`` command permanently erases all messages in the selected
     mailbox that contain the ``\\Deleted`` flag.
 
     See Also:
-        `RFC 3501 6.4.3. <https://tools.ietf.org/html/rfc3501#section-6.4.3>`_
+        `RFC 3501 6.4.3 <https://tools.ietf.org/html/rfc3501#section-6.4.3>`_
+        `RFC 4315 2.1 <https://tools.ietf.org/html/rfc4315#section-2.1>`_
+
+    Args:
+        uid_set: Only the messages in the given UID set should be expunged.
 
     """
 
     command = b'EXPUNGE'
+
+    def __init__(self, tag: bytes, uid_set: SequenceSet = None) -> None:
+        super().__init__(tag)
+        self.uid_set = uid_set
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['ExpungeCommand', bytes]:
+        uid_set: Optional[SequenceSet] = None
+        if params.uid:
+            _, buf = Space.parse(buf, params)
+            uid_set, buf = SequenceSet.parse(buf, params)
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, uid_set), buf
 
 
 class CopyCommand(CommandSelect):
@@ -105,12 +123,14 @@ class FetchCommand(CommandSelect):
     command = b'FETCH'
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
-                 attr_list: Sequence[FetchAttribute], uid: bool) -> None:
+                 attr_list: Sequence[FetchAttribute], uid: bool,
+                 options: ExtensionOptions) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.no_expunge_response = not seq_set.uid
         self.attributes = attr_list
         self.uid = uid
+        self.options = options
 
     @classmethod
     def _check_macros(cls, buf: bytes, params: Params):
@@ -157,8 +177,9 @@ class FetchCommand(CommandSelect):
             attr_list = cast(List[FetchAttribute], attr_list_p.value)
         if params.uid:
             attr_list.append(FetchAttribute(b'UID'))
+        options, buf = ExtensionOptions.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, seq_set, attr_list, params.uid), buf
+        return cls(params.tag, seq_set, attr_list, params.uid, options), buf
 
 
 class StoreCommand(CommandSelect):
@@ -184,23 +205,26 @@ class StoreCommand(CommandSelect):
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
                  flags: Iterable[Flag], mode: FlagOp,
-                 silent: bool, uid: bool) -> None:
+                 silent: bool, uid: bool,
+                 options: ExtensionOptions) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_set = frozenset(flags) - {Recent}
         self.mode = mode
         self.silent = silent
         self.uid = uid
+        self.options = options
 
     @classmethod
-    def _parse_store_info(cls, buf: bytes, params: Params):
+    def _parse_store_info(cls, buf: bytes, params: Params) \
+            -> Tuple[FlagOp, bool, bytes]:
         info, after = Atom.parse(buf, params)
         match = cls._info_pattern.match(info.value)
         if not match:
             raise NotParseable(buf)
         mode = cls._modes[match.group(1)]
         silent = bool(match.group(2))
-        return {'mode': mode, 'silent': silent}, after
+        return mode, silent, after
 
     @classmethod
     def _parse_flag_list(cls, buf: bytes, params: Params) \
@@ -226,12 +250,14 @@ class StoreCommand(CommandSelect):
     def parse(cls, buf: bytes, params: Params) -> Tuple['StoreCommand', bytes]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
+        options, buf = ExtensionOptions.parse(buf, params)
         _, buf = Space.parse(buf, params)
-        info, buf = cls._parse_store_info(buf, params)
+        mode, silent, buf = cls._parse_store_info(buf, params)
         _, buf = Space.parse(buf, params)
         flag_list, buf = cls._parse_flag_list(buf, params)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, seq_set, flag_list, uid=params.uid, **info), buf
+        return cls(params.tag, seq_set, flag_list, mode,
+                   silent, params.uid, options), buf
 
 
 class SearchCommand(CommandSelect):
@@ -252,15 +278,17 @@ class SearchCommand(CommandSelect):
     command = b'SEARCH'
 
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
-                 charset: str = None, uid: bool = False) -> None:
+                 charset: Optional[str], uid: bool,
+                 options: ExtensionOptions) -> None:
         super().__init__(tag)
         self.keys = frozenset(keys)
         self.charset = charset
         self.uid = uid
+        self.options = options
 
     @classmethod
     def _parse_charset(cls, buf: bytes, params: Params) \
-            -> Tuple[str, bytes]:
+            -> Tuple[Optional[str], bytes]:
         try:
             _, after = Space.parse(buf, params)
             atom, after = Atom.parse(after, params)
@@ -276,11 +304,22 @@ class SearchCommand(CommandSelect):
                 except LookupError:
                     raise NotParseable(buf, b'BADCHARSET')
                 return charset, after
-        return 'US-ASCII', buf
+        return None, buf
+
+    @classmethod
+    def _parse_options(cls, buf: bytes, params: Params) \
+            -> Tuple[ExtensionOptions, bytes]:
+        start = cls._whitespace_length(buf)
+        if buf[start:start + 6] == b'RETURN':
+            return ExtensionOptions.parse(buf[start + 6:], params)
+        else:
+            options, _ = ExtensionOptions.parse(b'', params)
+            return options, buf
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) \
             -> Tuple['SearchCommand', bytes]:
+        options, buf = cls._parse_options(buf, params)
         charset, buf = cls._parse_charset(buf, params)
         search_keys = []
         while True:
@@ -293,23 +332,25 @@ class SearchCommand(CommandSelect):
                     raise
                 break
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, search_keys, charset, params.uid), buf
+        return cls(params.tag, search_keys, charset, params.uid, options), buf
 
 
 class UidCommand(CommandSelect):
-    """The ``UID`` command precedes one of the ``COPY``, ``FETCH``, ``SEARCH``,
-    or ``STORE`` commands and indicates that the command interacts with message
-    UIDs instead of sequence numbers. Refer to the RFC section for a complete
-    description.
+    """The ``UID`` command precedes one of the ``COPY``, ``EXPUNGE``,
+    ``FETCH``, ``SEARCH``, or ``STORE`` commands and indicates that the
+    command interacts with message UIDs instead of sequence numbers. Refer
+    to the RFC section for a complete description.
 
     See Also:
-        `RFC 3501 6.4.8. <https://tools.ietf.org/html/rfc3501#section-6.4.8>`_
+        `RFC 3501 6.4.8 <https://tools.ietf.org/html/rfc3501#section-6.4.8>`_
+        `RFC 4315 2.1 <https://tools.ietf.org/html/rfc4315#section-2.1>`_
 
     """
 
     command = b'UID'
 
     _allowed_subcommands = {b'COPY': CopyCommand,
+                            b'EXPUNGE': ExpungeCommand,
                             b'FETCH': FetchCommand,
                             b'SEARCH': SearchCommand,
                             b'STORE': StoreCommand}

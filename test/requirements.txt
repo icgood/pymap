@@ -1,8 +1,8 @@
 mypy
 typing-extensions
-pycodestyle
+flake8
 pytest
 pytest-asyncio
 pytest-cov
 pytest-mypy
-pytest-codestyle
+pytest-flake8

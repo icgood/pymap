@@ -57,14 +57,14 @@ class SearchKey(Special[bytes]):
         return hash((self.value, self.filter, self.inverse))
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, SearchKey):
-            return NotImplemented
-        return hash(self) == hash(other)
+        if isinstance(other, SearchKey):
+            return hash(self) == hash(other)
+        return super().__eq__(other)
 
     def __ne__(self, other) -> bool:
-        if not isinstance(other, SearchKey):
-            return NotImplemented
-        return hash(self) != hash(other)
+        if isinstance(other, SearchKey):
+            return hash(self) != hash(other)
+        return super().__ne__(other)
 
     @classmethod
     def _parse_astring_filter(cls, buf: bytes, params: Params):

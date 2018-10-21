@@ -134,13 +134,13 @@ class TestSearchCommand(unittest.TestCase):
 
     def test_parse_charset_default(self):
         ret, buf = SearchCommand._parse_charset(b'  ', Params())
-        self.assertEqual('US-ASCII', ret)
+        self.assertIsNone(ret)
         self.assertEqual(b'  ', buf)
 
     def test_parse(self):
         ret, buf = SearchCommand.parse(b' ALL\n  ', Params())
         self.assertSetEqual({SearchKey(b'ALL')}, ret.keys)
-        self.assertEqual('US-ASCII', ret.charset)
+        self.assertIsNone(ret.charset)
         self.assertEqual(b'  ', buf)
 
     def test_parse_error(self):

@@ -2,11 +2,13 @@ from typing import Iterable, Optional, Sequence
 
 from . import ResponseCode
 from ..primitives import ListP
+from ..specials import SequenceSet
 from ..typing import MaybeBytes
 from ..util import BytesFormat
 
 __all__ = ['Alert', 'Capability', 'Parse', 'PermanentFlags', 'ReadOnly',
-           'ReadWrite', 'TryCreate', 'UidNext', 'UidValidity', 'Unseen']
+           'ReadWrite', 'TryCreate', 'UidNext', 'UidValidity', 'Unseen',
+           'AppendUid', 'CopyUid']
 
 
 class Alert(ResponseCode):
@@ -145,4 +147,46 @@ class Unseen(ResponseCode):
         self._raw = b'[UNSEEN %i]' % next_
 
     def __bytes__(self):
+        return self._raw
+
+
+class AppendUid(ResponseCode):
+    """Indicates the newly assigned UIDs and UIDVALIDITY of messages appended
+    to a mailbox.
+
+    Args:
+        validity: The UID validity value.
+        uids: The UIDs of the appended messages.
+
+    """
+
+    def __init__(self, validity: int, uids: Iterable[int]) -> None:
+        super().__init__()
+        uid_set = SequenceSet.build(uids)
+        self._raw = b'[APPENDUID %i %b]' % (validity, bytes(uid_set))
+
+    def __bytes__(self) -> bytes:
+        return self._raw
+
+
+class CopyUid(ResponseCode):
+    """Indicates the original and newly assigned UIDs and UIDVALIDITY of
+    messages appended to the mailbox.
+
+    Args:
+        validity: The UID validity value.
+        source_uids: The UIDs of the source messages.
+        dest_uids: The UIDs of the copied messages.
+
+    """
+
+    def __init__(self, validity: int, source_uids: Iterable[int],
+                 dest_uids: Iterable[int]) -> None:
+        super().__init__()
+        source_uid_set = SequenceSet.build(source_uids)
+        dest_uid_set = SequenceSet.build(dest_uids)
+        self._raw = b'[COPYUID %i %b %b]' \
+            % (validity, bytes(source_uid_set), bytes(dest_uid_set))
+
+    def __bytes__(self) -> bytes:
         return self._raw
