@@ -1,7 +1,8 @@
 
 import unittest
 
-from pymap.parsing import NotParseable, RequiresContinuation, Params
+from pymap.parsing import Params
+from pymap.parsing.exceptions import NotParseable, RequiresContinuation
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
     LiteralString, ListP
 
@@ -110,10 +111,17 @@ class TestString(unittest.TestCase):
             String.parse(b'{}\r\n', Params())
         with self.assertRaises(NotParseable):
             String.parse(b'{10}', Params())
+        with self.assertRaises(NotParseable):
+            String.parse(b'{10}\r\nabc', Params())
         with self.assertRaises(RequiresContinuation):
             String.parse(b'{10}\r\n', Params())
         with self.assertRaises(NotParseable):
             String.parse(b'{10}\r\n', Params(continuations=[b'a'*9]))
+        with self.assertRaises(NotParseable):
+            String.parse(b'{10+}\r\n', Params())
+        with self.assertRaises(NotParseable) as raised:
+            String.parse(b'{4097}\r\n', Params())
+        self.assertEqual(b'[TOOBIG]', bytes(raised.exception.code))
 
     def test_literal_bytes(self):
         qstring1 = LiteralString(b'one\r\ntwo')

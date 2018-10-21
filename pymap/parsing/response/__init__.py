@@ -1,11 +1,10 @@
-from typing import List, Optional, ClassVar
+from typing import List, Optional, Union, ClassVar
 
-from ..command import BadCommand
 from ..typing import MaybeBytes
 from ..util import BytesFormat
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
-           'ResponseBadCommand', 'ResponseNo', 'ResponseOk', 'ResponseBye']
+           'ResponseNo', 'ResponseOk', 'ResponseBye']
 
 
 class ResponseCode:
@@ -16,6 +15,29 @@ class ResponseCode:
 
     def __bytes__(self) -> bytes:
         raise NotImplementedError
+
+    @classmethod
+    def of(cls, code: Optional[MaybeBytes]) -> Optional['ResponseCode']:
+        """Build and return an anonymous response code object.
+
+        Args:
+            code: The code string, without square brackets.
+
+        """
+        if code is not None:
+            return _AnonymousResponseCode(code)
+        else:
+            return None
+
+
+class _AnonymousResponseCode(ResponseCode):
+
+    def __init__(self, code: MaybeBytes) -> None:
+        super().__init__()
+        self.code = code
+
+    def __bytes__(self) -> bytes:
+        return BytesFormat(b'[%b]') % self.code
 
 
 class Response:
@@ -38,7 +60,7 @@ class Response:
     def __init__(self, tag: MaybeBytes, text: MaybeBytes = None) -> None:
         super().__init__()
         self.tag = bytes(tag)
-        self.untagged: List[MaybeBytes] = []
+        self.untagged: List[Union[MaybeBytes, 'Response']] = []
         self._text = text or b''
         self._raw: Optional[bytes] = None
 
@@ -47,7 +69,7 @@ class Response:
         """The response text."""
         return bytes(self._text)
 
-    def add_untagged(self, response: MaybeBytes) -> None:
+    def add_untagged(self, response: Union[MaybeBytes, 'Response']) -> None:
         """Add an untagged response. These responses are shown before the
         parent response.
 
@@ -73,11 +95,22 @@ class Response:
         response = ResponseOk(b'*', text, code)
         self.add_untagged(response)
 
+    @property
+    def is_terminal(self) -> bool:
+        """True if the response contained an untagged ``BYE`` response
+        indicating that the session should be terminated.
+
+        """
+        for resp in self.untagged:
+            if isinstance(resp, ResponseBye):
+                return True
+        return False
+
     def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         resp_line = BytesFormat(b'%b %b\r\n') % (self.tag, self.text)
-        self._raw = BytesFormat(b'').join(self.untagged + [resp_line])
+        self._raw = BytesFormat(b'').join(self.untagged, [resp_line])
         return self._raw
 
 
@@ -97,6 +130,7 @@ class ResponseContinuation(Response):
 
 
 class ConditionResponse(Response):
+    """Base class for responses that indicate a condition, e.g. ``OK``.."""
 
     condition: ClassVar[bytes] = b''
 
@@ -125,24 +159,6 @@ class ResponseBad(ConditionResponse):
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
                  code: Optional[ResponseCode] = None) -> None:
         super().__init__(tag, text, code)
-
-
-class ResponseBadCommand(ResponseBad):
-    """``BAD`` response indicating the server was not able to parse the given
-    command from the client. The server promises that the state of the
-    connection or mailbox will not be changed as a result.
-
-    Args:
-        exc: The exception that was raised during command parsing.
-        code: Optional response code.
-
-    """
-
-    condition = b'BAD'
-
-    def __init__(self, exc: BadCommand, code: Optional[ResponseCode] = None) \
-            -> None:
-        super().__init__(exc.tag, bytes(exc), code)
 
 
 class ResponseNo(ConditionResponse):
@@ -195,3 +211,8 @@ class ResponseBye(ConditionResponse):
 
     def __init__(self, text: MaybeBytes) -> None:
         super().__init__(b'*', text, None)
+
+    @property
+    def is_terminal(self) -> bool:
+        """This response is always terminal."""
+        return True

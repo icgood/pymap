@@ -6,8 +6,8 @@ from functools import total_ordering
 from typing import Tuple, List, Union, Iterable, Any, Sequence, Optional, \
     Iterator
 
-from . import Parseable, ExpectedParseable, NotParseable, \
-    RequiresContinuation, Primitive, Params
+from . import Parseable, ExpectedParseable, NotParseable, Primitive, Params
+from .exceptions import RequiresContinuation
 from .typing import MaybeBytes
 from .util import BytesFormat
 
@@ -151,6 +151,8 @@ class String(Primitive[bytes]):
 
     """
 
+    _MAX_LEN = 4096
+
     def __init__(self, string: bytes, raw: Optional[bytes]) -> None:
         super().__init__()
         self.string = string
@@ -167,11 +169,7 @@ class String(Primitive[bytes]):
             return QuotedString.parse(buf, params)
         except NotParseable:
             pass
-        try:
-            return LiteralString.parse(buf, params)
-        except NotParseable:
-            pass
-        raise NotParseable(buf)
+        return LiteralString.parse(buf, params)
 
     @classmethod
     def build(cls, value: Any) -> Union[Nil, 'String']:
@@ -200,7 +198,9 @@ class String(Primitive[bytes]):
                 return LiteralString(ascii_)
         else:
             raise TypeError(value)
-        if len(ascii_) < 32 and b'\n' not in ascii_:
+        if len(ascii_) > cls._MAX_LEN:
+            raise ValueError(value)
+        elif len(ascii_) < 32 and b'\n' not in ascii_:
             return QuotedString(ascii_)
         else:
             return LiteralString(ascii_)
@@ -226,7 +226,7 @@ class QuotedString(String):
 
     """
 
-    _quoted_pattern = re.compile(br'(\r|\n|\\.|\")')
+    _quoted_pattern = re.compile(br'(?:\r|\n|\\.|\")')
     _quoted_specials_pattern = re.compile(br'[\"\\]')
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:
@@ -279,10 +279,18 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(br'{(\d+)}\r?\n$')
+    _literal_pattern = re.compile(br'{(\d+)}\r?\n')
 
     def __init__(self, string: bytes) -> None:
         super().__init__(string, None)
+
+    @classmethod
+    def _check_too_big(cls, params: Params, length: int) -> bool:
+        if params.command_name == b'APPEND':
+            max_len = params.max_append_len
+        else:
+            max_len = cls._MAX_LEN
+        return max_len is not None and length > max_len
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) \
@@ -292,7 +300,11 @@ class LiteralString(String):
         if not match:
             raise NotParseable(buf)
         literal_length = int(match.group(1))
-        if not params.continuations:
+        if len(buf) > match.end(0):
+            raise NotParseable(buf[match.end(0):])
+        elif cls._check_too_big(params, literal_length):
+            raise NotParseable(buf, b'TOOBIG')
+        elif not params.continuations:
             raise RequiresContinuation(b'Literal string', literal_length)
         buf = params.continuations.pop(0)
         literal = buf[0:literal_length]

@@ -7,13 +7,13 @@ backend plugin.
 from collections import OrderedDict
 from copy import copy
 from socket import getfqdn
-from ssl import SSLContext
 from typing import TYPE_CHECKING, Optional, Callable, Union, Tuple, \
     Awaitable, Dict
 
-from pysasl import SASLAuth, AuthenticationCredentials
+from pysasl import AuthenticationCredentials
 
-from .exceptions import CloseConnection, CommandNotAllowed
+from .config import IMAPConfig
+from .exceptions import CommandNotAllowed, CloseConnection
 from .interfaces.login import LoginProtocol
 from .interfaces.session import SessionInterface
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
@@ -47,24 +47,16 @@ fqdn = getfqdn().encode('ascii')
 class ConnectionState:
     """Defines the interaction with the backend plugin."""
 
-    #: The non-auth capabilities advertised by new connections.
-    DEFAULT_CAPABILITY = [b'STARTTLS', b'LOGINDISABLED']
-
-    #: The auth object used by new connections.
-    DEFAULT_AUTH = SASLAuth.secure()
-
-    #: The auth object used by connections after ``STARTTLS``.
-    DEFAULT_AUTH_STARTTLS = SASLAuth()
-
-    def __init__(self, login: LoginProtocol,
-                 ssl_context: Optional[SSLContext]) -> None:
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
         self.login = login
-        self.ssl_context = ssl_context
+        self.config = config
+        self.ssl_context = config.ssl_context
+        self.static_capability = config.static_capability
         self._session: Optional[SessionInterface] = None
         self._selected: Optional[SelectedMailbox] = None
-        self._capability = copy(self.DEFAULT_CAPABILITY)
-        self.auth = self.DEFAULT_AUTH
+        self._capability = list(config.initial_capability)
+        self.auth = config.initial_auth
 
     @property
     def session(self) -> SessionInterface:
@@ -82,7 +74,8 @@ class ConnectionState:
     def capability(self) -> Capability:
         return Capability(self._capability +
                           [b'AUTH=%b' % mech.name for mech in
-                           self.auth.server_mechanisms])
+                           self.auth.server_mechanisms] +
+                          list(self.static_capability))
 
     async def do_greeting(self):
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
@@ -99,21 +92,21 @@ class ConnectionState:
     async def do_login(self, cmd: 'LoginCommand',
                        creds: AuthenticationCredentials):
         if b'LOGINDISABLED' in self.capability:
-            raise CommandNotAllowed(cmd.command)
+            raise CommandNotAllowed(b'LOGIN is disabled.')
         return await self.do_authenticate(cmd, creds)
 
     async def do_starttls(self, cmd: 'StartTLSCommand'):
         if self.ssl_context is None:
-            raise CommandNotAllowed(cmd.command)
+            raise ValueError('ssl_context is None')
         try:
             self._capability.remove(b'STARTTLS')
         except ValueError:
-            raise CommandNotAllowed(cmd.command)
+            raise CommandNotAllowed(b'STARTTLS not available.')
         try:
             self._capability.remove(b'LOGINDISABLED')
         except ValueError:
             pass
-        self.auth = self.DEFAULT_AUTH_STARTTLS
+        self.auth = self.config.starttls_auth
         return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 
     async def do_capability(self, cmd: 'CapabilityCommand'):

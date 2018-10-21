@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import cast, Union, Iterable, SupportsBytes
 
 from .typing import MaybeBytes
@@ -51,7 +52,7 @@ class BytesFormat:
         """
         return self.how % tuple(bytes(item) for item in data)
 
-    def join(self, data: Iterable[MaybeBytes]) -> bytes:
+    def join(self, *data: Iterable[MaybeBytes]) -> bytes:
         """Iterable join on a delimiter.
 
         Args:
@@ -63,4 +64,4 @@ class BytesFormat:
                 BytesFormat(b' ').join([b'one', b'two', b'three'])
 
         """
-        return self.how.join([bytes(item) for item in data])
+        return self.how.join([bytes(item) for item in chain(*data)])

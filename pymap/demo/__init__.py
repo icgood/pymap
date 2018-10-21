@@ -1,3 +1,6 @@
+from typing import Tuple, Type
+
+from pymap.config import IMAPConfig
 from pymap.interfaces.login import LoginProtocol
 from .session import Session
 from .state import State
@@ -9,6 +12,6 @@ def add_subparser(subparsers):
     subparsers.add_parser('demo', help='In-memory demo backend.')
 
 
-def init(*_) -> LoginProtocol:
+def init(*_) -> Tuple[LoginProtocol, Type[IMAPConfig]]:
     State.init()
-    return Session.login
+    return Session.login, IMAPConfig

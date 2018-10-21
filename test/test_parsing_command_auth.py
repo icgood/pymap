@@ -2,7 +2,8 @@
 import unittest
 from datetime import datetime, timezone
 
-from pymap.parsing import NotParseable, Params
+from pymap.parsing import Params
+from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.command.auth import CreateCommand, AppendCommand, \
     ListCommand, RenameCommand, StatusCommand
 from pymap.parsing.specials import StatusAttribute, Flag
@@ -37,6 +38,13 @@ class TestAppendCommand(unittest.TestCase):
         self.assertEqual(b'test test!', ret.message)
         self.assertFalse(ret.flag_set)
         self.assertEqual(b'  ', buf)
+
+    def test_parse_toobig(self):
+        with self.assertRaises(NotParseable) as raised:
+            AppendCommand.parse(
+                b' inbox {10}\n',
+                Params(max_append_len=9, command_name=b'APPEND'))
+        self.assertEqual(b'[TOOBIG]', bytes(raised.exception.code))
 
 
 class TestListCommand(unittest.TestCase):

@@ -2,7 +2,8 @@
 import unittest
 
 from pymap.flags import FlagOp
-from pymap.parsing import NotParseable, Params
+from pymap.parsing import Params
+from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.command.select import CopyCommand, FetchCommand, \
     StoreCommand, UidCommand, SearchCommand
 from pymap.parsing.specials import FetchAttribute, SearchKey, Flag

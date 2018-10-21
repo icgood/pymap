@@ -1,12 +1,9 @@
-from typing import Dict, Type, Tuple, ClassVar
+from typing import Tuple, ClassVar
 
-from .. import Parseable, NotParseable, Space, EndLine, Params
-from ..primitives import Atom
-from ..specials import Tag
+from .. import Parseable, EndLine, Params
 
-__all__ = ['CommandNotFound', 'BadCommand', 'Command', 'CommandNoArgs',
-           'CommandAny', 'CommandAuth', 'CommandNonAuth', 'CommandSelect',
-           'Commands']
+__all__ = ['Command', 'CommandNoArgs', 'CommandAny', 'CommandAuth',
+           'CommandNonAuth', 'CommandSelect']
 
 
 class Command(Parseable[bytes]):
@@ -93,86 +90,3 @@ class CommandSelect(CommandAuth):
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise NotImplementedError
-
-
-class Commands:
-    """Contains the set of all known IMAP commands and the ability to parse."""
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.commands: Dict[bytes, Type[Command]] = {}
-        self._load_commands()
-
-    def _load_commands(self):
-        from . import any, auth, nonauth, select  # NOQA
-        for mod in (any, auth, nonauth, select):
-            for command_name in mod.__all__:
-                command = getattr(mod, command_name)
-                self.commands[command.command] = command
-
-    def parse(self, buf: bytes, params: Params) -> Tuple[Command, bytes]:
-        tag = Tag(b'*')
-        try:
-            tag, buf = Tag.parse(buf, params)
-            _, buf = Space.parse(buf, params)
-            atom, buf = Atom.parse(buf, params)
-            command = atom.value.upper()
-        except NotParseable:
-            raise CommandNotFound(buf, tag.value)
-        cmd_type = self.commands.get(command)
-        params = params.copy(tag=tag.value)
-        if cmd_type:
-            try:
-                return cmd_type.parse(buf, params)
-            except NotParseable as exc:
-                raise BadCommand(exc.buf, tag.value, cmd_type)
-        raise CommandNotFound(buf, tag.value, command)
-
-    def __bytes__(self) -> bytes:
-        raise NotImplementedError
-
-
-class BadCommand(NotParseable):
-    """Error indicating the data was not parseable because the command had
-    invalid arguments.
-
-    Args:
-        buf: The parsing buffer.
-        tag: The command tag value.
-        command: The command class.
-
-    """
-
-    def __init__(self, buf: bytes, tag: bytes, command: Type[Command]) -> None:
-        super().__init__(buf)
-        self.tag = tag
-        self.command = command
-        self._raw = None
-
-    def __bytes__(self) -> bytes:
-        if self._raw is None:
-            self._raw = b': '.join((self.command.command, super().__bytes__()))
-        return self._raw
-
-
-class CommandNotFound(NotParseable):
-    """Error indicating the data was not parseable because the command was not
-    found.
-
-    Args:
-        buf: The parsing buffer.
-        tag: The command tag value.
-        command: The command name.
-
-    """
-
-    def __init__(self, buf: bytes, tag: bytes, command: bytes = None) -> None:
-        super().__init__(buf)
-        self.tag = tag
-        self.command = command
-
-    def __bytes__(self) -> bytes:
-        if self.command:
-            return b'Command Not Found: %b' % self.command
-        else:
-            return b'Command Not Given'

@@ -11,20 +11,22 @@ from base64 import b64encode, b64decode
 from ssl import SSLContext
 from typing import Any, List, Optional
 
-from pysasl import (ServerChallenge, AuthenticationError,
-                    AuthenticationCredentials)
+from pysasl import ServerChallenge, AuthenticationError, \
+    AuthenticationCredentials
 
-from .exceptions import ResponseError, CloseConnection
+from .config import IMAPConfig
+from .exceptions import ResponseError
 from .interfaces.login import LoginProtocol
-from .parsing import RequiresContinuation, Params
-from .parsing.command import BadCommand, Commands, Command
+from .parsing.command import Command
+from .parsing.commands import Commands
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
     StartTLSCommand
-from .parsing.response import (ResponseContinuation, ResponseBadCommand,
-                               ResponseBad, ResponseBye, Response, ResponseOk)
+from .parsing.exceptions import RequiresContinuation, BadCommand
+from .parsing.response import ResponseContinuation, Response, \
+    ResponseBad, ResponseBye, ResponseOk
 from .state import ConnectionState
 
-__all__ = ['IMAPServer', 'IMAPConnection']
+__all__ = ['IMAPConfig', 'IMAPServer', 'IMAPConnection']
 
 
 class Disconnected(Exception):
@@ -40,23 +42,20 @@ class IMAPServer:
         login: Login callback that takes authentication credentials and
             returns a :class:`~pymap.interfaces.session.SessionInterface`
             object.
-        debug: If true, prints all socket activity to stdout.
-        ssl_context: SSL context that will be used for opportunistic TLS.
+        config: Settings to use for the IMAP server.
 
     """
 
-    def __init__(self, login: LoginProtocol, debug: bool = False,
-                 ssl_context: SSLContext = None) -> None:
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
-        self.commands = Commands()
+        self.commands = config.commands
         self.login = login
-        self.ssl_context = ssl_context
-        self.debug = debug
+        self.config = config
 
     async def __call__(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
-        conn = IMAPConnection(self.commands, self.debug, reader, writer)
-        state = ConnectionState(self.login, self.ssl_context)
+        conn = IMAPConnection(self.commands, self.config, reader, writer)
+        state = ConnectionState(self.login, self.config)
         await conn.run(state)
 
 
@@ -65,20 +64,22 @@ class IMAPConnection:
 
     Args:
         commands: Defines the IMAP commands available to the connection.
-        debug: If true, prints all socket activity to stdout.
+        config: Settings to use for the IMAP connection.
         reader: The input stream for the socket.
         writer: The output stream for the socket.
 
     """
 
-    def __init__(self, commands: Commands, debug: bool,
+    def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
                  writer: StreamWriter) -> None:
         super().__init__()
         self.commands = commands
+        self.params = config.parsing_params
+        self.bad_command_limit = config.bad_command_limit
         self.reader = reader
         self.writer = writer
-        self._print = self._real_print if debug else self._noop_print
+        self._print = self._real_print if config.debug else self._noop_print
 
     def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
         self.reader = reader
@@ -140,7 +141,7 @@ class IMAPConnection:
         while True:
             try:
                 cmd, _ = self.commands.parse(
-                    line, Params(continuations=conts.copy()))
+                    line, self.params.copy(continuations=conts.copy()))
             except RequiresContinuation as req:
                 cont = ResponseContinuation(req.message)
                 await self.write_response(cont)
@@ -174,15 +175,27 @@ class IMAPConnection:
         except IOError:
             pass
 
+    async def write_bad_command(self, bad: BadCommand,
+                                bad_commands: int) -> bool:
+        resp = bad.get_response()
+        if self.bad_command_limit and bad_commands >= self.bad_command_limit:
+            bye = ResponseBye(b'Too many errors, disconnecting.')
+            resp.add_untagged(bye)
+        await self.write_response(resp)
+        return resp.is_terminal
+
     async def run(self, state: ConnectionState) -> None:
         self._print('%d +++|', b'<connected>')
+        bad_commands = 0
         greeting = await state.do_greeting()
         await self.write_response(greeting)
         while True:
             try:
                 cmd = await self.read_command()
             except BadCommand as bad:
-                await self.write_response(ResponseBadCommand(bad))
+                bad_commands += 1
+                if await self.write_bad_command(bad, bad_commands):
+                    break
             except (ConnectionResetError, BrokenPipeError):
                 break
             except Disconnected:
@@ -191,6 +204,7 @@ class IMAPConnection:
                 await self.send_error_disconnect()
                 raise
             else:
+                bad_commands = 0
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         auth = await self.authenticate(state, cmd.mech_name)
@@ -205,7 +219,7 @@ class IMAPConnection:
                 except ResponseError as exc:
                     resp = exc.get_response(cmd.tag)
                     await self.write_response(resp)
-                    if isinstance(exc, CloseConnection):
+                    if resp.is_terminal:
                         break
                 except AuthenticationError as exc:
                     resp = ResponseBad(cmd.tag, bytes(str(exc), 'utf-8'))

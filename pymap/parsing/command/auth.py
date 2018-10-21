@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import cast, Tuple, Sequence, Iterable
 
 from . import CommandAuth
-from .. import NotParseable, UnexpectedType, Space, EndLine, Params, \
-    InvalidContent
+from .. import NotParseable, UnexpectedType, Space, EndLine, Params
+from ..exceptions import InvalidContent
 from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute
 

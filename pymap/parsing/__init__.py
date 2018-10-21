@@ -1,103 +1,13 @@
 """Package defining all the IMAP parsing and response classes."""
 
 import re
-from typing import Tuple, Optional, Generic, Sequence, Dict, Any, List, Type
+from typing import Tuple, Generic, Sequence, Dict, Any, List, Type
 
+from .exceptions import NotParseable, UnexpectedType
 from .typing import ParseableType
 
-__all__ = ['RequiresContinuation', 'NotParseable', 'InvalidContent',
-           'UnexpectedType', 'Parseable', 'ExpectedParseable', 'Space',
-           'EndLine', 'Primitive', 'Special', 'Params']
-
-
-class RequiresContinuation(Exception):
-    """Indicates that the buffer has been successfully parsed so far, but
-    requires a continuation of the command from the client.
-
-    Args:
-        message: The message from the server.
-        literal_length: If the continuation is for a string literal, this is
-            the byte length to expect.
-
-    """
-
-    def __init__(self, message: bytes, literal_length: int = 0) -> None:
-        super().__init__()
-        self.message = message
-        self.literal_length = literal_length
-
-
-class NotParseable(Exception):
-    """Indicates that the given buffer was not parseable by one or all of the
-    data formats.
-
-    Args:
-        buf: The buffer with the parsing error.
-
-    """
-
-    error_indicator = b'[:ERROR:]'
-
-    def __init__(self, buf: bytes) -> None:
-        super().__init__()
-        self.buf = buf
-        self._raw: Optional[bytes] = None
-        self._before: Optional[bytes] = None
-        self._after: Optional[bytes] = None
-        self.offset: int = 0
-        if isinstance(buf, memoryview):
-            obj = getattr(buf, 'obj')
-            nbytes = getattr(buf, 'nbytes')
-            self.offset = len(obj) - nbytes
-
-    @property
-    def before(self) -> bytes:
-        """The bytes before the parsing error was encountered."""
-        if self._before is not None:
-            return self._before
-        buf = self.buf
-        if isinstance(buf, memoryview):
-            buf = getattr(buf, 'obj')
-        self._before = before = buf[0:self.offset]
-        return before
-
-    @property
-    def after(self) -> bytes:
-        """The bytes after the parsing error was encountered."""
-        if self._after is not None:
-            return self._after
-        if isinstance(self.buf, memoryview):
-            self._after = after = self.buf.tobytes()
-        else:
-            self._after = after = self.buf
-        return after
-
-    def __bytes__(self) -> bytes:
-        if self._raw is not None:
-            return self._raw
-        before = self.before
-        after = self.after.rstrip(b'\r\n')
-        self._raw = raw = self.error_indicator.join((before, after))
-        return raw
-
-    def __str__(self) -> str:
-        return str(bytes(self), 'ascii', 'replace')
-
-
-class InvalidContent(NotParseable, ValueError):
-    """Indicates the type of the parsed content was correct, but something
-    about the content did not fit what was expected by the special type.
-
-    """
-    pass
-
-
-class UnexpectedType(NotParseable):
-    """Indicates that a generic parseable that was given a sub-type expectation
-    failed to meet that expectation.
-
-    """
-    pass
+__all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine',
+           'Primitive', 'Special']
 
 
 class Params:
@@ -108,27 +18,34 @@ class Params:
         continuations: The continuation buffers remaining for parsing.
         expected: The types that are expected in the next parsed object.
         list_expected: The types that are expect in a parsed list.
+        command_name: The name of the command currently being parsed, if any.
         uid: The next parsed command came after a ``UID`` command.
         charset: Strings should be decoded using this character set.
         tag: The next parsed command uses this tag bytestring.
+        max_append_len: The maximum allowed length of the message body to an
+            ``APPEND`` command.
 
     """
 
-    __slots__ = ['continuations', 'expected', 'list_expected',
-                 'uid', 'charset', 'tag']
+    __slots__ = ['continuations', 'expected', 'list_expected', 'command_name',
+                 'uid', 'charset', 'tag', 'max_string_len', 'max_append_len']
 
     def __init__(self, continuations: List[bytes] = None,
                  expected: Sequence[Type['Parseable']] = None,
                  list_expected: Sequence[Type['Parseable']] = None,
+                 command_name: bytes = None,
                  uid: bool = False,
                  charset: str = None,
-                 tag: bytes = None) -> None:
+                 tag: bytes = None,
+                 max_append_len: int = None) -> None:
         self.continuations = continuations or []
         self.expected = expected or []
         self.list_expected = list_expected or []
+        self.command_name = command_name
         self.uid = uid
         self.charset = charset
         self.tag = tag or b'.'
+        self.max_append_len = max_append_len
 
     def _set_if_none(self, kwargs: Dict[str, Any], attr: str, value) -> None:
         if value is not None:
@@ -136,20 +53,24 @@ class Params:
         else:
             kwargs[attr] = getattr(self, attr)
 
-    def copy(self, continuations: Sequence['Parseable'] = None,
+    def copy(self, continuations: List[bytes] = None,
              expected: Sequence[Type['Parseable']] = None,
              list_expected: Sequence[Type['Parseable']] = None,
+             command_name: bytes = None,
              uid: bool = None,
              charset: str = None,
-             tag: bytes = None) -> 'Params':
+             tag: bytes = None,
+             max_append_len: int = None) -> 'Params':
         """Copy the parameters, possibly replacing a subset."""
         kwargs: Dict[str, Any] = {}
         self._set_if_none(kwargs, 'continuations', continuations)
         self._set_if_none(kwargs, 'expected', expected)
         self._set_if_none(kwargs, 'list_expected', list_expected)
+        self._set_if_none(kwargs, 'command_name', command_name)
         self._set_if_none(kwargs, 'uid', uid)
         self._set_if_none(kwargs, 'charset', charset)
         self._set_if_none(kwargs, 'tag', tag)
+        self._set_if_none(kwargs, 'max_append_len', max_append_len)
         return Params(**kwargs)
 
 
