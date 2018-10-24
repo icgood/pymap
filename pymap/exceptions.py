@@ -7,9 +7,9 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
 from .parsing.response.code import TryCreate, ReadOnly
 
 __all__ = ['ResponseError', 'CloseConnection', 'CommandNotAllowed',
-           'SearchNotAllowed', 'MailboxError', 'MailboxNotFound',
-           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
-           'AppendFailure']
+           'SearchNotAllowed', 'InvalidAuth', 'MailboxError',
+           'MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
+           'MailboxReadOnly', 'AppendFailure']
 
 
 class ResponseError(Exception):
@@ -70,6 +70,16 @@ class SearchNotAllowed(CommandNotAllowed):
     def __init__(self, key: bytes = None) -> None:
         command = b'SEARCH ' + key if key else b'SEARCH'
         super().__init__(command + b' not allowed.')
+
+
+class InvalidAuth(ResponseError):
+    """The ``LOGIN`` or ``AUTHENTICATE`` commands received credential that the
+    IMAP backend has rejected.
+
+    """
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, b'Invalid authentication credentials.')
 
 
 class MailboxError(ResponseError):

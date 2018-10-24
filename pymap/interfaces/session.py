@@ -1,24 +1,58 @@
-from typing import Tuple, Optional, FrozenSet, Dict, Iterable, Sequence
+from abc import abstractmethod
+from typing import Tuple, Optional, FrozenSet, Mapping, Iterable, Sequence, \
+    TypeVar
+from typing_extensions import Protocol
+
+from pysasl import AuthenticationCredentials
 
 from .message import Message, LoadedMessage
 from .mailbox import MailboxInterface
+from ..config import IMAPConfig
 from ..flags import FlagOp
-from ..parsing.command import AppendMessage
+from ..message import AppendMessage
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
 
-__all__ = ['SessionInterface']
+__all__ = ['LoginProtocol', 'SessionInterface']
+
+_ConfigType = TypeVar('_ConfigType', bound=IMAPConfig, contravariant=True)
 
 
-class SessionInterface:
+class LoginProtocol(Protocol[_ConfigType]):
+    """Defines the callback protocol that backends use to initialize a new
+    session.
+
+    """
+
+    async def __call__(self, credentials: AuthenticationCredentials,
+                       config: _ConfigType) -> 'SessionInterface':
+        """Given a set of authentication credentials, initialize a new IMAP
+        session for the user.
+
+        Args:
+            credentials: Authentication credentials supplied by the user.
+            config: The config in use by the server.
+
+        Returns:
+            The new IMAP session.
+
+        Raises:
+            :class:`~pymap.exceptions.InvalidAuthentication`
+
+        """
+        ...
+
+
+class SessionInterface(Protocol):
     """Corresponds to a single, authenticated IMAP session."""
 
+    @abstractmethod
     async def list_mailboxes(self, ref_name: str,
                              filter_: str,
                              subscribed: bool = False,
                              selected: SelectedMailbox = None) \
-            -> Tuple[Iterable[Tuple[str, bytes, Dict[str, bool]]],
+            -> Tuple[Iterable[Tuple[str, bytes, Mapping[str, bool]]],
                      Optional[SelectedMailbox]]:
         """List the mailboxes owned by the user.
 
@@ -35,8 +69,9 @@ class SessionInterface:
             selected: If applicable, the currently selected mailbox name.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def get_mailbox(self, name: str,
                           selected: SelectedMailbox = None) \
             -> Tuple[MailboxInterface, Optional[SelectedMailbox]]:
@@ -52,8 +87,9 @@ class SessionInterface:
             MailboxNotFound: The mailbox name does not exist.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def create_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
@@ -71,8 +107,9 @@ class SessionInterface:
             MailboxConflict: The mailbox name already exists.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def delete_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
@@ -91,8 +128,9 @@ class SessionInterface:
             MailboxHasChildren: The mailbox has child mailboxes.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def rename_mailbox(self, before_name: str, after_name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
@@ -112,8 +150,9 @@ class SessionInterface:
             MailboxConflict: The destination mailbox name already exists.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def subscribe(self, name: str,
                         selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
@@ -132,8 +171,9 @@ class SessionInterface:
             MailboxNotFound: The mailbox name does not exist.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def unsubscribe(self, name: str,
                           selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
@@ -152,8 +192,9 @@ class SessionInterface:
             MailboxNotFound: The mailbox name does not exist.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def append_messages(self, name: str,
                               messages: Sequence[AppendMessage],
                               selected: SelectedMailbox = None) \
@@ -174,8 +215,9 @@ class SessionInterface:
             AppendFailure: The message could not be appended to the mailbox.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple['MailboxInterface', SelectedMailbox]:
         """Selects a :class:`MailboxInterface` object corresponding to an
@@ -197,8 +239,9 @@ class SessionInterface:
             MailboxNotFound: The mailbox name does not exist.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def check_mailbox(self, selected: SelectedMailbox,
                             housekeeping: bool = False) -> SelectedMailbox:
         """Checks for any updates in the mailbox. Optionally performs any
@@ -220,8 +263,9 @@ class SessionInterface:
             MailboxNotFound: The currently selected mailbox no longer exists.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequences: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
@@ -238,8 +282,9 @@ class SessionInterface:
             MailboxNotFound: The currently selected mailbox no longer exists.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def search_mailbox(self, selected: SelectedMailbox,
                              keys: FrozenSet[SearchKey]) \
             -> Tuple[Iterable[Tuple[int, Message]], SelectedMailbox]:
@@ -258,8 +303,9 @@ class SessionInterface:
             MailboxNotFound: The currently selected mailbox no longer exists.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def expunge_mailbox(self, selected: SelectedMailbox,
                               uid_set: SequenceSet = None) -> SelectedMailbox:
         """All messages that are marked as deleted are immediately expunged
@@ -279,8 +325,9 @@ class SessionInterface:
             MailboxReadOnly: The currently selected mailbox is read-only.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def copy_messages(self, selected: SelectedMailbox,
                             sequences: SequenceSet,
                             mailbox: str) \
@@ -303,8 +350,9 @@ class SessionInterface:
                 or the destination mailbox is read-only.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     async def update_flags(self, selected: SelectedMailbox,
                            sequences: SequenceSet,
                            flag_set: FrozenSet[Flag],
@@ -327,4 +375,4 @@ class SessionInterface:
             MailboxReadOnly: The currently selected mailbox is read-only.
 
         """
-        raise NotImplementedError
+        ...

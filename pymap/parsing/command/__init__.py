@@ -1,11 +1,9 @@
-from datetime import datetime
-from typing import Tuple, ClassVar, NamedTuple, FrozenSet
+from typing import Tuple, ClassVar
 
 from .. import Parseable, EndLine, Params
-from ..specials import Flag, ExtensionOptions
 
 __all__ = ['Command', 'CommandNoArgs', 'CommandAny', 'CommandAuth',
-           'CommandNonAuth', 'CommandSelect', 'AppendMessage']
+           'CommandNonAuth', 'CommandSelect']
 
 
 class Command(Parseable[bytes]):
@@ -18,6 +16,10 @@ class Command(Parseable[bytes]):
 
     #: The command key, e.g. ``b'NOOP'``.
     command: ClassVar[bytes] = b''
+
+    #: Whether the command allows untagged updates from concurrent sessions
+    #: for the selected mailbox.
+    allow_updates: ClassVar[bool] = True
 
     def __init__(self, tag: bytes) -> None:
         super().__init__()
@@ -78,6 +80,8 @@ class CommandNonAuth(Command):
 
     """
 
+    allow_updates = False
+
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise NotImplementedError
@@ -92,20 +96,3 @@ class CommandSelect(CommandAuth):
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
         raise NotImplementedError
-
-
-class AppendMessage(NamedTuple):
-    """A single message from the APPEND command.
-
-    Attributes:
-        message: The raw message bytes.
-        flag_set: The flags to assign to the message.
-        when: The internal timestamp to assign to the message.
-        options: The extension options in use for the message.
-
-    """
-
-    message: bytes
-    flag_set: FrozenSet[Flag]
-    when: datetime
-    options: ExtensionOptions

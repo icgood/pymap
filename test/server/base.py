@@ -1,21 +1,22 @@
 
 import asyncio
 
-from pymap.config import IMAPConfig
 from pymap.demo import init
 from pymap.server import IMAPServer
 from .mocktransport import MockTransport
 
 
-config = IMAPConfig(starttls_enabled=False,
-                    reject_insecure_auth=False)
-
-
 class TestBase:
+
+    class FakeArgs:
+        debug = True
+        cert = None
+        key = None
+        no_secure_login = True
 
     def setup_method(self) -> None:
         self._fd = 1
-        login, _ = init()
+        login, config = init(self.FakeArgs())  # type: ignore
         self._run = IMAPServer(login, config)
         self.matches = {}  # type: ignore
         self.transport = self.new_transport()

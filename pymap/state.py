@@ -5,7 +5,6 @@ backend plugin.
 """
 
 from collections import OrderedDict
-from copy import copy
 from socket import getfqdn
 from typing import TYPE_CHECKING, Optional, Callable, Union, Tuple, \
     Awaitable, Dict
@@ -14,8 +13,7 @@ from pysasl import AuthenticationCredentials
 
 from .config import IMAPConfig
 from .exceptions import CommandNotAllowed, CloseConnection
-from .interfaces.login import LoginProtocol
-from .interfaces.session import SessionInterface
+from .interfaces.session import SessionInterface, LoginProtocol
 from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
 from .parsing.primitives import ListP, Number, String, Nil
@@ -32,12 +30,18 @@ from .selected import SelectedMailbox
 __all__ = ['ConnectionState']
 
 if TYPE_CHECKING:
-    from .parsing.command.any import *  # noqa
-    from .parsing.command.nonauth import *  # noqa
-    from .parsing.command.auth import *  # noqa
-    from .parsing.command.select import *  # noqa
+    from .parsing.command.any import CapabilityCommand, LogoutCommand, \
+        NoOpCommand
+    from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
+        StartTLSCommand
+    from .parsing.command.auth import AppendCommand, CreateCommand, \
+        DeleteCommand, ExamineCommand, ListCommand, LSubCommand, \
+        RenameCommand, SelectCommand, StatusCommand, SubscribeCommand, \
+        UnsubscribeCommand
+    from .parsing.command.select import CheckCommand, CloseCommand, \
+        ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, SearchCommand
 
-    _AuthCommands = Union['AuthenticateCommand', 'LoginCommand']
+    _AuthCommands = Union[AuthenticateCommand, LoginCommand]
     _CommandFunc = Callable[[Command],
                             Awaitable[Tuple[Response, SelectedMailbox]]]
 
@@ -81,13 +85,11 @@ class ConnectionState:
         return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
 
     async def do_authenticate(self, cmd: '_AuthCommands',
-                              creds: AuthenticationCredentials):
+                              creds: Optional[AuthenticationCredentials]):
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self._session = await self.login(creds)
-        if self._session:
-            return ResponseOk(cmd.tag, b'Authentication successful.')
-        return ResponseNo(cmd.tag, b'Invalid authentication credentials.')
+        self._session = await self.login(creds, self.config)
+        return ResponseOk(cmd.tag, b'Authentication successful.')
 
     async def do_login(self, cmd: 'LoginCommand',
                        creds: AuthenticationCredentials):
@@ -135,7 +137,7 @@ class ConnectionState:
         resp.add_untagged(ExistsResponse(updates.exists))
         resp.add_untagged(RecentResponse(updates.recent))
         resp.add_untagged_ok(b'Predicted next UID.', UidNext(mailbox.next_uid))
-        resp.add_untagged_ok(b'Predicted next UID.',
+        resp.add_untagged_ok(b'UIDs valid.',
                              UidValidity(mailbox.uid_validity))
         if mailbox.first_unseen:
             resp.add_untagged_ok(b'First unseen message.',
@@ -346,7 +348,6 @@ class ConnectionState:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         response, selected = await func(cmd)
         if selected:
-            for update in selected.drain_updates():
-                response.add_untagged(update)
-            self._selected = copy(selected)
+            selected.drain_updates(cmd, response)
+            self._selected = selected.fork()
         return response

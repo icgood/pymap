@@ -167,6 +167,8 @@ class TestSequenceSet(unittest.TestCase):
             SequenceSet.parse(b'*:test', Params())
         with self.assertRaises(NotParseable):
             SequenceSet.parse(b'', Params())
+        with self.assertRaises(NotParseable):
+            SequenceSet.parse(b'0:*', Params())
 
 
 class TestFetchAttribute(unittest.TestCase):

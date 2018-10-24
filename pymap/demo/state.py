@@ -8,11 +8,10 @@ from weakref import WeakSet
 
 from pkg_resources import resource_listdir, resource_stream
 
-from pymap.message import BaseMessage
+from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.selected import SelectedMailbox
-from .message import Message
 
-__all__ = ['State']
+__all__ = ['State', 'Message']
 
 
 class _Mailbox:
@@ -30,6 +29,10 @@ class _Mailbox:
         uid = self.next_uid
         self.next_uid += 1
         return uid
+
+
+class Message(BaseLoadedMessage):
+    pass
 
 
 class State:

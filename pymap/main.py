@@ -1,6 +1,7 @@
 """IMAP server with pluggable Python backends."""
 
 import asyncio
+import traceback
 from argparse import ArgumentParser
 
 from pkg_resources import iter_entry_points
@@ -9,23 +10,35 @@ from .core import __version__
 from .server import IMAPServer
 
 
-def _load_backends():
-    return {entry_point.name: entry_point.load() for entry_point in
-            iter_entry_points('pymap.backend')}
+def _load_backends(parser):
+    ret = {}
+    for entry_point in iter_entry_points('pymap.backend'):
+        try:
+            mod = entry_point.load()
+        except ImportError:
+            traceback.print_exc()
+            parser.exit(1, 'Error importing registered backend: %s\n'
+                        % entry_point.name)
+        else:
+            ret[entry_point.name] = mod
+    return ret
 
 
 def main():
-    backends = _load_backends()
-
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--debug', action='store_true')
-    parser.add_argument('--port', action='store', type=int, default=1143)
-    parser.add_argument('--cert', action='store')
-    parser.add_argument('--key', action='store')
     parser.add_argument('--version', action='version',
                         version='%(prog)s' + __version__)
     subparsers = parser.add_subparsers(dest='backend',
                                        help='Which pymap backend to use.')
+    listener = parser.add_argument_group('listener arguments')
+    listener.add_argument('--port', action='store', type=int, default=1143)
+    listener.add_argument('--cert', action='store')
+    listener.add_argument('--key', action='store')
+    listener.add_argument('--no-secure-login', action='store_true')
+
+    backends = _load_backends(parser)
+
     for mod in backends.values():
         mod.add_subparser(subparsers)
     args = parser.parse_args()
@@ -36,9 +49,7 @@ def main():
         parser.error('Expected backend name.')
         return
 
-    login_func, config_type = backend.init(args)
-    config = config_type.from_args(args)
-
+    login_func, config = backend.init(args)
     callback = IMAPServer(login_func, config)
     loop = asyncio.get_event_loop()
     coro = asyncio.start_server(callback, port=args.port, loop=loop)

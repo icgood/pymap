@@ -2,7 +2,7 @@ import os.path
 import ssl
 from argparse import Namespace
 from ssl import SSLContext
-from typing import overload, Sequence, Any, Optional
+from typing import Sequence, Any, Optional
 
 from pysasl import SASLAuth
 
@@ -50,27 +50,20 @@ class IMAPConfig:
         self._extra = extra
 
     @classmethod
-    def from_args(cls, args: Namespace) -> 'IMAPConfig':
+    def from_args(cls, args: Namespace, **extra: Any) -> 'IMAPConfig':
         """Build and return a new :class:`IMAPConfig` using command-line
         arguments.
 
         Args:
             args: The arguments parsed from the command-line.
+            extra: Additional keywords used for special circumstances.
 
         """
-        return IMAPConfig(debug=args.debug,
-                          cert_file=args.cert,
-                          key_file=args.key)
+        return cls(debug=args.debug, cert_file=args.cert, key_file=args.key,
+                   reject_insecure_auth=not args.no_secure_login,
+                   **extra)
 
-    @overload  # noqa
-    def get_extra(self, key: str, fallback: None) -> Optional[str]:
-        ...
-
-    @overload  # noqa
-    def get_extra(self, key: str, fallback: str) -> str:
-        ...
-
-    def get_extra(self, key, fallback):  # noqa
+    def get_extra(self, key: str, fallback: Any = None) -> Any:
         return self._extra.get(key, fallback)
 
     @property

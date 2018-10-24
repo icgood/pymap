@@ -1,6 +1,8 @@
+from abc import abstractmethod
 from datetime import datetime
 from email.headerregistry import BaseHeader
 from typing import Optional, Iterable, Set, FrozenSet, Sequence, Union
+from typing_extensions import Protocol
 
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
@@ -9,31 +11,35 @@ from ..selected import SelectedMailbox
 __all__ = ['Message', 'LoadedMessage']
 
 
-class Message:
+class Message(Protocol):
     """Message metadata such as UID, permanent flags, and when the message
     was added to the system.
 
     """
 
     @property
+    @abstractmethod
     def uid(self) -> int:
         """The message's unique identifier in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def permanent_flags(self) -> Set[Flag]:
         """The message's set of permanent flags."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def internal_date(self) -> Optional[datetime]:
         """The message's internal date."""
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message."""
-        raise NotImplementedError
+        ...
 
 
 class LoadedMessage(Message):
@@ -45,25 +51,29 @@ class LoadedMessage(Message):
     """
 
     @property
+    @abstractmethod
     def uid(self) -> int:
         """The message's unique identifier in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def permanent_flags(self) -> Set[Flag]:
         """The message's set of permanent flags."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def internal_date(self) -> Optional[datetime]:
         """The message's internal date."""
-        raise NotImplementedError
+        ...
 
-    def get_flags(self, session: Optional[SelectedMailbox]) \
-            -> FrozenSet[Flag]:
+    @abstractmethod
+    def get_flags(self, session: Optional[SelectedMailbox]) -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message."""
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
         """Get the values of a header from the message.
 
@@ -71,12 +81,12 @@ class LoadedMessage(Message):
             name: The name of the header.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_headers(self, section: Iterable[int] = None,
                     subset: Iterable[bytes] = None,
-                    inverse: bool = False) \
-            -> Optional[bytes]:
+                    inverse: bool = False) -> Optional[bytes]:
         """Get the headers from the message.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -90,8 +100,9 @@ class LoadedMessage(Message):
                 the headers *not* in ``subset`` are returned.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_body(self, section: Iterable[int] = None,
                  binary: bool = False) -> Optional[bytes]:
         """Get the full body of the message part, including headers.
@@ -105,8 +116,9 @@ class LoadedMessage(Message):
             binary: True if the result uses 8-bit encoding.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_text(self, section: Iterable[int] = None,
                  binary: bool = False) -> Optional[bytes]:
         """Get the text of the message part, not including headers.
@@ -120,8 +132,9 @@ class LoadedMessage(Message):
             binary: True if the result uses 8-bit encoding.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_size(self, section: Iterable[int] = None,
                  binary: bool = False) -> int:
         """Return the size of the message, in octets.
@@ -131,8 +144,9 @@ class LoadedMessage(Message):
             binary: True if the result uses 8-bit encoding.
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_envelope_structure(self) -> EnvelopeStructure:
         """Build and return the envelope structure.
 
@@ -141,8 +155,9 @@ class LoadedMessage(Message):
             <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
 
         """
-        raise NotImplementedError
+        ...
 
+    @abstractmethod
     def get_body_structure(self) -> BodyStructure:
         """Build and return the body structure.
 
@@ -151,4 +166,4 @@ class LoadedMessage(Message):
             <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
 
         """
-        raise NotImplementedError
+        ...

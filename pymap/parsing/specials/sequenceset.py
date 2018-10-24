@@ -24,7 +24,7 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
 
     """
 
-    _num_pattern = re.compile(br'\d+')
+    _num_pattern = re.compile(br'[1-9]\d*')
 
     def __init__(self, sequences: Sequence[_SeqElem],
                  uid: bool = False) -> None:
@@ -33,6 +33,11 @@ class SequenceSet(Special[Sequence[_SeqElem]]):
         self.uid = uid
         self._flattened_cache = None
         self._raw: Optional[bytes] = None
+
+    @classmethod
+    def all(cls, uid: bool = False) -> 'SequenceSet':
+        """A sequence set intended to contain all values."""
+        return SequenceSet([(1, '*')], uid)
 
     @property
     def value(self) -> Sequence[_SeqElem]:

@@ -1,22 +1,40 @@
 """Base implementations of the :mod:`pymap.interfaces.message` interfaces."""
 
+import email
 import io
-from datetime import datetime
+from datetime import datetime, timezone
 from email.generator import BytesGenerator
 from email.headerregistry import BaseHeader
 from email.message import EmailMessage
 from email.policy import SMTP
 from typing import cast, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
-    Sequence, Union
+    Sequence, Union, NamedTuple
 
 from .interfaces.message import Message, LoadedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
-from .parsing.specials import Flag
+from .parsing.specials import Flag, ExtensionOptions
 from .selected import SelectedMailbox
 
-__all__ = ['BaseMessage', 'BaseLoadedMessage']
+__all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
+
+
+class AppendMessage(NamedTuple):
+    """A single message from the APPEND command.
+
+    Attributes:
+        message: The raw message bytes.
+        flag_set: The flags to assign to the message.
+        when: The internal timestamp to assign to the message.
+        options: The extension options in use for the message.
+
+    """
+
+    message: bytes
+    flag_set: FrozenSet[Flag]
+    when: datetime
+    options: ExtensionOptions
 
 
 class _FullBytesGenerator(BytesGenerator):
@@ -51,7 +69,7 @@ class BaseMessage(Message):
     """
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
-                 internal_date: Optional[datetime] = None) -> None:
+                 internal_date: datetime = None) -> None:
         super().__init__()
         self._uid = uid
         self._permanent_flags = set(permanent_flags or [])
@@ -97,9 +115,28 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
 
     def __init__(self, uid: int, contents: EmailMessage,
                  permanent_flags: Iterable[Flag] = None,
-                 internal_date: Optional[datetime] = None) -> None:
+                 internal_date: datetime = None) -> None:
         super().__init__(uid, permanent_flags, internal_date)
         self.contents: EmailMessage = contents
+
+    @classmethod
+    def parse(cls, uid: int, data: bytes,
+              permanent_flags: Iterable[Flag] = None,
+              internal_date: datetime = None) -> 'BaseLoadedMessage':
+        """Parse the given bytestring containing a MIME-encoded email message
+        into a :class:`BaseLoadedMessage` object.
+
+        Args:
+            uid: The UID of the message.
+            data: The raw contents of the message.
+            permanent_flags: Permanent flags for the message.
+            internal_date: The internal date of the message.
+
+        """
+        msg = email.message_from_bytes(data, policy=SMTP)
+        email_msg = cast(EmailMessage, msg)
+        return cls(uid, email_msg, permanent_flags,
+                   internal_date or datetime.now(timezone.utc))
 
     @classmethod
     def _get_subpart(cls, msg: 'BaseLoadedMessage', section) -> 'EmailMessage':
@@ -121,7 +158,7 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         values = self.contents.get_all(name_str, [])
         return cast(Sequence[Union[str, BaseHeader]], values)
 
-    def get_headers(self, section: Optional[Iterable[int]] = None,
+    def get_headers(self, section: Iterable[int] = None,
                     subset: Iterable[bytes] = None,
                     inverse: bool = False) \
             -> Optional[bytes]:
@@ -146,7 +183,7 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         else:
             return None
 
-    def get_body(self, section: Optional[Iterable[int]] = None,
+    def get_body(self, section: Iterable[int] = None,
                  binary: bool = False) -> Optional[bytes]:
         try:
             msg = self._get_subpart(self, section)
@@ -154,7 +191,7 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
             return None
         return self._get_bytes(msg, binary)
 
-    def get_text(self, section: Optional[Iterable[int]] = None,
+    def get_text(self, section: Iterable[int] = None,
                  binary: bool = False) -> Optional[bytes]:
         try:
             msg = self._get_subpart(self, section)

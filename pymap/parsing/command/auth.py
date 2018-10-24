@@ -2,12 +2,13 @@ import re
 from datetime import datetime
 from typing import cast, Tuple, Sequence, Iterable, Optional, List
 
-from . import CommandAuth, AppendMessage
+from . import CommandAuth
 from .. import NotParseable, UnexpectedType, Space, EndLine, Params
 from ..exceptions import InvalidContent
 from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
+from ...message import AppendMessage
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',
@@ -241,6 +242,7 @@ class SelectCommand(CommandMailboxArg):
     """
 
     command = b'SELECT'
+    allow_updates = False
 
     def __init__(self, tag: bytes, mailbox: Mailbox,
                  options: ExtensionOptions) -> None:
@@ -259,7 +261,7 @@ class SelectCommand(CommandMailboxArg):
 
 class ExamineCommand(SelectCommand):
     """The ``EXAMINE`` command selects a mailbox as read-only for querying and
-    statechanges.
+    state changes.
 
     """
 
