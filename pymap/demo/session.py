@@ -1,30 +1,30 @@
-from copy import copy
 from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet, \
     Iterable, Collection, Sequence
 
 from pysasl import AuthenticationCredentials
 
-from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.config import IMAPConfig
+from pymap.exceptions import InvalidAuth, MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.session import SessionInterface
-from pymap.parsing.command import AppendMessage
+from pymap.message import AppendMessage
 from pymap.parsing.response.code import AppendUid, CopyUid
 from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute, Flag
 from pymap.parsing.specials.flag import Deleted
 from pymap.search import SearchParams, SearchCriteriaSet
 from pymap.selected import SelectedMailbox
 from .mailbox import Mailbox
-from .message import Message
-from .state import State
+from .state import State, Message
 
 __all__ = ['Session']
 
 
 class Session(SessionInterface):
 
-    def __init__(self, user: str) -> None:
+    def __init__(self, user: str, config: IMAPConfig) -> None:
         super().__init__()
         self.user = user
+        self.config = config
         self.mailboxes: Dict[str, Mailbox] = {}
 
     @classmethod
@@ -35,7 +35,7 @@ class Session(SessionInterface):
     def _get_updates(cls, selected: Optional[SelectedMailbox]) \
             -> Optional[SelectedMailbox]:
         if selected is not None and selected.name in State.mailboxes:
-            return copy(selected)
+            return selected
         else:
             return None
 
@@ -73,12 +73,12 @@ class Session(SessionInterface):
                 yield (msg_seq, msg)
 
     @classmethod
-    async def login(cls, credentials: AuthenticationCredentials) \
-            -> Optional['Session']:
+    async def login(cls, credentials: AuthenticationCredentials,
+                    config: IMAPConfig) -> 'Session':
         if credentials.authcid == 'demouser' \
                 and credentials.check_secret('demopass'):
-            return cls(credentials.authcid)
-        return None
+            return cls(credentials.authcid, config)
+        raise InvalidAuth()
 
     async def list_mailboxes(self, ref_name: str,
                              filter_: str,
@@ -214,10 +214,16 @@ class Session(SessionInterface):
                               uid_set: SequenceSet = None) -> SelectedMailbox:
         mbx, selected = self._check_selected(selected)
         expunged = {}
-        for msg_idx in reversed(range(0, mbx.exists)):
+        if uid_set is None:
+            messages: Iterable[int] = reversed(range(0, mbx.exists))
+        else:
+            messages = []
+            for msg_uid in uid_set.iter(mbx.highest_uid):
+                msg_idx = mbx.uid_to_idx.get(msg_uid)
+                if msg_idx is not None:
+                    messages.insert(0, msg_idx)
+        for msg_idx in messages:
             msg = mbx.messages[msg_idx]
-            if uid_set and not uid_set.contains(msg.uid, mbx.highest_uid):
-                continue
             if Deleted in msg.get_flags(selected):
                 expunged[msg_idx + 1] = msg.uid
                 State.mailboxes[mbx.name].messages[msg_idx:msg_idx + 1] = []
@@ -236,13 +242,11 @@ class Session(SessionInterface):
         mbx, selected = self._check_selected(selected)
         dest, _ = self._get_mailbox(mailbox, selected)
         dest_messages = State.mailboxes[mailbox].messages
-        results = []
+        results: List[Tuple[int, Message]] = []
         source_uids: List[int] = []
-        dest_uids: List[int] = []
         for msg_seq, msg in self._iter_messages(mbx, sequences):
             dest_uid = self._increment_next_uid(mailbox)
             source_uids.append(msg.uid)
-            dest_uids.append(dest_uid)
             dest_msg = Message(dest_uid, msg.contents,
                                internal_date=msg.internal_date)
             dest_flags = msg.get_flags(selected)
@@ -250,13 +254,18 @@ class Session(SessionInterface):
             State.mailboxes[mailbox].recent.add(dest_uid)
             dest_messages.append(dest_msg)
             dest_seq = len(dest_messages)
-            results.append((dest_seq, dest_flags))
-        for session in self._sessions(selected.name):
-            for msg_seq, msg_flags in results:
+            results.append((dest_seq, dest_msg))
+        for session in self._sessions(mailbox):
+            for msg_seq, msg in results:
+                if msg.uid in State.mailboxes[mailbox].recent:
+                    session.session_flags.add_recent(msg.uid)
+                    State.mailboxes[mailbox].recent.remove(msg.uid)
+                msg_flags = msg.get_flags(session)
                 session.add_fetch(msg_seq, msg_flags)
         copy_uid: Optional[CopyUid] = None
+        dest_uids = [msg.uid for _, msg in results]
         if source_uids and dest_uids:
-            copy_uid = CopyUid(mbx.uid_validity, source_uids, dest_uids)
+            copy_uid = CopyUid(dest.uid_validity, source_uids, dest_uids)
         return copy_uid, selected
 
     async def update_flags(self, selected: SelectedMailbox,
@@ -267,8 +276,7 @@ class Session(SessionInterface):
         mbx, selected = self._check_selected(selected)
         results = []
         for msg_seq, msg in self._iter_messages(mbx, sequences):
-            mbx.update_flags(selected, msg, flag_set, mode)
-            new_flags = msg.get_flags(selected)
+            new_flags = mbx.update_flags(selected, msg, flag_set, mode)
             for session in self._sessions(selected.name):
                 if session != selected:
                     session.add_fetch(msg_seq, new_flags)

@@ -1,24 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
+import asyncio
 import enum
 import inspect
 import re
@@ -99,7 +79,12 @@ class MockTransport:
         self.push_write_close(set=set)
 
     def push_select(self, mailbox, exists=None, recent=None, uidnext=None,
-                    unseen=None, wait=None, set=None):
+                    unseen=None, wait=None, post_wait=None, set=None):
+        if unseen is False:
+            unseen_line = (None, b'')
+        else:
+            unseen_line = (None, b'* OK [UNSEEN ', (br'\d+', ),
+                           b'] First unseen message.\r\n')
         self.push_readline(
             b'select1 SELECT ' + mailbox + b'\r\n', wait=wait)
         self.push_write(
@@ -109,9 +94,10 @@ class MockTransport:
             b'* ', exists, b' EXISTS\r\n'
             b'* ', recent, b' RECENT\r\n'
             b'* OK [UIDNEXT ', uidnext, b'] Predicted next UID.\r\n'
-            b'* OK [UIDVALIDITY ', (br'\d+', ), b'] Predicted next UID.\r\n'
-            b'* OK [UNSEEN ', unseen, b'] First unseen message.\r\n'
-            b'select1 OK [READ-WRITE] Selected mailbox.\r\n', set=set)
+            b'* OK [UIDVALIDITY ', (br'\d+', ), b'] UIDs valid.\r\n',
+            unseen_line,
+            b'select1 OK [READ-WRITE] Selected mailbox.\r\n',
+            wait=post_wait, set=set)
 
     def _pop_expected(self, got):
         try:
@@ -124,21 +110,26 @@ class MockTransport:
                              '\nWhere:    ' + where
         return where, data, wait, set
 
-    def _match_write(self, where, expected, data):
-        re_parts = []
+    def _match_write_expected(self, expected, re_parts):
         for part in expected:
-            if isinstance(part, bytes):
+            if part is None:
+                re_parts.append(br'.*?')
+            elif isinstance(part, bytes):
                 re_parts.append(re.escape(part))
             elif isinstance(part, int):
                 re_parts.append(b'%i' % part)
             else:
-                if part is None:
-                    re_parts.append(br'.*?')
-                elif len(part) == 1:
+                if len(part) == 1:
                     re_parts.append(part[0])
+                elif part[0] is None:
+                    self._match_write_expected(part[1:], re_parts)
                 else:
                     regex, name = part
                     re_parts.append(br'(?P<' + name + br'>' + regex + br')')
+
+    def _match_write(self, where, expected, data):
+        re_parts = []
+        self._match_write_expected(expected, re_parts)
         full_regex = b'^' + b''.join(re_parts) + b'$'
         match = re.search(full_regex, data)
         assert match, '\nExpected: ' + repr(expected) + \
@@ -152,11 +143,15 @@ class MockTransport:
             return self.socket
 
     async def readline(self) -> bytes:
-        _, data, wait, set = self._pop_expected(_Type.READLINE)
+        where, data, wait, set = self._pop_expected(_Type.READLINE)
         if set:
             set.set()
         if wait:
-            await wait.wait()
+            try:
+                await asyncio.wait_for(wait.wait(), timeout=1.0)
+            except asyncio.TimeoutError:
+                assert False, '\nTimeout: 1.0s' + \
+                              '\nWhere:   ' + where
         return data
 
     async def readexactly(self, size: int) -> bytes:
@@ -167,7 +162,11 @@ class MockTransport:
         if set:
             set.set()
         if wait:
-            await wait.wait()
+            try:
+                await asyncio.wait_for(wait.wait(), timeout=1.0)
+            except asyncio.TimeoutError:
+                assert False, '\nTimeout: 1.0s' + \
+                              '\nWhere:   ' + where
         return data
 
     def write(self, data: bytes) -> None:
@@ -179,7 +178,10 @@ class MockTransport:
         if set:
             set.set()
         if wait:
-            await wait.wait()
+            try:
+                await asyncio.wait_for(wait.wait(), timeout=1.0)
+            except asyncio.TimeoutError:
+                assert False, '\nTimeout: 1.0s'
 
     def at_eof(self):
         return False

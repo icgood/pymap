@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Ian C. Good
+# Copyright (c) 2018 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,9 @@ setup(name='pymap',
       long_description=long_description,
       long_description_content_type='text/markdown',
       license='MIT',
-      url='http://github.com/icgood/pymap/',
+      url='https://github.com/icgood/pymap/',
       packages=find_packages(),
-      namespace_packages=['pymap'],
-      install_requires=['pysasl'],
+      install_requires=['pysasl', 'typing-extensions'],
       tests_require=['pytest', 'pytest-asyncio'],
       entry_points={'console_scripts': ['pymap = pymap.main:main'],
                     'pymap.backend': ['demo = pymap.demo']},

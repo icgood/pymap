@@ -9,14 +9,14 @@ import re
 from asyncio import IncompleteReadError, StreamReader, StreamWriter
 from base64 import b64encode, b64decode
 from ssl import SSLContext
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
 from .config import IMAPConfig
 from .exceptions import ResponseError
-from .interfaces.login import LoginProtocol
+from .interfaces.session import LoginProtocol
 from .parsing.command import Command
 from .parsing.commands import Commands
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
@@ -110,11 +110,11 @@ class IMAPConnection:
         self._print('%d -->|', extra)
         return extra
 
-    async def authenticate(self, state: ConnectionState,
-                           mech_name: bytes) -> Any:
+    async def authenticate(self, state: ConnectionState, mech_name: bytes) \
+            -> Optional[AuthenticationCredentials]:
         mech = state.auth.get_server(mech_name)
         if not mech:
-            return
+            return None
         responses: List[ServerChallenge] = []
         while True:
             try:
@@ -156,7 +156,7 @@ class IMAPConnection:
         await self.writer.drain()
         self._print('%d <--|', raw)
 
-    async def start_tls(self, ssl_context: Optional[SSLContext]) -> None:
+    async def start_tls(self, ssl_context: SSLContext) -> None:
         loop = asyncio.get_event_loop()
         transport = self.writer.transport
         protocol = transport.get_protocol()  # type: ignore
@@ -207,13 +207,13 @@ class IMAPConnection:
                 bad_commands = 0
                 try:
                     if isinstance(cmd, AuthenticateCommand):
-                        auth = await self.authenticate(state, cmd.mech_name)
-                        response = await state.do_authenticate(cmd, auth)
+                        creds = await self.authenticate(state, cmd.mech_name)
+                        response = await state.do_authenticate(cmd, creds)
                     elif isinstance(cmd, LoginCommand):
-                        auth = AuthenticationCredentials(
+                        creds = AuthenticationCredentials(
                             cmd.userid.decode('utf-8'),
                             cmd.password.decode('utf-8'))
-                        response = await state.do_login(cmd, auth)
+                        response = await state.do_login(cmd, creds)
                     else:
                         response = await state.do_command(cmd)
                 except ResponseError as exc:
@@ -229,7 +229,7 @@ class IMAPConnection:
                     raise
                 else:
                     await self.write_response(response)
-                    if isinstance(cmd, StartTLSCommand) \
+                    if isinstance(cmd, StartTLSCommand) and state.ssl_context \
                             and isinstance(response, ResponseOk):
                         await self.start_tls(state.ssl_context)
         self._print('%d ---|', b'<disconnected>')

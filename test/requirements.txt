@@ -1,5 +1,4 @@
 mypy
-typing-extensions
 flake8
 pytest
 pytest-asyncio

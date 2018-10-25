@@ -3,8 +3,8 @@
 from typing import Optional, AbstractSet, FrozenSet
 
 from .flags import FlagOp
-from .interfaces.mailbox import MailboxInterface
 from .interfaces.message import Message
+from .interfaces.mailbox import MailboxInterface
 from .parsing.specials import Flag
 from .parsing.specials.flag import Recent
 from .selected import SelectedMailbox

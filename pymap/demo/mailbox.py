@@ -6,8 +6,7 @@ from pymap.mailbox import BaseMailbox
 from pymap.parsing.specials.flag import Seen, Recent, Answered, Deleted, \
     Draft, Flagged
 from pymap.selected import SelectedMailbox
-from .message import Message
-from .state import State
+from .state import State, Message
 
 __all__ = ['Mailbox']
 
@@ -18,9 +17,13 @@ class _SelectedMailbox(SelectedMailbox):
         super().__init__(name, *args, **kwargs)
         State.mailboxes[name].sessions.add(self)
 
-    def __copy__(self) -> 'SelectedMailbox':
+    def fork(self) -> 'SelectedMailbox':
         State.mailboxes[self.name].sessions.discard(self)
-        return super().__copy__()
+        return super().fork()
+
+    @property
+    def exists(self) -> int:
+        return len(State.mailboxes[self.name].messages)
 
 
 class Mailbox(BaseMailbox):
@@ -48,7 +51,7 @@ class Mailbox(BaseMailbox):
                 if msg.uid in recent:
                     session_flags.add_recent(msg.uid)
             recent.clear()
-        return mbx, _SelectedMailbox(name, mbx.exists, readonly, session_flags)
+        return mbx, _SelectedMailbox(name, readonly, session_flags)
 
     @classmethod
     def get_snapshot(cls, name: str):

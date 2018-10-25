@@ -1,4 +1,6 @@
+from abc import abstractmethod
 from typing import Optional, AbstractSet, FrozenSet
+from typing_extensions import Protocol
 
 from .message import Message
 from ..flags import FlagOp
@@ -8,7 +10,7 @@ from ..selected import SelectedMailbox
 __all__ = ['MailboxInterface']
 
 
-class MailboxInterface:
+class MailboxInterface(Protocol):
     """Describes a mailbox as it exists in an IMAP backend, whether or not it
     is currently selected.
 
@@ -32,59 +34,70 @@ class MailboxInterface:
             The resulting set of flags on the message.
 
         """
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def name(self) -> str:
         """The name of the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def readonly(self) -> bool:
         """Whether the mailbox is read-only or read-write."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def permanent_flags(self) -> FrozenSet[Flag]:
         """The permanent flags allowed in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def session_flags(self) -> FrozenSet[Flag]:
         """The session flags allowed in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def flags(self) -> FrozenSet[Flag]:
         """Set of all permanent and session flags available on the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def exists(self) -> int:
         """Number of total messages in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def recent(self) -> int:
         """Number of recent messages in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def unseen(self) -> int:
         """Number of unseen messages in the mailbox."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def first_unseen(self) -> Optional[int]:
         """The sequence number of the first unseen message."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def next_uid(self) -> int:
         """The predicted next message UID."""
-        raise NotImplementedError
+        ...
 
     @property
+    @abstractmethod
     def uid_validity(self) -> int:
         """The mailbox UID validity value."""
-        raise NotImplementedError
+        ...
