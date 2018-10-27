@@ -1,5 +1,5 @@
-from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet, \
-    Iterable, Collection, Sequence, AsyncGenerator
+from typing import Optional, Tuple, List, Dict, FrozenSet, Iterable, \
+    Collection, Sequence, AsyncGenerator
 
 from pysasl import AuthenticationCredentials
 
@@ -190,8 +190,8 @@ class Session(SessionInterface[SelectedMailbox]):
 
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequences: SequenceSet,
-                             attributes: AbstractSet[FetchAttribute]) \
-            -> Tuple[List[Tuple[int, Message]], SelectedMailbox]:
+                             attributes: FrozenSet[FetchAttribute]) \
+            -> Tuple[Iterable[Tuple[int, Message]], SelectedMailbox]:
         mbx, selected = self._check_selected(selected)
         messages = list(self._iter_messages(mbx, sequences))
         return messages, selected
@@ -217,11 +217,12 @@ class Session(SessionInterface[SelectedMailbox]):
         if uid_set is None:
             messages: Iterable[int] = reversed(range(0, mbx.exists))
         else:
-            messages = []
+            messages_rev = []
             for msg_uid in uid_set.iter(mbx.highest_uid):
                 msg_idx = mbx.uid_to_idx.get(msg_uid)
                 if msg_idx is not None:
-                    messages.insert(0, msg_idx)
+                    messages_rev.append(msg_idx)
+            messages = reversed(messages_rev)
         for msg_idx in messages:
             msg = mbx.messages[msg_idx]
             if Deleted in msg.get_flags(selected):
@@ -272,7 +273,7 @@ class Session(SessionInterface[SelectedMailbox]):
 
     async def update_flags(self, selected: SelectedMailbox,
                            sequences: SequenceSet,
-                           flag_set: AbstractSet[Flag],
+                           flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
             -> Tuple[List[Tuple[int, Message]], SelectedMailbox]:
         mbx, selected = self._check_selected(selected)

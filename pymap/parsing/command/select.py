@@ -384,12 +384,11 @@ class IdleCommand(CommandSelect):
     See Also:
         `RFC 2177 <https://tools.ietf.org/html/rfc2177>`_
 
-    Attributes:
-        continuation: The string used to end the command.
-
     """
 
     command = b'IDLE'
+
+    #: The string used to end the command.
     continuation = b'DONE'
 
     @classmethod
@@ -400,10 +399,9 @@ class IdleCommand(CommandSelect):
     def parse_done(self, buf: bytes, params: Params) -> bytes:
         try:
             cont_len = len(self.continuation)
-            start = self._whitespace_length(buf)
-            if buf[start:start + cont_len].upper() != self.continuation:
-                raise NotParseable(buf[start:])
-            _, buf = EndLine.parse(buf[start + cont_len:], params)
+            if buf[0:cont_len].upper() != self.continuation:
+                raise NotParseable(buf)
+            _, buf = EndLine.parse(buf[cont_len:], params)
             return buf
         except NotParseable as exc:
             raise CommandInvalid(params.tag, self.command) from exc

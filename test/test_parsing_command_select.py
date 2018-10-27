@@ -3,9 +3,9 @@ import unittest
 
 from pymap.flags import FlagOp
 from pymap.parsing import Params
-from pymap.parsing.exceptions import NotParseable
+from pymap.parsing.exceptions import NotParseable, CommandInvalid
 from pymap.parsing.command.select import CopyCommand, FetchCommand, \
-    StoreCommand, UidCommand, SearchCommand
+    StoreCommand, UidCommand, SearchCommand, IdleCommand
 from pymap.parsing.specials import FetchAttribute, SearchKey, Flag
 
 
@@ -146,3 +146,26 @@ class TestSearchCommand(unittest.TestCase):
     def test_parse_error(self):
         with self.assertRaises(NotParseable):
             SearchCommand.parse(b' TEST\n', Params())
+
+
+class TestIdleCommand(unittest.TestCase):
+
+    def test_parse(self):
+        ret, buf = IdleCommand.parse(b' \r\nabc', Params())
+        self.assertIsInstance(ret, IdleCommand)
+        self.assertEqual(b'DONE', ret.continuation)
+        self.assertEqual(b'abc', buf)
+
+    def test_parse_error(self):
+        with self.assertRaises(NotParseable):
+            IdleCommand.parse(b' STUFF\r\n', Params())
+
+    def test_parse_done(self):
+        buf = IdleCommand(b'tag').parse_done(b'DONE\r\nabc', Params())
+        self.assertEqual(b'abc', buf)
+
+    def test_parse_done_error(self):
+        with self.assertRaises(CommandInvalid):
+            IdleCommand(b'tag').parse_done(b' DONE\r\n', Params())
+        with self.assertRaises(CommandInvalid):
+            IdleCommand(b'tag').parse_done(b'TEST\r\n', Params())
