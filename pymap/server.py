@@ -21,6 +21,7 @@ from .parsing.command import Command
 from .parsing.commands import Commands
 from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
     StartTLSCommand
+from .parsing.command.select import IdleCommand
 from .parsing.exceptions import RequiresContinuation, BadCommand
 from .parsing.response import ResponseContinuation, Response, \
     ResponseBad, ResponseBye, ResponseOk
@@ -150,6 +151,10 @@ class IMAPConnection:
             else:
                 return cmd
 
+    async def read_idle_done(self, cmd: IdleCommand) -> None:
+        buf = await self.read_continuation(len(cmd.continuation))
+        cmd.parse_done(buf, self.params.copy(tag=cmd.tag))
+
     async def write_response(self, resp: Response) -> None:
         raw = bytes(resp)
         self.writer.write(raw)
@@ -184,6 +189,29 @@ class IMAPConnection:
         await self.write_response(resp)
         return resp.is_terminal
 
+    async def write_updates(self, state: ConnectionState,
+                            cmd: IdleCommand) -> None:
+        async for resp in state.receive_updates(cmd):
+            await self.write_response(resp)
+
+    async def idle(self, state: ConnectionState, cmd: IdleCommand) -> Response:
+        response = await state.do_command(cmd)
+        if not isinstance(response, ResponseOk):
+            return response
+        await self.write_response(ResponseContinuation(b'Idling.'))
+        task = asyncio.create_task(self.write_updates(state, cmd))
+        try:
+            await self.read_idle_done(cmd)
+        except BadCommand as bad:
+            return bad.get_response()
+        finally:
+            task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+        return response
+
     async def run(self, state: ConnectionState) -> None:
         self._print('%d +++|', b'<connected>')
         bad_commands = 0
@@ -214,6 +242,8 @@ class IMAPConnection:
                             cmd.userid.decode('utf-8'),
                             cmd.password.decode('utf-8'))
                         response = await state.do_login(cmd, creds)
+                    elif isinstance(cmd, IdleCommand):
+                        response = await self.idle(state, cmd)
                     else:
                         response = await state.do_command(cmd)
                 except ResponseError as exc:

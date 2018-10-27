@@ -1,5 +1,5 @@
 from typing import Optional, Tuple, List, AbstractSet, Dict, FrozenSet, \
-    Iterable, Collection, Sequence
+    Iterable, Collection, Sequence, AsyncGenerator
 
 from pysasl import AuthenticationCredentials
 
@@ -12,14 +12,13 @@ from pymap.parsing.response.code import AppendUid, CopyUid
 from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute, Flag
 from pymap.parsing.specials.flag import Deleted
 from pymap.search import SearchParams, SearchCriteriaSet
-from pymap.selected import SelectedMailbox
 from .mailbox import Mailbox
-from .state import State, Message
+from .state import State, Message, SelectedMailbox
 
 __all__ = ['Session']
 
 
-class Session(SessionInterface):
+class Session(SessionInterface[SelectedMailbox]):
 
     def __init__(self, user: str, config: IMAPConfig) -> None:
         super().__init__()
@@ -170,6 +169,7 @@ class Session(SessionInterface):
             if sessions:
                 for session in sessions:
                     session.add_message(msg_seq, msg_uid, flag_set)
+                    session.updated.set()
             else:
                 State.mailboxes[name].recent.add(msg_uid)
         append_uid = AppendUid(mbx.uid_validity, msg_uids)
@@ -233,6 +233,7 @@ class Session(SessionInterface):
             for session in self._sessions(selected.name):
                 for msg_seq, msg_uid in sorted_expunged:
                     session.remove_message(msg_seq, msg_uid)
+                session.updated.set()
         return selected
 
     async def copy_messages(self, selected: SelectedMailbox,
@@ -262,6 +263,7 @@ class Session(SessionInterface):
                     State.mailboxes[mailbox].recent.remove(msg.uid)
                 msg_flags = msg.get_flags(session)
                 session.add_fetch(msg_seq, msg_flags)
+            session.updated.set()
         copy_uid: Optional[CopyUid] = None
         dest_uids = [msg.uid for _, msg in results]
         if source_uids and dest_uids:
@@ -280,5 +282,14 @@ class Session(SessionInterface):
             for session in self._sessions(selected.name):
                 if session != selected:
                     session.add_fetch(msg_seq, new_flags)
+                    session.updated.set()
             results.append((msg_seq, msg))
         return results, selected
+
+    async def send_updates(self, selected: SelectedMailbox) \
+            -> AsyncGenerator[SelectedMailbox, SelectedMailbox]:
+        while True:
+            _, selected = self._check_selected(selected)
+            await selected.updated.wait()
+            selected.updated.clear()
+            selected = yield selected

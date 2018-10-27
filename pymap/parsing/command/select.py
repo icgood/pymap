@@ -2,7 +2,8 @@ import re
 from typing import Tuple, Sequence, List, Iterable, cast, Optional
 
 from . import CommandSelect, CommandNoArgs
-from .. import NotParseable, Space, EndLine, Params
+from .. import Space, EndLine, Params
+from ..exceptions import NotParseable, CommandInvalid
 from ..primitives import Atom, ListP
 from ..specials import AString, Mailbox, SequenceSet, Flag, FetchAttribute, \
     SearchKey, ExtensionOptions
@@ -10,7 +11,8 @@ from ..specials.flag import Recent
 from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
-           'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand']
+           'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand',
+           'IdleCommand']
 
 
 class CheckCommand(CommandNoArgs, CommandSelect):
@@ -367,3 +369,41 @@ class UidCommand(CommandSelect):
         if not cmd:
             raise NotParseable(buf)
         return cmd.parse(after, params.copy(uid=True))
+
+
+class IdleCommand(CommandSelect):
+    """The ``IDLE`` command waits for the continuation string ``DONE`` from the
+    client. During this wait, the server may be sending untagged responses
+    indicating concurrent updates to the mailbox.
+
+    Parsing this command is a special case. The continuation string ``DONE`` is
+    actually parsed by the :meth:`.parse_done` method. The :meth:`.parse`
+    only parses the ``IDLE <CRLF>`` portion, and does not raise a
+    :exc:`~pymap.exceptions.RequiresContinuation` exception.
+
+    See Also:
+        `RFC 2177 <https://tools.ietf.org/html/rfc2177>`_
+
+    Attributes:
+        continuation: The string used to end the command.
+
+    """
+
+    command = b'IDLE'
+    continuation = b'DONE'
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['IdleCommand', bytes]:
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag), buf
+
+    def parse_done(self, buf: bytes, params: Params) -> bytes:
+        try:
+            cont_len = len(self.continuation)
+            start = self._whitespace_length(buf)
+            if buf[start:start + cont_len].upper() != self.continuation:
+                raise NotParseable(buf[start:])
+            _, buf = EndLine.parse(buf[start + cont_len:], params)
+            return buf
+        except NotParseable as exc:
+            raise CommandInvalid(params.tag, self.command) from exc

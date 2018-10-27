@@ -29,6 +29,7 @@ class IMAPConfig:
             ``APPEND`` command.
         bad_command_limit: The number of consecutive commands received from
             the client with parsing errors before the client is disconnected.
+        disable_idle: Disable the ``IDLE`` capability.
         extra: Additional keywords used for special circumstances.
 
     """
@@ -39,6 +40,7 @@ class IMAPConfig:
                  reject_insecure_auth: bool = True,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
+                 disable_idle: bool = False,
                  **extra: Any) -> None:
         super().__init__()
         self._debug = debug
@@ -47,6 +49,7 @@ class IMAPConfig:
         self._reject_insecure_auth = reject_insecure_auth
         self._max_append_len = max_append_len
         self._bad_command_limit = bad_command_limit
+        self._disable_idle = disable_idle
         self._extra = extra
 
     @classmethod
@@ -106,6 +109,8 @@ class IMAPConfig:
     @property
     def static_capability(self) -> Sequence[bytes]:
         ret = [b'BINARY', b'UIDPLUS', b'MULTIAPPEND']
+        if not self._disable_idle:
+            ret.append(b'IDLE')
         if self._max_append_len is not None:
             ret.append(b'APPENDLIMIT=%i' % self._max_append_len)
         return ret

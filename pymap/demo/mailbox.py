@@ -5,25 +5,9 @@ from pymap.flags import SessionFlags
 from pymap.mailbox import BaseMailbox
 from pymap.parsing.specials.flag import Seen, Recent, Answered, Deleted, \
     Draft, Flagged
-from pymap.selected import SelectedMailbox
-from .state import State, Message
+from .state import State, Message, SelectedMailbox
 
 __all__ = ['Mailbox']
-
-
-class _SelectedMailbox(SelectedMailbox):
-
-    def __init__(self, name: str, *args, **kwargs) -> None:
-        super().__init__(name, *args, **kwargs)
-        State.mailboxes[name].sessions.add(self)
-
-    def fork(self) -> 'SelectedMailbox':
-        State.mailboxes[self.name].sessions.discard(self)
-        return super().fork()
-
-    @property
-    def exists(self) -> int:
-        return len(State.mailboxes[self.name].messages)
 
 
 class Mailbox(BaseMailbox):
@@ -40,7 +24,7 @@ class Mailbox(BaseMailbox):
 
     @classmethod
     def load(cls, name: str, readonly: bool) \
-            -> Tuple['Mailbox', _SelectedMailbox]:
+            -> Tuple['Mailbox', SelectedMailbox]:
         mbx = cls(name)
         mbx.reset_messages()
         readonly = mbx.readonly or readonly
@@ -51,7 +35,7 @@ class Mailbox(BaseMailbox):
                 if msg.uid in recent:
                     session_flags.add_recent(msg.uid)
             recent.clear()
-        return mbx, _SelectedMailbox(name, readonly, session_flags)
+        return mbx, SelectedMailbox(name, readonly, session_flags)
 
     @classmethod
     def get_snapshot(cls, name: str):

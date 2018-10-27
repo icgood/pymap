@@ -1,3 +1,4 @@
+import asyncio
 import os.path
 import random
 from collections import defaultdict
@@ -9,9 +10,9 @@ from weakref import WeakSet
 from pkg_resources import resource_listdir, resource_stream
 
 from pymap.message import BaseMessage, BaseLoadedMessage
-from pymap.selected import SelectedMailbox
+from pymap.selected import SelectedMailbox as SelectedMailbox_
 
-__all__ = ['State', 'Message']
+__all__ = ['State', 'Message', 'SelectedMailbox']
 
 
 class _Mailbox:
@@ -33,6 +34,22 @@ class _Mailbox:
 
 class Message(BaseLoadedMessage):
     pass
+
+
+class SelectedMailbox(SelectedMailbox_):
+
+    def __init__(self, name: str, *args, **kwargs) -> None:
+        super().__init__(name, *args, **kwargs)
+        State.mailboxes[name].sessions.add(self)
+        self.updated = asyncio.Event()
+
+    def fork(self) -> 'SelectedMailbox_':
+        State.mailboxes[self.name].sessions.discard(self)
+        return super().fork()
+
+    @property
+    def exists(self) -> int:
+        return len(State.mailboxes[self.name].messages)
 
 
 class State:
