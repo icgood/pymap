@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from typing import Tuple, Optional, FrozenSet, Mapping, Iterable, Sequence, \
-    TypeVar, AsyncGenerator
+    TypeVar
 from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
@@ -238,20 +238,27 @@ class SessionInterface(Protocol[_Selected]):
         ...
 
     @abstractmethod
-    async def check_mailbox(self, selected: _Selected,
+    async def check_mailbox(self, selected: _Selected, block: bool = False,
                             housekeeping: bool = False) -> _Selected:
-        """Checks for any updates in the mailbox. Optionally performs any
-        house-keeping necessary by the mailbox backend, which may be a
-        slower operation.
+        """Checks for any updates in the mailbox.
+
+        Optionally block until updates are available in the selected
+        mailbox. Implementations may block however they want when ``block``
+        is true.
+
+        Optionally perform any house-keeping necessary by the mailbox
+        backend, which may be a slower operation.
 
         See Also:
             `RFC 3501 6.1.2.
             <https://tools.ietf.org/html/rfc3501#section-6.1.2>`_,
             `RFC 3501 6.4.1.
             <https://tools.ietf.org/html/rfc3501#section-6.4.1>`_
+            `RFC 2177 <https://tools.ietf.org/html/rfc2177>`_
 
         Args:
             selected: The selected mailbox session.
+            block: If True, wait for updates to become available.
             housekeeping: If True, the backend may perform additional
                 housekeeping operations if necessary.
 
@@ -369,25 +376,6 @@ class SessionInterface(Protocol[_Selected]):
         Raises:
             MailboxNotFound: The currently selected mailbox no longer exists.
             MailboxReadOnly: The currently selected mailbox is read-only.
-
-        """
-        ...
-
-    @abstractmethod
-    def send_updates(self, selected: _Selected) \
-            -> AsyncGenerator[_Selected, _Selected]:
-        """Wait for concurrent updates on the selected mailbox, yielding when
-        there are updates to process. The caller will raise a
-        :exc:`~asyncio.CancelledError` exception to stop.
-
-        See Also:
-            `RFC 2177 <https://tools.ietf.org/html/rfc2177>`_
-
-        Args:
-            selected: The selected mailbox session.
-
-        Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists.
 
         """
         ...

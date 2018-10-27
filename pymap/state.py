@@ -336,15 +336,14 @@ class ConnectionState:
 
     async def receive_updates(self, cmd: IdleCommand) \
             -> AsyncIterable[Response]:
-        recv = self.session.send_updates(self.selected)
-        selected = await recv.__anext__()
         while True:
             response = Response(cmd.tag)
+            selected = await self.session.check_mailbox(
+                self.selected, block=True)
             selected.drain_updates(cmd, response)
             self._selected = selected.fork()
             for untagged in response.untagged:
                 yield cast(Response, untagged)
-            selected = await recv.asend(selected)
 
     async def do_command(self, cmd: Command):
         if self._session and isinstance(cmd, CommandNonAuth):

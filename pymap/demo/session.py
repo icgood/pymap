@@ -1,5 +1,5 @@
 from typing import Optional, Tuple, List, Dict, FrozenSet, Iterable, \
-    Collection, Sequence, AsyncGenerator
+    Collection, Sequence
 
 from pysasl import AuthenticationCredentials
 
@@ -184,8 +184,12 @@ class Session(SessionInterface[SelectedMailbox]):
         return mbx, updates
 
     async def check_mailbox(self, selected: SelectedMailbox,
+                            block: bool = False,
                             housekeeping: bool = False) -> SelectedMailbox:
         _, selected = self._check_selected(selected)
+        if block:
+            await selected.updated.wait()
+            selected.updated.clear()
         return selected
 
     async def fetch_messages(self, selected: SelectedMailbox,
@@ -286,11 +290,3 @@ class Session(SessionInterface[SelectedMailbox]):
                     session.updated.set()
             results.append((msg_seq, msg))
         return results, selected
-
-    async def send_updates(self, selected: SelectedMailbox) \
-            -> AsyncGenerator[SelectedMailbox, SelectedMailbox]:
-        while True:
-            _, selected = self._check_selected(selected)
-            await selected.updated.wait()
-            selected.updated.clear()
-            selected = yield selected
