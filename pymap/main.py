@@ -26,16 +26,17 @@ def _load_backends(parser):
 
 def main():
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--debug', action='store_true',
+                        help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
                         version='%(prog)s' + __version__)
     subparsers = parser.add_subparsers(dest='backend',
-                                       help='Which pymap backend to use.')
-    listener = parser.add_argument_group('listener arguments')
+                                       help='which pymap backend to use')
+    listener = parser.add_argument_group('server arguments')
     listener.add_argument('--port', action='store', type=int, default=1143)
     listener.add_argument('--cert', action='store')
     listener.add_argument('--key', action='store')
-    listener.add_argument('--no-secure-login', action='store_true')
+    listener.add_argument('--insecure-login', action='store_true')
 
     backends = _load_backends(parser)
 
@@ -49,9 +50,9 @@ def main():
         parser.error('Expected backend name.')
         return
 
-    login_func, config = backend.init(args)
-    callback = IMAPServer(login_func, config)
     loop = asyncio.get_event_loop()
+    login_func, config = loop.run_until_complete(backend.init(args))
+    callback = IMAPServer(login_func, config)
     coro = asyncio.start_server(callback, port=args.port, loop=loop)
     server = loop.run_until_complete(coro)
 

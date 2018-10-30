@@ -1,14 +1,18 @@
 from abc import abstractmethod
 from datetime import datetime
 from email.headerregistry import BaseHeader
-from typing import Optional, Iterable, Set, FrozenSet, Sequence, Union
+from typing import Optional, Iterable, Set, FrozenSet, Sequence, Union, \
+    AbstractSet, TypeVar
 from typing_extensions import Protocol
 
+from ..flags import FlagOp
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
 from ..selected import SelectedMailbox
 
 __all__ = ['Message', 'LoadedMessage']
+
+_T = TypeVar('_T', bound='Message')
 
 
 class Message(Protocol):
@@ -36,9 +40,37 @@ class Message(Protocol):
         ...
 
     @abstractmethod
-    def get_flags(self, session: Optional[SelectedMailbox]) \
+    def copy(self: _T, new_uid: int) -> _T:
+        """Return a copy of the message with a new UID.
+
+        Args:
+            new_uid: The copied message UID.
+
+        """
+        ...
+
+    @abstractmethod
+    def get_flags(self, selected: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
-        """Get the full set of permanent and session flags for the message."""
+        """Get the full set of permanent and session flags for the message.
+
+        Args:
+            selected: The active mailbox session.
+
+        """
+        ...
+
+    @abstractmethod
+    def update_flags(self, flag_set: AbstractSet[Flag],
+                     flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
+        """Update the permanent flags for the message. Returns the resulting
+        set of permanent flags.
+
+        Args:
+            flag_set: The set of flags for the update operation.
+            flag_op: The mode to change the flags.
+
+        """
         ...
 
 

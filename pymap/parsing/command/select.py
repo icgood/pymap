@@ -126,13 +126,13 @@ class FetchCommand(CommandSelect):
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
                  attr_list: Sequence[FetchAttribute], uid: bool,
-                 options: ExtensionOptions) -> None:
+                 options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.no_expunge_response = not seq_set.uid
         self.attributes = attr_list
         self.uid = uid
-        self.options = options
+        self.options = options or ExtensionOptions.empty()
 
     @classmethod
     def _check_macros(cls, buf: bytes, params: Params):
@@ -208,14 +208,14 @@ class StoreCommand(CommandSelect):
     def __init__(self, tag: bytes, seq_set: SequenceSet,
                  flags: Iterable[Flag], mode: FlagOp,
                  silent: bool, uid: bool,
-                 options: ExtensionOptions) -> None:
+                 options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_set = frozenset(flags) - {Recent}
         self.mode = mode
         self.silent = silent
         self.uid = uid
-        self.options = options
+        self.options = options or ExtensionOptions.empty()
 
     @classmethod
     def _parse_store_info(cls, buf: bytes, params: Params) \
@@ -281,12 +281,12 @@ class SearchCommand(CommandSelect):
 
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
                  charset: Optional[str], uid: bool,
-                 options: ExtensionOptions) -> None:
+                 options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.keys = frozenset(keys)
         self.charset = charset
         self.uid = uid
-        self.options = options
+        self.options = options or ExtensionOptions.empty()
 
     @classmethod
     def _parse_charset(cls, buf: bytes, params: Params) \

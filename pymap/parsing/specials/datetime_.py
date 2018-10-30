@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import Tuple
+from datetime import datetime, tzinfo
+from typing import Tuple, Optional
 
 from .. import Params, Special
 from ..exceptions import InvalidContent
@@ -20,6 +20,8 @@ class DateTime(Special[datetime]):
 
     def __init__(self, when: datetime, raw: bytes = None) -> None:
         super().__init__()
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=self.get_local_tzinfo())
         self.when = when
         self._raw = raw
 
@@ -27,6 +29,11 @@ class DateTime(Special[datetime]):
     def value(self) -> datetime:
         """The date-time value."""
         return self.when
+
+    @classmethod
+    def get_local_tzinfo(cls) -> Optional[tzinfo]:
+        """The system timezone, used when no timezone is specified."""
+        return datetime.now().astimezone().tzinfo
 
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['DateTime', bytes]:
@@ -40,9 +47,6 @@ class DateTime(Special[datetime]):
 
     def __bytes__(self) -> bytes:
         if self._raw is None:
-            if self.value.tzinfo is None:
-                raw_str = self.value.strftime('%d-%b-%Y %X')
-            else:
-                raw_str = self.value.strftime('%d-%b-%Y %X %z')
+            raw_str = self.value.strftime('%d-%b-%Y %X %z')
             self._raw = bytes(raw_str, 'ascii')
         return BytesFormat(b'"%b"') % (self._raw, )

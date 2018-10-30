@@ -15,14 +15,14 @@ class TestSession(TestBase):
 
     async def test_select(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
         self.transport.push_logout()
         await self.run()
 
     async def test_select_clears_recent(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
-        self.transport.push_select(b'INBOX', 4, 0, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
+        self.transport.push_select(b'INBOX', 4, 0, 105, 4)
         self.transport.push_logout()
         await self.run()
 
@@ -36,11 +36,11 @@ class TestSession(TestBase):
         concurrent.push_write(
             b'* STATUS INBOX (MESSAGES 4 RECENT 1)\r\n'
             b'status1 OK STATUS completed.\r\n', set=event1)
-        concurrent.push_select(b'INBOX', 4, 0, 104, 4, wait=event2)
+        concurrent.push_select(b'INBOX', 4, 0, 105, 4, wait=event2)
         concurrent.push_logout()
 
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4,
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4,
                                    wait=event1, set=event2)
         self.transport.push_logout()
 

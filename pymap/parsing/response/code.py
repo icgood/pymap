@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, Sequence
+from typing import Iterable, Optional, Sequence, Tuple
 
 from . import ResponseCode
 from ..primitives import ListP
@@ -180,9 +180,9 @@ class CopyUid(ResponseCode):
 
     """
 
-    def __init__(self, validity: int, source_uids: Iterable[int],
-                 dest_uids: Iterable[int]) -> None:
+    def __init__(self, validity: int, uids: Iterable[Tuple[int, int]]) -> None:
         super().__init__()
+        source_uids, dest_uids = zip(*uids)
         source_uid_set = SequenceSet.build(source_uids)
         dest_uid_set = SequenceSet.build(dest_uids)
         self._raw = b'[COPYUID %i %b %b]' \

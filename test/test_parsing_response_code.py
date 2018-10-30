@@ -90,5 +90,5 @@ class TestAppendUid(unittest.TestCase):
 class TestCopyUid(unittest.TestCase):
 
     def test_bytes(self):
-        code = CopyUid(12345, [1, 2, 3, 5], [100, 101, 102, 103])
+        code = CopyUid(12345, [(1, 100), (2, 101), (3, 102), (5, 103)])
         self.assertEqual(b'[COPYUID 12345 1:3,5 100:103]', bytes(code))

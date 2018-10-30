@@ -14,7 +14,7 @@ class TestCopy(TestBase):
         self.transport.push_readline(
             b'copy1 COPY 1:* Trash\r\n')
         self.transport.push_write(
-            b'copy1 OK [COPYUID ', (br'\d+', ), b' 100:103 100:103]'
+            b'copy1 OK [COPYUID ', (br'\d+', ), b' 101:104 101:104]'
             b' COPY completed.\r\n')
         self.transport.push_select(b'Trash', 4, 4)
         self.transport.push_logout()
@@ -26,7 +26,7 @@ class TestCopy(TestBase):
         self.transport.push_readline(
             b'copy1 UID COPY 1:* Trash\r\n')
         self.transport.push_write(
-            b'copy1 OK [COPYUID ', (br'\d+', ), b' 100:103 100:103]'
+            b'copy1 OK [COPYUID ', (br'\d+', ), b' 101:104 101:104]'
             b' COPY completed.\r\n')
         self.transport.push_select(b'Trash', 4, 4)
         self.transport.push_logout()
@@ -37,10 +37,9 @@ class TestCopy(TestBase):
         event1, event2, event3 = self.new_events(3)
 
         concurrent.push_login()
-        concurrent.push_select(b'Trash', 0, 0, unseen=False,
-                               post_wait=event2, set=event1)
+        concurrent.push_select(b'Trash', 0, 0, unseen=False, set=event1)
         concurrent.push_readline(
-            b'noop1 NOOP\r\n')
+            b'noop1 NOOP\r\n', wait=event2)
         concurrent.push_write(
             b'* 4 EXISTS\r\n'
             b'* 4 RECENT\r\n'
@@ -56,7 +55,7 @@ class TestCopy(TestBase):
         self.transport.push_readline(
             b'copy1 COPY 1:* Trash\r\n')
         self.transport.push_write(
-            b'copy1 OK [COPYUID ', (br'\d+', ), b' 100:103 100:103]'
+            b'copy1 OK [COPYUID ', (br'\d+', ), b' 101:104 101:104]'
             b' COPY completed.\r\n', set=event2)
         self.transport.push_logout()
 

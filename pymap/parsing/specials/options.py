@@ -1,3 +1,4 @@
+
 import re
 from typing import Tuple, Optional, List, Mapping, Iterable
 
@@ -115,6 +116,12 @@ class ExtensionOptions(Special[Mapping[bytes, ListP]]):
             {opt.option: opt.arg for opt in options}
         self._raw: Optional[bytes] = None
 
+    @classmethod
+    def empty(cls) -> 'ExtensionOptions':
+        if cls._empty is None:
+            cls._empty = ExtensionOptions({})
+        return cls._empty
+
     @property
     def value(self) -> Mapping[bytes, ListP]:
         return self.options
@@ -163,6 +170,4 @@ class ExtensionOptions(Special[Mapping[bytes, ListP]]):
         try:
             return cls._parse(buf, params)
         except NotParseable:
-            if cls._empty is None:
-                cls._empty = ExtensionOptions({})
-            return cls._empty, buf
+            return cls.empty(), buf

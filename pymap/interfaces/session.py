@@ -7,6 +7,7 @@ from pysasl import AuthenticationCredentials
 
 from .message import Message, LoadedMessage
 from .mailbox import MailboxInterface
+from ..concurrent import Event
 from ..config import IMAPConfig
 from ..flags import FlagOp
 from ..message import AppendMessage
@@ -215,7 +216,7 @@ class SessionInterface(Protocol[_Selected]):
 
     @abstractmethod
     async def select_mailbox(self, name: str, readonly: bool = False) \
-            -> Tuple['MailboxInterface', _Selected]:
+            -> Tuple[MailboxInterface, _Selected]:
         """Selects a :class:`MailboxInterface` object corresponding to an
         existing mailbox owned by the user. The returned session is then
         used as the ``selected`` argument to other methods to fetch mailbox
@@ -238,13 +239,13 @@ class SessionInterface(Protocol[_Selected]):
         ...
 
     @abstractmethod
-    async def check_mailbox(self, selected: _Selected, block: bool = False,
+    async def check_mailbox(self, selected: _Selected, wait_on: Event = None,
                             housekeeping: bool = False) -> _Selected:
         """Checks for any updates in the mailbox.
 
-        Optionally block until updates are available in the selected
-        mailbox. Implementations may block however they want when ``block``
-        is true.
+        If ``wait_on`` is given, this method may block until there is a signal
+        from the event. Implementations should return sooner if they have
+        detected updates.
 
         Optionally perform any house-keeping necessary by the mailbox
         backend, which may be a slower operation.
@@ -258,7 +259,7 @@ class SessionInterface(Protocol[_Selected]):
 
         Args:
             selected: The selected mailbox session.
-            block: If True, wait for updates to become available.
+            wait_on: If given, block until this event signals.
             housekeeping: If True, the backend may perform additional
                 housekeeping operations if necessary.
 
@@ -360,7 +361,7 @@ class SessionInterface(Protocol[_Selected]):
                            sequences: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[Iterable[Tuple[int, Message]], _Selected]:
+            -> Tuple[Iterable[int], _Selected]:
         """Update the flags for the given set of messages.
 
         See Also:
