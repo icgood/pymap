@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pymap.proxy &#8212; pymap 0.3.0 documentation</title>
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.base.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pymap.search" href="search.html" />
+    <link rel="prev" title="pymap.message" href="message.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="search.html" title="pymap.search"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="message.html" title="pymap.message"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pymap.proxy">
+<span id="pymap-proxy"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.proxy</span></code><a class="headerlink" href="#module-pymap.proxy" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pymap.proxy.ExecutorProxy">
+<em class="property">class </em><code class="descclassname">pymap.proxy.</code><code class="descname">ExecutorProxy</code><span class="sig-paren">(</span><em>executor</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.proxy.ExecutorProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies calls to <a class="reference internal" href="interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a>
+object or <code class="xref py py-class docutils literal notranslate"><span class="pre">login</span></code>
+functions through an <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>executor</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code>]) – The executor to proxy through, e.g. a thread pool, or None.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pymap.proxy.ExecutorProxy.wrap_login">
+<code class="descname">wrap_login</code><span class="sig-paren">(</span><em>login</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.proxy.ExecutorProxy.wrap_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a login function so that it is called inside the executor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.proxy.ExecutorProxy.wrap_session">
+<code class="descname">wrap_session</code><span class="sig-paren">(</span><em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.proxy.ExecutorProxy.wrap_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap a session object so that all its methods are called inside the
+executor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="message.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="search.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/proxy.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="search.html" title="pymap.search"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="message.html" title="pymap.message"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

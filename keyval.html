@@ -1,0 +1,1164 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pymap.keyval &#8212; pymap 0.3.0 documentation</title>
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.base.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pymap.parsing" href="parsing.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="parsing.html" title="pymap.parsing"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pymap-keyval">
+<h1><code class="docutils literal notranslate"><span class="pre">pymap.keyval</span></code><a class="headerlink" href="#pymap-keyval" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-pymap.keyval.mailbox">
+<span id="pymap-keyval-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.keyval.mailbox</span></code><a class="headerlink" href="#module-pymap.keyval.mailbox" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymap.keyval.mailbox.MailboxSnapshot">
+<em class="property">class </em><code class="descclassname">pymap.keyval.mailbox.</code><code class="descname">MailboxSnapshot</code><span class="sig-paren">(</span><em>name</em>, <em>readonly</em>, <em>uid_validity</em>, <em>permanent_flags</em>, <em>session_flags</em>, <em>exists</em>, <em>recent</em>, <em>unseen</em>, <em>first_unseen</em>, <em>next_uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.mailbox.MailboxSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="pymap.keyval.mailbox.MailboxSnapshot.exists">
+<code class="descname">exists</code><a class="headerlink" href="#pymap.keyval.mailbox.MailboxSnapshot.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of total messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.mailbox.MailboxSnapshot.recent">
+<code class="descname">recent</code><a class="headerlink" href="#pymap.keyval.mailbox.MailboxSnapshot.recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of recent messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.mailbox.MailboxSnapshot.unseen">
+<code class="descname">unseen</code><a class="headerlink" href="#pymap.keyval.mailbox.MailboxSnapshot.unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of unseen messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.mailbox.MailboxSnapshot.first_unseen">
+<code class="descname">first_unseen</code><a class="headerlink" href="#pymap.keyval.mailbox.MailboxSnapshot.first_unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sequence number of the first unseen message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.mailbox.MailboxSnapshot.next_uid">
+<code class="descname">next_uid</code><a class="headerlink" href="#pymap.keyval.mailbox.MailboxSnapshot.next_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The predicted next message UID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.mailbox.KeyValMessage">
+<em class="property">class </em><code class="descclassname">pymap.keyval.mailbox.</code><code class="descname">KeyValMessage</code><span class="sig-paren">(</span><em>uid</em>, <em>contents</em>, <em>permanent_flags=None</em>, <em>internal_date=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.mailbox.KeyValMessage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.mailbox.KeyValMailbox">
+<em class="property">class </em><code class="descclassname">pymap.keyval.mailbox.</code><code class="descname">KeyValMailbox</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.mailbox.KeyValMailbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pymap.keyval.session">
+<span id="pymap-keyval-session"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.keyval.session</span></code><a class="headerlink" href="#module-pymap.keyval.session" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymap.keyval.session.KeyValSession">
+<em class="property">class </em><code class="descclassname">pymap.keyval.session.</code><code class="descname">KeyValSession</code><span class="sig-paren">(</span><em>inbox</em>, <em>msg_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.append_messages">
+<code class="descname">append_messages</code><span class="sig-paren">(</span><em>name</em>, <em>messages</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.append_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends a message to the end of the mailbox.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.11">RFC 3501 6.3.11.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="message.html#pymap.message.AppendMessage" title="pymap.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]) – The messages to append.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">AppendFailure</span></code> – The message could not be appended to the mailbox.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AppendUid</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.check_mailbox">
+<code class="descname">check_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>wait_on=None</em>, <em>housekeeping=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.check_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for any updates in the mailbox.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is given, this method may block until there is a signal
+from the event. Implementations should return sooner if they have
+detected updates.</p>
+<p>Optionally perform any house-keeping necessary by the mailbox
+backend, which may be a slower operation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.1.2">RFC 3501 6.1.2.</a>,
+<a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.4.1">RFC 3501 6.4.1.</a>
+<a class="reference external" href="https://tools.ietf.org/html/rfc2177">RFC 2177</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>selected</strong> (<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
+<li><strong>wait_on</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – If given, block until this event signals.</li>
+<li><strong>housekeeping</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, the backend may perform additional
+housekeeping operations if necessary.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.copy_messages">
+<code class="descname">copy_messages</code><span class="sig-paren">(</span><em>selected</em>, <em>sequences</em>, <em>mailbox</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.copy_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy a set of messages into the given mailbox.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.4.7">RFC 3501 6.4.7.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>selected</strong> (<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
+<li><strong>sequences</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code>[]) – Sequence set of message sequences or UIDs.</li>
+<li><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the mailbox to copy messages into.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists,
+or the destination mailbox does not exist.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code> – The currently selected mailbox is read-only,
+or the destination mailbox is read-only.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">CopyUid</span></code>], <a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.create_mailbox">
+<code class="descname">create_mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.create_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new mailbox owned by the user.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.3">RFC 3501 6.3.3.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxConflict</span></code> – The mailbox name already exists.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.delete_mailbox">
+<code class="descname">delete_mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.delete_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the mailbox owned by the user.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.4">RFC 3501 6.3.4.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxHasChildren</span></code> – The mailbox has child mailboxes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.expunge_mailbox">
+<code class="descname">expunge_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>uid_set=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.expunge_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>All messages that are marked as deleted are immediately expunged
+from the mailbox.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.4.3">RFC 3501 6.4.3.</a>
+<a class="reference external" href="https://tools.ietf.org/html/rfc4315#section-2.1">RFC 4315 2.1</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>selected</strong> (<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
+<li><strong>uid_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code>[]]) – Only the messages in the given UID set should be expunged.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code> – The currently selected mailbox is read-only.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.fetch_messages">
+<code class="descname">fetch_messages</code><span class="sig-paren">(</span><em>selected</em>, <em>sequences</em>, <em>attributes</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.fetch_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessage</span></code> objects corresponding to
+given sequence set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>selected</strong> (<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
+<li><strong>sequences</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code>[]) – Sequence set of message sequences or UIDs.</li>
+<li><strong>attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code>[]]) – Fetch attributes for the messages.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~_Message]], <a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.get_mailbox">
+<code class="descname">get_mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.get_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a <code class="xref py py-class docutils literal notranslate"><span class="pre">'MailboxInterface'</span></code> object corresponding to an
+existing mailbox owned by the user. Raises an exception if the
+mailbox does not yet exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.keyval.mailbox.MailboxSnapshot" title="pymap.keyval.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.list_mailboxes">
+<code class="descname">list_mailboxes</code><span class="sig-paren">(</span><em>ref_name</em>, <em>filter_</em>, <em>subscribed=False</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.list_mailboxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the mailboxes owned by the user.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.8">RFC 3501 6.3.8.</a>,
+<a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.9">RFC 3501 6.3.9.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox reference name.</li>
+<li><strong>filter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox name with possible wildcards.</li>
+<li><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, only list the subscribed mailboxes.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.rename_mailbox">
+<code class="descname">rename_mailbox</code><span class="sig-paren">(</span><em>before_name</em>, <em>after_name</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.rename_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renames the mailbox owned by the user.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.5">RFC 3501 6.3.5.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>before_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox before the rename.</li>
+<li><strong>after_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox after the rename.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxConflict</span></code> – The destination mailbox name already exists.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.search_mailbox">
+<code class="descname">search_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.search_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the messages in the current mailbox that meet all of the
+given search criteria.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-7.2.5">RFC 3501 7.2.5.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>selected</strong> (<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
+<li><strong>keys</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code>[]]) – Search keys specifying the message criteria.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~_Message]], <a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.select_mailbox">
+<code class="descname">select_mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>readonly=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.select_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selects a <code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxInterface</span></code> object corresponding to an
+existing mailbox owned by the user. The returned session is then
+used as the <code class="docutils literal notranslate"><span class="pre">selected</span></code> argument to other methods to fetch mailbox
+updates.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.1">RFC 3501 6.3.1.</a>,
+<a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.2">RFC 3501 6.3.2.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the mailbox is read-only.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.keyval.mailbox.MailboxSnapshot" title="pymap.keyval.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.subscribe">
+<code class="descname">subscribe</code><span class="sig-paren">(</span><em>name</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark the given folder name as subscribed, whether or not the given
+folder name currently exists.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.6">RFC 3501 6.3.6.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.unsubscribe">
+<code class="descname">unsubscribe</code><span class="sig-paren">(</span><em>name</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.unsubscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the given folder name from the subscription list, whether or
+not the given folder name currently exists.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.6">RFC 3501 6.3.6.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.keyval.session.KeyValSession.update_flags">
+<code class="descname">update_flags</code><span class="sig-paren">(</span><em>selected</em>, <em>sequences</em>, <em>flag_set</em>, <em>mode=&lt;FlagOp.REPLACE: 1&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.session.KeyValSession.update_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the flags for the given set of messages.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.4.6">RFC 3501 6.4.6.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>selected</strong> (<a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
+<li><strong>sequences</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code>[]) – Sequence set of message sequences or UIDs.</li>
+<li><strong>flag_set</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]) – Set of flags to update.</li>
+<li><strong>mode</strong> (<a class="reference internal" href="flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagOp</span></code></a>) – Update mode for the flag set.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</li>
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code> – The currently selected mailbox is read-only.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>], <a class="reference internal" href="selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pymap.keyval.util">
+<span id="pymap-keyval-util"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.keyval.util</span></code><a class="headerlink" href="#module-pymap.keyval.util" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymap.keyval.util.asyncenumerate">
+<em class="property">class </em><code class="descclassname">pymap.keyval.util.</code><code class="descname">asyncenumerate</code><span class="sig-paren">(</span><em>iterable</em>, <em>start=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.util.asyncenumerate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imitates Python’s <a class="reference external" href="https://docs.python.org/3/library/functions.html#enumerate" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">enumerate()</span></code></a> with async iterators.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>iterable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Asynciterable</span></code>[~_T]) – The iterable to enumerate over.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pymap.keyval.dict">
+<span id="pymap-keval-dict"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.keval.dict</span></code><a class="headerlink" href="#module-pymap.keyval.dict" title="Permalink to this headline">¶</a></h2>
+<p>Defines a configuration that uses an in-memory dictionary for example usage
+and integration testing.</p>
+<dl class="class">
+<dt id="pymap.keyval.dict.Config">
+<em class="property">class </em><code class="descclassname">pymap.keyval.dict.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>demo_data</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config implementation for the dict backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
+<li><strong>demo_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Load the demo data, used by integration tests.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.keyval.dict.Config.demo_user">
+<code class="descname">demo_user</code><a class="headerlink" href="#pymap.keyval.dict.Config.demo_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by the default <a class="reference internal" href="#pymap.keyval.dict.Session.get_password" title="pymap.keyval.dict.Session.get_password"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_password()</span></code></a> implementation
+to retrieve the <code class="docutils literal notranslate"><span class="pre">--demo-user</span></code> command-line argument, which defaults
+to <code class="docutils literal notranslate"><span class="pre">demouser</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.dict.Config.demo_password">
+<code class="descname">demo_password</code><a class="headerlink" href="#pymap.keyval.dict.Config.demo_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by the default <a class="reference internal" href="#pymap.keyval.dict.Session.get_password" title="pymap.keyval.dict.Session.get_password"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_password()</span></code></a> implementation
+to retrieve the <code class="docutils literal notranslate"><span class="pre">--demo-password</span></code> command-line argument, which
+defaults to <code class="docutils literal notranslate"><span class="pre">demopass</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.keyval.dict.Config.parse_args">
+<em class="property">classmethod </em><code class="descname">parse_args</code><span class="sig-paren">(</span><em>args</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Config.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given command-line arguments, return a dictionary of keywords that
+should be passed in to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code> (or sub-class)
+constructor. Sub-classes should override this method as needed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</li>
+<li><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Additional keywords used by sub-classes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.dict.Session">
+<em class="property">class </em><code class="descclassname">pymap.keyval.dict.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>inbox</em>, <em>msg_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The session implementation for the dict backend.</p>
+<dl class="classmethod">
+<dt id="pymap.keyval.dict.Session.get_password">
+<em class="property">classmethod </em><code class="descname">get_password</code><span class="sig-paren">(</span><em>config</em>, <em>user</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Session.get_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the given user ID exists, return its expected password. Override
+this method to implement custom login logic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>config</strong> (<a class="reference internal" href="#pymap.keyval.dict.Config" title="pymap.keyval.dict.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – The dict config object.</li>
+<li><strong>user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The expected user ID.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InvalidAuth</span></code> – The user ID was not valid.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.keyval.dict.Session.login">
+<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Session.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the given credentials for a valid login and returns a new
+session. The mailbox data is shared between concurrent and future
+sessions, but only for the lifetime of the process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~_ST</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.dict.MailboxSnapshot">
+<em class="property">class </em><code class="descclassname">pymap.keyval.dict.</code><code class="descname">MailboxSnapshot</code><span class="sig-paren">(</span><em>name</em>, <em>readonly</em>, <em>uid_validity</em>, <em>permanent_flags</em>, <em>session_flags</em>, <em>exists</em>, <em>recent</em>, <em>unseen</em>, <em>first_unseen</em>, <em>next_uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.MailboxSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="pymap.keyval.dict.MailboxSnapshot.exists">
+<code class="descname">exists</code><a class="headerlink" href="#pymap.keyval.dict.MailboxSnapshot.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of total messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.dict.MailboxSnapshot.recent">
+<code class="descname">recent</code><a class="headerlink" href="#pymap.keyval.dict.MailboxSnapshot.recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of recent messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.dict.MailboxSnapshot.unseen">
+<code class="descname">unseen</code><a class="headerlink" href="#pymap.keyval.dict.MailboxSnapshot.unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of unseen messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.dict.MailboxSnapshot.first_unseen">
+<code class="descname">first_unseen</code><a class="headerlink" href="#pymap.keyval.dict.MailboxSnapshot.first_unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sequence number of the first unseen message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.dict.MailboxSnapshot.next_uid">
+<code class="descname">next_uid</code><a class="headerlink" href="#pymap.keyval.dict.MailboxSnapshot.next_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The predicted next message UID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.dict.Message">
+<em class="property">class </em><code class="descclassname">pymap.keyval.dict.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>uid</em>, <em>contents</em>, <em>permanent_flags=None</em>, <em>internal_date=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of <a class="reference internal" href="#pymap.keyval.mailbox.KeyValMessage" title="pymap.keyval.mailbox.KeyValMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyValMessage</span></code></a> for the
+dict backend.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.dict.Mailbox">
+<em class="property">class </em><code class="descclassname">pymap.keyval.dict.</code><code class="descname">Mailbox</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.dict.Mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of <a class="reference internal" href="#pymap.keyval.mailbox.KeyValMailbox" title="pymap.keyval.mailbox.KeyValMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyValMailbox</span></code></a> for the
+dict backend.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pymap.keyval.maildir">
+<span id="pymap-keval-maildir"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.keval.maildir</span></code><a class="headerlink" href="#module-pymap.keyval.maildir" title="Permalink to this headline">¶</a></h2>
+<p>Defines an on-disk configuration that uses <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
+mailbox storage and <a class="reference external" href="https://docs.python.org/3/library/dbm.html#module-dbm" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dbm</span></code></a> for metadata storage.</p>
+<dl class="class">
+<dt id="pymap.keyval.maildir.Config">
+<em class="property">class </em><code class="descclassname">pymap.keyval.maildir.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>base_dir=None</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config implementation for the maildir backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The base directory for all relative mailbox paths.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.keyval.maildir.Config.users_file">
+<code class="descname">users_file</code><a class="headerlink" href="#pymap.keyval.maildir.Config.users_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by the default <a class="reference internal" href="#pymap.keyval.maildir.Session.find_user" title="pymap.keyval.maildir.Session.find_user"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_user()</span></code></a> implementation
+to retrieve the users file path from the command-line arguments. The
+users file is given as the first positional argument on the
+command-line.</p>
+<p>This file contains a valid login on each line, which are split into
+three parts by colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>) characters: the user name, the mailbox
+path, and the password.</p>
+<p>The password may contain colon characters. The mailbox path may be
+empty, relative, or absolute. If it is empty, the user ID is used as a
+relative path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.keyval.maildir.Config.parse_args">
+<em class="property">classmethod </em><code class="descname">parse_args</code><span class="sig-paren">(</span><em>args</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Config.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given command-line arguments, return a dictionary of keywords that
+should be passed in to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code> (or sub-class)
+constructor. Sub-classes should override this method as needed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</li>
+<li><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Additional keywords used by sub-classes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.maildir.Session">
+<em class="property">class </em><code class="descclassname">pymap.keyval.maildir.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>inbox</em>, <em>msg_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The session implementation for the maildir backend.</p>
+<dl class="classmethod">
+<dt id="pymap.keyval.maildir.Session.find_user">
+<em class="property">classmethod </em><code class="descname">find_user</code><span class="sig-paren">(</span><em>config</em>, <em>user</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Session.find_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the given user ID exists, return its expected password and
+mailbox path. Override this method to implement custom login logic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>config</strong> (<a class="reference internal" href="#pymap.keyval.maildir.Config" title="pymap.keyval.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – The maildir config object.</li>
+<li><strong>user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The expected user ID.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InvalidAuth</span></code> – The user ID was not valid.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.keyval.maildir.Session.login">
+<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Session.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the given credentials for a valid login and returns a new
+session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~_ST</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.maildir.MailboxSnapshot">
+<em class="property">class </em><code class="descclassname">pymap.keyval.maildir.</code><code class="descname">MailboxSnapshot</code><span class="sig-paren">(</span><em>name</em>, <em>readonly</em>, <em>uid_validity</em>, <em>permanent_flags</em>, <em>session_flags</em>, <em>exists</em>, <em>recent</em>, <em>unseen</em>, <em>first_unseen</em>, <em>next_uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.MailboxSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="pymap.keyval.maildir.MailboxSnapshot.exists">
+<code class="descname">exists</code><a class="headerlink" href="#pymap.keyval.maildir.MailboxSnapshot.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of total messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.maildir.MailboxSnapshot.recent">
+<code class="descname">recent</code><a class="headerlink" href="#pymap.keyval.maildir.MailboxSnapshot.recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of recent messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.maildir.MailboxSnapshot.unseen">
+<code class="descname">unseen</code><a class="headerlink" href="#pymap.keyval.maildir.MailboxSnapshot.unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of unseen messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.maildir.MailboxSnapshot.first_unseen">
+<code class="descname">first_unseen</code><a class="headerlink" href="#pymap.keyval.maildir.MailboxSnapshot.first_unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sequence number of the first unseen message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.keyval.maildir.MailboxSnapshot.next_uid">
+<code class="descname">next_uid</code><a class="headerlink" href="#pymap.keyval.maildir.MailboxSnapshot.next_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The predicted next message UID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> – Must be implemented by sub-class.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.maildir.Message">
+<em class="property">class </em><code class="descclassname">pymap.keyval.maildir.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>uid</em>, <em>contents</em>, <em>permanent_flags=None</em>, <em>internal_date=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="pymap.keyval.maildir.Mailbox">
+<em class="property">class </em><code class="descclassname">pymap.keyval.maildir.</code><code class="descname">Mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>maildir</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.keyval.maildir.Mailbox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.keyval</span></code></a><ul>
+<li><a class="reference internal" href="#module-pymap.keyval.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.keyval.mailbox</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.keyval.session"><code class="docutils literal notranslate"><span class="pre">pymap.keyval.session</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.keyval.util"><code class="docutils literal notranslate"><span class="pre">pymap.keyval.util</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.keyval.dict"><code class="docutils literal notranslate"><span class="pre">pymap.keval.dict</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.keyval.maildir"><code class="docutils literal notranslate"><span class="pre">pymap.keval.maildir</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="parsing.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/keyval.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="parsing.html" title="pymap.parsing"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
