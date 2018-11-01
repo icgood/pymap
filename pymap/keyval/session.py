@@ -3,6 +3,7 @@ from typing import overload, TypeVar, Type, Generic, Tuple, Optional, \
     FrozenSet, Mapping, Iterable, Sequence, List
 
 from pymap.concurrent import Event, TimeoutError
+from pymap.exceptions import MailboxNotFound
 from pymap.flags import FlagOp
 from pymap.message import AppendMessage
 from pymap.parsing.specials import SequenceSet, FetchAttribute, SearchKey
@@ -15,14 +16,15 @@ from pymap.selected import SelectedMailbox
 from .mailbox import KeyValMessage, KeyValMailbox, MailboxSnapshot
 from .util import asyncenumerate
 
-__all__ = ['Session']
+__all__ = ['KeyValSession']
 
-_T = TypeVar('_T', bound='Session')
+_T = TypeVar('_T', bound='KeyValSession')
 _Mailbox = TypeVar('_Mailbox', bound=KeyValMailbox)
 _Message = TypeVar('_Message', bound=KeyValMessage)
 
 
-class Session(Generic[_Mailbox, _Message], SessionInterface[SelectedMailbox]):
+class KeyValSession(Generic[_Mailbox, _Message],
+                    SessionInterface[SelectedMailbox]):
 
     def __init__(self, inbox: _Mailbox, msg_type: Type[_Message]) -> None:
         super().__init__()
@@ -43,7 +45,12 @@ class Session(Generic[_Mailbox, _Message], SessionInterface[SelectedMailbox]):
     async def _load_updates(self, selected, mbx):  # noqa
         if selected:
             if not mbx or selected.name != mbx.name:
-                mbx = await self.inbox.get_mailbox(selected.name)
+                try:
+                    mbx = await self.inbox.get_mailbox(selected.name)
+                except MailboxNotFound:
+                    selected.set_deleted()
+                    return selected
+            selected.set_uid_validity(mbx.uid_validity)
             async for uid, msg in mbx.items():
                 selected.add_messages((uid, msg.permanent_flags))
         return selected

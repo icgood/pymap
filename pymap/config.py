@@ -21,6 +21,7 @@ class IMAPConfig:
     extensions it supports.
 
     Args:
+        args: The command-line arguments.
         debug: If true, prints all socket activity to stdout.
         executor: If given, all backend operations will be run inside this
             executor object, e.g. a thread pool.
@@ -38,9 +39,13 @@ class IMAPConfig:
         disable_idle: Disable the ``IDLE`` capability.
         extra: Additional keywords used for special circumstances.
 
+    Attributes:
+        args: The command-line arguments.
+
     """
 
-    def __init__(self, debug: bool = False,
+    def __init__(self, args: Namespace,
+                 debug: bool = False,
                  executor: Executor = None,
                  ssl_context: SSLContext = None,
                  starttls_enabled: bool = True,
@@ -50,6 +55,7 @@ class IMAPConfig:
                  disable_idle: bool = False,
                  **extra: Any) -> None:
         super().__init__()
+        self.args = args
         self._debug = debug
         self._executor = executor
         self._ssl_context = ssl_context
@@ -73,8 +79,6 @@ class IMAPConfig:
 
         """
         return {'debug': args.debug,
-                'cert_file': args.cert,
-                'key_file': args.key,
                 'reject_insecure_auth': not args.insecure_login,
                 **extra}
 
@@ -89,10 +93,7 @@ class IMAPConfig:
 
         """
         params = cls.parse_args(args, **extra)
-        return cls(**params)
-
-    def get_extra(self, key: str, fallback: Any = None) -> Any:
-        return self._extra.get(key, fallback)
+        return cls(args, **params)
 
     @property
     def debug(self) -> bool:
@@ -123,10 +124,10 @@ class IMAPConfig:
     @property
     def ssl_context(self) -> Optional[SSLContext]:
         if self._ssl_context is None:
-            cert_file = self.get_extra('cert_file', None)
+            cert_file: Optional[str] = getattr(self.args, 'cert', None)
             if cert_file is None:
                 return None
-            key_file: str = self.get_extra('key_file', cert_file)
+            key_file: str = getattr(self.args, 'key', cert_file)
             cert_path = os.path.realpath(cert_file)
             key_path = os.path.realpath(key_file)
             ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)

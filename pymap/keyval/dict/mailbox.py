@@ -1,5 +1,4 @@
 
-import random
 from collections import OrderedDict
 from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
 from weakref import WeakSet
@@ -10,26 +9,37 @@ from pymap.selected import SelectedMailbox
 
 from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
 
-__all__ = ['Message', 'MailboxSnapshot', 'Mailbox']
+__all__ = ['Message', 'Mailbox']
 
 
 class Message(KeyValMessage):
+    """Implementation of :class:`~pymap.keyval.mailbox.KeyValMessage` for the
+    dict backend.
+
+    """
     pass
 
 
 class Mailbox(KeyValMailbox[Message]):
+    """Implementation of :class:`~pymap.keyval.mailbox.KeyValMailbox` for the
+    dict backend.
+
+    """
 
     def __init__(self, name: str) -> None:
         self._name = name
         self._subscribed: Dict[str, bool] = {}
-        self._uid_validity = random.randint(0, 2147483647)
         self._messages_lock = ReadWriteLock.for_asyncio()
-        self._max_uid = 100
-        self._messages: Dict[int, Message] = OrderedDict()
         self._children: Dict[str, 'Mailbox'] = OrderedDict()
         self._children_lock = ReadWriteLock.for_asyncio()
         self._last_selected: WeakSet[SelectedMailbox] = WeakSet()
         self._updated = Event.for_asyncio()
+        self._reset_messages()
+
+    def _reset_messages(self) -> None:
+        self._uid_validity = MailboxSnapshot.new_uid_validity()
+        self._max_uid = 100
+        self._messages: Dict[int, Message] = OrderedDict()
 
     @property
     def name(self) -> str:
@@ -102,14 +112,23 @@ class Mailbox(KeyValMailbox[Message]):
 
     async def rename_mailbox(self, before: str, after: str) -> 'Mailbox':
         async with self._children_lock.read_lock():
-            if before not in self._children:
+            if before != 'INBOX' and before not in self._children:
                 raise MailboxNotFound(before)
             elif after in self._children:
                 raise MailboxConflict(after)
-        async with self._children_lock.write_lock():
-            self._children[after] = self._children[before]
-            del self._children[before]
-            return self._children[after]
+        if before == 'INBOX':
+            async with self._children_lock.write_lock():
+                self._children[after] = ret = Mailbox(after)
+                ret._uid_validity = self._uid_validity
+                ret._max_uid = self._max_uid
+                ret._messages = self._messages
+                self._reset_messages()
+                return ret
+        else:
+            async with self._children_lock.write_lock():
+                self._children[after] = self._children[before]
+                del self._children[before]
+                return self._children[after]
 
     async def get_max_uid(self) -> int:
         async with self.messages_lock.read_lock():

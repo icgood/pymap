@@ -7,7 +7,8 @@ from typing_extensions import Protocol
 from .flags import SessionFlags
 from .parsing.command import Command
 from .parsing.primitives import ListP, Number
-from .parsing.response import Response
+from .parsing.response import Response, ResponseBye
+from .parsing.response.code import UidValidity
 from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag
@@ -25,6 +26,7 @@ class _Message(NamedTuple):
 
 
 class _Previous(NamedTuple):
+    uid_validity: Optional[int]
     recent: int
     messages: Dict[int, int]
 
@@ -50,6 +52,7 @@ class SelectedMailbox:
     """
 
     def __init__(self, name: str, readonly: bool,
+                 uid_validity: int = None,
                  session_flags: SessionFlags = None,
                  on_fork: _OnForkProtocol = None,
                  **kwargs: Any) -> None:
@@ -59,6 +62,8 @@ class SelectedMailbox:
         self._session_flags = session_flags or SessionFlags()
         self._on_fork = on_fork
         self._kwargs = kwargs
+        self._uid_validity = uid_validity
+        self._is_deleted = False
         self._messages: Dict[int, _Flags] = OrderedDict()
         self._hashed: Optional[Mapping[int, int]] = None
         self._previous: Optional[_Previous] = None
@@ -67,6 +72,11 @@ class SelectedMailbox:
     def name(self) -> str:
         """The name of the selected mailbox."""
         return self._name
+
+    @property
+    def uid_validity(self) -> Optional[int]:
+        """The UID validity of the selected mailbox."""
+        return self._uid_validity
 
     @property
     def readonly(self) -> bool:
@@ -92,6 +102,19 @@ class SelectedMailbox:
     def kwargs(self) -> Mapping[str, Any]:
         """Add keywords arguments to copy construction during :meth:`.fork`."""
         return {}
+
+    def set_uid_validity(self, uid_validity: int) -> None:
+        """Updates the UID validity of the selected mailbox.
+
+        Args:
+            uid_validity: The new UID validity value.
+
+        """
+        self._uid_validity = uid_validity
+
+    def set_deleted(self) -> None:
+        """Marks the selected mailbox as having been deleted."""
+        self._is_deleted = True
 
     def add_messages(self, *messages: _Message) -> None:
         """Add a message that exists in the mailbox. Shortcut for
@@ -141,11 +164,12 @@ class SelectedMailbox:
 
         """
         cls: Type['SelectedMailbox'] = self.__class__
-        copy = cls(self.name, self.readonly, self._session_flags,
-                   self._on_fork, **self.kwargs)
+        copy = cls(self.name, self.readonly, self.uid_validity,
+                   self._session_flags, self._on_fork, **self.kwargs)
         messages = [(uid, hash(flag_set))
                     for uid, flag_set in self._messages.items()]
-        copy._previous = _Previous(self.recent, OrderedDict(messages))
+        copy._previous = _Previous(self.uid_validity, self.recent,
+                                   OrderedDict(messages))
         if self._on_fork:
             self._on_fork(self, copy)
         return copy
@@ -168,7 +192,14 @@ class SelectedMailbox:
     def _compare(self, command: Command, previous: _Previous,
                  current: Mapping[int, _Flags]) -> Iterable[Response]:
         is_uid: bool = getattr(command, 'uid', False)
-        before_recent, before = previous
+        before_uidval, before_recent, before = previous
+        uidval = self.uid_validity
+        if self._is_deleted:
+            yield ResponseBye(b'Selected mailbox deleted.')
+            return
+        elif uidval is not None and before_uidval != uidval:
+            yield ResponseBye(b'UID validity changed.', UidValidity(uidval))
+            return
         before_uids = frozenset(before.keys())
         current_uids = frozenset(current.keys())
         sorted_uids = sorted(before_uids | current_uids)

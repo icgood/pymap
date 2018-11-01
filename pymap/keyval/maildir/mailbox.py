@@ -3,14 +3,13 @@ import dbm  # type: ignore
 import errno
 import os
 import os.path
-import random
 import time
 from concurrent.futures import TimeoutError
 from contextlib import contextmanager
 from datetime import datetime
 from mailbox import Maildir, MaildirMessage, NoSuchMailboxError  # type: ignore
-from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, Iterator, \
-    FrozenSet
+from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, \
+    Iterator, FrozenSet
 from weakref import WeakSet
 
 from pymap.concurrent import Event, ReadWriteLock
@@ -21,7 +20,7 @@ from pymap.selected import SelectedMailbox
 from .flags import get_permanent_flags, flags_from_imap, flags_from_maildir
 from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
 
-__all__ = ['Message', 'MailboxSnapshot', 'Mailbox']
+__all__ = ['Message', 'Mailbox']
 
 _Db = Dict[str, bytes]
 
@@ -54,6 +53,8 @@ class Mailbox(KeyValMailbox[Message]):
 
     db_retry_count = 100
     db_retry_delay = 0.1
+    filename_db = '.uid'
+    filename_tmp_db = 'tmp.uid'
 
     def __init__(self, name: str, maildir: Maildir) -> None:
         self._name = name
@@ -65,17 +66,20 @@ class Mailbox(KeyValMailbox[Message]):
         self._last_selected: WeakSet[SelectedMailbox] = WeakSet()
         self._updated = Event.for_threading()
 
-    @property
-    def _db_path(self) -> str:
-        return os.path.join(self._path, '.uid')
+    @classmethod
+    def _db_path(cls, maildir: Maildir) -> str:
+        return os.path.join(maildir._path, '.uid')
 
-    @property
-    def _tmp_db_path(self) -> str:
-        return os.path.join(self._path, 'tmp.uid')
+    @classmethod
+    def _tmp_db_path(cls, maildir: Maildir) -> str:
+        return os.path.join(maildir._path, 'tmp.uid')
 
     @contextmanager
     def _dbm_open(self, mode: str, tmp: bool = False) -> Iterator[_Db]:
-        path = self._tmp_db_path if tmp else self._db_path
+        if tmp:
+            path = self._tmp_db_path(self._maildir)
+        else:
+            path = self._db_path(self._maildir)
         count = 0
         while True:
             try:
@@ -149,7 +153,7 @@ class Mailbox(KeyValMailbox[Message]):
         return self._maildir.list_folders()
 
     async def get_mailbox(self, name: str) -> 'Mailbox':
-        if name.upper() == 'INBOX':
+        if name == 'INBOX':
             return await self.reset()
         try:
             maildir = self._maildir.get_folder(name)
@@ -174,21 +178,32 @@ class Mailbox(KeyValMailbox[Message]):
     async def remove_mailbox(self, name: str) -> None:
         if name not in self._maildir.list_folders():
             raise MailboxNotFound(name)
+        maildir = self._maildir.get_folder(name)
         try:
-            os.unlink(self._db_path)
-            os.unlink(self._tmp_db_path)
+            os.unlink(self._db_path(maildir))
+            os.unlink(self._tmp_db_path(maildir))
         except OSError:
             pass
-        self._maildir.get_folder(name).clear()
+        maildir.clear()
         self._maildir.remove_folder(name)
 
     async def rename_mailbox(self, before: str, after: str) -> 'Mailbox':
-        mailboxes = self._maildir.list_folders()
-        if before not in mailboxes:
-            raise MailboxNotFound(before)
-        elif after in mailboxes:
-            raise MailboxConflict(after)
-        raise RuntimeError()  # TODO
+        before_mbx = await self.get_mailbox(before)
+        after_mbx = await self.add_mailbox(after)
+        async with before_mbx.messages_lock.read_lock():
+            before_keys = sorted(before_mbx._maildir.keys())
+            before_msgs = [before_mbx._maildir[key] for key in before_keys]
+        async with after_mbx.messages_lock.write_lock():
+            for maildir_msg in before_msgs:
+                after_mbx._maildir.add(maildir_msg)
+        if before == 'INBOX':
+            async with self.messages_lock.write_lock():
+                self._maildir.clear()
+            with self._dbm_open('w') as db:
+                del db['uid-validity']
+        else:
+            await self.remove_mailbox(before)
+        return await after_mbx.reset()
 
     async def get_max_uid(self) -> int:
         with self._dbm_open('r') as db:
@@ -255,7 +270,8 @@ class Mailbox(KeyValMailbox[Message]):
                     subscribed = db.get('subscribed-' + folder)
                     if subscribed:
                         tmp_db['subscribed-' + folder] = subscribed
-            os.replace(self._tmp_db_path, self._db_path)
+            os.replace(self._tmp_db_path(self._maildir),
+                       self._db_path(self._maildir))
 
     async def uids(self) -> AsyncIterable[int]:
         async with self.messages_lock.read_lock():
@@ -283,18 +299,16 @@ class Mailbox(KeyValMailbox[Message]):
                 yield uid, Message.from_maildir(uid, maildir_msg)
 
     async def reset(self) -> 'Mailbox':
-        if os.path.exists(self._db_path):
-            with self._dbm_open('r') as db:
-                uid_validity = db.get('uid-validity')
-                if uid_validity:
-                    self._uid_validity = int(uid_validity.decode('ascii'))
-                    return self
         async with self.messages_lock.read_lock():
             keys = sorted(self._maildir.keys())
         with self._dbm_open('c') as db:
-            self._uid_validity = random.randint(0, 2147483647)
-            db['uid-validity'] = b'%i' % self._uid_validity
-            max_uid = 0
+            if 'uid-validity' in db:
+                self._uid_validity = int(db['uid-validity'].decode('ascii'))
+                max_uid = int(db['max-uid'].decode('ascii'))
+            else:
+                self._uid_validity = MailboxSnapshot.new_uid_validity()
+                db['uid-validity'] = b'%i' % self._uid_validity
+                max_uid = 0
             for key in keys:
                 key_str = 'key-' + key
                 if key_str not in db:

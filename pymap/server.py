@@ -259,6 +259,8 @@ class IMAPConnection:
                     raise
                 else:
                     await self.write_response(response)
+                    if response.is_terminal:
+                        break
                     if isinstance(cmd, StartTLSCommand) and state.ssl_context \
                             and isinstance(response, ResponseOk):
                         await self.start_tls(state.ssl_context)

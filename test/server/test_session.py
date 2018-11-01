@@ -1,4 +1,6 @@
 
+import base64
+
 import pytest  # type: ignore
 
 from .base import TestBase
@@ -60,7 +62,7 @@ class TestSession(TestBase):
             b'+ \r\n')
         self.transport.push_readexactly(b'')
         self.transport.push_readline(
-            b'AGRlbW91c2VyAGRlbW9wYXNz\r\n')
+            base64.b64encode(b'\x00testuser\x00testpass') + b'\r\n')
         self.transport.push_write(
             b'auth1 OK Authentication successful.\r\n')
         self.transport.push_logout()

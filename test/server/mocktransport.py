@@ -66,7 +66,7 @@ class MockTransport:
             b'] Server ready ',
             (br'\S+', ), b'\r\n', wait=wait)
         self.push_readline(
-            b'login1 LOGIN demouser demopass\r\n')
+            b'login1 LOGIN testuser testpass\r\n')
         self.push_write(
             b'login1 OK Authentication successful.\r\n', set=set)
 
@@ -85,6 +85,12 @@ class MockTransport:
         else:
             unseen_line = (None, b'* OK [UNSEEN ', (br'\d+', ),
                            b'] First unseen message.\r\n')
+        if exists is None:
+            exists = (br'\d+', )
+        if recent is None:
+            recent = (br'\d+', )
+        if uidnext is None:
+            uidnext = (br'\d+', )
         self.push_readline(
             b'select1 SELECT ' + mailbox + b'\r\n', wait=wait)
         self.push_write(
@@ -127,15 +133,25 @@ class MockTransport:
                     regex, name = part
                     re_parts.append(br'(?P<' + name + br'>' + regex + br')')
 
+    def _match_write_msg(self, expected, data, full_regex, where):
+        parts = ['',
+                 'Expected: ' + repr(expected),
+                 'Got:      ' + repr((data, )),
+                 'Where:    ' + where,
+                 '---------------------------------------------------']
+        raw_regex = str(full_regex.replace(b'\r', b''), 'ascii').splitlines()
+        raw_data = str(data, 'ascii', 'replace').splitlines()
+        for regex_line, data_line in zip(raw_regex, raw_data):
+            parts.append('>>> ' + regex_line)
+            parts.append('<<< ' + data_line)
+        return '\n'.join(parts)
+
     def _match_write(self, where, expected, data):
         re_parts = []
         self._match_write_expected(expected, re_parts)
         full_regex = b'^' + b''.join(re_parts) + b'$'
         match = re.search(full_regex, data)
-        assert match, '\nExpected: ' + repr(expected) + \
-                      '\nGot:      ' + repr((data, )) + \
-                      '\nRegex:    ' + str(full_regex, 'ascii') + \
-                      '\nWhere:    ' + where
+        assert match, self._match_write_msg(expected, data, full_regex, where)
         self.matches.update(match.groupdict())
 
     def get_extra_info(self, name: str):

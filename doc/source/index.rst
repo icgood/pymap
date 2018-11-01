@@ -14,15 +14,20 @@ Table of Contents
    :maxdepth: 2
    :caption: Contents:
 
+   concurrent
+   config
    exceptions
    flags
    mailbox
    message
+   proxy
    search
+   selected
    server
    state
    interfaces
    parsing
+   keyval
 
 Indices and tables
 ==================
