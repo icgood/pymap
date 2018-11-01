@@ -102,7 +102,7 @@ class Response:
 
         """
         for resp in self.untagged:
-            if isinstance(resp, ResponseBye):
+            if isinstance(resp, Response) and resp.is_terminal:
                 return True
         return False
 
@@ -204,13 +204,15 @@ class ResponseBye(ConditionResponse):
 
     Args:
         text: The reason for disconnection.
+        code: Optional response code.
 
     """
 
     condition = b'BYE'
 
-    def __init__(self, text: MaybeBytes) -> None:
-        super().__init__(b'*', text, None)
+    def __init__(self, text: MaybeBytes,
+                 code: Optional[ResponseCode] = None) -> None:
+        super().__init__(b'*', text, code)
 
     @property
     def is_terminal(self) -> bool:

@@ -3,7 +3,7 @@ import asyncio
 from argparse import Namespace
 from typing import Dict
 
-from pymap.keyval.demo import init
+from pymap.keyval.dict import init
 from pymap.server import IMAPServer
 from .mocktransport import MockTransport
 
@@ -12,10 +12,10 @@ class TestBase:
 
     class FakeArgs(Namespace):
         debug = True
-        cert = None
-        key = None
         insecure_login = True
         demo_data = True
+        demo_user = 'testuser'
+        demo_password = 'testpass'
 
     def setup_method(self) -> None:
         self._fd = 1

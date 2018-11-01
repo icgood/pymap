@@ -5,16 +5,34 @@
 .. automodule:: pymap.parsing
    :members:
 
-``pymap.parsing.specials``
+``pymap.parsing.exceptions``
 ----------------------------
 
-.. automodule:: pymap.parsing.specials
+.. automodule:: pymap.parsing.exceptions
+   :members:
+
+``pymap.parsing.commands``
+----------------------------
+
+.. automodule:: pymap.parsing.commands
    :members:
 
 ``pymap.parsing.command``
 ----------------------------
 
 .. automodule:: pymap.parsing.command
+   :members:
+
+``pymap.parsing.primitives``
+----------------------------
+
+.. automodule:: pymap.parsing.primitives
+   :members:
+
+``pymap.parsing.specials``
+----------------------------
+
+.. automodule:: pymap.parsing.specials
    :members:
 
 ``pymap.parsing.response``

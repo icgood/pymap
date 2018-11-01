@@ -134,3 +134,23 @@ class TestSelectedMailbox(unittest.TestCase):
                          b'* 4 FETCH (FLAGS (\\Flagged \\Recent) UID 6)\r\n'
                          b'* 5 FETCH (FLAGS (\\Seen) UID 7)\r\n'
                          b'. OK testing\r\n', bytes(response))
+
+    def test_add_untagged_deleted_bye(self):
+        selected = SelectedMailbox('test', False)
+        selected.add_messages((1, frozenset()))
+        forked = selected.fork()
+        forked.add_messages((2, frozenset()))
+        forked.set_deleted()
+        response = forked.add_untagged(self.command, self.response)
+        self.assertEqual(b'* BYE Selected mailbox deleted.\r\n'
+                         b'. OK testing\r\n', bytes(response))
+
+    def test_add_untagged_uid_validity_bye(self):
+        selected = SelectedMailbox('test', False)
+        selected.add_messages((1, frozenset()))
+        forked = selected.fork()
+        forked.add_messages((2, frozenset()))
+        forked.set_uid_validity(456)
+        response = forked.add_untagged(self.command, self.response)
+        self.assertEqual(b'* BYE [UIDVALIDITY 456] UID validity changed.\r\n'
+                         b'. OK testing\r\n', bytes(response))

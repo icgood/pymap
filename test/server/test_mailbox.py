@@ -37,6 +37,109 @@ class TestMailbox(TestBase):
         self.transport.push_logout()
         await self.run()
 
+    async def test_delete(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'delete1 DELETE Sent\r\n')
+        self.transport.push_write(
+            b'delete1 OK Mailbox deleted successfully.\r\n')
+        self.transport.push_readline(
+            b'list2 LIST "" ""\r\n')
+        self.transport.push_write(
+            b'* LIST () "." INBOX\r\n'
+            b'* LIST () "." Trash\r\n'
+            b'list2 OK LIST completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_delete_selected(self):
+        self.transport.push_login()
+        self.transport.push_select(b'Sent', unseen=False)
+        self.transport.push_readline(
+            b'delete1 DELETE Sent\r\n')
+        self.transport.push_write(
+            b'* BYE Selected mailbox deleted.\r\n'
+            b'delete1 OK Mailbox deleted successfully.\r\n')
+        self.transport.push_write_close()
+        await self.run()
+
+    async def test_rename(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'status1 STATUS Sent (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
+        self.transport.push_write(
+            b'* STATUS Sent (MESSAGES 1 UIDNEXT 102 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval1'), b')\r\n'
+            b'status1 OK STATUS completed.\r\n')
+        self.transport.push_readline(
+            b'rename1 RENAME Sent "Sent Test"\r\n')
+        self.transport.push_write(
+            b'rename1 OK Mailbox renamed successfully.\r\n')
+        self.transport.push_readline(
+            b'status1 STATUS Sent (MESSAGES)\r\n')
+        self.transport.push_write(
+            b'status1 NO Mailbox does not exist.\r\n')
+        self.transport.push_readline(
+            b'status1 STATUS "Sent Test" (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
+        self.transport.push_write(
+            b'* STATUS "Sent Test" (MESSAGES 1 UIDNEXT 102 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval2'), b')\r\n'
+            b'status1 OK STATUS completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+        assert self.matches['uidval1'] == self.matches['uidval2']
+
+    async def test_rename_inbox(self):
+        self.transport.push_login()
+        self.transport.push_readline(
+            b'status1 STATUS INBOX (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
+        self.transport.push_write(
+            b'* STATUS INBOX (MESSAGES 4 UIDNEXT 105 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval1'), b')\r\n'
+            b'status1 OK STATUS completed.\r\n')
+        self.transport.push_readline(
+            b'rename1 RENAME INBOX "Inbox Test"\r\n')
+        self.transport.push_write(
+            b'rename1 OK Mailbox renamed successfully.\r\n')
+        self.transport.push_readline(
+            b'status1 STATUS INBOX (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
+        self.transport.push_write(
+            b'* STATUS INBOX (MESSAGES 0 UIDNEXT 101 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval2'), b')\r\n'
+            b'status1 OK STATUS completed.\r\n')
+        self.transport.push_readline(
+            b'status1 STATUS "Inbox Test" (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
+        self.transport.push_write(
+            b'* STATUS "Inbox Test" (MESSAGES 4 UIDNEXT 105 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval3'), b')\r\n'
+            b'status1 OK STATUS completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+        assert self.matches['uidval1'] != self.matches['uidval2']
+        assert self.matches['uidval1'] == self.matches['uidval3']
+
+    async def test_rename_inbox_selected(self):
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX')
+        self.transport.push_readline(
+            b'rename1 RENAME INBOX "Inbox Test"\r\n')
+        self.transport.push_write(
+            b'* BYE [UIDVALIDITY ', (br'\d+', ), b'] UID validity changed.\r\n'
+            b'rename1 OK Mailbox renamed successfully.\r\n')
+        self.transport.push_write_close()
+        await self.run()
+
+    async def test_rename_selected(self):
+        self.transport.push_login()
+        self.transport.push_select(b'Sent', unseen=False)
+        self.transport.push_readline(
+            b'rename1 RENAME Sent "Sent Test"\r\n')
+        self.transport.push_write(
+            b'* BYE Selected mailbox deleted.\r\n'
+            b'rename1 OK Mailbox renamed successfully.\r\n')
+        self.transport.push_write_close()
+        await self.run()
+
     async def test_lsub(self):
         self.transport.push_login()
         self.transport.push_readline(

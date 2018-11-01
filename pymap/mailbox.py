@@ -1,5 +1,7 @@
 """Base implementations of the :mod:`pymap.interfaces.mailbox` interfaces."""
 
+import random
+import time
 from typing import Optional, AbstractSet, FrozenSet
 
 from .interfaces.mailbox import MailboxInterface
@@ -37,6 +39,16 @@ class BaseMailbox(MailboxInterface):
         self._session_flags: FrozenSet[Flag] = (
             frozenset((session_flags - self.permanent_flags) | {Recent})
             if session_flags else frozenset({Recent}))
+
+    @classmethod
+    def new_uid_validity(self) -> int:
+        """Generate a new UID validity value for a mailbox, where the first
+        two bytes are time-based and the second two bytes are random.
+
+        """
+        time_part = int(time.time()) % 4096
+        rand_part = random.randint(0, 1048576)
+        return (time_part << 20) + rand_part
 
     @property
     def name(self) -> str:

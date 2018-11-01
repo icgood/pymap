@@ -4,12 +4,17 @@ python:
 dist: xenial     # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
 sudo: required   # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
 install:
+  - travis_retry pip install -r doc/requirements.txt
   - travis_retry pip install -r test/requirements.txt
   - travis_retry pip install coveralls
   - travis_retry pip install -e .
 script: py.test --flake8 --mypy --cov=pymap
 after_success:
   - coveralls
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./doc/push.sh; fi'
 branches:
   only:
     - master
+env:
+  global:
+    - secure: "FYGb/4uVR9YFfS9/rPKCm1fo0XAajPaZXRlJVP8EeyuHrMe/UtMeVmQxF1BCAxphsHlKw5l/MtDu269qXJ0l9+13H8A8+VxQBHRgBm81RWhxqGoksnBv232skKG8kBwni9DrHMuLwFKLenqulgQKeoJ2Br0/dK0f+YW9QTIvOEY="
