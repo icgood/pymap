@@ -19,9 +19,8 @@ class TestExpunge(TestBase):
         self.transport.push_readline(
             b'expunge1 EXPUNGE\r\n')
         self.transport.push_write(
-            b'* 3 EXISTS\r\n'
-            b'* 0 RECENT\r\n'
             b'* 4 EXPUNGE\r\n'
+            b'* 0 RECENT\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -32,18 +31,17 @@ class TestExpunge(TestBase):
         self.transport.push_readline(
             b'store1 UID STORE * +FlAGS (\\Deleted)\r\n')
         self.transport.push_write(
-            b'* 4 FETCH (FLAGS (\\Deleted \\Recent) UID 103)\r\n'
+            b'* 4 FETCH (FLAGS (\\Deleted \\Recent) UID 104)\r\n'
             b'store1 OK STORE completed.\r\n')
         self.transport.push_readline(
-            b'expunge1 UID EXPUNGE 100:102\r\n')
+            b'expunge1 UID EXPUNGE 101:103\r\n')
         self.transport.push_write(
             b'expunge1 OK EXPUNGE completed.\r\n')
         self.transport.push_readline(
-            b'expunge1 UID EXPUNGE 100:*\r\n')
+            b'expunge1 UID EXPUNGE 101:*\r\n')
         self.transport.push_write(
-            b'* 3 EXISTS\r\n'
-            b'* 0 RECENT\r\n'
             b'* 4 EXPUNGE\r\n'
+            b'* 0 RECENT\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -57,9 +55,8 @@ class TestExpunge(TestBase):
         concurrent.push_readline(
             b'noop1 NOOP\r\n', wait=event2)
         concurrent.push_write(
-            b'* 3 EXISTS\r\n'
-            b'* 0 RECENT\r\n'
             b'* 4 EXPUNGE\r\n'
+            b'* 0 RECENT\r\n'
             b'noop1 OK NOOP completed.\r\n')
         concurrent.push_logout()
 
@@ -73,7 +70,6 @@ class TestExpunge(TestBase):
         self.transport.push_readline(
             b'expunge1 EXPUNGE\r\n', set=event2)
         self.transport.push_write(
-            b'* 3 EXISTS\r\n'
             b'* 4 EXPUNGE\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
         self.transport.push_logout()

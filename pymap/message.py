@@ -8,8 +8,9 @@ from email.headerregistry import BaseHeader
 from email.message import EmailMessage
 from email.policy import SMTP
 from typing import cast, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
-    Sequence, Union, NamedTuple
+    Sequence, Union, NamedTuple, AbstractSet, TypeVar, Type
 
+from pymap.flags import FlagOp
 from .interfaces.message import Message, LoadedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
@@ -18,6 +19,9 @@ from .parsing.specials import Flag, ExtensionOptions
 from .selected import SelectedMailbox
 
 __all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
+
+_MT = TypeVar('_MT', bound='BaseMessage')
+_LMT = TypeVar('_LMT', bound='BaseLoadedMessage')
 
 
 class AppendMessage(NamedTuple):
@@ -87,6 +91,10 @@ class BaseMessage(Message):
     def internal_date(self) -> Optional[datetime]:
         return self._internal_date
 
+    def copy(self: _MT, new_uid: int) -> _MT:
+        return self.__class__(new_uid, self.permanent_flags,
+                              self.internal_date)
+
     def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
         if session:
@@ -94,6 +102,17 @@ class BaseMessage(Message):
             return frozenset(self.permanent_flags | session_flags)
         else:
             return frozenset(self.permanent_flags)
+
+    def update_flags(self, flag_set: AbstractSet[Flag],
+                     flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
+        if flag_op == FlagOp.ADD:
+            self.permanent_flags.update(flag_set)
+        elif flag_op == FlagOp.DELETE:
+            self.permanent_flags.difference_update(flag_set)
+        else:  # flag_op == FlagOp.REPLACE
+            self.permanent_flags.clear()
+            self.permanent_flags.update(flag_set)
+        return frozenset(self.permanent_flags)
 
 
 class BaseLoadedMessage(BaseMessage, LoadedMessage):
@@ -119,10 +138,14 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         super().__init__(uid, permanent_flags, internal_date)
         self.contents: EmailMessage = contents
 
+    def copy(self: _LMT, new_uid: int) -> _LMT:
+        return self.__class__(new_uid, self.contents, self.permanent_flags,
+                              self.internal_date)
+
     @classmethod
-    def parse(cls, uid: int, data: bytes,
+    def parse(cls: Type[_LMT], uid: int, data: bytes,
               permanent_flags: Iterable[Flag] = None,
-              internal_date: datetime = None) -> 'BaseLoadedMessage':
+              internal_date: datetime = None) -> _LMT:
         """Parse the given bytestring containing a MIME-encoded email message
         into a :class:`BaseLoadedMessage` object.
 

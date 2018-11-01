@@ -6,11 +6,12 @@ backend plugin.
 
 from collections import OrderedDict
 from socket import getfqdn
-from typing import cast, Optional, Callable, Union, Tuple, Awaitable, Dict, \
+from typing import cast, Optional, Callable, Union, Tuple, Awaitable, \
     AsyncIterable
 
 from pysasl import AuthenticationCredentials
 
+from .concurrent import Event
 from .config import IMAPConfig
 from .exceptions import CommandNotAllowed, CloseConnection
 from .interfaces.session import SessionInterface, LoginProtocol
@@ -33,8 +34,8 @@ from .parsing.response.code import Capability, PermanentFlags, ReadOnly, \
 from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from .parsing.specials import FetchAttribute, DateTime
-from .parsing.typing import MaybeBytes
+from .parsing.specials import DateTime
+from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
 
 __all__ = ['ConnectionState']
@@ -51,20 +52,31 @@ class ConnectionState:
 
     def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
-        self.login = login
         self.config = config
         self.ssl_context = config.ssl_context
         self.static_capability = config.static_capability
+        self._login = login
         self._session: Optional[SessionInterface] = None
         self._selected: Optional[SelectedMailbox] = None
         self._capability = list(config.initial_capability)
+        self._proxy = ExecutorProxy(config.executor)
         self.auth = config.initial_auth
+
+    @property
+    def login(self) -> LoginProtocol:
+        if self._proxy:
+            return self._proxy.wrap_login(self._login)
+        else:
+            return self._login
 
     @property
     def session(self) -> SessionInterface:
         if self._session is None:
             raise RuntimeError()  # State checking should prevent this.
-        return self._session
+        if self._proxy:
+            return self._proxy.wrap_session(self._session)
+        else:
+            return self._session
 
     @property
     def selected(self) -> SelectedMailbox:
@@ -312,35 +324,29 @@ class ConnectionState:
         return resp, updates
 
     async def do_store(self, cmd: StoreCommand):
-        messages, updates = await self.session.update_flags(
+        uids, updates = await self.session.update_flags(
             self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
-        if not cmd.silent:
-            for msg_seq, msg in messages:
-                fetch_data: Dict[FetchAttribute, MaybeBytes] = OrderedDict()
-                fetch_data[FetchAttribute(b'FLAGS')] = ListP(
-                    msg.get_flags(self.selected), sort=True)
-                if cmd.uid:
-                    fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
-                resp.add_untagged(FetchResponse(msg_seq, fetch_data))
+        if cmd.silent:
+            self.selected.hide_fetch(*uids)
         return resp, updates
 
     async def do_idle(self, cmd: IdleCommand):
         if b'IDLE' not in self.capability:
             raise CommandNotAllowed(b'IDLE is disabled.')
-        return ResponseOk(cmd.tag, b'IDLE completed.'), self.selected
+        return ResponseOk(cmd.tag, b'IDLE completed.'), None
 
     @classmethod
     async def do_logout(cls, cmd: LogoutCommand):
         raise CloseConnection()
 
-    async def receive_updates(self, cmd: IdleCommand) \
+    async def receive_updates(self, cmd: IdleCommand, done: Event) \
             -> AsyncIterable[Response]:
-        while True:
-            response = Response(cmd.tag)
+        while not done.is_set():
             selected = await self.session.check_mailbox(
-                self.selected, block=True)
-            selected.drain_updates(cmd, response)
+                self.selected, wait_on=done)
+            response = Response(cmd.tag)
+            selected.add_untagged(cmd, response)
             self._selected = selected.fork()
             for untagged in response.untagged:
                 yield cast(Response, untagged)
@@ -362,6 +368,6 @@ class ConnectionState:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         response, selected = await func(cmd)
         if selected:
-            selected.drain_updates(cmd, response)
+            selected.add_untagged(cmd, response)
             self._selected = selected.fork()
         return response

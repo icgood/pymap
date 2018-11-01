@@ -10,7 +10,7 @@ class TestIdle(TestBase):
 
     async def test_idle(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
         self.transport.push_readline(
             b'idle1 IDLE\r\n')
         self.transport.push_write(
@@ -38,7 +38,7 @@ class TestIdle(TestBase):
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
-        concurrent.push_select(b'INBOX', 4, 1, 104, 4)
+        concurrent.push_select(b'INBOX', 4, 1, 105, 4)
         concurrent.push_readline(
             b'idle1 IDLE\r\n')
         concurrent.push_write(
@@ -67,7 +67,7 @@ class TestIdle(TestBase):
         self.transport.push_readline(
             b'\r\n')
         self.transport.push_write(
-            b'append1 OK [APPENDUID ', None, b' 104] APPEND completed.\r\n',
+            b'append1 OK [APPENDUID ', None, b' 105] APPEND completed.\r\n',
             set=event2)
         self.transport.push_logout()
 
@@ -78,7 +78,7 @@ class TestIdle(TestBase):
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
-        concurrent.push_select(b'INBOX', 4, 1, 104, 4)
+        concurrent.push_select(b'INBOX', 4, 1, 105, 4)
         concurrent.push_readline(
             b'idle1 IDLE\r\n')
         concurrent.push_write(
@@ -88,15 +88,13 @@ class TestIdle(TestBase):
         concurrent.push_readline(
             b'\r\n', wait=event2)
         concurrent.push_write(
-            b'* 3 EXISTS\r\n')
-        concurrent.push_write(
             b'* 1 EXPUNGE\r\n')
         concurrent.push_write(
             b'idle1 OK IDLE completed.\r\n')
         concurrent.push_logout()
 
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 0, 104, 4, wait=event1)
+        self.transport.push_select(b'INBOX', 4, 0, 105, 4, wait=event1)
         self.transport.push_readline(
             b'store1 STORE 1 +FLAGS.SILENT (\\Deleted)\r\n')
         self.transport.push_write(

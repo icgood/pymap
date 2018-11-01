@@ -47,7 +47,7 @@ class TestSearch(TestBase):
         self.transport.push_readline(
             b'search1 UID SEARCH ALL\r\n')
         self.transport.push_write(
-            b'* SEARCH 100 101 102 103\r\n'
+            b'* SEARCH 101 102 103 104\r\n'
             b'search1 OK SEARCH completed.\r\n')
         self.transport.push_logout()
         await self.run()

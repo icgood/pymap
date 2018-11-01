@@ -14,10 +14,10 @@ class TestFetch(TestBase):
         self.transport.push_readline(
             b'fetch1 UID FETCH 1:* (FLAGS)\r\n')
         self.transport.push_write(
-            b'* 1 FETCH (FLAGS (\\Seen) UID 100)\r\n'
-            b'* 2 FETCH (FLAGS (\\Answered \\Seen) UID 101)\r\n'
-            b'* 3 FETCH (FLAGS (\\Flagged \\Seen) UID 102)\r\n'
-            b'* 4 FETCH (FLAGS (\\Recent) UID 103)\r\n'
+            b'* 1 FETCH (FLAGS (\\Seen) UID 101)\r\n'
+            b'* 2 FETCH (FLAGS (\\Answered \\Seen) UID 102)\r\n'
+            b'* 3 FETCH (FLAGS (\\Flagged \\Seen) UID 103)\r\n'
+            b'* 4 FETCH (FLAGS (\\Recent) UID 104)\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -29,14 +29,14 @@ class TestFetch(TestBase):
             b'fetch1 FETCH * FULL\r\n')
         self.transport.push_write(
             b'* 4 FETCH (FLAGS (\\Recent) '
-            b'INTERNALDATE "01-Jan-2010 00:00:00" '
-            b'RFC822.SIZE 2048 '
+            b'INTERNALDATE "01-Jan-2010 00:00:00 +0000" '
+            b'RFC822.SIZE 1980 '
             b'ENVELOPE ("01-Jan-2010 01:01:00 +0000" "Hello, World!" '
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "me" "example.com")) NIL NIL NIL NIL) '
-            b'BODY ("text" "plain" NIL NIL NIL NIL 2048 38))\r\n'
+            b'BODY ("text" "plain" NIL NIL NIL NIL 1980 38))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -48,7 +48,7 @@ class TestFetch(TestBase):
             b'fetch1 FETCH * (BODYSTRUCTURE)\r\n')
         self.transport.push_write(
             b'* 4 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL NIL '
-            b'2048 38 NIL NIL NIL NIL))\r\n'
+            b'1980 38 NIL NIL NIL NIL))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -114,9 +114,9 @@ class TestFetch(TestBase):
         self.transport.push_readline(
             b'\r\n')
         self.transport.push_write(
-            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104]'
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 105]'
             b' APPEND completed.\r\n')
-        self.transport.push_select(b'INBOX', 5, 2, 105, 4)
+        self.transport.push_select(b'INBOX', 5, 2, 106, 4)
         self.transport.push_readline(
             b'fetch1 FETCH 5 (BINARY[] BINARY.SIZE[])\r\n')
         self.transport.push_write(

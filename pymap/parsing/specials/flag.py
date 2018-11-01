@@ -1,11 +1,11 @@
 from functools import total_ordering
-from typing import Tuple
+from typing import Tuple, FrozenSet
 
 from .. import NotParseable, Space, Params, Special
 from ..primitives import Atom
 
-__all__ = ['Flag', 'SystemFlag', 'Keyword', 'Seen', 'Recent', 'Deleted',
-           'Flagged', 'Answered', 'Draft']
+__all__ = ['Flag', 'SystemFlag', 'Keyword', 'get_system_flags', 'Seen',
+           'Recent', 'Deleted', 'Flagged', 'Answered', 'Draft']
 
 
 @total_ordering
@@ -99,6 +99,11 @@ class Keyword(Flag):
             return cls(atom.value), buf
         else:
             raise NotParseable(buf)
+
+
+def get_system_flags() -> FrozenSet[Flag]:
+    """Return the set of implemented system flags."""
+    return frozenset({Seen, Recent, Deleted, Flagged, Answered, Draft})
 
 
 #: The ``\\Seen`` system flag.

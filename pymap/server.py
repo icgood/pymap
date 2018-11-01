@@ -14,6 +14,7 @@ from typing import List, Optional
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
+from .concurrent import Event
 from .config import IMAPConfig
 from .exceptions import ResponseError
 from .interfaces.session import LoginProtocol
@@ -76,6 +77,7 @@ class IMAPConnection:
                  writer: StreamWriter) -> None:
         super().__init__()
         self.commands = commands
+        self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
         self.reader = reader
@@ -190,26 +192,24 @@ class IMAPConnection:
         return resp.is_terminal
 
     async def write_updates(self, state: ConnectionState,
-                            cmd: IdleCommand) -> None:
-        async for resp in state.receive_updates(cmd):
+                            cmd: IdleCommand, done: Event) -> None:
+        async for resp in state.receive_updates(cmd, done):
             await self.write_response(resp)
 
     async def idle(self, state: ConnectionState, cmd: IdleCommand) -> Response:
         response = await state.do_command(cmd)
         if not isinstance(response, ResponseOk):
             return response
+        done = self.config.new_event()
         await self.write_response(ResponseContinuation(b'Idling.'))
-        task = asyncio.create_task(self.write_updates(state, cmd))
+        task = asyncio.create_task(self.write_updates(state, cmd, done))
         try:
             await self.read_idle_done(cmd)
         except BadCommand as bad:
             return bad.get_response()
         finally:
-            task.cancel()
-        try:
-            await task
-        except asyncio.CancelledError:
-            pass
+            done.set()
+        await task
         return response
 
     async def run(self, state: ConnectionState) -> None:

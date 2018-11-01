@@ -1,24 +1,28 @@
 
 import asyncio
+from argparse import Namespace
+from typing import Dict
 
-from pymap.demo import init
+from pymap.keyval.demo import init
 from pymap.server import IMAPServer
 from .mocktransport import MockTransport
 
 
 class TestBase:
 
-    class FakeArgs:
+    class FakeArgs(Namespace):
         debug = True
         cert = None
         key = None
-        no_secure_login = True
+        insecure_login = True
+        demo_data = True
 
     def setup_method(self) -> None:
         self._fd = 1
-        login, config = init(self.FakeArgs())  # type: ignore
-        self._run = IMAPServer(login, config)
-        self.matches = {}  # type: ignore
+        loop = asyncio.get_event_loop()
+        login, self.config = loop.run_until_complete(init(self.FakeArgs()))
+        self._run = IMAPServer(login, self.config)
+        self.matches: Dict[str, bytes] = {}
         self.transport = self.new_transport()
 
     def _incr_fd(self):
@@ -29,12 +33,11 @@ class TestBase:
     def new_transport(self):
         return MockTransport(self.matches, self._incr_fd())
 
-    @classmethod
-    def new_events(cls, n=1):
+    def new_events(self, n=1):
         if n == 1:
-            return asyncio.Event()
+            return self.config.new_event()
         else:
-            return (asyncio.Event() for _ in range(n))
+            return (self.config.new_event() for _ in range(n))
 
     async def run(self, *transports):
         coros = [self._run(self.transport, self.transport)] + \

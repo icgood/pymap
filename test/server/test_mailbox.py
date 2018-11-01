@@ -76,15 +76,15 @@ class TestMailbox(TestBase):
             b'status1 STATUS INBOX '
             b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
         self.transport.push_write(
-            b'* STATUS INBOX (MESSAGES 4 RECENT 1 UIDNEXT 104 '
+            b'* STATUS INBOX (MESSAGES 4 RECENT 1 UIDNEXT 105 '
             b'UIDVALIDITY ', (br'\d+', b'uidval1'), b' UNSEEN 1)\r\n'
             b'status1 OK STATUS completed.\r\n')
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
         self.transport.push_readline(
             b'status2 STATUS INBOX '
             b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
         self.transport.push_write(
-            b'* STATUS INBOX (MESSAGES 4 RECENT 0 UIDNEXT 104 '
+            b'* STATUS INBOX (MESSAGES 4 RECENT 0 UIDNEXT 105 '
             b'UIDVALIDITY ', (br'\d+', b'uidval2'), b' UNSEEN 1)\r\n'
             b'status2 OK STATUS completed.\r\n')
         self.transport.push_logout()
@@ -102,9 +102,9 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'\r\n')
         self.transport.push_write(
-            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104]'
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 105]'
             b' APPEND completed.\r\n')
-        self.transport.push_select(b'INBOX', 5, 2, 105, 4)
+        self.transport.push_select(b'INBOX', 5, 2, 106, 4)
         self.transport.push_logout()
         await self.run()
 
@@ -120,7 +120,7 @@ class TestMailbox(TestBase):
             b'\r\n')
         self.transport.push_write(
             b'append1 NO APPEND cancelled.\r\n')
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
         self.transport.push_logout()
         await self.run()
 
@@ -141,16 +141,16 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'\r\n')
         self.transport.push_write(
-            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104:105]'
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 105:106]'
             b' APPEND completed.\r\n')
-        self.transport.push_select(b'INBOX', 6, 3, 106, 4)
+        self.transport.push_select(b'INBOX', 6, 3, 107, 4)
         self.transport.push_logout()
         await self.run()
 
     async def test_append_selected(self):
         message = b'test message\r\n'
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 104, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
         self.transport.push_readline(
             b'append1 APPEND INBOX (\\Seen) {%i}\r\n' % len(message))
         self.transport.push_write(
@@ -162,7 +162,7 @@ class TestMailbox(TestBase):
             b'* 5 EXISTS\r\n'
             b'* 2 RECENT\r\n'
             b'* 5 FETCH (FLAGS (\\Recent \\Seen))\r\n'
-            b'append1 OK [APPENDUID ', (br'\d+', ), b' 104]'
+            b'append1 OK [APPENDUID ', (br'\d+', ), b' 105]'
             b' APPEND completed.\r\n')
         self.transport.push_logout()
         await self.run()

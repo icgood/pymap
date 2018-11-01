@@ -2,12 +2,9 @@
 
 from typing import Optional, AbstractSet, FrozenSet
 
-from .flags import FlagOp
-from .interfaces.message import Message
 from .interfaces.mailbox import MailboxInterface
 from .parsing.specials import Flag
 from .parsing.specials.flag import Recent
-from .selected import SelectedMailbox
 
 __all__ = ['BaseMailbox']
 
@@ -26,8 +23,8 @@ class BaseMailbox(MailboxInterface):
     """
 
     def __init__(self, name: str,
-                 permanent_flags: Optional[AbstractSet[Flag]] = None,
-                 session_flags: Optional[AbstractSet[Flag]] = None,
+                 permanent_flags: AbstractSet[Flag] = None,
+                 session_flags: AbstractSet[Flag] = None,
                  readonly: bool = False,
                  uid_validity: int = 0) -> None:
         super().__init__()
@@ -40,22 +37,6 @@ class BaseMailbox(MailboxInterface):
         self._session_flags: FrozenSet[Flag] = (
             frozenset((session_flags - self.permanent_flags) | {Recent})
             if session_flags else frozenset({Recent}))
-
-    def update_flags(self, selected: SelectedMailbox, message: Message,
-                     flag_set: AbstractSet[Flag],
-                     flag_op: FlagOp = FlagOp.REPLACE) \
-            -> FrozenSet[Flag]:
-        permanent_flags = frozenset(flag_set & self.permanent_flags)
-        session_flags = frozenset(flag_set & self.session_flags)
-        selected.session_flags.update(message.uid, session_flags, flag_op)
-        if flag_op == FlagOp.ADD:
-            message.permanent_flags.update(permanent_flags)
-        elif flag_op == FlagOp.DELETE:
-            message.permanent_flags.difference_update(permanent_flags)
-        else:  # flag_op == FlagOp.REPLACE
-            message.permanent_flags.clear()
-            message.permanent_flags.update(permanent_flags)
-        return frozenset(message.permanent_flags)
 
     @property
     def name(self) -> str:
