@@ -95,7 +95,7 @@ class Session(KeyValSession[Mailbox, Message]):
             raise InvalidAuth()
         maildir = cls._load_maildir(config, user_dir)
         inbox = Mailbox('INBOX', maildir)
-        return cls(inbox, Message)
+        return cls(inbox)
 
     @classmethod
     async def find_user(cls, config: Config, user: str) \

@@ -1,11 +1,11 @@
 from functools import total_ordering
-from typing import Tuple, FrozenSet
+from typing import Tuple, FrozenSet, AnyStr
 
 from .. import NotParseable, Space, Params, Special
 from ..primitives import Atom
 
-__all__ = ['Flag', 'SystemFlag', 'Keyword', 'get_system_flags', 'Seen',
-           'Recent', 'Deleted', 'Flagged', 'Answered', 'Draft']
+__all__ = ['Flag', 'get_system_flags', 'Seen', 'Recent', 'Deleted', 'Flagged',
+           'Answered', 'Draft']
 
 
 @total_ordering
@@ -17,14 +17,23 @@ class Flag(Special[bytes]):
 
     """
 
-    def __init__(self, value: bytes) -> None:
+    def __init__(self, value: AnyStr) -> None:
         super().__init__()
-        self._value = self._capitalize(value)
+        if isinstance(value, bytes):
+            value_bytes = value
+        else:
+            value_bytes = bytes(value, 'ascii')
+        self._value = self._capitalize(value_bytes)
 
     @property
     def value(self) -> bytes:
         """The flag or keyword value."""
         return self._value
+
+    @property
+    def is_system(self) -> bool:
+        """True if the flag is an RFC-defined IMAP system flag."""
+        return self.value.startswith(b'\\')
 
     @classmethod
     def _capitalize(cls, value: bytes) -> bytes:
@@ -41,10 +50,16 @@ class Flag(Special[bytes]):
 
     def __lt__(self, other) -> bool:
         if isinstance(other, Flag):
-            return bytes(self) < bytes(other)
+            other_bytes = bytes(other)
         elif isinstance(other, bytes):
-            return bytes(self) < self._capitalize(other)
-        return NotImplemented
+            other_bytes = self._capitalize(other)
+        else:
+            return NotImplemented
+        if self.is_system and not other_bytes.startswith(b'\\'):
+            return True
+        elif not self.is_system and other_bytes.startswith(b'\\'):
+            return False
+        return bytes(self) < other_bytes
 
     def __hash__(self) -> int:
         return hash(bytes(self))
@@ -58,47 +73,17 @@ class Flag(Special[bytes]):
     @classmethod
     def parse(cls, buf: bytes, params: Params) -> Tuple['Flag', bytes]:
         try:
-            flag, buf = SystemFlag.parse(buf, params)
-        except NotParseable:
-            pass
-        else:
-            return flag, buf
-        return Keyword.parse(buf, params)
-
-
-class SystemFlag(Flag):
-    """Base class for system flags defined by the IMAP RFC."""
-
-    @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Flag', bytes]:
-        try:
             _, buf = Space.parse(buf, params)
         except NotParseable:
             pass
-        if buf and buf[0] == 0x5c:
-            atom, buf = Atom.parse(buf[1:], params)
-            return cls(b'\\' + atom.value), buf
-        else:
-            raise NotParseable(buf)
-
-
-class Keyword(Flag):
-    """Base class for defining custom flag objects. All custom flags, whether
-    they are instances or sub-classes, should use this class.
-
-    """
-
-    @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Keyword', bytes]:
-        try:
-            _, buf = Space.parse(buf, params)
-        except NotParseable:
-            pass
-        if buf and buf[0] != 0x5c:
-            atom, buf = Atom.parse(buf, params)
-            return cls(atom.value), buf
-        else:
-            raise NotParseable(buf)
+        if buf:
+            if buf[0] == 0x5c:
+                atom, buf = Atom.parse(buf[1:], params)
+                return cls(b'\\' + atom.value), buf
+            else:
+                atom, buf = Atom.parse(buf, params)
+                return cls(atom.value), buf
+        raise NotParseable(buf)
 
 
 def get_system_flags() -> FrozenSet[Flag]:
@@ -107,19 +92,19 @@ def get_system_flags() -> FrozenSet[Flag]:
 
 
 #: The ``\\Seen`` system flag.
-Seen = SystemFlag(br'\Seen')
+Seen = Flag(br'\Seen')
 
 #: The ``\\Recent`` system flag.
-Recent = SystemFlag(br'\Recent')
+Recent = Flag(br'\Recent')
 
 #: The ``\\Deleted`` system flag.
-Deleted = SystemFlag(br'\Deleted')
+Deleted = Flag(br'\Deleted')
 
 #: The ``\\Flagged`` system flag.
-Flagged = SystemFlag(br'\Flagged')
+Flagged = Flag(br'\Flagged')
 
 #: The ``\\Answered`` system flag.
-Answered = SystemFlag(br'\Answered')
+Answered = Flag(br'\Answered')
 
 #: The ``\\Draft`` system flag.
-Draft = SystemFlag(br'\Draft')
+Draft = Flag(br'\Draft')

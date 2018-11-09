@@ -5,11 +5,13 @@ from weakref import WeakSet
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.message import AppendMessage
+from pymap.parsing.specials.flag import Recent
 from pymap.selected import SelectedMailbox
 
 from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
 
-__all__ = ['Message', 'Mailbox']
+__all__ = ['MailboxSnapshot', 'Message', 'Mailbox']
 
 
 class Message(KeyValMessage):
@@ -73,6 +75,13 @@ class Mailbox(KeyValMailbox[Message]):
                                    on_fork=self._update_last_selected)
         self._last_selected.add(selected)
         return selected
+
+    def parse_message(self, append_msg: AppendMessage,
+                      with_recent: bool) -> Message:
+        flag_set = append_msg.flag_set
+        if with_recent:
+            flag_set = flag_set | {Recent}
+        return Message.parse(0, append_msg.message, flag_set, append_msg.when)
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
         async with self._children_lock.write_lock():

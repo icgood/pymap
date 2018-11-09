@@ -5,7 +5,7 @@ from typing_extensions import Protocol
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.mailbox import BaseMailbox
-from pymap.message import BaseLoadedMessage
+from pymap.message import AppendMessage, BaseLoadedMessage
 from pymap.parsing.specials.flag import get_system_flags, Flag, Seen, Recent
 from pymap.parsing.specials import SequenceSet
 from pymap.selected import SelectedMailbox
@@ -95,6 +95,11 @@ class KeyValMailbox(Protocol[_MT]):
 
     @abstractmethod
     def new_selected(self, readonly: bool) -> SelectedMailbox:
+        ...
+
+    @abstractmethod
+    def parse_message(self, append_msg: AppendMessage,
+                      with_recent: bool) -> _MT:
         ...
 
     @abstractmethod
