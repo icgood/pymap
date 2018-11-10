@@ -1,62 +1,132 @@
-from typing import Iterable, Union, List, FrozenSet
+from typing import IO, TypeVar, Type, Iterable, Union, Mapping, FrozenSet, \
+    Sequence
 
-from pymap.parsing.specials import Flag
+from pymap.parsing.specials.flag import Flag, Seen, Flagged, Deleted, Draft, \
+    Answered
 
-__all__ = ['get_permanent_flags', 'flags_from_imap', 'flags_from_maildir']
+from .io import FileReadable
 
+__all__ = ['MaildirFlags']
 
-_from_imap_table = {br'\Seen': 'S',
-                    br'\Flagged': 'F',
-                    br'\Deleted': 'T',
-                    br'\Draft': 'D',
-                    br'\Answered': 'R'}
-
-
-_from_maildir_table = {'S': Flag(br'\Seen'),
-                       'F': Flag(br'\Flagged'),
-                       'T': Flag(br'\Deleted'),
-                       'D': Flag(br'\Draft'),
-                       'R': Flag(br'\Answered')}
+_MFT = TypeVar('_MFT', bound='MaildirFlags')
 
 
-def get_permanent_flags() -> FrozenSet[Flag]:
-    """Set of all supported permanent flags."""
-    return frozenset({Flag(flag) for flag in _from_imap_table.keys()})
+class MaildirFlags(FileReadable):
+    """Maintains a set of IMAP keywords (non-standard flags) that are available
+    for use on messages. This uses a custom file format to define keywords,
+    which might look like this:
 
+        0 $Junk
+        1 $NonJunk
 
-def flags_from_imap(flags: Iterable[Union[bytes, Flag]]) -> str:
-    """Given a list of IMAP-style flags, e.g. ``\\Seen``, return a correlating
-    list of :py:class:`~mailbox.MaildirMessage` flags, in the form of a string.
-    Unrecognized flags are ignored.
+    The lower-case letter codes that correspond to each keyword start with
+    ``'a'`` for 0, ``'b'`` for 1, etc. and up to 26 are supported.
 
     Args:
-        flags: List of flags, each can either be bytestring or a
-            :class:`~pymap.parsing.specials.Flag`.
+        keywords: The list of keywords available for use on messages.
+
+    See Also:
+        `IMAP Keywords
+        <https://wiki.dovecot.org/MailboxFormat/Maildir#line-40>`_
 
     """
-    ret: List[str] = []
-    for flag in flags:
-        if isinstance(flag, Flag):
-            flag = flag.value
-        maildir_flag = _from_imap_table.get(flag)
-        if maildir_flag:
-            ret.append(maildir_flag)
-    return ''.join(ret)
 
+    _from_sys: Mapping[Flag, str] = {Seen: 'S',
+                                     Flagged: 'F',
+                                     Deleted: 'T',
+                                     Draft: 'D',
+                                     Answered: 'R'}
 
-def flags_from_maildir(flags: str) -> FrozenSet[Flag]:
-    """Given a string of :py:class:`~mailbox.MaildirMessage` flags, return a
-    correlating set of :class:`~pymap.parsing.specials.Flag` objects.
-    Unrecognized flags are ignored.
+    _to_sys: Mapping[str, Flag] = {'S': Seen,
+                                   'F': Flagged,
+                                   'T': Deleted,
+                                   'D': Draft,
+                                   'R': Answered}
 
-    Args:
-        flags: String of flags, as would be returned by
-            :py:class:`~mailbox.MaildirMessage.get_flags`.
+    def __init__(self, keywords: Sequence[Flag]) -> None:
+        super().__init__()
+        if len(keywords) > 26:
+            raise ValueError(keywords)
+        self.keywords = keywords
 
-    """
-    ret: List[Flag] = []
-    for flag in flags:
-        imap_flag = _from_maildir_table.get(flag)
-        if imap_flag:
-            ret.append(imap_flag)
-    return frozenset(ret)
+    @property
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        """Return the set of all permanent flags, system and keyword."""
+        return self.system_flags | self.keywords
+
+    @property
+    def system_flags(self) -> FrozenSet[Flag]:
+        """Return the set of defined IMAP system flags."""
+        return frozenset(self._from_sys.keys())
+
+    @property
+    def keywords(self) -> FrozenSet[Flag]:
+        """Return the set of available IMAP keywords."""
+        return frozenset(self._keywords)
+
+    @keywords.setter
+    def keywords(self, keywords: Iterable[Flag]) -> None:
+        self._keywords = list(keywords)
+        self._to_kwd = {chr(ord('a') + i): kwd
+                        for i, kwd in enumerate(keywords)}
+        self._from_kwd = {kwd: chr(ord('a') + i)
+                          for i, kwd in enumerate(keywords)}
+
+    def to_maildir(self, flags: Iterable[Union[bytes, Flag]]) -> str:
+        """Return the string of letter codes that are used to map to defined
+        IMAP flags and keywords.
+
+        Args:
+            flags: The flags and keywords to map.
+
+        """
+        codes = []
+        for flag in flags:
+            if isinstance(flag, bytes):
+                flag = Flag(flag)
+            from_sys = self._from_sys.get(flag)
+            if from_sys is not None:
+                codes.append(from_sys)
+            else:
+                from_kwd = self._from_kwd.get(flag)
+                if from_kwd is not None:
+                    codes.append(from_kwd)
+        return ''.join(codes)
+
+    def from_maildir(self, codes: str) -> FrozenSet[Flag]:
+        """Return the set of IMAP flags that correspond to the letter codes.
+
+        Args:
+            codes: The letter codes to map.
+
+        """
+        flags = set()
+        for code in codes:
+            if code == ',':
+                break
+            to_sys = self._to_sys.get(code)
+            if to_sys is not None:
+                flags.add(to_sys)
+            else:
+                to_kwd = self._to_kwd.get(code)
+                if to_kwd is not None:
+                    flags.add(to_kwd)
+        return frozenset(flags)
+
+    @classmethod
+    def get_file(cls) -> str:
+        return 'dovecot-keywords'
+
+    @classmethod
+    def get_default(cls: Type[_MFT], base_dir: str) -> _MFT:
+        return cls([])
+
+    @classmethod
+    def open(cls: Type[_MFT], base_dir: str, fp: IO[str]) -> _MFT:
+        ret = []
+        for line in fp:
+            i, kwd = line.split()
+            if kwd.startswith('\\'):
+                raise ValueError(kwd)
+            ret.append((i, kwd))
+        return cls([Flag(kwd) for _, kwd in sorted(ret)])

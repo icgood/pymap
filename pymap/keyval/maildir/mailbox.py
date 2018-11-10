@@ -1,36 +1,42 @@
 
-import dbm  # type: ignore
-import errno
-import os
-import os.path
-import time
-from concurrent.futures import TimeoutError
-from contextlib import contextmanager
 from datetime import datetime
+from email.message import EmailMessage
 from mailbox import Maildir, MaildirMessage, NoSuchMailboxError  # type: ignore
 from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, \
-    Iterator, FrozenSet
+    Iterable, FrozenSet
 from weakref import WeakSet
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
 from pymap.selected import SelectedMailbox
 
-from .flags import get_permanent_flags, flags_from_imap, flags_from_maildir
+from .flags import MaildirFlags
+from .io import NoChanges
+from .subscriptions import Subscriptions
+from .uidlist import Record, UidList
 from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
 
-__all__ = ['Message', 'Mailbox']
+__all__ = ['Message', 'MailboxSnapshot', 'Mailbox']
 
 _Db = Dict[str, bytes]
 
 
 class Message(KeyValMessage):
 
+    def __init__(self, uid: int, contents: EmailMessage,
+                 permanent_flags: Iterable[Flag],
+                 internal_date: Optional[datetime],
+                 maildir_flags: 'MaildirFlags'):
+        super().__init__(uid, contents, permanent_flags, internal_date,
+                         maildir_flags)
+        self.maildir_flags = maildir_flags
+
     @property
     def maildir_msg(self) -> MaildirMessage:
         is_recent = Recent in self.permanent_flags
-        flag_str = flags_from_imap(self.permanent_flags - {Recent})
+        flag_str = self.maildir_flags.to_maildir(self.permanent_flags)
         msg_bytes = self.get_body(binary=True)
         maildir_msg = MaildirMessage(msg_bytes)
         maildir_msg.set_flags(flag_str)
@@ -40,13 +46,14 @@ class Message(KeyValMessage):
         return maildir_msg
 
     @classmethod
-    def from_maildir(self, uid: int, maildir_msg: MaildirMessage) -> 'Message':
-        flag_set = flags_from_maildir(maildir_msg.get_flags())
+    def from_maildir(cls, uid: int, maildir_msg: MaildirMessage,
+                     maildir_flags: 'MaildirFlags') -> 'Message':
+        flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         if maildir_msg.get_subdir() == 'new':
             flag_set = flag_set | {Recent}
         msg_date = datetime.fromtimestamp(maildir_msg.get_date())
         msg_bytes = bytes(maildir_msg)
-        return self.parse(uid, msg_bytes, flag_set, msg_date)
+        return cls.parse(uid, msg_bytes, flag_set, msg_date, maildir_flags)
 
 
 class Mailbox(KeyValMailbox[Message]):
@@ -61,43 +68,11 @@ class Mailbox(KeyValMailbox[Message]):
         self._maildir = maildir
         self._path = maildir._path
         self._uid_validity = 0
+        self._flags: Optional[MaildirFlags] = None
         self._messages_lock = ReadWriteLock.for_threading()
         self._folder_cache: Dict[str, 'Mailbox'] = {}
         self._last_selected: WeakSet[SelectedMailbox] = WeakSet()
         self._updated = Event.for_threading()
-
-    @classmethod
-    def _db_path(cls, maildir: Maildir) -> str:
-        return os.path.join(maildir._path, '.uid')
-
-    @classmethod
-    def _tmp_db_path(cls, maildir: Maildir) -> str:
-        return os.path.join(maildir._path, 'tmp.uid')
-
-    @contextmanager
-    def _dbm_open(self, mode: str, tmp: bool = False) -> Iterator[_Db]:
-        if tmp:
-            path = self._tmp_db_path(self._maildir)
-        else:
-            path = self._db_path(self._maildir)
-        count = 0
-        while True:
-            try:
-                db = dbm.open(path, mode)
-            except dbm.error as exc:
-                exc_errno = getattr(exc, 'errno', None)
-                if exc_errno != errno.EAGAIN:
-                    raise
-                count += 1
-                if count >= self.db_retry_count:
-                    raise TimeoutError()
-                time.sleep(self.db_retry_delay)
-            else:
-                try:
-                    yield db
-                finally:
-                    db.close()
-                break
 
     @property
     def name(self) -> str:
@@ -108,8 +83,15 @@ class Mailbox(KeyValMailbox[Message]):
         return self._uid_validity
 
     @property
+    def maildir_flags(self) -> MaildirFlags:
+        if self._flags is not None:
+            return self._flags
+        self._flags = flags = MaildirFlags.file_read(self._path)
+        return flags
+
+    @property
     def permanent_flags(self) -> FrozenSet[Flag]:
-        return get_permanent_flags()
+        return self.maildir_flags.permanent_flags
 
     @property
     def messages_lock(self) -> ReadWriteLock:
@@ -136,18 +118,23 @@ class Mailbox(KeyValMailbox[Message]):
         self._last_selected.add(selected)
         return selected
 
-    def _is_subscribed(self, name: str) -> bool:
-        with self._dbm_open('c') as db:
-            is_subscribed = db.get('subscribed-' + name)
-            return is_subscribed == b'true'
+    def parse_message(self, append_msg: AppendMessage,
+                      with_recent: bool) -> Message:
+        flag_set = append_msg.flag_set
+        if with_recent:
+            flag_set = flag_set | {Recent}
+        return Message.parse(0, append_msg.message, flag_set,
+                             append_msg.when, self.maildir_flags)
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
-        with self._dbm_open('c') as db:
-            db['subscribed-' + name] = b'true' if subscribed else b''
+        async with Subscriptions.with_write(self._path) as subs:
+            subs.set(name, subscribed)
 
     async def list_subscribed(self) -> Sequence[str]:
+        async with Subscriptions.with_read(self._path) as subs:
+            subscribed = frozenset(subs.subscribed)
         return [name for name in self._maildir.list_folders()
-                if self._is_subscribed(name)]
+                if name in subscribed]
 
     async def list_mailboxes(self) -> Sequence[str]:
         return self._maildir.list_folders()
@@ -179,11 +166,8 @@ class Mailbox(KeyValMailbox[Message]):
         if name not in self._maildir.list_folders():
             raise MailboxNotFound(name)
         maildir = self._maildir.get_folder(name)
-        try:
-            os.unlink(self._db_path(maildir))
-            os.unlink(self._tmp_db_path(maildir))
-        except OSError:
-            pass
+        async with UidList.write_lock(self._path):
+            UidList.delete(self._path)
         maildir.clear()
         self._maildir.remove_folder(name)
 
@@ -199,51 +183,54 @@ class Mailbox(KeyValMailbox[Message]):
         if before == 'INBOX':
             async with self.messages_lock.write_lock():
                 self._maildir.clear()
-            with self._dbm_open('w') as db:
-                del db['uid-validity']
+            async with UidList.write_lock(self._path):
+                UidList.delete(self._path)
         else:
             await self.remove_mailbox(before)
         return await after_mbx.reset()
 
     async def get_max_uid(self) -> int:
-        with self._dbm_open('r') as db:
-            return int(db['max-uid'].decode('ascii'))
+        async with UidList.with_open(self._path) as uidl:
+            return uidl.next_uid - 1
 
     async def add(self, message: Message) -> 'Message':
         async with self.messages_lock.write_lock():
-            key = self._maildir.add(message.maildir_msg)
-        with self._dbm_open('w') as db:
-            new_uid = int(db['max-uid'].decode('ascii')) + 1
-            db['max-uid'] = b'%i' % new_uid
-            db['uid-%i' % new_uid] = key
-            db['key-' + key] = b'%i' % new_uid
-        return message.copy(new_uid)
+            maildir_msg = message.maildir_msg
+            key = self._maildir.add(maildir_msg)
+            filename = key + ':' + maildir_msg.get_info()
+        async with UidList.with_write(self._path) as uidl:
+            new_rec = Record(uidl.next_uid, {}, filename)
+            uidl.next_uid += 1
+            uidl.set(new_rec)
+        return message.copy(new_rec.uid)
 
     async def get(self, uid: int) -> Message:
-        with self._dbm_open('r') as db:
-            key = db['uid-%i' % uid].decode('ascii')
+        async with UidList.with_read(self._path) as uidl:
+            rec = uidl.get(uid)
+            key = rec.filename.split(':', 1)[0]
         async with self.messages_lock.read_lock():
             maildir_msg = self._maildir[key]
-            return Message.from_maildir(uid, maildir_msg)
+            return Message.from_maildir(uid, maildir_msg, self.maildir_flags)
 
     async def delete(self, uid: int) -> None:
-        with self._dbm_open('r') as db:
-            key = db['uid-%i' % uid].decode('ascii')
+        async with UidList.with_read(self._path) as uidl:
+            rec = uidl.get(uid)
+            key = rec.filename.split(':', 1)[0]
         async with self.messages_lock.write_lock():
             del self._maildir[key]
 
     async def save_flags(self, *messages: Message) -> None:
         keys: Dict[int, str] = {}
-        with self._dbm_open('r') as db:
+        async with UidList.with_read(self._path) as uidl:
             for message in messages:
-                uid = message.uid
-                keys[uid] = db['uid-%i' % uid].decode('ascii')
+                rec = uidl.get(message.uid)
+                keys[message.uid] = rec.filename.split(':', 1)[0]
         async with self.messages_lock.write_lock():
             for message in messages:
                 key = keys[message.uid]
                 is_recent = Recent in message.permanent_flags
                 flag_set = message.permanent_flags - {Recent}
-                flag_str = flags_from_imap(flag_set)
+                flag_str = self.maildir_flags.to_maildir(flag_set)
                 maildir_msg = self._maildir[key]
                 maildir_msg.set_flags(flag_str)
                 maildir_msg.set_subdir('new' if is_recent else 'cur')
@@ -255,66 +242,76 @@ class Mailbox(KeyValMailbox[Message]):
 
     async def cleanup(self) -> None:
         self._maildir.clean()
-        folders = self._maildir.list_folders()
+        folders = frozenset(self._maildir.list_folders())
         async with self.messages_lock.read_lock():
-            keys = list(self._maildir.keys())
-        with self._dbm_open('w') as db:
-            with self._dbm_open('n', tmp=True) as tmp_db:
-                tmp_db['uid-validity'] = db['uid-validity']
-                tmp_db['max-uid'] = db['max-uid']
-                for key in keys:
-                    uid = int(db['key-' + key].decode('ascii'))
-                    tmp_db['key-' + key] = b'%i' % uid
-                    tmp_db['uid-%i' % uid] = key
-                for folder in folders:
-                    subscribed = db.get('subscribed-' + folder)
-                    if subscribed:
-                        tmp_db['subscribed-' + folder] = subscribed
-            os.replace(self._tmp_db_path(self._maildir),
-                       self._db_path(self._maildir))
+            keys = {key: msg.get_info() for key, msg in self._maildir.items()}
+        async with UidList.with_write(self._path) as uidl:
+            for rec in list(uidl.records):
+                key = rec.filename.split(':', 1)[0]
+                info = keys.get(key)
+                if info is None:
+                    uidl.remove(rec.uid)
+                else:
+                    filename = key + ':' + info
+                    new_rec = Record(rec.uid, rec.fields, filename)
+                    uidl.set(new_rec)
+        async with Subscriptions.with_write(self._path) as subs:
+            for folder in subs.subscribed:
+                if folder not in folders:
+                    subs.remove(folder)
 
     async def uids(self) -> AsyncIterable[int]:
+        uids: Dict[int, str] = {}
+        async with UidList.with_read(self._path) as uidl:
+            for rec in uidl.records:
+                key = rec.filename.split(':', 1)[0]
+                uids[rec.uid] = key
         async with self.messages_lock.read_lock():
-            keys = sorted(self._maildir.keys())
-        with self._dbm_open('r') as db:
-            for key in keys:
-                yield int(db['key-' + key].decode('ascii'))
+            for uid, key in uids.items():
+                if key in self._maildir:
+                    yield uid
 
     async def messages(self) -> AsyncIterable[Message]:
+        uids: Dict[int, str] = {}
+        async with UidList.with_read(self._path) as uidl:
+            for rec in uidl.records:
+                key = rec.filename.split(':', 1)[0]
+                uids[rec.uid] = key
         async with self.messages_lock.read_lock():
-            keys = sorted(self._maildir.keys())
-        with self._dbm_open('r') as db:
-            for key in keys:
-                uid = int(db['key-' + key].decode('ascii'))
-                maildir_msg = self._maildir[key]
-                yield Message.from_maildir(uid, maildir_msg)
+            for uid, key in uids.items():
+                maildir_msg = self._maildir.get(key)
+                if maildir_msg is not None:
+                    yield Message.from_maildir(uid, maildir_msg,
+                                               self.maildir_flags)
 
     async def items(self) -> AsyncIterable[Tuple[int, Message]]:
+        uids: Dict[int, str] = {}
+        async with UidList.with_read(self._path) as uidl:
+            for rec in uidl.records:
+                key = rec.filename.split(':', 1)[0]
+                uids[rec.uid] = key
         async with self.messages_lock.read_lock():
-            keys = sorted(self._maildir.keys())
-        with self._dbm_open('r') as db:
-            for key in keys:
-                uid = int(db['key-' + key].decode('ascii'))
-                maildir_msg = self._maildir[key]
-                yield uid, Message.from_maildir(uid, maildir_msg)
+            for uid, key in uids.items():
+                maildir_msg = self._maildir.get(key)
+                if maildir_msg is not None:
+                    yield uid, Message.from_maildir(uid, maildir_msg,
+                                                    self.maildir_flags)
 
     async def reset(self) -> 'Mailbox':
+        keys: Dict[str, str] = {}
         async with self.messages_lock.read_lock():
-            keys = sorted(self._maildir.keys())
-        with self._dbm_open('c') as db:
-            if 'uid-validity' in db:
-                self._uid_validity = int(db['uid-validity'].decode('ascii'))
-                max_uid = int(db['max-uid'].decode('ascii'))
-            else:
-                self._uid_validity = MailboxSnapshot.new_uid_validity()
-                db['uid-validity'] = b'%i' % self._uid_validity
-                max_uid = 0
-            for key in keys:
-                key_str = 'key-' + key
-                if key_str not in db:
-                    max_uid += 1
-                    uid_str = 'uid-%i' % max_uid
-                    db[key_str] = b'%i' % max_uid
-                    db[uid_str] = key
-            db['max-uid'] = b'%i' % max_uid
+            for key in sorted(self._maildir.keys()):
+                keys[key] = self._maildir[key].get_info()
+        async with UidList.with_write(self._path) as uidl:
+            self._uid_validity = uidl.uid_validity
+            for rec in uidl.records:
+                key = rec.filename.split(':', 1)[0]
+                keys.pop(key, None)
+            if not keys:
+                raise NoChanges()
+            for key, info in keys.items():
+                filename = key + ':' + info
+                new_rec = Record(uidl.next_uid, {}, filename)
+                uidl.next_uid += 1
+                uidl.set(new_rec)
         return self

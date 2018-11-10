@@ -7,8 +7,8 @@ from email.generator import BytesGenerator
 from email.headerregistry import BaseHeader
 from email.message import EmailMessage
 from email.policy import SMTP
-from typing import cast, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
-    Sequence, Union, NamedTuple, AbstractSet, TypeVar, Type
+from typing import cast, Any, Tuple, Optional, Iterable, Set, Dict, \
+    FrozenSet, Sequence, Union, NamedTuple, AbstractSet, TypeVar, Type
 
 from pymap.flags import FlagOp
 from .interfaces.message import Message, LoadedMessage
@@ -41,21 +41,19 @@ class AppendMessage(NamedTuple):
     options: ExtensionOptions
 
 
-class _FullBytesGenerator(BytesGenerator):
+class _BytesGenerator(BytesGenerator):
 
-    def __init__(self, ofp, binary):
-        policy = SMTP if binary else SMTP.clone(cte_type='7bit')
-        super().__init__(ofp, False, policy=policy)
+    def __init__(self, ofp, *args, **kwargs):
+        if 'policy' not in kwargs:
+            binary = kwargs.pop('binary', None)
+            kwargs['policy'] = SMTP if binary else SMTP.clone(cte_type='7bit')
+        super().__init__(ofp, *args, **kwargs)
 
 
-class _BodyOnlyBytesGenerator(BytesGenerator):
+class _BodyOnlyBytesGenerator(_BytesGenerator):
     # This should produce a bytestring of a email.message.Message object
     # without including any headers, by exploiting the internal _write_headers
     # method.
-
-    def __init__(self, ofp, binary):
-        policy = SMTP if binary else SMTP.clone(cte_type='7bit')
-        super().__init__(ofp, False, policy=policy)
 
     def _write_headers(self, *args, **kwargs):
         pass
@@ -73,11 +71,14 @@ class BaseMessage(Message):
     """
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None) -> None:
+                 internal_date: datetime = None,
+                 *args: Any, **kwargs: Any) -> None:
         super().__init__()
         self._uid = uid
         self._permanent_flags = set(permanent_flags or [])
         self._internal_date = internal_date
+        self._args = args
+        self._kwargs = kwargs
 
     @property
     def uid(self) -> int:
@@ -93,7 +94,7 @@ class BaseMessage(Message):
 
     def copy(self: _MT, new_uid: int) -> _MT:
         return self.__class__(new_uid, self.permanent_flags,
-                              self.internal_date)
+                              self.internal_date, *self._args, **self._kwargs)
 
     def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
@@ -134,18 +135,22 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
 
     def __init__(self, uid: int, contents: EmailMessage,
                  permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None) -> None:
+                 internal_date: datetime = None,
+                 *args: Any, **kwargs: Any) -> None:
         super().__init__(uid, permanent_flags, internal_date)
         self.contents: EmailMessage = contents
+        self._args = args
+        self._kwargs = kwargs
 
     def copy(self: _LMT, new_uid: int) -> _LMT:
         return self.__class__(new_uid, self.contents, self.permanent_flags,
-                              self.internal_date)
+                              self.internal_date, *self._args, **self._kwargs)
 
     @classmethod
     def parse(cls: Type[_LMT], uid: int, data: bytes,
               permanent_flags: Iterable[Flag] = None,
-              internal_date: datetime = None) -> _LMT:
+              internal_date: datetime = None,
+              *args: Any, **kwargs: Any) -> _LMT:
         """Parse the given bytestring containing a MIME-encoded email message
         into a :class:`BaseLoadedMessage` object.
 
@@ -159,7 +164,8 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         msg = email.message_from_bytes(data, policy=SMTP)
         email_msg = cast(EmailMessage, msg)
         return cls(uid, email_msg, permanent_flags,
-                   internal_date or datetime.now(timezone.utc))
+                   internal_date or datetime.now(timezone.utc),
+                   *args, **kwargs)
 
     @classmethod
     def _get_subpart(cls, msg: 'BaseLoadedMessage', section) -> 'EmailMessage':
@@ -221,13 +227,13 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         except IndexError:
             return None
         ofp = io.BytesIO()
-        _BodyOnlyBytesGenerator(ofp, binary).flatten(msg)
+        _BodyOnlyBytesGenerator(ofp, binary=binary).flatten(msg)
         return ofp.getvalue()
 
     @classmethod
     def _get_bytes(cls, msg: 'EmailMessage', binary: bool = False) -> bytes:
         ofp = io.BytesIO()
-        _FullBytesGenerator(ofp, binary).flatten(msg)
+        _BytesGenerator(ofp, binary=binary).flatten(msg)
         return ofp.getvalue()
 
     @classmethod

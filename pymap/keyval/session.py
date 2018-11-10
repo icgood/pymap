@@ -1,5 +1,5 @@
 
-from typing import overload, TypeVar, Type, Generic, Tuple, Optional, \
+from typing import overload, TypeVar, Generic, Tuple, Optional, \
     FrozenSet, Mapping, Iterable, Sequence, List
 
 from pymap.concurrent import Event, TimeoutError
@@ -18,18 +18,24 @@ from .util import asyncenumerate
 
 __all__ = ['KeyValSession']
 
-_T = TypeVar('_T', bound='KeyValSession')
-_Mailbox = TypeVar('_Mailbox', bound=KeyValMailbox)
 _Message = TypeVar('_Message', bound=KeyValMessage)
+_Mailbox = TypeVar('_Mailbox', bound=KeyValMailbox)
 
 
 class KeyValSession(Generic[_Mailbox, _Message],
                     SessionInterface[SelectedMailbox]):
 
-    def __init__(self, inbox: _Mailbox, msg_type: Type[_Message]) -> None:
+    def __init__(self, inbox: _Mailbox) -> None:
         super().__init__()
         self.inbox = inbox
-        self.msg_type = msg_type
+
+    def _get_mbx_selected(self, selected: Optional[SelectedMailbox],
+                          mbx: _Mailbox) -> Optional[SelectedMailbox]:
+        if selected and selected.name == mbx.name:
+            return selected
+        elif mbx.last_selected:
+            return mbx.last_selected
+        return None
 
     @overload
     async def _load_updates(self, selected: SelectedMailbox,
@@ -115,18 +121,13 @@ class KeyValSession(Generic[_Mailbox, _Message],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         mbx = await self.inbox.get_mailbox(name)
-        last_selected = mbx.last_selected
+        mbx_selected = self._get_mbx_selected(selected, mbx)
         uids: List[int] = []
         for append_msg in messages:
-            msg = self.msg_type.parse(0, append_msg.message,
-                                      append_msg.flag_set, append_msg.when)
+            msg = mbx.parse_message(append_msg, not mbx_selected)
             msg = await mbx.add(msg)
-            if selected and selected.name == name:
-                selected.session_flags.add_recent(msg.uid)
-            elif last_selected:
-                last_selected.session_flags.add_recent(msg.uid)
-            else:
-                msg.permanent_flags.add(Recent)
+            if mbx_selected:
+                mbx_selected.session_flags.add_recent(msg.uid)
             uids.append(msg.uid)
         mbx.updated.set()
         return (AppendUid(mbx.uid_validity, uids),

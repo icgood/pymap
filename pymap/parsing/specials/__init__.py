@@ -3,14 +3,14 @@ primitives.
 
 """
 
-__all__ = ['AString', 'DateTime', 'FetchAttribute', 'Flag', 'SystemFlag',
-           'Keyword', 'Mailbox', 'SearchKey', 'SequenceSet',
-           'StatusAttribute', 'Tag', 'ExtensionOption', 'ExtensionOptions']
+__all__ = ['AString', 'DateTime', 'FetchAttribute', 'Flag', 'Mailbox',
+           'SearchKey', 'SequenceSet', 'StatusAttribute', 'Tag',
+           'ExtensionOption', 'ExtensionOptions']
 
 from .astring import AString
 from .datetime_ import DateTime
 from .fetchattr import FetchAttribute
-from .flag import Flag, SystemFlag, Keyword
+from .flag import Flag
 from .mailbox import Mailbox
 from .searchkey import SearchKey
 from .sequenceset import SequenceSet

@@ -6,8 +6,8 @@ from typing import cast, FrozenSet, Tuple, Optional, Iterable
 from .exceptions import SearchNotAllowed
 from .interfaces.message import Message, LoadedMessage
 from .parsing.specials import SearchKey, SequenceSet
-from .parsing.specials.flag import Flag, Keyword, Answered, Deleted, Draft, \
-    Flagged, Recent, Seen
+from .parsing.specials.flag import Flag, Answered, Deleted, Draft, Flagged, \
+    Recent, Seen
 from .selected import SelectedMailbox
 
 __all__ = ['SearchParams', 'SearchCriteria', 'SearchCriteriaSet']
@@ -124,10 +124,10 @@ class SearchCriteria:
         elif key.value == b'UNSEEN':
             return HasFlagSearchCriteria(Seen, False, params)
         elif key.value == b'KEYWORD':
-            keyword = cast(Keyword, key.filter)
+            keyword = cast(Flag, key.filter)
             return HasFlagSearchCriteria(keyword, True, params)
         elif key.value == b'UNKEYWORD':
-            keyword = cast(Keyword, key.filter)
+            keyword = cast(Flag, key.filter)
             return HasFlagSearchCriteria(keyword, False, params)
         elif key.value == b'NEW':
             return NewSearchCriteria(params)

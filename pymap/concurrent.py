@@ -4,6 +4,8 @@ an implementation using :mod:`asyncio` and :mod`threading` primitives.
 """
 
 import asyncio
+import os.path
+import time
 from abc import abstractmethod, ABCMeta
 from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock
 from concurrent.futures import TimeoutError
@@ -12,7 +14,7 @@ from threading import Event as _threading_Event, Lock as _threading_Lock
 from typing import AsyncContextManager, AsyncIterator, TypeVar
 from weakref import WeakSet
 
-__all__ = ['Event', 'ReadWriteLock', 'TimeoutError']
+__all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError']
 
 _Event = TypeVar('_Event', bound='Event')
 
@@ -31,6 +33,7 @@ class ReadWriteLock(metaclass=ABCMeta):
         return _ThreadingReadWriteLock()
 
     @property
+    @abstractmethod
     def subsystem(self) -> str:
         """The sub-system the read-write lock was created for, ``'asyncio'`` or
         ``'threading'``.
@@ -70,6 +73,7 @@ class Event(metaclass=ABCMeta):
         return _ThreadingEvent()
 
     @property
+    @abstractmethod
     def subsystem(self) -> str:
         """The sub-system the event was created for, ``'asyncio'`` or
         ``'threading'``.
@@ -188,6 +192,101 @@ class _ThreadingReadWriteLock(ReadWriteLock):
     async def write_lock(self) -> AsyncIterator[None]:
         with self._write_lock:
             yield
+
+
+class FileLock(ReadWriteLock):
+    """Uses the presence or absence of a file on the filesystem to simulate
+    a read-write lock. If the file is present, other read- and write-locks will
+    block until the file is gone. If the file is absent, read-locks will not
+    block. Write-locks will create the file on acquire and remove it on
+    release.
+
+    Args:
+        path: The path of the lock file.
+        expiration: Lock files older than this age will be deleted.
+        read_retry_delay: The delay between read-lock attempts.
+        read_retry_max: Max number of read-lock retries before failure.
+        write_retry_delay: The delay between write-lock attempts.
+        write_retry_max: Max number of write-lock retries before failure.
+
+    """
+
+    def __init__(self, path: str, expiration: float = 360.0,
+                 read_retry_delay: float = 0.1, read_retry_max: int = 100,
+                 write_retry_delay: float = 0.1, write_retry_max: int = 100) \
+            -> None:
+        super().__init__()
+        self.path = path
+        self.expiration = expiration
+        self.read_retry_delay = read_retry_delay
+        self.read_retry_max = read_retry_max
+        self.write_retry_delay = write_retry_delay
+        self.write_retry_max = write_retry_max
+
+    @property
+    def subsystem(self) -> str:
+        return 'file'
+
+    def _check_lock(self) -> bool:
+        try:
+            statinfo = os.stat(self.path)
+        except FileNotFoundError:
+            return True
+        else:
+            if time.time() - statinfo.st_mtime >= self.expiration:
+                try:
+                    os.unlink(self.path)
+                except OSError:
+                    pass
+                return True
+            return False
+
+    def _try_lock(self) -> bool:
+        try:
+            with open(self.path, 'x'):
+                pass
+        except FileExistsError:
+            return False
+        else:
+            return True
+
+    def _unlock(self) -> None:
+        try:
+            os.unlink(self.path)
+        except OSError:
+            pass
+
+    @asynccontextmanager
+    async def read_lock(self) -> AsyncIterator[None]:
+        if self._check_lock():
+            yield
+            return
+        for _ in range(self.read_retry_max):
+            await asyncio.sleep(self.read_retry_delay)
+            if not os.path.exists(self.path):
+                yield
+                break
+        else:
+            raise TimeoutError()
+
+    @asynccontextmanager
+    async def write_lock(self) -> AsyncIterator[None]:
+        if self._check_lock() and self._try_lock():
+            try:
+                yield
+            finally:
+                self._unlock()
+            return
+        for _ in range(self.write_retry_max):
+            await asyncio.sleep(self.write_retry_delay)
+            if self._try_lock():
+                try:
+                    yield
+                finally:
+                    self._unlock()
+                break
+        else:
+            raise TimeoutError()
 
 
 class _AsyncioEvent(Event):

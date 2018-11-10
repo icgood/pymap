@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import cast, Tuple, Union, Sequence
 
 from .astring import AString
-from .flag import Keyword
+from .flag import Flag
 from .sequenceset import SequenceSet
 from .. import ExpectedParseable, NotParseable, UnexpectedType, Space, \
     Params, Special
@@ -12,7 +12,7 @@ from ..primitives import Atom, Number, QuotedString, ListP
 __all__ = ['SearchKey']
 
 _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
-                    Sequence['SearchKey'], SequenceSet, Keyword,
+                    Sequence['SearchKey'], SequenceSet, Flag,
                     datetime, int, str]
 
 
@@ -127,8 +127,10 @@ class SearchKey(Special[bytes]):
             return cls(key, filter_, inverse), buf
         elif key in (b'KEYWORD', b'UNKEYWORD'):
             _, buf = Space.parse(after, params)
-            keyword, buf = Keyword.parse(buf, params)
-            return cls(key, keyword, inverse), buf
+            flag, after_buf = Flag.parse(buf, params)
+            if flag.is_system:
+                raise NotParseable(buf)
+            return cls(key, flag, inverse), after_buf
         elif key in (b'LARGER', b'SMALLER'):
             _, buf = Space.parse(after, params)
             num, buf = Number.parse(buf, params)

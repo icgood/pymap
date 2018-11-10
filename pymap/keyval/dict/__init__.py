@@ -100,7 +100,7 @@ class Session(KeyValSession[Mailbox, Message]):
             if config.demo_data:
                 await cls._load_demo(inbox)
             config.inbox_cache[user] = inbox
-        return cls(inbox, Message)
+        return cls(inbox)
 
     @classmethod
     async def get_password(cls, config: Config, user: str) -> str:
