@@ -11,12 +11,13 @@ from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock
 from concurrent.futures import TimeoutError
 from contextlib import asynccontextmanager
 from threading import Event as _threading_Event, Lock as _threading_Lock
-from typing import AsyncContextManager, AsyncIterator, TypeVar
+from typing import AsyncContextManager, AsyncIterator, TypeVar, Sequence
 from weakref import WeakSet
 
 __all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError']
 
 _Event = TypeVar('_Event', bound='Event')
+_Delay = Sequence[float]
 
 
 class ReadWriteLock(metaclass=ABCMeta):
@@ -201,27 +202,30 @@ class FileLock(ReadWriteLock):
     block. Write-locks will create the file on acquire and remove it on
     release.
 
+    The delay arguments are a sequence of floats used as the duration of
+    successive :func:`~asyncio.sleep` calls. If this sequence is exhausted
+    before a lock is established, :class:`TimeoutError` is thrown.
+
     Args:
         path: The path of the lock file.
         expiration: Lock files older than this age will be deleted.
-        read_retry_delay: The delay between read-lock attempts.
-        read_retry_max: Max number of read-lock retries before failure.
-        write_retry_delay: The delay between write-lock attempts.
-        write_retry_max: Max number of write-lock retries before failure.
+        read_retry_delay: The delay sequence between read-lock attempts.
+        write_retry_delay: The delay sequence between write-lock attempts.
 
     """
 
-    def __init__(self, path: str, expiration: float = 360.0,
-                 read_retry_delay: float = 0.1, read_retry_max: int = 100,
-                 write_retry_delay: float = 0.1, write_retry_max: int = 100) \
+    _DEFAULT_DELAY = (0.01, 0.03, 0.06, 0.1, 0.15, 0.25, 0.4, 0.5, 0.5, 1.0,
+                      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
+
+    def __init__(self, path: str, expiration: float = 600.0,
+                 read_retry_delay: _Delay = _DEFAULT_DELAY,
+                 write_retry_delay: _Delay = _DEFAULT_DELAY) \
             -> None:
         super().__init__()
         self.path = path
         self.expiration = expiration
         self.read_retry_delay = read_retry_delay
-        self.read_retry_max = read_retry_max
         self.write_retry_delay = write_retry_delay
-        self.write_retry_max = write_retry_max
 
     @property
     def subsystem(self) -> str:
@@ -261,8 +265,8 @@ class FileLock(ReadWriteLock):
         if self._check_lock():
             yield
             return
-        for _ in range(self.read_retry_max):
-            await asyncio.sleep(self.read_retry_delay)
+        for delay in self.read_retry_delay:
+            await asyncio.sleep(delay)
             if not os.path.exists(self.path):
                 yield
                 break
@@ -277,8 +281,8 @@ class FileLock(ReadWriteLock):
             finally:
                 self._unlock()
             return
-        for _ in range(self.write_retry_max):
-            await asyncio.sleep(self.write_retry_delay)
+        for delay in self.write_retry_delay:
+            await asyncio.sleep(delay)
             if self._try_lock():
                 try:
                     yield

@@ -157,6 +157,8 @@ class MockTransport:
     def get_extra_info(self, name: str):
         if name == 'socket':
             return self.socket
+        elif name == 'peername':
+            return 'test'
 
     async def readline(self) -> bytes:
         where, data, wait, set = self._pop_expected(_Type.READLINE)

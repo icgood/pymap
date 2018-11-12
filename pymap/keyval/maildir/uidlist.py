@@ -15,6 +15,7 @@ _UDT = TypeVar('_UDT', bound='UidList')
 
 
 class Record(NamedTuple):
+    """Defines a single record read from the UID list file."""
     uid: int
     fields: Mapping[str, Any]
     filename: str
@@ -30,6 +31,12 @@ class UidList(FileWriteable):
         global_uid: The 128-bit global mailbox UID.
 
     """
+
+    #: The UID list file name, stored in the mailbox directory.
+    FILE_NAME = 'dovecot-uidlist'
+
+    #: The UID list lock file, stored adjacent to the UID list file.
+    LOCK_FILE = 'dovecot-uidlist.lock'
 
     def __init__(self, base_dir: str, uid_validity: int,
                  next_uid: int, global_uid: bytes = None) -> None:
@@ -132,11 +139,11 @@ class UidList(FileWriteable):
 
     @classmethod
     def get_file(cls) -> str:
-        return 'dovecot-uidlist'
+        return cls.FILE_NAME
 
     @classmethod
     def get_lock(cls) -> str:
-        return 'dovecot-uidlist.lock'
+        return cls.LOCK_FILE
 
     def get_dir(self) -> str:
         return self._base_dir

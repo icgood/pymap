@@ -20,6 +20,7 @@ Table of Contents
    flags
    mailbox
    message
+   peerinfo
    proxy
    search
    selected

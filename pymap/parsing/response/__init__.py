@@ -1,10 +1,10 @@
-from typing import List, Optional, Union, ClassVar
+from typing import List, Optional, Union
 
 from ..typing import MaybeBytes
 from ..util import BytesFormat
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
-           'ResponseNo', 'ResponseOk', 'ResponseBye']
+           'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth']
 
 
 class ResponseCode:
@@ -54,20 +54,32 @@ class Response:
     Attributes:
         tag: The tag bytestring.
         untagged: The list of added untagged responses.
+        condition: The condition bytestring, e.g. ``OK``.
 
     """
 
-    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None) -> None:
+    condition: Optional[bytes] = None
+
+    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
+                 code: ResponseCode = None) -> None:
         super().__init__()
         self.tag = bytes(tag)
         self.untagged: List[Union[MaybeBytes, 'Response']] = []
+        self.code = code
         self._text = text or b''
         self._raw: Optional[bytes] = None
 
     @property
     def text(self) -> bytes:
         """The response text."""
-        return bytes(self._text)
+        if self.condition:
+            if self.code:
+                return BytesFormat(b'%b %b %b') \
+                    % (self.condition, self.code, self._text)
+            else:
+                return BytesFormat(b'%b %b') % (self.condition, self._text)
+        else:
+            return bytes(self._text)
 
     def add_untagged(self, response: Union[MaybeBytes, 'Response']) -> None:
         """Add an untagged response. These responses are shown before the
@@ -129,21 +141,7 @@ class ResponseContinuation(Response):
         super().__init__(b'+', text)
 
 
-class ConditionResponse(Response):
-    """Base class for responses that indicate a condition, e.g. ``OK``.."""
-
-    condition: ClassVar[bytes] = b''
-
-    def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode]) -> None:
-        if code:
-            text = BytesFormat(b'%b %b %b') % (self.condition, code, text)
-        else:
-            text = BytesFormat(b'%b %b') % (self.condition, text)
-        super().__init__(tag, text)
-
-
-class ResponseBad(ConditionResponse):
+class ResponseBad(Response):
     """``BAD`` response indicating the server encountered a protocol-related
     error in responding to the command.
 
@@ -161,7 +159,7 @@ class ResponseBad(ConditionResponse):
         super().__init__(tag, text, code)
 
 
-class ResponseNo(ConditionResponse):
+class ResponseNo(Response):
     """``NO`` response indicating the server successfully parsed the command
     but failed to execute it successfully.
 
@@ -179,7 +177,7 @@ class ResponseNo(ConditionResponse):
         super().__init__(tag, text, code)
 
 
-class ResponseOk(ConditionResponse):
+class ResponseOk(Response):
     """``OK`` response indicating the server successfully parsed and executed
     the command.
 
@@ -197,7 +195,7 @@ class ResponseOk(ConditionResponse):
         super().__init__(tag, text, code)
 
 
-class ResponseBye(ConditionResponse):
+class ResponseBye(Response):
     """``BYE`` response indicating that the server will be closing the
     connection immediately after sending the response is sent. This may be sent
     in response to a command (e.g. ``LOGOUT``) or unsolicited.
@@ -218,3 +216,21 @@ class ResponseBye(ConditionResponse):
     def is_terminal(self) -> bool:
         """This response is always terminal."""
         return True
+
+
+class ResponsePreAuth(Response):
+    """``PREAUTH`` response during server greeting to indicate the client is
+    already logged in.
+
+    Args:
+        tag: The tag bytestring to associate the response to a command.
+        text: The response text.
+        code: Optional response code.
+
+    """
+
+    condition = b'PREAUTH'
+
+    def __init__(self, tag: MaybeBytes, text: MaybeBytes,
+                 code: Optional[ResponseCode] = None) -> None:
+        super().__init__(tag, text, code)

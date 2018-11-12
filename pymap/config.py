@@ -5,7 +5,7 @@ from concurrent.futures import Executor
 from ssl import SSLContext
 from typing import Sequence, Any, Optional, Mapping, TypeVar, Type, Callable
 
-from pysasl import SASLAuth
+from pysasl import SASLAuth, AuthenticationCredentials
 
 from .concurrent import Event, ReadWriteLock
 from .parsing import Params
@@ -32,6 +32,8 @@ class IMAPConfig:
         reject_insecure_auth: True if authentication mechanisms that transmit
             credentials in cleartext should be rejected on non-encrypted
             transports.
+        preauth_credentials: If given, clients will pre-authenticate on
+            connection using these credentials.
         max_append_len: The maximum allowed length of the message body to an
             ``APPEND`` command.
         bad_command_limit: The number of consecutive commands received from
@@ -50,6 +52,7 @@ class IMAPConfig:
                  ssl_context: SSLContext = None,
                  starttls_enabled: bool = True,
                  reject_insecure_auth: bool = True,
+                 preauth_credentials: AuthenticationCredentials = None,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
                  disable_idle: bool = False,
@@ -61,6 +64,7 @@ class IMAPConfig:
         self._ssl_context = ssl_context
         self._starttls_enabled = starttls_enabled
         self._reject_insecure_auth = reject_insecure_auth
+        self._preauth_credentials = preauth_credentials
         self._max_append_len = max_append_len
         self._bad_command_limit = bad_command_limit
         self._disable_idle = disable_idle
@@ -149,6 +153,10 @@ class IMAPConfig:
     @property
     def starttls_auth(self) -> SASLAuth:
         return SASLAuth()
+
+    @property
+    def preauth_credentials(self) -> Optional[AuthenticationCredentials]:
+        return self._preauth_credentials
 
     @property
     def static_capability(self) -> Sequence[bytes]:

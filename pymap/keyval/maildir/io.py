@@ -16,60 +16,31 @@ _WT = TypeVar('_WT', bound='FileWriteable')
 
 
 class NoChanges(Exception):
-    """Raise in a :meth:`~FileWriteable.with_write` to indicate that the file
-    has not changed and should not be re-written. The exception is swallowed by
-    the context manager and is not re-raised.
-
-    """
     pass
 
 
 class FileReadable(metaclass=ABCMeta):
-    """Defines an object that can be read in its entirety from a file."""
 
     @classmethod
     @abstractmethod
     def get_file(cls) -> str:
-        """Return the filename of the file."""
         ...
 
     @classmethod
     def get_lock(cls) -> Optional[str]:
-        """Return the filename of the lock file, if any."""
         return None
 
     @classmethod
     @abstractmethod
     def get_default(cls: Type[_RT], base_dir: str) -> _RT:
-        """Return the default value, if the file does not exist.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         ...
 
     @classmethod
     @abstractmethod
     def open(cls: Type[_RT], base_dir: str, fp: IO[str]) -> _RT:
-        """Defines how the object is opened from the file, reading any
-        necessary data to create the object.
-
-        Args:
-            base_dir: The directory of the file.
-            fp: The text file object open for reading.
-
-        """
         ...
 
     def read(self, fp: IO[str]) -> None:
-        """Defines how the rest of the object is read from the file,
-        if applicable.
-
-        Args:
-            fp: The text file object open for reading.
-
-        """
         pass
 
     @classmethod
@@ -79,7 +50,6 @@ class FileReadable(metaclass=ABCMeta):
 
     @classmethod
     def read_lock(cls, base_dir: str) -> AsyncContextManager[None]:
-        """Async context manager that acquires and releases a read lock."""
         lock_file = cls.get_lock()
         if lock_file:
             path = os.path.join(base_dir, lock_file)
@@ -89,7 +59,6 @@ class FileReadable(metaclass=ABCMeta):
 
     @classmethod
     def write_lock(cls, base_dir: str) -> AsyncContextManager[None]:
-        """Async context manager that acquires and releases a write lock."""
         lock_file = cls.get_lock()
         if lock_file:
             path = os.path.join(base_dir, lock_file)
@@ -99,24 +68,11 @@ class FileReadable(metaclass=ABCMeta):
 
     @classmethod
     def file_exists(cls, base_dir: str) -> bool:
-        """Check if the file exists in the directory.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         path = os.path.join(base_dir, cls.get_file())
         return os.path.exists(path)
 
     @classmethod
     def file_open(cls: Type[_RT], base_dir: str) -> _RT:
-        """Read a file from the directory, or return :meth:`.get_default` if
-        the file does not exist.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         path = os.path.join(base_dir, cls.get_file())
         try:
             with open(path, 'r') as in_file:
@@ -126,13 +82,6 @@ class FileReadable(metaclass=ABCMeta):
 
     @classmethod
     def file_read(cls: Type[_RT], base_dir: str) -> _RT:
-        """Read a file from the directory, or return :meth:`.get_default` if
-        the file does not exist.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         path = os.path.join(base_dir, cls.get_file())
         try:
             with open(path, 'r') as in_file:
@@ -144,57 +93,25 @@ class FileReadable(metaclass=ABCMeta):
 
     @classmethod
     def with_open(cls: Type[_RT], base_dir: str) -> '_FileReadWith[_RT]':
-        """Context manager that on entry opens the file, possibly checking
-        for the existence of a write lock file first.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         return _FileReadWith(base_dir, cls, True)
 
     @classmethod
     def with_read(cls: Type[_RT], base_dir: str) -> '_FileReadWith[_RT]':
-        """Context manager that on entry reads the contents of the file,
-        possibly checking for the existence of a write lock file first.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         return _FileReadWith(base_dir, cls, False)
 
 
 class FileWriteable(FileReadable, metaclass=ABCMeta):
-    """Defines an object that can be written to a file. First it is written to
-    a temporary file, and then that file is atomically renamed to the final
-    filename.
-
-    """
 
     @abstractmethod
     def get_dir(self) -> str:
-        """Return the directory of the file."""
         ...
 
     @abstractmethod
     def write(self, fp: IO[str]) -> None:
-        """Defines how the object is written to a file object.
-
-        Args:
-            fp: The text file object open for writing.
-
-        """
         ...
 
     @classmethod
     def delete(cls, base_dir: str) -> None:
-        """Delete the file, if it exists.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         path = os.path.join(base_dir, cls.get_file())
         try:
             os.unlink(path)
@@ -202,10 +119,6 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
             pass
 
     def file_write(self) -> None:
-        """Write the file to a temporary filename, and then atomically
-        rename the file to its destination filename.
-
-        """
         filename = self.get_file()
         base_dir = self.get_dir()
         path = os.path.join(base_dir, filename)
@@ -216,14 +129,6 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
 
     @classmethod
     def with_write(cls: Type[_WT], base_dir: str) -> '_FileWriteWith[_WT]':
-        """Context manager that on entry creates the lock file and reads the
-        contents of the file, and on exit writes the object back to the file
-        and removes the lock file.
-
-        Args:
-            base_dir: The directory of the file.
-
-        """
         return _FileWriteWith(base_dir, cls)
 
 

@@ -13,6 +13,7 @@ from ..flags import FlagOp
 from ..message import AppendMessage
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from ..parsing.response.code import AppendUid, CopyUid
+from ..peerinfo import PeerInfo
 from ..selected import SelectedMailbox
 
 __all__ = ['LoginProtocol', 'SessionInterface']
@@ -28,13 +29,15 @@ class LoginProtocol(Protocol[_Config, _Selected]):
     """
 
     async def __call__(self, credentials: AuthenticationCredentials,
-                       config: _Config) -> 'SessionInterface[_Selected]':
+                       config: _Config, peer_info: PeerInfo) \
+            -> 'SessionInterface[_Selected]':
         """Given a set of authentication credentials, initialize a new IMAP
         session for the user.
 
         Args:
             credentials: Authentication credentials supplied by the user.
             config: The config in use by the server.
+            peer_info: Information about the connected socket.
 
         Returns:
             The new IMAP session.

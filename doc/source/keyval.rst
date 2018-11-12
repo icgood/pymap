@@ -2,6 +2,12 @@
 ``pymap.keyval``
 ====================
 
+.. toctree::
+   :caption: Contents:
+
+   keyval.dict
+   keyval.maildir
+
 ``pymap.keyval.mailbox``
 ----------------------------
 
@@ -18,16 +24,4 @@
 ----------------------------
 
 .. automodule:: pymap.keyval.util
-   :members:
-
-``pymap.keval.dict``
-----------------------------
-
-.. automodule:: pymap.keyval.dict
-   :members:
-
-``pymap.keval.maildir``
-----------------------------
-
-.. automodule:: pymap.keyval.maildir
    :members:
