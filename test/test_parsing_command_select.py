@@ -4,28 +4,59 @@ import unittest
 from pymap.flags import FlagOp
 from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable, CommandInvalid
-from pymap.parsing.command.select import CopyCommand, FetchCommand, \
-    StoreCommand, UidCommand, SearchCommand, IdleCommand
+from pymap.parsing.command.select import ExpungeCommand, CopyCommand, \
+    FetchCommand, StoreCommand, SearchCommand, UidExpungeCommand, \
+    UidCopyCommand, UidFetchCommand, UidStoreCommand, UidSearchCommand, \
+    IdleCommand
 from pymap.parsing.specials import FetchAttribute, SearchKey, Flag
+
+
+class TestExpungeCommand(unittest.TestCase):
+
+    def test_parse(self):
+        ret, buf = ExpungeCommand.parse(b' \n  ', Params())
+        self.assertFalse(ret.uid)
+        self.assertEqual(b'  ', buf)
+
+    def test_parse_uid(self):
+        ret, buf = UidExpungeCommand.parse(b' 12,13,14 \n  ', Params())
+        self.assertTrue(ret.uid)
+        self.assertTrue(ret.uid_set.uid)
+        self.assertEqual([12, 13, 14], ret.uid_set.value)
+        self.assertEqual(b'  ', buf)
 
 
 class TestCopyCommand(unittest.TestCase):
 
     def test_parse(self):
         ret, buf = CopyCommand.parse(b' 1,2,3 mbx\n  ', Params())
+        self.assertFalse(ret.uid)
+        self.assertFalse(ret.sequence_set.uid)
         self.assertEqual([1, 2, 3], ret.sequence_set.value)
         self.assertEqual('mbx', ret.mailbox)
         self.assertEqual(b'  ', buf)
+
+    def test_parse_uid(self):
+        ret, buf = UidCopyCommand.parse(b' 1,2,3 mbx\n  ', Params())
+        self.assertTrue(ret.uid)
+        self.assertTrue(ret.sequence_set.uid)
 
 
 class TestFetchCommand(unittest.TestCase):
 
     def test_parse(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 ENVELOPE\n  ', Params())
+        self.assertFalse(ret.uid)
+        self.assertFalse(ret.sequence_set.uid)
         self.assertEqual([1, 2, 3], ret.sequence_set.value)
         self.assertEqual(1, len(ret.attributes))
         self.assertListEqual([FetchAttribute(b'ENVELOPE')], ret.attributes)
         self.assertEqual(b'  ', buf)
+
+    def test_parse_uid(self):
+        ret, buf = UidFetchCommand.parse(b' 1,2,3 ENVELOPE\n  ', Params())
+        self.assertTrue(ret.uid)
+        self.assertTrue(ret.sequence_set.uid)
 
     def test_parse_list(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 (FLAGS ENVELOPE)\n  ', Params())
@@ -67,11 +98,19 @@ class TestStoreCommand(unittest.TestCase):
     def test_parse(self):
         ret, buf = StoreCommand.parse(
             b' 1,2,3 +FLAGS.SILENT (\\Seen)\n  ', Params())
+        self.assertFalse(ret.uid)
+        self.assertFalse(ret.sequence_set.uid)
         self.assertEqual([1, 2, 3], ret.sequence_set.value)
         self.assertSetEqual({Flag(br'\Seen')}, ret.flag_set)
         self.assertEqual(FlagOp.ADD, ret.mode)
         self.assertTrue(ret.silent)
         self.assertEqual(b'  ', buf)
+
+    def test_parse_uid(self):
+        ret, buf = UidStoreCommand.parse(
+            b' 1,2,3 +FLAGS.SILENT (\\Seen)\n  ', Params())
+        self.assertTrue(ret.uid)
+        self.assertTrue(ret.sequence_set.uid)
 
     def test_parse_simple(self):
         ret, buf = StoreCommand.parse(b' 1,2,3 FLAGS \\Seen\n  ', Params())
@@ -84,40 +123,6 @@ class TestStoreCommand(unittest.TestCase):
     def test_parse_error(self):
         with self.assertRaises(NotParseable):
             StoreCommand.parse(b' 1,2,3 TEST (\\Seen)\n', Params())
-
-
-class TestUidCommand(unittest.TestCase):
-
-    def test_parse_command_copy(self):
-        ret, buf = UidCommand.parse(b' COPY * mbx\n  ', Params())
-        self.assertIsInstance(ret, CopyCommand)
-        self.assertTrue(ret.sequence_set.uid)
-        self.assertTrue(ret.uid)
-        self.assertEqual(b'  ', buf)
-
-    def test_parse_command_fetch(self):
-        ret, buf = UidCommand.parse(b' FETCH * ENVELOPE\n  ', Params())
-        self.assertIsInstance(ret, FetchCommand)
-        self.assertTrue(ret.sequence_set.uid)
-        self.assertTrue(ret.uid)
-        self.assertEqual(b'  ', buf)
-
-    def test_parse_command_store(self):
-        ret, buf = UidCommand.parse(b' STORE * FLAGS \\Seen\n  ', Params())
-        self.assertIsInstance(ret, StoreCommand)
-        self.assertTrue(ret.sequence_set.uid)
-        self.assertTrue(ret.uid)
-        self.assertEqual(b'  ', buf)
-
-    def test_parse_command_search(self):
-        ret, buf = UidCommand.parse(b' SEARCH ALL\n  ', Params())
-        self.assertIsInstance(ret, SearchCommand)
-        self.assertTrue(ret.uid)
-        self.assertEqual(b'  ', buf)
-
-    def test_parse_error(self):
-        with self.assertRaises(NotParseable):
-            UidCommand.parse(b' NOOP\n', Params())
 
 
 class TestSearchCommand(unittest.TestCase):
@@ -139,9 +144,14 @@ class TestSearchCommand(unittest.TestCase):
 
     def test_parse(self):
         ret, buf = SearchCommand.parse(b' ALL\n  ', Params())
+        self.assertFalse(ret.uid)
         self.assertSetEqual({SearchKey(b'ALL')}, ret.keys)
         self.assertIsNone(ret.charset)
         self.assertEqual(b'  ', buf)
+
+    def test_parse_uid(self):
+        ret, buf = UidSearchCommand.parse(b' ALL\n  ', Params())
+        self.assertTrue(ret.uid)
 
     def test_parse_error(self):
         with self.assertRaises(NotParseable):

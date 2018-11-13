@@ -93,8 +93,9 @@ class BaseMessage(Message):
         return self._internal_date
 
     def copy(self: _MT, new_uid: int) -> _MT:
-        return self.__class__(new_uid, self.permanent_flags,
-                              self.internal_date, *self._args, **self._kwargs)
+        cls = type(self)
+        return cls(new_uid, self.permanent_flags, self.internal_date,
+                   *self._args, **self._kwargs)
 
     def get_flags(self, session: Optional[SelectedMailbox]) \
             -> FrozenSet[Flag]:
@@ -143,8 +144,9 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         self._kwargs = kwargs
 
     def copy(self: _LMT, new_uid: int) -> _LMT:
-        return self.__class__(new_uid, self.contents, self.permanent_flags,
-                              self.internal_date, *self._args, **self._kwargs)
+        cls = type(self)
+        return cls(new_uid, self.contents, self.permanent_flags,
+                   self.internal_date, *self._args, **self._kwargs)
 
     @classmethod
     def parse(cls: Type[_LMT], uid: int, data: bytes,

@@ -28,13 +28,15 @@ from .parsing.command.auth import AppendCommand, CreateCommand, \
 from .parsing.command.select import CheckCommand, CloseCommand, IdleCommand, \
     ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, SearchCommand
 from .parsing.primitives import ListP, Number, String, Nil
-from .parsing.response import ResponseOk, ResponseNo, ResponseBad, Response
+from .parsing.response import Response, ResponseOk, ResponseNo, ResponseBad, \
+        ResponsePreAuth
 from .parsing.response.code import Capability, PermanentFlags, ReadOnly, \
     UidNext, UidValidity, Unseen, ReadWrite
 from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
 from .parsing.specials import DateTime
+from .peerinfo import PeerInfo
 from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
 
@@ -91,21 +93,26 @@ class ConnectionState:
                            self.auth.server_mechanisms] +
                           list(self.static_capability))
 
-    async def do_greeting(self):
-        return ResponseOk(b'*', b'Server ready ' + fqdn, self.capability)
+    async def do_greeting(self, peer_info: PeerInfo) -> Response:
+        preauth_creds = self.config.preauth_credentials
+        if preauth_creds:
+            self._session = await self.login(
+                preauth_creds, self.config, peer_info)
+        resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
+        return resp_cls(b'*', b'Server ready ' + fqdn, self.capability)
 
-    async def do_authenticate(self, cmd: _AuthCommands,
+    async def do_authenticate(self, cmd: _AuthCommands, peer_info: PeerInfo,
                               creds: Optional[AuthenticationCredentials]):
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self._session = await self.login(creds, self.config)
+        self._session = await self.login(creds, self.config, peer_info)
         return ResponseOk(cmd.tag, b'Authentication successful.')
 
-    async def do_login(self, cmd: LoginCommand,
-                       creds: AuthenticationCredentials):
+    async def do_login(self, cmd: LoginCommand, peer_info: PeerInfo,
+                       creds: AuthenticationCredentials) -> Response:
         if b'LOGINDISABLED' in self.capability:
             raise CommandNotAllowed(b'LOGIN is disabled.')
-        return await self.do_authenticate(cmd, creds)
+        return await self.do_authenticate(cmd, peer_info, creds)
 
     async def do_starttls(self, cmd: StartTLSCommand):
         if self.ssl_context is None:
@@ -351,6 +358,13 @@ class ConnectionState:
             for untagged in response.untagged:
                 yield cast(Response, untagged)
 
+    def _get_func_name(self, cmd: Command) -> str:
+        cmd_type = type(cmd)
+        while cmd_type.delegate:
+            cmd_type = cmd_type.delegate
+        cmd_str = str(cmd_type.command, 'ascii').lower()
+        return 'do_' + cmd_str
+
     async def do_command(self, cmd: Command):
         if self._session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
@@ -361,7 +375,7 @@ class ConnectionState:
         elif not self._selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
-        func_name = 'do_' + str(cmd.command, 'ascii').lower()
+        func_name = self._get_func_name(cmd)
         try:
             func: _CommandFunc = getattr(self, func_name)
         except AttributeError:

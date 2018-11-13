@@ -1,7 +1,7 @@
 
 import unittest
 
-from pymap.parsing.command.select import SearchCommand
+from pymap.parsing.command.select import SearchCommand, UidSearchCommand
 from pymap.parsing.response import ResponseOk
 from pymap.parsing.specials.flag import Seen, Flagged
 from pymap.selected import SelectedMailbox
@@ -11,11 +11,11 @@ class TestSelectedMailbox(unittest.TestCase):
 
     @property
     def command(self) -> SearchCommand:
-        return SearchCommand(b'.', [], None, False)
+        return SearchCommand(b'.', [], None)
 
     @property
     def uid_command(self) -> SearchCommand:
-        return SearchCommand(b'.', [], None, True)
+        return UidSearchCommand(b'.', [], None)
 
     @property
     def response(self) -> ResponseOk:

@@ -1,4 +1,4 @@
-from typing import Dict, Type, Tuple
+from typing import Dict, List, Type, Tuple
 
 from . import Space, Params
 from .command import Command,  any, auth, nonauth, select
@@ -27,14 +27,22 @@ class Commands:
         tag = Tag(b'*')
         try:
             tag, buf = Tag.parse(buf, params)
-            _, buf = Space.parse(buf, params)
-            atom, buf = Atom.parse(buf, params)
-            command = atom.value.upper()
         except NotParseable:
             raise CommandNotFound(tag.value)
-        cmd_type = self.commands.get(command)
-        if not cmd_type:
-            raise CommandNotFound(tag.value, command)
+        cmd_parts: List[bytes] = []
+        while True:
+            try:
+                _, buf = Space.parse(buf, params)
+                atom, buf = Atom.parse(buf, params)
+                cmd_parts.append(atom.value.upper())
+            except NotParseable:
+                raise CommandNotFound(tag.value)
+            command = b' '.join(cmd_parts)
+            cmd_type = self.commands.get(command)
+            if not cmd_type:
+                raise CommandNotFound(tag.value, command)
+            elif not cmd_type.compound:
+                break
         params = params.copy(tag=tag.value, command_name=command)
         try:
             return cmd_type.parse(buf, params)

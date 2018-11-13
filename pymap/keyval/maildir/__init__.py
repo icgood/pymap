@@ -1,5 +1,6 @@
 """Defines an on-disk configuration that uses :class:`~mailbox.Maildir` for
-mailbox storage and :mod:`dbm` for metadata storage.
+mailbox storage and `MailboxFormat/Maildir
+<https://wiki2.dovecot.org/MailboxFormat/Maildir>`_ for metadata storage.
 
 """
 
@@ -14,6 +15,7 @@ from pysasl import AuthenticationCredentials
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.session import LoginProtocol
+from pymap.peerinfo import PeerInfo
 
 from .mailbox import MailboxSnapshot, Message, Mailbox
 from ..session import KeyValSession
@@ -84,7 +86,7 @@ class Session(KeyValSession[Mailbox, Message]):
 
     @classmethod
     async def login(cls: Type[_ST], credentials: AuthenticationCredentials,
-                    config: Config) -> _ST:
+                    config: Config, peer_info: PeerInfo) -> _ST:
         """Checks the given credentials for a valid login and returns a new
         session.
 

@@ -163,7 +163,7 @@ class SelectedMailbox:
         responses by :meth:`.add_untagged`.
 
         """
-        cls: Type['SelectedMailbox'] = self.__class__
+        cls: Type['SelectedMailbox'] = type(self)
         copy = cls(self.name, self.readonly, self.uid_validity,
                    self._session_flags, self._on_fork, **self.kwargs)
         messages = [(uid, hash(flag_set))
@@ -183,7 +183,7 @@ class SelectedMailbox:
             response: The tagged response to the command.
 
         """
-        if self._previous and command.allow_updates:
+        if self._previous:
             for untagged in self._compare(command, self._previous,
                                           self._messages):
                 response.add_untagged(untagged)
@@ -202,14 +202,14 @@ class SelectedMailbox:
             return
         before_uids = frozenset(before.keys())
         current_uids = frozenset(current.keys())
-        sorted_uids = sorted(before_uids | current_uids)
+        sorted_before_uids = sorted(before_uids)
         expunged_uids = before_uids - current_uids
         both_uids = before_uids & current_uids
         new_uids = current_uids - before_uids
         expunged: List[int] = []
         both: List[Tuple[int, int]] = []
         new: List[Tuple[int, int]] = []
-        for seq, uid in enumerate(sorted_uids, 1):
+        for seq, uid in enumerate(sorted_before_uids, 1):
             if uid in expunged_uids:
                 self.session_flags.remove(uid)
                 expunged.append(seq)

@@ -1,4 +1,4 @@
-from typing import Tuple, ClassVar
+from typing import Tuple, Optional, Type, ClassVar
 
 from .. import Parseable, EndLine, Params
 
@@ -17,9 +17,11 @@ class Command(Parseable[bytes]):
     #: The command key, e.g. ``b'NOOP'``.
     command: ClassVar[bytes] = b''
 
-    #: Whether the command allows untagged updates from concurrent sessions
-    #: for the selected mailbox.
-    allow_updates: ClassVar[bool] = True
+    #: If given, execution of this command is handled by the delegate command.
+    delegate: ClassVar[Optional[Type['Command']]] = None
+
+    #: True if the command is part of a compound command.
+    compound: ClassVar[bool] = False
 
     def __init__(self, tag: bytes) -> None:
         super().__init__()

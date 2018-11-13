@@ -14,7 +14,7 @@ from typing import List, Optional
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
-from .concurrent import Event
+from .concurrent import Event, TimeoutError
 from .config import IMAPConfig
 from .exceptions import ResponseError
 from .interfaces.session import LoginProtocol
@@ -24,8 +24,9 @@ from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
     StartTLSCommand
 from .parsing.command.select import IdleCommand
 from .parsing.exceptions import RequiresContinuation, BadCommand
-from .parsing.response import ResponseContinuation, Response, \
-    ResponseBad, ResponseBye, ResponseOk
+from .parsing.response import ResponseContinuation, Response, ResponseCode, \
+    ResponseBad, ResponseNo, ResponseBye, ResponseOk
+from .peerinfo import PeerInfo
 from .state import ConnectionState
 
 __all__ = ['IMAPConfig', 'IMAPServer', 'IMAPConnection']
@@ -80,13 +81,13 @@ class IMAPConnection:
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
-        self.reader = reader
-        self.writer = writer
+        self._reset_streams(reader, writer)
         self._print = self._real_print if config.debug else self._noop_print
 
     def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
         self.reader = reader
         self.writer = writer
+        self.peer_info = PeerInfo(writer)
 
     def _real_print(self, prefix: str, output: bytes) -> None:
         prefix = prefix % self.writer.get_extra_info('socket').fileno()
@@ -213,10 +214,18 @@ class IMAPConnection:
         return response
 
     async def run(self, state: ConnectionState) -> None:
-        self._print('%d +++|', b'<connected>')
+        self._print('%d +++|', bytes(self.peer_info))
         bad_commands = 0
-        greeting = await state.do_greeting()
-        await self.write_response(greeting)
+        try:
+            greeting = await state.do_greeting(self.peer_info)
+        except ResponseError as exc:
+            resp = exc.get_response(b'*')
+            resp.condition = ResponseBye.condition
+            await self.write_response(resp)
+            self.writer.close()
+            return
+        else:
+            await self.write_response(greeting)
         while True:
             try:
                 cmd = await self.read_command()
@@ -236,12 +245,14 @@ class IMAPConnection:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
-                        response = await state.do_authenticate(cmd, creds)
+                        response = await state.do_authenticate(
+                                cmd, self.peer_info, creds)
                     elif isinstance(cmd, LoginCommand):
                         creds = AuthenticationCredentials(
                             cmd.userid.decode('utf-8'),
                             cmd.password.decode('utf-8'))
-                        response = await state.do_login(cmd, creds)
+                        response = await state.do_login(
+                                cmd, self.peer_info, creds)
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)
                     else:
@@ -253,6 +264,10 @@ class IMAPConnection:
                         break
                 except AuthenticationError as exc:
                     resp = ResponseBad(cmd.tag, bytes(str(exc), 'utf-8'))
+                    await self.write_response(resp)
+                except TimeoutError:
+                    resp = ResponseNo(cmd.tag, b'Operation timed out.',
+                                      ResponseCode.of(b'TIMEOUT'))
                     await self.write_response(resp)
                 except Exception:
                     await self.send_error_disconnect()

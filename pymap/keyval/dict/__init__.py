@@ -16,6 +16,7 @@ from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.specials import Flag
+from pymap.peerinfo import PeerInfo
 
 from .mailbox import MailboxSnapshot, Message, Mailbox
 from ..session import KeyValSession
@@ -84,7 +85,7 @@ class Session(KeyValSession[Mailbox, Message]):
 
     @classmethod
     async def login(cls: Type[_ST], credentials: AuthenticationCredentials,
-                    config: Config) -> _ST:
+                    config: Config, peer_info: PeerInfo) -> _ST:
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.
