@@ -163,7 +163,7 @@ class SelectedMailbox:
         responses by :meth:`.add_untagged`.
 
         """
-        cls: Type['SelectedMailbox'] = self.__class__
+        cls: Type['SelectedMailbox'] = type(self)
         copy = cls(self.name, self.readonly, self.uid_validity,
                    self._session_flags, self._on_fork, **self.kwargs)
         messages = [(uid, hash(flag_set))
@@ -183,7 +183,7 @@ class SelectedMailbox:
             response: The tagged response to the command.
 
         """
-        if self._previous and command.allow_updates:
+        if self._previous:
             for untagged in self._compare(command, self._previous,
                                           self._messages):
                 response.add_untagged(untagged)

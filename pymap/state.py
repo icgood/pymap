@@ -358,6 +358,13 @@ class ConnectionState:
             for untagged in response.untagged:
                 yield cast(Response, untagged)
 
+    def _get_func_name(self, cmd: Command) -> str:
+        cmd_type = type(cmd)
+        while cmd_type.delegate:
+            cmd_type = cmd_type.delegate
+        cmd_str = str(cmd_type.command, 'ascii').lower()
+        return 'do_' + cmd_str
+
     async def do_command(self, cmd: Command):
         if self._session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
@@ -368,7 +375,7 @@ class ConnectionState:
         elif not self._selected and isinstance(cmd, CommandSelect):
             msg = cmd.command + b': Must select a mailbox first.'
             return ResponseBad(cmd.tag, msg)
-        func_name = 'do_' + str(cmd.command, 'ascii').lower()
+        func_name = self._get_func_name(cmd)
         try:
             func: _CommandFunc = getattr(self, func_name)
         except AttributeError:

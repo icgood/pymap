@@ -1,5 +1,5 @@
 import re
-from typing import Tuple, Sequence, List, Iterable, cast, Optional
+from typing import cast, Tuple, Sequence, List, Iterable, Optional, ClassVar
 
 from . import CommandSelect, CommandNoArgs
 from .. import Space, EndLine, Params
@@ -12,7 +12,8 @@ from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
            'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand',
-           'IdleCommand']
+           'UidCopyCommand', 'UidExpungeCommand', 'UidFetchCommand',
+           'UidSearchCommand', 'UidStoreCommand', 'IdleCommand']
 
 
 class CheckCommand(CommandNoArgs, CommandSelect):
@@ -47,11 +48,13 @@ class ExpungeCommand(CommandSelect):
         `RFC 4315 2.1 <https://tools.ietf.org/html/rfc4315#section-2.1>`_
 
     Args:
+        tag: The command tag.
         uid_set: Only the messages in the given UID set should be expunged.
 
     """
 
     command = b'EXPUNGE'
+    uid: ClassVar[bool] = False
 
     def __init__(self, tag: bytes, uid_set: SequenceSet = None) -> None:
         super().__init__(tag)
@@ -84,13 +87,13 @@ class CopyCommand(CommandSelect):
     """
 
     command = b'COPY'
+    uid: ClassVar[bool] = False
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
-                 mailbox: Mailbox, uid: bool) -> None:
+                 mailbox: Mailbox) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.mailbox_obj = mailbox
-        self.uid = uid
 
     @property
     def mailbox(self) -> str:
@@ -103,7 +106,7 @@ class CopyCommand(CommandSelect):
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, seq_set, mailbox, params.uid), buf
+        return cls(params.tag, seq_set, mailbox), buf
 
 
 class FetchCommand(CommandSelect):
@@ -118,20 +121,19 @@ class FetchCommand(CommandSelect):
         tag: The command tag.
         seq_set: The sequence set of the messages to fetch.
         attr_list: The message attributes to fetch.
-        uid: True if the command should use message UIDs.
 
     """
 
     command = b'FETCH'
+    uid: ClassVar[bool] = False
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
-                 attr_list: Sequence[FetchAttribute], uid: bool,
+                 attr_list: Sequence[FetchAttribute],
                  options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.no_expunge_response = not seq_set.uid
         self.attributes = attr_list
-        self.uid = uid
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
@@ -181,7 +183,7 @@ class FetchCommand(CommandSelect):
             attr_list.append(FetchAttribute(b'UID'))
         options, buf = ExtensionOptions.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, seq_set, attr_list, params.uid, options), buf
+        return cls(params.tag, seq_set, attr_list, options), buf
 
 
 class StoreCommand(CommandSelect):
@@ -201,20 +203,19 @@ class StoreCommand(CommandSelect):
     """
 
     command = b'STORE'
+    uid: ClassVar[bool] = False
 
     _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': FlagOp.REPLACE, b'+': FlagOp.ADD, b'-': FlagOp.DELETE}
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
                  flags: Iterable[Flag], mode: FlagOp,
-                 silent: bool, uid: bool,
-                 options: ExtensionOptions = None) -> None:
+                 silent: bool, options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_set = frozenset(flags) - {Recent}
         self.mode = mode
         self.silent = silent
-        self.uid = uid
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
@@ -258,8 +259,7 @@ class StoreCommand(CommandSelect):
         _, buf = Space.parse(buf, params)
         flag_list, buf = cls._parse_flag_list(buf, params)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, seq_set, flag_list, mode,
-                   silent, params.uid, options), buf
+        return cls(params.tag, seq_set, flag_list, mode, silent, options), buf
 
 
 class SearchCommand(CommandSelect):
@@ -278,14 +278,14 @@ class SearchCommand(CommandSelect):
     """
 
     command = b'SEARCH'
+    uid: ClassVar[bool] = False
 
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
-                 charset: Optional[str], uid: bool,
+                 charset: Optional[str],
                  options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.keys = frozenset(keys)
         self.charset = charset
-        self.uid = uid
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
@@ -334,7 +334,7 @@ class SearchCommand(CommandSelect):
                     raise
                 break
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, search_keys, charset, params.uid, options), buf
+        return cls(params.tag, search_keys, charset, options), buf
 
 
 class UidCommand(CommandSelect):
@@ -350,25 +350,92 @@ class UidCommand(CommandSelect):
     """
 
     command = b'UID'
+    compound = True
 
-    _allowed_subcommands = {b'COPY': CopyCommand,
-                            b'EXPUNGE': ExpungeCommand,
-                            b'FETCH': FetchCommand,
-                            b'SEARCH': SearchCommand,
-                            b'STORE': StoreCommand}
+
+class UidCopyCommand(CopyCommand):
+    """The ``UID COPY`` variant of the ``COPY`` command, which uses message
+    UIDs instead of sequence numbers.
+
+    """
+
+    command = b'UID COPY'
+    delegate = CopyCommand
+    uid = True
 
     @classmethod
-    def _get_cmd(cls, name: bytes):
-        return cls._allowed_subcommands.get(name.upper())
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['UidCopyCommand', bytes]:
+        ret, buf = super().parse(buf, params.copy(uid=True))
+        return cast('UidCopyCommand', ret), buf
+
+
+class UidExpungeCommand(ExpungeCommand):
+    """The ``UID EXPUNGE`` variant of the ``EXPUNGE`` command, which uses
+    message UIDs instead of sequence numbers.
+
+    """
+
+    command = b'UID EXPUNGE'
+    delegate = ExpungeCommand
+    uid = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple[CommandSelect, bytes]:
-        _, buf = Space.parse(buf, params)
-        atom, after = Atom.parse(buf, params)
-        cmd = cls._get_cmd(atom.value)
-        if not cmd:
-            raise NotParseable(buf)
-        return cmd.parse(after, params.copy(uid=True))
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['UidExpungeCommand', bytes]:
+        ret, buf = super().parse(buf, params.copy(uid=True))
+        return cast('UidExpungeCommand', ret), buf
+
+
+class UidFetchCommand(FetchCommand):
+    """The ``UID FETCH`` variant of the ``FETCH`` command, which uses message
+    UIDs instead of sequence numbers.
+
+    """
+
+    command = b'UID FETCH'
+    delegate = FetchCommand
+    uid = True
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['UidFetchCommand', bytes]:
+        ret, buf = super().parse(buf, params.copy(uid=True))
+        return cast('UidFetchCommand', ret), buf
+
+
+class UidSearchCommand(SearchCommand):
+    """The ``UID SEARCH`` variant of the ``SEARCH`` command, which uses message
+    UIDs instead of sequence numbers.
+
+    """
+
+    command = b'UID SEARCH'
+    delegate = SearchCommand
+    uid = True
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['UidSearchCommand', bytes]:
+        ret, buf = super().parse(buf, params.copy(uid=True))
+        return cast('UidSearchCommand', ret), buf
+
+
+class UidStoreCommand(StoreCommand):
+    """The ``UID STORE`` variant of the ``STORE`` command, which uses message
+    UIDs instead of sequence numbers.
+
+    """
+
+    command = b'UID STORE'
+    delegate = StoreCommand
+    uid = True
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) \
+            -> Tuple['UidStoreCommand', bytes]:
+        ret, buf = super().parse(buf, params.copy(uid=True))
+        return cast('UidStoreCommand', ret), buf
 
 
 class IdleCommand(CommandSelect):
