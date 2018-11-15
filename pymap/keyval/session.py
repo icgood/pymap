@@ -159,13 +159,12 @@ class KeyValSession(Generic[_Mailbox, _Message],
         return await self._load_updates(selected, mbx)
 
     async def fetch_messages(self, selected: SelectedMailbox,
-                             sequences: SequenceSet,
+                             sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
             -> Tuple[Iterable[Tuple[int, _Message]], SelectedMailbox]:
         mbx = await self.inbox.get_mailbox(selected.name)
-        ret: List[Tuple[int, _Message]] = []
-        async for seq, msg in mbx.find(sequences):
-            ret.append((seq, msg))
+        ret = [(seq, msg) async for seq, msg
+               in mbx.find(sequence_set, selected)]
         return ret, await self._load_updates(selected, mbx)
 
     async def search_mailbox(self, selected: SelectedMailbox,
@@ -188,24 +187,23 @@ class KeyValSession(Generic[_Mailbox, _Message],
         if not uid_set:
             uid_set = SequenceSet.all(uid=True)
         expunge_uids: List[int] = []
-        async for seq, msg in mbx.find(uid_set):
+        async for _, msg in mbx.find(uid_set, selected):
             if Deleted in msg.permanent_flags:
                 expunge_uids.append(msg.uid)
         for uid in expunge_uids:
-            selected.session_flags.remove(uid)
             await mbx.delete(uid)
         mbx.updated.set()
         return await self._load_updates(selected, mbx)
 
     async def copy_messages(self, selected: SelectedMailbox,
-                            sequences: SequenceSet,
+                            sequence_set: SequenceSet,
                             mailbox: str) \
             -> Tuple[Optional[CopyUid], SelectedMailbox]:
         mbx = await self.inbox.get_mailbox(selected.name)
         dest = await self.inbox.get_mailbox(mailbox)
         last_selected = dest.last_selected
         uids: List[Tuple[int, int]] = []
-        async for seq, msg in mbx.find(sequences):
+        async for _, msg in mbx.find(sequence_set, selected):
             source_uid = msg.uid
             msg = await dest.add(msg)
             if last_selected:
@@ -218,7 +216,7 @@ class KeyValSession(Generic[_Mailbox, _Message],
                 await self._load_updates(selected, mbx))
 
     async def update_flags(self, selected: SelectedMailbox,
-                           sequences: SequenceSet,
+                           sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
             -> Tuple[Iterable[int], SelectedMailbox]:
@@ -226,7 +224,7 @@ class KeyValSession(Generic[_Mailbox, _Message],
         permanent_flags = flag_set & mbx.permanent_flags
         session_flags = flag_set & mbx.session_flags
         messages: List[_Message] = []
-        async for _, msg in mbx.find(sequences):
+        async for _, msg in mbx.find(sequence_set, selected):
             msg.update_flags(permanent_flags, mode)
             selected.session_flags.update(msg.uid, session_flags, mode)
             messages.append(msg)

@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import cast, Tuple, Sequence, Iterable, Optional, List
+from typing import Tuple, Sequence, Iterable, Optional, List
 
 from . import CommandAuth
 from .. import NotParseable, UnexpectedType, Space, EndLine, Params
@@ -79,7 +79,7 @@ class AppendCommand(CommandAuth):
         except NotParseable:
             flags: Sequence[Flag] = []
         else:
-            flags = cast(Sequence[Flag], flag_list.value)
+            flags = flag_list.get_as(Flag)
             _, buf = Space.parse(buf, params)
         try:
             date_time_p, buf = DateTime.parse(buf, params)
@@ -297,7 +297,7 @@ class StatusCommand(CommandMailboxArg):
         if not status_list_p.value:
             raise NotParseable(buf)
         _, buf = EndLine.parse(after, params)
-        status_list = cast(Sequence[StatusAttribute], status_list_p.value)
+        status_list = status_list_p.get_as(StatusAttribute)
         return cls(params.tag, mailbox, status_list), buf
 
 

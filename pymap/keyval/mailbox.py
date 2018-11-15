@@ -139,7 +139,7 @@ class KeyValMailbox(Protocol[_MT]):
         ...
 
     @abstractmethod
-    async def get(self, uid: int) -> _MT:
+    async def get(self, uid: int) -> Optional[_MT]:
         ...
 
     @abstractmethod
@@ -170,20 +170,11 @@ class KeyValMailbox(Protocol[_MT]):
     def items(self) -> AsyncIterable[Tuple[int, _MT]]:
         ...
 
-    async def find(self, seq_set: SequenceSet) \
+    async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
             -> AsyncIterable[Tuple[int, _MT]]:
-        if seq_set.uid:
-            max_uid = await self.get_max_uid()
-            all_msgs = frozenset(seq_set.iter(max_uid))
-        else:
-            max_seq = await self.get_count()
-            all_msgs = frozenset(seq_set.iter(max_seq))
-        async for seq, item in asyncenumerate(self.items(), 1):
-            uid, msg = item
-            if seq_set.uid:
-                if msg.uid in all_msgs:
-                    yield (seq, msg)
-            elif seq in all_msgs:
+        for seq, uid in selected.iter_set(seq_set):
+            msg = await self.get(uid)
+            if msg is not None:
                 yield (seq, msg)
 
     async def snapshot(self) -> MailboxSnapshot:

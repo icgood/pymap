@@ -142,8 +142,9 @@ class MockTransport:
         raw_regex = str(full_regex.replace(b'\r', b''), 'ascii').splitlines()
         raw_data = str(data, 'ascii', 'replace').splitlines()
         for regex_line, data_line in zip(raw_regex, raw_data):
-            parts.append('>>> ' + regex_line)
-            parts.append('<<< ' + data_line)
+            parts.append('regex: ' + regex_line.lstrip('^'))
+            parts.append('data:  ' + re.escape(data_line + '\\'))
+            parts.append('')
         return '\n'.join(parts)
 
     def _match_write(self, where, expected, data):

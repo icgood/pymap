@@ -150,9 +150,9 @@ class Mailbox(KeyValMailbox[Message]):
             self._messages[message.uid] = message
             return message
 
-    async def get(self, uid: int) -> Message:
+    async def get(self, uid: int) -> Optional[Message]:
         async with self.messages_lock.read_lock():
-            return self._messages[uid]
+            return self._messages.get(uid)
 
     async def delete(self, uid: int) -> None:
         async with self.messages_lock.write_lock():

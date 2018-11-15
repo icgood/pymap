@@ -1,6 +1,6 @@
 """Package defining all the IMAP parsing and response classes."""
 
-from typing import cast, Optional
+from typing import Optional
 
 from .response import ResponseBad, ResponseCode
 from .typing import MaybeBytes
@@ -178,7 +178,7 @@ class CommandInvalid(BadCommand):
         exc = self.__cause__
         if not exc or not isinstance(exc, NotParseable):
             raise TypeError('Exception must have cause')
-        return cast(NotParseable, exc)
+        return exc
 
     def __bytes__(self) -> bytes:
         if self._raw is None:

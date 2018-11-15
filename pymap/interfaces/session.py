@@ -274,7 +274,7 @@ class SessionInterface(Protocol[_Selected]):
 
     @abstractmethod
     async def fetch_messages(self, selected: _Selected,
-                             sequences: SequenceSet,
+                             sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
             -> Tuple[Iterable[Tuple[int, LoadedMessage]], _Selected]:
         """Get a list of :class:`LoadedMessage` objects corresponding to
@@ -282,7 +282,7 @@ class SessionInterface(Protocol[_Selected]):
 
         Args:
             selected: The selected mailbox session.
-            sequences: Sequence set of message sequences or UIDs.
+            sequence_set: Sequence set of message sequences or UIDs.
             attributes: Fetch attributes for the messages.
 
         Raises:
@@ -336,7 +336,7 @@ class SessionInterface(Protocol[_Selected]):
 
     @abstractmethod
     async def copy_messages(self, selected: _Selected,
-                            sequences: SequenceSet,
+                            sequence_set: SequenceSet,
                             mailbox: str) \
             -> Tuple[Optional[CopyUid], _Selected]:
         """Copy a set of messages into the given mailbox.
@@ -347,7 +347,7 @@ class SessionInterface(Protocol[_Selected]):
 
         Args:
             selected: The selected mailbox session.
-            sequences: Sequence set of message sequences or UIDs.
+            sequence_set: Sequence set of message sequences or UIDs.
             mailbox: Name of the mailbox to copy messages into.
 
         Raises:
@@ -361,7 +361,7 @@ class SessionInterface(Protocol[_Selected]):
 
     @abstractmethod
     async def update_flags(self, selected: _Selected,
-                           sequences: SequenceSet,
+                           sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
             -> Tuple[Iterable[int], _Selected]:
@@ -373,7 +373,7 @@ class SessionInterface(Protocol[_Selected]):
 
         Args:
             selected: The selected mailbox session.
-            sequences: Sequence set of message sequences or UIDs.
+            sequence_set: Sequence set of message sequences or UIDs.
             flag_set: Set of flags to update.
             mode: Update mode for the flag set.
 

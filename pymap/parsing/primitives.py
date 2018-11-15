@@ -3,8 +3,8 @@
 import re
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import Tuple, List, Union, Iterable, Any, Sequence, Optional, \
-    Iterator
+from typing import cast, TypeVar, Type, Tuple, Any, List, Union, Iterable, \
+    Sequence, Optional, Iterator
 
 from . import Parseable, ExpectedParseable, NotParseable, Primitive, Params
 from .exceptions import RequiresContinuation
@@ -13,6 +13,8 @@ from .util import BytesFormat
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
+
+_IT = TypeVar('_IT', bound=MaybeBytes)
 
 
 class Nil(Primitive[None]):
@@ -348,6 +350,10 @@ class ListP(Primitive[Sequence[MaybeBytes]]):
     def value(self) -> Sequence[MaybeBytes]:
         """The list of parsed objects."""
         return self.items
+
+    def get_as(self, cls: Type[_IT]) -> Sequence[_IT]:
+        """Return the list of parsed objects."""
+        return cast(Sequence[_IT], self.items)
 
     def __iter__(self) -> Iterator[MaybeBytes]:
         return iter(self.value)

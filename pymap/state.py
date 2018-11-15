@@ -6,7 +6,7 @@ backend plugin.
 
 from collections import OrderedDict
 from socket import getfqdn
-from typing import cast, Optional, Callable, Union, Tuple, Awaitable, \
+from typing import Optional, Any, Dict, Callable, Union, Tuple, Awaitable, \
     AsyncIterable
 
 from pysasl import AuthenticationCredentials
@@ -35,7 +35,7 @@ from .parsing.response.code import Capability, PermanentFlags, ReadOnly, \
 from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from .parsing.specials import DateTime
+from .parsing.specials import DateTime, FetchAttribute
 from .peerinfo import PeerInfo
 from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
@@ -266,13 +266,14 @@ class ConnectionState:
         messages, updates = await self.session.fetch_messages(
             self.selected, cmd.sequence_set, frozenset(cmd.attributes))
         resp = ResponseOk(cmd.tag, b'FETCH completed.')
+        session_flags = self.selected.session_flags
         for msg_seq, msg in messages:
-            fetch_data = OrderedDict()  # type: ignore
+            fetch_data: Dict[FetchAttribute, Any] = OrderedDict()
             for attr in cmd.attributes:
                 if attr.value == b'UID':
                     fetch_data[attr] = Number(msg.uid)
                 elif attr.value == b'FLAGS':
-                    flags = msg.get_flags(self.selected)
+                    flags = msg.get_flags(session_flags)
                     fetch_data[attr] = ListP(flags, sort=True)
                 elif attr.value == b'INTERNALDATE':
                     if msg.internal_date:
@@ -317,6 +318,8 @@ class ConnectionState:
                     parts = attr.section.parts if attr.section else None
                     fetch_data[attr] = Number(msg.get_size(parts, True))
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
+        if not cmd.uid:
+            self.selected.hide_expunged()
         return resp, updates
 
     async def do_search(self, cmd: SearchCommand):
@@ -328,6 +331,8 @@ class ConnectionState:
         else:
             msg_ids = [msg_seq for msg_seq, _ in messages]
         resp.add_untagged(SearchResponse(msg_ids))
+        if not cmd.uid:
+            self.selected.hide_expunged()
         return resp, updates
 
     async def do_store(self, cmd: StoreCommand):
@@ -335,7 +340,9 @@ class ConnectionState:
             self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode)
         resp = ResponseOk(cmd.tag, b'STORE completed.')
         if cmd.silent:
-            self.selected.hide_fetch(*uids)
+            self.selected.hide(*uids)
+        if not cmd.uid:
+            self.selected.hide_expunged()
         return resp, updates
 
     async def do_idle(self, cmd: IdleCommand):
@@ -352,11 +359,9 @@ class ConnectionState:
         while not done.is_set():
             selected = await self.session.check_mailbox(
                 self.selected, wait_on=done)
-            response = Response(cmd.tag)
-            selected.add_untagged(cmd, response)
-            self._selected = selected.fork()
-            for untagged in response.untagged:
-                yield cast(Response, untagged)
+            self._selected, untagged = selected.fork(cmd)
+            for resp in untagged:
+                yield resp
 
     def _get_func_name(self, cmd: Command) -> str:
         cmd_type = type(cmd)
@@ -382,6 +387,6 @@ class ConnectionState:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         response, selected = await func(cmd)
         if selected:
-            selected.add_untagged(cmd, response)
-            self._selected = selected.fork()
+            self._selected, untagged = selected.fork(cmd)
+            response.add_untagged(*untagged)
         return response

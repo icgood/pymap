@@ -1,18 +1,27 @@
 from abc import abstractmethod
 from datetime import datetime
-from email.headerregistry import BaseHeader
-from typing import Optional, Iterable, Set, FrozenSet, Sequence, Union, \
+from typing import Optional, Iterable, Set, FrozenSet, Sequence, \
     AbstractSet, TypeVar
 from typing_extensions import Protocol
 
-from ..flags import FlagOp
+from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
-from ..selected import SelectedMailbox
 
-__all__ = ['Message', 'LoadedMessage']
+__all__ = ['Header', 'Message', 'LoadedMessage']
 
 _T = TypeVar('_T', bound='Message')
+
+
+class Header(Protocol):
+    """A message header value, which is convertible to a string with
+    :func:`str`.
+
+    """
+
+    @abstractmethod
+    def __str__(self) -> str:
+        ...
 
 
 class Message(Protocol):
@@ -50,12 +59,11 @@ class Message(Protocol):
         ...
 
     @abstractmethod
-    def get_flags(self, selected: Optional[SelectedMailbox]) \
-            -> FrozenSet[Flag]:
+    def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message.
 
         Args:
-            selected: The active mailbox session.
+            session_flags: The current session flags.
 
         """
         ...
@@ -82,31 +90,8 @@ class LoadedMessage(Message):
 
     """
 
-    @property
     @abstractmethod
-    def uid(self) -> int:
-        """The message's unique identifier in the mailbox."""
-        ...
-
-    @property
-    @abstractmethod
-    def permanent_flags(self) -> Set[Flag]:
-        """The message's set of permanent flags."""
-        ...
-
-    @property
-    @abstractmethod
-    def internal_date(self) -> Optional[datetime]:
-        """The message's internal date."""
-        ...
-
-    @abstractmethod
-    def get_flags(self, session: Optional[SelectedMailbox]) -> FrozenSet[Flag]:
-        """Get the full set of permanent and session flags for the message."""
-        ...
-
-    @abstractmethod
-    def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
+    def get_header(self, name: bytes) -> Sequence[Header]:
         """Get the values of a header from the message.
 
         Args:

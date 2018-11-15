@@ -4,19 +4,17 @@ import email
 import io
 from datetime import datetime, timezone
 from email.generator import BytesGenerator
-from email.headerregistry import BaseHeader
 from email.message import EmailMessage
 from email.policy import SMTP
-from typing import cast, Any, Tuple, Optional, Iterable, Set, Dict, \
-    FrozenSet, Sequence, Union, NamedTuple, AbstractSet, TypeVar, Type
+from typing import Any, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
+    Sequence, NamedTuple, AbstractSet, TypeVar, Type
 
-from pymap.flags import FlagOp
-from .interfaces.message import Message, LoadedMessage
+from .flags import FlagOp, SessionFlags
+from .interfaces.message import Header, Message, LoadedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
 from .parsing.specials import Flag, ExtensionOptions
-from .selected import SelectedMailbox
 
 __all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
 
@@ -97,11 +95,9 @@ class BaseMessage(Message):
         return cls(new_uid, self.permanent_flags, self.internal_date,
                    *self._args, **self._kwargs)
 
-    def get_flags(self, session: Optional[SelectedMailbox]) \
-            -> FrozenSet[Flag]:
-        if session:
-            session_flags = session.session_flags.get(self.uid)
-            return frozenset(self.permanent_flags | session_flags)
+    def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
+        if session_flags:
+            return frozenset(self.permanent_flags | session_flags[self.uid])
         else:
             return frozenset(self.permanent_flags)
 
@@ -164,8 +160,9 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
 
         """
         msg = email.message_from_bytes(data, policy=SMTP)
-        email_msg = cast(EmailMessage, msg)
-        return cls(uid, email_msg, permanent_flags,
+        if not isinstance(msg, EmailMessage):
+            raise TypeError(msg)
+        return cls(uid, msg, permanent_flags,
                    internal_date or datetime.now(timezone.utc),
                    *args, **kwargs)
 
@@ -184,10 +181,9 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         else:
             return msg.contents
 
-    def get_header(self, name: bytes) -> Sequence[Union[str, BaseHeader]]:
+    def get_header(self, name: bytes) -> Sequence[Header]:
         name_str = str(name, 'ascii', 'ignore')
-        values = self.contents.get_all(name_str, [])
-        return cast(Sequence[Union[str, BaseHeader]], values)
+        return self.contents.get_all(name_str, [])
 
     def get_headers(self, section: Iterable[int] = None,
                     subset: Iterable[bytes] = None,
@@ -305,7 +301,9 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         content_desc = msg.get('Content-Description')
         content_encoding = msg.get('Content-Transfer-Encoding')
         if maintype == 'message' and subtype == 'rfc822':
-            sub_msg = cast(EmailMessage, msg.get_payload(0))
+            sub_msg = msg.get_payload(0)
+            if not isinstance(sub_msg, EmailMessage):
+                raise TypeError(sub_msg)
             sub_env_struct = cls._get_envelope_structure(sub_msg)
             sub_body_struct = cls._get_body_structure(sub_msg)
             size, lines = cls._get_size_with_lines(msg)

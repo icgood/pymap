@@ -36,6 +36,15 @@ class SessionFlags:
     def __init__(self):
         self._flags: Dict[int, FrozenSet[Flag]] = {}
 
+    def __getitem__(self, uid: int) -> FrozenSet[Flag]:
+        return self.get(uid)
+
+    def __delitem__(self, uid: int) -> None:
+        self.remove(uid)
+
+    def __setitem__(self, uid: int, flag_set: AbstractSet[Flag]) -> None:
+        self.update(uid, flag_set)
+
     def get(self, uid: int) -> FrozenSet[Flag]:
         """Return the session flags for the mailbox session.
 
