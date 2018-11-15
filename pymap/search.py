@@ -1,9 +1,10 @@
 """Utilities for managing a IMAP searches."""
 
 from datetime import datetime
-from typing import cast, FrozenSet, Tuple, Optional, Iterable
+from typing import FrozenSet, Optional, Iterable
 
 from .exceptions import SearchNotAllowed
+from .flags import SessionFlags
 from .interfaces.message import Message, LoadedMessage
 from .parsing.specials import SearchKey, SequenceSet
 from .parsing.specials.flag import Flag, Answered, Deleted, Draft, Flagged, \
@@ -36,6 +37,10 @@ class SearchParams:
             self._max_uid = max_uid
         if disabled is not None:
             self._disabled = frozenset(disabled)
+
+    @property
+    def session_flags(self) -> SessionFlags:
+        return self.selected.session_flags
 
     @property
     def max_seq(self) -> int:
@@ -89,16 +94,15 @@ class SearchCriteria:
             raise SearchNotAllowed(key.value)
         elif key.inverse:
             return InverseSearchCriteria(key.not_inverse, params)
-        elif key.value == b'SEQSET' and isinstance(key.filter, SequenceSet):
-            return SequenceSetSearchCriteria(key.filter, params)
-        elif key.value == b'KEYSET' and isinstance(key.filter, frozenset):
-            keys = cast(FrozenSet[SearchKey], key.filter)
-            return SearchCriteriaSet(keys, params)
+        elif key.value == b'SEQSET':
+            return SequenceSetSearchCriteria(key.filter_sequence_set, params)
+        elif key.value == b'KEYSET':
+            return SearchCriteriaSet(key.filter_key_set, params)
         elif key.value == b'ALL':
             return AllSearchCriteria(params)
         elif key.value == b'OR':
-            keys = cast(Tuple[SearchKey, SearchKey], key.filter)
-            return OrSearchCriteria(keys[0], keys[1], params)
+            left_key, right_key = key.filter_key_or
+            return OrSearchCriteria(left_key, right_key, params)
         elif key.value == b'ANSWERED':
             return HasFlagSearchCriteria(Answered, True, params)
         elif key.value == b'UNANSWERED':
@@ -124,45 +128,34 @@ class SearchCriteria:
         elif key.value == b'UNSEEN':
             return HasFlagSearchCriteria(Seen, False, params)
         elif key.value == b'KEYWORD':
-            keyword = cast(Flag, key.filter)
-            return HasFlagSearchCriteria(keyword, True, params)
+            return HasFlagSearchCriteria(key.filter_flag, True, params)
         elif key.value == b'UNKEYWORD':
-            keyword = cast(Flag, key.filter)
-            return HasFlagSearchCriteria(keyword, False, params)
+            return HasFlagSearchCriteria(key.filter_flag, False, params)
         elif key.value == b'NEW':
             return NewSearchCriteria(params)
         elif key.value == b'BEFORE':
-            when = cast(datetime, key.filter)
-            return DateSearchCriteria(when, '<', params)
+            return DateSearchCriteria(key.filter_datetime, '<', params)
         elif key.value == b'ON':
-            when = cast(datetime, key.filter)
-            return DateSearchCriteria(when, '=', params)
+            return DateSearchCriteria(key.filter_datetime, '=', params)
         elif key.value == b'SINCE':
-            when = cast(datetime, key.filter)
-            return DateSearchCriteria(when, '>', params)
+            return DateSearchCriteria(key.filter_datetime, '>', params)
         elif key.value == b'SENTBEFORE':
-            when = cast(datetime, key.filter)
-            return HeaderDateSearchCriteria(when, '<', params)
+            return HeaderDateSearchCriteria(key.filter_datetime, '<', params)
         elif key.value == b'SENTON':
-            when = cast(datetime, key.filter)
-            return HeaderDateSearchCriteria(when, '=', params)
+            return HeaderDateSearchCriteria(key.filter_datetime, '=', params)
         elif key.value == b'SENTSINCE':
-            when = cast(datetime, key.filter)
-            return HeaderDateSearchCriteria(when, '>', params)
+            return HeaderDateSearchCriteria(key.filter_datetime, '>', params)
         elif key.value == b'SMALLER':
-            size = cast(int, key.filter)
-            return SizeSearchCriteria(size, '<', params)
+            return SizeSearchCriteria(key.filter_int, '<', params)
         elif key.value == b'LARGER':
-            size = cast(int, key.filter)
-            return SizeSearchCriteria(size, '>', params)
+            return SizeSearchCriteria(key.filter_int, '>', params)
         elif key.value in (b'BCC', b'CC', b'FROM', b'SUBJECT', b'TO'):
-            value = cast(str, key.filter)
-            return EnvelopeSearchCriteria(key.value, value, params)
+            return EnvelopeSearchCriteria(key.value, key.filter_str, params)
         elif key.value == b'HEADER':
-            name, value = cast(Tuple[str, str], key.filter)
+            name, value = key.filter_header
             return HeaderSearchCriteria(name, value, params)
         elif key.value in (b'BODY', b'TEXT'):
-            value = cast(str, key.filter)
+            value = key.filter_str
             return BodySearchCriteria(value, key.value == b'TEXT', params)
         raise SearchNotAllowed(key.value)
 
@@ -190,10 +183,9 @@ class _LoadedSearchCriteria(SearchCriteria):
 
     @classmethod
     def _get_loaded(cls, msg: Message) -> LoadedMessage:
-        if isinstance(msg, LoadedMessage):
-            return cast(LoadedMessage, msg)
-        else:
-            raise SearchNotAllowed
+        if not isinstance(msg, LoadedMessage):
+            raise SearchNotAllowed()
+        return msg
 
     def matches(self, msg_seq: int, msg: Message) -> bool:
         raise NotImplementedError
@@ -258,7 +250,7 @@ class HasFlagSearchCriteria(SearchCriteria):
         self.expected = expected
 
     def matches(self, msg_seq: int, msg: Message) -> bool:
-        has_flag = self.flag in msg.get_flags(self.params.selected)
+        has_flag = self.flag in msg.get_flags(self.params.session_flags)
         expected = self.expected
         return (has_flag and expected) or (not expected and not has_flag)
 
@@ -267,7 +259,7 @@ class NewSearchCriteria(SearchCriteria):
     """Matches if the message is considered "new", i.e. recent and unseen."""
 
     def matches(self, msg_seq: int, msg: Message) -> bool:
-        flags = msg.get_flags(self.params.selected)
+        flags = msg.get_flags(self.params.session_flags)
         return Recent in flags and Seen not in flags
 
 
@@ -294,7 +286,7 @@ class DateSearchCriteria(SearchCriteria):
             return msg_date == self.when
         elif self.cmp == '>':  # SINCE
             return msg_date > self.when
-        raise RuntimeError  # should not happen
+        raise ValueError(self.cmp)
 
 
 class HeaderDateSearchCriteria(DateSearchCriteria, _LoadedSearchCriteria):
@@ -322,7 +314,7 @@ class SizeSearchCriteria(_LoadedSearchCriteria):
             return size < self.size
         elif self.cmp == '>':
             return size > self.size
-        raise RuntimeError  # should not happen
+        raise ValueError(self.cmp)
 
 
 class EnvelopeSearchCriteria(_LoadedSearchCriteria):
@@ -359,7 +351,7 @@ class EnvelopeSearchCriteria(_LoadedSearchCriteria):
             if not envelope.to:
                 return False
             return any(self.value in str(to) for to in envelope.to)
-        raise RuntimeError
+        raise ValueError(self.key)
 
 
 class HeaderSearchCriteria(_LoadedSearchCriteria):

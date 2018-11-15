@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import cast, Tuple, Union, Sequence
+from typing import TypeVar, Type, Tuple, Union, Sequence, FrozenSet
 
 from .astring import AString
 from .flag import Flag
@@ -11,6 +11,7 @@ from ..primitives import Atom, Number, QuotedString, ListP
 
 __all__ = ['SearchKey']
 
+_FT = TypeVar('_FT')
 _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
                     Sequence['SearchKey'], SequenceSet, Flag,
                     datetime, int, str]
@@ -49,6 +50,43 @@ class SearchKey(Special[bytes]):
     def not_inverse(self) -> 'SearchKey':
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
+
+    def _get_filter(self, cls: Type[_FT]) -> _FT:
+        if not isinstance(self.filter, cls):
+            raise TypeError(self.filter)
+        return self.filter
+
+    @property
+    def filter_sequence_set(self) -> SequenceSet:
+        return self._get_filter(SequenceSet)
+
+    @property
+    def filter_key_set(self) -> FrozenSet['SearchKey']:
+        return self._get_filter(frozenset)  # type: ignore
+
+    @property
+    def filter_key_or(self) -> Tuple['SearchKey', 'SearchKey']:
+        return self._get_filter(tuple)  # type: ignore
+
+    @property
+    def filter_flag(self) -> Flag:
+        return self._get_filter(Flag)
+
+    @property
+    def filter_datetime(self) -> datetime:
+        return self._get_filter(datetime)
+
+    @property
+    def filter_int(self) -> int:
+        return self._get_filter(int)
+
+    @property
+    def filter_str(self) -> str:
+        return self._get_filter(str)
+
+    @property
+    def filter_header(self) -> Tuple[str, str]:
+        return self._get_filter(tuple)  # type: ignore
 
     def __bytes__(self) -> bytes:
         raise NotImplementedError
@@ -107,7 +145,7 @@ class SearchKey(Special[bytes]):
         except NotParseable:
             pass
         else:
-            key_list = cast(Sequence[SearchKey], key_list_p.value)
+            key_list = key_list_p.get_as(SearchKey)
             return cls(b'KEYSET', key_list, inverse), buf
         atom, after = Atom.parse(buf, params)
         key = atom.value.upper()

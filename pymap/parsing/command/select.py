@@ -1,5 +1,5 @@
 import re
-from typing import cast, Tuple, Sequence, List, Iterable, Optional, ClassVar
+from typing import Tuple, Sequence, List, Iterable, Optional, ClassVar
 
 from . import CommandSelect, CommandNoArgs
 from .. import Space, EndLine, Params
@@ -82,7 +82,6 @@ class CopyCommand(CommandSelect):
         tag: The command tag.
         seq_set: The sequence set of the messages to copy.
         mailbox: The destination mailbox.
-        uid: True if the command should use message UIDs.
 
     """
 
@@ -137,7 +136,8 @@ class FetchCommand(CommandSelect):
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
-    def _check_macros(cls, buf: bytes, params: Params):
+    def _check_macros(cls, buf: bytes, params: Params) \
+            -> Tuple[Sequence[FetchAttribute], bytes]:
         atom, after = Atom.parse(buf, params)
         macro = atom.value.upper()
         if macro == b'ALL':
@@ -165,7 +165,7 @@ class FetchCommand(CommandSelect):
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         _, buf = Space.parse(buf, params)
-        attr_list: List[FetchAttribute] = []
+        attr_list: Sequence[FetchAttribute] = []
         try:
             attr_list, buf = cls._check_macros(buf, params)
         except NotParseable:
@@ -178,9 +178,9 @@ class FetchCommand(CommandSelect):
         if not attr_list:
             params_copy = params.copy(list_expected=[FetchAttribute])
             attr_list_p, buf = ListP.parse(buf, params_copy)
-            attr_list = cast(List[FetchAttribute], attr_list_p.value)
+            attr_list = attr_list_p.get_as(FetchAttribute)
         if params.uid:
-            attr_list.append(FetchAttribute(b'UID'))
+            attr_list = list(attr_list) + [FetchAttribute(b'UID')]
         options, buf = ExtensionOptions.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag, seq_set, attr_list, options), buf
@@ -198,7 +198,6 @@ class StoreCommand(CommandSelect):
         seq_set: The sequence set of the messages to fetch.
         flags: The flag set operand.
         mode: The type of update operation.
-        uid: True if the command should use message UIDs.
 
     """
 
@@ -232,15 +231,14 @@ class StoreCommand(CommandSelect):
     @classmethod
     def _parse_flag_list(cls, buf: bytes, params: Params) \
             -> Tuple[Sequence[Flag], bytes]:
-        flag_list: List[Flag] = []
         try:
             params_copy = params.copy(list_expected=[Flag])
             flag_list_p, buf = ListP.parse(buf, params_copy)
         except NotParseable:
             pass
         else:
-            flag_list = cast(List[Flag], flag_list_p.value)
-            return flag_list, buf
+            return flag_list_p.get_as(Flag), buf
+        flag_list: List[Flag] = []
         while True:
             try:
                 flag, buf = Flag.parse(buf, params)
@@ -273,7 +271,6 @@ class SearchCommand(CommandSelect):
         tag: The command tag.
         keys: The search keys.
         charset: The charset in use by the search keys.
-        uid: True if the command should use message UIDs.
 
     """
 
@@ -367,7 +364,9 @@ class UidCopyCommand(CopyCommand):
     def parse(cls, buf: bytes, params: Params) \
             -> Tuple['UidCopyCommand', bytes]:
         ret, buf = super().parse(buf, params.copy(uid=True))
-        return cast('UidCopyCommand', ret), buf
+        if not isinstance(ret, UidCopyCommand):
+            raise TypeError(ret)
+        return ret, buf
 
 
 class UidExpungeCommand(ExpungeCommand):
@@ -384,7 +383,9 @@ class UidExpungeCommand(ExpungeCommand):
     def parse(cls, buf: bytes, params: Params) \
             -> Tuple['UidExpungeCommand', bytes]:
         ret, buf = super().parse(buf, params.copy(uid=True))
-        return cast('UidExpungeCommand', ret), buf
+        if not isinstance(ret, UidExpungeCommand):
+            raise TypeError(ret)
+        return ret, buf
 
 
 class UidFetchCommand(FetchCommand):
@@ -401,7 +402,9 @@ class UidFetchCommand(FetchCommand):
     def parse(cls, buf: bytes, params: Params) \
             -> Tuple['UidFetchCommand', bytes]:
         ret, buf = super().parse(buf, params.copy(uid=True))
-        return cast('UidFetchCommand', ret), buf
+        if not isinstance(ret, UidFetchCommand):
+            raise TypeError(ret)
+        return ret, buf
 
 
 class UidSearchCommand(SearchCommand):
@@ -418,7 +421,9 @@ class UidSearchCommand(SearchCommand):
     def parse(cls, buf: bytes, params: Params) \
             -> Tuple['UidSearchCommand', bytes]:
         ret, buf = super().parse(buf, params.copy(uid=True))
-        return cast('UidSearchCommand', ret), buf
+        if not isinstance(ret, UidSearchCommand):
+            raise TypeError(ret)
+        return ret, buf
 
 
 class UidStoreCommand(StoreCommand):
@@ -435,7 +440,9 @@ class UidStoreCommand(StoreCommand):
     def parse(cls, buf: bytes, params: Params) \
             -> Tuple['UidStoreCommand', bytes]:
         ret, buf = super().parse(buf, params.copy(uid=True))
-        return cast('UidStoreCommand', ret), buf
+        if not isinstance(ret, UidStoreCommand):
+            raise TypeError(ret)
+        return ret, buf
 
 
 class IdleCommand(CommandSelect):

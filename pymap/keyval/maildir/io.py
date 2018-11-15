@@ -170,7 +170,7 @@ class _FileWriteWith(Generic[_WT]):
     async def _release_lock(self) -> None:
         lock = self._lock
         if not lock:
-            raise RuntimeError()  # This should not happen.
+            raise RuntimeError()  # Lock not acquired.
         await lock.__aexit__(None, None, None)
 
     async def __aenter__(self) -> _WT:
@@ -184,7 +184,7 @@ class _FileWriteWith(Generic[_WT]):
     def _write_obj(self) -> None:
         obj = self._obj
         if not obj:
-            raise RuntimeError()  # This should not happen.
+            raise RuntimeError()  # Context manager not entered.
         obj.file_write()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:

@@ -81,7 +81,7 @@ class Response:
         else:
             return bytes(self._text)
 
-    def add_untagged(self, response: Union[MaybeBytes, 'Response']) -> None:
+    def add_untagged(self, *responses: Union[MaybeBytes, 'Response']) -> None:
         """Add an untagged response. These responses are shown before the
         parent response.
 
@@ -89,7 +89,7 @@ class Response:
             response: The untagged response to add.
 
         """
-        self.untagged.append(response)
+        self.untagged.extend(responses)
         self._raw = None
 
     def add_untagged_ok(self, text: MaybeBytes,
