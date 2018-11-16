@@ -59,9 +59,10 @@ class TestESearchResponse(unittest.TestCase):
 class TestListResponse(unittest.TestCase):
 
     def test_bytes(self):
-        resp1 = ListResponse('inbox', b'.')
+        resp1 = ListResponse('inbox', '.', [])
         self.assertEqual(b'* LIST () "." INBOX\r\n', bytes(resp1))
-        resp2 = ListResponse('Other.Stuff', b'.', True, False, True, True)
+        resp2 = ListResponse('Other.Stuff', '.',
+                             [b'Marked', b'Noinferior', b'Noselect'])
         self.assertEqual(b'* LIST (\\Marked \\Noinferior \\Noselect) '
                          b'"." Other.Stuff\r\n', bytes(resp2))
 
@@ -69,8 +70,9 @@ class TestListResponse(unittest.TestCase):
 class TestLSubResponse(unittest.TestCase):
 
     def test_bytes(self):
-        resp1 = LSubResponse('inbox', b'.')
+        resp1 = LSubResponse('inbox', '.', [])
         self.assertEqual(b'* LSUB () "." INBOX\r\n', bytes(resp1))
-        resp2 = LSubResponse('Other.Stuff', b'.', True, False, True, True)
+        resp2 = LSubResponse('Other.Stuff', '.',
+                             [b'Marked', b'Noinferior', b'Noselect'])
         self.assertEqual(b'* LSUB (\\Marked \\Noinferior \\Noselect) '
                          b'"." Other.Stuff\r\n', bytes(resp2))

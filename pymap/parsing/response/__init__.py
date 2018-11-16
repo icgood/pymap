@@ -1,7 +1,6 @@
 from typing import List, Optional, Union
 
-from ..typing import MaybeBytes
-from ..util import BytesFormat
+from ...bytes import MaybeBytes, BytesFormat
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
            'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth']
@@ -52,9 +51,9 @@ class Response:
         text: The response text.
 
     Attributes:
+        condition: The condition bytestring, e.g. ``OK``.
         tag: The tag bytestring.
         untagged: The list of added untagged responses.
-        condition: The condition bytestring, e.g. ``OK``.
 
     """
 
@@ -86,7 +85,7 @@ class Response:
         parent response.
 
         Args:
-            response: The untagged response to add.
+            responses: The untagged responses to add.
 
         """
         self.untagged.extend(responses)

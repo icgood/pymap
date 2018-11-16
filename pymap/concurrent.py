@@ -11,7 +11,8 @@ from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock
 from concurrent.futures import TimeoutError
 from contextlib import asynccontextmanager
 from threading import Event as _threading_Event, Lock as _threading_Lock
-from typing import AsyncContextManager, AsyncIterator, TypeVar, Sequence
+from typing import TypeVar, Sequence, MutableSet, AsyncContextManager, \
+    AsyncIterator
 from weakref import WeakSet
 
 __all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError']
@@ -298,7 +299,7 @@ class _AsyncioEvent(Event):
     def __init__(self) -> None:
         super().__init__()
         self._event = _asyncio_Event()
-        self._listeners: WeakSet['_AsyncioEvent'] = WeakSet()
+        self._listeners: MutableSet['_AsyncioEvent'] = WeakSet()
 
     @property
     def subsystem(self) -> str:
@@ -331,7 +332,7 @@ class _ThreadingEvent(Event):
     def __init__(self) -> None:
         super().__init__()
         self._event = _threading_Event()
-        self._listeners: WeakSet['_ThreadingEvent'] = WeakSet()
+        self._listeners: MutableSet['_ThreadingEvent'] = WeakSet()
 
     @property
     def subsystem(self) -> str:

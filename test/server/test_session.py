@@ -64,6 +64,8 @@ class TestSession(TestBase):
         self.transport.push_readline(
             base64.b64encode(b'\x00testuser\x00testpass') + b'\r\n')
         self.transport.push_write(
-            b'auth1 OK Authentication successful.\r\n')
+            b'auth1 OK [CAPABILITY IMAP4rev1',
+            (br'(?:\s+[a-zA-Z0-9=+-]+)*', ),
+            b'] Authentication successful.\r\n')
         self.transport.push_logout()
         await self.run()

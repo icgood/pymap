@@ -14,8 +14,8 @@ from .util import asyncenumerate
 
 __all__ = ['MailboxSnapshot', 'KeyValMessage', 'KeyValMailbox']
 
-_T = TypeVar('_T', bound='KeyValMailbox')
-_MT = TypeVar('_MT', bound='KeyValMessage')
+_MailboxT = TypeVar('_MailboxT', bound='KeyValMailbox')
+_MessageT = TypeVar('_MessageT', bound='KeyValMessage')
 
 
 class MailboxSnapshot(BaseMailbox):
@@ -58,7 +58,7 @@ class KeyValMessage(BaseLoadedMessage):
     pass
 
 
-class KeyValMailbox(Protocol[_MT]):
+class KeyValMailbox(Protocol[_MessageT]):
 
     @property
     @abstractmethod
@@ -99,7 +99,7 @@ class KeyValMailbox(Protocol[_MT]):
 
     @abstractmethod
     def parse_message(self, append_msg: AppendMessage,
-                      with_recent: bool) -> _MT:
+                      with_recent: bool) -> _MessageT:
         ...
 
     @abstractmethod
@@ -115,11 +115,11 @@ class KeyValMailbox(Protocol[_MT]):
         ...
 
     @abstractmethod
-    async def get_mailbox(self: _T, name: str) -> _T:
+    async def get_mailbox(self: _MailboxT, name: str) -> _MailboxT:
         ...
 
     @abstractmethod
-    async def add_mailbox(self: _T, name: str) -> _T:
+    async def add_mailbox(self: _MailboxT, name: str) -> _MailboxT:
         ...
 
     @abstractmethod
@@ -127,7 +127,8 @@ class KeyValMailbox(Protocol[_MT]):
         ...
 
     @abstractmethod
-    async def rename_mailbox(self: _T, before: str, after: str) -> _T:
+    async def rename_mailbox(self: _MailboxT, before: str,
+                             after: str) -> _MailboxT:
         ...
 
     @abstractmethod
@@ -135,11 +136,11 @@ class KeyValMailbox(Protocol[_MT]):
         ...
 
     @abstractmethod
-    async def add(self, message: _MT) -> _MT:
+    async def add(self, message: _MessageT) -> _MessageT:
         ...
 
     @abstractmethod
-    async def get(self, uid: int) -> Optional[_MT]:
+    async def get(self, uid: int) -> Optional[_MessageT]:
         ...
 
     @abstractmethod
@@ -147,7 +148,7 @@ class KeyValMailbox(Protocol[_MT]):
         ...
 
     @abstractmethod
-    async def save_flags(self, *messages: _MT) -> None:
+    async def save_flags(self, *messages: _MessageT) -> None:
         ...
 
     @abstractmethod
@@ -163,15 +164,15 @@ class KeyValMailbox(Protocol[_MT]):
         ...
 
     @abstractmethod
-    def messages(self) -> AsyncIterable[_MT]:
+    def messages(self) -> AsyncIterable[_MessageT]:
         ...
 
     @abstractmethod
-    def items(self) -> AsyncIterable[Tuple[int, _MT]]:
+    def items(self) -> AsyncIterable[Tuple[int, _MessageT]]:
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
-            -> AsyncIterable[Tuple[int, _MT]]:
+            -> AsyncIterable[Tuple[int, _MessageT]]:
         for seq, uid in selected.iter_set(seq_set):
             msg = await self.get(uid)
             if msg is not None:

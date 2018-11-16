@@ -64,3 +64,8 @@ def main():
     server.close()
     loop.run_until_complete(server.wait_closed())
     loop.close()
+    return 0
+
+
+if __name__ == '__main__':
+    main()

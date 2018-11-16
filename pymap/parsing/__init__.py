@@ -1,13 +1,14 @@
 """Package defining all the IMAP parsing and response classes."""
 
 import re
-from typing import Tuple, Generic, Sequence, Dict, Any, List, Type
+from abc import abstractmethod, ABCMeta
+from typing import Tuple, Generic, TypeVar, Sequence, Dict, Any, List, Type
 
 from .exceptions import NotParseable, UnexpectedType
-from .typing import ParseableType
 
-__all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine',
-           'Primitive', 'Special']
+__all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine']
+
+_ParseableT = TypeVar('_ParseableT')
 
 
 class Params:
@@ -74,7 +75,7 @@ class Params:
         return Params(**kwargs)
 
 
-class Parseable(Generic[ParseableType]):
+class Parseable(Generic[_ParseableT], metaclass=ABCMeta):
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
 
@@ -84,11 +85,14 @@ class Parseable(Generic[ParseableType]):
     """
 
     _whitespace_pattern = re.compile(br' +')
+    _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
+                               br'-\x5B\x5E-\x7A\x7C\x7E]+')
 
     @property
-    def value(self) -> ParseableType:
+    @abstractmethod
+    def value(self) -> _ParseableT:
         """The primary value associated with the parsed data."""
-        raise NotImplementedError
+        ...
 
     @classmethod
     def _whitespace_length(cls, buf: bytes, start: int = 0) -> int:
@@ -97,8 +101,9 @@ class Parseable(Generic[ParseableType]):
             return match.end(0) - start
         return 0
 
+    @abstractmethod
     def __bytes__(self) -> bytes:
-        raise NotImplementedError
+        ...
 
     def __eq__(self, other) -> bool:
         if isinstance(other, bytes):
@@ -106,6 +111,7 @@ class Parseable(Generic[ParseableType]):
         return NotImplemented
 
     @classmethod
+    @abstractmethod
     def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
         """Implemented by sub-classes to define how to parse the given buffer.
 
@@ -114,7 +120,7 @@ class Parseable(Generic[ParseableType]):
             params: The parameters used by some parseable types.
 
         """
-        raise NotImplementedError
+        ...
 
 
 class ExpectedParseable(Parseable[None]):
@@ -219,39 +225,3 @@ class EndLine(Parseable[bytes]):
 
     def __bytes__(self) -> bytes:
         return b' ' * self.preceding_spaces + self.value
-
-
-class Primitive(Parseable[ParseableType]):
-    """Base class for primitive data objects from an IMAP stream. The
-    sub-classes implement the different primitive formats.
-
-    """
-
-    _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
-                               br'-\x5B\x5E-\x7A\x7C\x7E]+')
-
-    @property
-    def value(self) -> ParseableType:
-        raise NotImplementedError
-
-    def __bytes__(self) -> bytes:
-        raise NotImplementedError
-
-    @classmethod
-    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
-        raise NotImplementedError
-
-
-class Special(Parseable[ParseableType]):
-    """Base class for special data objects in an IMAP stream."""
-
-    @property
-    def value(self) -> ParseableType:
-        raise NotImplementedError
-
-    def __bytes__(self) -> bytes:
-        raise NotImplementedError
-
-    @classmethod
-    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
-        raise NotImplementedError

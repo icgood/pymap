@@ -1,12 +1,13 @@
+
 from typing import Tuple, Optional
 
 from . import AString
-from .. import Params, Special
+from .. import Params, Parseable
 
 __all__ = ['Mailbox']
 
 
-class Mailbox(Special[str]):
+class Mailbox(Parseable[str]):
     """Represents a mailbox data object from an IMAP stream.
 
     Args:

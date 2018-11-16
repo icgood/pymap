@@ -3,15 +3,16 @@ from functools import total_ordering
 from typing import Tuple, Optional, Union, Sequence, FrozenSet
 
 from . import AString
-from .. import NotParseable, Params, Special
+from .. import Params, Parseable
+from ..exceptions import NotParseable
 from ..primitives import Atom, ListP
-from ..util import BytesFormat
+from ...bytes import BytesFormat
 
 __all__ = ['FetchAttribute']
 
 
 @total_ordering
-class FetchAttribute(Special[bytes]):
+class FetchAttribute(Parseable[bytes]):
     """Represents an attribute that should be fetched for each message in the
     sequence set of a FETCH command on an IMAP stream.
 

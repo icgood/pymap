@@ -1,11 +1,11 @@
+
 from itertools import chain
-from typing import Iterable, List, Mapping, Optional
+from typing import Iterable, Mapping, Optional
 
 from . import Response
-from ..primitives import ListP, QuotedString, Number
-from ..specials import Mailbox, FetchAttribute, StatusAttribute, Flag
-from ..typing import MaybeBytes
-from ..util import BytesFormat
+from ..primitives import Nil, ListP, QuotedString, Number
+from ..specials import Mailbox, FetchAttribute, StatusAttribute
+from ...bytes import MaybeBytes, BytesFormat
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
@@ -153,34 +153,21 @@ class ListResponse(Response):
     Args:
         name: The mailbox name.
         sep: The heirarchy separation character.
-        marked: If this mailbox is considered "interesting" by the server.
-        unmarked: If this mailbox is not considered "interesting".
-        no_inferior: If the mailbox does not and cannot have inferior
-                        mailboxes in its heirarchy.
-        no_select: If the mailbox is not able to be selected.
+        attrs: The attribute flags associated with the mailbox.
 
     """
 
     name: bytes = b'LIST'
 
-    def __init__(self, name: str, sep: bytes,
-                 marked: bool = False,
-                 unmarked: bool = False,
-                 no_inferior: bool = False,
-                 no_select: bool = False) -> None:
-        name_attrs: List[Flag] = []
-        if marked:
-            name_attrs.append(Flag(br'\Marked'))
-        elif unmarked:
-            name_attrs.append(Flag(br'\Unmarked'))
-        if no_inferior:
-            name_attrs.append(Flag(br'\Noinferior'))
-        if no_select:
-            name_attrs.append(Flag(br'\Noselect'))
-        text = b' '.join((bytes(self.name),
-                          bytes(ListP(name_attrs)),
-                          bytes(QuotedString(sep)),
-                          bytes(Mailbox(name))))
+    def __init__(self, name: str, sep: Optional[str],
+                 attrs: Iterable[bytes]) -> None:
+        if sep:
+            sep_obj: MaybeBytes = QuotedString(sep.encode('utf-8'))
+        else:
+            sep_obj = Nil()
+        attrs_obj = ListP([b'\\' + attr for attr in attrs])
+        text = BytesFormat(b' ').join(
+            (self.name, attrs_obj, sep_obj, Mailbox(name)))
         super().__init__(b'*', text)
 
 

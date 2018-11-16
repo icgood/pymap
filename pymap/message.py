@@ -18,8 +18,8 @@ from .parsing.specials import Flag, ExtensionOptions
 
 __all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
 
-_MT = TypeVar('_MT', bound='BaseMessage')
-_LMT = TypeVar('_LMT', bound='BaseLoadedMessage')
+_MessageT = TypeVar('_MessageT', bound='BaseMessage')
+_LoadedT = TypeVar('_LoadedT', bound='BaseLoadedMessage')
 
 
 class AppendMessage(NamedTuple):
@@ -90,7 +90,7 @@ class BaseMessage(Message):
     def internal_date(self) -> Optional[datetime]:
         return self._internal_date
 
-    def copy(self: _MT, new_uid: int) -> _MT:
+    def copy(self: _MessageT, new_uid: int) -> _MessageT:
         cls = type(self)
         return cls(new_uid, self.permanent_flags, self.internal_date,
                    *self._args, **self._kwargs)
@@ -139,16 +139,16 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
         self._args = args
         self._kwargs = kwargs
 
-    def copy(self: _LMT, new_uid: int) -> _LMT:
+    def copy(self: _LoadedT, new_uid: int) -> _LoadedT:
         cls = type(self)
         return cls(new_uid, self.contents, self.permanent_flags,
                    self.internal_date, *self._args, **self._kwargs)
 
     @classmethod
-    def parse(cls: Type[_LMT], uid: int, data: bytes,
+    def parse(cls: Type[_LoadedT], uid: int, data: bytes,
               permanent_flags: Iterable[Flag] = None,
               internal_date: datetime = None,
-              *args: Any, **kwargs: Any) -> _LMT:
+              *args: Any, **kwargs: Any) -> _LoadedT:
         """Parse the given bytestring containing a MIME-encoded email message
         into a :class:`BaseLoadedMessage` object.
 

@@ -16,7 +16,7 @@ from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.specials import Flag
-from pymap.peerinfo import PeerInfo
+from pymap.sockinfo import SocketInfo
 
 from .mailbox import MailboxSnapshot, Message, Mailbox
 from ..session import KeyValSession
@@ -85,12 +85,13 @@ class Session(KeyValSession[Mailbox, Message]):
 
     @classmethod
     async def login(cls: Type[_ST], credentials: AuthenticationCredentials,
-                    config: Config, peer_info: PeerInfo) -> _ST:
+                    config: Config, sock_info: SocketInfo) -> _ST:
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.
 
         """
+        _ = sock_info  # noqa
         user = credentials.authcid
         password = await cls.get_password(config, user)
         if not password or not credentials.check_secret(password):
@@ -101,7 +102,7 @@ class Session(KeyValSession[Mailbox, Message]):
             if config.demo_data:
                 await cls._load_demo(inbox)
             config.inbox_cache[user] = inbox
-        return cls(inbox)
+        return cls(inbox, '.')
 
     @classmethod
     async def get_password(cls, config: Config, user: str) -> str:
@@ -128,11 +129,11 @@ class Session(KeyValSession[Mailbox, Message]):
         mbx_names = sorted(resource_listdir(cls.resource, 'data'))
         for name in mbx_names:
             if name != 'INBOX':
-                mailbox = await inbox.add_mailbox(name)
-                await cls._load_demo_mailbox(name, mailbox)
+                mbx = await inbox.add_mailbox(name)
+                await cls._load_demo_mailbox(name, mbx)
 
     @classmethod
-    async def _load_demo_mailbox(cls, name: str, mailbox: Mailbox) -> None:
+    async def _load_demo_mailbox(cls, name: str, mbx: Mailbox) -> None:
         path = os.path.join('data', name)
         msg_names = sorted(resource_listdir(cls.resource, path))
         for msg_name in msg_names:
@@ -147,4 +148,4 @@ class Session(KeyValSession[Mailbox, Message]):
                 msg_flags = {Flag(flag) for flag in flags_line.split()}
                 msg_data = message_stream.read()
             msg = Message.parse(0, msg_data, msg_flags, msg_dt)
-            await mailbox.add(msg)
+            await mbx.add(msg)

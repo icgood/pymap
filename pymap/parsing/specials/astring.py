@@ -1,13 +1,13 @@
 import re
 from typing import Tuple
 
-from .. import Params, Special
+from .. import Params, Parseable
 from ..primitives import String, QuotedString
 
 __all__ = ['AString']
 
 
-class AString(Special[bytes]):
+class AString(Parseable[bytes]):
     """Represents a string that may have quotes (like a quoted-string) or may
     not (like an atom).  Additionally allows the closing square bracket (``]``)
     character in the unquoted form.

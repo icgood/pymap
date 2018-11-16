@@ -1,15 +1,15 @@
 from datetime import datetime, tzinfo
 from typing import Tuple, Optional
 
-from .. import Params, Special
+from .. import Params, Parseable
 from ..exceptions import InvalidContent
 from ..primitives import QuotedString
-from ..util import BytesFormat
+from ...bytes import BytesFormat
 
 __all__ = ['DateTime']
 
 
-class DateTime(Special[datetime]):
+class DateTime(Parseable[datetime]):
     """Represents a date-time quoted string from an IMAP stream.
 
     Args:

@@ -36,7 +36,7 @@ from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
 from .parsing.specials import DateTime, FetchAttribute
-from .peerinfo import PeerInfo
+from .sockinfo import SocketInfo
 from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
 
@@ -56,7 +56,6 @@ class ConnectionState:
         super().__init__()
         self.config = config
         self.ssl_context = config.ssl_context
-        self.static_capability = config.static_capability
         self._login = login
         self._session: Optional[SessionInterface] = None
         self._selected: Optional[SelectedMailbox] = None
@@ -88,31 +87,35 @@ class ConnectionState:
 
     @property
     def capability(self) -> Capability:
-        return Capability(self._capability +
-                          [b'AUTH=%b' % mech.name for mech in
-                           self.auth.server_mechanisms] +
-                          list(self.static_capability))
+        if self._session:
+            login_capability = list(self.config.login_capability)
+            return Capability(self._capability + login_capability)
+        else:
+            return Capability(self._capability +
+                              [b'AUTH=%b' % mech.name for mech in
+                               self.auth.server_mechanisms])
 
-    async def do_greeting(self, peer_info: PeerInfo) -> Response:
+    async def do_greeting(self, sock_info: SocketInfo) -> Response:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
             self._session = await self.login(
-                preauth_creds, self.config, peer_info)
+                preauth_creds, self.config, sock_info)
         resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
         return resp_cls(b'*', b'Server ready ' + fqdn, self.capability)
 
-    async def do_authenticate(self, cmd: _AuthCommands, peer_info: PeerInfo,
+    async def do_authenticate(self, cmd: _AuthCommands, sock_info: SocketInfo,
                               creds: Optional[AuthenticationCredentials]):
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self._session = await self.login(creds, self.config, peer_info)
-        return ResponseOk(cmd.tag, b'Authentication successful.')
+        self._session = await self.login(creds, self.config, sock_info)
+        return ResponseOk(cmd.tag, b'Authentication successful.',
+                          self.capability)
 
-    async def do_login(self, cmd: LoginCommand, peer_info: PeerInfo,
+    async def do_login(self, cmd: LoginCommand, sock_info: SocketInfo,
                        creds: AuthenticationCredentials) -> Response:
         if b'LOGINDISABLED' in self.capability:
             raise CommandNotAllowed(b'LOGIN is disabled.')
-        return await self.do_authenticate(cmd, peer_info, creds)
+        return await self.do_authenticate(cmd, sock_info, creds)
 
     async def do_starttls(self, cmd: StartTLSCommand):
         if self.ssl_context is None:
@@ -230,7 +233,7 @@ class ConnectionState:
             cmd.ref_name, cmd.filter, selected=self._selected)
         resp = ResponseOk(cmd.tag, b'LIST completed.')
         for name, sep, attrs in mailboxes:
-            resp.add_untagged(ListResponse(name, sep, **attrs))
+            resp.add_untagged(ListResponse(name, sep, attrs))
         return resp, updates
 
     async def do_lsub(self, cmd: LSubCommand):
@@ -238,7 +241,7 @@ class ConnectionState:
             cmd.ref_name, cmd.filter, subscribed=True, selected=self._selected)
         resp = ResponseOk(cmd.tag, b'LSUB completed.')
         for name, sep, attrs in mailboxes:
-            resp.add_untagged(LSubResponse(name, sep, **attrs))
+            resp.add_untagged(LSubResponse(name, sep, attrs))
         return resp, updates
 
     async def do_check(self, cmd: CheckCommand):
@@ -363,7 +366,8 @@ class ConnectionState:
             for resp in untagged:
                 yield resp
 
-    def _get_func_name(self, cmd: Command) -> str:
+    @classmethod
+    def _get_func_name(cls, cmd: Command) -> str:
         cmd_type = type(cmd)
         while cmd_type.delegate:
             cmd_type = cmd_type.delegate

@@ -3,8 +3,7 @@ from typing import Iterable, Optional, Sequence, Tuple
 from . import ResponseCode
 from ..primitives import ListP
 from ..specials import SequenceSet
-from ..typing import MaybeBytes
-from ..util import BytesFormat
+from ...bytes import MaybeBytes, BytesFormat
 
 __all__ = ['Alert', 'Capability', 'Parse', 'PermanentFlags', 'ReadOnly',
            'ReadWrite', 'TryCreate', 'UidNext', 'UidValidity', 'Unseen',
@@ -175,8 +174,7 @@ class CopyUid(ResponseCode):
 
     Args:
         validity: The UID validity value.
-        source_uids: The UIDs of the source messages.
-        dest_uids: The UIDs of the copied messages.
+        uids: The pairs of source UID mapped to destination UID.
 
     """
 

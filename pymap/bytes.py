@@ -1,9 +1,15 @@
+"""Defines useful types and utilities for working with bytestrings."""
+
 from itertools import chain
-from typing import cast, Union, Iterable, SupportsBytes
+from typing import cast, TypeVar, ByteString, SupportsBytes, Union, Iterable
 
-from .typing import MaybeBytes
+__all__ = ['MaybeBytes', 'MaybeBytesT', 'BytesFormat']
 
-__all__ = ['BytesFormat']
+#: A bytes object or an object with a ``__bytes__`` method.
+MaybeBytes = Union[ByteString, SupportsBytes]
+
+#: A type variable bound to :class:`MaybeBytes`.
+MaybeBytesT = TypeVar('MaybeBytesT', bound=MaybeBytes)
 
 
 class BytesFormat:

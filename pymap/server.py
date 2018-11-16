@@ -26,7 +26,7 @@ from .parsing.command.select import IdleCommand
 from .parsing.exceptions import RequiresContinuation, BadCommand
 from .parsing.response import ResponseContinuation, Response, ResponseCode, \
     ResponseBad, ResponseNo, ResponseBye, ResponseOk
-from .peerinfo import PeerInfo
+from .sockinfo import SocketInfo
 from .state import ConnectionState
 
 __all__ = ['IMAPConfig', 'IMAPServer', 'IMAPConnection']
@@ -87,7 +87,7 @@ class IMAPConnection:
     def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
         self.reader = reader
         self.writer = writer
-        self.peer_info = PeerInfo(writer)
+        self.sock_info = SocketInfo(writer)
 
     def _real_print(self, prefix: str, output: bytes) -> None:
         prefix = prefix % self.writer.get_extra_info('socket').fileno()
@@ -214,10 +214,10 @@ class IMAPConnection:
         return response
 
     async def run(self, state: ConnectionState) -> None:
-        self._print('%d +++|', bytes(self.peer_info))
+        self._print('%d +++|', bytes(self.sock_info))
         bad_commands = 0
         try:
-            greeting = await state.do_greeting(self.peer_info)
+            greeting = await state.do_greeting(self.sock_info)
         except ResponseError as exc:
             resp = exc.get_response(b'*')
             resp.condition = ResponseBye.condition
@@ -246,13 +246,13 @@ class IMAPConnection:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
                         response = await state.do_authenticate(
-                                cmd, self.peer_info, creds)
+                                cmd, self.sock_info, creds)
                     elif isinstance(cmd, LoginCommand):
                         creds = AuthenticationCredentials(
                             cmd.userid.decode('utf-8'),
                             cmd.password.decode('utf-8'))
                         response = await state.do_login(
-                                cmd, self.peer_info, creds)
+                                cmd, self.sock_info, creds)
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)
                     else:

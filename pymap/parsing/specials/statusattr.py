@@ -1,13 +1,13 @@
 from typing import Tuple
 
-from .. import NotParseable, Space, Params, Special
-from ..exceptions import InvalidContent
+from .. import Params, Parseable, Space
+from ..exceptions import NotParseable, InvalidContent
 from ..primitives import Atom
 
 __all__ = ['StatusAttribute']
 
 
-class StatusAttribute(Special[bytes]):
+class StatusAttribute(Parseable[bytes]):
     """Represents a status attribute from an IMAP stream.
 
     Args:

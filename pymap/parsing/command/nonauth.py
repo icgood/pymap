@@ -1,7 +1,8 @@
+
 from typing import Tuple
 
 from . import CommandNonAuth, CommandNoArgs
-from .. import Space, EndLine, Params
+from .. import Params, Space, EndLine
 from ..primitives import Atom
 from ..specials import AString
 
