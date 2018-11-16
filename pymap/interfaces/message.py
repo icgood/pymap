@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from datetime import datetime
-from typing import Optional, Iterable, Set, FrozenSet, Sequence, \
-    AbstractSet, TypeVar
+from typing import Optional, Iterable, Set, FrozenSet, Sequence, TypeVar
 from typing_extensions import Protocol
 
 from ..flags import FlagOp, SessionFlags
@@ -69,7 +68,7 @@ class Message(Protocol):
         ...
 
     @abstractmethod
-    def update_flags(self, flag_set: AbstractSet[Flag],
+    def update_flags(self, flag_set: Iterable[Flag],
                      flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
         """Update the permanent flags for the message. Returns the resulting
         set of permanent flags.

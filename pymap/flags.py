@@ -6,7 +6,7 @@ See Also:
 """
 
 import enum
-from typing import AbstractSet, FrozenSet, Dict
+from typing import Iterable, FrozenSet, Dict
 
 from .parsing.specials.flag import Flag, Recent
 
@@ -42,7 +42,7 @@ class SessionFlags:
     def __delitem__(self, uid: int) -> None:
         self.remove(uid)
 
-    def __setitem__(self, uid: int, flag_set: AbstractSet[Flag]) -> None:
+    def __setitem__(self, uid: int, flag_set: Iterable[Flag]) -> None:
         self.update(uid, flag_set)
 
     def get(self, uid: int) -> FrozenSet[Flag]:
@@ -63,7 +63,7 @@ class SessionFlags:
         """
         self._flags.pop(uid, None)
 
-    def update(self, uid: int, flag_set: AbstractSet[Flag],
+    def update(self, uid: int, flag_set: Iterable[Flag],
                op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
         """Update the flags for the session, returning the resulting flags.
 
@@ -75,9 +75,9 @@ class SessionFlags:
         """
         session_flags = self._flags.get(uid, frozenset())
         if op == FlagOp.ADD:
-            session_flags = session_flags | flag_set
+            session_flags = session_flags | frozenset(flag_set)
         elif op == FlagOp.DELETE:
-            session_flags = session_flags - flag_set
+            session_flags = session_flags - frozenset(flag_set)
         else:  # op == FlagOp.REPLACE
             session_flags = frozenset(flag_set)
         self._flags[uid] = session_flags

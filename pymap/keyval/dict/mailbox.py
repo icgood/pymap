@@ -52,6 +52,10 @@ class Mailbox(KeyValMailbox[Message]):
         return self._uid_validity
 
     @property
+    def next_uid(self) -> int:
+        return self._max_uid + 1
+
+    @property
     def messages_lock(self) -> ReadWriteLock:
         return self._messages_lock
 
@@ -139,10 +143,6 @@ class Mailbox(KeyValMailbox[Message]):
                 del self._children[before]
                 return self._children[after]
 
-    async def get_max_uid(self) -> int:
-        async with self.messages_lock.read_lock():
-            return self._max_uid
-
     async def add(self, message: Message) -> Message:
         async with self.messages_lock.write_lock():
             self._max_uid += 1
@@ -160,10 +160,6 @@ class Mailbox(KeyValMailbox[Message]):
 
     async def save_flags(self, *messages: Message) -> None:
         pass
-
-    async def get_count(self) -> int:
-        async with self.messages_lock.read_lock():
-            return len(self._messages)
 
     async def cleanup(self) -> None:
         pass

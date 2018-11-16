@@ -18,13 +18,14 @@ Table of Contents
    config
    exceptions
    flags
+   listtree
    mailbox
    message
-   peerinfo
    proxy
    search
    selected
    server
+   sockinfo
    state
    interfaces
    parsing

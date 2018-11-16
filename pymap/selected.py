@@ -12,7 +12,7 @@ from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
-__all__ = ['SelectedMailbox']
+__all__ = ['SelectedSnapshot', 'SelectedMailbox']
 
 _SelectedT = TypeVar('_SelectedT', bound='SelectedMailbox')
 _Flags = FrozenSet[Flag]
@@ -21,17 +21,52 @@ _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
 
 
-class _Previous(NamedTuple):
-    uid_validity: Optional[int]
-    recent: int
-    messages: Dict[int, _Flags]
-
-
 class _OnForkProtocol(Protocol):
 
     def __call__(self, orig: 'SelectedMailbox',
                  forked: 'SelectedMailbox') -> None:
         ...
+
+
+class SelectedSnapshot(NamedTuple):
+    """Holds a snapshot of the selected mailbox as of the last fork.
+
+    Attributes:
+        uid_validity: The UID validity of the selected mailbox.
+        max_uid: The highest message UID in the mailbox.
+        recent: The number of messages in the mailbox with ``\\Recent``.
+        messages: The message UIDs mapped to flags.
+
+    """
+
+    uid_validity: Optional[int]
+    max_uid: int
+    recent: int
+    messages: Dict[int, _Flags]
+
+    @property
+    def exists(self) -> int:
+        """The total number of messages in the mailbox."""
+        return len(self.messages)
+
+    def iter_set(self, seq_set: SequenceSet) -> Iterable[Tuple[int, int]]:
+        """Iterate through the given sequence set based on the message state at
+        the last fork.
+
+        Args:
+            seq_set: Sequence set to convert to UID set.
+
+        """
+        if seq_set.uid:
+            all_msgs = frozenset(seq_set.iter(self.max_uid))
+        else:
+            all_msgs = frozenset(seq_set.iter(self.exists))
+        for seq, uid in enumerate(sorted(self.messages.keys()), 1):
+            if seq_set.uid:
+                if uid in all_msgs:
+                    yield (seq, uid)
+            elif seq in all_msgs:
+                yield (seq, uid)
 
 
 class SelectedMailbox:
@@ -69,7 +104,7 @@ class SelectedMailbox:
         self._hashed: Optional[Mapping[int, int]] = None
         self._hide_expunged = False
         self._hidden: Set[int] = set()
-        self._previous: Optional[_Previous] = None
+        self._snapshot: Optional[SelectedSnapshot] = None
 
     @property
     def name(self) -> str:
@@ -87,6 +122,11 @@ class SelectedMailbox:
         return self._readonly
 
     @property
+    def max_uid(self) -> int:
+        """The highest message UID in the mailbox."""
+        return self._max_uid
+
+    @property
     def exists(self) -> int:
         """The total number of messages in the mailbox."""
         return len(self._messages)
@@ -100,6 +140,13 @@ class SelectedMailbox:
     def session_flags(self) -> SessionFlags:
         """Session-only flags for the mailbox."""
         return self._session_flags
+
+    @property
+    def snapshot(self) -> SelectedSnapshot:
+        """A snapshot of the selected mailbox as of the last fork."""
+        if not self._snapshot:
+            raise RuntimeError()  # Must call fork() first.
+        return self._snapshot
 
     @property
     def kwargs(self) -> Mapping[str, Any]:
@@ -162,28 +209,6 @@ class SelectedMailbox:
         """
         self._hidden.update(uids)
 
-    def iter_set(self, seq_set: SequenceSet) -> Iterable[Tuple[int, int]]:
-        """Iterate through the given sequence set based on the message state at
-        the last fork.
-
-        Args:
-            seq_set: Sequence set to convert to UID set.
-
-        """
-        if not self._previous:
-            raise RuntimeError()  # Must call fork() first.
-        prev_messages = self._previous.messages
-        if seq_set.uid:
-            all_msgs = frozenset(seq_set.iter(self._max_uid))
-        else:
-            all_msgs = frozenset(seq_set.iter(len(prev_messages)))
-        for seq, uid in enumerate(sorted(prev_messages.keys()), 1):
-            if seq_set.uid:
-                if uid in all_msgs:
-                    yield (seq, uid)
-            elif seq in all_msgs:
-                yield (seq, uid)
-
     def fork(self: _SelectedT, command: Command) \
             -> Tuple[_SelectedT, Iterable[Response]]:
         """Compares the state of the current object to that of the last fork,
@@ -199,19 +224,18 @@ class SelectedMailbox:
                    **self.kwargs)
         copy._uid_validity = self._uid_validity
         copy._max_uid = self._max_uid
-        copy._previous = _Previous(self.uid_validity, self.recent,
-                                   self._messages)
+        copy._snapshot = SelectedSnapshot(self.uid_validity, self.max_uid,
+                                          self.recent, self._messages)
         if self._on_fork:
             self._on_fork(self, copy)
-        if self._previous:
-            return copy, self._compare(command, self._previous)
+        if self._snapshot:
+            return copy, self._compare(command)
         else:
             return copy, []
 
-    def _compare(self, command: Command, previous: _Previous) \
-            -> Iterable[Response]:
+    def _compare(self, command: Command) -> Iterable[Response]:
         is_uid: bool = getattr(command, 'uid', False)
-        before_uidval, before_recent, before = previous
+        before_uidval, _, before_recent, before = self.snapshot
         current = self._messages
         uidval = self.uid_validity
         if self._is_deleted:

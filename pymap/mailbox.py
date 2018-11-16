@@ -2,7 +2,7 @@
 
 import random
 import time
-from typing import Optional, AbstractSet, FrozenSet
+from typing import Optional, Iterable, FrozenSet
 
 from .interfaces.mailbox import MailboxInterface
 from .parsing.specials import Flag
@@ -25,8 +25,8 @@ class BaseMailbox(MailboxInterface):
     """
 
     def __init__(self, name: str,
-                 permanent_flags: AbstractSet[Flag] = None,
-                 session_flags: AbstractSet[Flag] = None,
+                 permanent_flags: Iterable[Flag] = None,
+                 session_flags: Iterable[Flag] = None,
                  readonly: bool = False,
                  uid_validity: int = 0) -> None:
         super().__init__()
@@ -34,10 +34,10 @@ class BaseMailbox(MailboxInterface):
         self._readonly = readonly
         self._uid_validity = uid_validity
         self._permanent_flags: FrozenSet[Flag] = (
-            frozenset(permanent_flags - {Recent})
+            frozenset(permanent_flags) - {Recent}
             if permanent_flags else frozenset())
         self._session_flags: FrozenSet[Flag] = (
-            frozenset((session_flags - self.permanent_flags) | {Recent})
+            (frozenset(session_flags) - self.permanent_flags) | {Recent}
             if session_flags else frozenset({Recent}))
 
     @classmethod

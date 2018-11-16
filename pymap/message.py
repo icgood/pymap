@@ -7,7 +7,7 @@ from email.generator import BytesGenerator
 from email.message import EmailMessage
 from email.policy import SMTP
 from typing import Any, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
-    Sequence, NamedTuple, AbstractSet, TypeVar, Type
+    Sequence, NamedTuple, TypeVar, Type
 
 from .flags import FlagOp, SessionFlags
 from .interfaces.message import Header, Message, LoadedMessage
@@ -101,7 +101,7 @@ class BaseMessage(Message):
         else:
             return frozenset(self.permanent_flags)
 
-    def update_flags(self, flag_set: AbstractSet[Flag],
+    def update_flags(self, flag_set: Iterable[Flag],
                      flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
         if flag_op == FlagOp.ADD:
             self.permanent_flags.update(flag_set)

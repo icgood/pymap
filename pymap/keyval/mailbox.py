@@ -72,6 +72,11 @@ class KeyValMailbox(Protocol[_MessageT]):
 
     @property
     @abstractmethod
+    def next_uid(self) -> int:
+        ...
+
+    @property
+    @abstractmethod
     def messages_lock(self) -> ReadWriteLock:
         ...
 
@@ -132,10 +137,6 @@ class KeyValMailbox(Protocol[_MessageT]):
         ...
 
     @abstractmethod
-    async def get_max_uid(self) -> int:
-        ...
-
-    @abstractmethod
     async def add(self, message: _MessageT) -> _MessageT:
         ...
 
@@ -149,10 +150,6 @@ class KeyValMailbox(Protocol[_MessageT]):
 
     @abstractmethod
     async def save_flags(self, *messages: _MessageT) -> None:
-        ...
-
-    @abstractmethod
-    async def get_count(self) -> int:
         ...
 
     @abstractmethod
@@ -173,26 +170,26 @@ class KeyValMailbox(Protocol[_MessageT]):
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
             -> AsyncIterable[Tuple[int, _MessageT]]:
-        for seq, uid in selected.iter_set(seq_set):
+        for seq, uid in selected.snapshot.iter_set(seq_set):
             msg = await self.get(uid)
             if msg is not None:
                 yield (seq, msg)
 
     async def snapshot(self) -> MailboxSnapshot:
         readonly = False
-        exists = await self.get_count()
+        exists = 0
         recent = 0
         unseen = 0
         first_unseen: Optional[int] = None
         async for seq, msg in asyncenumerate(self.messages(), 1):
+            exists += 1
             if Recent in msg.permanent_flags:
                 recent += 1
             if Seen not in msg.permanent_flags:
                 unseen += 1
                 if first_unseen is None:
                     first_unseen = seq
-        next_uid = await self.get_max_uid() + 1
         return MailboxSnapshot(self.name, readonly, self.uid_validity,
                                self.permanent_flags, self.session_flags,
                                exists, recent, unseen, first_unseen,
-                               next_uid)
+                               self.next_uid)

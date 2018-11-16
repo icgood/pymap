@@ -24,7 +24,7 @@ from ..session import KeyValSession
 __all__ = ['add_subparser', 'init', 'Config', 'Session',
            'MailboxSnapshot', 'Message', 'Mailbox']
 
-_ST = TypeVar('_ST', bound='Session')
+_SessionT = TypeVar('_SessionT', bound='Session')
 
 
 def add_subparser(subparsers) -> None:
@@ -96,14 +96,15 @@ class Config(IMAPConfig):
                                   executor=executor, **extra)
 
 
-class Session(KeyValSession[Mailbox, Message]):
+class Session(KeyValSession):
     """The session implementation for the maildir backend."""
 
     resource = __name__
 
     @classmethod
-    async def login(cls: Type[_ST], credentials: AuthenticationCredentials,
-                    config: Config, sock_info: SocketInfo) -> _ST:
+    async def login(cls: Type[_SessionT],
+                    credentials: AuthenticationCredentials,
+                    config: Config, sock_info: SocketInfo) -> _SessionT:
         """Checks the given credentials for a valid login and returns a new
         session.
 

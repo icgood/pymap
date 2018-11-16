@@ -73,6 +73,7 @@ class Mailbox(KeyValMailbox[Message]):
         self._layout = layout
         self._path = layout.get_path(name)
         self._uid_validity = 0
+        self._next_uid = 0
         self._flags: Optional[MaildirFlags] = None
         self._messages_lock = ReadWriteLock.for_threading()
         self._folder_cache: Dict[str, 'Mailbox'] = {}
@@ -86,6 +87,10 @@ class Mailbox(KeyValMailbox[Message]):
     @property
     def uid_validity(self) -> int:
         return self._uid_validity
+
+    @property
+    def next_uid(self) -> int:
+        return self._next_uid
 
     @property
     def maildir_flags(self) -> MaildirFlags:
@@ -197,10 +202,6 @@ class Mailbox(KeyValMailbox[Message]):
             after_mbx = Mailbox(after, maildir, self._layout)
         return await after_mbx.reset()
 
-    async def get_max_uid(self) -> int:
-        async with UidList.with_open(self._path) as uidl:
-            return uidl.next_uid - 1
-
     async def add(self, message: Message) -> 'Message':
         async with self.messages_lock.write_lock():
             maildir_msg = message.maildir_msg
@@ -253,10 +254,6 @@ class Mailbox(KeyValMailbox[Message]):
                     maildir_msg.set_flags(flag_str)
                     maildir_msg.set_subdir('new' if is_recent else 'cur')
                     self._maildir[key] = maildir_msg
-
-    async def get_count(self) -> int:
-        async with self.messages_lock.read_lock():
-            return len(self._maildir)
 
     async def cleanup(self) -> None:
         self._maildir.clean()
@@ -323,7 +320,6 @@ class Mailbox(KeyValMailbox[Message]):
     async def reset(self) -> 'Mailbox':
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
-            self._uid_validity = uidl.uid_validity
             for rec in uidl.records:
                 key = rec.filename.split(':', 1)[0]
                 keys.pop(key, None)
@@ -334,6 +330,8 @@ class Mailbox(KeyValMailbox[Message]):
                 new_rec = Record(uidl.next_uid, {}, filename)
                 uidl.next_uid += 1
                 uidl.set(new_rec)
+        self._uid_validity = uidl.uid_validity
+        self._next_uid = uidl.next_uid
         return self
 
     async def _get_keys(self) -> Dict[str, str]:

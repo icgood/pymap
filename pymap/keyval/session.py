@@ -1,6 +1,6 @@
 
-from typing import overload, TypeVar, Generic, Tuple, Optional, \
-    FrozenSet, Iterable, Sequence, List
+from typing import overload, Tuple, Optional, FrozenSet, Iterable, \
+    Sequence, List
 
 from pymap.concurrent import Event, TimeoutError
 from pymap.exceptions import MailboxNotFound
@@ -19,26 +19,22 @@ from .util import asyncenumerate
 
 __all__ = ['KeyValSession']
 
-_MessageT = TypeVar('_MessageT', bound=KeyValMessage)
-_MailboxT = TypeVar('_MailboxT', bound=KeyValMailbox)
 
+class KeyValSession(SessionInterface[SelectedMailbox]):
 
-class KeyValSession(Generic[_MailboxT, _MessageT],
-                    SessionInterface[SelectedMailbox]):
-
-    def __init__(self, inbox: _MailboxT, delimiter: str) -> None:
+    def __init__(self, inbox: KeyValMailbox, delimiter: str) -> None:
         super().__init__()
         self.inbox = inbox
         self.delimiter = delimiter
 
     @overload
     async def _load_updates(self, selected: SelectedMailbox,
-                            mbx: _MailboxT) -> SelectedMailbox:
+                            mbx: KeyValMailbox) -> SelectedMailbox:
         ...
 
     @overload  # noqa
     async def _load_updates(self, selected: Optional[SelectedMailbox],
-                            mbx: Optional[_MailboxT]) \
+                            mbx: Optional[KeyValMailbox]) \
             -> Optional[SelectedMailbox]:
         ...
 
@@ -57,7 +53,7 @@ class KeyValSession(Generic[_MailboxT, _MessageT],
 
     @classmethod
     def _get_mbx_selected(cls, selected: Optional[SelectedMailbox],
-                          mbx: _MailboxT) -> Optional[SelectedMailbox]:
+                          mbx: KeyValMailbox) -> Optional[SelectedMailbox]:
         if selected and selected.name == mbx.name:
             return selected
         elif mbx.last_selected:
@@ -65,7 +61,8 @@ class KeyValSession(Generic[_MailboxT, _MessageT],
         return None
 
     @classmethod
-    async def _wait_for_updates(cls, mbx: _MailboxT, wait_on: Event) -> None:
+    async def _wait_for_updates(cls, mbx: KeyValMailbox,
+                                wait_on: Event) -> None:
         try:
             or_event = wait_on.or_event(mbx.updated)
             await or_event.wait(timeout=10.0)
@@ -147,7 +144,7 @@ class KeyValSession(Generic[_MailboxT, _MessageT],
         mbx = await self.inbox.get_mailbox(name)
         selected = mbx.new_selected(readonly)
         if not readonly:
-            recent_msgs: List[_MessageT] = []
+            recent_msgs: List[KeyValMessage] = []
             async for msg in mbx.messages():
                 if Recent in msg.permanent_flags:
                     msg.permanent_flags.remove(Recent)
@@ -170,7 +167,7 @@ class KeyValSession(Generic[_MailboxT, _MessageT],
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
-            -> Tuple[Iterable[Tuple[int, _MessageT]], SelectedMailbox]:
+            -> Tuple[Iterable[Tuple[int, KeyValMessage]], SelectedMailbox]:
         mbx = await self.inbox.get_mailbox(selected.name)
         ret = [(seq, msg) async for seq, msg
                in mbx.find(sequence_set, selected)]
@@ -178,12 +175,12 @@ class KeyValSession(Generic[_MailboxT, _MessageT],
 
     async def search_mailbox(self, selected: SelectedMailbox,
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[Tuple[int, _MessageT]], SelectedMailbox]:
+            -> Tuple[Iterable[Tuple[int, KeyValMessage]], SelectedMailbox]:
         mbx = await self.inbox.get_mailbox(selected.name)
-        ret: List[Tuple[int, _MessageT]] = []
-        max_seq = await mbx.get_count()
-        max_uid = await mbx.get_max_uid()
-        params = SearchParams(selected, max_seq=max_seq, max_uid=max_uid)
+        ret: List[Tuple[int, KeyValMessage]] = []
+        snapshot = selected.snapshot
+        params = SearchParams(selected, max_seq=snapshot.exists,
+                              max_uid=snapshot.max_uid)
         search = SearchCriteriaSet(keys, params)
         async for seq, msg in asyncenumerate(mbx.messages(), 1):
             if search.matches(seq, msg):
@@ -232,7 +229,7 @@ class KeyValSession(Generic[_MailboxT, _MessageT],
         mbx = await self.inbox.get_mailbox(selected.name)
         permanent_flags = flag_set & mbx.permanent_flags
         session_flags = flag_set & mbx.session_flags
-        messages: List[_MessageT] = []
+        messages: List[KeyValMessage] = []
         async for _, msg in mbx.find(sequence_set, selected):
             msg.update_flags(permanent_flags, mode)
             selected.session_flags.update(msg.uid, session_flags, mode)
