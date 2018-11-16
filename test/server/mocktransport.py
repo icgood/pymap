@@ -68,7 +68,9 @@ class MockTransport:
         self.push_readline(
             b'login1 LOGIN testuser testpass\r\n')
         self.push_write(
-            b'login1 OK Authentication successful.\r\n', set=set)
+            b'login1 OK [CAPABILITY IMAP4rev1',
+            (br'(?:\s+[a-zA-Z0-9=+-]+)*', ),
+            b'] Authentication successful.\r\n', set=set)
 
     def push_logout(self, wait=None, set=None):
         self.push_readline(

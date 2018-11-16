@@ -2,7 +2,7 @@ import re
 from typing import Tuple, Sequence, List, Iterable, Optional, ClassVar
 
 from . import CommandSelect, CommandNoArgs
-from .. import Space, EndLine, Params
+from .. import Params, Space, EndLine
 from ..exceptions import NotParseable, CommandInvalid
 from ..primitives import Atom, ListP
 from ..specials import AString, Mailbox, SequenceSet, Flag, FetchAttribute, \
@@ -348,6 +348,10 @@ class UidCommand(CommandSelect):
 
     command = b'UID'
     compound = True
+
+    @classmethod
+    def parse(cls, buf: bytes, params: Params) -> Tuple['UidCommand', bytes]:
+        raise NotImplementedError
 
 
 class UidCopyCommand(CopyCommand):

@@ -3,15 +3,15 @@ import re
 from typing import Tuple, Optional, List, Mapping, Iterable
 
 from . import AString, SequenceSet
-from .. import Special, Params
+from .. import Params, Parseable
 from ..exceptions import NotParseable
 from ..primitives import Number, ListP
-from ..util import BytesFormat
+from ...bytes import BytesFormat
 
 __all__ = ['ExtensionOption', 'ExtensionOptions']
 
 
-class ExtensionOption(Special[bytes]):
+class ExtensionOption(Parseable[bytes]):
     """Represents a single command option, which may or may not have an
     associated value.
 
@@ -94,7 +94,7 @@ class ExtensionOption(Special[bytes]):
         return cls(option, arg), buf
 
 
-class ExtensionOptions(Special[Mapping[bytes, ListP]]):
+class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
     """Represents a set of command options, which may or may not have an
     associated argument. Command options are always optional, so the parsing
     will not fail, it will just return an empty object.

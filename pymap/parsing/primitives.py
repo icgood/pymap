@@ -3,21 +3,18 @@
 import re
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import cast, TypeVar, Type, Tuple, Any, List, Union, Iterable, \
-    Sequence, Optional, Iterator
+from typing import cast, Type, Tuple, Any, List, Union, Iterable, Sequence, \
+    Optional, Iterator
 
-from . import Parseable, ExpectedParseable, NotParseable, Primitive, Params
+from . import Parseable, ExpectedParseable, NotParseable, Params
 from .exceptions import RequiresContinuation
-from .typing import MaybeBytes
-from .util import BytesFormat
+from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
 
-_IT = TypeVar('_IT', bound=MaybeBytes)
 
-
-class Nil(Primitive[None]):
+class Nil(Parseable[None]):
     """Represents a ``NIL`` object from an IMAP stream."""
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
@@ -54,7 +51,7 @@ class Nil(Primitive[None]):
 
 
 @total_ordering
-class Number(Primitive[int]):
+class Number(Parseable[int]):
     """Represents a number object from an IMAP stream.
 
     Args:
@@ -106,7 +103,7 @@ class Number(Primitive[int]):
         return NotImplemented
 
 
-class Atom(Primitive[bytes]):
+class Atom(Parseable[bytes]):
     """Represents an atom object from an IMAP stream.
 
     Args:
@@ -144,7 +141,7 @@ class Atom(Primitive[bytes]):
         return super().__eq__(other)
 
 
-class String(Primitive[bytes]):
+class String(Parseable[bytes]):
     """Represents a string object from an IMAP string. This object may not be
     instantiated directly, use one of its derivatives instead.
 
@@ -329,7 +326,7 @@ class LiteralString(String):
         return self._raw
 
 
-class ListP(Primitive[Sequence[MaybeBytes]]):
+class ListP(Parseable[Sequence[MaybeBytes]]):
     """Represents a list of :class:`Parseable` objects from an IMAP stream.
 
     Args:
@@ -351,9 +348,10 @@ class ListP(Primitive[Sequence[MaybeBytes]]):
         """The list of parsed objects."""
         return self.items
 
-    def get_as(self, cls: Type[_IT]) -> Sequence[_IT]:
+    def get_as(self, cls: Type[MaybeBytesT]) -> Sequence[MaybeBytesT]:
         """Return the list of parsed objects."""
-        return cast(Sequence[_IT], self.items)
+        _ = cls  # noqa
+        return cast(Sequence[MaybeBytesT], self.items)
 
     def __iter__(self) -> Iterator[MaybeBytes]:
         return iter(self.value)

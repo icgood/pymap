@@ -4,7 +4,8 @@ import re
 from itertools import chain
 from typing import Iterable, Tuple, Union, Sequence, Optional, List
 
-from .. import NotParseable, Space, Params, Special
+from .. import Params, Parseable, Space
+from ..exceptions import NotParseable
 
 __all__ = ['SequenceSet']
 
@@ -12,7 +13,7 @@ _SeqIdx = Union[None, str, int]
 _SeqElem = Union[_SeqIdx, Tuple[_SeqIdx, _SeqIdx]]
 
 
-class SequenceSet(Special[Sequence[_SeqElem]]):
+class SequenceSet(Parseable[Sequence[_SeqElem]]):
     """Represents a sequence set from an IMAP stream.
 
     Args:

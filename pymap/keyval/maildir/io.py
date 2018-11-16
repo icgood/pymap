@@ -121,8 +121,9 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
     def file_write(self) -> None:
         filename = self.get_file()
         base_dir = self.get_dir()
+        tmp_dir = os.path.join(base_dir, 'tmp')
         path = os.path.join(base_dir, filename)
-        with NamedTemporaryFile('w', dir=base_dir, delete=False) as tmp:
+        with NamedTemporaryFile('w', dir=tmp_dir, delete=False) as tmp:
             self.write(tmp)
         tmp_path = os.path.join(base_dir, tmp.name)
         os.rename(tmp_path, path)

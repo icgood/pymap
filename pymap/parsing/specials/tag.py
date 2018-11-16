@@ -1,12 +1,13 @@
 import re
 from typing import Tuple
 
-from .. import NotParseable, Params, Special
+from .. import Params, Parseable
+from ..exceptions import NotParseable
 
 __all__ = ['Tag']
 
 
-class Tag(Special[bytes]):
+class Tag(Parseable[bytes]):
     """Represents the tag prefixed to every client command in an IMAP stream.
 
     Args:

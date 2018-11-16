@@ -3,7 +3,7 @@
 from typing import Optional
 
 from .response import ResponseBad, ResponseCode
-from .typing import MaybeBytes
+from ..bytes import MaybeBytes
 
 __all__ = ['RequiresContinuation', 'NotParseable', 'InvalidContent',
            'UnexpectedType', 'BadCommand', 'CommandNotFound', 'CommandInvalid']

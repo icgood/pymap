@@ -2,14 +2,14 @@
 from asyncio import BaseTransport, StreamWriter
 from typing import Any, Union, Optional, Tuple, Mapping
 
-__all__ = ['PeerInfo']
+__all__ = ['SocketInfo']
 
 _Transport = Union[BaseTransport, StreamWriter]
 _PeerName = Union[Tuple[str, int], Tuple[str, int, int, int], str]
 _PeerCert = Mapping[str, Any]  # {'issuer': ..., ...}
 
 
-class PeerInfo:
+class SocketInfo:
     """Information about a connected socket, which may be useful for
     server-side logic such as authentication and authorization.
 
@@ -37,7 +37,7 @@ class PeerInfo:
         return self._transport.get_extra_info(name)
 
     def __str__(self) -> str:
-        return '<PeerInfo peername=%r sockname=%r peercert=%r>' \
+        return '<SocketInfo peername=%r sockname=%r peercert=%r>' \
             % (self.peername, self.sockname, self.peercert)
 
     def __bytes__(self) -> bytes:

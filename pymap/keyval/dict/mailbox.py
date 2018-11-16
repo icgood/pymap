@@ -1,6 +1,6 @@
 
 from collections import OrderedDict
-from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
+from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, MutableSet
 from weakref import WeakSet
 
 from pymap.concurrent import Event, ReadWriteLock
@@ -34,7 +34,7 @@ class Mailbox(KeyValMailbox[Message]):
         self._messages_lock = ReadWriteLock.for_asyncio()
         self._children: Dict[str, 'Mailbox'] = OrderedDict()
         self._children_lock = ReadWriteLock.for_asyncio()
-        self._last_selected: WeakSet[SelectedMailbox] = WeakSet()
+        self._last_selected: MutableSet[SelectedMailbox] = WeakSet()
         self._updated = Event.for_asyncio()
         self._reset_messages()
 

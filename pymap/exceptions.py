@@ -132,7 +132,7 @@ class MailboxConflict(MailboxError):
 
 class MailboxHasChildren(MailboxError):
     """The mailbox cannot be deleted because there are other inferior
-    heirarchical mailboxes below it.
+    hierarchical mailboxes below it.
 
     Args:
         mailbox: The name of the mailbox.

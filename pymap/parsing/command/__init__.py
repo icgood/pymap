@@ -1,6 +1,6 @@
 from typing import Tuple, Optional, Type, ClassVar
 
-from .. import Parseable, EndLine, Params
+from .. import Params, Parseable, EndLine
 
 __all__ = ['Command', 'CommandNoArgs', 'CommandAny', 'CommandAuth',
            'CommandNonAuth', 'CommandSelect']

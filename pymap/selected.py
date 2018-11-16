@@ -14,7 +14,7 @@ from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
 __all__ = ['SelectedMailbox']
 
-_SMT = TypeVar('_SMT', bound='SelectedMailbox')
+_SelectedT = TypeVar('_SelectedT', bound='SelectedMailbox')
 _Flags = FrozenSet[Flag]
 _Message = Tuple[int, _Flags]
 _flags_attr = FetchAttribute(b'FLAGS')
@@ -184,7 +184,8 @@ class SelectedMailbox:
             elif seq in all_msgs:
                 yield (seq, uid)
 
-    def fork(self: _SMT, command: Command) -> Tuple[_SMT, Iterable[Response]]:
+    def fork(self: _SelectedT, command: Command) \
+            -> Tuple[_SelectedT, Iterable[Response]]:
         """Compares the state of the current object to that of the last fork,
         returning the untagged responses that reflect any changes. A new copy
         of the object is also returned, ready for the next command.
@@ -193,7 +194,7 @@ class SelectedMailbox:
             command: The command that was finished.
 
         """
-        cls: Type[_SMT] = type(self)
+        cls: Type[_SelectedT] = type(self)
         copy = cls(self.name, self.readonly, self._session_flags,
                    **self.kwargs)
         copy._uid_validity = self._uid_validity

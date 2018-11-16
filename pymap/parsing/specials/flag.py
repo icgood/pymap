@@ -1,7 +1,9 @@
+
 from functools import total_ordering
 from typing import Tuple, FrozenSet, AnyStr
 
-from .. import NotParseable, Space, Params, Special
+from .. import Params, Parseable, Space
+from ..exceptions import NotParseable
 from ..primitives import Atom
 
 __all__ = ['Flag', 'get_system_flags', 'Seen', 'Recent', 'Deleted', 'Flagged',
@@ -9,7 +11,7 @@ __all__ = ['Flag', 'get_system_flags', 'Seen', 'Recent', 'Deleted', 'Flagged',
 
 
 @total_ordering
-class Flag(Special[bytes]):
+class Flag(Parseable[bytes]):
     """Represents a message flag from an IMAP stream.
 
     Args:

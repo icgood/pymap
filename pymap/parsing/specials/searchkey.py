@@ -5,8 +5,8 @@ from typing import TypeVar, Type, Tuple, Union, Sequence, FrozenSet
 from .astring import AString
 from .flag import Flag
 from .sequenceset import SequenceSet
-from .. import ExpectedParseable, NotParseable, UnexpectedType, Space, \
-    Params, Special
+from .. import Params, Parseable, ExpectedParseable, Space
+from ..exceptions import NotParseable, UnexpectedType
 from ..primitives import Atom, Number, QuotedString, ListP
 
 __all__ = ['SearchKey']
@@ -17,7 +17,7 @@ _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
                     datetime, int, str]
 
 
-class SearchKey(Special[bytes]):
+class SearchKey(Parseable[bytes]):
     """Represents a search key given to the SEARCH command on an IMAP stream.
 
     Args:

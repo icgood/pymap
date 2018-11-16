@@ -10,7 +10,7 @@ from ..parsing.specials import Flag
 
 __all__ = ['Header', 'Message', 'LoadedMessage']
 
-_T = TypeVar('_T', bound='Message')
+_MessageT = TypeVar('_MessageT', bound='Message')
 
 
 class Header(Protocol):
@@ -49,7 +49,7 @@ class Message(Protocol):
         ...
 
     @abstractmethod
-    def copy(self: _T, new_uid: int) -> _T:
+    def copy(self: _MessageT, new_uid: int) -> _MessageT:
         """Return a copy of the message with a new UID.
 
         Args:

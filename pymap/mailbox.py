@@ -41,7 +41,7 @@ class BaseMailbox(MailboxInterface):
             if session_flags else frozenset({Recent}))
 
     @classmethod
-    def new_uid_validity(self) -> int:
+    def new_uid_validity(cls) -> int:
         """Generate a new UID validity value for a mailbox, where the first
         two bytes are time-based and the second two bytes are random.
 

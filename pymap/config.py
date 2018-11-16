@@ -13,7 +13,7 @@ from .parsing.commands import Commands
 
 __all__ = ['IMAPConfig']
 
-_T = TypeVar('_T', bound='IMAPConfig')
+_ConfigT = TypeVar('_ConfigT', bound='IMAPConfig')
 
 
 class IMAPConfig:
@@ -71,7 +71,7 @@ class IMAPConfig:
         self._extra = extra
 
     @classmethod
-    def parse_args(cls: Type[_T], args: Namespace, **extra: Any) \
+    def parse_args(cls: Type[_ConfigT], args: Namespace, **extra: Any) \
             -> Mapping[str, Any]:
         """Given command-line arguments, return a dictionary of keywords that
         should be passed in to the :class:`IMAPConfig` (or sub-class)
@@ -82,12 +82,16 @@ class IMAPConfig:
             extra: Additional keywords used by sub-classes.
 
         """
-        return {'debug': args.debug,
-                'reject_insecure_auth': not args.insecure_login,
-                **extra}
+        ret = {'debug': args.debug,
+               'reject_insecure_auth': not args.insecure_login}
+        for key, val in extra.items():
+            if val is not None:
+                ret[key] = val
+        return ret
 
     @classmethod
-    def from_args(cls: Type[_T], args: Namespace, **extra: Any) -> _T:
+    def from_args(cls: Type[_ConfigT], args: Namespace,
+                  **extra: Any) -> _ConfigT:
         """Build and return a new :class:`IMAPConfig` using command-line
         arguments.
 
@@ -159,17 +163,17 @@ class IMAPConfig:
         return self._preauth_credentials
 
     @property
-    def static_capability(self) -> Sequence[bytes]:
-        ret = [b'BINARY', b'UIDPLUS', b'MULTIAPPEND']
+    def parsing_params(self) -> Params:
+        return Params(max_append_len=self._max_append_len)
+
+    @property
+    def login_capability(self) -> Sequence[bytes]:
+        ret = [b'BINARY', b'UIDPLUS', b'MULTIAPPEND', b'CHILDREN']
         if not self._disable_idle:
             ret.append(b'IDLE')
         if self._max_append_len is not None:
             ret.append(b'APPENDLIMIT=%i' % self._max_append_len)
         return ret
-
-    @property
-    def parsing_params(self) -> Params:
-        return Params(max_append_len=self._max_append_len)
 
     @property
     def initial_capability(self) -> Sequence[bytes]:
