@@ -138,7 +138,7 @@ class Mailbox(KeyValMailbox[Message]):
     async def list_subscribed(self) -> Sequence[str]:
         async with Subscriptions.with_read(self._path) as subs:
             subscribed = frozenset(subs.subscribed)
-        return [name for name in self._maildir.list_folders()
+        return [name for name in self._layout.list_folders()
                 if name in subscribed]
 
     async def list_mailboxes(self) -> Sequence[str]:
@@ -260,7 +260,7 @@ class Mailbox(KeyValMailbox[Message]):
 
     async def cleanup(self) -> None:
         self._maildir.clean()
-        folders = frozenset(self._maildir.list_folders())
+        folders = frozenset(self._layout.list_folders())
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
             for rec in list(uidl.records):
