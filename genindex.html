@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Index &#8212; pymap 0.3.0 documentation</title>
+    <title>Index &#8212; pymap 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -17,7 +17,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.base.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
@@ -36,7 +35,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -86,27 +85,21 @@
       <li><a href="flags.html#pymap.flags.SessionFlags.add_recent">add_recent() (pymap.flags.SessionFlags method)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.response.Response.add_untagged">add_untagged() (pymap.parsing.response.Response method)</a>
-
-      <ul>
-        <li><a href="selected.html#pymap.selected.SelectedMailbox.add_untagged">(pymap.selected.SelectedMailbox method)</a>
 </li>
-      </ul></li>
       <li><a href="parsing.html#pymap.parsing.response.Response.add_untagged_ok">add_untagged_ok() (pymap.parsing.response.Response method)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.exceptions.NotParseable.after">after (pymap.parsing.exceptions.NotParseable attribute)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.specials.SequenceSet.all">all() (pymap.parsing.specials.SequenceSet class method)</a>
 </li>
-      <li><a href="parsing.html#pymap.parsing.command.Command.allow_updates">allow_updates (pymap.parsing.command.Command attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="interfaces.html#pymap.interfaces.session.SessionInterface.append_messages">append_messages() (pymap.interfaces.session.SessionInterface method)</a>
 
       <ul>
         <li><a href="keyval.html#pymap.keyval.session.KeyValSession.append_messages">(pymap.keyval.session.KeyValSession method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="exceptions.html#pymap.exceptions.AppendFailure">AppendFailure</a>
 </li>
       <li><a href="message.html#pymap.message.AppendMessage">AppendMessage (class in pymap.message)</a>
@@ -119,9 +112,11 @@
       </ul></li>
       <li><a href="parsing.html#pymap.parsing.specials.AString">AString (class in pymap.parsing.specials)</a>
 </li>
-      <li><a href="keyval.html#pymap.keyval.util.asyncenumerate">asyncenumerate (class in pymap.keyval.util)</a>
+      <li><a href="keyval.html#pymap.keyval.util.asyncenumerate">asyncenumerate() (in module pymap.keyval.util)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.primitives.Atom">Atom (class in pymap.parsing.primitives)</a>
+</li>
+      <li><a href="listtree.html#pymap.listtree.ListEntry.attrs">attrs (pymap.listtree.ListEntry attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -195,18 +190,22 @@
 </li>
       <li><a href="exceptions.html#pymap.exceptions.CommandNotAllowed">CommandNotAllowed</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="parsing.html#pymap.parsing.exceptions.CommandNotFound">CommandNotFound</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="parsing.html#pymap.parsing.commands.Commands">Commands (class in pymap.parsing.commands)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.command.CommandSelect">CommandSelect (class in pymap.parsing.command)</a>
 </li>
-      <li><a href="keyval.html#pymap.keyval.dict.Config">Config (class in pymap.keyval.dict)</a>
+      <li><a href="parsing.html#pymap.parsing.command.Command.compound">compound (pymap.parsing.command.Command attribute)</a>
+</li>
+      <li><a href="parsing.html#pymap.parsing.response.Response.condition">condition (pymap.parsing.response.Response attribute)</a>
+</li>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Config">Config (class in pymap.keyval.dict)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.maildir.Config">(class in pymap.keyval.maildir)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.Config">(class in pymap.keyval.maildir)</a>
 </li>
       </ul></li>
       <li><a href="state.html#pymap.state.ConnectionState">ConnectionState (class in pymap.state)</a>
@@ -251,6 +250,8 @@
 </li>
       <li><a href="parsing.html#pymap.parsing.specials.Mailbox.decode_name">decode_name() (pymap.parsing.specials.Mailbox class method)</a>
 </li>
+      <li><a href="parsing.html#pymap.parsing.command.Command.delegate">delegate (pymap.parsing.command.Command attribute)</a>
+</li>
       <li><a href="flags.html#pymap.flags.FlagOp.DELETE">DELETE (pymap.flags.FlagOp attribute)</a>
 </li>
   </ul></td>
@@ -261,9 +262,9 @@
         <li><a href="keyval.html#pymap.keyval.session.KeyValSession.delete_mailbox">(pymap.keyval.session.KeyValSession method)</a>
 </li>
       </ul></li>
-      <li><a href="keyval.html#pymap.keyval.dict.Config.demo_password">demo_password (pymap.keyval.dict.Config attribute)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Config.demo_password">demo_password (pymap.keyval.dict.Config attribute)</a>
 </li>
-      <li><a href="keyval.html#pymap.keyval.dict.Config.demo_user">demo_user (pymap.keyval.dict.Config attribute)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Config.demo_user">demo_user (pymap.keyval.dict.Config attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -282,15 +283,19 @@
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.exists">exists (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.MailboxSnapshot.exists">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.exists">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="keyval.html#pymap.keyval.mailbox.MailboxSnapshot.exists">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.MailboxSnapshot.exists">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.exists">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
+</li>
+        <li><a href="listtree.html#pymap.listtree.ListEntry.exists">(pymap.listtree.ListEntry attribute)</a>
 </li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.exists">(pymap.mailbox.BaseMailbox attribute)</a>
 </li>
         <li><a href="selected.html#pymap.selected.SelectedMailbox.exists">(pymap.selected.SelectedMailbox attribute)</a>
+</li>
+        <li><a href="selected.html#pymap.selected.SelectedSnapshot.exists">(pymap.selected.SelectedSnapshot attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -325,24 +330,26 @@
 </li>
       <li><a href="parsing.html#pymap.parsing.specials.FetchAttribute.Section">FetchAttribute.Section (class in pymap.parsing.specials)</a>
 </li>
-      <li><a href="keyval.html#pymap.keyval.maildir.Session.find_user">find_user() (pymap.keyval.maildir.Session class method)</a>
+      <li><a href="concurrent.html#pymap.concurrent.FileLock">FileLock (class in pymap.concurrent)</a>
+</li>
+      <li><a href="keyval.maildir.html#pymap.keyval.maildir.Session.find_user">find_user() (pymap.keyval.maildir.Session class method)</a>
 </li>
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.first_unseen">first_unseen (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.MailboxSnapshot.first_unseen">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.first_unseen">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="keyval.html#pymap.keyval.mailbox.MailboxSnapshot.first_unseen">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.MailboxSnapshot.first_unseen">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.first_unseen">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.first_unseen">(pymap.mailbox.BaseMailbox attribute)</a>
 </li>
       </ul></li>
-      <li><a href="parsing.html#pymap.parsing.specials.Flag">Flag (class in pymap.parsing.specials)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="parsing.html#pymap.parsing.specials.Flag">Flag (class in pymap.parsing.specials)</a>
+</li>
       <li><a href="message.html#pymap.message.AppendMessage.flag_set">flag_set (pymap.message.AppendMessage attribute)</a>, <a href="message.html#pymap.message.AppendMessage.flag_set">[1]</a>
 </li>
       <li><a href="flags.html#pymap.flags.FlagOp">FlagOp (class in pymap.flags)</a>
@@ -381,6 +388,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="flags.html#pymap.flags.SessionFlags.get">get() (pymap.flags.SessionFlags method)</a>
 </li>
+      <li><a href="parsing.html#pymap.parsing.primitives.ListP.get_as">get_as() (pymap.parsing.primitives.ListP method)</a>
+</li>
       <li><a href="interfaces.html#pymap.interfaces.message.LoadedMessage.get_body">get_body() (pymap.interfaces.message.LoadedMessage method)</a>
 
       <ul>
@@ -399,11 +408,9 @@
         <li><a href="message.html#pymap.message.BaseLoadedMessage.get_envelope_structure">(pymap.message.BaseLoadedMessage method)</a>
 </li>
       </ul></li>
-      <li><a href="interfaces.html#pymap.interfaces.message.LoadedMessage.get_flags">get_flags() (pymap.interfaces.message.LoadedMessage method)</a>
+      <li><a href="interfaces.html#pymap.interfaces.message.Message.get_flags">get_flags() (pymap.interfaces.message.Message method)</a>
 
       <ul>
-        <li><a href="interfaces.html#pymap.interfaces.message.Message.get_flags">(pymap.interfaces.message.Message method)</a>
-</li>
         <li><a href="message.html#pymap.message.BaseMessage.get_flags">(pymap.message.BaseMessage method)</a>
 </li>
       </ul></li>
@@ -429,7 +436,7 @@
         <li><a href="keyval.html#pymap.keyval.session.KeyValSession.get_mailbox">(pymap.keyval.session.KeyValSession method)</a>
 </li>
       </ul></li>
-      <li><a href="keyval.html#pymap.keyval.dict.Session.get_password">get_password() (pymap.keyval.dict.Session class method)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Session.get_password">get_password() (pymap.keyval.dict.Session class method)</a>
 </li>
       <li><a href="exceptions.html#pymap.exceptions.CloseConnection.get_response">get_response() (pymap.exceptions.CloseConnection method)</a>
 
@@ -463,11 +470,17 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="parsing.html#pymap.parsing.specials.FetchAttribute.Section.headers">headers (pymap.parsing.specials.FetchAttribute.Section attribute)</a>
+      <li><a href="listtree.html#pymap.listtree.ListEntry.has_children">has_children (pymap.listtree.ListEntry attribute)</a>
+</li>
+      <li><a href="interfaces.html#pymap.interfaces.message.Header">Header (class in pymap.interfaces.message)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="selected.html#pymap.selected.SelectedMailbox.hide_fetch">hide_fetch() (pymap.selected.SelectedMailbox method)</a>
+      <li><a href="parsing.html#pymap.parsing.specials.FetchAttribute.Section.headers">headers (pymap.parsing.specials.FetchAttribute.Section attribute)</a>
+</li>
+      <li><a href="selected.html#pymap.selected.SelectedMailbox.hide">hide() (pymap.selected.SelectedMailbox method)</a>
+</li>
+      <li><a href="selected.html#pymap.selected.SelectedMailbox.hide_expunged">hide_expunged() (pymap.selected.SelectedMailbox method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -485,21 +498,21 @@
 </li>
       <li><a href="server.html#pymap.server.IMAPServer">IMAPServer (class in pymap.server)</a>
 </li>
-      <li><a href="interfaces.html#pymap.interfaces.message.LoadedMessage.internal_date">internal_date (pymap.interfaces.message.LoadedMessage attribute)</a>
+      <li><a href="interfaces.html#pymap.interfaces.message.Message.internal_date">internal_date (pymap.interfaces.message.Message attribute)</a>
 
       <ul>
-        <li><a href="interfaces.html#pymap.interfaces.message.Message.internal_date">(pymap.interfaces.message.Message attribute)</a>
-</li>
         <li><a href="message.html#pymap.message.BaseMessage.internal_date">(pymap.message.BaseMessage attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="exceptions.html#pymap.exceptions.InvalidAuth">InvalidAuth</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="parsing.html#pymap.parsing.exceptions.InvalidContent">InvalidContent</a>
 </li>
       <li><a href="concurrent.html#pymap.concurrent.Event.is_set">is_set() (pymap.concurrent.Event method)</a>
+</li>
+      <li><a href="parsing.html#pymap.parsing.specials.Flag.is_system">is_system (pymap.parsing.specials.Flag attribute)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.response.Response.is_terminal">is_terminal (pymap.parsing.response.Response attribute)</a>
 
@@ -508,6 +521,8 @@
 </li>
       </ul></li>
       <li><a href="parsing.html#pymap.parsing.specials.SequenceSet.iter">iter() (pymap.parsing.specials.SequenceSet method)</a>
+</li>
+      <li><a href="selected.html#pymap.selected.SelectedSnapshot.iter_set">iter_set() (pymap.selected.SelectedSnapshot method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -523,8 +538,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="keyval.html#pymap.keyval.session.KeyValSession">KeyValSession (class in pymap.keyval.session)</a>
 </li>
-      <li><a href="parsing.html#pymap.parsing.specials.Keyword">Keyword (class in pymap.parsing.specials)</a>
-</li>
       <li><a href="selected.html#pymap.selected.SelectedMailbox.kwargs">kwargs (pymap.selected.SelectedMailbox attribute)</a>
 </li>
   </ul></td>
@@ -533,6 +546,8 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="listtree.html#pymap.listtree.ListTree.list">list() (pymap.listtree.ListTree method)</a>
+</li>
       <li><a href="parsing.html#pymap.parsing.Params.list_expected">list_expected (pymap.parsing.Params attribute)</a>
 </li>
       <li><a href="interfaces.html#pymap.interfaces.session.SessionInterface.list_mailboxes">list_mailboxes() (pymap.interfaces.session.SessionInterface method)</a>
@@ -541,18 +556,24 @@
         <li><a href="keyval.html#pymap.keyval.session.KeyValSession.list_mailboxes">(pymap.keyval.session.KeyValSession method)</a>
 </li>
       </ul></li>
-      <li><a href="parsing.html#pymap.parsing.primitives.ListP">ListP (class in pymap.parsing.primitives)</a>
+      <li><a href="listtree.html#pymap.listtree.ListTree.list_matching">list_matching() (pymap.listtree.ListTree method)</a>
+</li>
+      <li><a href="listtree.html#pymap.listtree.ListEntry">ListEntry (class in pymap.listtree)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="parsing.html#pymap.parsing.primitives.ListP">ListP (class in pymap.parsing.primitives)</a>
+</li>
+      <li><a href="listtree.html#pymap.listtree.ListTree">ListTree (class in pymap.listtree)</a>
+</li>
       <li><a href="parsing.html#pymap.parsing.primitives.LiteralString">LiteralString (class in pymap.parsing.primitives)</a>
 </li>
       <li><a href="interfaces.html#pymap.interfaces.message.LoadedMessage">LoadedMessage (class in pymap.interfaces.message)</a>
 </li>
-      <li><a href="keyval.html#pymap.keyval.dict.Session.login">login() (pymap.keyval.dict.Session class method)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Session.login">login() (pymap.keyval.dict.Session class method)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.maildir.Session.login">(pymap.keyval.maildir.Session class method)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.Session.login">(pymap.keyval.maildir.Session class method)</a>
 </li>
       </ul></li>
       <li><a href="interfaces.html#pymap.interfaces.session.LoginProtocol">LoginProtocol (class in pymap.interfaces.session)</a>
@@ -563,14 +584,16 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="keyval.html#pymap.keyval.dict.Mailbox">Mailbox (class in pymap.keyval.dict)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Mailbox">Mailbox (class in pymap.keyval.dict)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.maildir.Mailbox">(class in pymap.keyval.maildir)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.Mailbox">(class in pymap.keyval.maildir)</a>
 </li>
         <li><a href="parsing.html#pymap.parsing.specials.Mailbox">(class in pymap.parsing.specials)</a>
 </li>
       </ul></li>
+      <li><a href="keyval.maildir.html#pymap.keyval.maildir.Config.mailbox_delimiter">mailbox_delimiter (pymap.keyval.maildir.Config attribute)</a>
+</li>
       <li><a href="exceptions.html#pymap.exceptions.MailboxConflict">MailboxConflict</a>
 </li>
       <li><a href="exceptions.html#pymap.exceptions.MailboxError">MailboxError</a>
@@ -583,16 +606,16 @@
 </li>
       <li><a href="exceptions.html#pymap.exceptions.MailboxReadOnly">MailboxReadOnly</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="keyval.html#pymap.keyval.dict.MailboxSnapshot">MailboxSnapshot (class in pymap.keyval.dict)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.MailboxSnapshot">MailboxSnapshot (class in pymap.keyval.dict)</a>
 
       <ul>
         <li><a href="keyval.html#pymap.keyval.mailbox.MailboxSnapshot">(class in pymap.keyval.mailbox)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.MailboxSnapshot">(class in pymap.keyval.maildir)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot">(class in pymap.keyval.maildir)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="search.html#pymap.search.SearchCriteria.matches">matches() (pymap.search.SearchCriteria method)</a>
 
       <ul>
@@ -601,15 +624,23 @@
       </ul></li>
       <li><a href="parsing.html#pymap.parsing.Params.max_append_len">max_append_len (pymap.parsing.Params attribute)</a>
 </li>
+      <li><a href="selected.html#pymap.selected.SelectedMailbox.max_uid">max_uid (pymap.selected.SelectedMailbox attribute)</a>
+
+      <ul>
+        <li><a href="selected.html#pymap.selected.SelectedSnapshot.max_uid">(pymap.selected.SelectedSnapshot attribute)</a>, <a href="selected.html#pymap.selected.SelectedSnapshot.max_uid">[1]</a>
+</li>
+      </ul></li>
       <li><a href="interfaces.html#pymap.interfaces.message.Message">Message (class in pymap.interfaces.message)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.Message">(class in pymap.keyval.dict)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.Message">(class in pymap.keyval.dict)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.Message">(class in pymap.keyval.maildir)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.Message">(class in pymap.keyval.maildir)</a>
 </li>
       </ul></li>
       <li><a href="message.html#pymap.message.AppendMessage.message">message (pymap.message.AppendMessage attribute)</a>, <a href="message.html#pymap.message.AppendMessage.message">[1]</a>
+</li>
+      <li><a href="selected.html#pymap.selected.SelectedSnapshot.messages">messages (pymap.selected.SelectedSnapshot attribute)</a>, <a href="selected.html#pymap.selected.SelectedSnapshot.messages">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -620,6 +651,8 @@
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.name">name (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
+        <li><a href="listtree.html#pymap.listtree.ListEntry.name">(pymap.listtree.ListEntry attribute)</a>
+</li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.name">(pymap.mailbox.BaseMailbox attribute)</a>
 </li>
         <li><a href="selected.html#pymap.selected.SelectedMailbox.name">(pymap.selected.SelectedMailbox attribute)</a>
@@ -630,11 +663,11 @@
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.next_uid">next_uid (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.MailboxSnapshot.next_uid">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.next_uid">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="keyval.html#pymap.keyval.mailbox.MailboxSnapshot.next_uid">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.MailboxSnapshot.next_uid">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.next_uid">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.next_uid">(pymap.mailbox.BaseMailbox attribute)</a>
 </li>
@@ -684,11 +717,7 @@
 </li>
         <li><a href="parsing.html#pymap.parsing.Parseable.parse">(pymap.parsing.Parseable class method)</a>
 </li>
-        <li><a href="parsing.html#pymap.parsing.Primitive.parse">(pymap.parsing.Primitive class method)</a>
-</li>
         <li><a href="parsing.html#pymap.parsing.Space.parse">(pymap.parsing.Space class method)</a>
-</li>
-        <li><a href="parsing.html#pymap.parsing.Special.parse">(pymap.parsing.Special class method)</a>
 </li>
         <li><a href="parsing.html#pymap.parsing.command.Command.parse">(pymap.parsing.command.Command class method)</a>
 </li>
@@ -728,8 +757,6 @@
 </li>
         <li><a href="parsing.html#pymap.parsing.specials.Flag.parse">(pymap.parsing.specials.Flag class method)</a>
 </li>
-        <li><a href="parsing.html#pymap.parsing.specials.Keyword.parse">(pymap.parsing.specials.Keyword class method)</a>
-</li>
         <li><a href="parsing.html#pymap.parsing.specials.Mailbox.parse">(pymap.parsing.specials.Mailbox class method)</a>
 </li>
         <li><a href="parsing.html#pymap.parsing.specials.SearchKey.parse">(pymap.parsing.specials.SearchKey class method)</a>
@@ -738,25 +765,23 @@
 </li>
         <li><a href="parsing.html#pymap.parsing.specials.StatusAttribute.parse">(pymap.parsing.specials.StatusAttribute class method)</a>
 </li>
-        <li><a href="parsing.html#pymap.parsing.specials.SystemFlag.parse">(pymap.parsing.specials.SystemFlag class method)</a>
-</li>
         <li><a href="parsing.html#pymap.parsing.specials.Tag.parse">(pymap.parsing.specials.Tag class method)</a>
 </li>
       </ul></li>
       <li><a href="config.html#pymap.config.IMAPConfig.parse_args">parse_args() (pymap.config.IMAPConfig class method)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.Config.parse_args">(pymap.keyval.dict.Config class method)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.Config.parse_args">(pymap.keyval.dict.Config class method)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.Config.parse_args">(pymap.keyval.maildir.Config class method)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.Config.parse_args">(pymap.keyval.maildir.Config class method)</a>
 </li>
         <li><a href="server.html#pymap.server.IMAPConfig.parse_args">(pymap.server.IMAPConfig class method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="parsing.html#pymap.parsing.Parseable">Parseable (class in pymap.parsing)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="parsing.html#pymap.parsing.specials.FetchAttribute.partial">partial (pymap.parsing.specials.FetchAttribute attribute)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.specials.FetchAttribute.Section.parts">parts (pymap.parsing.specials.FetchAttribute.Section attribute)</a>
@@ -764,8 +789,6 @@
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.permanent_flags">permanent_flags (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="interfaces.html#pymap.interfaces.message.LoadedMessage.permanent_flags">(pymap.interfaces.message.LoadedMessage attribute)</a>
-</li>
         <li><a href="interfaces.html#pymap.interfaces.message.Message.permanent_flags">(pymap.interfaces.message.Message attribute)</a>
 </li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.permanent_flags">(pymap.mailbox.BaseMailbox attribute)</a>
@@ -774,8 +797,6 @@
 </li>
       </ul></li>
       <li><a href="parsing.html#pymap.parsing.EndLine.preceding_spaces">preceding_spaces (pymap.parsing.EndLine attribute)</a>
-</li>
-      <li><a href="parsing.html#pymap.parsing.Primitive">Primitive (class in pymap.parsing)</a>
 </li>
       <li><a href="concurrent.html#module-pymap.concurrent">pymap.concurrent (module)</a>
 </li>
@@ -791,15 +812,17 @@
 </li>
       <li><a href="interfaces.html#module-pymap.interfaces.session">pymap.interfaces.session (module)</a>
 </li>
-      <li><a href="keyval.html#module-pymap.keyval.dict">pymap.keyval.dict (module)</a>
+      <li><a href="keyval.dict.html#module-pymap.keyval.dict">pymap.keyval.dict (module)</a>
 </li>
       <li><a href="keyval.html#module-pymap.keyval.mailbox">pymap.keyval.mailbox (module)</a>
 </li>
-      <li><a href="keyval.html#module-pymap.keyval.maildir">pymap.keyval.maildir (module)</a>
+      <li><a href="keyval.maildir.html#module-pymap.keyval.maildir">pymap.keyval.maildir (module)</a>
 </li>
       <li><a href="keyval.html#module-pymap.keyval.session">pymap.keyval.session (module)</a>
 </li>
       <li><a href="keyval.html#module-pymap.keyval.util">pymap.keyval.util (module)</a>
+</li>
+      <li><a href="listtree.html#module-pymap.listtree">pymap.listtree (module)</a>
 </li>
       <li><a href="mailbox.html#module-pymap.mailbox">pymap.mailbox (module)</a>
 </li>
@@ -827,6 +850,8 @@
 </li>
       <li><a href="server.html#module-pymap.server">pymap.server (module)</a>
 </li>
+      <li><a href="sockinfo.html#module-pymap.sockinfo">pymap.sockinfo (module)</a>
+</li>
       <li><a href="state.html#module-pymap.state">pymap.state (module)</a>
 </li>
   </ul></td>
@@ -843,8 +868,12 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="concurrent.html#pymap.concurrent.ReadWriteLock.read_lock">read_lock() (pymap.concurrent.ReadWriteLock method)</a>
+      <li><a href="concurrent.html#pymap.concurrent.FileLock.read_lock">read_lock() (pymap.concurrent.FileLock method)</a>
+
+      <ul>
+        <li><a href="concurrent.html#pymap.concurrent.ReadWriteLock.read_lock">(pymap.concurrent.ReadWriteLock method)</a>
 </li>
+      </ul></li>
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.readonly">readonly (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
@@ -858,15 +887,17 @@
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.recent">recent (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.MailboxSnapshot.recent">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.recent">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="keyval.html#pymap.keyval.mailbox.MailboxSnapshot.recent">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.MailboxSnapshot.recent">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.recent">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.recent">(pymap.mailbox.BaseMailbox attribute)</a>
 </li>
         <li><a href="selected.html#pymap.selected.SelectedMailbox.recent">(pymap.selected.SelectedMailbox attribute)</a>
+</li>
+        <li><a href="selected.html#pymap.selected.SelectedSnapshot.recent">(pymap.selected.SelectedSnapshot attribute)</a>, <a href="selected.html#pymap.selected.SelectedSnapshot.recent">[1]</a>
 </li>
       </ul></li>
       <li><a href="flags.html#pymap.flags.SessionFlags.remove">remove() (pymap.flags.SessionFlags method)</a>
@@ -901,6 +932,8 @@
 </li>
       <li><a href="parsing.html#pymap.parsing.response.ResponseOk">ResponseOk (class in pymap.parsing.response)</a>
 </li>
+      <li><a href="parsing.html#pymap.parsing.response.ResponsePreAuth">ResponsePreAuth (class in pymap.parsing.response)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -933,12 +966,14 @@
       </ul></li>
       <li><a href="selected.html#pymap.selected.SelectedMailbox">SelectedMailbox (class in pymap.selected)</a>
 </li>
+      <li><a href="selected.html#pymap.selected.SelectedSnapshot">SelectedSnapshot (class in pymap.selected)</a>
+</li>
       <li><a href="parsing.html#pymap.parsing.specials.SequenceSet">SequenceSet (class in pymap.parsing.specials)</a>
 </li>
-      <li><a href="keyval.html#pymap.keyval.dict.Session">Session (class in pymap.keyval.dict)</a>
+      <li><a href="keyval.dict.html#pymap.keyval.dict.Session">Session (class in pymap.keyval.dict)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.maildir.Session">(class in pymap.keyval.maildir)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.Session">(class in pymap.keyval.maildir)</a>
 </li>
       </ul></li>
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.session_flags">session_flags (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
@@ -961,9 +996,11 @@
 </li>
       <li><a href="selected.html#pymap.selected.SelectedMailbox.set_uid_validity">set_uid_validity() (pymap.selected.SelectedMailbox method)</a>
 </li>
-      <li><a href="parsing.html#pymap.parsing.Space">Space (class in pymap.parsing)</a>
+      <li><a href="selected.html#pymap.selected.SelectedMailbox.snapshot">snapshot (pymap.selected.SelectedMailbox attribute)</a>
 </li>
-      <li><a href="parsing.html#pymap.parsing.Special">Special (class in pymap.parsing)</a>
+      <li><a href="sockinfo.html#pymap.sockinfo.SocketInfo">SocketInfo (class in pymap.sockinfo)</a>
+</li>
+      <li><a href="parsing.html#pymap.parsing.Space">Space (class in pymap.parsing)</a>
 </li>
       <li><a href="parsing.html#pymap.parsing.specials.FetchAttribute.Section.specifier">specifier (pymap.parsing.specials.FetchAttribute.Section attribute)</a>
 </li>
@@ -986,11 +1023,11 @@
       <li><a href="concurrent.html#pymap.concurrent.Event.subsystem">subsystem (pymap.concurrent.Event attribute)</a>
 
       <ul>
+        <li><a href="concurrent.html#pymap.concurrent.FileLock.subsystem">(pymap.concurrent.FileLock attribute)</a>
+</li>
         <li><a href="concurrent.html#pymap.concurrent.ReadWriteLock.subsystem">(pymap.concurrent.ReadWriteLock attribute)</a>
 </li>
       </ul></li>
-      <li><a href="parsing.html#pymap.parsing.specials.SystemFlag">SystemFlag (class in pymap.parsing.specials)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -1019,11 +1056,9 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="interfaces.html#pymap.interfaces.message.LoadedMessage.uid">uid (pymap.interfaces.message.LoadedMessage attribute)</a>
+      <li><a href="interfaces.html#pymap.interfaces.message.Message.uid">uid (pymap.interfaces.message.Message attribute)</a>
 
       <ul>
-        <li><a href="interfaces.html#pymap.interfaces.message.Message.uid">(pymap.interfaces.message.Message attribute)</a>
-</li>
         <li><a href="message.html#pymap.message.BaseMessage.uid">(pymap.message.BaseMessage attribute)</a>
 </li>
         <li><a href="parsing.html#pymap.parsing.Params.uid">(pymap.parsing.Params attribute)</a>
@@ -1038,17 +1073,19 @@
 </li>
         <li><a href="selected.html#pymap.selected.SelectedMailbox.uid_validity">(pymap.selected.SelectedMailbox attribute)</a>
 </li>
+        <li><a href="selected.html#pymap.selected.SelectedSnapshot.uid_validity">(pymap.selected.SelectedSnapshot attribute)</a>, <a href="selected.html#pymap.selected.SelectedSnapshot.uid_validity">[1]</a>
+</li>
       </ul></li>
       <li><a href="parsing.html#pymap.parsing.exceptions.UnexpectedType">UnexpectedType</a>
 </li>
       <li><a href="interfaces.html#pymap.interfaces.mailbox.MailboxInterface.unseen">unseen (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="keyval.html#pymap.keyval.dict.MailboxSnapshot.unseen">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.unseen">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="keyval.html#pymap.keyval.mailbox.MailboxSnapshot.unseen">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
 </li>
-        <li><a href="keyval.html#pymap.keyval.maildir.MailboxSnapshot.unseen">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
+        <li><a href="keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.unseen">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="mailbox.html#pymap.mailbox.BaseMailbox.unseen">(pymap.mailbox.BaseMailbox attribute)</a>
 </li>
@@ -1064,7 +1101,11 @@
       <li><a href="parsing.html#pymap.parsing.response.Response.untagged">untagged (pymap.parsing.response.Response attribute)</a>
 </li>
       <li><a href="flags.html#pymap.flags.SessionFlags.update">update() (pymap.flags.SessionFlags method)</a>
+
+      <ul>
+        <li><a href="listtree.html#pymap.listtree.ListTree.update">(pymap.listtree.ListTree method)</a>
 </li>
+      </ul></li>
       <li><a href="interfaces.html#pymap.interfaces.message.Message.update_flags">update_flags() (pymap.interfaces.message.Message method)</a>
 
       <ul>
@@ -1075,7 +1116,7 @@
         <li><a href="message.html#pymap.message.BaseMessage.update_flags">(pymap.message.BaseMessage method)</a>
 </li>
       </ul></li>
-      <li><a href="keyval.html#pymap.keyval.maildir.Config.users_file">users_file (pymap.keyval.maildir.Config attribute)</a>
+      <li><a href="keyval.maildir.html#pymap.keyval.maildir.Config.users_file">users_file (pymap.keyval.maildir.Config attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1094,11 +1135,7 @@
 </li>
         <li><a href="parsing.html#pymap.parsing.Parseable.value">(pymap.parsing.Parseable attribute)</a>
 </li>
-        <li><a href="parsing.html#pymap.parsing.Primitive.value">(pymap.parsing.Primitive attribute)</a>
-</li>
         <li><a href="parsing.html#pymap.parsing.Space.value">(pymap.parsing.Space attribute)</a>
-</li>
-        <li><a href="parsing.html#pymap.parsing.Special.value">(pymap.parsing.Special attribute)</a>
 </li>
         <li><a href="parsing.html#pymap.parsing.primitives.Atom.value">(pymap.parsing.primitives.Atom attribute)</a>
 </li>
@@ -1143,14 +1180,18 @@
 </li>
       <li><a href="message.html#pymap.message.AppendMessage.when">when (pymap.message.AppendMessage attribute)</a>, <a href="message.html#pymap.message.AppendMessage.when">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="proxy.html#pymap.proxy.ExecutorProxy.wrap_login">wrap_login() (pymap.proxy.ExecutorProxy method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="proxy.html#pymap.proxy.ExecutorProxy.wrap_session">wrap_session() (pymap.proxy.ExecutorProxy method)</a>
 </li>
-      <li><a href="concurrent.html#pymap.concurrent.ReadWriteLock.write_lock">write_lock() (pymap.concurrent.ReadWriteLock method)</a>
+      <li><a href="concurrent.html#pymap.concurrent.FileLock.write_lock">write_lock() (pymap.concurrent.FileLock method)</a>
+
+      <ul>
+        <li><a href="concurrent.html#pymap.concurrent.ReadWriteLock.write_lock">(pymap.concurrent.ReadWriteLock method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1205,7 +1246,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -1213,7 +1254,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

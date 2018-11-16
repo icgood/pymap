@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.flags &#8212; pymap 0.3.0 documentation</title>
+    <title>pymap.flags &#8212; pymap 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -16,13 +16,12 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.base.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pymap.mailbox" href="mailbox.html" />
+    <link rel="next" title="pymap.listtree" href="listtree.html" />
     <link rel="prev" title="pymap.exceptions" href="exceptions.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
@@ -38,12 +37,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="mailbox.html" title="pymap.mailbox"
+          <a href="listtree.html" title="pymap.listtree"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="exceptions.html" title="pymap.exceptions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -134,7 +133,7 @@ dictionary. The key can be any value, but it is typically a
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID value.</li>
-<li><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]) – The set of flags for the update operation.</li>
+<li><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]) – The set of flags for the update operation.</li>
 <li><strong>op</strong> (<a class="reference internal" href="#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagOp</span></code></a>) – The type of update.</li>
 </ul>
 </td>
@@ -193,8 +192,8 @@ dictionary. The key can be any value, but it is typically a
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="mailbox.html"
-                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.mailbox</span></code></a></p>
+    <p class="topless"><a href="listtree.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code></a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -248,12 +247,12 @@ dictionary. The key can be any value, but it is typically a
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="mailbox.html" title="pymap.mailbox"
+          <a href="listtree.html" title="pymap.listtree"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="exceptions.html" title="pymap.exceptions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -261,7 +260,7 @@ dictionary. The key can be any value, but it is typically a
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

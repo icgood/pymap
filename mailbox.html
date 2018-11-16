@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.mailbox &#8212; pymap 0.3.0 documentation</title>
+    <title>pymap.mailbox &#8212; pymap 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -16,14 +16,13 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.base.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pymap.message" href="message.html" />
-    <link rel="prev" title="pymap.flags" href="flags.html" /> 
+    <link rel="prev" title="pymap.listtree" href="listtree.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
     <div class="relbar-top">
@@ -41,9 +40,9 @@
           <a href="message.html" title="pymap.message"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="flags.html" title="pymap.flags"
+          <a href="listtree.html" title="pymap.listtree"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -69,8 +68,8 @@ that wish to save themselves some trouble.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
-<li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]]) – The permanent flags defined in the mailbox.</li>
-<li><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]]) – The session flags defined in the mailbox.</li>
+<li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]]) – The permanent flags defined in the mailbox.</li>
+<li><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code>[]]]) – The session flags defined in the mailbox.</li>
 <li><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the mailbox is read-only.</li>
 <li><strong>uid_validity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID validity value for mailbox consistency.</li>
 </ul>
@@ -269,8 +268,8 @@ two bytes are time-based and the second two bytes are random.</p>
         <div class="sphinxsidebarwrapper">
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="flags.html"
-                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.flags</span></code></a></p>
+    <p class="topless"><a href="listtree.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code></a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
@@ -332,9 +331,9 @@ two bytes are time-based and the second two bytes are random.</p>
           <a href="message.html" title="pymap.message"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="flags.html" title="pymap.flags"
+          <a href="listtree.html" title="pymap.listtree"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.3.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -342,7 +341,7 @@ two bytes are time-based and the second two bytes are random.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
