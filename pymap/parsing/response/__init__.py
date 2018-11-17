@@ -1,9 +1,13 @@
-from typing import List, Optional, Union
+
+from typing import TypeVar, Type, Any, Optional, List, Dict, Tuple
 
 from ...bytes import MaybeBytes, BytesFormat
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
            'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth']
+
+_ResponseT = TypeVar('_ResponseT', bound='Response')
+_Mergeable = Dict[Tuple[Type['Response'], Any], int]
 
 
 class ResponseCode:
@@ -49,11 +53,11 @@ class Response:
             indicate a continuation requirement, or an asterisk (``*``) to
             indicate an untagged response.
         text: The response text.
+        code: Optional response code.
 
     Attributes:
         condition: The condition bytestring, e.g. ``OK``.
         tag: The tag bytestring.
-        untagged: The list of added untagged responses.
 
     """
 
@@ -63,9 +67,10 @@ class Response:
                  code: ResponseCode = None) -> None:
         super().__init__()
         self.tag = bytes(tag)
-        self.untagged: List[Union[MaybeBytes, 'Response']] = []
         self.code = code
         self._text = text or b''
+        self._untagged: List['Response'] = []
+        self._mergeable: _Mergeable = {}
         self._raw: Optional[bytes] = None
 
     @property
@@ -80,7 +85,7 @@ class Response:
         else:
             return bytes(self._text)
 
-    def add_untagged(self, *responses: Union[MaybeBytes, 'Response']) -> None:
+    def add_untagged(self, *responses: 'Response') -> None:
         """Add an untagged response. These responses are shown before the
         parent response.
 
@@ -88,12 +93,27 @@ class Response:
             responses: The untagged responses to add.
 
         """
-        self.untagged.extend(responses)
+        for resp in responses:
+            try:
+                merge_key = resp.merge_key
+            except TypeError:
+                self._untagged.append(resp)
+            else:
+                key = (type(resp), merge_key)
+                try:
+                    untagged_idx = self._mergeable[key]
+                except KeyError:
+                    untagged_idx = len(self._untagged)
+                    self._mergeable[key] = untagged_idx
+                    self._untagged.append(resp)
+                else:
+                    merged = self._untagged[untagged_idx].merge(resp)
+                    self._untagged[untagged_idx] = merged
         self._raw = None
 
     def add_untagged_ok(self, text: MaybeBytes,
                         code: Optional[ResponseCode] = None) -> None:
-        """Add an untagged "OK" response.
+        """Add an untagged ``OK`` response.
 
         See Also:
             :meth:`.add_untagged`, :class:`ResponseOk`
@@ -112,16 +132,41 @@ class Response:
         indicating that the session should be terminated.
 
         """
-        for resp in self.untagged:
-            if isinstance(resp, Response) and resp.is_terminal:
+        for resp in self._untagged:
+            if resp.is_terminal:
                 return True
         return False
+
+    @property
+    def merge_key(self) -> Any:
+        """Returns a hashable value which can be compared to other
+        :attr:`.merge_key` values of the same response type to see if the
+        two responses can be merged.
+
+        Raises:
+            TypeError: This response type may not be merged.
+
+        """
+        raise TypeError(self)
+
+    def merge(self: _ResponseT, other: _ResponseT) -> _ResponseT:
+        """Return a copy of this response with the other response merged in.
+
+        Args:
+            other: The other response to merge.
+
+        Raises:
+            TypeError: This response type may not be merged.
+            ValueError: The two responses are not mergeable.
+
+        """
+        raise TypeError(self)
 
     def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
         resp_line = BytesFormat(b'%b %b\r\n') % (self.tag, self.text)
-        self._raw = BytesFormat(b'').join(self.untagged, [resp_line])
+        self._raw = BytesFormat(b'').join(self._untagged, [resp_line])
         return self._raw
 
 

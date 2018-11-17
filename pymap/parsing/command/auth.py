@@ -1,7 +1,7 @@
 
 import re
 from datetime import datetime
-from typing import Tuple, Sequence, Iterable, Optional, List
+from typing import ClassVar, Tuple, Sequence, Iterable, Optional, List
 
 from . import CommandAuth
 from .. import NotParseable, UnexpectedType, Space, EndLine, Params
@@ -166,6 +166,9 @@ class ListCommand(CommandAuth):
 
     command = b'LIST'
 
+    #: All mailboxes may be listed, not only subscribed mailboxes.
+    only_subscribed: ClassVar[bool] = False
+
     _list_mailbox_pattern = re.compile(br'[\x21\x23-\x27\x2A-\x5B'
                                        br'\x5D-\x7A\x7C\x7E]+')
 
@@ -195,6 +198,10 @@ class LSubCommand(ListCommand):
     """The ``LSUB`` command lists subscribed mailboxes."""
 
     command = b'LSUB'
+    delegate = ListCommand
+
+    #: Only subscribed mailboxes may be listed.
+    only_subscribed: ClassVar[bool] = True
 
 
 class RenameCommand(CommandAuth):
@@ -245,6 +252,10 @@ class SelectCommand(CommandMailboxArg):
     command = b'SELECT'
     allow_updates = False
 
+    #: The mailbox will not be opened read-only unless the backend indicates
+    #: that it must be.
+    readonly: ClassVar[bool] = False
+
     def __init__(self, tag: bytes, mailbox: Mailbox,
                  options: ExtensionOptions) -> None:
         super().__init__(tag, mailbox)
@@ -267,6 +278,10 @@ class ExamineCommand(SelectCommand):
     """
 
     command = b'EXAMINE'
+    delegate = SelectCommand
+
+    #: The mailbox will be opened read-only.
+    readonly: ClassVar[bool] = True
 
 
 class StatusCommand(CommandMailboxArg):

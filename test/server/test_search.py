@@ -48,7 +48,7 @@ class TestSearch(TestBase):
             b'search1 UID SEARCH ALL\r\n')
         self.transport.push_write(
             b'* SEARCH 101 102 103 104\r\n'
-            b'search1 OK SEARCH completed.\r\n')
+            b'search1 OK UID SEARCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
 
@@ -91,7 +91,7 @@ class TestSearch(TestBase):
         self.transport.push_readline(
             b'search1 SEARCH SEEN\r\n')
         self.transport.push_write(
-            b'* SEARCH 1 2 3\r\n'
+            b'* SEARCH 1 2\r\n'
             b'search1 OK SEARCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -102,7 +102,7 @@ class TestSearch(TestBase):
         self.transport.push_readline(
             b'search1 SEARCH UNSEEN\r\n')
         self.transport.push_write(
-            b'* SEARCH 4\r\n'
+            b'* SEARCH 3 4\r\n'
             b'search1 OK SEARCH completed.\r\n')
         self.transport.push_logout()
         await self.run()

@@ -45,9 +45,14 @@ class SelectedSet:
 
     @property
     def any_selected(self) -> Optional['SelectedMailbox']:
-        """A single, random instance in the set of selected mailbox objects."""
+        """A single, random object in the set of selected mailbox objects.
+        Selected mailbox object's marked :attr:`~SelectedMailbox.readonly`
+        will not be chosen.
+
+        """
         for selected in self._set:
-            return selected
+            if not selected.readonly:
+                return selected
         return None
 
 

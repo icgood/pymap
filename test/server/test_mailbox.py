@@ -35,7 +35,7 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'create1 CREATE "test mailbox"\r\n')
         self.transport.push_write(
-            b'create1 OK Mailbox created successfully.\r\n')
+            b'create1 OK CREATE completed.\r\n')
         self.transport.push_readline(
             b'list1 LIST "" *\r\n')
         self.transport.push_write(
@@ -52,7 +52,7 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'create1 CREATE "Trash.test mailbox"\r\n')
         self.transport.push_write(
-            b'create1 OK Mailbox created successfully.\r\n')
+            b'create1 OK CREATE completed.\r\n')
         self.transport.push_readline(
             b'list1 LIST "Trash" *\r\n')
         self.transport.push_write(
@@ -67,7 +67,7 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'delete1 DELETE Sent\r\n')
         self.transport.push_write(
-            b'delete1 OK Mailbox deleted successfully.\r\n')
+            b'delete1 OK DELETE completed.\r\n')
         self.transport.push_readline(
             b'list2 LIST "" *\r\n')
         self.transport.push_write(
@@ -82,11 +82,11 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'create1 CREATE "Trash.test mailbox"\r\n')
         self.transport.push_write(
-            b'create1 OK Mailbox created successfully.\r\n')
+            b'create1 OK CREATE completed.\r\n')
         self.transport.push_readline(
             b'delete1 DELETE Trash\r\n')
         self.transport.push_write(
-            b'delete1 OK Mailbox deleted successfully.\r\n')
+            b'delete1 OK DELETE completed.\r\n')
         self.transport.push_readline(
             b'list1 LIST "Trash" *\r\n')
         self.transport.push_write(
@@ -103,7 +103,7 @@ class TestMailbox(TestBase):
             b'delete1 DELETE Sent\r\n')
         self.transport.push_write(
             b'* BYE Selected mailbox deleted.\r\n'
-            b'delete1 OK Mailbox deleted successfully.\r\n')
+            b'delete1 OK DELETE completed.\r\n')
         self.transport.push_write_close()
         await self.run()
 
@@ -118,7 +118,7 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'rename1 RENAME Sent "Sent Test"\r\n')
         self.transport.push_write(
-            b'rename1 OK Mailbox renamed successfully.\r\n')
+            b'rename1 OK RENAME completed.\r\n')
         self.transport.push_readline(
             b'status1 STATUS Sent (MESSAGES)\r\n')
         self.transport.push_write(
@@ -144,7 +144,7 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'rename1 RENAME INBOX "Inbox Test"\r\n')
         self.transport.push_write(
-            b'rename1 OK Mailbox renamed successfully.\r\n')
+            b'rename1 OK RENAME completed.\r\n')
         self.transport.push_readline(
             b'status1 STATUS INBOX (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
         self.transport.push_write(
@@ -169,7 +169,7 @@ class TestMailbox(TestBase):
             b'rename1 RENAME INBOX "Inbox Test"\r\n')
         self.transport.push_write(
             b'* BYE [UIDVALIDITY ', (br'\d+', ), b'] UID validity changed.\r\n'
-            b'rename1 OK Mailbox renamed successfully.\r\n')
+            b'rename1 OK RENAME completed.\r\n')
         self.transport.push_write_close()
         await self.run()
 
@@ -180,7 +180,7 @@ class TestMailbox(TestBase):
             b'rename1 RENAME Sent "Sent Test"\r\n')
         self.transport.push_write(
             b'* BYE Selected mailbox deleted.\r\n'
-            b'rename1 OK Mailbox renamed successfully.\r\n')
+            b'rename1 OK RENAME completed.\r\n')
         self.transport.push_write_close()
         await self.run()
 
@@ -224,15 +224,15 @@ class TestMailbox(TestBase):
             b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
         self.transport.push_write(
             b'* STATUS INBOX (MESSAGES 4 RECENT 1 UIDNEXT 105 '
-            b'UIDVALIDITY ', (br'\d+', b'uidval1'), b' UNSEEN 1)\r\n'
+            b'UIDVALIDITY ', (br'\d+', b'uidval1'), b' UNSEEN 2)\r\n'
             b'status1 OK STATUS completed.\r\n')
-        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 3)
         self.transport.push_readline(
             b'status2 STATUS INBOX '
             b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
         self.transport.push_write(
             b'* STATUS INBOX (MESSAGES 4 RECENT 0 UIDNEXT 105 '
-            b'UIDVALIDITY ', (br'\d+', b'uidval2'), b' UNSEEN 1)\r\n'
+            b'UIDVALIDITY ', (br'\d+', b'uidval2'), b' UNSEEN 2)\r\n'
             b'status2 OK STATUS completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -251,7 +251,7 @@ class TestMailbox(TestBase):
         self.transport.push_write(
             b'append1 OK [APPENDUID ', (br'\d+', ), b' 105]'
             b' APPEND completed.\r\n')
-        self.transport.push_select(b'INBOX', 5, 2, 106, 4)
+        self.transport.push_select(b'INBOX', 5, 2, 106, 3)
         self.transport.push_logout()
         await self.run()
 
@@ -267,7 +267,7 @@ class TestMailbox(TestBase):
             b'\r\n')
         self.transport.push_write(
             b'append1 NO APPEND cancelled.\r\n')
-        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 3)
         self.transport.push_logout()
         await self.run()
 
@@ -290,14 +290,14 @@ class TestMailbox(TestBase):
         self.transport.push_write(
             b'append1 OK [APPENDUID ', (br'\d+', ), b' 105:106]'
             b' APPEND completed.\r\n')
-        self.transport.push_select(b'INBOX', 6, 3, 107, 4)
+        self.transport.push_select(b'INBOX', 6, 3, 107, 3)
         self.transport.push_logout()
         await self.run()
 
     async def test_append_selected(self):
         message = b'test message\r\n'
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105, 3)
         self.transport.push_readline(
             b'append1 APPEND INBOX (\\Seen) {%i}\r\n' % len(message))
         self.transport.push_write(

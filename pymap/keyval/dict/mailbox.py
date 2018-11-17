@@ -5,7 +5,6 @@ from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
 from pymap.concurrent import ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.message import AppendMessage
-from pymap.parsing.specials.flag import Recent
 from pymap.selected import SelectedSet
 
 from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
@@ -29,6 +28,7 @@ class Mailbox(KeyValMailbox[Message]):
 
     def __init__(self, name: str) -> None:
         self._name = name
+        self._readonly = False
         self._subscribed: Dict[str, bool] = {}
         self._messages_lock = ReadWriteLock.for_asyncio()
         self._children: Dict[str, 'Mailbox'] = OrderedDict()
@@ -46,6 +46,10 @@ class Mailbox(KeyValMailbox[Message]):
         return self._name
 
     @property
+    def readonly(self) -> bool:
+        return self._readonly
+
+    @property
     def uid_validity(self) -> int:
         return self._uid_validity
 
@@ -61,12 +65,9 @@ class Mailbox(KeyValMailbox[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    def parse_message(self, append_msg: AppendMessage,
-                      with_recent: bool) -> Message:
-        flag_set = append_msg.flag_set
-        if with_recent:
-            flag_set = flag_set | {Recent}
-        return Message.parse(0, append_msg.message, flag_set, append_msg.when)
+    def parse_message(self, append_msg: AppendMessage) -> Message:
+        return Message.parse(0, append_msg.message, append_msg.flag_set,
+                             append_msg.when, True)
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
         async with self._children_lock.write_lock():
@@ -125,12 +126,13 @@ class Mailbox(KeyValMailbox[Message]):
                 del self._children[before]
                 return self._children[after]
 
-    async def add(self, message: Message) -> Message:
+    async def add(self, message: Message, recent: bool = False) -> Message:
         async with self.messages_lock.write_lock():
             self._max_uid += 1
-            message = message.copy(self._max_uid)
-            self._messages[message.uid] = message
-            return message
+            msg_copy = message.copy(self._max_uid)
+            msg_copy.recent = recent or message.recent
+            self._messages[msg_copy.uid] = msg_copy
+            return msg_copy
 
     async def get(self, uid: int) -> Optional[Message]:
         async with self.messages_lock.read_lock():

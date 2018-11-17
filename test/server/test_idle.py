@@ -10,7 +10,7 @@ class TestIdle(TestBase):
 
     async def test_idle(self):
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105, 4)
+        self.transport.push_select(b'INBOX', 4, 1, 105)
         self.transport.push_readline(
             b'idle1 IDLE\r\n')
         self.transport.push_write(
@@ -38,7 +38,7 @@ class TestIdle(TestBase):
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
-        concurrent.push_select(b'INBOX', 4, 1, 105, 4)
+        concurrent.push_select(b'INBOX', 4, 1, 105)
         concurrent.push_readline(
             b'idle1 IDLE\r\n')
         concurrent.push_write(
@@ -78,7 +78,7 @@ class TestIdle(TestBase):
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
-        concurrent.push_select(b'INBOX', 4, 1, 105, 4)
+        concurrent.push_select(b'INBOX', 4, 1, 105)
         concurrent.push_readline(
             b'idle1 IDLE\r\n')
         concurrent.push_write(
@@ -94,7 +94,7 @@ class TestIdle(TestBase):
         concurrent.push_logout()
 
         self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 0, 105, 4, wait=event1)
+        self.transport.push_select(b'INBOX', 4, 0, 105, wait=event1)
         self.transport.push_readline(
             b'store1 STORE 1 +FLAGS.SILENT (\\Deleted)\r\n')
         self.transport.push_write(

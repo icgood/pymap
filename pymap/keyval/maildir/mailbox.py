@@ -10,7 +10,7 @@ from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
 from pymap.message import AppendMessage
-from pymap.parsing.specials.flag import Flag, Recent
+from pymap.parsing.specials.flag import Flag
 from pymap.selected import SelectedSet
 
 from .flags import MaildirFlags
@@ -30,19 +30,18 @@ class Message(KeyValMessage):
     def __init__(self, uid: int, contents: EmailMessage,
                  permanent_flags: Iterable[Flag],
                  internal_date: Optional[datetime],
-                 maildir_flags: 'MaildirFlags'):
+                 recent: bool, maildir_flags: 'MaildirFlags'):
         super().__init__(uid, contents, permanent_flags, internal_date,
-                         maildir_flags)
+                         recent, maildir_flags)
         self.maildir_flags = maildir_flags
 
     @property
     def maildir_msg(self) -> MaildirMessage:
-        is_recent = Recent in self.permanent_flags
         flag_str = self.maildir_flags.to_maildir(self.permanent_flags)
         msg_bytes = self.get_body(binary=True)
         maildir_msg = MaildirMessage(msg_bytes)
         maildir_msg.set_flags(flag_str)
-        maildir_msg.set_subdir('new' if is_recent else 'cur')
+        maildir_msg.set_subdir('new' if self.recent else 'cur')
         if self.internal_date is not None:
             maildir_msg.set_date(self.internal_date.timestamp())
         return maildir_msg
@@ -51,11 +50,11 @@ class Message(KeyValMessage):
     def from_maildir(cls, uid: int, maildir_msg: MaildirMessage,
                      maildir_flags: 'MaildirFlags') -> 'Message':
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
-        if maildir_msg.get_subdir() == 'new':
-            flag_set = flag_set | {Recent}
+        recent = maildir_msg.get_subdir() == 'new'
         msg_date = datetime.fromtimestamp(maildir_msg.get_date())
         msg_bytes = bytes(maildir_msg)
-        return cls.parse(uid, msg_bytes, flag_set, msg_date, maildir_flags)
+        return cls.parse(uid, msg_bytes, flag_set, msg_date, recent,
+                         maildir_flags)
 
 
 class Mailbox(KeyValMailbox[Message]):
@@ -81,6 +80,10 @@ class Mailbox(KeyValMailbox[Message]):
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def readonly(self) -> bool:
+        return False
 
     @property
     def uid_validity(self) -> int:
@@ -109,13 +112,9 @@ class Mailbox(KeyValMailbox[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    def parse_message(self, append_msg: AppendMessage,
-                      with_recent: bool) -> Message:
-        flag_set = append_msg.flag_set
-        if with_recent:
-            flag_set = flag_set | {Recent}
-        return Message.parse(0, append_msg.message, flag_set,
-                             append_msg.when, self.maildir_flags)
+    def parse_message(self, append_msg: AppendMessage) -> Message:
+        return Message.parse(0, append_msg.message, append_msg.flag_set,
+                             append_msg.when, True, self.maildir_flags)
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
         async with Subscriptions.with_write(self._path) as subs:
@@ -184,16 +183,21 @@ class Mailbox(KeyValMailbox[Message]):
             after_mbx = Mailbox(after, maildir, self._layout)
         return await after_mbx.reset()
 
-    async def add(self, message: Message) -> 'Message':
+    async def add(self, message: Message, recent: bool = False) -> 'Message':
+        recent = recent or message.recent
         async with self.messages_lock.write_lock():
             maildir_msg = message.maildir_msg
+            if recent:
+                maildir_msg.set_subdir('new')
             key = self._maildir.add(maildir_msg)
             filename = key + ':' + maildir_msg.get_info()
         async with UidList.with_write(self._path) as uidl:
             new_rec = Record(uidl.next_uid, {}, filename)
             uidl.next_uid += 1
             uidl.set(new_rec)
-        return message.copy(new_rec.uid)
+        msg_copy = message.copy(new_rec.uid)
+        msg_copy.recent = recent
+        return msg_copy
 
     async def get(self, uid: int) -> Optional[Message]:
         async with UidList.with_read(self._path) as uidl:
@@ -225,8 +229,7 @@ class Mailbox(KeyValMailbox[Message]):
         async with self.messages_lock.write_lock():
             for message in messages:
                 key = keys[message.uid]
-                is_recent = Recent in message.permanent_flags
-                flag_set = message.permanent_flags - {Recent}
+                flag_set = message.permanent_flags
                 flag_str = self.maildir_flags.to_maildir(flag_set)
                 try:
                     maildir_msg = self._maildir[key]
@@ -234,7 +237,7 @@ class Mailbox(KeyValMailbox[Message]):
                     pass
                 else:
                     maildir_msg.set_flags(flag_str)
-                    maildir_msg.set_subdir('new' if is_recent else 'cur')
+                    maildir_msg.set_subdir('new' if message.recent else 'cur')
                     self._maildir[key] = maildir_msg
 
     async def cleanup(self) -> None:
