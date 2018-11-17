@@ -14,22 +14,22 @@ Table of Contents
    :maxdepth: 2
    :caption: Contents:
 
-   concurrent
-   config
-   exceptions
-   flags
-   listtree
-   mailbox
-   message
-   proxy
-   search
-   selected
-   server
-   sockinfo
-   state
-   interfaces
-   parsing
-   keyval
+   pymap.concurrent
+   pymap.config
+   pymap.exceptions
+   pymap.flags
+   pymap.listtree
+   pymap.mailbox
+   pymap.message
+   pymap.proxy
+   pymap.search
+   pymap.selected
+   pymap.server
+   pymap.sockinfo
+   pymap.state
+   pymap.interfaces
+   pymap.parsing
+   pymap.keyval
 
 Indices and tables
 ==================

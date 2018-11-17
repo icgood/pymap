@@ -4,3 +4,4 @@
 
 .. automodule:: pymap.search
    :members:
+   :ignore-module-all:

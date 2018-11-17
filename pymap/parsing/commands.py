@@ -24,6 +24,14 @@ class Commands:
                 self.commands[command.command] = command
 
     def parse(self, buf: bytes, params: Params) -> Tuple[Command, bytes]:
+        """Parse the given bytes into a command. The basic syntax is a tag
+        string, a command name, possibly some arguments, and then an endline.
+
+        Args:
+            buf: The bytes to parse.
+            params: The parsing parameters.
+
+        """
         tag = Tag(b'*')
         try:
             tag, buf = Tag.parse(buf, params)
@@ -48,6 +56,3 @@ class Commands:
             return cmd_type.parse(buf, params)
         except NotParseable as exc:
             raise CommandInvalid(tag.value, command) from exc
-
-    def __bytes__(self) -> bytes:
-        raise NotImplementedError

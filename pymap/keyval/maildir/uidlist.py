@@ -3,7 +3,7 @@ import hashlib
 import struct
 from collections import OrderedDict
 from typing import IO, Any, Optional, Iterable, Mapping, Dict, \
-    NamedTuple, TypeVar, Type
+    NamedTuple, ClassVar, TypeVar, Type
 
 from pymap.mailbox import BaseMailbox
 
@@ -15,7 +15,15 @@ _UDT = TypeVar('_UDT', bound='UidList')
 
 
 class Record(NamedTuple):
-    """Defines a single record read from the UID list file."""
+    """Defines a single record read from the UID list file.
+
+    Args:
+        uid: The message UID of the record.
+        fields: The metadata fields of the record.
+        filename: The filename of the record.
+
+    """
+
     uid: int
     fields: Mapping[str, Any]
     filename: str
@@ -33,10 +41,10 @@ class UidList(FileWriteable):
     """
 
     #: The UID list file name, stored in the mailbox directory.
-    FILE_NAME = 'dovecot-uidlist'
+    FILE_NAME: ClassVar[str] = 'dovecot-uidlist'
 
     #: The UID list lock file, stored adjacent to the UID list file.
-    LOCK_FILE = 'dovecot-uidlist.lock'
+    LOCK_FILE: ClassVar[str] = 'dovecot-uidlist.lock'
 
     def __init__(self, base_dir: str, uid_validity: int,
                  next_uid: int, global_uid: bytes = None) -> None:

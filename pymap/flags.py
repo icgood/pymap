@@ -27,9 +27,9 @@ class FlagOp(enum.Enum):
 
 
 class SessionFlags:
-    """Used to track session flags on a message. Stored as a weak-key
-    dictionary. The key can be any value, but it is typically a
-    :class:`~pymap.interfaces.message.Message`.
+    """Used to track session flags on a message. Session flags are only valid
+    for the current IMAP client connection while it has the mailbox selected,
+    they do not persist. The ``\\Recent`` flag is a special-case session flag.
 
     """
 

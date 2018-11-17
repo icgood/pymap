@@ -12,7 +12,7 @@ __all__ = ['ExecutorProxy']
 
 class ExecutorProxy:
     """Proxies calls to :class:`~pymap.interfaces.session.SessionInterface`
-    object or :class:`login <~pymap.interfaces.session.LoginProtocol>`
+    object or :class:`~pymap.interfaces.session.LoginProtocol`
     functions through an :class:`~concurrent.futures.Executor`.
 
     Args:

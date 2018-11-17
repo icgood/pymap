@@ -1,5 +1,6 @@
 """Implements some concurrency utilities used by pymap. Each has
-an implementation using :mod:`asyncio` and :mod`threading` primitives.
+an implementation using :mod:`asyncio` and :mod:`threading` concurrency
+primitives.
 
 """
 
@@ -17,7 +18,7 @@ from weakref import WeakSet
 
 __all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError']
 
-_Event = TypeVar('_Event', bound='Event')
+_EventT = TypeVar('_EventT', bound='Event')
 _Delay = Sequence[float]
 
 
@@ -84,7 +85,7 @@ class Event(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def or_event(self: _Event, *events: _Event) -> _Event:
+    def or_event(self: _EventT, *events: _EventT) -> _EventT:
         """Return a new event that is signalled when either the current thread
         or any of the provided threads are signalled.
 
@@ -230,6 +231,9 @@ class FileLock(ReadWriteLock):
 
     @property
     def subsystem(self) -> str:
+        """The sub-system the read-write lock was created for, ``'file'``.
+
+        """
         return 'file'
 
     def _check_lock(self) -> bool:
