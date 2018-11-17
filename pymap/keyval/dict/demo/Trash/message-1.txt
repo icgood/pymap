@@ -1,0 +1,9 @@
+\Deleted \Recent
+0.0
+From: sales@example.com
+To: me@example.com
+Subject: Buy our snake oil!
+Content-Type: text/plain
+
+It just works. Only five easy payments of $19.99.
+

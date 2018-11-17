@@ -3,12 +3,12 @@ from typing import overload, Tuple, Optional, FrozenSet, Iterable, \
     Sequence, List
 
 from pymap.concurrent import Event, TimeoutError
-from pymap.exceptions import MailboxNotFound
+from pymap.exceptions import MailboxNotFound, MailboxReadOnly
 from pymap.flags import FlagOp
 from pymap.listtree import ListTree
 from pymap.message import AppendMessage
 from pymap.parsing.specials import SequenceSet, FetchAttribute, SearchKey
-from pymap.parsing.specials.flag import Flag, Deleted, Recent
+from pymap.parsing.specials.flag import Flag, Deleted, Seen
 from pymap.parsing.response.code import AppendUid, CopyUid
 from pymap.interfaces.session import SessionInterface
 from pymap.search import SearchParams, SearchCriteriaSet
@@ -52,8 +52,8 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
         return selected
 
     @classmethod
-    def _get_mbx_selected(cls, selected: Optional[SelectedMailbox],
-                          mbx: KeyValMailbox) -> Optional[SelectedMailbox]:
+    def _find_selected(cls, selected: Optional[SelectedMailbox],
+                       mbx: KeyValMailbox) -> Optional[SelectedMailbox]:
         if selected and selected.name == mbx.name:
             return selected
         return mbx.selected_set.any_selected
@@ -125,13 +125,15 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         mbx = await self.inbox.get_mailbox(name, try_create=True)
-        mbx_selected = self._get_mbx_selected(selected, mbx)
+        if mbx.readonly:
+            raise MailboxReadOnly(name)
+        dest_selected = self._find_selected(selected, mbx)
         uids: List[int] = []
         for append_msg in messages:
-            msg = mbx.parse_message(append_msg, not mbx_selected)
-            msg = await mbx.add(msg)
-            if mbx_selected:
-                mbx_selected.session_flags.add_recent(msg.uid)
+            msg = mbx.parse_message(append_msg)
+            msg = await mbx.add(msg, recent=not dest_selected)
+            if dest_selected:
+                dest_selected.session_flags.add_recent(msg.uid)
             uids.append(msg.uid)
         mbx.selected_set.updated.set()
         return (AppendUid(mbx.uid_validity, uids),
@@ -140,13 +142,13 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple[MailboxSnapshot, SelectedMailbox]:
         mbx = await self.inbox.get_mailbox(name)
-        selected = SelectedMailbox(name, readonly,
+        selected = SelectedMailbox(name, readonly or mbx.readonly,
                                    selected_set=mbx.selected_set)
-        if not readonly:
+        if not selected.readonly:
             recent_msgs: List[KeyValMessage] = []
             async for msg in mbx.messages():
-                if Recent in msg.permanent_flags:
-                    msg.permanent_flags.remove(Recent)
+                if msg.recent:
+                    msg.recent = False
                     selected.session_flags.add_recent(msg.uid)
                     recent_msgs.append(msg)
             await mbx.save_flags(*recent_msgs)
@@ -170,6 +172,10 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
         mbx = await self.inbox.get_mailbox(selected.name)
         ret = [(seq, msg) async for seq, msg
                in mbx.find(sequence_set, selected)]
+        if not selected.readonly and any(attr.set_seen for attr in attributes):
+            for _, msg in ret:
+                msg.permanent_flags.add(Seen)
+            await mbx.save_flags(msg for _, msg in ret)
         return ret, await self._load_updates(selected, mbx)
 
     async def search_mailbox(self, selected: SelectedMailbox,
@@ -188,6 +194,8 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
 
     async def expunge_mailbox(self, selected: SelectedMailbox,
                               uid_set: SequenceSet = None) -> SelectedMailbox:
+        if selected.readonly:
+            raise MailboxReadOnly(selected.name)
         mbx = await self.inbox.get_mailbox(selected.name)
         if not uid_set:
             uid_set = SequenceSet.all(uid=True)
@@ -206,17 +214,17 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
             -> Tuple[Optional[CopyUid], SelectedMailbox]:
         mbx = await self.inbox.get_mailbox(selected.name)
         dest = await self.inbox.get_mailbox(mailbox, try_create=True)
-        last_selected = dest.selected_set.any_selected
+        if dest.readonly:
+            raise MailboxReadOnly(mailbox)
+        dest_selected = self._find_selected(selected, dest)
         uids: List[Tuple[int, int]] = []
         async for _, msg in mbx.find(sequence_set, selected):
             source_uid = msg.uid
-            msg = await dest.add(msg)
-            if last_selected:
-                last_selected.session_flags.add_recent(msg.uid)
-            else:
-                msg.permanent_flags.add(Recent)
+            msg = await dest.add(msg, recent=not dest_selected)
+            if dest_selected:
+                dest_selected.session_flags.add_recent(msg.uid)
             uids.append((source_uid, msg.uid))
-        mbx.selected_set.updated.set()
+        dest.selected_set.updated.set()
         return (CopyUid(dest.uid_validity, uids),
                 await self._load_updates(selected, mbx))
 
@@ -225,6 +233,8 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
             -> Tuple[Iterable[int], SelectedMailbox]:
+        if selected.readonly:
+            raise MailboxReadOnly(selected.name)
         mbx = await self.inbox.get_mailbox(selected.name)
         permanent_flags = flag_set & mbx.permanent_flags
         session_flags = flag_set & mbx.session_flags

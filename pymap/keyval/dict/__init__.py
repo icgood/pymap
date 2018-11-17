@@ -15,7 +15,7 @@ from pysasl import AuthenticationCredentials
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.session import LoginProtocol
-from pymap.parsing.specials import Flag
+from pymap.parsing.specials.flag import Flag, Recent
 from pymap.sockinfo import SocketInfo
 
 from .mailbox import MailboxSnapshot, Message, Mailbox
@@ -127,7 +127,7 @@ class Session(KeyValSession):
     @classmethod
     async def _load_demo(cls, inbox: Mailbox) -> None:
         await cls._load_demo_mailbox('INBOX', inbox)
-        mbx_names = sorted(resource_listdir(cls.resource, 'data'))
+        mbx_names = sorted(resource_listdir(cls.resource, 'demo'))
         for name in mbx_names:
             if name != 'INBOX':
                 mbx = await inbox.add_mailbox(name)
@@ -135,10 +135,13 @@ class Session(KeyValSession):
 
     @classmethod
     async def _load_demo_mailbox(cls, name: str, mbx: Mailbox) -> None:
-        path = os.path.join('data', name)
+        path = os.path.join('demo', name)
         msg_names = sorted(resource_listdir(cls.resource, path))
         for msg_name in msg_names:
-            if msg_name == '.ignore':
+            if msg_name == '.readonly':
+                mbx._readonly = True
+                continue
+            elif msg_name.startswith('.'):
                 continue
             msg_path = os.path.join(path, msg_name)
             message_stream = resource_stream(cls.resource, msg_path)
@@ -147,6 +150,11 @@ class Session(KeyValSession):
                 msg_timestamp = float(message_stream.readline())
                 msg_dt = datetime.fromtimestamp(msg_timestamp, timezone.utc)
                 msg_flags = {Flag(flag) for flag in flags_line.split()}
+                if Recent in msg_flags:
+                    msg_flags.remove(Recent)
+                    msg_recent = True
+                else:
+                    msg_recent = False
                 msg_data = message_stream.read()
-            msg = Message.parse(0, msg_data, msg_flags, msg_dt)
+            msg = Message.parse(0, msg_data, msg_flags, msg_dt, msg_recent)
             await mbx.add(msg)

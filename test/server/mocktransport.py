@@ -1,8 +1,10 @@
+
 import asyncio
 import enum
 import inspect
 import re
 from collections import deque
+from itertools import zip_longest
 
 __all__ = ['MockTransport']
 
@@ -81,11 +83,15 @@ class MockTransport:
         self.push_write_close(set=set)
 
     def push_select(self, mailbox, exists=None, recent=None, uidnext=None,
-                    unseen=None, wait=None, post_wait=None, set=None):
+                    unseen=None, readonly=False, examine=False, wait=None,
+                    post_wait=None, set=None):
         if unseen is False:
             unseen_line = (None, b'')
+        elif unseen is None:
+            unseen_line = (None, b'* OK [UNSEEN ', (br'\d+',),
+                           b'] First unseen message.\r\n')
         else:
-            unseen_line = (None, b'* OK [UNSEEN ', (br'\d+', ),
+            unseen_line = (None, b'* OK [UNSEEN ', unseen,
                            b'] First unseen message.\r\n')
         if exists is None:
             exists = (br'\d+', )
@@ -93,18 +99,32 @@ class MockTransport:
             recent = (br'\d+', )
         if uidnext is None:
             uidnext = (br'\d+', )
+        if readonly or examine:
+            ok_code = b'READ-ONLY'
+            permflags_line = b'* OK [PERMANENTFLAGS ()] Read-only mailbox.\r\n'
+        else:
+            ok_code = b'READ-WRITE'
+            permflags_line = b'* OK [PERMANENTFLAGS (' \
+                             b'\\Answered \\Deleted \\Draft \\Flagged ' \
+                             b'\\Seen)] Flags permitted.\r\n'
+        if examine:
+            tag = b'examine1'
+            cmd = b'EXAMINE'
+        else:
+            tag = b'select1'
+            cmd = b'SELECT'
         self.push_readline(
-            b'select1 SELECT ' + mailbox + b'\r\n', wait=wait)
+            tag + b' ' + cmd + b' ' + mailbox + b'\r\n', wait=wait)
         self.push_write(
-            b'* OK [PERMANENTFLAGS (\\Answered \\Deleted \\Draft \\Flagged '
-            b'\\Seen)] Flags permitted.\r\n* FLAGS (\\Answered \\Deleted '
-            b'\\Draft \\Flagged \\Recent \\Seen)\r\n'
+            permflags_line,
+            b'* FLAGS (\\Answered \\Deleted \\Draft '
+            b'\\Flagged \\Recent \\Seen)\r\n'
             b'* ', exists, b' EXISTS\r\n'
             b'* ', recent, b' RECENT\r\n'
             b'* OK [UIDNEXT ', uidnext, b'] Predicted next UID.\r\n'
             b'* OK [UIDVALIDITY ', (br'\d+', ), b'] UIDs valid.\r\n',
             unseen_line,
-            b'select1 OK [READ-WRITE] Selected mailbox.\r\n',
+            tag, b' OK [', ok_code, b'] Selected mailbox.\r\n',
             wait=post_wait, set=set)
 
     def _pop_expected(self, got):
@@ -143,9 +163,15 @@ class MockTransport:
                  '---------------------------------------------------']
         raw_regex = str(full_regex.replace(b'\r', b''), 'ascii').splitlines()
         raw_data = str(data, 'ascii', 'replace').splitlines()
-        for regex_line, data_line in zip(raw_regex, raw_data):
-            parts.append('regex: ' + regex_line.lstrip('^'))
-            parts.append('data:  ' + re.escape(data_line + '\\'))
+        for regex_line, data_line in zip_longest(raw_regex, raw_data):
+            if regex_line:
+                parts.append('regex: ' + regex_line.lstrip('^'))
+            else:
+                parts.append('regex: ')
+            if data_line:
+                parts.append('data:  ' + re.escape(data_line + '\\'))
+            else:
+                parts.append('data:  ')
             parts.append('')
         return '\n'.join(parts)
 

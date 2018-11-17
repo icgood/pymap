@@ -134,10 +134,8 @@ class BaseLoadedMessage(BaseMessage, LoadedMessage):
                  permanent_flags: Iterable[Flag] = None,
                  internal_date: datetime = None,
                  *args: Any, **kwargs: Any) -> None:
-        super().__init__(uid, permanent_flags, internal_date)
+        super().__init__(uid, permanent_flags, internal_date, *args, **kwargs)
         self.contents: EmailMessage = contents
-        self._args = args
-        self._kwargs = kwargs
 
     def copy(self: _LoadedT, new_uid: int) -> _LoadedT:
         cls = type(self)

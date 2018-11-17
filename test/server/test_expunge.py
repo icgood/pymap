@@ -32,17 +32,17 @@ class TestExpunge(TestBase):
             b'store1 UID STORE * +FlAGS (\\Deleted)\r\n')
         self.transport.push_write(
             b'* 4 FETCH (FLAGS (\\Deleted \\Recent) UID 104)\r\n'
-            b'store1 OK STORE completed.\r\n')
+            b'store1 OK UID STORE completed.\r\n')
         self.transport.push_readline(
             b'expunge1 UID EXPUNGE 101:103\r\n')
         self.transport.push_write(
-            b'expunge1 OK EXPUNGE completed.\r\n')
+            b'expunge1 OK UID EXPUNGE completed.\r\n')
         self.transport.push_readline(
             b'expunge1 UID EXPUNGE 101:*\r\n')
         self.transport.push_write(
             b'* 4 EXPUNGE\r\n'
             b'* 0 RECENT\r\n'
-            b'expunge1 OK EXPUNGE completed.\r\n')
+            b'expunge1 OK UID EXPUNGE completed.\r\n')
         self.transport.push_logout()
         await self.run()
 

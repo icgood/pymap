@@ -1,6 +1,9 @@
 
 from abc import abstractmethod
-from typing import TypeVar, Tuple, Sequence, Optional, FrozenSet, AsyncIterable
+from datetime import datetime
+from email.message import EmailMessage
+from typing import TypeVar, Tuple, Sequence, Optional, FrozenSet, \
+    AsyncIterable, Iterable
 from typing_extensions import Protocol
 
 from pymap.concurrent import ReadWriteLock
@@ -55,7 +58,14 @@ class MailboxSnapshot(BaseMailbox):
 
 
 class KeyValMessage(BaseLoadedMessage):
-    pass
+
+    def __init__(self, uid: int, contents: EmailMessage,
+                 permanent_flags: Iterable[Flag],
+                 internal_date: Optional[datetime],
+                 recent: bool, *args, **kwargs):
+        super().__init__(uid, contents, permanent_flags, internal_date,
+                         recent, *args, **kwargs)
+        self.recent = recent
 
 
 class KeyValMailbox(Protocol[_MessageT]):
@@ -63,6 +73,11 @@ class KeyValMailbox(Protocol[_MessageT]):
     @property
     @abstractmethod
     def name(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
+    def readonly(self) -> bool:
         ...
 
     @property
@@ -94,8 +109,7 @@ class KeyValMailbox(Protocol[_MessageT]):
         ...
 
     @abstractmethod
-    def parse_message(self, append_msg: AppendMessage,
-                      with_recent: bool) -> _MessageT:
+    def parse_message(self, append_msg: AppendMessage) -> _MessageT:
         ...
 
     @abstractmethod
@@ -129,7 +143,7 @@ class KeyValMailbox(Protocol[_MessageT]):
         ...
 
     @abstractmethod
-    async def add(self, message: _MessageT) -> _MessageT:
+    async def add(self, message: _MessageT, recent: bool = False) -> _MessageT:
         ...
 
     @abstractmethod
@@ -168,20 +182,19 @@ class KeyValMailbox(Protocol[_MessageT]):
                 yield (seq, msg)
 
     async def snapshot(self) -> MailboxSnapshot:
-        readonly = False
         exists = 0
         recent = 0
         unseen = 0
         first_unseen: Optional[int] = None
         async for seq, msg in asyncenumerate(self.messages(), 1):
             exists += 1
-            if Recent in msg.permanent_flags:
+            if msg.recent:
                 recent += 1
             if Seen not in msg.permanent_flags:
                 unseen += 1
                 if first_unseen is None:
                     first_unseen = seq
-        return MailboxSnapshot(self.name, readonly, self.uid_validity,
+        return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
                                self.permanent_flags, self.session_flags,
                                exists, recent, unseen, first_unseen,
                                self.next_uid)

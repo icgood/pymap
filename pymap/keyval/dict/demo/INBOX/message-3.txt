@@ -1,4 +1,4 @@
-\Seen \Flagged
+\Flagged
 946684800.0
 From: corp@example.com
 To: me@example.com

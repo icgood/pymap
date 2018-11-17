@@ -26,7 +26,7 @@ class TestStore(TestBase):
             b'store1 UID STORE * +FlAGS (\\Seen)\r\n')
         self.transport.push_write(
             b'* 4 FETCH (FLAGS (\\Recent \\Seen) UID 104)\r\n'
-            b'store1 OK STORE completed.\r\n')
+            b'store1 OK UID STORE completed.\r\n')
         self.transport.push_logout()
         await self.run()
 
