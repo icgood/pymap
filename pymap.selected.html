@@ -1,0 +1,536 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pymap.selected &#8212; pymap 0.4.0 documentation</title>
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.base.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pymap.server" href="pymap.server.html" />
+    <link rel="prev" title="pymap.search" href="pymap.search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.server.html" title="pymap.server"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.search.html" title="pymap.search"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pymap.selected">
+<span id="pymap-selected"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code><a class="headerlink" href="#module-pymap.selected" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pymap.selected.SelectedSet">
+<em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSet</code><span class="sig-paren">(</span><em>updated=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Maintains a weak set of <a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a> objects that exist for
+a mailbox, across all sessions. This is useful for assigning the
+<code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag, as well as notifying other sessions about updates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>updated</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – The event to notify when updates occur. Defaults to a new
+event using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> concurrency primitives.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSet.updated">
+<code class="descname">updated</code><a class="headerlink" href="#pymap.selected.SelectedSet.updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event to notify when updates occur.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSet.any_selected">
+<code class="descname">any_selected</code><a class="headerlink" href="#pymap.selected.SelectedSet.any_selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single, random instance in the set of selected mailbox objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.selected.SelectedSnapshot">
+<em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSnapshot</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Holds a snapshot of the selected mailbox as of the last fork.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>uid_validity</strong> – The UID validity of the selected mailbox.</li>
+<li><strong>max_uid</strong> – The highest message UID in the mailbox.</li>
+<li><strong>recent</strong> – The number of messages in the mailbox with <code class="docutils literal notranslate"><span class="pre">\Recent</span></code>.</li>
+<li><strong>messages</strong> – The message UIDs mapped to flags.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSnapshot.uid_validity">
+<code class="descname">uid_validity</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.uid_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSnapshot.max_uid">
+<code class="descname">max_uid</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.max_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSnapshot.recent">
+<code class="descname">recent</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSnapshot.messages">
+<code class="descname">messages</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedSnapshot.exists">
+<code class="descname">exists</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedSnapshot.iter_set">
+<code class="descname">iter_set</code><span class="sig-paren">(</span><em>seq_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedSnapshot.iter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate through the given sequence set based on the message state at
+the last fork.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>[]) – Sequence set to convert to UID set.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.selected.SelectedMailbox">
+<em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedMailbox</code><span class="sig-paren">(</span><em>name</em>, <em>readonly</em>, <em>session_flags=None</em>, <em>selected_set=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Manages the updates to the current selected mailbox from other
+concurrent sessions.</p>
+<p>The current state of the selected mailbox will be written to this object by
+the backend implementation during each operation.  Then, when the operation
+completes, call <a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a> to make a fresh copy of the object and any
+untagged responses that should be added to the response.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the selected mailbox.</li>
+<li><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Indicates the mailbox is selected as read-only.</li>
+<li><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a>]) – Session-only flags for the mailbox.</li>
+<li><strong>selected_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedSet" title="pymap.selected.SelectedSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedSet</span></code></a>]) – The <code class="docutils literal notranslate"><span class="pre">self</span></code> object and subsequent forked copies will be
+kept in in this set.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.name">
+<code class="descname">name</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the selected mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.uid_validity">
+<code class="descname">uid_validity</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.uid_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The UID validity of the selected mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.readonly">
+<code class="descname">readonly</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.readonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates the mailbox is selected as read-only.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.max_uid">
+<code class="descname">max_uid</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.max_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The highest message UID in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.exists">
+<code class="descname">exists</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of messages in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.recent">
+<code class="descname">recent</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of messages in the mailbox with <code class="docutils literal notranslate"><span class="pre">\Recent</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.session_flags">
+<code class="descname">session_flags</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.session_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Session-only flags for the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.snapshot">
+<code class="descname">snapshot</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>A snapshot of the selected mailbox as of the last fork.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.selected.SelectedSnapshot" title="pymap.selected.SelectedSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedSnapshot</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.kwargs">
+<code class="descname">kwargs</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add keywords arguments to copy construction during <a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.set_uid_validity">
+<code class="descname">set_uid_validity</code><span class="sig-paren">(</span><em>uid_validity</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.set_uid_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the UID validity of the selected mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid_validity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The new UID validity value.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.set_deleted">
+<code class="descname">set_deleted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.set_deleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the selected mailbox as having been deleted.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.add_messages">
+<code class="descname">add_messages</code><span class="sig-paren">(</span><em>*messages</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.add_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a message that exists in the mailbox. Shortcut for
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">add_message()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>messages</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]]) – The messages to add, each a tuple of UID and permanent
+flags.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.remove_messages">
+<code class="descname">remove_messages</code><span class="sig-paren">(</span><em>*uids</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.remove_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove messages that exist in the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UIDs.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.hide_expunged">
+<code class="descname">hide_expunged</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.hide_expunged" title="Permalink to this definition">¶</a></dt>
+<dd><p>No untagged <code class="docutils literal notranslate"><span class="pre">EXPUNGE</span></code> responses will be generated, and message
+sequence numbers will not be adjusted, until the next <a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.hide">
+<code class="descname">hide</code><span class="sig-paren">(</span><em>*uids</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.hide" title="Permalink to this definition">¶</a></dt>
+<dd><p>The messages with the given UIDs are marked as hidden, so that they
+will not produce untagged <code class="docutils literal notranslate"><span class="pre">FETCH</span></code> responses, until the next
+<a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UIDs.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.selected.SelectedMailbox.fork">
+<code class="descname">fork</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.fork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares the state of the current object to that of the last fork,
+returning the untagged responses that reflect any changes. A new copy
+of the object is also returned, ready for the next command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[]) – The command that was finished.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[~_SelectedT, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="pymap.search.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="pymap.server.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.server</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pymap.selected.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.server.html" title="pymap.server"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.search.html" title="pymap.search"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.4.0 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
