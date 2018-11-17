@@ -29,7 +29,7 @@ from .parsing.response import ResponseContinuation, Response, ResponseCode, \
 from .sockinfo import SocketInfo
 from .state import ConnectionState
 
-__all__ = ['IMAPConfig', 'IMAPServer', 'IMAPConnection']
+__all__ = ['IMAPServer', 'IMAPConnection']
 
 
 class Disconnected(Exception):
@@ -39,7 +39,7 @@ class Disconnected(Exception):
 
 class IMAPServer:
     """Callable object that creates and runs :class:`IMAPConnection` objects
-    when :meth:`asyncio.start_server` receives a new connection.
+    when :func:`asyncio.start_server` receives a new connection.
 
     Args:
         login: Login callback that takes authentication credentials and
@@ -214,6 +214,13 @@ class IMAPConnection:
         return response
 
     async def run(self, state: ConnectionState) -> None:
+        """Start the socket communication with the IMAP greeting, and then
+        enter the command/response cycle.
+
+        Args:
+            state: Defines the interaction with the backend plugin.
+
+        """
         self._print('%d +++|', bytes(self.sock_info))
         bad_commands = 0
         try:

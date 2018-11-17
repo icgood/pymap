@@ -15,7 +15,7 @@ class Params:
     """Parameters used and passed around among the :meth:`~Parseable.parse`
     methods.
 
-    Attributes:
+    Args:
         continuations: The continuation buffers remaining for parsing.
         expected: The types that are expected in the next parsed object.
         list_expected: The types that are expect in a parsed list.

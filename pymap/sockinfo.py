@@ -13,6 +13,10 @@ class SocketInfo:
     """Information about a connected socket, which may be useful for
     server-side logic such as authentication and authorization.
 
+    Attribute access is passed directly into
+    :meth:`~asyncio.BaseTransport.get_extra_info`, decorated in some cases with
+    type hints and checks.
+
     See Also:
         :meth:`~asyncio.BaseTransport.get_extra_info`
 

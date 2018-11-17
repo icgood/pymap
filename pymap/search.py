@@ -1,5 +1,6 @@
 """Utilities for managing a IMAP searches."""
 
+from abc import abstractmethod, ABCMeta
 from datetime import datetime
 from typing import FrozenSet, Optional, Iterable
 
@@ -59,7 +60,7 @@ class SearchParams:
         return getattr(self, '_disabled', frozenset())
 
 
-class SearchCriteria:
+class SearchCriteria(metaclass=ABCMeta):
     """Base class for different types of search criteria.
 
     Args:
@@ -70,6 +71,7 @@ class SearchCriteria:
     def __init__(self, params: SearchParams) -> None:
         self.params = params
 
+    @abstractmethod
     def matches(self, msg_seq: int, msg: Message) -> bool:
         """Implemented by sub-classes to define the search criteria.
 
@@ -78,7 +80,7 @@ class SearchCriteria:
             msg: The message object.
 
         """
-        raise NotImplementedError
+        ...
 
     @classmethod
     def of(cls, key: SearchKey, params: SearchParams) -> 'SearchCriteria':
@@ -176,6 +178,13 @@ class SearchCriteriaSet(SearchCriteria):
         self.all_criteria = [SearchCriteria.of(key, params) for key in keys]
 
     def matches(self, msg_seq: int, msg: Message) -> bool:
+        """The message matches if all the defined search key criteria match.
+
+        Args:
+            msg_seq: The message sequence ID.
+            msg: The message object.
+
+        """
         return all(crit.matches(msg_seq, msg) for crit in self.all_criteria)
 
 
@@ -318,8 +327,8 @@ class SizeSearchCriteria(_LoadedSearchCriteria):
 
 
 class EnvelopeSearchCriteria(_LoadedSearchCriteria):
-    """Matches by checking for strings withing various fields of the
-    envelope structure.
+    """Matches by checking for strings within various fields of the envelope
+    structure.
 
     """
 

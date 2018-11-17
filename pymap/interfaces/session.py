@@ -77,9 +77,9 @@ class SessionInterface(Protocol[_SelectedT]):
     @abstractmethod
     async def get_mailbox(self, name: str, selected: _SelectedT = None) \
             -> Tuple[MailboxInterface, Optional[_SelectedT]]:
-        """Retrieves a :class:`'MailboxInterface'` object corresponding to an
-        existing mailbox owned by the user. Raises an exception if the
-        mailbox does not yet exist.
+        """Retrieves a :class:`~pymap.interfaces.mailbox.MailboxInterface`
+        object corresponding to an existing mailbox owned by the user. Raises
+        an exception if the mailbox does not yet exist.
 
         Args:
             name: The name of the mailbox.
@@ -200,8 +200,8 @@ class SessionInterface(Protocol[_SelectedT]):
         """Appends a message to the end of the mailbox.
 
         See Also:
-            `RFC 3501 6.3.11.
-            <https://tools.ietf.org/html/rfc3501#section-6.3.11>`_
+            `RFC 3502 6.3.11.
+            <https://tools.ietf.org/html/rfc3502#section-6.3.11>`_
 
         Args:
             name: The name of the mailbox.
@@ -218,10 +218,10 @@ class SessionInterface(Protocol[_SelectedT]):
     @abstractmethod
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple[MailboxInterface, _SelectedT]:
-        """Selects a :class:`MailboxInterface` object corresponding to an
-        existing mailbox owned by the user. The returned session is then
-        used as the ``selected`` argument to other methods to fetch mailbox
-        updates.
+        """Selects a :class:`~pymap.interfaces.mailbox.MailboxInterface` object
+        corresponding to an existing mailbox owned by the user. The returned
+        session is then used as the ``selected`` argument to other methods to
+        fetch mailbox updates.
 
         See Also:
             `RFC 3501 6.3.1.
@@ -275,8 +275,8 @@ class SessionInterface(Protocol[_SelectedT]):
                              sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
             -> Tuple[Iterable[Tuple[int, LoadedMessage]], _SelectedT]:
-        """Get a list of :class:`LoadedMessage` objects corresponding to
-        given sequence set.
+        """Get a list of loaded message objects corresponding to given sequence
+        set.
 
         Args:
             selected: The selected mailbox session.

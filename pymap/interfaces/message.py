@@ -14,7 +14,7 @@ _MessageT = TypeVar('_MessageT', bound='Message')
 
 class Header(Protocol):
     """A message header value, which is convertible to a string with
-    :func:`str`.
+    :class:`str`.
 
     """
 

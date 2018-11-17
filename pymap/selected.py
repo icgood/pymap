@@ -1,8 +1,9 @@
 
-from typing import Any, TypeVar, Type, Dict, Mapping, FrozenSet, NamedTuple, \
-    Optional, Iterable, List, Set, Tuple, SupportsBytes
-from typing_extensions import Protocol
+from typing import Any, TypeVar, Type, Dict, Mapping, MutableSet, FrozenSet, \
+    NamedTuple, Optional, Iterable, List, Tuple, SupportsBytes
+from weakref import WeakSet
 
+from .concurrent import Event
 from .flags import SessionFlags
 from .parsing.command import Command
 from .parsing.primitives import ListP, Number
@@ -12,7 +13,7 @@ from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
-__all__ = ['SelectedSnapshot', 'SelectedMailbox']
+__all__ = ['SelectedSet', 'SelectedSnapshot', 'SelectedMailbox']
 
 _SelectedT = TypeVar('_SelectedT', bound='SelectedMailbox')
 _Flags = FrozenSet[Flag]
@@ -21,17 +22,39 @@ _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
 
 
-class _OnForkProtocol(Protocol):
+class SelectedSet:
+    """Maintains a weak set of :class:`SelectedMailbox` objects that exist for
+    a mailbox, across all sessions. This is useful for assigning the
+    ``\\Recent`` flag, as well as notifying other sessions about updates.
 
-    def __call__(self, orig: 'SelectedMailbox',
-                 forked: 'SelectedMailbox') -> None:
-        ...
+    Args:
+        updated: The event to notify when updates occur. Defaults to a new
+            event using :mod:`asyncio` concurrency primitives.
+
+    """
+
+    def __init__(self, updated: Event = None) -> None:
+        super().__init__()
+        self._updated = updated or Event.for_asyncio()
+        self._set: MutableSet['SelectedMailbox'] = WeakSet()
+
+    @property
+    def updated(self) -> Event:
+        """The event to notify when updates occur."""
+        return self._updated
+
+    @property
+    def any_selected(self) -> Optional['SelectedMailbox']:
+        """A single, random instance in the set of selected mailbox objects."""
+        for selected in self._set:
+            return selected
+        return None
 
 
 class SelectedSnapshot(NamedTuple):
     """Holds a snapshot of the selected mailbox as of the last fork.
 
-    Attributes:
+    Args:
         uid_validity: The UID validity of the selected mailbox.
         max_uid: The highest message UID in the mailbox.
         recent: The number of messages in the mailbox with ``\\Recent``.
@@ -82,20 +105,20 @@ class SelectedMailbox:
         name: The name of the selected mailbox.
         readonly: Indicates the mailbox is selected as read-only.
         session_flags: Session-only flags for the mailbox.
-        on_fork: Callback passed in the before and after objects on a
-            :meth:`.fork` call.
+        selected_set: The ``self`` object and subsequent forked copies will be
+            kept in in this set.
 
     """
 
     def __init__(self, name: str, readonly: bool,
                  session_flags: SessionFlags = None,
-                 on_fork: _OnForkProtocol = None,
+                 selected_set: SelectedSet = None,
                  **kwargs: Any) -> None:
         super().__init__()
         self._name = name
         self._readonly = readonly
         self._session_flags = session_flags or SessionFlags()
-        self._on_fork = on_fork
+        self._selected_set = selected_set
         self._kwargs = kwargs
         self._uid_validity: Optional[int] = None
         self._max_uid = 0
@@ -103,8 +126,10 @@ class SelectedMailbox:
         self._messages: Dict[int, _Flags] = {}
         self._hashed: Optional[Mapping[int, int]] = None
         self._hide_expunged = False
-        self._hidden: Set[int] = set()
+        self._hidden: MutableSet[int] = set()
         self._snapshot: Optional[SelectedSnapshot] = None
+        if selected_set:
+            selected_set._set.add(self)
 
     @property
     def name(self) -> str:
@@ -207,7 +232,7 @@ class SelectedMailbox:
             uids: The message UIDs.
 
         """
-        self._hidden.update(uids)
+        self._hidden |= frozenset(uids)
 
     def fork(self: _SelectedT, command: Command) \
             -> Tuple[_SelectedT, Iterable[Response]]:
@@ -221,13 +246,14 @@ class SelectedMailbox:
         """
         cls: Type[_SelectedT] = type(self)
         copy = cls(self.name, self.readonly, self._session_flags,
-                   **self.kwargs)
+                   self._selected_set, **self.kwargs)
         copy._uid_validity = self._uid_validity
         copy._max_uid = self._max_uid
         copy._snapshot = SelectedSnapshot(self.uid_validity, self.max_uid,
                                           self.recent, self._messages)
-        if self._on_fork:
-            self._on_fork(self, copy)
+        if self._selected_set:
+            self._selected_set._set.discard(self)
+            self._selected_set._set.add(copy)
         if self._snapshot:
             return copy, self._compare(command)
         else:

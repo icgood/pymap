@@ -5,8 +5,8 @@
 .. toctree::
    :caption: Contents:
 
-   keyval.dict
-   keyval.maildir
+   pymap.keyval.dict
+   pymap.keyval.maildir
 
 ``pymap.keyval.mailbox``
 ----------------------------

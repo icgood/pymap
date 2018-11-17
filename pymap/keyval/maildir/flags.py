@@ -14,7 +14,7 @@ _MFT = TypeVar('_MFT', bound='MaildirFlags')
 class MaildirFlags(FileReadable):
     """Maintains a set of IMAP keywords (non-standard flags) that are available
     for use on messages. This uses a custom file format to define keywords,
-    which might look like this:
+    which might look like this::
 
         0 $Junk
         1 $NonJunk

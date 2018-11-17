@@ -3,12 +3,12 @@ from abc import abstractmethod
 from typing import TypeVar, Tuple, Sequence, Optional, FrozenSet, AsyncIterable
 from typing_extensions import Protocol
 
-from pymap.concurrent import Event, ReadWriteLock
+from pymap.concurrent import ReadWriteLock
 from pymap.mailbox import BaseMailbox
 from pymap.message import AppendMessage, BaseLoadedMessage
 from pymap.parsing.specials.flag import get_system_flags, Flag, Seen, Recent
 from pymap.parsing.specials import SequenceSet
-from pymap.selected import SelectedMailbox
+from pymap.selected import SelectedSet, SelectedMailbox
 
 from .util import asyncenumerate
 
@@ -90,16 +90,7 @@ class KeyValMailbox(Protocol[_MessageT]):
 
     @property
     @abstractmethod
-    def updated(self) -> Event:
-        ...
-
-    @property
-    @abstractmethod
-    def last_selected(self) -> Optional[SelectedMailbox]:
-        ...
-
-    @abstractmethod
-    def new_selected(self, readonly: bool) -> SelectedMailbox:
+    def selected_set(self) -> SelectedSet:
         ...
 
     @abstractmethod
@@ -120,7 +111,8 @@ class KeyValMailbox(Protocol[_MessageT]):
         ...
 
     @abstractmethod
-    async def get_mailbox(self: _MailboxT, name: str) -> _MailboxT:
+    async def get_mailbox(self: _MailboxT, name: str,
+                          try_create: bool = False) -> _MailboxT:
         ...
 
     @abstractmethod

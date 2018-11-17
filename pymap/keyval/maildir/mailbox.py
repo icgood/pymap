@@ -4,15 +4,14 @@ from datetime import datetime
 from email.message import EmailMessage
 from mailbox import Maildir, MaildirMessage  # type: ignore
 from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, \
-    Iterable, FrozenSet, MutableSet
-from weakref import WeakSet
+    Iterable, FrozenSet
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
 from pymap.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
-from pymap.selected import SelectedMailbox
+from pymap.selected import SelectedSet
 
 from .flags import MaildirFlags
 from .io import NoChanges
@@ -77,8 +76,7 @@ class Mailbox(KeyValMailbox[Message]):
         self._flags: Optional[MaildirFlags] = None
         self._messages_lock = ReadWriteLock.for_threading()
         self._folder_cache: Dict[str, 'Mailbox'] = {}
-        self._last_selected: MutableSet[SelectedMailbox] = WeakSet()
-        self._updated = Event.for_threading()
+        self._selected_set = SelectedSet(Event.for_threading())
 
     @property
     def name(self) -> str:
@@ -108,25 +106,8 @@ class Mailbox(KeyValMailbox[Message]):
         return self._messages_lock
 
     @property
-    def updated(self) -> Event:
-        return self._updated
-
-    @property
-    def last_selected(self) -> Optional[SelectedMailbox]:
-        for selected in self._last_selected:
-            return selected
-        return None
-
-    def _update_last_selected(self, orig: SelectedMailbox,
-                              forked: SelectedMailbox) -> None:
-        self._last_selected.remove(orig)
-        self._last_selected.add(forked)
-
-    def new_selected(self, readonly: bool) -> SelectedMailbox:
-        selected = SelectedMailbox(self.name, readonly,
-                                   on_fork=self._update_last_selected)
-        self._last_selected.add(selected)
-        return selected
+    def selected_set(self) -> SelectedSet:
+        return self._selected_set
 
     def parse_message(self, append_msg: AppendMessage,
                       with_recent: bool) -> Message:
@@ -149,13 +130,14 @@ class Mailbox(KeyValMailbox[Message]):
     async def list_mailboxes(self) -> Sequence[str]:
         return self._layout.list_folders()
 
-    async def get_mailbox(self, name: str) -> 'Mailbox':
+    async def get_mailbox(self, name: str,
+                          try_create: bool = False) -> 'Mailbox':
         if name == 'INBOX':
             return await self.reset()
         try:
             maildir = self._layout.get_folder(name)
         except FileNotFoundError:
-            raise MailboxNotFound(name)
+            raise MailboxNotFound(name, try_create)
         else:
             if name in self._folder_cache:
                 mbx = self._folder_cache[name]

@@ -1,6 +1,6 @@
 
 from functools import total_ordering
-from typing import Tuple, FrozenSet, AnyStr
+from typing import Tuple, FrozenSet, Union
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
@@ -19,7 +19,7 @@ class Flag(Parseable[bytes]):
 
     """
 
-    def __init__(self, value: AnyStr) -> None:
+    def __init__(self, value: Union[str, bytes]) -> None:
         super().__init__()
         if isinstance(value, bytes):
             value_bytes = value

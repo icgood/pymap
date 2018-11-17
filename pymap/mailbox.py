@@ -2,6 +2,7 @@
 
 import random
 import time
+from abc import abstractmethod, ABCMeta
 from typing import Optional, Iterable, FrozenSet
 
 from .interfaces.mailbox import MailboxInterface
@@ -11,7 +12,7 @@ from .parsing.specials.flag import Recent
 __all__ = ['BaseMailbox']
 
 
-class BaseMailbox(MailboxInterface):
+class BaseMailbox(MailboxInterface, metaclass=ABCMeta):
     """Implements some of the basic functionality of a mailbox, for backends
     that wish to save themselves some trouble.
 
@@ -75,51 +76,31 @@ class BaseMailbox(MailboxInterface):
         return self.session_flags | self.permanent_flags
 
     @property
+    @abstractmethod
     def exists(self) -> int:
-        """Number of total messages in the mailbox.
-
-        Raises:
-            NotImplementedError: Must be implemented by sub-class.
-
-        """
-        raise NotImplementedError
+        """Number of total messages in the mailbox."""
+        ...
 
     @property
+    @abstractmethod
     def recent(self) -> int:
-        """Number of recent messages in the mailbox.
-
-        Raises:
-            NotImplementedError: Must be implemented by sub-class.
-
-        """
-        raise NotImplementedError
+        """Number of recent messages in the mailbox."""
+        ...
 
     @property
+    @abstractmethod
     def unseen(self) -> int:
-        """Number of unseen messages in the mailbox.
-
-        Raises:
-            NotImplementedError: Must be implemented by sub-class.
-
-        """
-        raise NotImplementedError
+        """Number of unseen messages in the mailbox."""
+        ...
 
     @property
+    @abstractmethod
     def first_unseen(self) -> Optional[int]:
-        """The sequence number of the first unseen message.
-
-        Raises:
-            NotImplementedError: Must be implemented by sub-class.
-
-        """
-        raise NotImplementedError
+        """The sequence number of the first unseen message."""
+        ...
 
     @property
+    @abstractmethod
     def next_uid(self) -> int:
-        """The predicted next message UID.
-
-        Raises:
-            NotImplementedError: Must be implemented by sub-class.
-
-        """
-        raise NotImplementedError
+        """The predicted next message UID."""
+        ...

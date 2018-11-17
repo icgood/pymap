@@ -1,13 +1,12 @@
 
 from collections import OrderedDict
-from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, MutableSet
-from weakref import WeakSet
+from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
 
-from pymap.concurrent import Event, ReadWriteLock
+from pymap.concurrent import ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.message import AppendMessage
 from pymap.parsing.specials.flag import Recent
-from pymap.selected import SelectedMailbox
+from pymap.selected import SelectedSet
 
 from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
 
@@ -34,8 +33,7 @@ class Mailbox(KeyValMailbox[Message]):
         self._messages_lock = ReadWriteLock.for_asyncio()
         self._children: Dict[str, 'Mailbox'] = OrderedDict()
         self._children_lock = ReadWriteLock.for_asyncio()
-        self._last_selected: MutableSet[SelectedMailbox] = WeakSet()
-        self._updated = Event.for_asyncio()
+        self._selected_set = SelectedSet()
         self._reset_messages()
 
     def _reset_messages(self) -> None:
@@ -60,25 +58,8 @@ class Mailbox(KeyValMailbox[Message]):
         return self._messages_lock
 
     @property
-    def updated(self) -> Event:
-        return self._updated
-
-    @property
-    def last_selected(self) -> Optional[SelectedMailbox]:
-        for selected in self._last_selected:
-            return selected
-        return None
-
-    def _update_last_selected(self, orig: SelectedMailbox,
-                              forked: SelectedMailbox) -> None:
-        self._last_selected.remove(orig)
-        self._last_selected.add(forked)
-
-    def new_selected(self, readonly: bool) -> SelectedMailbox:
-        selected = SelectedMailbox(self.name, readonly,
-                                   on_fork=self._update_last_selected)
-        self._last_selected.add(selected)
-        return selected
+    def selected_set(self) -> SelectedSet:
+        return self._selected_set
 
     def parse_message(self, append_msg: AppendMessage,
                       with_recent: bool) -> Message:
@@ -100,12 +81,13 @@ class Mailbox(KeyValMailbox[Message]):
         async with self._children_lock.read_lock():
             return list(self._children.keys())
 
-    async def get_mailbox(self, name: str) -> 'Mailbox':
+    async def get_mailbox(self, name: str,
+                          try_create: bool = False) -> 'Mailbox':
         if name.upper() == 'INBOX':
             return self
         async with self._children_lock.read_lock():
             if name not in self._children:
-                raise MailboxNotFound(name)
+                raise MailboxNotFound(name, try_create)
             return self._children[name]
 
     async def add_mailbox(self, name: str) -> 'Mailbox':
