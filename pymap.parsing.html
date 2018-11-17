@@ -969,6 +969,12 @@ flags, and the internal timestamp to assign to the message.</li>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.command.auth.ListCommand.only_subscribed">
+<code class="descname">only_subscribed</code><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.auth.ListCommand.only_subscribed" title="Permalink to this definition">¶</a></dt>
+<dd><p>All mailboxes may be listed, not only subscribed mailboxes.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.parsing.command.auth.ListCommand.parse">
 <em class="property">classmethod </em><code class="descname">parse</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.auth.ListCommand.parse" title="Permalink to this definition">¶</a></dt>
@@ -997,6 +1003,18 @@ flags, and the internal timestamp to assign to the message.</li>
 <em class="property">class </em><code class="descclassname">pymap.parsing.command.auth.</code><code class="descname">LSubCommand</code><span class="sig-paren">(</span><em>tag</em>, <em>ref_name</em>, <em>filter_</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.auth.LSubCommand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.parsing.command.auth.ListCommand" title="pymap.parsing.command.auth.ListCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.auth.ListCommand</span></code></a></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">LSUB</span></code> command lists subscribed mailboxes.</p>
+<dl class="attribute">
+<dt id="pymap.parsing.command.auth.LSubCommand.delegate">
+<code class="descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.auth.LSubCommand.delegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.ListCommand" title="pymap.parsing.command.auth.ListCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListCommand</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.command.auth.LSubCommand.only_subscribed">
+<code class="descname">only_subscribed</code><em class="property"> = True</em><a class="headerlink" href="#pymap.parsing.command.auth.LSubCommand.only_subscribed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only subscribed mailboxes may be listed.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -1046,6 +1064,13 @@ flags, and the internal timestamp to assign to the message.</li>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.auth.CommandMailboxArg</span></code></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> command selects a mailbox for querying, updates, and
 state changes.</p>
+<dl class="attribute">
+<dt id="pymap.parsing.command.auth.SelectCommand.readonly">
+<code class="descname">readonly</code><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.auth.SelectCommand.readonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox will not be opened read-only unless the backend indicates
+that it must be.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.parsing.command.auth.SelectCommand.parse">
 <em class="property">classmethod </em><code class="descname">parse</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.auth.SelectCommand.parse" title="Permalink to this definition">¶</a></dt>
@@ -1075,6 +1100,18 @@ state changes.</p>
 <dd><p>Bases: <a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.auth.SelectCommand</span></code></a></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">EXAMINE</span></code> command selects a mailbox as read-only for querying and
 state changes.</p>
+<dl class="attribute">
+<dt id="pymap.parsing.command.auth.ExamineCommand.delegate">
+<code class="descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.delegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.command.auth.ExamineCommand.readonly">
+<code class="descname">readonly</code><em class="property"> = True</em><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.readonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox will be opened read-only.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -2904,6 +2941,7 @@ tagged command from the client.</p>
 indicate a continuation requirement, or an asterisk (<code class="docutils literal notranslate"><span class="pre">*</span></code>) to
 indicate an untagged response.</li>
 <li><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]) – The response text.</li>
+<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]) – Optional response code.</li>
 </ul>
 </td>
 </tr>
@@ -2919,12 +2957,6 @@ indicate an untagged response.</li>
 <dt id="pymap.parsing.response.Response.tag">
 <code class="descname">tag</code><a class="headerlink" href="#pymap.parsing.response.Response.tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The tag bytestring.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.parsing.response.Response.untagged">
-<code class="descname">untagged</code><a class="headerlink" href="#pymap.parsing.response.Response.untagged" title="Permalink to this definition">¶</a></dt>
-<dd><p>The list of added untagged responses.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -2950,7 +2982,7 @@ parent response.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>responses</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>, <a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>]) – The untagged responses to add.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>responses</strong> (<a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>) – The untagged responses to add.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
@@ -2961,7 +2993,7 @@ parent response.</p>
 <dl class="method">
 <dt id="pymap.parsing.response.Response.add_untagged_ok">
 <code class="descname">add_untagged_ok</code><span class="sig-paren">(</span><em>text</em>, <em>code=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.Response.add_untagged_ok" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add an untagged “OK” response.</p>
+<dd><p>Add an untagged <code class="docutils literal notranslate"><span class="pre">OK</span></code> response.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="#pymap.parsing.response.Response.add_untagged" title="pymap.parsing.response.Response.add_untagged"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_untagged()</span></code></a>, <a class="reference internal" href="#pymap.parsing.response.ResponseOk" title="pymap.parsing.response.ResponseOk"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseOk</span></code></a></p>
@@ -2993,6 +3025,48 @@ indicating that the session should be terminated.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.response.Response.merge_key">
+<code class="descname">merge_key</code><a class="headerlink" href="#pymap.parsing.response.Response.merge_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a hashable value which can be compared to other
+<a class="reference internal" href="#pymap.parsing.response.Response.merge_key" title="pymap.parsing.response.Response.merge_key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">merge_key</span></code></a> values of the same response type to see if the
+two responses can be merged.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> – This response type may not be merged.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.parsing.response.Response.merge">
+<code class="descname">merge</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.Response.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this response with the other response merged in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> (<em>~_ResponseT</em>) – The other response to merge.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> – This response type may not be merged.</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – The two responses are not mergeable.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~_ResponseT</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -3550,6 +3624,20 @@ commands.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.FlagsResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.FlagsResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3566,6 +3654,20 @@ commands.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.ExistsResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.ExistsResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3582,6 +3684,20 @@ commands.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.RecentResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.RecentResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3597,6 +3713,20 @@ commands.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.ExpungeResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.ExpungeResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3617,6 +3747,63 @@ commands.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.FetchResponse.merge_key">
+<code class="descname">merge_key</code><a class="headerlink" href="#pymap.parsing.response.specials.FetchResponse.merge_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a hashable value which can be compared to other
+<a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse.merge_key" title="pymap.parsing.response.specials.FetchResponse.merge_key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">merge_key</span></code></a> values of the same response type to see if the
+two responses can be merged.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> – This response type may not be merged.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.parsing.response.specials.FetchResponse.merge">
+<code class="descname">merge</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.FetchResponse.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge the other FETCH response, adding any fetch attributes that do
+not already exist in this FETCH response. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="mi">3</span> <span class="n">FETCH</span> <span class="p">(</span><span class="n">UID</span> <span class="mi">119</span><span class="p">)</span>
+<span class="o">*</span> <span class="mi">3</span> <span class="n">FETCH</span> <span class="p">(</span><span class="n">FLAGS</span> <span class="p">(</span>\<span class="n">Seen</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Would merge into:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="mi">3</span> <span class="n">FETCH</span> <span class="p">(</span><span class="n">UID</span> <span class="mi">119</span> <span class="n">FLAGS</span> <span class="p">(</span>\<span class="n">Seen</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse" title="pymap.parsing.response.specials.FetchResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchResponse</span></code></a>) – The other response to merge.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse" title="pymap.parsing.response.specials.FetchResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchResponse</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.FetchResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.FetchResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3632,11 +3819,25 @@ commands.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.SearchResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.SearchResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="pymap.parsing.response.specials.ESearchResponse">
-<em class="property">class </em><code class="descclassname">pymap.parsing.response.specials.</code><code class="descname">ESearchResponse</code><span class="sig-paren">(</span><em>tag</em>, <em>uid</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.ESearchResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.parsing.response.specials.</code><code class="descname">ESearchResponse</code><span class="sig-paren">(</span><em>issuer_tag</em>, <em>uid</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.ESearchResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.response.Response</span></code></a></p>
 <p>Constructs the special ESEARCH response used by extended SEARCH
 commands. This response should be mutually exclusive with SEARCH responses.</p>
@@ -3649,7 +3850,7 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The command tag, if issued in response to a command.</li>
+<li><strong>issuer_tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The command tag, if issued in response to a command.</li>
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the response refers to message UIDs.</li>
 <li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]]) – The returned search data pairs.</li>
 </ul>
@@ -3657,6 +3858,20 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.ESearchResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.ESearchResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3676,11 +3891,25 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.StatusResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.StatusResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="pymap.parsing.response.specials.ListResponse">
-<em class="property">class </em><code class="descclassname">pymap.parsing.response.specials.</code><code class="descname">ListResponse</code><span class="sig-paren">(</span><em>name</em>, <em>sep</em>, <em>attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.ListResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.parsing.response.specials.</code><code class="descname">ListResponse</code><span class="sig-paren">(</span><em>mailbox</em>, <em>sep</em>, <em>attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.ListResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.response.Response</span></code></a></p>
 <p>Constructs the special LIST response used by the LIST command.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3688,7 +3917,7 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The mailbox name.</li>
+<li><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The mailbox name.</li>
 <li><strong>sep</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The heirarchy separation character.</li>
 <li><strong>attrs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The attribute flags associated with the mailbox.</li>
 </ul>
@@ -3696,11 +3925,25 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.specials.ListResponse.text">
+<code class="descname">text</code><a class="headerlink" href="#pymap.parsing.response.specials.ListResponse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="pymap.parsing.response.specials.LSubResponse">
-<em class="property">class </em><code class="descclassname">pymap.parsing.response.specials.</code><code class="descname">LSubResponse</code><span class="sig-paren">(</span><em>name</em>, <em>sep</em>, <em>attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.LSubResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.parsing.response.specials.</code><code class="descname">LSubResponse</code><span class="sig-paren">(</span><em>mailbox</em>, <em>sep</em>, <em>attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.specials.LSubResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.parsing.response.specials.ListResponse" title="pymap.parsing.response.specials.ListResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.response.specials.ListResponse</span></code></a></p>
 <p>Constructs the special LSUB response used by the LSUB command.</p>
 </dd></dl>
