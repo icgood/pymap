@@ -151,8 +151,6 @@
 </li>
       <li><a href="pymap.message.html#pymap.message.BaseLoadedMessage">BaseLoadedMessage (class in pymap.message)</a>
 </li>
-      <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox">BaseMailbox (class in pymap.mailbox)</a>
-</li>
       <li><a href="pymap.message.html#pymap.message.BaseMessage">BaseMessage (class in pymap.message)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.exceptions.NotParseable.before">before (pymap.parsing.exceptions.NotParseable attribute)</a>
@@ -358,15 +356,9 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.exists">exists (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.exists">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.html#pymap.keyval.mailbox.MailboxSnapshot.exists">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.exists">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
-</li>
         <li><a href="pymap.listtree.html#pymap.listtree.ListEntry.exists">(pymap.listtree.ListEntry attribute)</a>
 </li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.exists">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.exists">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.exists">(pymap.selected.SelectedMailbox attribute)</a>
 </li>
@@ -440,13 +432,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.first_unseen">first_unseen (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.first_unseen">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.html#pymap.keyval.mailbox.MailboxSnapshot.first_unseen">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.first_unseen">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.first_unseen">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.first_unseen">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -462,7 +448,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.flags">flags (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.flags">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.flags">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
       </ul></li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.specials.FlagsResponse">FlagsResponse (class in pymap.parsing.response.specials)</a>
@@ -745,14 +731,8 @@
 </li>
       <li><a href="pymap.exceptions.html#pymap.exceptions.MailboxReadOnly">MailboxReadOnly</a>
 </li>
-      <li><a href="pymap.keyval.dict.html#pymap.keyval.dict.MailboxSnapshot">MailboxSnapshot (class in pymap.keyval.dict)</a>
-
-      <ul>
-        <li><a href="pymap.keyval.html#pymap.keyval.mailbox.MailboxSnapshot">(class in pymap.keyval.mailbox)</a>
+      <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot">MailboxSnapshot (class in pymap.mailbox)</a>
 </li>
-        <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot">(class in pymap.keyval.maildir)</a>
-</li>
-      </ul></li>
       <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.flags.MaildirFlags">MaildirFlags (class in pymap.keyval.maildir.flags)</a>
 </li>
       <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.layout.MaildirLayout">MaildirLayout (class in pymap.keyval.maildir.layout)</a>
@@ -832,29 +812,23 @@
       <ul>
         <li><a href="pymap.listtree.html#pymap.listtree.ListEntry.name">(pymap.listtree.ListEntry attribute)</a>
 </li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.name">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.name">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.name">(pymap.selected.SelectedMailbox attribute)</a>
 </li>
       </ul></li>
-      <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.new_uid_validity">new_uid_validity() (pymap.mailbox.BaseMailbox class method)</a>
+      <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.new_uid_validity">new_uid_validity() (pymap.mailbox.MailboxSnapshot class method)</a>
 </li>
       <li><a href="pymap.search.html#pymap.search.NewSearchCriteria">NewSearchCriteria (class in pymap.search)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.next_uid">next_uid (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.next_uid">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.html#pymap.keyval.mailbox.MailboxSnapshot.next_uid">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.next_uid">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.next_uid">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.next_uid">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.primitives.Nil">Nil (class in pymap.parsing.primitives)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.any.NoOpCommand">NoOpCommand (class in pymap.parsing.command.any)</a>
@@ -1028,7 +1002,7 @@
 </li>
         <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.flags.MaildirFlags.permanent_flags">(pymap.keyval.maildir.flags.MaildirFlags attribute)</a>
 </li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.permanent_flags">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.permanent_flags">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.message.html#pymap.message.BaseMessage.permanent_flags">(pymap.message.BaseMessage attribute)</a>
 </li>
@@ -1158,7 +1132,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.readonly">readonly (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.readonly">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.readonly">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.parsing.html#pymap.parsing.command.auth.ExamineCommand.readonly">(pymap.parsing.command.auth.ExamineCommand attribute)</a>
 </li>
@@ -1176,13 +1150,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.recent">recent (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.recent">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.html#pymap.keyval.mailbox.MailboxSnapshot.recent">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.recent">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.recent">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.recent">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.recent">(pymap.selected.SelectedMailbox attribute)</a>
 </li>
@@ -1195,8 +1163,6 @@
 </li>
       <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.uidlist.UidList.records">records (pymap.keyval.maildir.uidlist.UidList attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.flags.html#pymap.flags.SessionFlags.remove">remove() (pymap.flags.SessionFlags method)</a>
 
       <ul>
@@ -1205,6 +1171,8 @@
         <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.uidlist.UidList.remove">(pymap.keyval.maildir.uidlist.UidList method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.layout.MaildirLayout.remove_folder">remove_folder() (pymap.keyval.maildir.layout.MaildirLayout method)</a>
 </li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.remove_messages">remove_messages() (pymap.selected.SelectedMailbox method)</a>
@@ -1300,7 +1268,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.session_flags">session_flags (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.session_flags">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.session_flags">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.session_flags">(pymap.selected.SelectedMailbox attribute)</a>
 </li>
@@ -1440,7 +1408,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.uid_validity">uid_validity (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.uid_validity">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.uid_validity">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.uid_validity">(pymap.selected.SelectedMailbox attribute)</a>
 </li>
@@ -1463,10 +1431,10 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.select.UidStoreCommand">UidStoreCommand (class in pymap.parsing.command.select)</a>
 </li>
-      <li><a href="pymap.parsing.html#pymap.parsing.response.code.UidValidity">UidValidity (class in pymap.parsing.response.code)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.parsing.html#pymap.parsing.response.code.UidValidity">UidValidity (class in pymap.parsing.response.code)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.exceptions.UnexpectedType">UnexpectedType</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.code.Unseen">Unseen (class in pymap.parsing.response.code)</a>
@@ -1474,13 +1442,7 @@
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.unseen">unseen (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
-        <li><a href="pymap.keyval.dict.html#pymap.keyval.dict.MailboxSnapshot.unseen">(pymap.keyval.dict.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.html#pymap.keyval.mailbox.MailboxSnapshot.unseen">(pymap.keyval.mailbox.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.keyval.maildir.html#pymap.keyval.maildir.MailboxSnapshot.unseen">(pymap.keyval.maildir.MailboxSnapshot attribute)</a>
-</li>
-        <li><a href="pymap.mailbox.html#pymap.mailbox.BaseMailbox.unseen">(pymap.mailbox.BaseMailbox attribute)</a>
+        <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.unseen">(pymap.mailbox.MailboxSnapshot attribute)</a>
 </li>
       </ul></li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.unsubscribe">unsubscribe() (pymap.interfaces.session.SessionInterface method)</a>
