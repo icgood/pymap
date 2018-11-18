@@ -368,7 +368,7 @@ class HeaderSearchCriteria(_LoadedSearchCriteria):
 
     def __init__(self, name: str, value: str, params: SearchParams) -> None:
         super().__init__(params)
-        self.name = bytes(name, 'ascii', 'ignore')
+        self.name = name
         self.value = value
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
@@ -384,7 +384,7 @@ class BodySearchCriteria(_LoadedSearchCriteria):
                  params: SearchParams) -> None:
         super().__init__(params)
         self.with_headers = with_headers
-        self.value = bytes(value, 'utf-8')
+        self.value = bytes(value, 'utf-8', 'replace')
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         loaded = self._get_loaded(msg)

@@ -45,4 +45,4 @@ class SocketInfo:
             % (self.peername, self.sockname, self.peercert)
 
     def __bytes__(self) -> bytes:
-        return bytes(str(self), 'utf-8')
+        return bytes(str(self), 'utf-8', 'replace')

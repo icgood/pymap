@@ -196,7 +196,7 @@ class String(Parseable[bytes]):
             try:
                 ascii_ = bytes(value, 'ascii')
             except UnicodeEncodeError:
-                ascii_ = bytes(value, 'utf-8')
+                ascii_ = bytes(value, 'utf-8', 'replace')
                 return LiteralString(ascii_, binary)
         else:
             raise TypeError(value)

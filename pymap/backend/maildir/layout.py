@@ -22,12 +22,11 @@ class MaildirLayout(Protocol):
     """
 
     @classmethod
-    def get(cls, path: str, delimiter: str, layout: str) -> 'MaildirLayout':
+    def get(cls, path: str, layout: str) -> 'MaildirLayout':
         """
 
         Args:
             path: The root path of the inbox.
-            delimiter: The nested sub-folder delimiter string.
             layout: The layout name, e.g. ``'++'`` or ``'fs'``.
 
         Raises:
@@ -35,9 +34,9 @@ class MaildirLayout(Protocol):
 
         """
         if layout == '++':
-            return DefaultLayout(path, delimiter)
+            return DefaultLayout(path)
         elif layout == 'fs':
-            return FilesystemLayout(path, delimiter)
+            return FilesystemLayout(path)
         else:
             raise ValueError(layout)
 
@@ -47,28 +46,25 @@ class MaildirLayout(Protocol):
         """The root path of the inbox."""
         ...
 
-    @property
     @abstractmethod
-    def delimiter(self) -> str:
-        """The nested sub-folder delimiter string."""
-        ...
-
-    @abstractmethod
-    def get_path(self, name: str) -> str:
+    def get_path(self, name: str, delimiter: str) -> str:
         """Return the path of the sub-folder.
 
         Args:
             name: The nested parts of the folder name, not including inbox.
+            delimiter: The nested sub-folder delimiter string.
 
         """
         ...
 
     @abstractmethod
-    def list_folders(self, top: str = 'INBOX') -> Sequence[str]:
+    def list_folders(self, delimiter: str, top: str = 'INBOX') \
+            -> Sequence[str]:
         """Return all folders, starting with ``top`` and traversing
         through the sub-folder heirarchy.
 
         Args:
+            delimiter: The nested sub-folder delimiter string.
             top: The top of the folder heirarchy to list.
 
         Raises:
@@ -78,11 +74,12 @@ class MaildirLayout(Protocol):
         ...
 
     @abstractmethod
-    def get_folder(self, name: str) -> Maildir:
+    def get_folder(self, name: str, delimiter: str) -> Maildir:
         """Return the existing sub-folder.
 
         Args:
             name: The delimited sub-folder name, not including inbox.
+            delimiter: The nested sub-folder delimiter string.
 
         Raises:
             FileNotFoundError: The folder did not exist.
@@ -91,11 +88,12 @@ class MaildirLayout(Protocol):
         ...
 
     @abstractmethod
-    def add_folder(self, name: str) -> Maildir:
+    def add_folder(self, name: str, delimiter: str) -> Maildir:
         """Add and return a new sub-folder.
 
         Args:
             name: The delimited sub-folder name, not including inbox.
+            delimiter: The nested sub-folder delimiter string.
 
         Raises:
             FileExistsError: The folder already exists.
@@ -105,11 +103,12 @@ class MaildirLayout(Protocol):
         ...
 
     @abstractmethod
-    def remove_folder(self, name: str) -> None:
+    def remove_folder(self, name: str, delimiter: str) -> None:
         """Remove the existing sub-folder.
 
         Args:
             name: The delimited sub-folder name, not including inbox.
+            delimiter: The nested sub-folder delimiter string.
 
         Raises:
             FileNotFoundError: The folder did not exist.
@@ -119,12 +118,14 @@ class MaildirLayout(Protocol):
         ...
 
     @abstractmethod
-    def rename_folder(self, source_name: str, dest_name: str) -> Maildir:
+    def rename_folder(self, source_name: str, dest_name: str,
+                      delimiter: str) -> Maildir:
         """Rename the existing sub-folder to the destination.
 
         Args:
             source_name: The delimited source sub-folder name.
             dest_name: The delimited destination sub-folder name.
+            delimiter: The nested sub-folder delimiter string.
 
         Raises:
             FileNotFoundError: The source folder did not exist.
@@ -136,28 +137,25 @@ class MaildirLayout(Protocol):
 
 class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
 
-    def __init__(self, path: str, delimiter: str) -> None:
+    def __init__(self, path: str) -> None:
         super().__init__()
         self._path = path
-        self._delimiter = delimiter
 
     @property
     def path(self) -> str:
         return self._path
 
-    @property
-    def delimiter(self) -> str:
-        return self._delimiter
-
-    def _split(self, name: str) -> _Parts:
+    @classmethod
+    def _split(cls, name: str, delimiter: str) -> _Parts:
         if name == 'INBOX':
             return []
-        return name.split(self._delimiter)
+        return name.split(delimiter)
 
-    def _join(self, parts: _Parts) -> str:
+    @classmethod
+    def _join(cls, parts: _Parts, delimiter: str) -> str:
         if not parts:
             return 'INBOX'
-        return self._delimiter.join(parts)
+        return delimiter.join(parts)
 
     def _can_remove(self, parts: _Parts) -> bool:
         return True
@@ -175,24 +173,25 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
                        dest_parts: _Parts) -> Maildir:
         ...
 
-    def get_path(self, name: str) -> str:
-        parts = self._split(name)
+    def get_path(self, name: str, delimiter: str) -> str:
+        parts = self._split(name, delimiter)
         return self._get_path(parts)
 
-    def list_folders(self, top: str = 'INBOX') -> Sequence[str]:
-        parts = self._split(top)
-        return [self._join(sub_parts)
+    def list_folders(self, delimiter: str, top: str = 'INBOX') \
+            -> Sequence[str]:
+        parts = self._split(top, delimiter)
+        return [self._join(sub_parts, delimiter)
                 for sub_parts in self._list_folders(parts)]
 
-    def get_folder(self, name: str) -> Maildir:
-        path = self.get_path(name)
+    def get_folder(self, name: str, delimiter: str) -> Maildir:
+        path = self.get_path(name, delimiter)
         try:
             return Maildir(path, create=False)
         except NoSuchMailboxError:
             raise FileNotFoundError(path)
 
-    def add_folder(self, name: str) -> Maildir:
-        parts = self._split(name)
+    def add_folder(self, name: str, delimiter: str) -> Maildir:
+        parts = self._split(name, delimiter)
         for i in range(1, len(parts) - 1):
             path = self._get_path(parts[0:i])
             if not os.path.isdir(path):
@@ -204,8 +203,8 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
             pass
         return maildir
 
-    def remove_folder(self, name: str) -> None:
-        parts = self._split(name)
+    def remove_folder(self, name: str, delimiter: str) -> None:
+        parts = self._split(name, delimiter)
         path = self._get_path(parts)
         if not self._can_remove(parts):
             path = self._get_path(parts)
@@ -218,15 +217,16 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
                 os.rmdir(os.path.join(root, entry))
         os.rmdir(path)
 
-    def rename_folder(self, source_name: str, dest_name: str) -> Maildir:
-        source_parts = self._split(source_name)
-        dest_parts = self._split(dest_name)
+    def rename_folder(self, source_name: str, dest_name: str,
+                      delimiter: str) -> Maildir:
+        source_parts = self._split(source_name, delimiter)
+        dest_parts = self._split(dest_name, delimiter)
         for i in range(1, len(dest_parts) - 1):
             parts = dest_parts[0:i]
             path = self._get_path(parts)
             if not os.path.isdir(path):
-                name = self._join(parts)
-                self.add_folder(name)
+                name = self._join(parts, delimiter)
+                self.add_folder(name, delimiter)
         return self._rename_folder(source_parts, dest_parts)
 
 
@@ -264,7 +264,7 @@ class DefaultLayout(_BaseLayout):
         for elem in os.listdir(self._path):
             if elem in ('new', 'cur', 'tmp'):
                 pass
-            elif not subdir or elem.startswith(subdir + self.delimiter):
+            elif not subdir or elem.startswith(subdir + '.'):
                 elem_path = os.path.join(self._path, elem)
                 if os.path.isdir(elem_path):
                     yield self._get_parts(elem)
@@ -275,7 +275,7 @@ class DefaultLayout(_BaseLayout):
         dest_subdir = self._get_subdir(dest_parts)
         dest_path = self._get_path(dest_parts)
         for elem in os.listdir(self._path):
-            if elem == subdir or elem.startswith(subdir + self.delimiter):
+            if elem == subdir or elem.startswith(subdir + '.'):
                 elem_path = os.path.join(self._path, elem)
                 if os.path.isdir(elem_path):
                     dest_elem = dest_subdir + elem[len(subdir):]

@@ -256,8 +256,8 @@ class IMAPConnection:
                                 cmd, self.sock_info, creds)
                     elif isinstance(cmd, LoginCommand):
                         creds = AuthenticationCredentials(
-                            cmd.userid.decode('utf-8'),
-                            cmd.password.decode('utf-8'))
+                            cmd.userid.decode('utf-8', 'surrogateescape'),
+                            cmd.password.decode('utf-8', 'surrogateescape'))
                         response = await state.do_login(
                                 cmd, self.sock_info, creds)
                     elif isinstance(cmd, IdleCommand):
@@ -270,7 +270,8 @@ class IMAPConnection:
                     if resp.is_terminal:
                         break
                 except AuthenticationError as exc:
-                    resp = ResponseBad(cmd.tag, bytes(str(exc), 'utf-8'))
+                    msg = bytes(str(exc), 'utf-8', 'surrogateescape')
+                    resp = ResponseBad(cmd.tag, msg)
                     await self.write_response(resp)
                 except TimeoutError:
                     resp = ResponseNo(cmd.tag, b'Operation timed out.',

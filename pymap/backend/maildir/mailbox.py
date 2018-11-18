@@ -1,10 +1,9 @@
 
 import errno
 from datetime import datetime
-from email.message import EmailMessage
+from io import BytesIO
 from mailbox import Maildir, MaildirMessage  # type: ignore
-from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, \
-    Iterable, FrozenSet
+from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, FrozenSet
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
@@ -18,22 +17,18 @@ from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
-from ..mailbox import KeyValMessage, KeyValMailbox
+from ..mailbox import LoadedMessage, MailboxDataInterface, MailboxSetInterface
 
-__all__ = ['Message', 'Mailbox']
+__all__ = ['Message', 'MailboxData', 'MailboxSet']
 
 _Db = Dict[str, bytes]
 
 
-class Message(KeyValMessage):
+class Message(LoadedMessage):
 
-    def __init__(self, uid: int, contents: EmailMessage,
-                 permanent_flags: Iterable[Flag],
-                 internal_date: Optional[datetime],
-                 recent: bool, maildir_flags: 'MaildirFlags'):
-        super().__init__(uid, contents, permanent_flags, internal_date,
-                         recent, maildir_flags)
-        self.maildir_flags = maildir_flags
+    @property
+    def maildir_flags(self) -> MaildirFlags:
+        return self._kwargs['maildir_flags']
 
     @property
     def maildir_msg(self) -> MaildirMessage:
@@ -51,30 +46,27 @@ class Message(KeyValMessage):
                      maildir_flags: 'MaildirFlags') -> 'Message':
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         recent = maildir_msg.get_subdir() == 'new'
-        msg_date = datetime.fromtimestamp(maildir_msg.get_date())
-        msg_bytes = bytes(maildir_msg)
-        return cls.parse(uid, msg_bytes, flag_set, msg_date, recent,
-                         maildir_flags)
+        msg_dt = datetime.fromtimestamp(maildir_msg.get_date())
+        msg_data = BytesIO(bytes(maildir_msg))
+        return cls.parse(uid, msg_data, flag_set, msg_dt, recent=recent,
+                         maildir_flags=maildir_flags)
 
 
-class Mailbox(KeyValMailbox[Message]):
+class MailboxData(MailboxDataInterface[Message, Message]):
 
     db_retry_count = 100
     db_retry_delay = 0.1
     filename_db = '.uid'
     filename_tmp_db = 'tmp.uid'
 
-    def __init__(self, name: str, maildir: Maildir,
-                 layout: MaildirLayout) -> None:
+    def __init__(self, name: str, maildir: Maildir, path: str) -> None:
         self._name = name
         self._maildir = maildir
-        self._layout = layout
-        self._path = layout.get_path(name)
+        self._path = path
         self._uid_validity = 0
         self._next_uid = 0
         self._flags: Optional[MaildirFlags] = None
         self._messages_lock = ReadWriteLock.for_threading()
-        self._folder_cache: Dict[str, 'Mailbox'] = {}
         self._selected_set = SelectedSet(Event.for_threading())
 
     @property
@@ -113,75 +105,10 @@ class Mailbox(KeyValMailbox[Message]):
         return self._selected_set
 
     def parse_message(self, append_msg: AppendMessage) -> Message:
-        return Message.parse(0, append_msg.message, append_msg.flag_set,
-                             append_msg.when, True, self.maildir_flags)
-
-    async def set_subscribed(self, name: str, subscribed: bool) -> None:
-        async with Subscriptions.with_write(self._path) as subs:
-            subs.set(name, subscribed)
-
-    async def list_subscribed(self) -> Sequence[str]:
-        async with Subscriptions.with_read(self._path) as subs:
-            subscribed = frozenset(subs.subscribed)
-        return [name for name in self._layout.list_folders()
-                if name in subscribed]
-
-    async def list_mailboxes(self) -> Sequence[str]:
-        return self._layout.list_folders()
-
-    async def get_mailbox(self, name: str,
-                          try_create: bool = False) -> 'Mailbox':
-        if name == 'INBOX':
-            return await self.reset()
-        try:
-            maildir = self._layout.get_folder(name)
-        except FileNotFoundError:
-            raise MailboxNotFound(name, try_create)
-        else:
-            if name in self._folder_cache:
-                mbx = self._folder_cache[name]
-            else:
-                mbx = Mailbox(name, maildir, self._layout)
-                self._folder_cache[name] = mbx
-            return await mbx.reset()
-
-    async def add_mailbox(self, name: str) -> 'Mailbox':
-        try:
-            maildir = self._layout.add_folder(name)
-        except FileExistsError:
-            raise MailboxConflict(name)
-        mbx = Mailbox(name, maildir, self._layout)
-        self._folder_cache[name] = mbx
-        return await mbx.reset()
-
-    async def remove_mailbox(self, name: str) -> None:
-        try:
-            self._layout.remove_folder(name)
-        except FileNotFoundError:
-            raise MailboxNotFound(name)
-        except OSError as exc:
-            if exc.errno == errno.ENOTEMPTY:
-                raise MailboxHasChildren(name) from exc
-            raise exc
-
-    async def rename_mailbox(self, before: str, after: str) -> 'Mailbox':
-        if before == 'INBOX':
-            before_mbx = await self.get_mailbox(before)
-            after_mbx = await self.add_mailbox(after)
-            async with before_mbx.messages_lock.read_lock():
-                before_keys = sorted(before_mbx._maildir.keys())
-                before_msgs = [before_mbx._maildir[key] for key in before_keys]
-            async with after_mbx.messages_lock.write_lock():
-                for maildir_msg in before_msgs:
-                    after_mbx._maildir.add(maildir_msg)
-            async with self.messages_lock.write_lock():
-                self._maildir.clear()
-            async with UidList.write_lock(self._path):
-                UidList.delete(self._path)
-        else:
-            maildir = self._layout.rename_folder(before, after)
-            after_mbx = Mailbox(after, maildir, self._layout)
-        return await after_mbx.reset()
+        msg_data = BytesIO(append_msg.message)
+        return Message.parse(0, msg_data, append_msg.flag_set,
+                             append_msg.when, recent=True,
+                             maildir_flags=self.maildir_flags)
 
     async def add(self, message: Message, recent: bool = False) -> 'Message':
         recent = recent or message.recent
@@ -242,7 +169,6 @@ class Mailbox(KeyValMailbox[Message]):
 
     async def cleanup(self) -> None:
         self._maildir.clean()
-        folders = frozenset(self._layout.list_folders())
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
             for rec in list(uidl.records):
@@ -254,10 +180,6 @@ class Mailbox(KeyValMailbox[Message]):
                     filename = key + ':' + info
                     new_rec = Record(rec.uid, rec.fields, filename)
                     uidl.set(new_rec)
-        async with Subscriptions.with_write(self._path) as subs:
-            for folder in subs.subscribed:
-                if folder not in folders:
-                    subs.remove(folder)
 
     async def uids(self) -> AsyncIterable[int]:
         uids: Dict[int, str] = {}
@@ -302,7 +224,7 @@ class Mailbox(KeyValMailbox[Message]):
                     yield uid, Message.from_maildir(
                         uid, maildir_msg, self.maildir_flags)
 
-    async def reset(self) -> 'Mailbox':
+    async def reset(self) -> 'MailboxData':
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
             for rec in uidl.records:
@@ -330,3 +252,90 @@ class Mailbox(KeyValMailbox[Message]):
                 else:
                     keys[key] = msg.get_info()
         return keys
+
+
+class MailboxSet(MailboxSetInterface[MailboxData]):
+
+    def __init__(self, maildir: Maildir, layout: MaildirLayout) -> None:
+        super().__init__()
+        self._layout = layout
+        self._inbox = MailboxData('INBOX', maildir, layout.path)
+        self._cache: Dict[str, 'MailboxData'] = {}
+
+    @property
+    def inbox(self) -> MailboxData:
+        return self._inbox
+
+    @property
+    def delimiter(self) -> str:
+        return '/'
+
+    async def set_subscribed(self, name: str, subscribed: bool) -> None:
+        async with Subscriptions.with_write(self.inbox._path) as subs:
+            subs.set(name, subscribed)
+
+    async def list_subscribed(self) -> Sequence[str]:
+        async with Subscriptions.with_read(self.inbox._path) as subs:
+            subscribed = frozenset(subs.subscribed)
+        return [name for name in self._layout.list_folders(self.delimiter)
+                if name in subscribed]
+
+    async def list_mailboxes(self) -> Sequence[str]:
+        return self._layout.list_folders(self.delimiter)
+
+    async def get_mailbox(self, name: str,
+                          try_create: bool = False) -> 'MailboxData':
+        if name == 'INBOX':
+            return await self.inbox.reset()
+        try:
+            maildir = self._layout.get_folder(name, self.delimiter)
+        except FileNotFoundError:
+            raise MailboxNotFound(name, try_create)
+        else:
+            if name in self._cache:
+                mbx = self._cache[name]
+            else:
+                path = self._layout.get_path(name, self.delimiter)
+                mbx = MailboxData(name, maildir, path)
+                self._cache[name] = mbx
+            return await mbx.reset()
+
+    async def add_mailbox(self, name: str) -> 'MailboxData':
+        try:
+            maildir = self._layout.add_folder(name, self.delimiter)
+        except FileExistsError:
+            raise MailboxConflict(name)
+        path = self._layout.get_path(name, self.delimiter)
+        mbx = MailboxData(name, maildir, path)
+        self._cache[name] = mbx
+        return await mbx.reset()
+
+    async def delete_mailbox(self, name: str) -> None:
+        try:
+            self._layout.remove_folder(name, self.delimiter)
+        except FileNotFoundError:
+            raise MailboxNotFound(name)
+        except OSError as exc:
+            if exc.errno == errno.ENOTEMPTY:
+                raise MailboxHasChildren(name) from exc
+            raise exc
+
+    async def rename_mailbox(self, before: str, after: str) -> 'MailboxData':
+        if before == 'INBOX':
+            before_mbx = await self.get_mailbox(before)
+            after_mbx = await self.add_mailbox(after)
+            async with before_mbx.messages_lock.read_lock():
+                before_keys = sorted(before_mbx._maildir.keys())
+                before_msgs = [before_mbx._maildir[key] for key in before_keys]
+            async with after_mbx.messages_lock.write_lock():
+                for maildir_msg in before_msgs:
+                    after_mbx._maildir.add(maildir_msg)
+            async with self.inbox.messages_lock.write_lock():
+                self.inbox._maildir.clear()
+            async with UidList.write_lock(self.inbox._path):
+                UidList.delete(self.inbox._path)
+        else:
+            maildir = self._layout.rename_folder(before, after, self.delimiter)
+            after_path = self._layout.get_path(after, self.delimiter)
+            after_mbx = MailboxData(after, maildir, after_path)
+        return await after_mbx.reset()

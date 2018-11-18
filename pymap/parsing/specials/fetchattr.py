@@ -31,7 +31,7 @@ class FetchAttribute(Parseable[bytes]):
         """Represents a fetch attribute section, which typically comes after
         the attribute name within square brackets, e.g. ``BODY[0.TEXT]``.
 
-        Attributes:
+        Args:
             parts: The nested MIME part identifiers.
             specifier: The MIME part specifier.
             headers: The MIME part specifier headers.
@@ -40,10 +40,11 @@ class FetchAttribute(Parseable[bytes]):
 
         def __init__(self, parts: Sequence[int],
                      specifier: bytes = None,
-                     headers: FrozenSet[bytes] = None) -> None:
+                     headers: FrozenSet[str] = None) -> None:
             self.parts = parts
             self.specifier = specifier
-            self.headers = headers
+            self.headers = frozenset(hdr.upper() for hdr in headers) \
+                if headers else None
 
         def __hash__(self) -> int:
             return hash((tuple(self.parts), self.specifier, self.headers))
@@ -107,8 +108,10 @@ class FetchAttribute(Parseable[bytes]):
             if self.section.specifier:
                 parts.append(self.section.specifier)
                 if self.section.headers:
+                    headers = [bytes(hdr, 'ascii')
+                               for hdr in self.section.headers]
                     parts.append(b' ')
-                    parts.append(bytes(ListP(self.section.headers, sort=True)))
+                    parts.append(bytes(ListP(headers, sort=True)))
             parts.append(b']')
         if self.partial:
             partial = BytesFormat(b'.').join(
@@ -155,8 +158,8 @@ class FetchAttribute(Parseable[bytes]):
         elif specifier in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             params = params.copy(list_expected=[AString])
             header_list_p, buf = ListP.parse(after, params)
-            header_list = frozenset(
-                [bytes(hdr).upper() for hdr in header_list_p.value])
+            header_list = frozenset([bytes(hdr).decode('ascii', 'ignore')
+                                     for hdr in header_list_p.value])
             if not header_list:
                 raise NotParseable(after)
             return cls.Section(section_parts, specifier, header_list), buf

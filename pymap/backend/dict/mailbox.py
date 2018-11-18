@@ -1,5 +1,6 @@
 
 from collections import OrderedDict
+from io import BytesIO
 from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
@@ -8,32 +9,25 @@ from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage
 from pymap.selected import SelectedSet
 
-from ..mailbox import KeyValMessage, KeyValMailbox
+from ..mailbox import LoadedMessage, MailboxDataInterface, MailboxSetInterface
 
-__all__ = ['Message', 'Mailbox']
+__all__ = ['Message', 'MailboxData', 'MailboxSet']
 
 
-class Message(KeyValMessage):
-    """Implementation of :class:`~pymap.keyval.mailbox.KeyValMessage` for the
-    dict backend.
-
-    """
+class Message(LoadedMessage):
     pass
 
 
-class Mailbox(KeyValMailbox[Message]):
-    """Implementation of :class:`~pymap.keyval.mailbox.KeyValMailbox` for the
-    dict backend.
+class MailboxData(MailboxDataInterface[Message, Message]):
+    """Implementation of :class:`~pymap.backend.mailbox.MailboxDataInterface`
+    for the dict backend.
 
     """
 
     def __init__(self, name: str) -> None:
         self._name = name
         self._readonly = False
-        self._subscribed: Dict[str, bool] = {}
         self._messages_lock = ReadWriteLock.for_asyncio()
-        self._children: Dict[str, 'Mailbox'] = OrderedDict()
-        self._children_lock = ReadWriteLock.for_asyncio()
         self._selected_set = SelectedSet()
         self._reset_messages()
 
@@ -67,65 +61,9 @@ class Mailbox(KeyValMailbox[Message]):
         return self._selected_set
 
     def parse_message(self, append_msg: AppendMessage) -> Message:
-        return Message.parse(0, append_msg.message, append_msg.flag_set,
-                             append_msg.when, True)
-
-    async def set_subscribed(self, name: str, subscribed: bool) -> None:
-        async with self._children_lock.write_lock():
-            self._subscribed[name] = subscribed
-
-    async def list_subscribed(self) -> Sequence[str]:
-        async with self._children_lock.read_lock():
-            return [child for child in self._children.keys()
-                    if self._subscribed.get(child)]
-
-    async def list_mailboxes(self) -> Sequence[str]:
-        async with self._children_lock.read_lock():
-            return list(self._children.keys())
-
-    async def get_mailbox(self, name: str,
-                          try_create: bool = False) -> 'Mailbox':
-        if name.upper() == 'INBOX':
-            return self
-        async with self._children_lock.read_lock():
-            if name not in self._children:
-                raise MailboxNotFound(name, try_create)
-            return self._children[name]
-
-    async def add_mailbox(self, name: str) -> 'Mailbox':
-        async with self._children_lock.read_lock():
-            if name in self._children:
-                raise MailboxConflict(name)
-        async with self._children_lock.write_lock():
-            self._children[name] = ret = Mailbox(name)
-        return ret
-
-    async def remove_mailbox(self, name: str) -> None:
-        async with self._children_lock.read_lock():
-            if name not in self._children:
-                raise MailboxNotFound(name)
-        async with self._children_lock.write_lock():
-            del self._children[name]
-
-    async def rename_mailbox(self, before: str, after: str) -> 'Mailbox':
-        async with self._children_lock.read_lock():
-            if before != 'INBOX' and before not in self._children:
-                raise MailboxNotFound(before)
-            elif after in self._children:
-                raise MailboxConflict(after)
-        if before == 'INBOX':
-            async with self._children_lock.write_lock():
-                self._children[after] = ret = Mailbox(after)
-                ret._uid_validity = self._uid_validity
-                ret._max_uid = self._max_uid
-                ret._messages = self._messages
-                self._reset_messages()
-                return ret
-        else:
-            async with self._children_lock.write_lock():
-                self._children[after] = self._children[before]
-                del self._children[before]
-                return self._children[after]
+        msg_data = BytesIO(append_msg.message)
+        return Message.parse(0, msg_data, append_msg.flag_set,
+                             append_msg.when, recent=True)
 
     async def add(self, message: Message, recent: bool = False) -> Message:
         async with self.messages_lock.write_lock():
@@ -163,3 +101,82 @@ class Mailbox(KeyValMailbox[Message]):
         async with self.messages_lock.read_lock():
             for key, msg in self._messages.items():
                 yield (key, msg)
+
+
+class MailboxSet(MailboxSetInterface[MailboxData]):
+    """Implementation of :class:`~pymap.backend.mailbox.MailboxSetInterface`
+    for the dict backend.
+
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._inbox = MailboxData('INBOX')
+        self._set: Dict[str, 'MailboxData'] = OrderedDict()
+        self._set_lock = ReadWriteLock.for_asyncio()
+        self._subscribed: Dict[str, bool] = {}
+
+    @property
+    def inbox(self) -> MailboxData:
+        return self._inbox
+
+    @property
+    def delimiter(self) -> str:
+        return '.'
+
+    async def set_subscribed(self, name: str, subscribed: bool) -> None:
+        async with self._set_lock.write_lock():
+            self._subscribed[name] = subscribed
+
+    async def list_subscribed(self) -> Sequence[str]:
+        async with self._set_lock.read_lock():
+            return [child for child in self._set.keys()
+                    if self._subscribed.get(child)]
+
+    async def list_mailboxes(self) -> Sequence[str]:
+        async with self._set_lock.read_lock():
+            return list(self._set.keys())
+
+    async def get_mailbox(self, name: str,
+                          try_create: bool = False) -> 'MailboxData':
+        if name.upper() == 'INBOX':
+            return self.inbox
+        async with self._set_lock.read_lock():
+            if name not in self._set:
+                raise MailboxNotFound(name, try_create)
+            return self._set[name]
+
+    async def add_mailbox(self, name: str) -> 'MailboxData':
+        async with self._set_lock.read_lock():
+            if name in self._set:
+                raise MailboxConflict(name)
+        async with self._set_lock.write_lock():
+            self._set[name] = ret = MailboxData(name)
+        return ret
+
+    async def delete_mailbox(self, name: str) -> None:
+        async with self._set_lock.read_lock():
+            if name not in self._set:
+                raise MailboxNotFound(name)
+        async with self._set_lock.write_lock():
+            del self._set[name]
+
+    async def rename_mailbox(self, before: str, after: str) -> 'MailboxData':
+        async with self._set_lock.read_lock():
+            if before != 'INBOX' and before not in self._set:
+                raise MailboxNotFound(before)
+            elif after in self._set:
+                raise MailboxConflict(after)
+        if before == 'INBOX':
+            async with self._set_lock.write_lock():
+                self._set[after] = ret = MailboxData(after)
+                ret._uid_validity = self.inbox._uid_validity
+                ret._max_uid = self.inbox._max_uid
+                ret._messages = self.inbox._messages
+                self.inbox._reset_messages()
+                return ret
+        else:
+            async with self._set_lock.write_lock():
+                self._set[after] = self._set[before]
+                del self._set[before]
+                return self._set[after]
