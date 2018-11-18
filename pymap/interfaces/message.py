@@ -1,3 +1,4 @@
+
 from abc import abstractmethod
 from datetime import datetime
 from typing import Optional, Iterable, Set, FrozenSet, Sequence, TypeVar
@@ -90,7 +91,7 @@ class LoadedMessageInterface(MessageInterface):
     """
 
     @abstractmethod
-    def get_header(self, name: bytes) -> Sequence[Header]:
+    def get_header(self, name: str) -> Sequence[Header]:
         """Get the values of a header from the message.
 
         Args:
@@ -101,7 +102,7 @@ class LoadedMessageInterface(MessageInterface):
 
     @abstractmethod
     def get_headers(self, section: Iterable[int] = None,
-                    subset: Iterable[bytes] = None,
+                    subset: Iterable[str] = None,
                     inverse: bool = False) -> Optional[bytes]:
         """Get the headers from the message.
 

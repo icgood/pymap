@@ -29,7 +29,7 @@ Table of Contents
    pymap.state
    pymap.interfaces
    pymap.parsing
-   pymap.keyval
+   pymap.backend
 
 Indices and tables
 ==================

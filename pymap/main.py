@@ -2,7 +2,7 @@
 
 import asyncio
 import traceback
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 from pkg_resources import iter_entry_points
 
@@ -25,7 +25,8 @@ def _load_backends(parser):
 
 
 def main():
-    parser = ArgumentParser(description=__doc__)
+    parser = ArgumentParser(description=__doc__,
+                            formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', action='store_true',
                         help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
@@ -33,10 +34,12 @@ def main():
     subparsers = parser.add_subparsers(dest='backend',
                                        help='which pymap backend to use')
     listener = parser.add_argument_group('server arguments')
-    listener.add_argument('--port', action='store', type=int, default=1143)
-    listener.add_argument('--cert', action='store')
-    listener.add_argument('--key', action='store')
-    listener.add_argument('--insecure-login', action='store_true')
+    listener.add_argument('--port', action='store', type=int, default=1143,
+                          help='the port to listen on')
+    listener.add_argument('--cert', action='store', help='cert file for TLS')
+    listener.add_argument('--key', action='store', help='key file for TLS')
+    listener.add_argument('--insecure-login', action='store_true',
+                          help='allow plaintext login without TLS')
 
     backends = _load_backends(parser)
 

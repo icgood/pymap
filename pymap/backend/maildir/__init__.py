@@ -18,10 +18,10 @@ from pymap.interfaces.session import LoginProtocol
 from pymap.sockinfo import SocketInfo
 
 from .layout import MaildirLayout
-from .mailbox import Message, Mailbox
-from ..session import KeyValSession
+from .mailbox import MailboxSet
+from ..session import BaseSession
 
-__all__ = ['add_subparser', 'init', 'Config', 'Session', 'Message', 'Mailbox']
+__all__ = ['add_subparser', 'init', 'Config', 'Session']
 
 _SessionT = TypeVar('_SessionT', bound='Session')
 
@@ -62,11 +62,6 @@ class Config(IMAPConfig):
         self.layout = layout
 
     @property
-    def mailbox_delimiter(self) -> str:
-        """The delimiter used in mailbox names to indicate hierarchy."""
-        return '/'
-
-    @property
     def users_file(self) -> str:
         """Used by the default :meth:`~Session.find_user` implementation
         to retrieve the users file path from the command-line arguments. The
@@ -95,7 +90,7 @@ class Config(IMAPConfig):
                                   executor=executor, **extra)
 
 
-class Session(KeyValSession):
+class Session(BaseSession):
     """The session implementation for the maildir backend."""
 
     resource = __name__
@@ -114,8 +109,8 @@ class Session(KeyValSession):
         if not credentials.check_secret(password):
             raise InvalidAuth()
         maildir, layout = cls._load_maildir(config, user_dir)
-        inbox = Mailbox('INBOX', maildir, layout)
-        return cls(inbox, config.mailbox_delimiter)
+        mailbox_set = MailboxSet(maildir, layout)
+        return cls(mailbox_set)
 
     @classmethod
     async def find_user(cls, config: Config, user: str) \
@@ -142,6 +137,5 @@ class Session(KeyValSession):
     def _load_maildir(cls, config: Config, user_dir: str) \
             -> Tuple[Maildir, MaildirLayout]:
         full_path = os.path.join(config.base_dir, user_dir)
-        layout = MaildirLayout.get(full_path, config.mailbox_delimiter,
-                                   config.layout)
+        layout = MaildirLayout.get(full_path, config.layout)
         return Maildir(full_path, create=True), layout

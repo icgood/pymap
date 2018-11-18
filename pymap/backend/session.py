@@ -15,27 +15,36 @@ from pymap.interfaces.session import SessionInterface
 from pymap.search import SearchParams, SearchCriteriaSet
 from pymap.selected import SelectedMailbox
 
-from .mailbox import KeyValMessage, KeyValMailbox
+from .mailbox import MailboxDataInterface, MailboxSetInterface, \
+    Message, LoadedMessage
 from .util import asyncenumerate
 
-__all__ = ['KeyValSession']
+__all__ = ['BaseSession']
 
 
-class KeyValSession(SessionInterface[SelectedMailbox]):
+class BaseSession(SessionInterface[SelectedMailbox]):
+    """Base implementation of
+    :class:`~pymap.interfaces.session.SessionInterface` intended for use by
+    most backends.
 
-    def __init__(self, inbox: KeyValMailbox, delimiter: str) -> None:
+    Args:
+        mailbox_set: Manages the set of mailboxes available to the
+            authenticated user.
+
+    """
+
+    def __init__(self, mailbox_set: MailboxSetInterface) -> None:
         super().__init__()
-        self.inbox = inbox
-        self.delimiter = delimiter
+        self.mailbox_set = mailbox_set
 
     @overload
     async def _load_updates(self, selected: SelectedMailbox,
-                            mbx: KeyValMailbox) -> SelectedMailbox:
+                            mbx: MailboxDataInterface) -> SelectedMailbox:
         ...
 
     @overload  # noqa
     async def _load_updates(self, selected: Optional[SelectedMailbox],
-                            mbx: Optional[KeyValMailbox]) \
+                            mbx: Optional[MailboxDataInterface]) \
             -> Optional[SelectedMailbox]:
         ...
 
@@ -43,7 +52,7 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
         if selected:
             if not mbx or selected.name != mbx.name:
                 try:
-                    mbx = await self.inbox.get_mailbox(selected.name)
+                    mbx = await self.mailbox_set.get_mailbox(selected.name)
                 except MailboxNotFound:
                     selected.set_deleted()
                     return selected
@@ -54,13 +63,13 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
 
     @classmethod
     def _find_selected(cls, selected: Optional[SelectedMailbox],
-                       mbx: KeyValMailbox) -> Optional[SelectedMailbox]:
+                       mbx: MailboxDataInterface) -> Optional[SelectedMailbox]:
         if selected and selected.name == mbx.name:
             return selected
         return mbx.selected_set.any_selected
 
     @classmethod
-    async def _wait_for_updates(cls, mbx: KeyValMailbox,
+    async def _wait_for_updates(cls, mbx: MailboxDataInterface,
                                 wait_on: Event) -> None:
         try:
             or_event = wait_on.or_event(mbx.selected_set.updated)
@@ -73,59 +82,60 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
                              selected: SelectedMailbox = None) \
             -> Tuple[Iterable[Tuple[str, Optional[str], Sequence[bytes]]],
                      Optional[SelectedMailbox]]:
+        delimiter = self.mailbox_set.delimiter
         if filter_:
-            list_tree = ListTree(self.delimiter).update('INBOX')
+            list_tree = ListTree(delimiter).update('INBOX')
             if subscribed:
-                list_tree.update(*await self.inbox.list_subscribed())
+                list_tree.update(*await self.mailbox_set.list_subscribed())
             else:
-                list_tree.update(*await self.inbox.list_mailboxes())
-            ret = [(entry.name, self.delimiter, entry.attrs)
+                list_tree.update(*await self.mailbox_set.list_mailboxes())
+            ret = [(entry.name, delimiter, entry.attrs)
                    for entry in list_tree.list_matching(ref_name, filter_)]
         else:
-            ret = [("", self.delimiter, [b'Noselect'])]
+            ret = [("", delimiter, [b'Noselect'])]
         return ret, await self._load_updates(selected, None)
 
     async def get_mailbox(self, name: str, selected: SelectedMailbox = None) \
             -> Tuple[MailboxSnapshot, Optional[SelectedMailbox]]:
-        mbx = await self.inbox.get_mailbox(name)
+        mbx = await self.mailbox_set.get_mailbox(name)
         snapshot = await mbx.snapshot()
         return snapshot, await self._load_updates(selected, mbx)
 
     async def create_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        await self.inbox.add_mailbox(name)
+        await self.mailbox_set.add_mailbox(name)
         return await self._load_updates(selected, None)
 
     async def delete_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        await self.inbox.remove_mailbox(name)
+        await self.mailbox_set.delete_mailbox(name)
         return await self._load_updates(selected, None)
 
     async def rename_mailbox(self, before_name: str, after_name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        await self.inbox.rename_mailbox(before_name, after_name)
+        await self.mailbox_set.rename_mailbox(before_name, after_name)
         return await self._load_updates(selected, None)
 
     async def subscribe(self, name: str, selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        mbx = await self.inbox.get_mailbox('INBOX')
-        await mbx.set_subscribed(name, True)
+        mbx = await self.mailbox_set.get_mailbox('INBOX')
+        await self.mailbox_set.set_subscribed(name, True)
         return await self._load_updates(selected, mbx)
 
     async def unsubscribe(self, name: str, selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        mbx = await self.inbox.get_mailbox('INBOX')
-        await mbx.set_subscribed(name, False)
+        mbx = await self.mailbox_set.get_mailbox('INBOX')
+        await self.mailbox_set.set_subscribed(name, False)
         return await self._load_updates(selected, mbx)
 
     async def append_messages(self, name: str,
                               messages: Sequence[AppendMessage],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
-        mbx = await self.inbox.get_mailbox(name, try_create=True)
+        mbx = await self.mailbox_set.get_mailbox(name, try_create=True)
         if mbx.readonly:
             raise MailboxReadOnly(name)
         dest_selected = self._find_selected(selected, mbx)
@@ -142,11 +152,11 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
 
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple[MailboxSnapshot, SelectedMailbox]:
-        mbx = await self.inbox.get_mailbox(name)
+        mbx = await self.mailbox_set.get_mailbox(name)
         selected = SelectedMailbox(name, readonly or mbx.readonly,
                                    selected_set=mbx.selected_set)
         if not selected.readonly:
-            recent_msgs: List[KeyValMessage] = []
+            recent_msgs: List[Message] = []
             async for msg in mbx.messages():
                 if msg.recent:
                     msg.recent = False
@@ -159,7 +169,7 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
     async def check_mailbox(self, selected: SelectedMailbox,
                             wait_on: Event = None,
                             housekeeping: bool = False) -> SelectedMailbox:
-        mbx = await self.inbox.get_mailbox(selected.name)
+        mbx = await self.mailbox_set.get_mailbox(selected.name)
         if housekeeping:
             await mbx.cleanup()
         if wait_on:
@@ -169,8 +179,8 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
-            -> Tuple[Iterable[Tuple[int, KeyValMessage]], SelectedMailbox]:
-        mbx = await self.inbox.get_mailbox(selected.name)
+            -> Tuple[Iterable[Tuple[int, LoadedMessage]], SelectedMailbox]:
+        mbx = await self.mailbox_set.get_mailbox(selected.name)
         ret = [(seq, msg) async for seq, msg
                in mbx.find(sequence_set, selected)]
         if not selected.readonly and any(attr.set_seen for attr in attributes):
@@ -181,9 +191,9 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
 
     async def search_mailbox(self, selected: SelectedMailbox,
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[Tuple[int, KeyValMessage]], SelectedMailbox]:
-        mbx = await self.inbox.get_mailbox(selected.name)
-        ret: List[Tuple[int, KeyValMessage]] = []
+            -> Tuple[Iterable[Tuple[int, LoadedMessage]], SelectedMailbox]:
+        mbx = await self.mailbox_set.get_mailbox(selected.name)
+        ret: List[Tuple[int, LoadedMessage]] = []
         snapshot = selected.snapshot
         params = SearchParams(selected, max_seq=snapshot.exists,
                               max_uid=snapshot.max_uid)
@@ -197,7 +207,7 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
                               uid_set: SequenceSet = None) -> SelectedMailbox:
         if selected.readonly:
             raise MailboxReadOnly(selected.name)
-        mbx = await self.inbox.get_mailbox(selected.name)
+        mbx = await self.mailbox_set.get_mailbox(selected.name)
         if not uid_set:
             uid_set = SequenceSet.all(uid=True)
         expunge_uids: List[int] = []
@@ -213,8 +223,8 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
                             sequence_set: SequenceSet,
                             mailbox: str) \
             -> Tuple[Optional[CopyUid], SelectedMailbox]:
-        mbx = await self.inbox.get_mailbox(selected.name)
-        dest = await self.inbox.get_mailbox(mailbox, try_create=True)
+        mbx = await self.mailbox_set.get_mailbox(selected.name)
+        dest = await self.mailbox_set.get_mailbox(mailbox, try_create=True)
         if dest.readonly:
             raise MailboxReadOnly(mailbox)
         dest_selected = self._find_selected(selected, dest)
@@ -236,10 +246,10 @@ class KeyValSession(SessionInterface[SelectedMailbox]):
             -> Tuple[Iterable[int], SelectedMailbox]:
         if selected.readonly:
             raise MailboxReadOnly(selected.name)
-        mbx = await self.inbox.get_mailbox(selected.name)
+        mbx = await self.mailbox_set.get_mailbox(selected.name)
         permanent_flags = flag_set & mbx.permanent_flags
         session_flags = flag_set & mbx.session_flags
-        messages: List[KeyValMessage] = []
+        messages: List[Message] = []
         async for _, msg in mbx.find(sequence_set, selected):
             msg.update_flags(permanent_flags, mode)
             selected.session_flags.update(msg.uid, session_flags, mode)

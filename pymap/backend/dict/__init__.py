@@ -4,10 +4,10 @@ and integration testing.
 """
 
 import os.path
-from argparse import Namespace
+from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from contextlib import closing
 from datetime import datetime, timezone
-from typing import Any, Tuple, Mapping, Dict, TypeVar, Type
+from typing import cast, Any, Tuple, Mapping, Dict, BinaryIO, TypeVar, Type
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
@@ -18,22 +18,24 @@ from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.specials.flag import Flag, Recent
 from pymap.sockinfo import SocketInfo
 
-from .mailbox import Message, Mailbox
-from ..session import KeyValSession
+from .mailbox import Message, MailboxData, MailboxSet
+from ..session import BaseSession
 
-__all__ = ['add_subparser', 'init', 'Config', 'Session', 'Message', 'Mailbox']
+__all__ = ['add_subparser', 'init', 'Config', 'Session']
 
 _SessionT = TypeVar('_SessionT', bound='Session')
 
 
 def add_subparser(subparsers) -> None:
-    parser = subparsers.add_parser('dict', help='in-memory backend')
+    parser = subparsers.add_parser(
+        'dict', help='in-memory backend',
+        formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('-d', '--demo-data', action='store_true',
                         help='load initial demo data')
     parser.add_argument('-u', '--demo-user', default='demouser',
-                        help='demo user ID [%default]')
+                        metavar='VAL', help='demo user ID')
     parser.add_argument('-p', '--demo-password', default='demopass',
-                        help='demo user password [%default]')
+                        metavar='VAL', help='demo user password')
 
 
 async def init(args: Namespace) -> Tuple[LoginProtocol, 'Config']:
@@ -52,7 +54,7 @@ class Config(IMAPConfig):
     def __init__(self, args: Namespace, demo_data: bool, **extra: Any) -> None:
         super().__init__(args, **extra)
         self.demo_data = demo_data
-        self.inbox_cache: Dict[str, Mailbox] = {}
+        self.set_cache: Dict[str, MailboxSet] = {}
 
     @property
     def demo_user(self) -> str:
@@ -77,7 +79,7 @@ class Config(IMAPConfig):
         return super().parse_args(args, demo_data=args.demo_data, **extra)
 
 
-class Session(KeyValSession):
+class Session(BaseSession):
     """The session implementation for the dict backend."""
 
     resource = __name__
@@ -96,13 +98,13 @@ class Session(KeyValSession):
         password = await cls.get_password(config, user)
         if not password or not credentials.check_secret(password):
             raise InvalidAuth()
-        inbox = config.inbox_cache.get(user)
-        if not inbox:
-            inbox = Mailbox('INBOX')
+        mailbox_set = config.set_cache.get(user)
+        if not mailbox_set:
+            mailbox_set = MailboxSet()
             if config.demo_data:
-                await cls._load_demo(inbox)
-            config.inbox_cache[user] = inbox
-        return cls(inbox, '.')
+                await cls._load_demo(mailbox_set)
+            config.set_cache[user] = mailbox_set
+        return cls(mailbox_set)
 
     @classmethod
     async def get_password(cls, config: Config, user: str) -> str:
@@ -124,16 +126,17 @@ class Session(KeyValSession):
         raise InvalidAuth()
 
     @classmethod
-    async def _load_demo(cls, inbox: Mailbox) -> None:
+    async def _load_demo(cls, mailbox_set: MailboxSet) -> None:
+        inbox = await mailbox_set.get_mailbox('INBOX')
         await cls._load_demo_mailbox('INBOX', inbox)
         mbx_names = sorted(resource_listdir(cls.resource, 'demo'))
         for name in mbx_names:
             if name != 'INBOX':
-                mbx = await inbox.add_mailbox(name)
+                mbx = await mailbox_set.add_mailbox(name)
                 await cls._load_demo_mailbox(name, mbx)
 
     @classmethod
-    async def _load_demo_mailbox(cls, name: str, mbx: Mailbox) -> None:
+    async def _load_demo_mailbox(cls, name: str, mbx: MailboxData) -> None:
         path = os.path.join('demo', name)
         msg_names = sorted(resource_listdir(cls.resource, path))
         for msg_name in msg_names:
@@ -145,6 +148,7 @@ class Session(KeyValSession):
             msg_path = os.path.join(path, msg_name)
             message_stream = resource_stream(cls.resource, msg_path)
             with closing(message_stream):
+                msg_file = cast(BinaryIO, message_stream)
                 flags_line = message_stream.readline()
                 msg_timestamp = float(message_stream.readline())
                 msg_dt = datetime.fromtimestamp(msg_timestamp, timezone.utc)
@@ -154,6 +158,6 @@ class Session(KeyValSession):
                     msg_recent = True
                 else:
                     msg_recent = False
-                msg_data = message_stream.read()
-            msg = Message.parse(0, msg_data, msg_flags, msg_dt, msg_recent)
+                msg = Message.parse(0, msg_file, msg_flags, msg_dt,
+                                    recent=msg_recent)
             await mbx.add(msg)

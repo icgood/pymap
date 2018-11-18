@@ -1,16 +1,17 @@
 """Base implementations of the :mod:`pymap.interfaces.message` interfaces."""
 
-import email
-import io
 from datetime import datetime, timezone
 from email.generator import BytesGenerator
 from email.message import EmailMessage
+from email.parser import BytesParser
 from email.policy import SMTP
+from io import BytesIO
 from typing import Any, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
-    Sequence, NamedTuple, TypeVar, Type
+    Sequence, List, NamedTuple, BinaryIO, TypeVar, Type
 
 from .flags import FlagOp, SessionFlags
-from .interfaces.message import Header, MessageInterface, LoadedMessageInterface
+from .interfaces.message import Header, MessageInterface, \
+    LoadedMessageInterface
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
@@ -20,6 +21,9 @@ __all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
 
 _MessageT = TypeVar('_MessageT', bound='BaseMessage')
 _LoadedT = TypeVar('_LoadedT', bound='BaseLoadedMessage')
+
+_Policy = SMTP.clone(cte_type='8bit', utf8=True)
+_Policy7Bit = _Policy.clone(cte_type='7bit')
 
 
 class AppendMessage(NamedTuple):
@@ -39,16 +43,7 @@ class AppendMessage(NamedTuple):
     options: ExtensionOptions
 
 
-class _BytesGenerator(BytesGenerator):
-
-    def __init__(self, ofp, *args, **kwargs):
-        if 'policy' not in kwargs:
-            binary = kwargs.pop('binary', None)
-            kwargs['policy'] = SMTP if binary else SMTP.clone(cte_type='7bit')
-        super().__init__(ofp, *args, **kwargs)
-
-
-class _BodyOnlyBytesGenerator(_BytesGenerator):
+class _BodyOnlyBytesGenerator(BytesGenerator):
     # This should produce a bytestring of a email.message.Message object
     # without including any headers, by exploiting the internal _write_headers
     # method.
@@ -69,13 +64,11 @@ class BaseMessage(MessageInterface):
     """
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None,
-                 *args: Any, **kwargs: Any) -> None:
+                 internal_date: datetime = None, **kwargs: Any) -> None:
         super().__init__()
         self._uid = uid
         self._permanent_flags = set(permanent_flags or [])
         self._internal_date = internal_date
-        self._args = args
         self._kwargs = kwargs
 
     @property
@@ -93,7 +86,7 @@ class BaseMessage(MessageInterface):
     def copy(self: _MessageT, new_uid: int) -> _MessageT:
         cls = type(self)
         return cls(new_uid, self.permanent_flags, self.internal_date,
-                   *self._args, **self._kwargs)
+                   **self._kwargs)
 
     def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
         if session_flags:
@@ -132,22 +125,21 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
 
     def __init__(self, uid: int, contents: EmailMessage,
                  permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None,
-                 *args: Any, **kwargs: Any) -> None:
-        super().__init__(uid, permanent_flags, internal_date, *args, **kwargs)
+                 internal_date: datetime = None, **kwargs: Any) -> None:
+        super().__init__(uid, permanent_flags, internal_date, **kwargs)
         self.contents: EmailMessage = contents
 
     def copy(self: _LoadedT, new_uid: int) -> _LoadedT:
         cls = type(self)
         return cls(new_uid, self.contents, self.permanent_flags,
-                   self.internal_date, *self._args, **self._kwargs)
+                   self.internal_date, **self._kwargs)
 
     @classmethod
-    def parse(cls: Type[_LoadedT], uid: int, data: bytes,
+    def parse(cls: Type[_LoadedT], uid: int, data: BinaryIO,
               permanent_flags: Iterable[Flag] = None,
               internal_date: datetime = None,
-              *args: Any, **kwargs: Any) -> _LoadedT:
-        """Parse the given bytestring containing a MIME-encoded email message
+              **kwargs: Any) -> _LoadedT:
+        """Parse the given file object containing a MIME-encoded email message
         into a :class:`BaseLoadedMessage` object.
 
         Args:
@@ -157,12 +149,11 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
             internal_date: The internal date of the message.
 
         """
-        msg = email.message_from_bytes(data, policy=SMTP)
+        msg = BytesParser(policy=_Policy).parse(data)
         if not isinstance(msg, EmailMessage):
             raise TypeError(msg)
-        return cls(uid, msg, permanent_flags,
-                   internal_date or datetime.now(timezone.utc),
-                   *args, **kwargs)
+        internal_date = internal_date or datetime.now(timezone.utc)
+        return cls(uid, msg, permanent_flags, internal_date, **kwargs)
 
     @classmethod
     def _get_subpart(cls, msg: 'BaseLoadedMessage', section) -> 'EmailMessage':
@@ -179,32 +170,27 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
         else:
             return msg.contents
 
-    def get_header(self, name: bytes) -> Sequence[Header]:
-        name_str = str(name, 'ascii', 'ignore')
-        return self.contents.get_all(name_str, [])
+    def get_header(self, name: str) -> Sequence[Header]:
+        return self.contents.get_all(name, [])
 
     def get_headers(self, section: Iterable[int] = None,
-                    subset: Iterable[bytes] = None,
+                    subset: Iterable[str] = None,
                     inverse: bool = False) \
             -> Optional[bytes]:
         try:
             msg = self._get_subpart(self, section)
         except IndexError:
             return None
-        ret = EmailMessage(SMTP)
+        ret: List[bytes] = []
         for key, value in msg.items():
             if subset is not None:
-                try:
-                    key_bytes = bytes(key, 'ascii').upper()
-                except UnicodeEncodeError:
-                    pass
-                else:
-                    if inverse != (key_bytes in subset):
-                        ret[key] = value
+                if inverse != (key in subset):
+                    ret.append(_Policy.fold_binary(key, str(value)))
             else:
-                ret[key] = value
+                ret.append(_Policy.fold_binary(key, str(value)))
         if len(ret) > 0:
-            return bytes(ret)
+            linesep = _Policy.linesep.encode('ascii')
+            return b''.join(ret) + linesep
         else:
             return None
 
@@ -222,14 +208,20 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
             msg = self._get_subpart(self, section)
         except IndexError:
             return None
-        ofp = io.BytesIO()
-        _BodyOnlyBytesGenerator(ofp, binary=binary).flatten(msg)
-        return ofp.getvalue()
+        return self._get_bytes(msg, binary, True)
 
     @classmethod
-    def _get_bytes(cls, msg: 'EmailMessage', binary: bool = False) -> bytes:
-        ofp = io.BytesIO()
-        _BytesGenerator(ofp, binary=binary).flatten(msg)
+    def _get_bytes(cls, msg: 'EmailMessage', binary: bool = False,
+                   body_only: bool = False) -> bytes:
+        ofp = BytesIO()
+        generator: Type[BytesGenerator] = _BodyOnlyBytesGenerator \
+            if body_only else BytesGenerator
+        policy = _Policy if binary else _Policy7Bit
+        try:
+            generator(ofp, policy=policy).flatten(msg)  # type: ignore
+        except (LookupError, UnicodeEncodeError):
+            # Message had a malformed or incorrect charset, default to binary.
+            return cls._get_bytes(msg, True, body_only)
         return ofp.getvalue()
 
     @classmethod
@@ -240,7 +232,7 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
 
     @classmethod
     def _get_size_with_lines(cls, msg: 'EmailMessage') -> Tuple[int, int]:
-        data = cls._get_bytes(msg)
+        data = cls._get_bytes(msg, True)
         size = len(data)
         lines = data.count(b'\n')
         return size, lines
@@ -314,7 +306,7 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
             return TextBodyStructure(  # type: ignore
                 subtype, params, disposition, language, location,
                 content_id, content_desc, content_encoding, None, size, lines)
-        size = cls._get_size(msg)
+        size = cls._get_size(msg, True)
         return ContentBodyStructure(  # type: ignore
             maintype, subtype, params, disposition, language, location,
             content_id, content_desc, content_encoding, None, size)
