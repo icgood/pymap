@@ -11,7 +11,7 @@ Lightweight, asynchronous IMAP serving in Python.
 
 This project attempts to simplify the complexity of the [IMAP protocol][1] into
 a set of clean Python APIs that can be implemented by pluggable backends.
-Everything runs runs in an [asyncio][2] event loop.
+Everything runs in an [asyncio][2] event loop.
 
 There are two backend plugins included in the package, dict and maildir.
 
@@ -148,8 +148,8 @@ by the RFC are not supported.
 ## Development and Testing
 
 You will need to do some additional setup to develop and test plugins. First
-off, I suggest activating a [virtualenv][5]. Then, install the test
-requirements and a local link to the pymap package:
+off, I suggest activating a [venv][5]. Then, install the test requirements and
+a local link to the pymap package:
 
 ```
 $ pip install -r test/requirements.txt
@@ -190,6 +190,6 @@ no need to attempt `--strict` mode.
 [2]: https://docs.python.org/3/library/asyncio.html
 [3]: https://en.wikipedia.org/wiki/Maildir
 [4]: https://wiki.dovecot.org/MailboxFormat/Maildir
-[5]: https://virtualenv.pypa.io/en/latest/
+[5]: https://docs.python.org/3/library/venv.html
 [6]: https://www.python.org/dev/peps/pep-0484/
 [7]: http://mypy-lang.org/
