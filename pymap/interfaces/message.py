@@ -9,7 +9,7 @@ from ..parsing.specials import Flag
 
 __all__ = ['Header', 'MessageInterface', 'LoadedMessageInterface']
 
-_MessageT = TypeVar('_MessageT', bound='Message')
+_MessageT = TypeVar('_MessageT', bound='MessageInterface')
 
 
 class Header(Protocol):
