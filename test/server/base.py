@@ -3,7 +3,7 @@ import asyncio
 from argparse import Namespace
 from typing import Dict
 
-from pymap.keyval.dict import init
+from pymap.backend.dict import init
 from pymap.server import IMAPServer
 from .mocktransport import MockTransport
 
