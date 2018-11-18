@@ -47,7 +47,11 @@ class MaildirFlags(FileReadable):
         super().__init__()
         if len(keywords) > 26:
             raise ValueError(keywords)
-        self.keywords = keywords
+        self._keywords = frozenset(keywords)
+        self._to_kwd = {chr(ord('a') + i): kwd
+                        for i, kwd in enumerate(keywords)}
+        self._from_kwd = {kwd: chr(ord('a') + i)
+                          for i, kwd in enumerate(keywords)}
 
     @property
     def permanent_flags(self) -> FrozenSet[Flag]:
@@ -62,15 +66,7 @@ class MaildirFlags(FileReadable):
     @property
     def keywords(self) -> FrozenSet[Flag]:
         """Return the set of available IMAP keywords."""
-        return frozenset(self._keywords)
-
-    @keywords.setter
-    def keywords(self, keywords: Iterable[Flag]) -> None:
-        self._keywords = list(keywords)
-        self._to_kwd = {chr(ord('a') + i): kwd
-                        for i, kwd in enumerate(keywords)}
-        self._from_kwd = {kwd: chr(ord('a') + i)
-                          for i, kwd in enumerate(keywords)}
+        return self._keywords
 
     def to_maildir(self, flags: Iterable[Union[bytes, Flag]]) -> str:
         """Return the string of letter codes that are used to map to defined
