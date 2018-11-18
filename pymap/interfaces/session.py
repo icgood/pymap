@@ -4,7 +4,7 @@ from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
 
-from .message import Message, LoadedMessage
+from .message import MessageInterface, LoadedMessageInterface
 from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import IMAPConfig
@@ -274,7 +274,7 @@ class SessionInterface(Protocol[_SelectedT]):
     async def fetch_messages(self, selected: _SelectedT,
                              sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
-            -> Tuple[Iterable[Tuple[int, LoadedMessage]], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, LoadedMessageInterface]], _SelectedT]:
         """Get a list of loaded message objects corresponding to given sequence
         set.
 
@@ -292,7 +292,7 @@ class SessionInterface(Protocol[_SelectedT]):
     @abstractmethod
     async def search_mailbox(self, selected: _SelectedT,
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[Tuple[int, Message]], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, MessageInterface]], _SelectedT]:
         """Get the messages in the current mailbox that meet all of the
         given search criteria.
 

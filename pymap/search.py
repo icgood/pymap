@@ -6,7 +6,7 @@ from typing import FrozenSet, Optional, Iterable
 
 from .exceptions import SearchNotAllowed
 from .flags import SessionFlags
-from .interfaces.message import Message, LoadedMessage
+from .interfaces.message import MessageInterface, LoadedMessageInterface
 from .parsing.specials import SearchKey, SequenceSet
 from .parsing.specials.flag import Flag, Answered, Deleted, Draft, Flagged, \
     Recent, Seen
@@ -72,7 +72,7 @@ class SearchCriteria(metaclass=ABCMeta):
         self.params = params
 
     @abstractmethod
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         """Implemented by sub-classes to define the search criteria.
 
         Args:
@@ -177,7 +177,7 @@ class SearchCriteriaSet(SearchCriteria):
         super().__init__(params)
         self.all_criteria = [SearchCriteria.of(key, params) for key in keys]
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         """The message matches if all the defined search key criteria match.
 
         Args:
@@ -191,12 +191,12 @@ class SearchCriteriaSet(SearchCriteria):
 class _LoadedSearchCriteria(SearchCriteria):
 
     @classmethod
-    def _get_loaded(cls, msg: Message) -> LoadedMessage:
-        if not isinstance(msg, LoadedMessage):
+    def _get_loaded(cls, msg: MessageInterface) -> LoadedMessageInterface:
+        if not isinstance(msg, LoadedMessageInterface):
             raise SearchNotAllowed()
         return msg
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         raise NotImplementedError
 
 
@@ -207,14 +207,14 @@ class InverseSearchCriteria(SearchCriteria):
         super().__init__(params)
         self.key = SearchCriteria.of(key, params)
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         return not self.key.matches(msg_seq, msg)
 
 
 class AllSearchCriteria(SearchCriteria):
     """Always matches anything."""
 
-    def matches(self, msg_seq: int, msg: Message):
+    def matches(self, msg_seq: int, msg: MessageInterface):
         return True
 
 
@@ -227,7 +227,7 @@ class OrSearchCriteria(SearchCriteria):
         self.left = SearchCriteria.of(left, self.params)
         self.right = SearchCriteria.of(right, self.params)
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         return (self.left.matches(msg_seq, msg)
                 or self.right.matches(msg_seq, msg))
 
@@ -239,7 +239,7 @@ class SequenceSetSearchCriteria(SearchCriteria):
         super().__init__(params)
         self.seq_set = seq_set
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         if self.seq_set.uid:
             return self.seq_set.contains(msg.uid, self.params.max_uid)
         else:
@@ -258,7 +258,7 @@ class HasFlagSearchCriteria(SearchCriteria):
         self.flag = flag
         self.expected = expected
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         has_flag = self.flag in msg.get_flags(self.params.session_flags)
         expected = self.expected
         return (has_flag and expected) or (not expected and not has_flag)
@@ -267,7 +267,7 @@ class HasFlagSearchCriteria(SearchCriteria):
 class NewSearchCriteria(SearchCriteria):
     """Matches if the message is considered "new", i.e. recent and unseen."""
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         flags = msg.get_flags(self.params.session_flags)
         return Recent in flags and Seen not in flags
 
@@ -281,10 +281,10 @@ class DateSearchCriteria(SearchCriteria):
         self.cmp = cmp
 
     @classmethod
-    def _get_msg_date(cls, msg: Message) -> Optional[datetime]:
+    def _get_msg_date(cls, msg: MessageInterface) -> Optional[datetime]:
         return msg.internal_date
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         msg_datetime = self._get_msg_date(msg)
         if msg_datetime is None:
             return False
@@ -302,7 +302,7 @@ class HeaderDateSearchCriteria(DateSearchCriteria, _LoadedSearchCriteria):
     """Matches by comparing against the ``Date:`` header of the message."""
 
     @classmethod
-    def _get_msg_date(cls, msg: Message) -> Optional[datetime]:
+    def _get_msg_date(cls, msg: MessageInterface) -> Optional[datetime]:
         loaded = cls._get_loaded(msg)
         envelope = loaded.get_envelope_structure()
         return envelope.date.datetime if envelope.date else None
@@ -316,7 +316,7 @@ class SizeSearchCriteria(_LoadedSearchCriteria):
         self.size = size
         self.cmp = cmp
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         loaded = self._get_loaded(msg)
         size = loaded.get_size()
         if self.cmp == '<':
@@ -337,7 +337,7 @@ class EnvelopeSearchCriteria(_LoadedSearchCriteria):
         self.key = key
         self.value = value
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         loaded = self._get_loaded(msg)
         envelope = loaded.get_envelope_structure()
         if self.key == b'BCC':
@@ -371,7 +371,7 @@ class HeaderSearchCriteria(_LoadedSearchCriteria):
         self.name = bytes(name, 'ascii', 'ignore')
         self.value = value
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         loaded = self._get_loaded(msg)
         values = loaded.get_header(self.name)
         return any(self.value in str(value) for value in values)
@@ -386,7 +386,7 @@ class BodySearchCriteria(_LoadedSearchCriteria):
         self.with_headers = with_headers
         self.value = bytes(value, 'utf-8')
 
-    def matches(self, msg_seq: int, msg: Message) -> bool:
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         loaded = self._get_loaded(msg)
         data = loaded.get_body() if self.with_headers else loaded.get_text()
         return data is not None and self.value in data

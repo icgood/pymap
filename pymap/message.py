@@ -10,7 +10,7 @@ from typing import Any, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
     Sequence, NamedTuple, TypeVar, Type
 
 from .flags import FlagOp, SessionFlags
-from .interfaces.message import Header, Message, LoadedMessage
+from .interfaces.message import Header, MessageInterface, LoadedMessageInterface
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
@@ -57,7 +57,7 @@ class _BodyOnlyBytesGenerator(_BytesGenerator):
         pass
 
 
-class BaseMessage(Message):
+class BaseMessage(MessageInterface):
     """Message metadata such as UID, permanent flags, and when the message
     was added to the system.
 
@@ -113,7 +113,7 @@ class BaseMessage(Message):
         return frozenset(self.permanent_flags)
 
 
-class BaseLoadedMessage(BaseMessage, LoadedMessage):
+class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
     """A message with its contents loaded, such that it pulls the information
     from a message object necessary to gather `message attributes
     <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the

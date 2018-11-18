@@ -7,7 +7,7 @@ from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
 
-__all__ = ['Header', 'Message', 'LoadedMessage']
+__all__ = ['Header', 'MessageInterface', 'LoadedMessageInterface']
 
 _MessageT = TypeVar('_MessageT', bound='Message')
 
@@ -23,7 +23,7 @@ class Header(Protocol):
         ...
 
 
-class Message(Protocol):
+class MessageInterface(Protocol):
     """Message metadata such as UID, permanent flags, and when the message
     was added to the system.
 
@@ -81,7 +81,7 @@ class Message(Protocol):
         ...
 
 
-class LoadedMessage(Message):
+class LoadedMessageInterface(MessageInterface):
     """A message with its contents loaded, such that it pulls the information
     from a message object necessary to gather `message attributes
     <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the
