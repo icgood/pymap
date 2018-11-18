@@ -21,7 +21,7 @@
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pymap.keyval" href="pymap.keyval.html" />
+    <link rel="next" title="pymap.backend" href="pymap.backend.html" />
     <link rel="prev" title="pymap.interfaces" href="pymap.interfaces.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
@@ -37,7 +37,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.keyval.html" title="pymap.keyval"
+          <a href="pymap.backend.html" title="pymap.backend"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
@@ -2216,24 +2216,19 @@ sequence set of a FETCH command on an IMAP stream.</p>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents a fetch attribute section, which typically comes after
 the attribute name within square brackets, e.g. <code class="docutils literal notranslate"><span class="pre">BODY[0.TEXT]</span></code>.</p>
-<dl class="attribute">
-<dt id="pymap.parsing.specials.fetchattr.FetchAttribute.Section.parts">
-<code class="descname">parts</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchAttribute.Section.parts" title="Permalink to this definition">¶</a></dt>
-<dd><p>The nested MIME part identifiers.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.parsing.specials.fetchattr.FetchAttribute.Section.specifier">
-<code class="descname">specifier</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchAttribute.Section.specifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>The MIME part specifier.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.parsing.specials.fetchattr.FetchAttribute.Section.headers">
-<code class="descname">headers</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchAttribute.Section.headers" title="Permalink to this definition">¶</a></dt>
-<dd><p>The MIME part specifier headers.</p>
-</dd></dl>
-
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parts</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The nested MIME part identifiers.</li>
+<li><strong>specifier</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The MIME part specifier.</li>
+<li><strong>headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – The MIME part specifier headers.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -3978,8 +3973,8 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="pymap.keyval.html"
-                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.keyval</span></code></a></p>
+    <p class="topless"><a href="pymap.backend.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -4033,7 +4028,7 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.keyval.html" title="pymap.keyval"
+          <a href="pymap.backend.html" title="pymap.backend"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
