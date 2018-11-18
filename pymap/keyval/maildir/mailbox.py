@@ -10,7 +10,7 @@ from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
 from pymap.message import AppendMessage
-from pymap.parsing.specials.flag import Flag
+from pymap.parsing.specials import Flag
 from pymap.selected import SelectedSet
 
 from .flags import MaildirFlags
@@ -18,9 +18,9 @@ from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
-from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
+from ..mailbox import KeyValMessage, KeyValMailbox
 
-__all__ = ['Message', 'MailboxSnapshot', 'Mailbox']
+__all__ = ['Message', 'Mailbox']
 
 _Db = Dict[str, bytes]
 

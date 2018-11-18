@@ -5,7 +5,7 @@ from collections import OrderedDict
 from typing import IO, Any, Optional, Iterable, Mapping, Dict, \
     NamedTuple, ClassVar, TypeVar, Type
 
-from pymap.mailbox import BaseMailbox
+from pymap.mailbox import MailboxSnapshot
 
 from .io import FileWriteable
 
@@ -158,7 +158,7 @@ class UidList(FileWriteable):
 
     @classmethod
     def get_default(cls: Type[_UDT], base_dir: str) -> _UDT:
-        return cls(base_dir, BaseMailbox.new_uid_validity(), 1)
+        return cls(base_dir, MailboxSnapshot.new_uid_validity(), 1)
 
     def write(self, fp: IO[str]) -> None:
         fp.write(self._build_header())

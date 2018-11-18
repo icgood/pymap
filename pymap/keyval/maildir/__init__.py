@@ -18,11 +18,10 @@ from pymap.interfaces.session import LoginProtocol
 from pymap.sockinfo import SocketInfo
 
 from .layout import MaildirLayout
-from .mailbox import MailboxSnapshot, Message, Mailbox
+from .mailbox import Message, Mailbox
 from ..session import KeyValSession
 
-__all__ = ['add_subparser', 'init', 'Config', 'Session',
-           'MailboxSnapshot', 'Message', 'Mailbox']
+__all__ = ['add_subparser', 'init', 'Config', 'Session', 'Message', 'Mailbox']
 
 _SessionT = TypeVar('_SessionT', bound='Session')
 

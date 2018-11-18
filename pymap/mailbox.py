@@ -1,45 +1,51 @@
-"""Base implementations of the :mod:`pymap.interfaces.mailbox` interfaces."""
+"""Base implementation of the :mod:`pymap.interfaces.mailbox` interfaces."""
 
 import random
 import time
-from abc import abstractmethod, ABCMeta
 from typing import Optional, Iterable, FrozenSet
 
 from .interfaces.mailbox import MailboxInterface
-from .parsing.specials import Flag
-from .parsing.specials.flag import Recent
+from .parsing.specials.flag import Flag, Recent
 
-__all__ = ['BaseMailbox']
+__all__ = ['MailboxSnapshot']
 
 
-class BaseMailbox(MailboxInterface, metaclass=ABCMeta):
-    """Implements some of the basic functionality of a mailbox, for backends
-    that wish to save themselves some trouble.
+class MailboxSnapshot(MailboxInterface):
+    """Implements the full functionality of a mailbox using entirely static
+    arguments to the constructor. Backends can create and return a new
+    mailbox snapshot every time a
+    :class:`~pymap.interfaces.mailbox.MailboxInterface` is required.
 
     Args:
         name: The name of the mailbox.
-        permanent_flags: The permanent flags defined in the mailbox.
-        session_flags: The session flags defined in the mailbox.
         readonly: If ``True``, the mailbox is read-only.
         uid_validity: The UID validity value for mailbox consistency.
+        permanent_flags: The permanent flags defined in the mailbox.
+        session_flags: The session flags defined in the mailbox.
+        exists: Number of total messages in the mailbox.
+        recent: Number of recent messages in the mailbox.
+        unseen: Number of unseen messages in the mailbox.
+        first_unseen: The sequence number of the first unseen message.
+        next_uid: The predicted next message UID.
 
     """
 
-    def __init__(self, name: str,
-                 permanent_flags: Iterable[Flag] = None,
-                 session_flags: Iterable[Flag] = None,
-                 readonly: bool = False,
-                 uid_validity: int = 0) -> None:
+    def __init__(self, name: str, readonly: bool, uid_validity: int,
+                 permanent_flags: Iterable[Flag],
+                 session_flags: FrozenSet[Flag],
+                 exists: int, recent: int, unseen: int,
+                 first_unseen: Optional[int], next_uid: int) -> None:
         super().__init__()
         self._name = name
         self._readonly = readonly
         self._uid_validity = uid_validity
-        self._permanent_flags: FrozenSet[Flag] = (
-            frozenset(permanent_flags) - {Recent}
-            if permanent_flags else frozenset())
-        self._session_flags: FrozenSet[Flag] = (
-            (frozenset(session_flags) - self.permanent_flags) | {Recent}
-            if session_flags else frozenset({Recent}))
+        self._permanent_flags = frozenset(permanent_flags) - {Recent}
+        self._session_flags = frozenset(session_flags) | {Recent}
+        self._exists = exists
+        self._recent = recent
+        self._unseen = unseen
+        self._first_unseen = first_unseen
+        self._next_uid = next_uid
 
     @classmethod
     def new_uid_validity(cls) -> int:
@@ -68,39 +74,29 @@ class BaseMailbox(MailboxInterface, metaclass=ABCMeta):
         return self._session_flags
 
     @property
+    def flags(self) -> FrozenSet[Flag]:
+        return self.permanent_flags | self.session_flags
+
+    @property
     def uid_validity(self) -> int:
         return self._uid_validity
 
     @property
-    def flags(self) -> FrozenSet[Flag]:
-        return self.session_flags | self.permanent_flags
-
-    @property
-    @abstractmethod
     def exists(self) -> int:
-        """Number of total messages in the mailbox."""
-        ...
+        return self._exists
 
     @property
-    @abstractmethod
     def recent(self) -> int:
-        """Number of recent messages in the mailbox."""
-        ...
+        return self._recent
 
     @property
-    @abstractmethod
     def unseen(self) -> int:
-        """Number of unseen messages in the mailbox."""
-        ...
+        return self._unseen
 
     @property
-    @abstractmethod
     def first_unseen(self) -> Optional[int]:
-        """The sequence number of the first unseen message."""
-        ...
+        return self._first_unseen
 
     @property
-    @abstractmethod
     def next_uid(self) -> int:
-        """The predicted next message UID."""
-        ...
+        return self._next_uid

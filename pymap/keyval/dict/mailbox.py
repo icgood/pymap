@@ -4,12 +4,13 @@ from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage
 from pymap.selected import SelectedSet
 
-from ..mailbox import MailboxSnapshot, KeyValMessage, KeyValMailbox
+from ..mailbox import KeyValMessage, KeyValMailbox
 
-__all__ = ['MailboxSnapshot', 'Message', 'Mailbox']
+__all__ = ['Message', 'Mailbox']
 
 
 class Message(KeyValMessage):

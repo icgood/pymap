@@ -7,7 +7,7 @@ from typing import TypeVar, Tuple, Sequence, Optional, FrozenSet, \
 from typing_extensions import Protocol
 
 from pymap.concurrent import ReadWriteLock
-from pymap.mailbox import BaseMailbox
+from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage, BaseLoadedMessage
 from pymap.parsing.specials.flag import get_system_flags, Flag, Seen, Recent
 from pymap.parsing.specials import SequenceSet
@@ -15,46 +15,10 @@ from pymap.selected import SelectedSet, SelectedMailbox
 
 from .util import asyncenumerate
 
-__all__ = ['MailboxSnapshot', 'KeyValMessage', 'KeyValMailbox']
+__all__ = ['KeyValMessage', 'KeyValMailbox']
 
 _MailboxT = TypeVar('_MailboxT', bound='KeyValMailbox')
 _MessageT = TypeVar('_MessageT', bound='KeyValMessage')
-
-
-class MailboxSnapshot(BaseMailbox):
-
-    def __init__(self, name: str, readonly: bool, uid_validity: int,
-                 permanent_flags: FrozenSet[Flag],
-                 session_flags: FrozenSet[Flag],
-                 exists: int, recent: int, unseen: int,
-                 first_unseen: Optional[int], next_uid: int) -> None:
-        super().__init__(name, permanent_flags, session_flags, readonly,
-                         uid_validity)
-        self._exists = exists
-        self._recent = recent
-        self._unseen = unseen
-        self._first_unseen = first_unseen
-        self._next_uid = next_uid
-
-    @property
-    def exists(self) -> int:
-        return self._exists
-
-    @property
-    def recent(self) -> int:
-        return self._recent
-
-    @property
-    def unseen(self) -> int:
-        return self._unseen
-
-    @property
-    def first_unseen(self) -> Optional[int]:
-        return self._first_unseen
-
-    @property
-    def next_uid(self) -> int:
-        return self._next_uid
 
 
 class KeyValMessage(BaseLoadedMessage):
