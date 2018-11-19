@@ -84,15 +84,135 @@
 <dd><p>The flag set should be removed from the existing set.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="pymap.flags.FlagOp.apply">
+<code class="descname">apply</code><span class="sig-paren">(</span><em>flag_set</em>, <em>operand</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.FlagOp.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the flag operation on the two sets, returning the result.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]) – The flag set being operated on.</li>
+<li><strong>operand</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]) – The flags to use as the operand.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.flags.PermanentFlags">
+<em class="property">class </em><code class="descclassname">pymap.flags.</code><code class="descname">PermanentFlags</code><span class="sig-paren">(</span><em>*defined</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.PermanentFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Keeps track of the defined permanent flags on a mailbox. Because the
+permanent flags can include the special <code class="docutils literal notranslate"><span class="pre">\*</span></code> wildcard flag, a simple
+set union operation is not enough to filter out unknown permanent flags.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>defined</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]) – The defined session flags for the mailbox.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.flags.PermanentFlags.defined">
+<code class="descname">defined</code><a class="headerlink" href="#pymap.flags.PermanentFlags.defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>The defined permanent flags for the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.flags.PermanentFlags.intersect">
+<code class="descname">intersect</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.PermanentFlags.intersect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the subset of flags in <code class="docutils literal notranslate"><span class="pre">other</span></code> that are also in
+<a class="reference internal" href="#pymap.flags.PermanentFlags.defined" title="pymap.flags.PermanentFlags.defined"><code class="xref py py-attr docutils literal notranslate"><span class="pre">defined</span></code></a>. If the wildcard flag is defined, then all flags in
+<code class="docutils literal notranslate"><span class="pre">other</span></code> are returned.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> operator is an alias of this method, making these two
+calls equivalent:;</p>
+<blockquote>
+<div>perm_flags.union(other_flags)
+perm_flags &amp; other_flags</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]) – The operand flag set.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="pymap.flags.SessionFlags">
-<em class="property">class </em><code class="descclassname">pymap.flags.</code><code class="descname">SessionFlags</code><a class="headerlink" href="#pymap.flags.SessionFlags" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.flags.</code><code class="descname">SessionFlags</code><span class="sig-paren">(</span><em>*defined</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.SessionFlags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Used to track session flags on a message. Session flags are only valid
 for the current IMAP client connection while it has the mailbox selected,
 they do not persist. The <code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag is a special-case session flag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>defined</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]) – The defined session flags for the mailbox.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.flags.SessionFlags.defined">
+<code class="descname">defined</code><a class="headerlink" href="#pymap.flags.SessionFlags.defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>The defined session flags for the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.flags.SessionFlags.intersect">
+<code class="descname">intersect</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.SessionFlags.intersect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the subset of flags in <code class="docutils literal notranslate"><span class="pre">other</span></code> that are also in
+<a class="reference internal" href="#pymap.flags.SessionFlags.defined" title="pymap.flags.SessionFlags.defined"><code class="xref py py-attr docutils literal notranslate"><span class="pre">defined</span></code></a>. If the wildcard flag is defined, then all flags in
+<code class="docutils literal notranslate"><span class="pre">other</span></code> are returned.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> operator is an alias of this method, making these two
+calls equivalent:;</p>
+<blockquote>
+<div>session_flags.union(other_flags)
+session_flags &amp; other_flags</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]) – The operand flag set.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.flags.SessionFlags.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.SessionFlags.get" title="Permalink to this definition">¶</a></dt>
@@ -163,15 +283,15 @@ they do not persist. The <code class="docutils literal notranslate"><span class=
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="pymap.flags.SessionFlags.count_recent">
-<code class="descname">count_recent</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.flags.SessionFlags.count_recent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Count the number of messages with the <code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag.</p>
+<dl class="attribute">
+<dt id="pymap.flags.SessionFlags.recent_uids">
+<code class="descname">recent_uids</code><a class="headerlink" href="#pymap.flags.SessionFlags.recent_uids" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message UIDs with the <code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
