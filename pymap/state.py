@@ -338,14 +338,16 @@ class ConnectionState:
             self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
         if cmd.silent:
-            self.selected.silence((uid for _, uid, _ in messages),
+            self.selected.silence((msg.uid for _, msg in messages),
                                   cmd.flag_set, cmd.mode)
         else:
-            for msg_seq, uid, flags in messages:
+            session_flags = self.selected.session_flags
+            for msg_seq, msg in messages:
+                flags = msg.get_flags(session_flags)
                 fetch_data: Dict[FetchAttribute, MaybeBytes] = \
                     {FetchAttribute(b'FLAGS'): ListP(flags, sort=True)}
                 if cmd.uid:
-                    fetch_data[FetchAttribute(b'UID')] = Number(uid)
+                    fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
                 resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 

@@ -363,7 +363,7 @@ class SessionInterface(Protocol[_SelectedT]):
                            sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[Iterable[Tuple[int, int, FrozenSet[Flag]]], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, MessageInterface]], _SelectedT]:
         """Update the flags for the given set of messages.
 
         See Also:

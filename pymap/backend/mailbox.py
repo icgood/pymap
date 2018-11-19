@@ -115,7 +115,10 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
 
     @abstractmethod
     async def get(self, uid: int) -> Optional[_LoadedT]:
-        """Return the message with the given UID, if it exists.
+        """Return the message with the given UID. If the UID has been
+        expunged, a message with
+        :attr:`~pymap.interfaces.message.MessageInterface.expunged` set to
+        True should be returned.
 
         Args:
             uid: The message UID.
@@ -174,7 +177,7 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
-            -> AsyncIterable[Tuple[int, int, Optional[_LoadedT]]]:
+            -> AsyncIterable[Tuple[int, _LoadedT]]:
         """Find the active message UID and message pairs in the mailbox that
         are contained in the given sequences set. Message sequence numbers
         are resolved by the selected mailbox session.
@@ -187,7 +190,8 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         mbx_uids = frozenset({uid async for uid in self.uids()})
         for seq, uid in selected.iter_set(seq_set, mbx_uids):
             msg = await self.get(uid)
-            yield (seq, uid, msg)
+            if msg is not None:
+                yield (seq, msg)
 
     async def snapshot(self) -> MailboxSnapshot:
         """Returns a snapshot of the current state of the mailbox."""
