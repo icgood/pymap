@@ -1,6 +1,6 @@
 """Base implementations of the :mod:`pymap.interfaces.message` interfaces."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 from email.generator import BytesGenerator
 from email.message import EmailMessage
 from email.parser import BytesParser
@@ -15,7 +15,8 @@ from .interfaces.message import Header, MessageInterface, \
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
-from .parsing.specials import Flag, ExtensionOptions
+from .parsing.specials import ExtensionOptions
+from .parsing.specials.flag import Flag, Deleted
 
 __all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
 
@@ -60,20 +61,27 @@ class BaseMessage(MessageInterface):
         uid: The UID of the message.
         permanent_flags: Permanent flags for the message.
         internal_date: The internal date of the message.
+        expunged: True if this message has been expunged from the mailbox.
 
     """
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None, **kwargs: Any) -> None:
+                 internal_date: datetime = None, expunged: bool = False,
+                 **kwargs: Any) -> None:
         super().__init__()
         self._uid = uid
         self._permanent_flags = set(permanent_flags or [])
         self._internal_date = internal_date
+        self._expunged = expunged
         self._kwargs = kwargs
 
     @property
     def uid(self) -> int:
         return self._uid
+
+    @property
+    def expunged(self) -> bool:
+        return self._expunged
 
     @property
     def permanent_flags(self) -> Set[Flag]:
@@ -86,10 +94,12 @@ class BaseMessage(MessageInterface):
     def copy(self: _MessageT, new_uid: int) -> _MessageT:
         cls = type(self)
         return cls(new_uid, self.permanent_flags, self.internal_date,
-                   **self._kwargs)
+                   self.expunged, **self._kwargs)
 
     def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
-        if session_flags:
+        if self.expunged:
+            return frozenset({Deleted})
+        elif session_flags:
             return frozenset(self.permanent_flags | session_flags[self.uid])
         else:
             return frozenset(self.permanent_flags)
@@ -113,22 +123,29 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
         contents: The contents of the message.
         permanent_flags: Permanent flags for the message.
         internal_date: The internal date of the message.
-
-    Attributes:
-        contents: The MIME-parsed message object.
+        expunged: True if this message has been expunged from the mailbox.
 
     """
 
-    def __init__(self, uid: int, contents: EmailMessage,
+    def __init__(self, uid: int, contents: EmailMessage = None,
                  permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None, **kwargs: Any) -> None:
-        super().__init__(uid, permanent_flags, internal_date, **kwargs)
-        self.contents: EmailMessage = contents
+                 internal_date: datetime = None, expunged: bool = False,
+                 **kwargs: Any) -> None:
+        super().__init__(uid, permanent_flags, internal_date,
+                         expunged, **kwargs)
+        self._contents = contents
+
+    @property
+    def contents(self) -> EmailMessage:
+        """The MIME-parsed message object."""
+        if self._contents is None:
+            return EmailMessage()
+        return self._contents
 
     def copy(self: _LoadedT, new_uid: int) -> _LoadedT:
         cls = type(self)
-        return cls(new_uid, self.contents, self.permanent_flags,
-                   self.internal_date, **self._kwargs)
+        return cls(new_uid, self._contents, self.permanent_flags,
+                   self.internal_date, self.expunged, **self._kwargs)
 
     @classmethod
     def parse(cls: Type[_LoadedT], uid: int, data: BinaryIO,
@@ -148,7 +165,6 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
         msg = BytesParser(policy=_Policy).parse(data)
         if not isinstance(msg, EmailMessage):
             raise TypeError(msg)
-        internal_date = internal_date or datetime.now(timezone.utc)
         return cls(uid, msg, permanent_flags, internal_date, **kwargs)
 
     @classmethod

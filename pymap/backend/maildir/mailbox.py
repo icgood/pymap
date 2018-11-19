@@ -127,13 +127,17 @@ class MailboxData(MailboxDataInterface[Message, Message]):
 
     async def get(self, uid: int) -> Optional[Message]:
         async with UidList.with_read(self._path) as uidl:
+            next_uid = uidl.next_uid
             rec = uidl.get(uid)
             key = rec.filename.split(':', 1)[0]
         async with self.messages_lock.read_lock():
             try:
                 maildir_msg = self._maildir[key]
             except (KeyError, FileNotFoundError):
-                return None
+                if uid < next_uid:
+                    return Message(uid, expunged=True)
+                else:
+                    return None
             return Message.from_maildir(uid, maildir_msg, self.maildir_flags)
 
     async def delete(self, *uids: int) -> None:

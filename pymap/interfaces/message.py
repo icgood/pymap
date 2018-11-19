@@ -38,6 +38,12 @@ class MessageInterface(Protocol):
 
     @property
     @abstractmethod
+    def expunged(self) -> bool:
+        """True if this message has been expunged from the mailbox."""
+        ...
+
+    @property
+    @abstractmethod
     def permanent_flags(self) -> Set[Flag]:
         """The message's set of permanent flags."""
         ...

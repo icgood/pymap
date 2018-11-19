@@ -184,8 +184,8 @@ class BaseSession(SessionInterface[SelectedMailbox]):
                              attributes: FrozenSet[FetchAttribute]) \
             -> Tuple[Iterable[Tuple[int, LoadedMessage]], SelectedMailbox]:
         mbx = await self.mailbox_set.get_mailbox(selected.name)
-        ret = [(seq, msg) async for seq, _, msg
-               in mbx.find(sequence_set, selected) if msg]
+        ret = [(seq, msg) async for seq, msg
+               in mbx.find(sequence_set, selected) if not msg.expunged]
         if not selected.readonly and any(attr.set_seen for attr in attributes):
             for _, msg in ret:
                 msg.permanent_flags.add(Seen)
@@ -214,9 +214,9 @@ class BaseSession(SessionInterface[SelectedMailbox]):
         if not uid_set:
             uid_set = SequenceSet.all(uid=True)
         expunge_uids: List[int] = []
-        async for _, uid, msg in mbx.find(uid_set, selected):
-            if msg and Deleted in msg.permanent_flags:
-                expunge_uids.append(uid)
+        async for _, msg in mbx.find(uid_set, selected):
+            if not msg.expunged and Deleted in msg.permanent_flags:
+                expunge_uids.append(msg.uid)
         await mbx.delete(*expunge_uids)
         mbx.selected_set.updated.set()
         return await self._load_updates(selected, mbx)
@@ -231,8 +231,9 @@ class BaseSession(SessionInterface[SelectedMailbox]):
             raise MailboxReadOnly(mailbox)
         dest_selected = self._find_selected(selected, dest)
         uids: List[Tuple[int, int]] = []
-        async for _, source_uid, msg in mbx.find(sequence_set, selected):
-            if msg:
+        async for _, msg in mbx.find(sequence_set, selected):
+            if not msg.expunged:
+                source_uid = msg.uid
                 msg = await dest.add(msg, recent=not dest_selected)
                 if dest_selected:
                     dest_selected.session_flags.add_recent(msg.uid)
@@ -245,21 +246,17 @@ class BaseSession(SessionInterface[SelectedMailbox]):
                            sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[Iterable[Tuple[int, int, FrozenSet[Flag]]],
-                     SelectedMailbox]:
+            -> Tuple[Iterable[Tuple[int, Message]], SelectedMailbox]:
         if selected.readonly:
             raise MailboxReadOnly(selected.name)
         mbx = await self.mailbox_set.get_mailbox(selected.name)
         permanent_flags = selected.permanent_flags & flag_set
-        messages: List[Tuple[int, int, FrozenSet[Flag]]] = []
-        async for msg_seq, uid, msg in mbx.find(sequence_set, selected):
-            if msg:
+        messages: List[Tuple[int, Message]] = []
+        async for msg_seq, msg in mbx.find(sequence_set, selected):
+            if not msg.expunged:
                 msg.update_flags(permanent_flags, mode)
                 selected.session_flags.update(msg.uid, flag_set, mode)
-                flags = msg.get_flags(selected.session_flags)
-            else:
-                flags = frozenset()
-            messages.append((msg_seq, uid, flags))
+            messages.append((msg_seq, msg))
         await mbx.save_flags(*messages)
         mbx.selected_set.updated.set()
         return messages, await self._load_updates(selected, mbx)

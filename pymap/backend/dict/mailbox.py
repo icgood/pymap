@@ -75,7 +75,10 @@ class MailboxData(MailboxDataInterface[Message, Message]):
 
     async def get(self, uid: int) -> Optional[Message]:
         async with self.messages_lock.read_lock():
-            return self._messages.get(uid)
+            ret = self._messages.get(uid)
+            if ret is None and uid <= self._max_uid:
+                ret = Message(uid, expunged=True)
+            return ret
 
     async def delete(self, *uids: int) -> None:
         async with self.messages_lock.write_lock():
