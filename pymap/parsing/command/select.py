@@ -1,3 +1,4 @@
+
 import re
 from typing import Tuple, Sequence, List, Iterable, Optional, ClassVar
 
@@ -7,7 +8,6 @@ from ..exceptions import NotParseable, CommandInvalid
 from ..primitives import Atom, ListP
 from ..specials import AString, Mailbox, SequenceSet, Flag, FetchAttribute, \
     SearchKey, ExtensionOptions
-from ..specials.flag import Recent
 from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -212,7 +212,7 @@ class StoreCommand(CommandSelect):
                  silent: bool, options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.flag_set = frozenset(flags) - {Recent}
+        self.flag_set = frozenset(flags)
         self.mode = mode
         self.silent = silent
         self.options = options or ExtensionOptions.empty()

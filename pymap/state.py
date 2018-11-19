@@ -11,6 +11,7 @@ from typing import Optional, Any, Dict, Callable, Union, Tuple, Awaitable, \
 
 from pysasl import AuthenticationCredentials
 
+from .bytes import MaybeBytes
 from .concurrent import Event
 from .config import IMAPConfig
 from .exceptions import CommandNotAllowed, CloseConnection
@@ -34,7 +35,7 @@ from .parsing.response.code import Capability, PermanentFlags, ReadOnly, \
 from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from .parsing.specials import DateTime, FetchAttribute
+from .parsing.specials import DateTime, FetchAttribute, StatusAttribute
 from .sockinfo import SocketInfo
 from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
@@ -187,12 +188,15 @@ class ConnectionState:
     async def do_status(self, cmd: StatusCommand):
         mailbox, updates = await self.session.get_mailbox(
             cmd.mailbox, selected=self._selected)
-        data = OrderedDict()  # type: ignore
+        data: Dict[StatusAttribute, Number] = OrderedDict()
         for attr in cmd.status_list:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
             elif attr == b'RECENT':
-                data[attr] = Number(mailbox.recent)
+                if self._selected and self.selected.name == cmd.mailbox:
+                    data[attr] = Number(self.selected.recent)
+                else:
+                    data[attr] = Number(mailbox.recent)
             elif attr == b'UNSEEN':
                 data[attr] = Number(mailbox.unseen)
             elif attr == b'UIDNEXT':
@@ -255,6 +259,8 @@ class ConnectionState:
         return resp, updates
 
     async def do_fetch(self, cmd: FetchCommand):
+        if not cmd.uid:
+            self.selected.hide_expunged()
         messages, updates = await self.session.fetch_messages(
             self.selected, cmd.sequence_set, frozenset(cmd.attributes))
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
@@ -310,11 +316,11 @@ class ConnectionState:
                     parts = attr.section.parts if attr.section else None
                     fetch_data[attr] = Number(msg.get_size(parts, True))
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
-        if not cmd.uid:
-            self.selected.hide_expunged()
         return resp, updates
 
     async def do_search(self, cmd: SearchCommand):
+        if not cmd.uid:
+            self.selected.hide_expunged()
         messages, updates = await self.session.search_mailbox(
             self.selected, cmd.keys)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
@@ -323,18 +329,24 @@ class ConnectionState:
         else:
             msg_ids = [msg_seq for msg_seq, _ in messages]
         resp.add_untagged(SearchResponse(msg_ids))
-        if not cmd.uid:
-            self.selected.hide_expunged()
         return resp, updates
 
     async def do_store(self, cmd: StoreCommand):
-        uids, updates = await self.session.update_flags(
+        if not cmd.uid:
+            self.selected.hide_expunged()
+        messages, updates = await self.session.update_flags(
             self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
         if cmd.silent:
-            self.selected.hide(*uids)
-        if not cmd.uid:
-            self.selected.hide_expunged()
+            self.selected.silence((uid for _, uid, _ in messages),
+                                  cmd.flag_set, cmd.mode)
+        else:
+            for msg_seq, uid, flags in messages:
+                fetch_data: Dict[FetchAttribute, MaybeBytes] = \
+                    {FetchAttribute(b'FLAGS'): ListP(flags, sort=True)}
+                if cmd.uid:
+                    fetch_data[FetchAttribute(b'UID')] = Number(uid)
+                resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
     async def do_idle(self, cmd: IdleCommand):

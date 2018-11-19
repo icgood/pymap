@@ -96,14 +96,10 @@ class BaseMessage(MessageInterface):
 
     def update_flags(self, flag_set: Iterable[Flag],
                      flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
-        if flag_op == FlagOp.ADD:
-            self.permanent_flags.update(flag_set)
-        elif flag_op == FlagOp.DELETE:
-            self.permanent_flags.difference_update(flag_set)
-        else:  # flag_op == FlagOp.REPLACE
-            self.permanent_flags.clear()
-            self.permanent_flags.update(flag_set)
-        return frozenset(self.permanent_flags)
+        new_flags = flag_op.apply(self.permanent_flags, flag_set)
+        self.permanent_flags.clear()
+        self.permanent_flags.update(new_flags)
+        return new_flags
 
 
 class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):

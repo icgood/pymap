@@ -7,7 +7,7 @@ from ..exceptions import NotParseable
 from ..primitives import Atom
 
 __all__ = ['Flag', 'get_system_flags', 'Seen', 'Recent', 'Deleted', 'Flagged',
-           'Answered', 'Draft']
+           'Answered', 'Draft', 'Wildcard']
 
 
 @total_ordering
@@ -110,3 +110,6 @@ Answered = Flag(br'\Answered')
 
 #: The ``\\Draft`` system flag.
 Draft = Flag(br'\Draft')
+
+#: The ``\\*`` special wildcard flag.
+Wildcard = Flag(br'\*')
