@@ -124,11 +124,11 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     @abstractmethod
-    async def delete(self, uid: int) -> None:
-        """Delete the message with the given UID, if it exists.
+    async def delete(self, *uids: int) -> None:
+        """Delete messages with the given UIDs.
 
         Args:
-            uid: The message UID.
+            uids: The message UIDs.
 
         """
         ...
@@ -174,7 +174,7 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
-            -> AsyncIterable[Tuple[int, _LoadedT]]:
+            -> AsyncIterable[Tuple[int, int, Optional[_LoadedT]]]:
         """Find the active message UID and message pairs in the mailbox that
         are contained in the given sequences set. Message sequence numbers
         are resolved by the selected mailbox session.
@@ -184,10 +184,10 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
             selected: The selected mailbox session.
 
         """
-        for seq, uid in selected.snapshot.iter_set(seq_set):
+        mbx_uids = frozenset({uid async for uid in self.uids()})
+        for seq, uid in selected.iter_set(seq_set, mbx_uids):
             msg = await self.get(uid)
-            if msg is not None:
-                yield (seq, msg)
+            yield (seq, uid, msg)
 
     async def snapshot(self) -> MailboxSnapshot:
         """Returns a snapshot of the current state of the mailbox."""

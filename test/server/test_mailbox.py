@@ -231,9 +231,20 @@ class TestMailbox(TestBase):
             b'status2 STATUS INBOX '
             b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
         self.transport.push_write(
-            b'* STATUS INBOX (MESSAGES 4 RECENT 0 UIDNEXT 105 '
+            b'* STATUS INBOX (MESSAGES 4 RECENT 1 UIDNEXT 105 '
             b'UIDVALIDITY ', (br'\d+', b'uidval2'), b' UNSEEN 2)\r\n'
             b'status2 OK STATUS completed.\r\n')
+        self.transport.push_readline(
+            b'close1 CLOSE\r\n')
+        self.transport.push_write(
+            b'close1 OK CLOSE completed.\r\n')
+        self.transport.push_readline(
+            b'status3 STATUS INBOX '
+            b'(MESSAGES RECENT UIDNEXT UIDVALIDITY UNSEEN)\r\n')
+        self.transport.push_write(
+            b'* STATUS INBOX (MESSAGES 4 RECENT 0 UIDNEXT 105 '
+            b'UIDVALIDITY ', (br'\d+', b'uidval2'), b' UNSEEN 2)\r\n'
+            b'status3 OK STATUS completed.\r\n')
         self.transport.push_logout()
         await self.run()
         assert self.matches['uidval1'] == self.matches['uidval2']
@@ -311,5 +322,10 @@ class TestMailbox(TestBase):
             b'* 5 FETCH (FLAGS (\\Recent \\Seen))\r\n'
             b'append1 OK [APPENDUID ', (br'\d+', ), b' 105]'
             b' APPEND completed.\r\n')
+        self.transport.push_readline(
+            b'status1 STATUS INBOX (RECENT)\r\n')
+        self.transport.push_write(
+            b'* STATUS INBOX (RECENT 2)\r\n'
+            b'status1 OK STATUS completed.\r\n')
         self.transport.push_logout()
         await self.run()

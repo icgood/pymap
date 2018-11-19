@@ -12,7 +12,7 @@ class TestStore(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
-            b'store1 STORE * +FlAGS (\\Seen)\r\n')
+            b'store1 STORE * +FLAGS (\\Seen)\r\n')
         self.transport.push_write(
             b'* 4 FETCH (FLAGS (\\Recent \\Seen))\r\n'
             b'store1 OK STORE completed.\r\n')
@@ -23,7 +23,7 @@ class TestStore(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
-            b'store1 UID STORE * +FlAGS (\\Seen)\r\n')
+            b'store1 UID STORE * +FLAGS (\\Seen)\r\n')
         self.transport.push_write(
             b'* 4 FETCH (FLAGS (\\Recent \\Seen) UID 104)\r\n'
             b'store1 OK UID STORE completed.\r\n')
@@ -34,8 +34,9 @@ class TestStore(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
-            b'store1 STORE 1 +FlAGS (\\Recent)\r\n')
+            b'store1 STORE 1 +FLAGS (\\Recent)\r\n')
         self.transport.push_write(
+            b'* 1 FETCH (FLAGS (\\Seen))\r\n'
             b'store1 OK STORE completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -44,8 +45,20 @@ class TestStore(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
-            b'store1 STORE * -FlAGS (\\Recent)\r\n')
+            b'store1 STORE * -FLAGS (\\Recent)\r\n')
         self.transport.push_write(
+            b'* 4 FETCH (FLAGS (\\Recent))\r\n'
+            b'store1 OK STORE completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_store_set_non_recent(self):
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX')
+        self.transport.push_readline(
+            b'store1 STORE * FLAGS ()\r\n')
+        self.transport.push_write(
+            b'* 4 FETCH (FLAGS (\\Recent))\r\n'
             b'store1 OK STORE completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -54,8 +67,9 @@ class TestStore(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX', 4, 1)
         self.transport.push_readline(
-            b'store1 STORE * +FlAGS (\\Invalid)\r\n')
+            b'store1 STORE * +FLAGS (\\Invalid)\r\n')
         self.transport.push_write(
+            b'* 4 FETCH (FLAGS (\\Recent))\r\n'
             b'store1 OK STORE completed.\r\n')
         self.transport.push_logout()
         await self.run()

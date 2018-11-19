@@ -111,7 +111,6 @@ class MailboxData(MailboxDataInterface[Message, Message]):
                              maildir_flags=self.maildir_flags)
 
     async def add(self, message: Message, recent: bool = False) -> 'Message':
-        recent = recent or message.recent
         async with self.messages_lock.write_lock():
             maildir_msg = message.maildir_msg
             if recent:
@@ -137,15 +136,21 @@ class MailboxData(MailboxDataInterface[Message, Message]):
                 return None
             return Message.from_maildir(uid, maildir_msg, self.maildir_flags)
 
-    async def delete(self, uid: int) -> None:
+    async def delete(self, *uids: int) -> None:
+        keys: Dict[int, str] = {}
         async with UidList.with_read(self._path) as uidl:
-            rec = uidl.get(uid)
-            key = rec.filename.split(':', 1)[0]
+            for uid in uids:
+                try:
+                    rec = uidl.get(uid)
+                    keys[uid] = rec.filename.split(':', 1)[0]
+                except KeyError:
+                    pass
         async with self.messages_lock.write_lock():
-            try:
-                del self._maildir[key]
-            except (KeyError, FileNotFoundError):
-                pass
+            for uid, key in keys.items():
+                try:
+                    del self._maildir[key]
+                except (KeyError, FileNotFoundError):
+                    pass
 
     async def save_flags(self, *messages: Message) -> None:
         keys: Dict[int, str] = {}

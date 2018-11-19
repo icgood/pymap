@@ -1,3 +1,4 @@
+
 from abc import abstractmethod
 from typing import Tuple, Optional, FrozenSet, Iterable, Sequence, TypeVar
 from typing_extensions import Protocol
@@ -362,7 +363,7 @@ class SessionInterface(Protocol[_SelectedT]):
                            sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[Iterable[int], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, int, FrozenSet[Flag]]], _SelectedT]:
         """Update the flags for the given set of messages.
 
         See Also:

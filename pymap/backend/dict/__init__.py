@@ -158,6 +158,5 @@ class Session(BaseSession):
                     msg_recent = True
                 else:
                     msg_recent = False
-                msg = Message.parse(0, msg_file, msg_flags, msg_dt,
-                                    recent=msg_recent)
-            await mbx.add(msg)
+                msg = Message.parse(0, msg_file, msg_flags, msg_dt)
+            await mbx.add(msg, msg_recent)

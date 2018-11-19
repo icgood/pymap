@@ -69,7 +69,7 @@ class MailboxData(MailboxDataInterface[Message, Message]):
         async with self.messages_lock.write_lock():
             self._max_uid += 1
             msg_copy = message.copy(self._max_uid)
-            msg_copy.recent = recent or message.recent
+            msg_copy.recent = recent
             self._messages[msg_copy.uid] = msg_copy
             return msg_copy
 
@@ -77,9 +77,13 @@ class MailboxData(MailboxDataInterface[Message, Message]):
         async with self.messages_lock.read_lock():
             return self._messages.get(uid)
 
-    async def delete(self, uid: int) -> None:
+    async def delete(self, *uids: int) -> None:
         async with self.messages_lock.write_lock():
-            del self._messages[uid]
+            for uid in uids:
+                try:
+                    del self._messages[uid]
+                except KeyError:
+                    pass
 
     async def save_flags(self, *messages: Message) -> None:
         pass
