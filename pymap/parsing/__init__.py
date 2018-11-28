@@ -6,9 +6,12 @@ from typing import Tuple, Generic, TypeVar, Sequence, Dict, Any, List, Type
 
 from .exceptions import NotParseable, UnexpectedType
 
-__all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine']
+__all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine',
+           'ParseableT']
 
-_ParseableT = TypeVar('_ParseableT')
+#: Type variable used for specifying the parseable type of a :class:`Parseable`
+#: sub-class.
+ParseableT = TypeVar('ParseableT')
 
 
 class Params:
@@ -75,7 +78,7 @@ class Params:
         return Params(**kwargs)
 
 
-class Parseable(Generic[_ParseableT], metaclass=ABCMeta):
+class Parseable(Generic[ParseableT], metaclass=ABCMeta):
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
 
@@ -90,7 +93,7 @@ class Parseable(Generic[_ParseableT], metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def value(self) -> _ParseableT:
+    def value(self) -> ParseableT:
         """The primary value associated with the parsed data."""
         ...
 

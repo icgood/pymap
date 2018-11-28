@@ -1,5 +1,6 @@
 
 from asyncio import BaseTransport, StreamWriter
+from socket import socket as _socket
 from typing import Any, Union, Optional, Tuple, Mapping
 
 __all__ = ['SocketInfo']
@@ -25,6 +26,13 @@ class SocketInfo:
     def __init__(self, transport: _Transport) -> None:
         super().__init__()
         self._transport = transport
+
+    @property
+    def socket(self) -> _socket:
+        sock = self._transport.get_extra_info('socket')
+        if sock is None:
+            raise ValueError('socket')
+        return sock
 
     @property
     def peername(self) -> _PeerName:

@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import TypeVar, Type, Tuple, Union, Sequence, FrozenSet
 
 from .astring import AString
+from .fetchattr import FetchRequirement
 from .flag import Flag
 from .sequenceset import SequenceSet
 from .. import Params, Parseable, ExpectedParseable, Space
@@ -11,7 +12,7 @@ from ..primitives import Atom, Number, QuotedString, ListP
 
 __all__ = ['SearchKey']
 
-_FT = TypeVar('_FT')
+_FilterT = TypeVar('_FilterT', bound='_FilterType')
 _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
                     Sequence['SearchKey'], SequenceSet, Flag,
                     datetime, int, str]
@@ -47,11 +48,32 @@ class SearchKey(Parseable[bytes]):
         return self.key
 
     @property
+    def requirement(self) -> FetchRequirement:
+        """Indicates the data required to fulfill this search key."""
+        key_name = self.key
+        if key_name == b'ALL':
+            return FetchRequirement.NONE
+        elif key_name == b'KEYSET':
+            keyset_reqs = {key.requirement for key in self.filter_key_set}
+            return FetchRequirement.reduce(keyset_reqs)
+        elif key_name == b'OR':
+            left, right = self.filter_key_or
+            key_or_reqs = {left.requirement, right.requirement}
+            return FetchRequirement.reduce(key_or_reqs)
+        elif key_name in (b'SENTBEFORE', b'SENTON', b'SENTSINCE', b'BCC',
+                          b'CC', b'FROM', b'SUBJECT', b'TO', b'HEADER'):
+            return FetchRequirement.HEADERS
+        elif key_name in (b'BODY', b'TEXT'):
+            return FetchRequirement.BODY
+        else:
+            return FetchRequirement.METADATA
+
+    @property
     def not_inverse(self) -> 'SearchKey':
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
 
-    def _get_filter(self, cls: Type[_FT]) -> _FT:
+    def _get_filter(self, cls: Type[_FilterT]) -> _FilterT:
         if not isinstance(self.filter, cls):
             raise TypeError(self.filter)
         return self.filter

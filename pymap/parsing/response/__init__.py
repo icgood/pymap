@@ -4,9 +4,12 @@ from typing import TypeVar, Type, Any, Optional, List, Dict, Tuple
 from ...bytes import MaybeBytes, BytesFormat
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
-           'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth']
+           'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth',
+           'ResponseT']
 
-_ResponseT = TypeVar('_ResponseT', bound='Response')
+#: Type variable with an upper bound of :class:`Response`.
+ResponseT = TypeVar('ResponseT', bound='Response')
+
 _Mergeable = Dict[Tuple[Type['Response'], Any], int]
 
 
@@ -149,7 +152,7 @@ class Response:
         """
         raise TypeError(self)
 
-    def merge(self: _ResponseT, other: _ResponseT) -> _ResponseT:
+    def merge(self: ResponseT, other: ResponseT) -> ResponseT:
         """Return a copy of this response with the other response merged in.
 
         Args:

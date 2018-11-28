@@ -16,7 +16,6 @@ from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.specials.flag import Flag, Recent
-from pymap.sockinfo import SocketInfo
 
 from .mailbox import Message, MailboxData, MailboxSet
 from ..session import BaseSession
@@ -79,7 +78,7 @@ class Config(IMAPConfig):
         return super().parse_args(args, demo_data=args.demo_data, **extra)
 
 
-class Session(BaseSession):
+class Session(BaseSession[MailboxData]):
     """The session implementation for the dict backend."""
 
     resource = __name__
@@ -87,13 +86,12 @@ class Session(BaseSession):
     @classmethod
     async def login(cls: Type[_SessionT],
                     credentials: AuthenticationCredentials,
-                    config: Config, sock_info: SocketInfo) -> _SessionT:
+                    config: Config) -> _SessionT:
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.
 
         """
-        _ = sock_info  # noqa
         user = credentials.authcid
         password = await cls.get_password(config, user)
         if not password or not credentials.check_secret(password):

@@ -7,18 +7,16 @@ mailbox storage and `MailboxFormat/Maildir
 import os.path
 from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
-from mailbox import Maildir  # type: ignore
-from typing import Any, Tuple, Mapping, TypeVar, Type
+from typing import Any, Optional, Tuple, Mapping, TypeVar, Type
 
 from pysasl import AuthenticationCredentials
 
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.session import LoginProtocol
-from pymap.sockinfo import SocketInfo
 
 from .layout import MaildirLayout
-from .mailbox import MailboxSet
+from .mailbox import Maildir, MailboxData, MailboxSet
 from ..session import BaseSession
 
 __all__ = ['add_subparser', 'init', 'Config', 'Session']
@@ -54,12 +52,22 @@ class Config(IMAPConfig):
     """
 
     def __init__(self, args: Namespace, users_file: str = None,
-                 base_dir: str = '.', layout: str = '++',
+                 base_dir: str = None, layout: str = '++',
                  **extra: Any) -> None:
         super().__init__(args, **extra)
         self._users_file = users_file
-        self.base_dir = base_dir
+        self.base_dir = self._get_base_dir(base_dir, users_file)
         self.layout = layout
+
+    @classmethod
+    def _get_base_dir(self, base_dir: Optional[str],
+                      users_file: Optional[str]) -> str:
+        if base_dir:
+            return base_dir
+        elif users_file:
+            return os.path.dirname(users_file)
+        else:
+            raise ValueError('--base-dir', base_dir)
 
     @property
     def users_file(self) -> str:
@@ -77,9 +85,9 @@ class Config(IMAPConfig):
         relative path.
 
         """
-        if self._users_file is None:
-            raise ValueError()
-        return self.args.users_file
+        if not self._users_file:
+            raise ValueError('users_file', self._users_file)
+        return self._users_file
 
     @classmethod
     def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
@@ -90,7 +98,7 @@ class Config(IMAPConfig):
                                   executor=executor, **extra)
 
 
-class Session(BaseSession):
+class Session(BaseSession[MailboxData]):
     """The session implementation for the maildir backend."""
 
     resource = __name__
@@ -98,12 +106,11 @@ class Session(BaseSession):
     @classmethod
     async def login(cls: Type[_SessionT],
                     credentials: AuthenticationCredentials,
-                    config: Config, sock_info: SocketInfo) -> _SessionT:
+                    config: Config) -> _SessionT:
         """Checks the given credentials for a valid login and returns a new
         session.
 
         """
-        _ = sock_info  # noqa
         user = credentials.authcid
         password, user_dir = await cls.find_user(config, user)
         if not credentials.check_secret(password):
@@ -137,5 +144,5 @@ class Session(BaseSession):
     def _load_maildir(cls, config: Config, user_dir: str) \
             -> Tuple[Maildir, MaildirLayout]:
         full_path = os.path.join(config.base_dir, user_dir)
-        layout = MaildirLayout.get(full_path, config.layout)
+        layout = MaildirLayout.get(full_path, config.layout, Maildir)
         return Maildir(full_path, create=True), layout

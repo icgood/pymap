@@ -13,9 +13,11 @@ from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
-__all__ = ['SelectedSet', 'SelectedSnapshot', 'SelectedMailbox']
+__all__ = ['SelectedSet', 'SelectedSnapshot', 'SelectedMailbox', 'SelectedT']
 
-_SelectedT = TypeVar('_SelectedT', bound='SelectedMailbox')
+#: Type variable with an upper bound of :class:`SelectedMailbox`.
+SelectedT = TypeVar('SelectedT', bound='SelectedMailbox')
+
 _Flags = FrozenSet[Flag]
 _Message = Tuple[int, _Flags]
 _flags_attr = FetchAttribute(b'FLAGS')
@@ -244,9 +246,8 @@ class SelectedMailbox:
             uids: The current set of UIDs in the mailbox.
 
         """
-        snapshot = self.snapshot
         if self._hide_expunged:
-            snapshot_uids = frozenset(snapshot.messages.keys())
+            snapshot_uids = frozenset(self.snapshot.messages.keys())
             all_uids = uids | snapshot_uids
         else:
             all_uids = uids
@@ -264,8 +265,8 @@ class SelectedMailbox:
             if idx in all_idx:
                 yield (seq, uid)
 
-    def fork(self: _SelectedT, command: Command) \
-            -> Tuple[_SelectedT, Iterable[Response]]:
+    def fork(self: SelectedT, command: Command) \
+            -> Tuple[SelectedT, Iterable[Response]]:
         """Compares the state of the current object to that of the last fork,
         returning the untagged responses that reflect any changes. A new copy
         of the object is also returned, ready for the next command.
@@ -274,11 +275,16 @@ class SelectedMailbox:
             command: The command that was finished.
 
         """
-        cls: Type[_SelectedT] = type(self)
+        cls: Type[SelectedT] = type(self)
         copy = cls(self.name, self.readonly, self._permanent_flags,
                    self._session_flags, self._selected_set, **self.kwargs)
+        if self._hide_expunged and self._snapshot:
+            messages = self.snapshot.messages.copy()
+            messages.update(self._messages)
+        else:
+            messages = self._messages
         copy._snapshot = SelectedSnapshot(self.uid_validity, self.next_uid,
-                                          self.recent, self._messages)
+                                          self.recent, messages)
         if self._selected_set:
             self._selected_set._set.discard(self)
             self._selected_set._set.add(copy)

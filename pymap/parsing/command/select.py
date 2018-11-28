@@ -477,7 +477,7 @@ class IdleCommand(CommandSelect):
     def parse_done(self, buf: bytes, params: Params) -> bytes:
         try:
             cont_len = len(self.continuation)
-            if buf[0:cont_len].upper() != self.continuation:
+            if bytes(buf[0:cont_len]).upper() != self.continuation:
                 raise NotParseable(buf)
             _, buf = EndLine.parse(buf[cont_len:], params)
             return buf

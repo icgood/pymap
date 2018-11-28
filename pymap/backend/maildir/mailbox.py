@@ -1,30 +1,84 @@
 
 import errno
+import os
+import os.path
 from datetime import datetime
 from io import BytesIO
-from mailbox import Maildir, MaildirMessage  # type: ignore
-from typing import Tuple, Sequence, Dict, Optional, AsyncIterable, FrozenSet
+from mailbox import Maildir as _Maildir, MaildirMessage  # type: ignore
+from typing import Tuple, Sequence, Dict, Optional, FrozenSet, \
+    Iterable, AsyncIterable
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
 from pymap.message import AppendMessage
-from pymap.parsing.specials import Flag
-from pymap.selected import SelectedSet
+from pymap.parsing.specials import Flag, FetchRequirement
+from pymap.selected import SelectedSet, SelectedMailbox
 
 from .flags import MaildirFlags
 from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
-from ..mailbox import LoadedMessage, MailboxDataInterface, MailboxSetInterface
+from ..mailbox import MailboxDataInterface, MailboxSetInterface, \
+    Message as _Message
 
-__all__ = ['Message', 'MailboxData', 'MailboxSet']
-
-_Db = Dict[str, bytes]
+__all__ = ['Maildir', 'Message', 'MailboxData', 'MailboxSet']
 
 
-class Message(LoadedMessage):
+class Maildir(_Maildir):
+
+    def claim_new(self) -> Iterable[str]:
+        """Checks for messages in the ``new`` subdirectory, moving them to
+        ``cur`` and returning their keys.
+
+        """
+        new_subdir = self._paths['new']
+        cur_subdir = self._paths['cur']
+        for name in os.listdir(new_subdir):
+            new_path = os.path.join(new_subdir, name)
+            cur_path = os.path.join(cur_subdir, name)
+            try:
+                os.rename(new_path, cur_path)
+            except FileNotFoundError:
+                pass
+            else:
+                yield name.rsplit(self.colon, 1)[0]
+
+    def get_message_metadata(self, key: str) -> MaildirMessage:
+        """Like :meth:`~mailbox.Maildir.get_message` but the message contents
+        are not read from disk.
+
+        """
+        msg = MaildirMessage()
+        subpath = self._lookup(key)
+        subdir, name = os.path.split(subpath)
+        msg.set_subdir(subdir)
+        if self.colon in name:
+            msg.set_info(name.rsplit(self.colon, 1)[-1])
+        msg.set_date(os.path.getmtime(os.path.join(self._path, subpath)))
+        return msg
+
+    def update_metadata(self, key: str, msg: MaildirMessage) -> None:
+        """Uses :func:`os.rename` to atomically update the message filename
+        based on :meth:`~mailbox.MaildirMessage.get_info`.
+
+        """
+        subpath = self._lookup(key)
+        subdir, name = os.path.split(subpath)
+        new_subdir = msg.get_subdir()
+        new_name = key + self.colon + msg.get_info()
+        if subdir != new_subdir:
+            raise ValueError('Message subdir may not be updated')
+        elif name != new_name:
+            new_subpath = os.path.join(msg.get_subdir(), new_name)
+            old_path = os.path.join(self._path, subpath)
+            new_path = os.path.join(self._path, new_subpath)
+            os.rename(old_path, new_path)
+            self._toc[key] = new_subpath
+
+
+class Message(_Message):
 
     @property
     def maildir_flags(self) -> MaildirFlags:
@@ -43,16 +97,21 @@ class Message(LoadedMessage):
 
     @classmethod
     def from_maildir(cls, uid: int, maildir_msg: MaildirMessage,
-                     maildir_flags: 'MaildirFlags') -> 'Message':
+                     maildir_flags: 'MaildirFlags',
+                     metadata_only: bool) -> 'Message':
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         recent = maildir_msg.get_subdir() == 'new'
         msg_dt = datetime.fromtimestamp(maildir_msg.get_date())
-        msg_data = BytesIO(bytes(maildir_msg))
-        return cls.parse(uid, msg_data, flag_set, msg_dt, recent=recent,
-                         maildir_flags=maildir_flags)
+        if metadata_only:
+            return cls(uid, flag_set, msg_dt, recent=recent,
+                       maildir_flags=maildir_flags)
+        else:
+            msg_data = BytesIO(bytes(maildir_msg))
+            return cls.parse(uid, msg_data, flag_set, msg_dt, recent=recent,
+                             maildir_flags=maildir_flags)
 
 
-class MailboxData(MailboxDataInterface[Message, Message]):
+class MailboxData(MailboxDataInterface[Message]):
 
     db_retry_count = 100
     db_retry_delay = 0.1
@@ -125,63 +184,75 @@ class MailboxData(MailboxDataInterface[Message, Message]):
         msg_copy.recent = recent
         return msg_copy
 
-    async def get(self, uid: int) -> Optional[Message]:
+    async def get(self, uid: int,
+                  requirement: FetchRequirement = FetchRequirement.METADATA) \
+            -> Optional[Message]:
         async with UidList.with_read(self._path) as uidl:
             next_uid = uidl.next_uid
-            rec = uidl.get(uid)
-            key = rec.filename.split(':', 1)[0]
+            try:
+                key = uidl.get(uid).key
+            except KeyError:
+                return None
+        metadata_only = (requirement == FetchRequirement.METADATA)
         async with self.messages_lock.read_lock():
             try:
-                maildir_msg = self._maildir[key]
+                if metadata_only:
+                    maildir_msg = self._maildir.get_message_metadata(key)
+                else:
+                    maildir_msg = self._maildir.get_message(key)
             except (KeyError, FileNotFoundError):
                 if uid < next_uid:
                     return Message(uid, expunged=True)
                 else:
                     return None
-            return Message.from_maildir(uid, maildir_msg, self.maildir_flags)
+            return Message.from_maildir(uid, maildir_msg, self.maildir_flags,
+                                        metadata_only)
 
-    async def delete(self, *uids: int) -> None:
-        keys: Dict[int, str] = {}
+    async def delete(self, uids: Iterable[int]) -> None:
         async with UidList.with_read(self._path) as uidl:
-            for uid in uids:
-                try:
-                    rec = uidl.get(uid)
-                    keys[uid] = rec.filename.split(':', 1)[0]
-                except KeyError:
-                    pass
+            records = uidl.get_all(uids)
         async with self.messages_lock.write_lock():
-            for uid, key in keys.items():
+            for uid, rec in records.items():
                 try:
-                    del self._maildir[key]
+                    self._maildir.remove(rec.key)
                 except (KeyError, FileNotFoundError):
                     pass
 
-    async def save_flags(self, *messages: Message) -> None:
-        keys: Dict[int, str] = {}
-        async with UidList.with_read(self._path) as uidl:
-            for message in messages:
-                rec = uidl.get(message.uid)
-                keys[message.uid] = rec.filename.split(':', 1)[0]
+    async def claim_recent(self, selected: SelectedMailbox) -> None:
         async with self.messages_lock.write_lock():
-            for message in messages:
-                key = keys[message.uid]
+            keys = self._maildir.claim_new()
+        async with UidList.with_read(self._path) as uidl:
+            for rec in uidl.records:
+                if rec.key in keys:
+                    selected.session_flags.add_recent(rec.uid)
+
+    async def save_flags(self, messages: Iterable[Message]) -> None:
+        msgs_map = {msg.uid: msg for msg in messages}
+        async with UidList.with_read(self._path) as uidl:
+            records = uidl.get_all(msgs_map.keys())
+        async with self.messages_lock.write_lock():
+            for uid, rec in records.items():
+                key = rec.key
+                message = msgs_map[uid]
                 flag_set = message.permanent_flags
                 flag_str = self.maildir_flags.to_maildir(flag_set)
                 try:
-                    maildir_msg = self._maildir[key]
+                    maildir_msg = self._maildir.get_message_metadata(key)
+                except (KeyError, FileNotFoundError):
+                    continue
+                maildir_msg.set_flags(flag_str)
+                maildir_msg.set_subdir('new' if message.recent else 'cur')
+                try:
+                    self._maildir.update_metadata(key, maildir_msg)
                 except (KeyError, FileNotFoundError):
                     pass
-                else:
-                    maildir_msg.set_flags(flag_str)
-                    maildir_msg.set_subdir('new' if message.recent else 'cur')
-                    self._maildir[key] = maildir_msg
 
     async def cleanup(self) -> None:
         self._maildir.clean()
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
             for rec in list(uidl.records):
-                key = rec.filename.split(':', 1)[0]
+                key = rec.key
                 info = keys.get(key)
                 if info is None:
                     uidl.remove(rec.uid)
@@ -191,54 +262,45 @@ class MailboxData(MailboxDataInterface[Message, Message]):
                     uidl.set(new_rec)
 
     async def uids(self) -> AsyncIterable[int]:
-        uids: Dict[int, str] = {}
         async with UidList.with_read(self._path) as uidl:
-            for rec in uidl.records:
-                key = rec.filename.split(':', 1)[0]
-                uids[rec.uid] = key
+            uids = {rec.uid: rec.key for rec in uidl.records}
         async with self.messages_lock.read_lock():
-            for uid, key in uids.items():
-                if key in self._maildir:
-                    yield uid
+            keys = frozenset(self._maildir.keys())
+        for uid, key in uids.items():
+            if key in keys:
+                yield uid
 
     async def messages(self) -> AsyncIterable[Message]:
-        uids: Dict[int, str] = {}
         async with UidList.with_read(self._path) as uidl:
-            for rec in uidl.records:
-                key = rec.filename.split(':', 1)[0]
-                uids[rec.uid] = key
+            uids = {rec.uid: rec.key for rec in uidl.records}
         async with self.messages_lock.read_lock():
             for uid, key in uids.items():
                 try:
-                    maildir_msg = self._maildir[key]
+                    maildir_msg = self._maildir.get_message_metadata(key)
                 except (KeyError, FileNotFoundError):
                     pass
                 else:
                     yield Message.from_maildir(
-                        uid, maildir_msg, self.maildir_flags)
+                        uid, maildir_msg, self.maildir_flags, True)
 
     async def items(self) -> AsyncIterable[Tuple[int, Message]]:
-        uids: Dict[int, str] = {}
         async with UidList.with_read(self._path) as uidl:
-            for rec in uidl.records:
-                key = rec.filename.split(':', 1)[0]
-                uids[rec.uid] = key
+            uids = {rec.uid: rec.key for rec in uidl.records}
         async with self.messages_lock.read_lock():
             for uid, key in uids.items():
                 try:
-                    maildir_msg = self._maildir[key]
+                    maildir_msg = self._maildir.get_message_metadata(key)
                 except (KeyError, FileNotFoundError):
                     pass
                 else:
                     yield uid, Message.from_maildir(
-                        uid, maildir_msg, self.maildir_flags)
+                        uid, maildir_msg, self.maildir_flags, True)
 
     async def reset(self) -> 'MailboxData':
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
             for rec in uidl.records:
-                key = rec.filename.split(':', 1)[0]
-                keys.pop(key, None)
+                keys.pop(rec.key, None)
             if not keys:
                 raise NoChanges()
             for key, info in keys.items():
@@ -255,7 +317,7 @@ class MailboxData(MailboxDataInterface[Message, Message]):
         async with self.messages_lock.read_lock():
             for key in self._maildir.keys():
                 try:
-                    msg = self._maildir[key]
+                    msg = self._maildir.get_message_metadata(key)
                 except (KeyError, FileNotFoundError):
                     pass
                 else:

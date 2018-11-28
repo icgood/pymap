@@ -6,7 +6,7 @@ from typing import FrozenSet, Optional, Iterable
 
 from .exceptions import SearchNotAllowed
 from .flags import SessionFlags
-from .interfaces.message import MessageInterface, LoadedMessageInterface
+from .interfaces.message import MessageInterface
 from .parsing.specials import SearchKey, SequenceSet
 from .parsing.specials.flag import Flag, Answered, Deleted, Draft, Flagged, \
     Recent, Seen
@@ -188,18 +188,6 @@ class SearchCriteriaSet(SearchCriteria):
         return all(crit.matches(msg_seq, msg) for crit in self.all_criteria)
 
 
-class _LoadedSearchCriteria(SearchCriteria):
-
-    @classmethod
-    def _get_loaded(cls, msg: MessageInterface) -> LoadedMessageInterface:
-        if not isinstance(msg, LoadedMessageInterface):
-            raise SearchNotAllowed()
-        return msg
-
-    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
-        raise NotImplementedError
-
-
 class InverseSearchCriteria(SearchCriteria):
     """Matches only if the given search criteria does not match."""
 
@@ -298,17 +286,16 @@ class DateSearchCriteria(SearchCriteria):
         raise ValueError(self.cmp)
 
 
-class HeaderDateSearchCriteria(DateSearchCriteria, _LoadedSearchCriteria):
+class HeaderDateSearchCriteria(DateSearchCriteria):
     """Matches by comparing against the ``Date:`` header of the message."""
 
     @classmethod
     def _get_msg_date(cls, msg: MessageInterface) -> Optional[datetime]:
-        loaded = cls._get_loaded(msg)
-        envelope = loaded.get_envelope_structure()
+        envelope = msg.get_envelope_structure()
         return envelope.date.datetime if envelope.date else None
 
 
-class SizeSearchCriteria(_LoadedSearchCriteria):
+class SizeSearchCriteria(SearchCriteria):
     """Matches by comparing against the size of the message."""
 
     def __init__(self, size: int, cmp: str, params: SearchParams) -> None:
@@ -317,8 +304,7 @@ class SizeSearchCriteria(_LoadedSearchCriteria):
         self.cmp = cmp
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
-        loaded = self._get_loaded(msg)
-        size = loaded.get_size()
+        size = msg.get_size()
         if self.cmp == '<':
             return size < self.size
         elif self.cmp == '>':
@@ -326,7 +312,7 @@ class SizeSearchCriteria(_LoadedSearchCriteria):
         raise ValueError(self.cmp)
 
 
-class EnvelopeSearchCriteria(_LoadedSearchCriteria):
+class EnvelopeSearchCriteria(SearchCriteria):
     """Matches by checking for strings within various fields of the envelope
     structure.
 
@@ -338,8 +324,7 @@ class EnvelopeSearchCriteria(_LoadedSearchCriteria):
         self.value = value
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
-        loaded = self._get_loaded(msg)
-        envelope = loaded.get_envelope_structure()
+        envelope = msg.get_envelope_structure()
         if self.key == b'BCC':
             if not envelope.bcc:
                 return False
@@ -363,7 +348,7 @@ class EnvelopeSearchCriteria(_LoadedSearchCriteria):
         raise ValueError(self.key)
 
 
-class HeaderSearchCriteria(_LoadedSearchCriteria):
+class HeaderSearchCriteria(SearchCriteria):
     """Matches if the message has a header containing a value."""
 
     def __init__(self, name: str, value: str, params: SearchParams) -> None:
@@ -372,12 +357,11 @@ class HeaderSearchCriteria(_LoadedSearchCriteria):
         self.value = value
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
-        loaded = self._get_loaded(msg)
-        values = loaded.get_header(self.name)
+        values = msg.get_header(self.name)
         return any(self.value in str(value) for value in values)
 
 
-class BodySearchCriteria(_LoadedSearchCriteria):
+class BodySearchCriteria(SearchCriteria):
     """Matches if the message body contains a value."""
 
     def __init__(self, value: str, with_headers: bool,
@@ -387,6 +371,5 @@ class BodySearchCriteria(_LoadedSearchCriteria):
         self.value = bytes(value, 'utf-8', 'replace')
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
-        loaded = self._get_loaded(msg)
-        data = loaded.get_body() if self.with_headers else loaded.get_text()
+        data = msg.get_body() if self.with_headers else msg.get_text()
         return data is not None and self.value in data

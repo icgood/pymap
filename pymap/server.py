@@ -14,8 +14,10 @@ from typing import List, Optional
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
+from .bytes import as_memoryview
 from .concurrent import Event, TimeoutError
 from .config import IMAPConfig
+from .context import current_command, socket_info
 from .exceptions import ResponseError
 from .interfaces.session import LoginProtocol
 from .parsing.command import Command
@@ -87,10 +89,10 @@ class IMAPConnection:
     def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
         self.reader = reader
         self.writer = writer
-        self.sock_info = SocketInfo(writer)
+        socket_info.set(SocketInfo(writer))
 
     def _real_print(self, prefix: str, output: bytes) -> None:
-        prefix = prefix % self.writer.get_extra_info('socket').fileno()
+        prefix = prefix % socket_info.get().socket.fileno()
         lines = re.split(br'\r?\n', output)
         if not lines[-1]:
             lines = lines[:-1]
@@ -112,7 +114,7 @@ class IMAPConnection:
             raise Disconnected
         extra = extra_literal + extra_line
         self._print('%d -->|', extra)
-        return extra
+        return as_memoryview(extra)
 
     async def authenticate(self, state: ConnectionState, mech_name: bytes) \
             -> Optional[AuthenticationCredentials]:
@@ -132,12 +134,12 @@ class IMAPConnection:
                     chal.set_response(b64decode(resp_bytes))
                 except binascii.Error as exc:
                     raise AuthenticationError(exc)
-                if resp_bytes.rstrip(b'\r\n') == b'*':
+                if bytes(resp_bytes).rstrip(b'\r\n') == b'*':
                     raise AuthenticationError('Authentication canceled.')
                 responses.append(chal)
 
     async def read_command(self) -> Command:
-        line = await self.reader.readline()
+        line = as_memoryview(await self.reader.readline())
         if self.reader.at_eof():
             raise Disconnected
         self._print('%d -->|', line)
@@ -221,10 +223,10 @@ class IMAPConnection:
             state: Defines the interaction with the backend plugin.
 
         """
-        self._print('%d +++|', bytes(self.sock_info))
+        self._print('%d +++|', bytes(socket_info.get()))
         bad_commands = 0
         try:
-            greeting = await state.do_greeting(self.sock_info)
+            greeting = await state.do_greeting()
         except ResponseError as exc:
             resp = exc.get_response(b'*')
             resp.condition = ResponseBye.condition
@@ -249,17 +251,16 @@ class IMAPConnection:
                 raise
             else:
                 bad_commands = 0
+                prev_cmd = current_command.set(cmd)
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
-                        response = await state.do_authenticate(
-                                cmd, self.sock_info, creds)
+                        response = await state.do_authenticate(cmd, creds)
                     elif isinstance(cmd, LoginCommand):
                         creds = AuthenticationCredentials(
                             cmd.userid.decode('utf-8', 'surrogateescape'),
                             cmd.password.decode('utf-8', 'surrogateescape'))
-                        response = await state.do_login(
-                                cmd, self.sock_info, creds)
+                        response = await state.do_login(cmd, creds)
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)
                     else:
@@ -287,5 +288,7 @@ class IMAPConnection:
                     if isinstance(cmd, StartTLSCommand) and state.ssl_context \
                             and isinstance(response, ResponseOk):
                         await self.start_tls(state.ssl_context)
+                finally:
+                    current_command.reset(prev_cmd)
         self._print('%d ---|', b'<disconnected>')
         self.writer.close()
