@@ -1,24 +1,21 @@
 
 from collections import OrderedDict
 from io import BytesIO
-from typing import Tuple, Sequence, Dict, Optional, AsyncIterable
+from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage
-from pymap.selected import SelectedSet
+from pymap.parsing.specials import FetchRequirement
+from pymap.selected import SelectedSet, SelectedMailbox
 
-from ..mailbox import LoadedMessage, MailboxDataInterface, MailboxSetInterface
+from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
 
 
-class Message(LoadedMessage):
-    pass
-
-
-class MailboxData(MailboxDataInterface[Message, Message]):
+class MailboxData(MailboxDataInterface[Message]):
     """Implementation of :class:`~pymap.backend.mailbox.MailboxDataInterface`
     for the dict backend.
 
@@ -73,14 +70,16 @@ class MailboxData(MailboxDataInterface[Message, Message]):
             self._messages[msg_copy.uid] = msg_copy
             return msg_copy
 
-    async def get(self, uid: int) -> Optional[Message]:
+    async def get(self, uid: int,
+                  requirement: FetchRequirement = FetchRequirement.METADATA) \
+            -> Optional[Message]:
         async with self.messages_lock.read_lock():
             ret = self._messages.get(uid)
             if ret is None and uid <= self._max_uid:
                 ret = Message(uid, expunged=True)
             return ret
 
-    async def delete(self, *uids: int) -> None:
+    async def delete(self, uids: Iterable[int]) -> None:
         async with self.messages_lock.write_lock():
             for uid in uids:
                 try:
@@ -88,7 +87,13 @@ class MailboxData(MailboxDataInterface[Message, Message]):
                 except KeyError:
                     pass
 
-    async def save_flags(self, *messages: Message) -> None:
+    async def claim_recent(self, selected: SelectedMailbox) -> None:
+        async for msg in self.messages():
+            if msg.recent:
+                msg.recent = False
+                selected.session_flags.add_recent(msg.uid)
+
+    async def save_flags(self, messages: Iterable[Message]) -> None:
         pass
 
     async def cleanup(self) -> None:

@@ -1,6 +1,7 @@
+import enum
 import re
-from functools import total_ordering
-from typing import Tuple, Optional, Union, Sequence, FrozenSet
+from functools import total_ordering, reduce
+from typing import Tuple, Optional, Union, Iterable, Sequence, FrozenSet
 
 from . import AString
 from .. import Params, Parseable
@@ -8,7 +9,34 @@ from ..exceptions import NotParseable
 from ..primitives import Atom, ListP
 from ...bytes import BytesFormat
 
-__all__ = ['FetchAttribute']
+__all__ = ['FetchAttribute', 'FetchRequirement']
+
+
+class FetchRequirement(enum.Flag):
+    """Indicates the data required to fulfill a message fetch.
+
+    Attributes:
+        NONE: No data is required.
+        METADATA: The IMAP metadata is required.
+        HEADERS: The message headers are required.
+        BODY: The parsed MIME message body is required.
+
+    """
+    NONE = 0
+    METADATA = enum.auto()
+    HEADERS = enum.auto()
+    BODY = enum.auto()
+
+    @classmethod
+    def reduce(cls, requirements: Iterable['FetchRequirement']) \
+            -> 'FetchRequirement':
+        """Reduce a set of fetch requirements into a single requirement.
+
+        Args:
+            requirements: The set of fetch requirements.
+
+        """
+        return reduce(lambda x, y: x | y, requirements, cls.NONE)
 
 
 @total_ordering
@@ -88,6 +116,17 @@ class FetchAttribute(Parseable[bytes]):
         elif self.value in (b'RFC822', b'RFC822.TEXT'):
             return True
         return False
+
+    @property
+    def requirement(self) -> FetchRequirement:
+        """Indicates the data required to fulfill this fetch attribute."""
+        attr_name = self.attribute
+        if attr_name in (b'UID', b'FLAGS', b'INTERNALDATE'):
+            return FetchRequirement.METADATA
+        elif attr_name in (b'ENVELOPE', b'RFC822.HEADER'):
+            return FetchRequirement.HEADERS
+        else:
+            return FetchRequirement.BODY
 
     @property
     def raw(self) -> bytes:

@@ -36,7 +36,6 @@ from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
 from .parsing.specials import DateTime, FetchAttribute, StatusAttribute
-from .sockinfo import SocketInfo
 from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
 
@@ -95,27 +94,26 @@ class ConnectionState:
                               [b'AUTH=%b' % mech.name for mech in
                                self.auth.server_mechanisms])
 
-    async def do_greeting(self, sock_info: SocketInfo) -> Response:
+    async def do_greeting(self) -> Response:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
-            self._session = await self.login(
-                preauth_creds, self.config, sock_info)
+            self._session = await self.login(preauth_creds, self.config)
         resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
         return resp_cls(b'*', b'Server ready ' + fqdn, self.capability)
 
-    async def do_authenticate(self, cmd: _AuthCommands, sock_info: SocketInfo,
+    async def do_authenticate(self, cmd: _AuthCommands,
                               creds: Optional[AuthenticationCredentials]):
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self._session = await self.login(creds, self.config, sock_info)
+        self._session = await self.login(creds, self.config)
         return ResponseOk(cmd.tag, b'Authentication successful.',
                           self.capability)
 
-    async def do_login(self, cmd: LoginCommand, sock_info: SocketInfo,
+    async def do_login(self, cmd: LoginCommand,
                        creds: AuthenticationCredentials) -> Response:
         if b'LOGINDISABLED' in self.capability:
             raise CommandNotAllowed(b'LOGIN is disabled.')
-        return await self.do_authenticate(cmd, sock_info, creds)
+        return await self.do_authenticate(cmd, creds)
 
     async def do_starttls(self, cmd: StartTLSCommand):
         if self.ssl_context is None:

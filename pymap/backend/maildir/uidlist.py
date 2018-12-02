@@ -28,6 +28,11 @@ class Record(NamedTuple):
     fields: Mapping[str, Any]
     filename: str
 
+    @property
+    def key(self) -> str:
+        """The :class:`~mailbox.Maildir` key value."""
+        return self.filename.split(':', 1)[0]
+
 
 class UidList(FileWriteable):
     """Maintains the file with UID mapping to maildir files.
@@ -63,11 +68,24 @@ class UidList(FileWriteable):
     def get(self, uid: int) -> Record:
         """Get a single record by its UID.
 
+        Args:
+            uid: The message UID.
+
         Raises:
             KeyError: The UID does not exist.
 
         """
         return self._records[uid]
+
+    def get_all(self, uids: Iterable[int]) -> Mapping[int, Record]:
+        """Get records by a set of UIDs.
+
+        Args:
+            uids: The message UIDs.
+
+        """
+        return {uid: self._records[uid] for uid in uids
+                if uid in self._records}
 
     def set(self, rec: Record) -> None:
         """Add or update the record in the UID list file."""

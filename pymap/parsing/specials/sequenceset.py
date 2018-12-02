@@ -140,6 +140,9 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
     def __hash__(self) -> int:
         return hash((tuple(self.sequences), self.uid))
 
+    def __repr__(self) -> str:
+        return '<%s set=%r>' % (type(self).__name__, self.sequences)
+
     @classmethod
     def _parse_part(cls, buf: bytes) -> Tuple[_SeqElem, bytes]:
         if buf and buf[0] == 0x2a:

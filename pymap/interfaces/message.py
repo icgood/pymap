@@ -8,9 +8,10 @@ from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
 
-__all__ = ['Header', 'MessageInterface', 'LoadedMessageInterface']
+__all__ = ['Header', 'MessageInterface', 'MessageT']
 
-_MessageT = TypeVar('_MessageT', bound='MessageInterface')
+#: Type variable with an upper bound of :class:`MessageInterface`.
+MessageT = TypeVar('MessageT', bound='MessageInterface')
 
 
 class Header(Protocol):
@@ -55,7 +56,7 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def copy(self: _MessageT, new_uid: int) -> _MessageT:
+    def copy(self: MessageT, new_uid: int) -> MessageT:
         """Return a copy of the message with a new UID.
 
         Args:
@@ -86,15 +87,6 @@ class MessageInterface(Protocol):
 
         """
         ...
-
-
-class LoadedMessageInterface(MessageInterface):
-    """A message with its contents loaded, such that it pulls the information
-    from a message object necessary to gather `message attributes
-    <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the
-    `FETCH responses <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_.
-
-    """
 
     @abstractmethod
     def get_header(self, name: str) -> Sequence[Header]:

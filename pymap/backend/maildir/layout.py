@@ -4,7 +4,7 @@ import os
 import os.path
 from abc import abstractmethod, ABCMeta
 from mailbox import Maildir, NoSuchMailboxError  # type: ignore
-from typing import Sequence, Iterable
+from typing import Type, Sequence, Iterable
 from typing_extensions import Protocol
 
 __all__ = ['MaildirLayout', 'DefaultLayout', 'FilesystemLayout']
@@ -22,21 +22,23 @@ class MaildirLayout(Protocol):
     """
 
     @classmethod
-    def get(cls, path: str, layout: str) -> 'MaildirLayout':
+    def get(cls, path: str, layout: str,
+            maildir_type: Type[Maildir] = Maildir) -> 'MaildirLayout':
         """
 
         Args:
             path: The root path of the inbox.
             layout: The layout name, e.g. ``'++'`` or ``'fs'``.
+            maildir_type: The :class:`~mailbox.Maildir` class override.
 
         Raises:
             ValueError: The layout name was not recognized.
 
         """
         if layout == '++':
-            return DefaultLayout(path)
+            return DefaultLayout(path, maildir_type)
         elif layout == 'fs':
-            return FilesystemLayout(path)
+            return FilesystemLayout(path, maildir_type)
         else:
             raise ValueError(layout)
 
@@ -137,9 +139,11 @@ class MaildirLayout(Protocol):
 
 class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, maildir_type: Type[Maildir] = Maildir) \
+            -> None:
         super().__init__()
         self._path = path
+        self._maildir = maildir_type
 
     @property
     def path(self) -> str:
@@ -186,7 +190,7 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
     def get_folder(self, name: str, delimiter: str) -> Maildir:
         path = self.get_path(name, delimiter)
         try:
-            return Maildir(path, create=False)
+            return self._maildir(path, create=False)
         except NoSuchMailboxError:
             raise FileNotFoundError(path)
 
@@ -197,7 +201,7 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
             if not os.path.isdir(path):
                 raise FileNotFoundError(path)
         path = self._get_path(parts)
-        maildir = Maildir(path, create=True)
+        maildir = self._maildir(path, create=True)
         maildirfolder = os.path.join(path, 'maildirfolder')
         with open(maildirfolder, 'x'):
             pass
@@ -232,11 +236,15 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
 
 class DefaultLayout(_BaseLayout):
     """The default Maildir++ layout, which uses sub-folder names starting
-    with a ``.`` and nested using a delimiter, e.g.::
+    with and using ``.`` as a delimiter for nesting , e.g.::
 
         .Trash/
         .Important.To-Do/
         .Important.Misc/
+
+    Args:
+        path: The root path of the inbox.
+        maildir_type: The :class:`~mailbox.Maildir` class override.
 
     """
 
@@ -281,7 +289,7 @@ class DefaultLayout(_BaseLayout):
                     dest_elem = dest_subdir + elem[len(subdir):]
                     dest_elem_path = os.path.join(self._path, dest_elem)
                     os.rename(elem_path, dest_elem_path)
-        return Maildir(dest_path, create=False)
+        return self._maildir(dest_path, create=False)
 
 
 class FilesystemLayout(_BaseLayout):
@@ -291,6 +299,10 @@ class FilesystemLayout(_BaseLayout):
         Trash/
         Important/To-Do/
         Important/Misc/
+
+    Args:
+        path: The root path of the inbox.
+        maildir_type: The :class:`~mailbox.Maildir` class override.
 
     """
 
@@ -321,4 +333,4 @@ class FilesystemLayout(_BaseLayout):
         path = self._get_path(source_parts)
         dest_path = self._get_path(dest_parts)
         os.rename(path, dest_path)
-        return Maildir(dest_path, create=False)
+        return self._maildir(dest_path, create=False)

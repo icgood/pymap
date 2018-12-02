@@ -1,22 +1,27 @@
 
 from abc import abstractmethod
-from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, AsyncIterable
+from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
+    Iterable, AsyncIterable
 from typing_extensions import Protocol
 
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import AppendMessage, BaseMessage, BaseLoadedMessage
-from pymap.parsing.specials import SequenceSet
+from pymap.message import AppendMessage, BaseMessage
+from pymap.parsing.specials import SequenceSet, FetchRequirement
 from pymap.parsing.specials.flag import get_system_flags, Flag, Recent, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 
 from .util import asyncenumerate
 
-__all__ = ['MailboxDataInterface', 'MailboxSetInterface',
-           'Message', 'LoadedMessage']
+__all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'Message',
+           'MessageT', 'MailboxDataT_co']
 
-_MessageT = TypeVar('_MessageT', bound='Message', contravariant=True)
-_LoadedT = TypeVar('_LoadedT', bound='LoadedMessage')
-_DataT = TypeVar('_DataT', bound='MailboxDataInterface', covariant=True)
+#: Type variable with an upper bound of :class:`Message`.
+MessageT = TypeVar('MessageT', bound='Message')
+
+#: Covariant type variable with an upper bound of
+#: :class:`MailboxDataInterface`.
+MailboxDataT_co = TypeVar('MailboxDataT_co', bound='MailboxDataInterface',
+                          covariant=True)
 
 
 class Message(BaseMessage):
@@ -40,15 +45,7 @@ class Message(BaseMessage):
         self._kwargs['recent'] = recent
 
 
-class LoadedMessage(BaseLoadedMessage, Message):
-    """Manages a single message. This message has had its contents loaded
-    into memory and parsed into a MIME representation.
-
-    """
-    pass
-
-
-class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
+class MailboxDataInterface(Protocol[MessageT]):
     """Manages the messages and metadata associated with a single mailbox."""
 
     @property
@@ -92,7 +89,7 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     @abstractmethod
-    def parse_message(self, append_msg: AppendMessage) -> _LoadedT:
+    def parse_message(self, append_msg: AppendMessage) -> MessageT:
         """Parse the raw message data into a loaded message object.
 
         Args:
@@ -102,7 +99,7 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     @abstractmethod
-    async def add(self, message: _LoadedT, recent: bool = False) -> _LoadedT:
+    async def add(self, message: MessageT, recent: bool = False) -> MessageT:
         """Adds a new message to the end of the mailbox, returning a copy of
         message with its assigned UID.
 
@@ -114,7 +111,9 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     @abstractmethod
-    async def get(self, uid: int) -> Optional[_LoadedT]:
+    async def get(self, uid: int,
+                  requirement: FetchRequirement = FetchRequirement.METADATA) \
+            -> Optional[MessageT]:
         """Return the message with the given UID. If the UID has been
         expunged, a message with
         :attr:`~pymap.interfaces.message.MessageInterface.expunged` set to
@@ -122,12 +121,13 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
 
         Args:
             uid: The message UID.
+            requirement: The data required from each message.
 
         """
         ...
 
     @abstractmethod
-    async def delete(self, *uids: int) -> None:
+    async def delete(self, uids: Iterable[int]) -> None:
         """Delete messages with the given UIDs.
 
         Args:
@@ -137,7 +137,18 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     @abstractmethod
-    async def save_flags(self, *messages: _MessageT) -> None:
+    async def claim_recent(self, selected: SelectedMailbox) -> None:
+        """Messages that are newly added to the mailbox are assigned the
+        ``\\Recent`` flag in the current selected mailbox session.
+
+        Args:
+            selected: The selected mailbox session.
+
+        """
+        ...
+
+    @abstractmethod
+    async def save_flags(self, messages: Iterable[MessageT]) -> None:
         """Save the flags currently stored in each message's
         :attr:`~pymap.interfaces.message.Message.permanent_flags` set.
 
@@ -164,20 +175,21 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         ...
 
     @abstractmethod
-    def messages(self) -> AsyncIterable[_LoadedT]:
+    def messages(self) -> AsyncIterable[MessageT]:
         """Return all of the active messages in the mailbox."""
         ...
 
     @abstractmethod
-    def items(self) -> AsyncIterable[Tuple[int, _LoadedT]]:
+    def items(self) -> AsyncIterable[Tuple[int, MessageT]]:
         """Return all of the active message UID and message pairs in the
         mailbox.
 
         """
         ...
 
-    async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
-            -> AsyncIterable[Tuple[int, _LoadedT]]:
+    async def find(self, seq_set: SequenceSet, selected: SelectedMailbox,
+                   requirement: FetchRequirement = FetchRequirement.METADATA) \
+            -> AsyncIterable[Tuple[int, MessageT]]:
         """Find the active message UID and message pairs in the mailbox that
         are contained in the given sequences set. Message sequence numbers
         are resolved by the selected mailbox session.
@@ -185,11 +197,12 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
         Args:
             seq_set: The sequence set of the desired messages.
             selected: The selected mailbox session.
+            requirement: The data required from each message.
 
         """
         mbx_uids = frozenset({uid async for uid in self.uids()})
         for seq, uid in selected.iter_set(seq_set, mbx_uids):
-            msg = await self.get(uid)
+            msg = await self.get(uid, requirement)
             if msg is not None:
                 yield (seq, msg)
 
@@ -213,12 +226,12 @@ class MailboxDataInterface(Protocol[_MessageT, _LoadedT]):
                                self.next_uid)
 
 
-class MailboxSetInterface(Protocol[_DataT]):
+class MailboxSetInterface(Protocol[MailboxDataT_co]):
     """Manages the set of mailboxes available to the authenticated user."""
 
     @property
     @abstractmethod
-    def inbox(self) -> _DataT:
+    def inbox(self) -> MailboxDataT_co:
         """The INBOX mailbox, which must always exist."""
         ...
 
@@ -264,7 +277,8 @@ class MailboxSetInterface(Protocol[_DataT]):
         ...
 
     @abstractmethod
-    async def get_mailbox(self, name: str, try_create: bool = False) -> _DataT:
+    async def get_mailbox(self, name: str, try_create: bool = False) \
+            -> MailboxDataT_co:
         """Return an existing mailbox.
 
         Args:
@@ -279,7 +293,7 @@ class MailboxSetInterface(Protocol[_DataT]):
         ...
 
     @abstractmethod
-    async def add_mailbox(self, name: str) -> _DataT:
+    async def add_mailbox(self, name: str) -> MailboxDataT_co:
         """Create a new mailbox.
 
         See Also:
@@ -312,7 +326,7 @@ class MailboxSetInterface(Protocol[_DataT]):
         ...
 
     @abstractmethod
-    async def rename_mailbox(self, before: str, after: str) -> _DataT:
+    async def rename_mailbox(self, before: str, after: str) -> MailboxDataT_co:
         """Rename an existing mailbox.
 
         See Also:

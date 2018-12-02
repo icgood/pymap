@@ -3,13 +3,30 @@
 from itertools import chain
 from typing import cast, TypeVar, ByteString, SupportsBytes, Union, Iterable
 
-__all__ = ['MaybeBytes', 'MaybeBytesT', 'BytesFormat']
+__all__ = ['MaybeBytes', 'MaybeBytesT', 'as_memoryview', 'BytesFormat']
 
 #: A bytes object or an object with a ``__bytes__`` method.
 MaybeBytes = Union[ByteString, SupportsBytes]
 
 #: A type variable bound to :class:`MaybeBytes`.
 MaybeBytesT = TypeVar('MaybeBytesT', bound=MaybeBytes)
+
+
+def as_memoryview(val: bytes) -> bytes:
+    """Wrap a bytestring in a :class:`memoryview` for performance, while
+    maintaining ``bytes`` type annotation.
+
+    Note:
+        This is necessary because even though the :class:`~typing.ByteString`
+        state that ``bytes`` may be used to annotate memoryview objects, it
+        does not appear to work in practice. If/when this is resolved, remove
+        this function in factor of a simple ``... = memoryview(val)`` call.
+
+    See Also:
+        `python/mypy#4871 <https://github.com/python/mypy/issues/4871>`_
+
+    """
+    return cast(bytes, memoryview(val))
 
 
 class BytesFormat:

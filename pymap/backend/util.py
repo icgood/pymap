@@ -1,41 +1,30 @@
 
 from typing import TypeVar, Tuple, AsyncIterable, AsyncIterator
 
-__all__ = ['asyncenumerate']
+__all__ = ['asyncenumerate', 'AsyncEnumerateT']
 
-_ElementT = TypeVar('_ElementT')
+#: Type variable bound to the enumerated element in :func:`asyncenumerate`.
+AsyncEnumerateT = TypeVar('AsyncEnumerateT')
 
 
-class _AsyncEnumerateIterator(AsyncIterator[Tuple[int, _ElementT]]):
+class _AsyncEnumerateIterator(AsyncIterator[Tuple[int, AsyncEnumerateT]]):
 
-    def __init__(self, iterator: AsyncIterator[_ElementT], idx: int) -> None:
+    def __init__(self, iterator: AsyncIterator[AsyncEnumerateT],
+                 idx: int) -> None:
         super().__init__()
         self._iter = iterator
         self._idx = idx
 
-    def __aiter__(self) -> AsyncIterator[Tuple[int, _ElementT]]:
+    def __aiter__(self) -> AsyncIterator[Tuple[int, AsyncEnumerateT]]:
         return self
 
-    async def __anext__(self) -> Tuple[int, _ElementT]:
+    async def __anext__(self) -> Tuple[int, AsyncEnumerateT]:
         item = await self._iter.__anext__()
         self._idx += 1
         return self._idx, item
 
 
-class _AsyncEnumerate(AsyncIterable[Tuple[int, _ElementT]]):
-
-    def __init__(self, iterable: AsyncIterable[_ElementT], start: int) -> None:
-        super().__init__()
-        self._sub_iter = iterable
-        self._start = start - 1
-
-    def __aiter__(self) -> AsyncIterator[Tuple[int, _ElementT]]:
-        sub_iter = self._sub_iter.__aiter__()
-        return _AsyncEnumerateIterator(sub_iter, self._start)
-
-
-def asyncenumerate(iterable: AsyncIterable[_ElementT],
-                   start: int = 0) -> _AsyncEnumerate[_ElementT]:
+class _AsyncEnumerate(AsyncIterable[Tuple[int, AsyncEnumerateT]]):
     """Imitates Python's :func:`enumerate` with async iterators.
 
     Args:
@@ -43,4 +32,17 @@ def asyncenumerate(iterable: AsyncIterable[_ElementT],
         start: The starting value of the index.
 
     """
-    return _AsyncEnumerate(iterable, start)
+
+    def __init__(self, iterable: AsyncIterable[AsyncEnumerateT],
+                 start: int = 0) -> None:
+        super().__init__()
+        self._sub_iter = iterable
+        self._start = start - 1
+
+    def __aiter__(self) -> AsyncIterator[Tuple[int, AsyncEnumerateT]]:
+        sub_iter = self._sub_iter.__aiter__()
+        return _AsyncEnumerateIterator(sub_iter, self._start)
+
+
+# Expose _AsyncEnumerate class with a public alias.
+asyncenumerate = _AsyncEnumerate

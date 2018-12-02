@@ -10,21 +10,23 @@ from typing import Any, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
     Sequence, List, NamedTuple, BinaryIO, TypeVar, Type
 
 from .flags import FlagOp, SessionFlags
-from .interfaces.message import Header, MessageInterface, \
-    LoadedMessageInterface
+from .interfaces.message import Header, MessageInterface
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
 from .parsing.specials import ExtensionOptions
 from .parsing.specials.flag import Flag, Deleted
 
-__all__ = ['AppendMessage', 'BaseMessage', 'BaseLoadedMessage']
+__all__ = ['AppendMessage', 'BaseMessage', 'MessageT', 'Policy', 'Policy7Bit']
 
-_MessageT = TypeVar('_MessageT', bound='BaseMessage')
-_LoadedT = TypeVar('_LoadedT', bound='BaseLoadedMessage')
+#: Type variable with an upper bound of :class:`BaseMessage`.
+MessageT = TypeVar('MessageT', bound='BaseMessage')
 
-_Policy = SMTP.clone(cte_type='8bit', utf8=True)
-_Policy7Bit = _Policy.clone(cte_type='7bit')
+#: :class:`~email.policy.Policy` used for 8-bit serialization.
+Policy = SMTP.clone(cte_type='8bit', utf8=True)
+
+#: :class:`~email.policy.Policy` used for 7-bit serialization.
+Policy7Bit = Policy.clone(cte_type='7bit')
 
 
 class AppendMessage(NamedTuple):
@@ -62,18 +64,42 @@ class BaseMessage(MessageInterface):
         permanent_flags: Permanent flags for the message.
         internal_date: The internal date of the message.
         expunged: True if this message has been expunged from the mailbox.
+        contents: The contents of the message.
 
     """
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
                  internal_date: datetime = None, expunged: bool = False,
-                 **kwargs: Any) -> None:
+                 contents: EmailMessage = None, **kwargs: Any) -> None:
         super().__init__()
         self._uid = uid
         self._permanent_flags = set(permanent_flags or [])
         self._internal_date = internal_date
         self._expunged = expunged
+        self._contents = contents
         self._kwargs = kwargs
+
+    @classmethod
+    def parse(cls: Type[MessageT], uid: int, data: BinaryIO,
+              permanent_flags: Iterable[Flag] = None,
+              internal_date: datetime = None, expunged: bool = False,
+              **kwargs: Any) -> MessageT:
+        """Parse the given file object containing a MIME-encoded email message
+        into a :class:`BaseLoadedMessage` object.
+
+        Args:
+            uid: The UID of the message.
+            data: The raw contents of the message.
+            permanent_flags: Permanent flags for the message.
+            internal_date: The internal date of the message.
+            expunged: True if this message has been expunged from the mailbox.
+
+        """
+        contents = BytesParser(policy=Policy).parse(data)
+        if not isinstance(contents, EmailMessage):
+            raise TypeError(contents)
+        return cls(uid, permanent_flags, internal_date, expunged,
+                   contents, **kwargs)
 
     @property
     def uid(self) -> int:
@@ -91,10 +117,17 @@ class BaseMessage(MessageInterface):
     def internal_date(self) -> Optional[datetime]:
         return self._internal_date
 
-    def copy(self: _MessageT, new_uid: int) -> _MessageT:
+    @property
+    def contents(self) -> EmailMessage:
+        """The MIME-parsed message object."""
+        if self._contents is None:
+            raise ValueError('Message contents not available.')
+        return self._contents
+
+    def copy(self: MessageT, new_uid: int) -> MessageT:
         cls = type(self)
         return cls(new_uid, self.permanent_flags, self.internal_date,
-                   self.expunged, **self._kwargs)
+                   self.expunged, self._contents, **self._kwargs)
 
     def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
         if self.expunged:
@@ -111,64 +144,9 @@ class BaseMessage(MessageInterface):
         self.permanent_flags.update(new_flags)
         return new_flags
 
-
-class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
-    """A message with its contents loaded, such that it pulls the information
-    from a message object necessary to gather `message attributes
-    <https://tools.ietf.org/html/rfc3501#section-2.3>`_, as needed by the
-    `FETCH responses <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_.
-
-    Args:
-        uid: The UID of the message.
-        contents: The contents of the message.
-        permanent_flags: Permanent flags for the message.
-        internal_date: The internal date of the message.
-        expunged: True if this message has been expunged from the mailbox.
-
-    """
-
-    def __init__(self, uid: int, contents: EmailMessage = None,
-                 permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None, expunged: bool = False,
-                 **kwargs: Any) -> None:
-        super().__init__(uid, permanent_flags, internal_date,
-                         expunged, **kwargs)
-        self._contents = contents
-
-    @property
-    def contents(self) -> EmailMessage:
-        """The MIME-parsed message object."""
-        if self._contents is None:
-            return EmailMessage()
-        return self._contents
-
-    def copy(self: _LoadedT, new_uid: int) -> _LoadedT:
-        cls = type(self)
-        return cls(new_uid, self._contents, self.permanent_flags,
-                   self.internal_date, self.expunged, **self._kwargs)
-
     @classmethod
-    def parse(cls: Type[_LoadedT], uid: int, data: BinaryIO,
-              permanent_flags: Iterable[Flag] = None,
-              internal_date: datetime = None,
-              **kwargs: Any) -> _LoadedT:
-        """Parse the given file object containing a MIME-encoded email message
-        into a :class:`BaseLoadedMessage` object.
-
-        Args:
-            uid: The UID of the message.
-            data: The raw contents of the message.
-            permanent_flags: Permanent flags for the message.
-            internal_date: The internal date of the message.
-
-        """
-        msg = BytesParser(policy=_Policy).parse(data)
-        if not isinstance(msg, EmailMessage):
-            raise TypeError(msg)
-        return cls(uid, msg, permanent_flags, internal_date, **kwargs)
-
-    @classmethod
-    def _get_subpart(cls, msg: 'BaseLoadedMessage', section) -> 'EmailMessage':
+    def _get_subpart(cls: Type[MessageT], msg: MessageT, section) \
+            -> 'EmailMessage':
         if section:
             subpart = msg.contents
             for i in section:
@@ -197,11 +175,11 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
         for key, value in msg.items():
             if subset is not None:
                 if inverse != (key in subset):
-                    ret.append(_Policy.fold_binary(key, str(value)))
+                    ret.append(Policy.fold_binary(key, str(value)))
             else:
-                ret.append(_Policy.fold_binary(key, str(value)))
+                ret.append(Policy.fold_binary(key, str(value)))
         if len(ret) > 0:
-            linesep = _Policy.linesep.encode('ascii')
+            linesep = Policy.linesep.encode('ascii')
             return b''.join(ret) + linesep
         else:
             return None
@@ -228,7 +206,7 @@ class BaseLoadedMessage(BaseMessage, LoadedMessageInterface):
         ofp = BytesIO()
         generator: Type[BytesGenerator] = _BodyOnlyBytesGenerator \
             if body_only else BytesGenerator
-        policy = _Policy if binary else _Policy7Bit
+        policy = Policy if binary else Policy7Bit
         try:
             generator(ofp, policy=policy).flatten(msg)  # type: ignore
         except (LookupError, UnicodeEncodeError):

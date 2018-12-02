@@ -41,6 +41,9 @@ class Command(Parseable[bytes]):
     def __bytes__(self) -> bytes:
         return b' '.join((self.tag, self.command))
 
+    def __repr__(self) -> str:
+        return f'<%s tag=%r>' % (type(self).__name__, self.tag)
+
 
 class CommandNoArgs(Command):
     """Convenience class used to fail parsing when args are given to a command

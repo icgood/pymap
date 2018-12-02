@@ -1,6 +1,7 @@
 
 import asyncio
 import threading
+from contextvars import copy_context
 from concurrent.futures import Executor
 from functools import partial
 from typing import cast, Optional
@@ -46,13 +47,14 @@ class ExecutorProxy:
 
     async def _call(self, func, *args, **kwargs):
         loop = asyncio.get_event_loop()
+        ctx = copy_context()
         func_call = partial(func, *args, **kwargs)
         return await loop.run_in_executor(
-            self.executor, self._call_with_event_loop, func_call())
+            self.executor, self._call_with_event_loop, func_call(), ctx)
 
-    def _call_with_event_loop(self, future):
+    def _call_with_event_loop(self, future, ctx):
         loop = self._local.event_loop
-        return loop.run_until_complete(future)
+        return ctx.run(loop.run_until_complete, future)
 
 
 class _EventLoopLocal(threading.local):

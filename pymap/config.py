@@ -11,9 +11,14 @@ from .concurrent import Event, ReadWriteLock
 from .parsing import Params
 from .parsing.commands import Commands
 
-__all__ = ['IMAPConfig']
+__all__ = ['IMAPConfig', 'ConfigT', 'ConfigT_contra']
 
-_ConfigT = TypeVar('_ConfigT', bound='IMAPConfig')
+#: Type variable with an upper bound of :class:`IMAPConfig`.
+ConfigT = TypeVar('ConfigT', bound='IMAPConfig')
+
+#: Contravariant type variable with an upper bound of :class:`IMAPConfig`.
+ConfigT_contra = TypeVar('ConfigT_contra', bound='IMAPConfig',
+                         contravariant=True)
 
 
 class IMAPConfig:
@@ -71,8 +76,7 @@ class IMAPConfig:
         self._extra = extra
 
     @classmethod
-    def parse_args(cls: Type[_ConfigT], args: Namespace, **extra: Any) \
-            -> Mapping[str, Any]:
+    def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
         """Given command-line arguments, return a dictionary of keywords that
         should be passed in to the :class:`IMAPConfig` (or sub-class)
         constructor. Sub-classes should override this method as needed.
@@ -90,8 +94,8 @@ class IMAPConfig:
         return ret
 
     @classmethod
-    def from_args(cls: Type[_ConfigT], args: Namespace,
-                  **extra: Any) -> _ConfigT:
+    def from_args(cls: Type[ConfigT], args: Namespace,
+                  **extra: Any) -> ConfigT:
         """Build and return a new :class:`IMAPConfig` using command-line
         arguments.
 

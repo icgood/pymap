@@ -16,9 +16,11 @@ from typing import TypeVar, Sequence, MutableSet, AsyncContextManager, \
     AsyncIterator
 from weakref import WeakSet
 
-__all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError']
+__all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError', 'EventT']
 
-_EventT = TypeVar('_EventT', bound='Event')
+#: Type variable with an upper bound of :class:`Event`.
+EventT = TypeVar('EventT', bound='Event')
+
 _Delay = Sequence[float]
 
 
@@ -85,7 +87,7 @@ class Event(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def or_event(self: _EventT, *events: _EventT) -> _EventT:
+    def or_event(self: EventT, *events: EventT) -> EventT:
         """Return a new event that is signalled when either the current thread
         or any of the provided threads are signalled.
 

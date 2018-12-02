@@ -1,43 +1,38 @@
 
 from abc import abstractmethod
-from typing import Tuple, Optional, FrozenSet, Iterable, Sequence, TypeVar
+from typing import Tuple, Optional, FrozenSet, Iterable, Sequence
 from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
 
-from .message import MessageInterface, LoadedMessageInterface
+from .message import MessageInterface
 from .mailbox import MailboxInterface
 from ..concurrent import Event
-from ..config import IMAPConfig
+from ..config import ConfigT_contra
 from ..flags import FlagOp
 from ..message import AppendMessage
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from ..parsing.response.code import AppendUid, CopyUid
-from ..sockinfo import SocketInfo
-from ..selected import SelectedMailbox
+from ..selected import SelectedT
 
 __all__ = ['LoginProtocol', 'SessionInterface']
 
-_ConfigT = TypeVar('_ConfigT', bound=IMAPConfig, contravariant=True)
-_SelectedT = TypeVar('_SelectedT', bound=SelectedMailbox)
 
-
-class LoginProtocol(Protocol[_ConfigT, _SelectedT]):
+class LoginProtocol(Protocol[ConfigT_contra, SelectedT]):
     """Defines the callback protocol that backends use to initialize a new
     session.
 
     """
 
     async def __call__(self, credentials: AuthenticationCredentials,
-                       config: _ConfigT, sock_info: SocketInfo) \
-            -> 'SessionInterface[_SelectedT]':
+                       config: ConfigT_contra) \
+            -> 'SessionInterface[SelectedT]':
         """Given a set of authentication credentials, initialize a new IMAP
         session for the user.
 
         Args:
             credentials: Authentication credentials supplied by the user.
             config: The config in use by the server.
-            sock_info: Information about the connected socket.
 
         Returns:
             The new IMAP session.
@@ -49,15 +44,15 @@ class LoginProtocol(Protocol[_ConfigT, _SelectedT]):
         ...
 
 
-class SessionInterface(Protocol[_SelectedT]):
+class SessionInterface(Protocol[SelectedT]):
     """Corresponds to a single, authenticated IMAP session."""
 
     @abstractmethod
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,
-                             selected: _SelectedT = None) \
+                             selected: SelectedT = None) \
             -> Tuple[Iterable[Tuple[str, Optional[str], Sequence[bytes]]],
-                     Optional[_SelectedT]]:
+                     Optional[SelectedT]]:
         """List the mailboxes owned by the user.
 
         See Also:
@@ -76,8 +71,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def get_mailbox(self, name: str, selected: _SelectedT = None) \
-            -> Tuple[MailboxInterface, Optional[_SelectedT]]:
+    async def get_mailbox(self, name: str, selected: SelectedT = None) \
+            -> Tuple[MailboxInterface, Optional[SelectedT]]:
         """Retrieves a :class:`~pymap.interfaces.mailbox.MailboxInterface`
         object corresponding to an existing mailbox owned by the user. Raises
         an exception if the mailbox does not yet exist.
@@ -93,8 +88,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def create_mailbox(self, name: str, selected: _SelectedT = None) \
-            -> Optional[_SelectedT]:
+    async def create_mailbox(self, name: str, selected: SelectedT = None) \
+            -> Optional[SelectedT]:
         """Creates a new mailbox owned by the user.
 
         See Also:
@@ -112,8 +107,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def delete_mailbox(self, name: str, selected: _SelectedT = None) \
-            -> Optional[_SelectedT]:
+    async def delete_mailbox(self, name: str, selected: SelectedT = None) \
+            -> Optional[SelectedT]:
         """Deletes the mailbox owned by the user.
 
         See Also:
@@ -133,8 +128,8 @@ class SessionInterface(Protocol[_SelectedT]):
 
     @abstractmethod
     async def rename_mailbox(self, before_name: str, after_name: str,
-                             selected: _SelectedT = None) \
-            -> Optional[_SelectedT]:
+                             selected: SelectedT = None) \
+            -> Optional[SelectedT]:
         """Renames the mailbox owned by the user.
 
         See Also:
@@ -154,8 +149,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def subscribe(self, name: str, selected: _SelectedT = None) \
-            -> Optional[_SelectedT]:
+    async def subscribe(self, name: str, selected: SelectedT = None) \
+            -> Optional[SelectedT]:
         """Mark the given folder name as subscribed, whether or not the given
         folder name currently exists.
 
@@ -174,8 +169,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def unsubscribe(self, name: str, selected: _SelectedT = None) \
-            -> Optional[_SelectedT]:
+    async def unsubscribe(self, name: str, selected: SelectedT = None) \
+            -> Optional[SelectedT]:
         """Remove the given folder name from the subscription list, whether or
         not the given folder name currently exists.
 
@@ -196,8 +191,8 @@ class SessionInterface(Protocol[_SelectedT]):
     @abstractmethod
     async def append_messages(self, name: str,
                               messages: Sequence[AppendMessage],
-                              selected: _SelectedT = None) \
-            -> Tuple[AppendUid, Optional[_SelectedT]]:
+                              selected: SelectedT = None) \
+            -> Tuple[AppendUid, Optional[SelectedT]]:
         """Appends a message to the end of the mailbox.
 
         See Also:
@@ -218,7 +213,7 @@ class SessionInterface(Protocol[_SelectedT]):
 
     @abstractmethod
     async def select_mailbox(self, name: str, readonly: bool = False) \
-            -> Tuple[MailboxInterface, _SelectedT]:
+            -> Tuple[MailboxInterface, SelectedT]:
         """Selects a :class:`~pymap.interfaces.mailbox.MailboxInterface` object
         corresponding to an existing mailbox owned by the user. The returned
         session is then used as the ``selected`` argument to other methods to
@@ -241,8 +236,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def check_mailbox(self, selected: _SelectedT, wait_on: Event = None,
-                            housekeeping: bool = False) -> _SelectedT:
+    async def check_mailbox(self, selected: SelectedT, wait_on: Event = None,
+                            housekeeping: bool = False) -> SelectedT:
         """Checks for any updates in the mailbox.
 
         If ``wait_on`` is given, this method may block until there is a signal
@@ -272,10 +267,10 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def fetch_messages(self, selected: _SelectedT,
+    async def fetch_messages(self, selected: SelectedT,
                              sequence_set: SequenceSet,
                              attributes: FrozenSet[FetchAttribute]) \
-            -> Tuple[Iterable[Tuple[int, LoadedMessageInterface]], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, MessageInterface]], SelectedT]:
         """Get a list of loaded message objects corresponding to given sequence
         set.
 
@@ -291,9 +286,9 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def search_mailbox(self, selected: _SelectedT,
+    async def search_mailbox(self, selected: SelectedT,
                              keys: FrozenSet[SearchKey]) \
-            -> Tuple[Iterable[Tuple[int, MessageInterface]], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, MessageInterface]], SelectedT]:
         """Get the messages in the current mailbox that meet all of the
         given search criteria.
 
@@ -312,8 +307,8 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def expunge_mailbox(self, selected: _SelectedT,
-                              uid_set: SequenceSet = None) -> _SelectedT:
+    async def expunge_mailbox(self, selected: SelectedT,
+                              uid_set: SequenceSet = None) -> SelectedT:
         """All messages that are marked as deleted are immediately expunged
         from the mailbox.
 
@@ -334,10 +329,10 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def copy_messages(self, selected: _SelectedT,
+    async def copy_messages(self, selected: SelectedT,
                             sequence_set: SequenceSet,
                             mailbox: str) \
-            -> Tuple[Optional[CopyUid], _SelectedT]:
+            -> Tuple[Optional[CopyUid], SelectedT]:
         """Copy a set of messages into the given mailbox.
 
         See Also:
@@ -359,11 +354,11 @@ class SessionInterface(Protocol[_SelectedT]):
         ...
 
     @abstractmethod
-    async def update_flags(self, selected: _SelectedT,
+    async def update_flags(self, selected: SelectedT,
                            sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> Tuple[Iterable[Tuple[int, MessageInterface]], _SelectedT]:
+            -> Tuple[Iterable[Tuple[int, MessageInterface]], SelectedT]:
         """Update the flags for the given set of messages.
 
         See Also:
