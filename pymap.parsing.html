@@ -57,6 +57,13 @@
   <div class="section" id="module-pymap.parsing">
 <span id="pymap-parsing"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code><a class="headerlink" href="#module-pymap.parsing" title="Permalink to this headline">¶</a></h1>
 <p>Package defining all the IMAP parsing and response classes.</p>
+<dl class="data">
+<dt id="pymap.parsing.ParseableT">
+<code class="descclassname">pymap.parsing.</code><code class="descname">ParseableT</code><em class="property"> = ~ParseableT</em><a class="headerlink" href="#pymap.parsing.ParseableT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable used for specifying the parseable type of a <a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>
+sub-class.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.parsing.Params">
 <em class="property">class </em><code class="descclassname">pymap.parsing.</code><code class="descname">Params</code><span class="sig-paren">(</span><em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=False</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params" title="Permalink to this definition">¶</a></dt>
@@ -69,8 +76,8 @@ methods.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>continuations</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – The continuation buffers remaining for parsing.</li>
-<li><strong>expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~_ParseableT]]]]) – The types that are expected in the next parsed object.</li>
-<li><strong>list_expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~_ParseableT]]]]) – The types that are expect in a parsed list.</li>
+<li><strong>expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT]]]]) – The types that are expected in the next parsed object.</li>
+<li><strong>list_expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT]]]]) – The types that are expect in a parsed list.</li>
 <li><strong>command_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The name of the command currently being parsed, if any.</li>
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The next parsed command came after a <code class="docutils literal notranslate"><span class="pre">UID</span></code> command.</li>
 <li><strong>charset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Strings should be decoded using this character set.</li>
@@ -114,7 +121,7 @@ formal syntax section.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~_ParseableT</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~ParseableT</td>
 </tr>
 </tbody>
 </table>
@@ -134,7 +141,7 @@ formal syntax section.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~_ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -179,7 +186,7 @@ then returns the parsed object.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~_ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2180,6 +2187,37 @@ character in the unquoted form.</p>
 </dd></dl>
 
 <span class="target" id="module-pymap.parsing.specials.fetchattr"></span><dl class="class">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement">
+<em class="property">class </em><code class="descclassname">pymap.parsing.specials.fetchattr.</code><code class="descname">FetchRequirement</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Flag" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Flag</span></code></a></p>
+<p>Indicates the data required to fulfill a message fetch.</p>
+<dl class="attribute">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement.NONE">
+<code class="descname">NONE</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement.NONE" title="Permalink to this definition">¶</a></dt>
+<dd><p>No data is required.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement.METADATA">
+<code class="descname">METADATA</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement.METADATA" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IMAP metadata is required.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement.HEADERS">
+<code class="descname">HEADERS</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement.HEADERS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message headers are required.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement.BODY">
+<code class="descname">BODY</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement.BODY" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parsed MIME message body is required.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="pymap.parsing.specials.fetchattr.FetchAttribute">
 <em class="property">class </em><code class="descclassname">pymap.parsing.specials.fetchattr.</code><code class="descname">FetchAttribute</code><span class="sig-paren">(</span><em>attribute</em>, <em>section=None</em>, <em>partial=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchAttribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.Parseable</span></code></a></p>
@@ -2240,6 +2278,20 @@ the attribute name within square brackets, e.g. <code class="docutils literal no
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.specials.fetchattr.FetchAttribute.requirement">
+<code class="descname">requirement</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchAttribute.requirement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates the data required to fulfill this fetch attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -2501,6 +2553,20 @@ IMAP.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.specials.searchkey.SearchKey.requirement">
+<code class="descname">requirement</code><a class="headerlink" href="#pymap.parsing.specials.searchkey.SearchKey.requirement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates the data required to fulfill this search key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -2902,6 +2968,12 @@ will not fail, it will just return an empty object.</p>
 </div>
 <div class="section" id="module-pymap.parsing.response">
 <span id="pymap-parsing-response"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.response</span></code><a class="headerlink" href="#module-pymap.parsing.response" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="pymap.parsing.response.ResponseT">
+<code class="descclassname">pymap.parsing.response.</code><code class="descname">ResponseT</code><em class="property"> = ~ResponseT</em><a class="headerlink" href="#pymap.parsing.response.ResponseT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.parsing.response.ResponseCode">
 <em class="property">class </em><code class="descclassname">pymap.parsing.response.</code><code class="descname">ResponseCode</code><a class="headerlink" href="#pymap.parsing.response.ResponseCode" title="Permalink to this definition">¶</a></dt>
@@ -3057,7 +3129,7 @@ two responses can be merged.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> (<em>~_ResponseT</em>) – The other response to merge.</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> (<em>~ResponseT</em>) – The other response to merge.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
@@ -3066,7 +3138,7 @@ two responses can be merged.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~_ResponseT</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~ResponseT</p>
 </td>
 </tr>
 </tbody>

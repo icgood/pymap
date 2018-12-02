@@ -56,6 +56,12 @@
             
   <div class="section" id="module-pymap.selected">
 <span id="pymap-selected"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code><a class="headerlink" href="#module-pymap.selected" title="Permalink to this headline">¶</a></h1>
+<dl class="data">
+<dt id="pymap.selected.SelectedT">
+<code class="descclassname">pymap.selected.</code><code class="descname">SelectedT</code><em class="property"> = ~SelectedT</em><a class="headerlink" href="#pymap.selected.SelectedT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.selected.SelectedSet">
 <em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSet</code><span class="sig-paren">(</span><em>updated=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
@@ -437,7 +443,7 @@ of the object is also returned, ready for the next command.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[]) – The command that was finished.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[~_SelectedT, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>]]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[~SelectedT, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>

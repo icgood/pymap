@@ -56,6 +56,18 @@
             
   <div class="section" id="module-pymap.config">
 <span id="pymap-config"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code><a class="headerlink" href="#module-pymap.config" title="Permalink to this headline">¶</a></h1>
+<dl class="data">
+<dt id="pymap.config.ConfigT">
+<code class="descclassname">pymap.config.</code><code class="descname">ConfigT</code><em class="property"> = ~ConfigT</em><a class="headerlink" href="#pymap.config.ConfigT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="pymap.config.ConfigT_contra">
+<code class="descclassname">pymap.config.</code><code class="descname">ConfigT_contra</code><em class="property"> = -ConfigT_contra</em><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contravariant type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.config.IMAPConfig">
 <em class="property">class </em><code class="descclassname">pymap.config.</code><code class="descname">IMAPConfig</code><span class="sig-paren">(</span><em>args</em>, <em>debug=False</em>, <em>executor=None</em>, <em>ssl_context=None</em>, <em>starttls_enabled=True</em>, <em>reject_insecure_auth=True</em>, <em>preauth_credentials=None</em>, <em>max_append_len=1000000000</em>, <em>bad_command_limit=5</em>, <em>disable_idle=False</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
@@ -135,7 +147,7 @@ arguments.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~_ConfigT</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~ConfigT</p>
 </td>
 </tr>
 </tbody>

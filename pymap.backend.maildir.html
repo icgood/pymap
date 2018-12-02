@@ -57,7 +57,7 @@
 mailbox storage and <a class="reference external" href="https://wiki2.dovecot.org/MailboxFormat/Maildir">MailboxFormat/Maildir</a> for metadata storage.</p>
 <dl class="class">
 <dt id="pymap.backend.maildir.Config">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>users_file=None</em>, <em>base_dir='.'</em>, <em>layout='++'</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>users_file=None</em>, <em>base_dir=None</em>, <em>layout='++'</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.config.IMAPConfig</span></code></a></p>
 <p>The config implementation for the maildir backend.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -67,7 +67,7 @@ mailbox storage and <a class="reference external" href="https://wiki2.dovecot.or
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
 <li><strong>users_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The path to the users file, see <a class="reference internal" href="#pymap.backend.maildir.Config.users_file" title="pymap.backend.maildir.Config.users_file"><code class="xref py py-attr docutils literal notranslate"><span class="pre">users_file</span></code></a>.</li>
-<li><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The base directory for all relative mailbox paths.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The base directory for all relative mailbox paths.</li>
 <li><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The Maildir directory layout.</li>
 </ul>
 </td>
@@ -154,7 +154,7 @@ mailbox path. Override this method to implement custom login logic.</p>
 
 <dl class="classmethod">
 <dt id="pymap.backend.maildir.Session.login">
-<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em>, <em>sock_info</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session.login" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the given credentials for a valid login and returns a new
 session.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -287,7 +287,7 @@ IMAP flags and keywords.</p>
 </div>
 <dl class="classmethod">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.get">
-<em class="property">classmethod </em><code class="descname">get</code><span class="sig-paren">(</span><em>path</em>, <em>layout</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get</code><span class="sig-paren">(</span><em>path</em>, <em>layout</em>, <em>maildir_type=&lt;class 'mailbox.Maildir'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -295,6 +295,7 @@ IMAP flags and keywords.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</li>
 <li><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The layout name, e.g. <code class="docutils literal notranslate"><span class="pre">'++'</span></code> or <code class="docutils literal notranslate"><span class="pre">'fs'</span></code>.</li>
+<li><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a>]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</li>
 </ul>
 </td>
 </tr>
@@ -478,20 +479,32 @@ through the sub-folder heirarchy.</p>
 
 <dl class="class">
 <dt id="pymap.backend.maildir.layout.DefaultLayout">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">DefaultLayout</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.DefaultLayout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">DefaultLayout</code><span class="sig-paren">(</span><em>path</em>, <em>maildir_type=&lt;class 'mailbox.Maildir'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.DefaultLayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout._BaseLayout</span></code></p>
 <p>The default Maildir++ layout, which uses sub-folder names starting
-with a <code class="docutils literal notranslate"><span class="pre">.</span></code> and nested using a delimiter, e.g.:</p>
+with and using <code class="docutils literal notranslate"><span class="pre">.</span></code> as a delimiter for nesting , e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">Trash</span><span class="o">/</span>
 <span class="o">.</span><span class="n">Important</span><span class="o">.</span><span class="n">To</span><span class="o">-</span><span class="n">Do</span><span class="o">/</span>
 <span class="o">.</span><span class="n">Important</span><span class="o">.</span><span class="n">Misc</span><span class="o">/</span>
 </pre></div>
 </div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</li>
+<li><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a>]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
 <dt id="pymap.backend.maildir.layout.FilesystemLayout">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">FilesystemLayout</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.FilesystemLayout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">FilesystemLayout</code><span class="sig-paren">(</span><em>path</em>, <em>maildir_type=&lt;class 'mailbox.Maildir'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.FilesystemLayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout._BaseLayout</span></code></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">fs</span></code> layout, which uses nested sub-directories on the filesystem,
 e.g.:</p>
@@ -500,6 +513,18 @@ e.g.:</p>
 <span class="n">Important</span><span class="o">/</span><span class="n">Misc</span><span class="o">/</span>
 </pre></div>
 </div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</li>
+<li><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a>]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -615,6 +640,20 @@ e.g.:</p>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.backend.maildir.uidlist.Record.key">
+<code class="descname">key</code><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> key value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -670,9 +709,27 @@ e.g.:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> – The UID does not exist.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> – The UID does not exist.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.backend.maildir.uidlist.UidList.get_all">
+<code class="descname">get_all</code><span class="sig-paren">(</span><em>uids</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get records by a set of UIDs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The message UIDs.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]</td>
 </tr>
 </tbody>
 </table>

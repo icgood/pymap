@@ -59,6 +59,12 @@
 <p>Implements some concurrency utilities used by pymap. Each has
 an implementation using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a> concurrency
 primitives.</p>
+<dl class="data">
+<dt id="pymap.concurrent.EventT">
+<code class="descclassname">pymap.concurrent.</code><code class="descname">EventT</code><em class="property"> = ~EventT</em><a class="headerlink" href="#pymap.concurrent.EventT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.concurrent.ReadWriteLock">
 <em class="property">class </em><code class="descclassname">pymap.concurrent.</code><code class="descname">ReadWriteLock</code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock" title="Permalink to this definition">¶</a></dt>
@@ -195,9 +201,9 @@ or any of the provided threads are signalled.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>events</strong> (<em>~_EventT</em>) – Additional threads to be signalled by.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>events</strong> (<em>~EventT</em>) – Additional threads to be signalled by.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">~_EventT</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">~EventT</td>
 </tr>
 </tbody>
 </table>

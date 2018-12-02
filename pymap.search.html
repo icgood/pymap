@@ -376,14 +376,14 @@ session flag sets.</p>
 <dl class="class">
 <dt id="pymap.search.HeaderDateSearchCriteria">
 <em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">HeaderDateSearchCriteria</code><span class="sig-paren">(</span><em>when</em>, <em>cmp</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderDateSearchCriteria" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.search.DateSearchCriteria" title="pymap.search.DateSearchCriteria"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search.DateSearchCriteria</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search._LoadedSearchCriteria</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#pymap.search.DateSearchCriteria" title="pymap.search.DateSearchCriteria"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search.DateSearchCriteria</span></code></a></p>
 <p>Matches by comparing against the <code class="docutils literal notranslate"><span class="pre">Date:</span></code> header of the message.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pymap.search.SizeSearchCriteria">
 <em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">SizeSearchCriteria</code><span class="sig-paren">(</span><em>size</em>, <em>cmp</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search._LoadedSearchCriteria</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#pymap.search.SearchCriteria" title="pymap.search.SearchCriteria"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search.SearchCriteria</span></code></a></p>
 <p>Matches by comparing against the size of the message.</p>
 <dl class="method">
 <dt id="pymap.search.SizeSearchCriteria.matches">
@@ -411,7 +411,7 @@ session flag sets.</p>
 <dl class="class">
 <dt id="pymap.search.EnvelopeSearchCriteria">
 <em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">EnvelopeSearchCriteria</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search._LoadedSearchCriteria</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#pymap.search.SearchCriteria" title="pymap.search.SearchCriteria"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search.SearchCriteria</span></code></a></p>
 <p>Matches by checking for strings within various fields of the envelope
 structure.</p>
 <dl class="method">
@@ -440,7 +440,7 @@ structure.</p>
 <dl class="class">
 <dt id="pymap.search.HeaderSearchCriteria">
 <em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">HeaderSearchCriteria</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search._LoadedSearchCriteria</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#pymap.search.SearchCriteria" title="pymap.search.SearchCriteria"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search.SearchCriteria</span></code></a></p>
 <p>Matches if the message has a header containing a value.</p>
 <dl class="method">
 <dt id="pymap.search.HeaderSearchCriteria.matches">
@@ -468,7 +468,7 @@ structure.</p>
 <dl class="class">
 <dt id="pymap.search.BodySearchCriteria">
 <em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">BodySearchCriteria</code><span class="sig-paren">(</span><em>value</em>, <em>with_headers</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search._LoadedSearchCriteria</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#pymap.search.SearchCriteria" title="pymap.search.SearchCriteria"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.search.SearchCriteria</span></code></a></p>
 <p>Matches if the message body contains a value.</p>
 <dl class="method">
 <dt id="pymap.search.BodySearchCriteria.matches">
