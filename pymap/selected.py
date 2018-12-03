@@ -63,7 +63,7 @@ class SelectedSet:
 class SelectedSnapshot(NamedTuple):
     """Holds a snapshot of the selected mailbox as of the last fork.
 
-    Attributes:
+    Args:
         uid_validity: The UID validity of the selected mailbox.
         next_uid: The predicted next message UID of the mailbox.
         recent: The number of messages in the mailbox with ``\\Recent``.

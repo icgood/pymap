@@ -9,7 +9,7 @@ __all__ = ['ListEntry', 'ListTree']
 class ListEntry(NamedTuple):
     """An entry in the list results.
 
-    Attributes:
+    Args:
         name: The name of the mailbox.
         exists: False if the mailbox should be marked ``\\Noselect``.
         has_children: Whether the mailbox should be marked ``\\HasChildren`` or

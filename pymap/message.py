@@ -32,7 +32,7 @@ Policy7Bit = Policy.clone(cte_type='7bit')
 class AppendMessage(NamedTuple):
     """A single message from the APPEND command.
 
-    Attributes:
+    Args:
         message: The raw message bytes.
         flag_set: The flags to assign to the message.
         when: The internal timestamp to assign to the message.
