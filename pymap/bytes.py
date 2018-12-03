@@ -39,6 +39,8 @@ class BytesFormat:
 
     """
 
+    __slots__ = ['how']
+
     def __init__(self, how: bytes) -> None:
         super().__init__()
         self.how = how

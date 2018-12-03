@@ -9,7 +9,7 @@ __all__ = ['ListEntry', 'ListTree']
 class ListEntry(NamedTuple):
     """An entry in the list results.
 
-    Args:
+    Attributes:
         name: The name of the mailbox.
         exists: False if the mailbox should be marked ``\\Noselect``.
         has_children: Whether the mailbox should be marked ``\\HasChildren`` or
@@ -22,7 +22,7 @@ class ListEntry(NamedTuple):
     has_children: bool
 
     @property
-    def attrs(self) -> Sequence[bytes]:
+    def attributes(self) -> Sequence[bytes]:
         """The mailbox attributes that should be returned with the mailbox
         in a ``LIST`` response, e.g. ``\\Noselect``.
 
@@ -41,6 +41,8 @@ class ListEntry(NamedTuple):
 
 
 class _TreeNode:
+
+    __slots__ = ['parent', 'name', 'exists', 'children']
 
     def __init__(self, name: str, parent: '_TreeNode' = None) -> None:
         super().__init__()
@@ -80,6 +82,8 @@ class ListTree:
     _asterisk_escape = re.escape('*')
     _percent_escape = re.escape('%')
     _anything = '.*?'
+
+    __slots__ = ['_delimiter', '_no_delimiter', '_root']
 
     def __init__(self, delimiter: str) -> None:
         super().__init__()

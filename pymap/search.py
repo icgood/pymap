@@ -28,6 +28,8 @@ class SearchParams:
 
     """
 
+    __slots__ = ['selected', '_max_seq', '_max_uid', '_disabled']
+
     def __init__(self, selected: SelectedMailbox,
                  max_seq: int = None, max_uid: int = None,
                  disabled: Iterable[bytes] = None) -> None:

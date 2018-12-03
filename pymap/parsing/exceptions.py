@@ -20,6 +20,8 @@ class RequiresContinuation(Exception):
 
     """
 
+    __slots__ = ['message', 'literal_length']
+
     def __init__(self, message: bytes, literal_length: int = 0) -> None:
         super().__init__()
         self.message = message
@@ -37,14 +39,16 @@ class NotParseable(Exception):
 
     error_indicator = b'[:ERROR:]'
 
+    __slots__ = ['buf', 'code', 'offset', '_raw', '_before', '_after']
+
     def __init__(self, buf: bytes, code: Optional[MaybeBytes] = None) -> None:
         super().__init__()
         self.buf = buf
         self.code = ResponseCode.of(code)
+        self.offset: int = 0
         self._raw: Optional[bytes] = None
         self._before: Optional[bytes] = None
         self._after: Optional[bytes] = None
-        self.offset: int = 0
         if isinstance(buf, memoryview):
             obj = getattr(buf, 'obj')
             nbytes = getattr(buf, 'nbytes')
@@ -109,6 +113,8 @@ class BadCommand(Exception):
 
     """
 
+    __slots__ = ['tag']
+
     def __init__(self, tag: bytes) -> None:
         super().__init__()
         self.tag = tag
@@ -141,6 +147,8 @@ class CommandNotFound(BadCommand):
         command: The command name.
 
     """
+
+    __slots__ = ['command']
 
     def __init__(self, tag: bytes, command: bytes = None) -> None:
         super().__init__(tag)

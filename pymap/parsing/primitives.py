@@ -19,6 +19,8 @@ class Nil(Parseable[None]):
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
+    __slots__ = []
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -60,6 +62,8 @@ class Number(Parseable[int]):
     """
 
     _num_pattern = re.compile(br'^\d+$')
+
+    __slots__ = ['num', '_raw']
 
     def __init__(self, num: int) -> None:
         super().__init__()
@@ -111,6 +115,8 @@ class Atom(Parseable[bytes]):
 
     """
 
+    __slots__ = ['_value']
+
     def __init__(self, value: bytes) -> None:
         super().__init__()
         self._value = value
@@ -152,6 +158,8 @@ class String(Parseable[bytes]):
     """
 
     _MAX_LEN = 4096
+
+    __slots__ = ['string', 'binary', '_raw']
 
     def __init__(self, string: bytes, raw: Optional[bytes]) -> None:
         super().__init__()
@@ -231,6 +239,8 @@ class QuotedString(String):
     _quoted_pattern = re.compile(br'(?:\r|\n|\\.|\")')
     _quoted_specials_pattern = re.compile(br'[\"\\]')
 
+    __slots__ = []
+
     def __init__(self, string: bytes, raw: bytes = None) -> None:
         super().__init__(string, raw)
 
@@ -282,6 +292,8 @@ class LiteralString(String):
     """
 
     _literal_pattern = re.compile(br'(~?){(\d+)}\r?\n')
+
+    __slots__ = ['binary']
 
     def __init__(self, string: bytes, binary: bool = False) -> None:
         super().__init__(string, None)
@@ -336,6 +348,8 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
     """
 
     _end_pattern = re.compile(br' *\)')
+
+    __slots__ = ['items']
 
     def __init__(self, items: Iterable[MaybeBytes],
                  sort: bool = False) -> None:

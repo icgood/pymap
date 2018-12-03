@@ -55,12 +55,12 @@ class ConnectionState:
         super().__init__()
         self.config = config
         self.ssl_context = config.ssl_context
+        self.auth = config.initial_auth
         self._login = login
         self._session: Optional[SessionInterface] = None
         self._selected: Optional[SelectedMailbox] = None
         self._capability = list(config.initial_capability)
         self._proxy = ExecutorProxy(config.executor)
-        self.auth = config.initial_auth
 
     @property
     def login(self) -> LoginProtocol:

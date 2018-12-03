@@ -53,6 +53,8 @@ class PermanentFlags:
 
     """
 
+    __slots__ = ['_defined']
+
     def __init__(self, *defined: Flag) -> None:
         super().__init__()
         self._defined = frozenset(defined) - {Recent}
@@ -95,6 +97,8 @@ class SessionFlags:
         defined: The defined session flags for the mailbox.
 
     """
+
+    __slots__ = ['_defined', '_flags']
 
     def __init__(self, *defined: Flag):
         super().__init__()

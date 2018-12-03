@@ -35,10 +35,12 @@ class SelectedSet:
 
     """
 
+    __slots__ = ['set', '_updated']
+
     def __init__(self, updated: Event = None) -> None:
         super().__init__()
+        self.set: MutableSet['SelectedMailbox'] = WeakSet()
         self._updated = updated or Event.for_asyncio()
-        self._set: MutableSet['SelectedMailbox'] = WeakSet()
 
     @property
     def updated(self) -> Event:
@@ -52,7 +54,7 @@ class SelectedSet:
         will not be chosen.
 
         """
-        for selected in self._set:
+        for selected in self.set:
             if not selected.readonly:
                 return selected
         return None
@@ -61,7 +63,7 @@ class SelectedSet:
 class SelectedSnapshot(NamedTuple):
     """Holds a snapshot of the selected mailbox as of the last fork.
 
-    Args:
+    Attributes:
         uid_validity: The UID validity of the selected mailbox.
         next_uid: The predicted next message UID of the mailbox.
         recent: The number of messages in the mailbox with ``\\Recent``.
@@ -119,7 +121,7 @@ class SelectedMailbox:
         self._hide_expunged = False
         self._snapshot: Optional[SelectedSnapshot] = None
         if selected_set:
-            selected_set._set.add(self)
+            selected_set.set.add(self)
 
     @property
     def name(self) -> str:
@@ -286,8 +288,8 @@ class SelectedMailbox:
         copy._snapshot = SelectedSnapshot(self.uid_validity, self.next_uid,
                                           self.recent, messages)
         if self._selected_set:
-            self._selected_set._set.discard(self)
-            self._selected_set._set.add(copy)
+            self._selected_set.set.discard(self)
+            self._selected_set.set.add(copy)
         if self._snapshot:
             return copy, self._compare(command)
         else:

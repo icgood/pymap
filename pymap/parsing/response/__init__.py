@@ -59,11 +59,11 @@ class Response:
         code: Optional response code.
 
     Attributes:
-        condition: The condition bytestring, e.g. ``OK``.
         tag: The tag bytestring.
 
     """
 
+    #: The condition bytestring, e.g. ``OK``.
     condition: Optional[bytes] = None
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,

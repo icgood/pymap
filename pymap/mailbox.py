@@ -30,6 +30,10 @@ class MailboxSnapshot(MailboxInterface):
 
     """
 
+    __slots__ = ['_name', '_readonly', '_uid_validity', '_permanent_flags',
+                 '_session_flags', '_exists', '_recent', '_unseen',
+                 '_first_unseen', '_next_uid']
+
     def __init__(self, name: str, readonly: bool, uid_validity: int,
                  permanent_flags: Iterable[Flag],
                  session_flags: FrozenSet[Flag],

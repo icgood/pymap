@@ -51,6 +51,8 @@ class IMAPServer:
 
     """
 
+    __slots__ = ['commands', 'login', 'config']
+
     def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
         self.commands = config.commands
@@ -75,6 +77,9 @@ class IMAPConnection:
 
     """
 
+    __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
+                 '_print', 'reader', 'writer']
+
     def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
                  writer: StreamWriter) -> None:
@@ -91,7 +96,8 @@ class IMAPConnection:
         self.writer = writer
         socket_info.set(SocketInfo(writer))
 
-    def _real_print(self, prefix: str, output: bytes) -> None:
+    @classmethod
+    def _real_print(cls, prefix: str, output: bytes) -> None:
         prefix = prefix % socket_info.get().socket.fileno()
         lines = re.split(br'\r?\n', output)
         if not lines[-1]:

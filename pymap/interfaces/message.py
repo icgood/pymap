@@ -31,6 +31,8 @@ class MessageInterface(Protocol):
 
     """
 
+    __slots__ = []
+
     @property
     @abstractmethod
     def uid(self) -> int:

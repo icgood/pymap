@@ -23,6 +23,8 @@ class SocketInfo:
 
     """
 
+    __slots__ = ['_transport']
+
     def __init__(self, transport: _Transport) -> None:
         super().__init__()
         self._transport = transport

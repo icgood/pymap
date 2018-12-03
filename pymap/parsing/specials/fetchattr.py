@@ -22,6 +22,7 @@ class FetchRequirement(enum.Flag):
         BODY: The parsed MIME message body is required.
 
     """
+
     NONE = 0
     METADATA = enum.auto()
     HEADERS = enum.auto()

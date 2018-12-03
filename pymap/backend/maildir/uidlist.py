@@ -17,7 +17,7 @@ _UDT = TypeVar('_UDT', bound='UidList')
 class Record(NamedTuple):
     """Defines a single record read from the UID list file.
 
-    Args:
+    Attributes:
         uid: The message UID of the record.
         fields: The metadata fields of the record.
         filename: The filename of the record.

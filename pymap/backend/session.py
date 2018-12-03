@@ -23,7 +23,7 @@ from .util import asyncenumerate
 __all__ = ['BaseSession']
 
 
-class BaseSession(Generic[MailboxDataT_co], SessionInterface[SelectedMailbox]):
+class BaseSession(Generic[MailboxDataT_co], SessionInterface):
     """Base implementation of
     :class:`~pymap.interfaces.session.SessionInterface` intended for use by
     most backends.
@@ -33,6 +33,8 @@ class BaseSession(Generic[MailboxDataT_co], SessionInterface[SelectedMailbox]):
             authenticated user.
 
     """
+
+    __slots__ = ['mailbox_set']
 
     def __init__(self, mailbox_set: MailboxSetInterface[MailboxDataT_co]) \
             -> None:
@@ -92,7 +94,7 @@ class BaseSession(Generic[MailboxDataT_co], SessionInterface[SelectedMailbox]):
                 list_tree.update(*await self.mailbox_set.list_subscribed())
             else:
                 list_tree.update(*await self.mailbox_set.list_mailboxes())
-            ret = [(entry.name, delimiter, entry.attrs)
+            ret = [(entry.name, delimiter, entry.attributes)
                    for entry in list_tree.list_matching(ref_name, filter_)]
         else:
             ret = [("", delimiter, [b'Noselect'])]

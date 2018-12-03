@@ -1,13 +1,15 @@
 
 from typing import TypeVar, Tuple, AsyncIterable, AsyncIterator
 
-__all__ = ['asyncenumerate', 'AsyncEnumerateT']
+__all__ = ['asyncenumerate', 'AsyncEnumerate', 'AsyncEnumerateT']
 
-#: Type variable bound to the enumerated element in :func:`asyncenumerate`.
+#: Type variable bound to the enumerated element in :class:`AsyncEnumerate`.
 AsyncEnumerateT = TypeVar('AsyncEnumerateT')
 
 
 class _AsyncEnumerateIterator(AsyncIterator[Tuple[int, AsyncEnumerateT]]):
+
+    __slots__ = ['_iter', '_idx']
 
     def __init__(self, iterator: AsyncIterator[AsyncEnumerateT],
                  idx: int) -> None:
@@ -24,7 +26,7 @@ class _AsyncEnumerateIterator(AsyncIterator[Tuple[int, AsyncEnumerateT]]):
         return self._idx, item
 
 
-class _AsyncEnumerate(AsyncIterable[Tuple[int, AsyncEnumerateT]]):
+class AsyncEnumerate(AsyncIterable[Tuple[int, AsyncEnumerateT]]):
     """Imitates Python's :func:`enumerate` with async iterators.
 
     Args:
@@ -32,6 +34,8 @@ class _AsyncEnumerate(AsyncIterable[Tuple[int, AsyncEnumerateT]]):
         start: The starting value of the index.
 
     """
+
+    __slots__ = ['_sub_iter', '_start']
 
     def __init__(self, iterable: AsyncIterable[AsyncEnumerateT],
                  start: int = 0) -> None:
@@ -44,5 +48,5 @@ class _AsyncEnumerate(AsyncIterable[Tuple[int, AsyncEnumerateT]]):
         return _AsyncEnumerateIterator(sub_iter, self._start)
 
 
-# Expose _AsyncEnumerate class with a public alias.
-asyncenumerate = _AsyncEnumerate
+# Expose AsyncEnumerator class with a public alias.
+asyncenumerate = AsyncEnumerate

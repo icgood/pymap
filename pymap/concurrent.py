@@ -226,10 +226,10 @@ class FileLock(ReadWriteLock):
                  write_retry_delay: _Delay = _DEFAULT_DELAY) \
             -> None:
         super().__init__()
-        self.path = path
-        self.expiration = expiration
-        self.read_retry_delay = read_retry_delay
-        self.write_retry_delay = write_retry_delay
+        self._path = path
+        self._expiration = expiration
+        self._read_retry_delay = read_retry_delay
+        self._write_retry_delay = write_retry_delay
 
     @property
     def subsystem(self) -> str:
@@ -240,13 +240,13 @@ class FileLock(ReadWriteLock):
 
     def _check_lock(self) -> bool:
         try:
-            statinfo = os.stat(self.path)
+            statinfo = os.stat(self._path)
         except FileNotFoundError:
             return True
         else:
-            if time.time() - statinfo.st_mtime >= self.expiration:
+            if time.time() - statinfo.st_mtime >= self._expiration:
                 try:
-                    os.unlink(self.path)
+                    os.unlink(self._path)
                 except OSError:
                     pass
                 return True
@@ -254,7 +254,7 @@ class FileLock(ReadWriteLock):
 
     def _try_lock(self) -> bool:
         try:
-            with open(self.path, 'x'):
+            with open(self._path, 'x'):
                 pass
         except FileExistsError:
             return False
@@ -263,7 +263,7 @@ class FileLock(ReadWriteLock):
 
     def _unlock(self) -> None:
         try:
-            os.unlink(self.path)
+            os.unlink(self._path)
         except OSError:
             pass
 
@@ -272,9 +272,9 @@ class FileLock(ReadWriteLock):
         if self._check_lock():
             yield
             return
-        for delay in self.read_retry_delay:
+        for delay in self._read_retry_delay:
             await asyncio.sleep(delay)
-            if not os.path.exists(self.path):
+            if not os.path.exists(self._path):
                 yield
                 break
         else:
@@ -288,7 +288,7 @@ class FileLock(ReadWriteLock):
             finally:
                 self._unlock()
             return
-        for delay in self.write_retry_delay:
+        for delay in self._write_retry_delay:
             await asyncio.sleep(delay)
             if self._try_lock():
                 try:

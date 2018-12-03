@@ -65,6 +65,8 @@ class _EventLoopLocal(threading.local):
 
 class _ProxyWrapper:
 
+    __slots__ = ['_call', '_obj']
+
     def __init__(self, call, obj) -> None:
         super().__init__()
         self._call = call

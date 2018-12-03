@@ -32,7 +32,7 @@ class Params:
     """
 
     __slots__ = ['continuations', 'expected', 'list_expected', 'command_name',
-                 'uid', 'charset', 'tag', 'max_string_len', 'max_append_len']
+                 'uid', 'charset', 'tag', 'max_append_len']
 
     def __init__(self, continuations: List[bytes] = None,
                  expected: Sequence[Type['Parseable']] = None,
@@ -42,6 +42,7 @@ class Params:
                  charset: str = None,
                  tag: bytes = None,
                  max_append_len: int = None) -> None:
+        super().__init__()
         self.continuations = continuations or []
         self.expected = expected or []
         self.list_expected = list_expected or []
@@ -90,6 +91,8 @@ class Parseable(Generic[ParseableT], metaclass=ABCMeta):
     _whitespace_pattern = re.compile(br' +')
     _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
                                br'-\x5B\x5E-\x7A\x7C\x7E]+')
+
+    __slots__ = []
 
     @property
     @abstractmethod
@@ -170,6 +173,8 @@ class Space(Parseable[int]):
 
     """
 
+    __slots__ = ['length']
+
     def __init__(self, length: int) -> None:
         super().__init__()
         self.length = length
@@ -205,6 +210,8 @@ class EndLine(Parseable[bytes]):
     """
 
     _pattern = re.compile(br' *(\r?)\n')
+
+    __slots__ = ['preceding_spaces', 'carriage_return']
 
     def __init__(self, preceding_spaces: int = 0,
                  carriage_return: bool = True) -> None:

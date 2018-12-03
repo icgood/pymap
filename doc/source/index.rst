@@ -14,8 +14,10 @@ Table of Contents
    :maxdepth: 2
    :caption: Contents:
 
+   pymap.bytes
    pymap.concurrent
    pymap.config
+   pymap.context
    pymap.exceptions
    pymap.flags
    pymap.listtree

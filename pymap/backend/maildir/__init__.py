@@ -60,7 +60,7 @@ class Config(IMAPConfig):
         self.layout = layout
 
     @classmethod
-    def _get_base_dir(self, base_dir: Optional[str],
+    def _get_base_dir(cls, base_dir: Optional[str],
                       users_file: Optional[str]) -> str:
         if base_dir:
             return base_dir

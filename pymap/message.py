@@ -32,7 +32,7 @@ Policy7Bit = Policy.clone(cte_type='7bit')
 class AppendMessage(NamedTuple):
     """A single message from the APPEND command.
 
-    Args:
+    Attributes:
         message: The raw message bytes.
         flag_set: The flags to assign to the message.
         when: The internal timestamp to assign to the message.
@@ -67,6 +67,9 @@ class BaseMessage(MessageInterface):
         contents: The contents of the message.
 
     """
+
+    __slots__ = ['_uid', '_permanent_flags', '_internal_date',
+                 '_expunged', '_contents', '_kwargs']
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
                  internal_date: datetime = None, expunged: bool = False,

@@ -12,6 +12,8 @@ __all__ = ['Commands']
 class Commands:
     """Contains the set of all known IMAP commands and the ability to parse."""
 
+    __slots__ = ['commands']
+
     def __init__(self) -> None:
         super().__init__()
         self.commands: Dict[bytes, Type[Command]] = {}
