@@ -68,9 +68,6 @@ class BaseMessage(MessageInterface):
 
     """
 
-    __slots__ = ['_uid', '_permanent_flags', '_internal_date',
-                 '_expunged', '_contents', '_kwargs']
-
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
                  internal_date: datetime = None, expunged: bool = False,
                  contents: EmailMessage = None, **kwargs: Any) -> None:

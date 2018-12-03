@@ -19,7 +19,7 @@ class Nil(Parseable[None]):
 
     _nil_pattern = re.compile(b'^NIL$', re.I)
 
-    __slots__ = []
+    __slots__ = []  # type: ignore
 
     def __init__(self) -> None:
         super().__init__()
@@ -239,7 +239,7 @@ class QuotedString(String):
     _quoted_pattern = re.compile(br'(?:\r|\n|\\.|\")')
     _quoted_specials_pattern = re.compile(br'[\"\\]')
 
-    __slots__ = []
+    __slots__ = []  # type: ignore
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:
         super().__init__(string, raw)

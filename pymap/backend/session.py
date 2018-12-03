@@ -34,8 +34,6 @@ class BaseSession(Generic[MailboxDataT_co], SessionInterface):
 
     """
 
-    __slots__ = ['mailbox_set']
-
     def __init__(self, mailbox_set: MailboxSetInterface[MailboxDataT_co]) \
             -> None:
         super().__init__()

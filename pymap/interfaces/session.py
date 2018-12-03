@@ -46,8 +46,6 @@ class LoginProtocol(Protocol[ConfigT_contra]):
 class SessionInterface(Protocol):
     """Corresponds to a single, authenticated IMAP session."""
 
-    __slots__ = []
-
     @abstractmethod
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,

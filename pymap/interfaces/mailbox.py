@@ -13,8 +13,6 @@ class MailboxInterface(Protocol):
 
     """
 
-    __slots__ = []
-
     @property
     @abstractmethod
     def name(self) -> str:
