@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.sockinfo &#8212; pymap 0.5.0 documentation</title>
+    <title>pymap.context &#8212; pymap 0.5.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -21,8 +21,8 @@
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pymap.state" href="pymap.state.html" />
-    <link rel="prev" title="pymap.server" href="pymap.server.html" /> 
+    <link rel="next" title="pymap.exceptions" href="pymap.exceptions.html" />
+    <link rel="prev" title="pymap.config" href="pymap.config.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
     <div class="relbar-top">
@@ -37,10 +37,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.state.html" title="pymap.state"
+          <a href="pymap.exceptions.html" title="pymap.exceptions"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.server.html" title="pymap.server"
+          <a href="pymap.config.html" title="pymap.config"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.5.0 documentation</a> &#187;</li>
  
@@ -54,21 +54,20 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.sockinfo">
-<span id="pymap-sockinfo"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sockinfo</span></code><a class="headerlink" href="#module-pymap.sockinfo" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pymap.sockinfo.SocketInfo">
-<em class="property">class </em><code class="descclassname">pymap.sockinfo.</code><code class="descname">SocketInfo</code><span class="sig-paren">(</span><em>transport</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockinfo.SocketInfo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Information about a connected socket, which may be useful for
-server-side logic such as authentication and authorization.</p>
-<p>Attribute access is passed directly into
-<a class="reference external" href="https://docs.python.org/3/library/asyncio-protocol.html#asyncio.BaseTransport.get_extra_info" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_extra_info()</span></code></a>, decorated in some cases with
-type hints and checks.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://docs.python.org/3/library/asyncio-protocol.html#asyncio.BaseTransport.get_extra_info" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_extra_info()</span></code></a></p>
-</div>
+  <div class="section" id="module-pymap.context">
+<span id="pymap-context"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.context</span></code><a class="headerlink" href="#module-pymap.context" title="Permalink to this headline">¶</a></h1>
+<p>Contains the context variables that are made available by the IMAP server to
+backend implementations.</p>
+<dl class="attribute">
+<dt id="pymap.context.current_command">
+<code class="descclassname">pymap.context.</code><code class="descname">current_command</code><a class="headerlink" href="#pymap.context.current_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently executing command.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.context.socket_info">
+<code class="descclassname">pymap.context.</code><code class="descname">socket_info</code><a class="headerlink" href="#pymap.context.socket_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Info about the currently connected socket.</p>
 </dd></dl>
 
 </div>
@@ -81,18 +80,18 @@ type hints and checks.</p>
         <div class="sphinxsidebarwrapper">
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="pymap.server.html"
-                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.server</span></code></a></p>
+    <p class="topless"><a href="pymap.config.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="pymap.state.html"
-                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.state</span></code></a></p>
+    <p class="topless"><a href="pymap.exceptions.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/pymap.sockinfo.rst.txt"
+      <li><a href="_sources/pymap.context.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -141,10 +140,10 @@ type hints and checks.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.state.html" title="pymap.state"
+          <a href="pymap.exceptions.html" title="pymap.exceptions"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.server.html" title="pymap.server"
+          <a href="pymap.config.html" title="pymap.config"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.5.0 documentation</a> &#187;</li>
  
