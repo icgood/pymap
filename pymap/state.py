@@ -86,8 +86,7 @@ class ConnectionState:
     @property
     def capability(self) -> Capability:
         if self._session:
-            login_capability = list(self.config.login_capability)
-            return Capability(self._capability + login_capability)
+            return Capability(self._capability)
         else:
             return Capability(self._capability +
                               [b'AUTH=%b' % mech.name for mech in
@@ -105,6 +104,7 @@ class ConnectionState:
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
         self._session = await self.login(creds, self.config)
+        self._capability.extend(self.config.login_capability)
         return ResponseOk(cmd.tag, b'Authentication successful.',
                           self.capability)
 

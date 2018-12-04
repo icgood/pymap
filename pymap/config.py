@@ -181,7 +181,7 @@ class IMAPConfig:
 
     @property
     def initial_capability(self) -> Sequence[bytes]:
-        ret = []
+        ret = [b'LITERAL+']
         if self._starttls_enabled:
             ret.append(b'STARTTLS')
         if self._reject_insecure_auth:

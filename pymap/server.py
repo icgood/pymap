@@ -80,6 +80,9 @@ class IMAPConnection:
 
     """
 
+    _lines = re.compile(br'\r?\n')
+    _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
+
     __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
                  '_print', 'reader', 'writer']
 
@@ -102,7 +105,7 @@ class IMAPConnection:
     @classmethod
     def _real_print(cls, prefix: str, output: bytes) -> None:
         prefix = prefix % socket_info.get().socket.fileno()
-        lines = re.split(br'\r?\n', output)
+        lines = cls._lines.split(output)
         if not lines[-1]:
             lines = lines[:-1]
         for line in lines:
@@ -113,14 +116,27 @@ class IMAPConnection:
     def _noop_print(cls, prefix: str, output: bytes) -> None:
         pass
 
+    async def readline(self) -> bytes:
+        buf = bytearray(await self.reader.readline())
+        while True:
+            lit_plus = self._literal_plus.search(buf)
+            if lit_plus:
+                literal_length = int(lit_plus.group(1))
+                try:
+                    buf += await self.reader.readexactly(literal_length)
+                except IncompleteReadError:
+                    raise Disconnected
+                buf += await self.reader.readline()
+            else:
+                self._print('%d -->|', buf)
+                return as_memoryview(buf)
+
     async def read_continuation(self, literal_length: int) -> bytes:
         try:
             extra_literal = await self.reader.readexactly(literal_length)
         except IncompleteReadError:
             raise Disconnected
-        extra_line: bytes = await self.reader.readline()
-        if self.reader.at_eof():
-            raise Disconnected
+        extra_line: bytes = await self.readline()
         extra = extra_literal + extra_line
         self._print('%d -->|', extra)
         return as_memoryview(extra)
@@ -148,12 +164,11 @@ class IMAPConnection:
                 responses.append(chal)
 
     async def read_command(self) -> Command:
-        line = as_memoryview(await self.reader.readline())
-        if self.reader.at_eof():
-            raise Disconnected
-        self._print('%d -->|', line)
+        line = await self.readline()
         conts: List[bytes] = []
         while True:
+            if self.reader.at_eof():
+                raise Disconnected
             try:
                 cmd, _ = self.commands.parse(
                     line, self.params.copy(continuations=conts.copy()))

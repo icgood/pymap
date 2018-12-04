@@ -107,9 +107,23 @@ class TestString(unittest.TestCase):
         self.assertEqual(b'', ret.value)
         self.assertEqual(b'abc', buf)
 
+    def test_literal_plus(self):
+        ret, buf = String.parse(b'{5+}\r\ntest\x01abc', Params())
+        self.assertIsInstance(ret, LiteralString)
+        self.assertEqual(b'test\x01', ret.value)
+        self.assertFalse(ret.binary)
+        self.assertEqual(b'abc', buf)
+
     def test_literal_binary(self):
         ret, buf = String.parse(
             b'~{3}\r\n', Params(continuations=[b'\x00\x01\02abc']))
+        self.assertIsInstance(ret, LiteralString)
+        self.assertEqual(b'\x00\x01\x02', ret.value)
+        self.assertTrue(ret.binary)
+        self.assertEqual(b'abc', buf)
+
+    def test_literal_plus_binary(self):
+        ret, buf = String.parse(b'~{3+}\r\n\x00\x01\02abc', Params())
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'\x00\x01\x02', ret.value)
         self.assertTrue(ret.binary)
@@ -127,7 +141,7 @@ class TestString(unittest.TestCase):
         with self.assertRaises(NotParseable):
             String.parse(b'{10}\r\n', Params(continuations=[b'a'*9]))
         with self.assertRaises(NotParseable):
-            String.parse(b'{10+}\r\n', Params())
+            String.parse(b'{10+}\r\n' + (b'a'*9), Params())
         with self.assertRaises(NotParseable) as raised:
             String.parse(b'{4097}\r\n', Params())
         self.assertEqual(b'[TOOBIG]', bytes(raised.exception.code))
