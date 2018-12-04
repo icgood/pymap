@@ -2,6 +2,13 @@
 ``pymap.interfaces``
 ====================
 
+``pymap.interfaces.backend``
+----------------------------
+
+.. automodule:: pymap.interfaces.backend
+   :members:
+   :special-members: __call__
+
 ``pymap.interfaces.message``
 ----------------------------
 

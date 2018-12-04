@@ -193,8 +193,7 @@ class SelectedMailbox:
         self._is_deleted = True
 
     def add_messages(self, *messages: _Message) -> None:
-        """Add a message that exists in the mailbox. Shortcut for
-        :meth:`.add_message`.
+        """Add a message that exists in the mailbox.
 
         Args:
             messages: The messages to add, each a tuple of UID and permanent

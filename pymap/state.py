@@ -1,8 +1,3 @@
-"""Defines the state flow of the IMAP connection. Determines if a command
-can be processed at that point in the connection, and interacts with the
-backend plugin.
-
-"""
 
 from collections import OrderedDict
 from socket import getfqdn
@@ -29,9 +24,9 @@ from .parsing.command.select import CheckCommand, CloseCommand, IdleCommand, \
     ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, SearchCommand
 from .parsing.primitives import ListP, Number, String, Nil
 from .parsing.response import Response, ResponseOk, ResponseNo, ResponseBad, \
-        ResponsePreAuth
-from .parsing.response.code import Capability, PermanentFlags, ReadOnly, \
-    UidNext, UidValidity, Unseen, ReadWrite
+        ResponseCode, ResponsePreAuth
+from .parsing.response.code import Capability, PermanentFlags, UidNext, \
+    UidValidity, Unseen
 from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
@@ -49,7 +44,11 @@ fqdn = getfqdn().encode('ascii')
 
 
 class ConnectionState:
-    """Defines the interaction with the backend plugin."""
+    """Defines the state flow of the IMAP connection. Determines if a command
+    can be processed at that point in the connection, and interacts with the
+    backend plugin.
+
+    """
 
     def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
@@ -145,10 +144,12 @@ class ConnectionState:
         mailbox, updates = await self.session.select_mailbox(
             cmd.mailbox, cmd.readonly)
         if updates.readonly:
-            resp = ResponseOk(cmd.tag, b'Selected mailbox.', ReadOnly())
+            resp = ResponseOk(cmd.tag, b'Selected mailbox.',
+                              ResponseCode.of(b'READ-ONLY'))
             resp.add_untagged_ok(b'Read-only mailbox.', PermanentFlags([]))
         else:
-            resp = ResponseOk(cmd.tag, b'Selected mailbox.', ReadWrite())
+            resp = ResponseOk(cmd.tag, b'Selected mailbox.',
+                              ResponseCode.of(b'READ-WRITE'))
             resp.add_untagged_ok(b'Flags permitted.',
                                  PermanentFlags(mailbox.permanent_flags))
         resp.add_untagged(FlagsResponse(mailbox.flags))

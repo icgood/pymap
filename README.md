@@ -139,6 +139,11 @@ added to a mailbox.
 No additional functionality by itself, but allows pymap to be extended easily
 and more robustly handle bad client implementations.
 
+#### [RFC 5530](https://tools.ietf.org/html/rfc5530)
+
+Adds additional IMAP response codes that can help tell an IMAP client why a
+command failed.
+
 #### [RFC 7889 (partial)](https://tools.ietf.org/html/rfc7889)
 
 Adds the `APPENDLIMIT=` capability, declaring the maximum message size a server

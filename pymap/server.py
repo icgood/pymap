@@ -49,6 +49,9 @@ class IMAPServer:
             object.
         config: Settings to use for the IMAP server.
 
+    Attributes:
+        config: Settings to use for the IMAP server.
+
     """
 
     __slots__ = ['commands', 'login', 'config']
@@ -184,7 +187,8 @@ class IMAPConnection:
         self._print('%d <->|', b'<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
-        resp = ResponseBye(b'Unhandled server error.')
+        resp = ResponseBye(b'Unhandled server error.',
+                           ResponseCode.of(b'SERVERBUG'))
         try:
             await self.write_response(resp)
             self.writer.close()

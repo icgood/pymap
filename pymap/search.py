@@ -1,4 +1,4 @@
-"""Utilities for managing a IMAP searches."""
+"""Utilities for managing IMAP searches."""
 
 from abc import abstractmethod, ABCMeta
 from datetime import datetime

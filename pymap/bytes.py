@@ -16,11 +16,15 @@ def as_memoryview(val: bytes) -> bytes:
     """Wrap a bytestring in a :class:`memoryview` for performance, while
     maintaining ``bytes`` type annotation.
 
+    Args:
+        val: The bytestring to wrap in a memoryview.
+
     Note:
         This is necessary because even though the :class:`~typing.ByteString`
-        state that ``bytes`` may be used to annotate memoryview objects, it
-        does not appear to work in practice. If/when this is resolved, remove
-        this function in factor of a simple ``... = memoryview(val)`` call.
+        docs state that ``bytes`` may be used to annotate memoryview objects,
+        it does not appear to work in practice. If/when this is resolved,
+        remove this function in factor of a simple ``... = memoryview(val)``
+        call.
 
     See Also:
         `python/mypy#4871 <https://github.com/python/mypy/issues/4871>`_

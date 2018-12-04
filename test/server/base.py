@@ -3,8 +3,7 @@ import asyncio
 from argparse import Namespace
 from typing import Dict
 
-from pymap.backend.dict import init
-from pymap.server import IMAPServer
+from pymap.backend.dict import DictBackend
 from .mocktransport import MockTransport
 
 
@@ -20,8 +19,9 @@ class TestBase:
     def setup_method(self) -> None:
         self._fd = 1
         loop = asyncio.get_event_loop()
-        login, self.config = loop.run_until_complete(init(self.FakeArgs()))
-        self._run = IMAPServer(login, self.config)
+        self._run = server = loop.run_until_complete(
+                DictBackend.init(self.FakeArgs()))
+        self.config = server.config
         self.matches: Dict[str, bytes] = {}
         self.transport = self.new_transport()
 

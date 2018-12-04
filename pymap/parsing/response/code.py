@@ -5,19 +5,8 @@ from ..primitives import ListP
 from ..specials import SequenceSet
 from ...bytes import MaybeBytes, BytesFormat
 
-__all__ = ['Alert', 'Capability', 'Parse', 'PermanentFlags', 'ReadOnly',
-           'ReadWrite', 'TryCreate', 'UidNext', 'UidValidity', 'Unseen',
+__all__ = ['Capability', 'PermanentFlags', 'UidNext', 'UidValidity', 'Unseen',
            'AppendUid', 'CopyUid']
-
-
-class Alert(ResponseCode):
-    """Indicates the response text must be presented to the user in a way that
-    catches attention.
-
-    """
-
-    def __bytes__(self) -> bytes:
-        return b'[ALERT]'
 
 
 class Capability(ResponseCode):
@@ -49,13 +38,6 @@ class Capability(ResponseCode):
         return BytesFormat(b'[%b]') % self.string
 
 
-class Parse(ResponseCode):
-    """Indicates the server failed to parse the headers in a message."""
-
-    def __bytes__(self) -> bytes:
-        return b'[PARSE]'
-
-
 class PermanentFlags(ResponseCode):
     """Indicates the permanent flags available in a mailbox.
 
@@ -71,30 +53,6 @@ class PermanentFlags(ResponseCode):
 
     def __bytes__(self) -> bytes:
         return self._raw
-
-
-class ReadOnly(ResponseCode):
-    """Indicates the currently selected mailbox is opened read-only."""
-
-    def __bytes__(self) -> bytes:
-        return b'[READ-ONLY]'
-
-
-class ReadWrite(ResponseCode):
-    """Indicates the currently selected mailbox is opened read-write."""
-
-    def __bytes__(self) -> bytes:
-        return b'[READ-WRITE]'
-
-
-class TryCreate(ResponseCode):
-    """Indicates that a failing ``APPEND`` or ``COPY`` command may succeed if
-    the client first creates the destination mailbox.
-
-    """
-
-    def __bytes__(self) -> bytes:
-        return b'[TRYCREATE]'
 
 
 class UidNext(ResponseCode):
