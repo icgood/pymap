@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend &#8212; pymap 0.5.1 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.5.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.5.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.5.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -668,8 +668,8 @@ authenticated user.</td>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">AppendFailure</span></code> – The message could not be appended to the mailbox.</li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AppendFailure" title="pymap.exceptions.AppendFailure"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendFailure</span></code></a></li>
 </ul>
 </td>
 </tr>
@@ -707,7 +707,7 @@ housekeeping operations if necessary.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a></p>
@@ -737,10 +737,8 @@ housekeeping operations if necessary.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists,
-or the destination mailbox does not exist.</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code> – The currently selected mailbox is read-only,
-or the destination mailbox is read-only.</li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxReadOnly" title="pymap.exceptions.MailboxReadOnly"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code></a></li>
 </ul>
 </td>
 </tr>
@@ -769,7 +767,7 @@ or the destination mailbox is read-only.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxConflict</span></code> – The mailbox name already exists.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxConflict" title="pymap.exceptions.MailboxConflict"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxConflict</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
@@ -798,8 +796,8 @@ or the destination mailbox is read-only.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxHasChildren</span></code> – The mailbox has child mailboxes.</li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxHasChildren" title="pymap.exceptions.MailboxHasChildren"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxHasChildren</span></code></a></li>
 </ul>
 </td>
 </tr>
@@ -831,8 +829,8 @@ from the mailbox.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code> – The currently selected mailbox is read-only.</li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxReadOnly" title="pymap.exceptions.MailboxReadOnly"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code></a></li>
 </ul>
 </td>
 </tr>
@@ -859,7 +857,7 @@ set.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.mailbox.Message" title="pymap.backend.mailbox.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
@@ -885,7 +883,7 @@ an exception if the mailbox does not yet exist.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
@@ -943,8 +941,8 @@ an exception if the mailbox does not yet exist.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxConflict</span></code> – The destination mailbox name already exists.</li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxConflict" title="pymap.exceptions.MailboxConflict"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxConflict</span></code></a></li>
 </ul>
 </td>
 </tr>
@@ -974,7 +972,7 @@ given search criteria.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.mailbox.Message" title="pymap.backend.mailbox.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
@@ -1006,7 +1004,7 @@ fetch mailbox updates.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
@@ -1035,7 +1033,7 @@ folder name currently exists.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
@@ -1064,7 +1062,7 @@ not the given folder name currently exists.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The mailbox name does not exist.</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
@@ -1095,8 +1093,8 @@ not the given folder name currently exists.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxNotFound</span></code> – The currently selected mailbox no longer exists.</li>
-<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code> – The currently selected mailbox is read-only.</li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxReadOnly" title="pymap.exceptions.MailboxReadOnly"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code></a></li>
 </ul>
 </td>
 </tr>
@@ -1230,7 +1228,7 @@ not the given folder name currently exists.</p>
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.5.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.5.2 documentation</a> &#187;</li>
  
       </ul>
     </div>

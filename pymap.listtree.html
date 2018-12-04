@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.listtree &#8212; pymap 0.5.1 documentation</title>
+    <title>pymap.listtree &#8212; pymap 0.5.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="pymap.flags.html" title="pymap.flags"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.5.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.5.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -68,6 +68,8 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>name</strong> – The name of the mailbox.</li>
 <li><strong>exists</strong> – False if the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\Noselect</span></code>.</li>
+<li><strong>marked</strong> – True, False, or None if the mailbox should be marked with
+<code class="docutils literal notranslate"><span class="pre">\Marked</span></code>, <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> , or neither, respectively.</li>
 <li><strong>has_children</strong> – Whether the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\HasChildren</span></code> or
 <code class="docutils literal notranslate"><span class="pre">\HasNoChildren</span></code>.</li>
 </ul>
@@ -88,9 +90,15 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="pymap.listtree.ListEntry.marked">
+<code class="descname">marked</code><a class="headerlink" href="#pymap.listtree.ListEntry.marked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="pymap.listtree.ListEntry.has_children">
 <code class="descname">has_children</code><a class="headerlink" href="#pymap.listtree.ListEntry.has_children" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
+<dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -140,6 +148,29 @@ has superior names in the heirarchy that do not exist, they are added as
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The names of the mailboxes.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.listtree.ListTree" title="pymap.listtree.ListTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListTree</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.listtree.ListTree.set_marked">
+<code class="descname">set_marked</code><span class="sig-paren">(</span><em>name</em>, <em>marked=False</em>, <em>unmarked=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.set_marked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add or remove the <code class="docutils literal notranslate"><span class="pre">\Marked</span></code> and <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> mailbox
+attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>marked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the <code class="docutils literal notranslate"><span class="pre">\Marked</span></code> attribute should be added.</li>
+<li><strong>unmarked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> attribute should be added.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -257,7 +288,7 @@ has superior names in the heirarchy that do not exist, they are added as
         <li class="right" >
           <a href="pymap.flags.html" title="pymap.flags"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.5.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.5.2 documentation</a> &#187;</li>
  
       </ul>
     </div>

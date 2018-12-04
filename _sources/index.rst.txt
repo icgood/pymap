@@ -28,7 +28,6 @@ Table of Contents
    pymap.selected
    pymap.server
    pymap.sockinfo
-   pymap.state
    pymap.interfaces
    pymap.parsing
    pymap.backend
