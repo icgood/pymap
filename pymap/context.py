@@ -5,6 +5,9 @@ Attributes:
     current_command: The currently executing command.
     socket_info: Info about the currently connected socket.
 
+See Also:
+    :mod:`contextvars`
+
 """
 
 from contextvars import ContextVar

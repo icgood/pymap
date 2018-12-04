@@ -16,8 +16,8 @@ class TestSelectedMailbox(unittest.TestCase):
     @classmethod
     def new_selected(cls) -> SelectedMailbox:
         return SelectedMailbox('test', False,
-                               PermanentFlags(Seen, Flagged),
-                               SessionFlags())
+                               PermanentFlags([Seen, Flagged]),
+                               SessionFlags([]))
 
     @property
     def command(self) -> SearchCommand:

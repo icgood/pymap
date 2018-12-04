@@ -3,28 +3,30 @@
 import asyncio
 import traceback
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from typing import Mapping, Type
 
 from pkg_resources import iter_entry_points
 
 from .core import __version__
-from .server import IMAPServer
+from .interfaces.backend import BackendInterface
 
 
-def _load_backends(parser):
+def _load_backends(parser: ArgumentParser) \
+        -> Mapping[str, Type[BackendInterface]]:
     ret = {}
     for entry_point in iter_entry_points('pymap.backend'):
         try:
-            mod = entry_point.load()
+            cls = entry_point.load()
         except ImportError:
             traceback.print_exc()
             parser.exit(1, 'Error importing registered backend: %s\n'
                         % entry_point.name)
         else:
-            ret[entry_point.name] = mod
+            ret[entry_point.name] = cls
     return ret
 
 
-def main():
+def main() -> None:
     parser = ArgumentParser(description=__doc__,
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', action='store_true',
@@ -43,8 +45,8 @@ def main():
 
     backends = _load_backends(parser)
 
-    for mod in backends.values():
-        mod.add_subparser(subparsers)
+    for cls in backends.values():
+        cls.add_subparser(subparsers)
     args = parser.parse_args()
 
     try:
@@ -54,8 +56,7 @@ def main():
         return
 
     loop = asyncio.get_event_loop()
-    login_func, config = loop.run_until_complete(backend.init(args))
-    callback = IMAPServer(login_func, config)
+    callback = loop.run_until_complete(backend.init(args))
     coro = asyncio.start_server(callback, port=args.port, loop=loop)
     server = loop.run_until_complete(coro)
 
@@ -67,7 +68,6 @@ def main():
     server.close()
     loop.run_until_complete(server.wait_closed())
     loop.close()
-    return 0
 
 
 if __name__ == '__main__':

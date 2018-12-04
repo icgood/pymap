@@ -1,7 +1,7 @@
 
 import re
 from collections import OrderedDict
-from typing import Dict, Iterable, Sequence, List, NamedTuple
+from typing import Optional, Dict, Iterable, Sequence, List, NamedTuple
 
 __all__ = ['ListEntry', 'ListTree']
 
@@ -12,6 +12,8 @@ class ListEntry(NamedTuple):
     Args:
         name: The name of the mailbox.
         exists: False if the mailbox should be marked ``\\Noselect``.
+        marked: True, False, or None if the mailbox should be marked with
+            ``\\Marked``, ``\\Unmarked`` , or neither, respectively.
         has_children: Whether the mailbox should be marked ``\\HasChildren`` or
             ``\\HasNoChildren``.
 
@@ -19,6 +21,7 @@ class ListEntry(NamedTuple):
 
     name: str
     exists: bool
+    marked: Optional[bool]
     has_children: bool
 
     @property
@@ -37,6 +40,10 @@ class ListEntry(NamedTuple):
             ret.append(b'HasChildren')
         else:
             ret.append(b'HasNoChildren')
+        if self.marked is True:
+            ret.append(b'Marked')
+        elif self.marked is False:
+            ret.append(b'Unmarked')
         return ret
 
 
@@ -83,13 +90,14 @@ class ListTree:
     _percent_escape = re.escape('%')
     _anything = '.*?'
 
-    __slots__ = ['_delimiter', '_no_delimiter', '_root']
+    __slots__ = ['_delimiter', '_no_delimiter', '_root', '_marked']
 
     def __init__(self, delimiter: str) -> None:
         super().__init__()
         self._delimiter = delimiter
         self._no_delimiter = '[^' + re.escape(delimiter) + ']*?'
         self._root = _TreeNode('')
+        self._marked: Dict[str, bool] = {}
 
     def update(self, *names: str) -> 'ListTree':
         """Add all the mailbox names to the tree, filling in any missing nodes.
@@ -103,10 +111,29 @@ class ListTree:
             self._root.add(*parts)
         return self
 
+    def set_marked(self, name: str, marked: bool = False,
+                   unmarked: bool = False) -> None:
+        """Add or remove the ``\\Marked`` and ``\\Unmarked`` mailbox
+        attributes.
+
+        Args:
+            name: The name of the mailbox.
+            marked: True if the ``\\Marked`` attribute should be added.
+            unmarked: True if the ``\\Unmarked`` attribute should be added.
+
+        """
+        if marked:
+            self._marked[name] = True
+        elif unmarked:
+            self._marked[name] = False
+        else:
+            self._marked.pop(name, None)
+
     def _iter(self, node: _TreeNode) -> Iterable[ListEntry]:
         if node.parent is not None:
             name = node.flatten(self._delimiter)
-            yield ListEntry(name, node.exists, bool(node.children))
+            marked = self._marked.get(name)
+            yield ListEntry(name, node.exists, marked, bool(node.children))
         for child in node.children.values():
             for entry in self._iter(child):
                 yield entry

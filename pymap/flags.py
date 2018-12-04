@@ -55,7 +55,7 @@ class PermanentFlags:
 
     __slots__ = ['_defined']
 
-    def __init__(self, *defined: Flag) -> None:
+    def __init__(self, defined: Iterable[Flag]) -> None:
         super().__init__()
         self._defined = frozenset(defined) - {Recent}
 
@@ -70,7 +70,7 @@ class PermanentFlags:
         ``other`` are returned.
 
         The ``&`` operator is an alias of this method, making these two
-        calls equivalent:;
+        calls equivalent::
 
             perm_flags.union(other_flags)
             perm_flags & other_flags
@@ -100,7 +100,7 @@ class SessionFlags:
 
     __slots__ = ['_defined', '_flags']
 
-    def __init__(self, *defined: Flag):
+    def __init__(self, defined: Iterable[Flag]):
         super().__init__()
         self._defined = frozenset(defined) | {Recent}
         self._flags: Dict[int, FrozenSet[Flag]] = {}
@@ -116,7 +116,7 @@ class SessionFlags:
         ``other`` are returned.
 
         The ``&`` operator is an alias of this method, making these two
-        calls equivalent:;
+        calls equivalent::
 
             session_flags.union(other_flags)
             session_flags & other_flags

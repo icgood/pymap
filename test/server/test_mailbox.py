@@ -122,7 +122,7 @@ class TestMailbox(TestBase):
         self.transport.push_readline(
             b'status1 STATUS Sent (MESSAGES)\r\n')
         self.transport.push_write(
-            b'status1 NO Mailbox does not exist.\r\n')
+            b'status1 NO [NONEXISTENT] Mailbox does not exist.\r\n')
         self.transport.push_readline(
             b'status1 STATUS "Sent Test" (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
         self.transport.push_write(

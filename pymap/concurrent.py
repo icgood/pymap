@@ -9,7 +9,7 @@ import os.path
 import time
 from abc import abstractmethod, ABCMeta
 from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock
-from concurrent.futures import TimeoutError
+from concurrent.futures import TimeoutError as _TimeoutError
 from contextlib import asynccontextmanager
 from threading import Event as _threading_Event, Lock as _threading_Lock
 from typing import TypeVar, Sequence, MutableSet, AsyncContextManager, \
@@ -20,6 +20,9 @@ __all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError', 'EventT']
 
 #: Type variable with an upper bound of :class:`Event`.
 EventT = TypeVar('EventT', bound='Event')
+
+# Alias for concurrent.futures.TimeoutError.
+TimeoutError = _TimeoutError
 
 _Delay = Sequence[float]
 

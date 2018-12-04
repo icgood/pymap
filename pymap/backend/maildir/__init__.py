@@ -1,8 +1,3 @@
-"""Defines an on-disk configuration that uses :class:`~mailbox.Maildir` for
-mailbox storage and `MailboxFormat/Maildir
-<https://wiki2.dovecot.org/MailboxFormat/Maildir>`_ for metadata storage.
-
-"""
 
 import os.path
 from argparse import Namespace
@@ -13,31 +8,40 @@ from pysasl import AuthenticationCredentials
 
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
-from pymap.interfaces.session import LoginProtocol
+from pymap.interfaces.backend import BackendInterface
+from pymap.server import IMAPServer
 
 from .layout import MaildirLayout
 from .mailbox import Maildir, MailboxData, MailboxSet
 from ..session import BaseSession
 
-__all__ = ['add_subparser', 'init', 'Config', 'Session']
+__all__ = ['MaildirBackend', 'Config', 'Session']
 
 _SessionT = TypeVar('_SessionT', bound='Session')
 
 
-def add_subparser(subparsers) -> None:
-    parser = subparsers.add_parser('maildir', help='on-disk backend')
-    parser.add_argument('users_file', metavar='PATH',
-                        help='Path the the users file.')
-    parser.add_argument('-d', '--base-dir', metavar='DIR',
-                        help='Base directory for mailbox relative paths.')
-    parser.add_argument('-t', '--concurrency', metavar='NUM', type=int,
-                        help='Maximum number of IO workers.')
-    parser.add_argument('-l', '--layout', metavar='TYPE',
-                        help='Maildir directory layout.')
+class MaildirBackend(IMAPServer, BackendInterface):
+    """Defines an on-disk backend that uses :class:`~mailbox.Maildir` for
+    mailbox storage and `MailboxFormat/Maildir
+    <https://wiki2.dovecot.org/MailboxFormat/Maildir>`_ for metadata storage.
 
+    """
 
-async def init(args: Namespace) -> Tuple[LoginProtocol, IMAPConfig]:
-    return Session.login, Config.from_args(args)
+    @classmethod
+    def add_subparser(cls, subparsers) -> None:
+        parser = subparsers.add_parser('maildir', help='on-disk backend')
+        parser.add_argument('users_file', metavar='PATH',
+                            help='Path the the users file.')
+        parser.add_argument('-d', '--base-dir', metavar='DIR',
+                            help='Base directory for mailbox relative paths.')
+        parser.add_argument('-t', '--concurrency', metavar='NUM', type=int,
+                            help='Maximum number of IO workers.')
+        parser.add_argument('-l', '--layout', metavar='TYPE',
+                            help='Maildir directory layout.')
+
+    @classmethod
+    async def init(cls, args: Namespace) -> 'MaildirBackend':
+        return cls(Session.login, Config.from_args(args))
 
 
 class Config(IMAPConfig):

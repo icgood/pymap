@@ -1,16 +1,8 @@
 
 import unittest
 
-from pymap.parsing.response.code import Alert, Capability, Parse, \
-    PermanentFlags, ReadOnly, ReadWrite, TryCreate, UidNext, UidValidity, \
-    Unseen, AppendUid, CopyUid
-
-
-class TestAlert(unittest.TestCase):
-
-    def test_bytes(self):
-        code = Alert()
-        self.assertEqual(b'[ALERT]', bytes(code))
+from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
+    UidValidity, Unseen, AppendUid, CopyUid
 
 
 class TestCapability(unittest.TestCase):
@@ -24,39 +16,11 @@ class TestCapability(unittest.TestCase):
         self.assertEqual(b'[CAPABILITY IMAP4rev1 TEST STUFF]', bytes(code))
 
 
-class TestParse(unittest.TestCase):
-
-    def test_bytes(self):
-        code = Parse()
-        self.assertEqual(b'[PARSE]', bytes(code))
-
-
 class TestPermanentFlags(unittest.TestCase):
 
     def test_bytes(self):
         code = PermanentFlags([br'\One', br'\Two'])
         self.assertEqual(br'[PERMANENTFLAGS (\One \Two)]', bytes(code))
-
-
-class TestReadOnly(unittest.TestCase):
-
-    def test_bytes(self):
-        code = ReadOnly()
-        self.assertEqual(b'[READ-ONLY]', bytes(code))
-
-
-class TestReadWrite(unittest.TestCase):
-
-    def test_bytes(self):
-        code = ReadWrite()
-        self.assertEqual(b'[READ-WRITE]', bytes(code))
-
-
-class TestTryCreate(unittest.TestCase):
-
-    def test_bytes(self):
-        code = TryCreate()
-        self.assertEqual(b'[TRYCREATE]', bytes(code))
 
 
 class TestUidNext(unittest.TestCase):

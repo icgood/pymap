@@ -157,8 +157,8 @@ class BaseSession(Generic[MailboxDataT_co], SessionInterface):
             -> Tuple[MailboxSnapshot, SelectedMailbox]:
         mbx = await self.mailbox_set.get_mailbox(name)
         selected = SelectedMailbox(name, readonly or mbx.readonly,
-                                   PermanentFlags(*mbx.permanent_flags),
-                                   SessionFlags(*mbx.session_flags),
+                                   PermanentFlags(mbx.permanent_flags),
+                                   SessionFlags(mbx.session_flags),
                                    selected_set=mbx.selected_set)
         if not selected.readonly:
             await mbx.claim_recent(selected)

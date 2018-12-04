@@ -1,44 +1,48 @@
-"""Defines a configuration that uses an in-memory dictionary for example usage
-and integration testing.
-
-"""
 
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from contextlib import closing
 from datetime import datetime, timezone
-from typing import cast, Any, Tuple, Mapping, Dict, BinaryIO, TypeVar, Type
+from typing import cast, Any, Mapping, Dict, BinaryIO, TypeVar, Type
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
 
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
-from pymap.interfaces.session import LoginProtocol
+from pymap.interfaces.backend import BackendInterface
 from pymap.parsing.specials.flag import Flag, Recent
+from pymap.server import IMAPServer
 
 from .mailbox import Message, MailboxData, MailboxSet
 from ..session import BaseSession
 
-__all__ = ['add_subparser', 'init', 'Config', 'Session']
+__all__ = ['DictBackend', 'Config', 'Session']
 
 _SessionT = TypeVar('_SessionT', bound='Session')
 
 
-def add_subparser(subparsers) -> None:
-    parser = subparsers.add_parser(
-        'dict', help='in-memory backend',
-        formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-d', '--demo-data', action='store_true',
-                        help='load initial demo data')
-    parser.add_argument('-u', '--demo-user', default='demouser',
-                        metavar='VAL', help='demo user ID')
-    parser.add_argument('-p', '--demo-password', default='demopass',
-                        metavar='VAL', help='demo user password')
+class DictBackend(IMAPServer, BackendInterface):
+    """Defines a backend that uses an in-memory dictionary for example usage
+    and integration testing.
 
+    """
 
-async def init(args: Namespace) -> Tuple[LoginProtocol, 'Config']:
-    return Session.login, Config.from_args(args)
+    @classmethod
+    def add_subparser(cls, subparsers) -> None:
+        parser = subparsers.add_parser(
+            'dict', help='in-memory backend',
+            formatter_class=ArgumentDefaultsHelpFormatter)
+        parser.add_argument('-d', '--demo-data', action='store_true',
+                            help='load initial demo data')
+        parser.add_argument('-u', '--demo-user', default='demouser',
+                            metavar='VAL', help='demo user ID')
+        parser.add_argument('-p', '--demo-password', default='demopass',
+                            metavar='VAL', help='demo user password')
+
+    @classmethod
+    async def init(cls, args: Namespace) -> 'DictBackend':
+        return cls(Session.login, Config.from_args(args))
 
 
 class Config(IMAPConfig):

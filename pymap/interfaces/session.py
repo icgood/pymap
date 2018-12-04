@@ -26,18 +26,15 @@ class LoginProtocol(Protocol[ConfigT_contra]):
 
     async def __call__(self, credentials: AuthenticationCredentials,
                        config: ConfigT_contra) -> 'SessionInterface':
-        """Given a set of authentication credentials, initialize a new IMAP
-        session for the user.
+        """Given a set of authentication credentials, initialize and return a
+        new IMAP session for the user.
 
         Args:
             credentials: Authentication credentials supplied by the user.
             config: The config in use by the server.
 
-        Returns:
-            The new IMAP session.
-
         Raises:
-            :class:`~pymap.exceptions.InvalidAuthentication`
+            :class:`~pymap.exceptions.InvalidAuth`
 
         """
         ...
@@ -81,7 +78,7 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -101,7 +98,7 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxConflict: The mailbox name already exists.
+            :class:`~pymap.exceptions.MailboxConflict`
 
         """
         ...
@@ -121,8 +118,8 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
-            MailboxHasChildren: The mailbox has child mailboxes.
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxHasChildren`
 
         """
         ...
@@ -143,8 +140,8 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
-            MailboxConflict: The destination mailbox name already exists.
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxConflict`
 
         """
         ...
@@ -164,7 +161,7 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -184,7 +181,7 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -206,8 +203,8 @@ class SessionInterface(Protocol):
             selected: If applicable, the currently selected mailbox name.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
-            AppendFailure: The message could not be appended to the mailbox.
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.AppendFailure`
 
         """
         ...
@@ -231,7 +228,7 @@ class SessionInterface(Protocol):
             readonly: True if the mailbox is read-only.
 
         Raises:
-            MailboxNotFound: The mailbox name does not exist.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -263,7 +260,7 @@ class SessionInterface(Protocol):
                 housekeeping operations if necessary.
 
         Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -282,7 +279,7 @@ class SessionInterface(Protocol):
             attributes: Fetch attributes for the messages.
 
         Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -303,7 +300,7 @@ class SessionInterface(Protocol):
             keys: Search keys specifying the message criteria.
 
         Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists.
+            :class:`~pymap.exceptions.MailboxNotFound`
 
         """
         ...
@@ -324,8 +321,8 @@ class SessionInterface(Protocol):
             uid_set: Only the messages in the given UID set should be expunged.
 
         Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists.
-            MailboxReadOnly: The currently selected mailbox is read-only.
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxReadOnly`
 
         """
         ...
@@ -347,10 +344,8 @@ class SessionInterface(Protocol):
             mailbox: Name of the mailbox to copy messages into.
 
         Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists,
-                or the destination mailbox does not exist.
-            MailboxReadOnly: The currently selected mailbox is read-only,
-                or the destination mailbox is read-only.
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxReadOnly`
 
         """
         ...
@@ -374,8 +369,8 @@ class SessionInterface(Protocol):
             mode: Update mode for the flag set.
 
         Raises:
-            MailboxNotFound: The currently selected mailbox no longer exists.
-            MailboxReadOnly: The currently selected mailbox is read-only.
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxReadOnly`
 
         """
         ...

@@ -4,7 +4,6 @@ from typing import Optional
 
 from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
-from .parsing.response.code import TryCreate, ReadOnly
 
 __all__ = ['ResponseError', 'CloseConnection', 'CommandNotAllowed',
            'SearchNotAllowed', 'InvalidAuth', 'MailboxError',
@@ -79,7 +78,8 @@ class InvalidAuth(ResponseError):
     """
 
     def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, b'Invalid authentication credentials.')
+        return ResponseNo(tag, b'Invalid authentication credentials.',
+                          ResponseCode.of(b'AUTHENTICATIONFAILED'))
 
 
 class MailboxError(ResponseError):
@@ -108,13 +108,13 @@ class MailboxNotFound(MailboxError):
 
     Args:
         mailbox: The name of the mailbox
-        try_create: Whether to include ``[TRYCREATE]`` in the error.
+        try_create: True if creating the mailbox first may help.
 
     """
 
     def __init__(self, mailbox: str, try_create: bool = False) -> None:
-        super().__init__(mailbox, b'Mailbox does not exist.',
-                         TryCreate() if try_create else None)
+        code = ResponseCode.of(b'TRYCREATE' if try_create else b'NONEXISTENT')
+        super().__init__(mailbox, b'Mailbox does not exist.', code)
 
 
 class MailboxConflict(MailboxError):
@@ -127,7 +127,8 @@ class MailboxConflict(MailboxError):
     """
 
     def __init__(self, mailbox: str) -> None:
-        super().__init__(mailbox, b'Mailbox already exists.')
+        super().__init__(mailbox, b'Mailbox already exists.',
+                         ResponseCode.of(b'ALREADYEXISTS'))
 
 
 class MailboxHasChildren(MailboxError):
@@ -153,7 +154,8 @@ class MailboxReadOnly(MailboxError):
     """
 
     def __init__(self, mailbox: str) -> None:
-        super().__init__(mailbox, b'Mailbox is read-only.', ReadOnly())
+        super().__init__(mailbox, b'Mailbox is read-only.',
+                         ResponseCode.of(b'READ-ONLY'))
 
 
 class AppendFailure(MailboxError):
