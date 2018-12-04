@@ -291,7 +291,7 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(br'(~?){(\d+)}\r?\n')
+    _literal_pattern = re.compile(br'(~?){(\d+)(\+?)}\r?\n')
 
     __slots__ = ['binary']
 
@@ -316,14 +316,18 @@ class LiteralString(String):
             raise NotParseable(buf)
         binary = match.group(1) == b'~'
         literal_length = int(match.group(2))
-        if len(buf) > match.end(0):
-            raise NotParseable(buf[match.end(0):])
-        elif cls._check_too_big(params, literal_length):
+        if cls._check_too_big(params, literal_length):
             raise NotParseable(buf, b'TOOBIG')
-        elif not params.continuations:
+        elif match.group(3) == b'+':
+            buf = buf[match.end(0):]
+            literal = buf[0:literal_length]
+        elif len(buf) > match.end(0):
+            raise NotParseable(buf[match.end(0):])
+        elif params.continuations:
+            buf = params.continuations.pop(0)
+            literal = buf[0:literal_length]
+        else:
             raise RequiresContinuation(b'Literal string', literal_length)
-        buf = params.continuations.pop(0)
-        literal = buf[0:literal_length]
         if len(literal) != literal_length:
             raise NotParseable(buf)
         return cls(literal, binary), buf[literal_length:]
