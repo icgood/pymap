@@ -35,7 +35,8 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
             -> MailboxSetInterface[MailboxDataInterface[MessageT]]:
         ...
 
-    async def _load_selected(self, selected: SelectedMailbox,
+    @classmethod
+    async def _load_selected(cls, selected: SelectedMailbox,
                              mbx: MailboxDataInterface[MessageT]) \
             -> SelectedMailbox:
         selected.uid_validity = mbx.uid_validity

@@ -4,11 +4,12 @@ from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
     Iterable, AsyncIterable
 from typing_extensions import Protocol
 
+from pymap.interfaces.message import CachedMessage
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage, BaseMessage
 from pymap.parsing.specials import SequenceSet, FetchRequirement
 from pymap.parsing.specials.flag import get_system_flags, Flag, Recent, Seen
-from pymap.selected import CachedMessage, SelectedSet, SelectedMailbox
+from pymap.selected import SelectedSet, SelectedMailbox
 
 __all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'Message',
            'MessageT', 'MailboxDataT', 'MailboxDataT_co']

@@ -5,10 +5,11 @@ from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.interfaces.message import CachedMessage
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage
 from pymap.parsing.specials import FetchRequirement
-from pymap.selected import CachedMessage, SelectedSet, SelectedMailbox
+from pymap.selected import SelectedSet, SelectedMailbox
 
 from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
 

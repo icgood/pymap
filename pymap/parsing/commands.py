@@ -86,7 +86,6 @@ class Commands:
             params: The parsing parameters.
 
         """
-        tag = Tag(params.tag)
         try:
             tag, buf = Tag.parse(buf, params)
         except NotParseable as exc:

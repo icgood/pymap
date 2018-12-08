@@ -74,7 +74,8 @@ class SearchCriteria(metaclass=ABCMeta):
     def __init__(self, params: SearchParams) -> None:
         self.params = params
 
-    def _in(self, substr: AnyStr, data: AnyStr) -> bool:
+    @classmethod
+    def _in(cls, substr: AnyStr, data: AnyStr) -> bool:
         re_flags = re.I | re.A
         escaped_substr = re.escape(substr)
         return re.search(escaped_substr, data, re_flags) is not None

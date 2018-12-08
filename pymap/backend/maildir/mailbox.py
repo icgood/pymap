@@ -11,9 +11,10 @@ from typing import Tuple, Sequence, Dict, Optional, FrozenSet, \
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
+from pymap.interfaces.message import CachedMessage
 from pymap.message import AppendMessage
 from pymap.parsing.specials import Flag, FetchRequirement
-from pymap.selected import CachedMessage, SelectedSet, SelectedMailbox
+from pymap.selected import SelectedSet, SelectedMailbox
 
 from .flags import MaildirFlags
 from .io import NoChanges

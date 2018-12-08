@@ -482,14 +482,12 @@ class IdleCommand(CommandSelect):
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag), buf
 
-    def parse_done(self, buf: memoryview, params: Params) \
-            -> Tuple[bool, memoryview]:
+    def parse_done(self, buf: memoryview) -> Tuple[bool, memoryview]:
         """Parse the continuation line sent by the client to end the ``IDLE``
         command.
 
         Args:
             buf: The continuation line to parse.
-            params: The parsing parameters.
 
         """
         match = self._pattern.match(buf)

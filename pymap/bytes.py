@@ -101,7 +101,7 @@ class BytesFormat:
 
 class ReView:
     """Wrap a :class:`~re.Pattern` so that it takes :class:`memoryview`
-    strings. This is supported by :mod:`re`, it's only a typing problem.
+    strings.
 
     Note:
         This behavior is supported by :mod:`re`, but type stubs do not allow

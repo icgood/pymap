@@ -189,7 +189,7 @@ class IMAPConnection:
 
     async def read_idle_done(self, cmd: IdleCommand) -> bool:
         buf = await self.read_continuation(0)
-        ok, _ = cmd.parse_done(buf, self.params.copy(tag=cmd.tag))
+        ok, _ = cmd.parse_done(buf)
         return ok
 
     async def write_response(self, resp: Response) -> None:
@@ -278,7 +278,6 @@ class IMAPConnection:
                 await self.send_error_disconnect()
                 raise
             else:
-                bad_commands = 0
                 prev_cmd = current_command.set(cmd)
                 try:
                     if isinstance(cmd, AuthenticateCommand):
@@ -315,6 +314,8 @@ class IMAPConnection:
                                 and bad_commands >= self.bad_command_limit:
                             msg = b'Too many errors, disconnecting.'
                             response.add_untagged(ResponseBye(msg))
+                    else:
+                        bad_commands = 0
                     if response.is_terminal:
                         break
                     if isinstance(cmd, StartTLSCommand) and state.ssl_context \

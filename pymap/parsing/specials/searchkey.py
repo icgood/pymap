@@ -1,6 +1,7 @@
+
 import re
 from datetime import datetime
-from typing import TypeVar, Type, Tuple, Union, Sequence, FrozenSet
+from typing import Any, TypeVar, Tuple, Union, Sequence, FrozenSet
 
 from .astring import AString
 from .fetchattr import FetchRequirement
@@ -13,10 +14,10 @@ from ...bytes import rev
 
 __all__ = ['SearchKey']
 
-_FilterT = TypeVar('_FilterT', bound='_FilterType')
 _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
                     Sequence['SearchKey'], SequenceSet, Flag,
                     datetime, int, str]
+_FilterT = TypeVar('_FilterT', bound=_FilterType)
 
 
 class SearchKey(Parseable[bytes]):
@@ -74,7 +75,7 @@ class SearchKey(Parseable[bytes]):
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
 
-    def _get_filter(self, cls: Type[_FilterT]) -> _FilterT:
+    def _get_filter(self, cls) -> Any:
         if not isinstance(self.filter, cls):
             raise TypeError(self.filter)
         return self.filter
@@ -85,11 +86,11 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_key_set(self) -> FrozenSet['SearchKey']:
-        return self._get_filter(frozenset)  # type: ignore
+        return self._get_filter(frozenset)
 
     @property
     def filter_key_or(self) -> Tuple['SearchKey', 'SearchKey']:
-        return self._get_filter(tuple)  # type: ignore
+        return self._get_filter(tuple)
 
     @property
     def filter_flag(self) -> Flag:
@@ -175,7 +176,6 @@ class SearchKey(Parseable[bytes]):
             return cls(b'KEYSET', key_list, inverse), buf
         atom, after = Atom.parse(buf, params)
         key = atom.value.upper()
-        filter_: _FilterType
         if key in (b'ALL', b'ANSWERED', b'DELETED', b'FLAGGED', b'NEW', b'OLD',
                    b'RECENT', b'SEEN', b'UNANSWERED', b'UNDELETED',
                    b'UNFLAGGED', b'UNSEEN', b'DRAFT', b'UNDRAFT'):
@@ -183,13 +183,13 @@ class SearchKey(Parseable[bytes]):
         elif key in (
                 b'BCC', b'BODY', b'CC', b'FROM', b'SUBJECT', b'TEXT', b'TO'):
             _, buf = Space.parse(after, params)
-            filter_, buf = cls._parse_astring_filter(buf, params)
-            return cls(key, filter_, inverse), buf
+            filter_str, buf = cls._parse_astring_filter(buf, params)
+            return cls(key, filter_str, inverse), buf
         elif key in (b'BEFORE', b'ON', b'SINCE', b'SENTBEFORE', b'SENTON',
                      b'SENTSINCE'):
             _, buf = Space.parse(after, params)
-            filter_, buf = cls._parse_date_filter(buf, params)
-            return cls(key, filter_, inverse), buf
+            filter_date, buf = cls._parse_date_filter(buf, params)
+            return cls(key, filter_date, inverse), buf
         elif key in (b'KEYWORD', b'UNKEYWORD'):
             _, buf = Space.parse(after, params)
             flag, after_buf = Flag.parse(buf, params)
