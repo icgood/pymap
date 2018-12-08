@@ -1,14 +1,15 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import Optional, Iterable, Set, FrozenSet, Sequence, TypeVar
+from typing import TypeVar, Optional, Iterable, Sequence, FrozenSet, \
+    AbstractSet
 from typing_extensions import Protocol
 
 from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
 
-__all__ = ['Header', 'MessageInterface', 'MessageT']
+__all__ = ['Header', 'CachedMessage', 'MessageInterface', 'MessageT']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
@@ -25,9 +26,44 @@ class Header(Protocol):
         ...
 
 
+class CachedMessage(Protocol):
+    """Cached message metadata used to track state changes. Used to produce
+    untagged FETCH responses when a message's flags have changed, or when a
+    FETCH command requests metadata of an expunged message before its untagged
+    EXPUNGE response has been sent.
+
+    This is intended to be compatible with :class:`MessageInterface`, and
+    should be implemented by the same classes in most cases.
+
+    """
+
+    @property
+    @abstractmethod
+    def uid(self) -> int:
+        """The message's unique identifier in the mailbox."""
+        ...
+
+    @property
+    @abstractmethod
+    def internal_date(self) -> Optional[datetime]:
+        """The message's internal date."""
+        ...
+
+    @abstractmethod
+    def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
+        """Get the full set of permanent and session flags for the message. If
+        ``session_flags`` is not given, only permanent flags are returned.
+
+        Args:
+            session_flags: The current session flags.
+
+        """
+        ...
+
+
 class MessageInterface(Protocol):
-    """Message metadata such as UID, permanent flags, and when the message
-    was added to the system.
+    """Message data including content and metadata such as UID, permanent
+    flags, and when the message was added to the system.
 
     """
 
@@ -41,12 +77,6 @@ class MessageInterface(Protocol):
     @abstractmethod
     def expunged(self) -> bool:
         """True if this message has been expunged from the mailbox."""
-        ...
-
-    @property
-    @abstractmethod
-    def permanent_flags(self) -> Set[Flag]:
-        """The message's set of permanent flags."""
         ...
 
     @property
@@ -76,10 +106,9 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def update_flags(self, flag_set: Iterable[Flag],
-                     flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
-        """Update the permanent flags for the message. Returns the resulting
-        set of permanent flags.
+    def update_flags(self, flag_set: AbstractSet[Flag],
+                     flag_op: FlagOp = FlagOp.REPLACE) -> None:
+        """Update the permanent flags for the message.
 
         Args:
             flag_set: The set of flags for the update operation.
@@ -101,7 +130,7 @@ class MessageInterface(Protocol):
     @abstractmethod
     def get_headers(self, section: Iterable[int] = None,
                     subset: Iterable[str] = None,
-                    inverse: bool = False) -> Optional[bytes]:
+                    inverse: bool = False) -> bytes:
         """Get the headers from the message.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -119,7 +148,7 @@ class MessageInterface(Protocol):
 
     @abstractmethod
     def get_body(self, section: Iterable[int] = None,
-                 binary: bool = False) -> Optional[bytes]:
+                 binary: bool = False) -> bytes:
         """Get the full body of the message part, including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -135,7 +164,7 @@ class MessageInterface(Protocol):
 
     @abstractmethod
     def get_text(self, section: Iterable[int] = None,
-                 binary: bool = False) -> Optional[bytes]:
+                 binary: bool = False) -> bytes:
         """Get the text of the message part, not including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -179,6 +208,17 @@ class MessageInterface(Protocol):
         See Also:
             `RFC 3501 2.3.6
             <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
+
+        """
+        ...
+
+    @abstractmethod
+    def contains(self, value: bytes) -> bool:
+        """Check the body of the message for a sub-string. This may be
+        optimized to only search headers and ``text/*`` MIME parts.
+
+        Args:
+            value: The sub-string to find.
 
         """
         ...

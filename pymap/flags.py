@@ -6,7 +6,7 @@ See Also:
 """
 
 import enum
-from typing import Iterable, AbstractSet, FrozenSet, Dict
+from typing import Iterable, AbstractSet, FrozenSet, Dict, Set
 
 from .parsing.specials.flag import Flag, Recent, Wildcard
 
@@ -25,7 +25,7 @@ class FlagOp(enum.Enum):
     #: The flag set should be removed from the existing set.
     DELETE = enum.auto()
 
-    def apply(self, flag_set: AbstractSet[Flag], operand: Iterable[Flag]) \
+    def apply(self, flag_set: AbstractSet[Flag], operand: AbstractSet[Flag]) \
             -> FrozenSet[Flag]:
         """Apply the flag operation on the two sets, returning the result.
 
@@ -34,13 +34,12 @@ class FlagOp(enum.Enum):
             operand: The flags to use as the operand.
 
         """
-        operand_set = frozenset(operand)
         if self == FlagOp.ADD:
-            return frozenset(flag_set | operand_set)
+            return frozenset(flag_set | operand)
         elif self == FlagOp.DELETE:
-            return frozenset(flag_set - operand_set)
+            return frozenset(flag_set - operand)
         else:  # op == FlagOp.REPLACE
-            return operand_set
+            return frozenset(operand)
 
 
 class PermanentFlags:
@@ -98,12 +97,15 @@ class SessionFlags:
 
     """
 
-    __slots__ = ['_defined', '_flags']
+    __slots__ = ['_defined', '_flags', '_recent']
+
+    _recent_set = frozenset({Recent})
 
     def __init__(self, defined: Iterable[Flag]):
         super().__init__()
-        self._defined = frozenset(defined) | {Recent}
+        self._defined = frozenset(defined) - self._recent_set
         self._flags: Dict[int, FrozenSet[Flag]] = {}
+        self._recent: Set[int] = set()
 
     @property
     def defined(self) -> FrozenSet[Flag]:
@@ -133,15 +135,6 @@ class SessionFlags:
     def __and__(self, other: Iterable[Flag]) -> FrozenSet[Flag]:
         return self.intersect(other)
 
-    def __getitem__(self, uid: int) -> FrozenSet[Flag]:
-        return self.get(uid)
-
-    def __delitem__(self, uid: int) -> None:
-        self.remove(uid)
-
-    def __setitem__(self, uid: int, flag_set: Iterable[Flag]) -> None:
-        self.update(uid, flag_set)
-
     def get(self, uid: int) -> FrozenSet[Flag]:
         """Return the session flags for the mailbox session.
 
@@ -149,7 +142,9 @@ class SessionFlags:
             uid: The message UID value.
 
         """
-        return self._flags.get(uid, frozenset())
+        recent = self._recent_set if uid in self._recent else frozenset()
+        flags = self._flags.get(uid)
+        return recent if flags is None else (flags | recent)
 
     def remove(self, uid: int) -> None:
         """Remove any session flags for the given message.
@@ -158,6 +153,7 @@ class SessionFlags:
             uid: The message UID value.
 
         """
+        self._recent.discard(uid)
         self._flags.pop(uid, None)
 
     def update(self, uid: int, flag_set: Iterable[Flag],
@@ -172,26 +168,22 @@ class SessionFlags:
         """
         orig_set = self._flags.get(uid, frozenset())
         new_flags = op.apply(orig_set, self & flag_set)
-        if Recent in orig_set:
-            new_flags = new_flags | {Recent}
+        if new_flags:
+            self._flags[uid] = new_flags
         else:
-            new_flags = new_flags - {Recent}
-        self._flags[uid] = new_flags
+            self._flags.pop(uid, None)
         return new_flags
 
-    def add_recent(self, uid: int) -> FrozenSet[Flag]:
+    def add_recent(self, uid: int) -> None:
         """Adds the ``\\Recent`` flag to the flags for the session.
 
         Args:
             uid: The message UID value.
 
         """
-        orig_set = self._flags.get(uid, frozenset())
-        self._flags[uid] = new_flags = orig_set | {Recent}
-        return new_flags
+        self._recent.add(uid)
 
     @property
     def recent_uids(self) -> FrozenSet[int]:
         """The message UIDs with the ``\\Recent`` flag."""
-        return frozenset(uid for uid, flags in self._flags.items()
-                         if Recent in flags)
+        return frozenset(self._recent)

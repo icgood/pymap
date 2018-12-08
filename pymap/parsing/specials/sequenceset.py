@@ -1,11 +1,11 @@
 import heapq
 import math
-import re
 from itertools import chain
 from typing import Iterable, Tuple, Union, Sequence, Optional, List
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
+from ...bytes import rev
 
 __all__ = ['SequenceSet']
 
@@ -25,7 +25,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
     """
 
-    _num_pattern = re.compile(br'[1-9]\d*')
+    _num_pattern = rev.compile(br'[1-9]\d*')
 
     def __init__(self, sequences: Sequence[_SeqElem],
                  uid: bool = False) -> None:
@@ -144,7 +144,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         return '<%s set=%r>' % (type(self).__name__, self.sequences)
 
     @classmethod
-    def _parse_part(cls, buf: bytes) -> Tuple[_SeqElem, bytes]:
+    def _parse_part(cls, buf: memoryview) -> Tuple[_SeqElem, memoryview]:
         if buf and buf[0] == 0x2a:
             item1: _SeqIdx = '*'
             buf = buf[1:]
@@ -197,7 +197,8 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         return SequenceSet(groups, uid)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['SequenceSet', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['SequenceSet', memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

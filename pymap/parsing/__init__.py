@@ -1,10 +1,10 @@
 """Package defining all the IMAP parsing and response classes."""
 
-import re
 from abc import abstractmethod, ABCMeta
-from typing import Tuple, Generic, TypeVar, Sequence, Dict, Any, List, Type
+from typing import Any, Type, TypeVar, Generic, Tuple, Sequence, Dict, List
 
 from .exceptions import NotParseable, UnexpectedType
+from ..bytes import rev
 
 __all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine',
            'ParseableT']
@@ -34,7 +34,7 @@ class Params:
     __slots__ = ['continuations', 'expected', 'list_expected', 'command_name',
                  'uid', 'charset', 'tag', 'max_append_len']
 
-    def __init__(self, continuations: List[bytes] = None,
+    def __init__(self, *, continuations: List[memoryview] = None,
                  expected: Sequence[Type['Parseable']] = None,
                  list_expected: Sequence[Type['Parseable']] = None,
                  command_name: bytes = None,
@@ -49,7 +49,7 @@ class Params:
         self.command_name = command_name
         self.uid = uid
         self.charset = charset
-        self.tag = tag or b'.'
+        self.tag = tag or b'*'
         self.max_append_len = max_append_len
 
     def _set_if_none(self, kwargs: Dict[str, Any], attr: str, value) -> None:
@@ -58,7 +58,7 @@ class Params:
         else:
             kwargs[attr] = getattr(self, attr)
 
-    def copy(self, continuations: List[bytes] = None,
+    def copy(self, *, continuations: List[memoryview] = None,
              expected: Sequence[Type['Parseable']] = None,
              list_expected: Sequence[Type['Parseable']] = None,
              command_name: bytes = None,
@@ -88,9 +88,9 @@ class Parseable(Generic[ParseableT], metaclass=ABCMeta):
 
     """
 
-    _whitespace_pattern = re.compile(br' +')
-    _atom_pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B'
-                               br'-\x5B\x5E-\x7A\x7C\x7E]+')
+    _whitespace_pattern = rev.compile(br' +')
+    _atom_pattern = rev.compile(
+        br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5E-\x7A\x7C\x7E]+')
 
     __slots__ = []  # type: ignore
 
@@ -101,7 +101,7 @@ class Parseable(Generic[ParseableT], metaclass=ABCMeta):
         ...
 
     @classmethod
-    def _whitespace_length(cls, buf: bytes, start: int = 0) -> int:
+    def _whitespace_length(cls, buf: memoryview, start: int = 0) -> int:
         match = cls._whitespace_pattern.match(buf, start)
         if match:
             return match.end(0) - start
@@ -112,13 +112,14 @@ class Parseable(Generic[ParseableT], metaclass=ABCMeta):
         ...
 
     def __eq__(self, other) -> bool:
-        if isinstance(other, bytes):
+        if isinstance(other, (bytes, memoryview)):
             return bytes(self) == other
         return NotImplemented
 
     @classmethod
     @abstractmethod
-    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Parseable', memoryview]:
         """Implemented by sub-classes to define how to parse the given buffer.
 
         Args:
@@ -147,7 +148,8 @@ class ExpectedParseable(Parseable[None]):
         raise NotImplementedError
 
     @classmethod
-    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Parseable', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple[Parseable, memoryview]:
         """Parses the given buffer by attempting to parse the list of
         :attr:`~Params.expected` types until one of them succeeds,
         then returns the parsed object.
@@ -185,7 +187,8 @@ class Space(Parseable[int]):
         return self.length
 
     @classmethod
-    def parse(cls, buf: bytes, params: 'Params') -> Tuple['Space', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Space', memoryview]:
         ret = cls._whitespace_length(buf)
         if not ret:
             raise NotParseable(buf)
@@ -209,7 +212,7 @@ class EndLine(Parseable[bytes]):
 
     """
 
-    _pattern = re.compile(br' *(\r?)\n')
+    _pattern = rev.compile(br' *(\r?)\n')
 
     __slots__ = ['preceding_spaces', 'carriage_return']
 
@@ -225,7 +228,8 @@ class EndLine(Parseable[bytes]):
         return b'\r\n' if self.carriage_return else b'\n'
 
     @classmethod
-    def parse(cls, buf: bytes, params: 'Params') -> Tuple['EndLine', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['EndLine', memoryview]:
         match = cls._pattern.match(buf)
         if not match:
             raise NotParseable(buf)

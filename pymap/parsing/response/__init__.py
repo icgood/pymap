@@ -70,7 +70,7 @@ class Response:
                  code: ResponseCode = None) -> None:
         super().__init__()
         self.tag = bytes(tag)
-        self.code = code
+        self._code = code
         self._text = text or b''
         self._untagged: List['Response'] = []
         self._mergeable: _Mergeable = {}
@@ -87,6 +87,16 @@ class Response:
                 return BytesFormat(b'%b %b') % (self.condition, self._text)
         else:
             return bytes(self._text)
+
+    @property
+    def code(self) -> Optional[ResponseCode]:
+        """Optional response code."""
+        return self._code
+
+    @code.setter
+    def code(self, code: Optional[ResponseCode]) -> None:
+        self._code = code
+        self._raw = None
 
     def add_untagged(self, *responses: 'Response') -> None:
         """Add an untagged response. These responses are shown before the
@@ -138,6 +148,14 @@ class Response:
         for resp in self._untagged:
             if resp.is_terminal:
                 return True
+        return False
+
+    @property
+    def is_bad(self) -> bool:
+        """True if the response indicates an error in the command received from
+        the client.
+
+        """
         return False
 
     @property
@@ -204,6 +222,10 @@ class ResponseBad(Response):
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
                  code: Optional[ResponseCode] = None) -> None:
         super().__init__(tag, text, code)
+
+    @property
+    def is_bad(self) -> bool:
+        return True
 
 
 class ResponseNo(Response):

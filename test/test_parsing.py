@@ -7,25 +7,6 @@ from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
     ListP
 
 
-class TestNotParseable(unittest.TestCase):
-
-    def test_bytes(self):
-        exc = NotParseable(b'one two three')
-        self.assertEqual(0, exc.offset)
-        self.assertEqual(b'', exc.before)
-        self.assertEqual(b'one two three', exc.after)
-        self.assertEqual('[:ERROR:]one two three', str(exc))
-
-    def test_memoryview(self):
-        mem = memoryview(b'one two three')[4:]
-        exc = NotParseable(mem)
-        self.assertEqual(4, exc.offset)
-        self.assertEqual(b'one ', exc.before)
-        self.assertEqual(b'two three', exc.after)
-        self.assertEqual(b'one [:ERROR:]two three', bytes(exc))
-        self.assertEqual('one [:ERROR:]two three', str(exc))
-
-
 class TestExpectedParseable(unittest.TestCase):
 
     def test_parse(self):

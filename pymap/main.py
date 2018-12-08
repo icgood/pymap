@@ -1,8 +1,9 @@
 """IMAP server with pluggable Python backends."""
 
 import asyncio
+import logging
 import traceback
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from argparse import ArgumentParser, Namespace, ArgumentDefaultsHelpFormatter
 from typing import Mapping, Type
 
 from pkg_resources import iter_entry_points
@@ -49,26 +50,23 @@ def main() -> None:
         cls.add_subparser(subparsers)
     args = parser.parse_args()
 
+    logging.basicConfig(level=logging.WARNING)
+
     try:
         backend = backends[args.backend]
     except KeyError:
         parser.error('Expected backend name.')
-        return
-
-    loop = asyncio.get_event_loop()
-    callback = loop.run_until_complete(backend.init(args))
-    coro = asyncio.start_server(callback, port=args.port, loop=loop)
-    server = loop.run_until_complete(coro)
-
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        print()
-
-    server.close()
-    loop.run_until_complete(server.wait_closed())
-    loop.close()
+    else:
+        try:
+            return asyncio.run(run(args, backend), debug=False)
+        except KeyboardInterrupt:
+            pass
 
 
-if __name__ == '__main__':
-    main()
+async def run(args: Namespace, backend: Type[BackendInterface]) -> None:
+    callback = await backend.init(args)
+    server = await asyncio.start_server(callback, port=args.port)
+
+    # Typeshed currently has poor stubs for AbstractServer.
+    async with server:  # type: ignore
+        await server.serve_forever()  # type: ignore

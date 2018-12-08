@@ -32,8 +32,8 @@ class StatusAttribute(Parseable[bytes]):
         return self.status
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['StatusAttribute', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['StatusAttribute', memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

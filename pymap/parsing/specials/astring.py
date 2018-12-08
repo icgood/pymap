@@ -1,8 +1,8 @@
-import re
 from typing import Tuple
 
 from .. import Params, Parseable
 from ..primitives import String, QuotedString
+from ...bytes import rev
 
 __all__ = ['AString']
 
@@ -21,8 +21,8 @@ class AString(Parseable[bytes]):
 
     """
 
-    _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2B-\x5B'
-                          br'\x5D\x5E-\x7A\x7C\x7E]+')
+    _pattern = rev.compile(
+        br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5D\x5E-\x7A\x7C\x7E]+')
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:
         super().__init__()
@@ -35,7 +35,8 @@ class AString(Parseable[bytes]):
         return self.string
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['AString', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['AString', memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if match:

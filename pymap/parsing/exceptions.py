@@ -2,11 +2,11 @@
 
 from typing import Optional
 
-from .response import ResponseBad, ResponseCode
+from .response import ResponseCode
 from ..bytes import MaybeBytes
 
 __all__ = ['RequiresContinuation', 'NotParseable', 'InvalidContent',
-           'UnexpectedType', 'BadCommand', 'CommandNotFound', 'CommandInvalid']
+           'UnexpectedType']
 
 
 class RequiresContinuation(Exception):
@@ -39,49 +39,19 @@ class NotParseable(Exception):
 
     error_indicator = b'[:ERROR:]'
 
-    __slots__ = ['buf', 'code', 'offset', '_raw', '_before', '_after']
+    __slots__ = ['buf', 'code', '_raw']
 
-    def __init__(self, buf: bytes, code: Optional[MaybeBytes] = None) -> None:
+    def __init__(self, buf: memoryview, code:
+                 Optional[MaybeBytes] = None) -> None:
         super().__init__()
-        self.buf = buf
+        self.buf = bytes(buf)
         self.code = ResponseCode.of(code)
-        self.offset: int = 0
         self._raw: Optional[bytes] = None
-        self._before: Optional[bytes] = None
-        self._after: Optional[bytes] = None
-        if isinstance(buf, memoryview):
-            obj = getattr(buf, 'obj')
-            nbytes = getattr(buf, 'nbytes')
-            self.offset = len(obj) - nbytes
-
-    @property
-    def before(self) -> bytes:
-        """The bytes before the parsing error was encountered."""
-        if self._before is not None:
-            return self._before
-        buf = self.buf
-        if isinstance(buf, memoryview):
-            buf = getattr(buf, 'obj')
-        self._before = before = buf[0:self.offset]
-        return before
-
-    @property
-    def after(self) -> bytes:
-        """The bytes after the parsing error was encountered."""
-        if self._after is not None:
-            return self._after
-        if isinstance(self.buf, memoryview):
-            self._after = after = self.buf.tobytes()
-        else:
-            self._after = after = self.buf
-        return after
 
     def __bytes__(self) -> bytes:
         if self._raw is not None:
             return self._raw
-        before = self.before
-        after = self.after.rstrip(b'\r\n')
-        self._raw = raw = self.error_indicator.join((before, after))
+        self._raw = raw = self.error_indicator.join((b'', self.buf))
         return raw
 
     def __str__(self) -> str:
@@ -102,93 +72,3 @@ class UnexpectedType(NotParseable):
 
     """
     pass
-
-
-class BadCommand(Exception):
-    """Base class for errors that occurred while parsing a command received
-    from the client.
-
-    Args:
-        tag: The command tag value.
-
-    """
-
-    __slots__ = ['tag']
-
-    def __init__(self, tag: bytes) -> None:
-        super().__init__()
-        self.tag = tag
-
-    @property
-    def code(self) -> Optional[ResponseCode]:
-        """The optional response code."""
-        return None
-
-    def __bytes__(self) -> bytes:
-        raise NotImplementedError
-
-    def __str__(self) -> str:
-        return bytes(self).decode('ascii', 'ignore')
-
-    def get_response(self) -> ResponseBad:
-        """The response to send back to the client in response to the command
-        parsing error.
-
-        """
-        return ResponseBad(self.tag, bytes(self), self.code)
-
-
-class CommandNotFound(BadCommand):
-    """Error indicating the data was not parseable because the command was not
-    found.
-
-    Args:
-        tag: The command tag value.
-        command: The command name.
-
-    """
-
-    __slots__ = ['command']
-
-    def __init__(self, tag: bytes, command: bytes = None) -> None:
-        super().__init__(tag)
-        self.command = command
-
-    def __bytes__(self) -> bytes:
-        if self.command:
-            return b'Command Not Found: %b' % self.command
-        else:
-            return b'Command Not Given'
-
-
-class CommandInvalid(BadCommand):
-    """Error indicating the data was not parseable because the command had
-    invalid arguments.
-
-    Args:
-        tag: The command tag value.
-        command: The command class.
-
-    """
-
-    def __init__(self, tag: bytes, command: bytes) -> None:
-        super().__init__(tag)
-        self.command = command
-        self._raw: Optional[bytes] = None
-
-    @property
-    def code(self) -> Optional[ResponseCode]:
-        return self.cause.code
-
-    @property
-    def cause(self) -> NotParseable:
-        """The parsing exception that caused this exception."""
-        exc = self.__cause__
-        if not exc or not isinstance(exc, NotParseable):
-            raise TypeError('Exception must have cause')
-        return exc
-
-    def __bytes__(self) -> bytes:
-        if self._raw is None:
-            self._raw = b': '.join((self.command, bytes(self.cause)))
-        return self._raw

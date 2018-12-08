@@ -1,8 +1,9 @@
 """Utilities for managing IMAP searches."""
 
+import re
 from abc import abstractmethod, ABCMeta
 from datetime import datetime
-from typing import FrozenSet, Optional, Iterable
+from typing import AnyStr, FrozenSet, Optional, Iterable
 
 from .exceptions import SearchNotAllowed
 from .flags import SessionFlags
@@ -73,6 +74,11 @@ class SearchCriteria(metaclass=ABCMeta):
     def __init__(self, params: SearchParams) -> None:
         self.params = params
 
+    def _in(self, substr: AnyStr, data: AnyStr) -> bool:
+        re_flags = re.I | re.A
+        escaped_substr = re.escape(substr)
+        return re.search(escaped_substr, data, re_flags) is not None
+
     @abstractmethod
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         """Implemented by sub-classes to define the search criteria.
@@ -94,74 +100,74 @@ class SearchCriteria(metaclass=ABCMeta):
             params: The parameters that may be used by some searches.
 
         """
-        if key.value in params.disabled:
-            raise SearchNotAllowed(key.value)
+        key_name = key.value
+        if key_name in params.disabled:
+            raise SearchNotAllowed(key_name)
         elif key.inverse:
             return InverseSearchCriteria(key.not_inverse, params)
-        elif key.value == b'SEQSET':
+        elif key_name == b'SEQSET':
             return SequenceSetSearchCriteria(key.filter_sequence_set, params)
-        elif key.value == b'KEYSET':
+        elif key_name == b'KEYSET':
             return SearchCriteriaSet(key.filter_key_set, params)
-        elif key.value == b'ALL':
+        elif key_name == b'ALL':
             return AllSearchCriteria(params)
-        elif key.value == b'OR':
+        elif key_name == b'OR':
             left_key, right_key = key.filter_key_or
             return OrSearchCriteria(left_key, right_key, params)
-        elif key.value == b'ANSWERED':
+        elif key_name == b'ANSWERED':
             return HasFlagSearchCriteria(Answered, True, params)
-        elif key.value == b'UNANSWERED':
+        elif key_name == b'UNANSWERED':
             return HasFlagSearchCriteria(Answered, False, params)
-        elif key.value == b'DELETED':
+        elif key_name == b'DELETED':
             return HasFlagSearchCriteria(Deleted, True, params)
-        elif key.value == b'UNDELETED':
+        elif key_name == b'UNDELETED':
             return HasFlagSearchCriteria(Deleted, False, params)
-        elif key.value == b'DRAFT':
+        elif key_name == b'DRAFT':
             return HasFlagSearchCriteria(Draft, True, params)
-        elif key.value == b'UNDRAFT':
+        elif key_name == b'UNDRAFT':
             return HasFlagSearchCriteria(Draft, False, params)
-        elif key.value == b'FLAGGED':
+        elif key_name == b'FLAGGED':
             return HasFlagSearchCriteria(Flagged, True, params)
-        elif key.value == b'UNFLAGGED':
+        elif key_name == b'UNFLAGGED':
             return HasFlagSearchCriteria(Flagged, False, params)
-        elif key.value == b'RECENT':
+        elif key_name == b'RECENT':
             return HasFlagSearchCriteria(Recent, True, params)
-        elif key.value == b'OLD':
+        elif key_name == b'OLD':
             return HasFlagSearchCriteria(Recent, False, params)
-        elif key.value == b'SEEN':
+        elif key_name == b'SEEN':
             return HasFlagSearchCriteria(Seen, True, params)
-        elif key.value == b'UNSEEN':
+        elif key_name == b'UNSEEN':
             return HasFlagSearchCriteria(Seen, False, params)
-        elif key.value == b'KEYWORD':
+        elif key_name == b'KEYWORD':
             return HasFlagSearchCriteria(key.filter_flag, True, params)
-        elif key.value == b'UNKEYWORD':
+        elif key_name == b'UNKEYWORD':
             return HasFlagSearchCriteria(key.filter_flag, False, params)
-        elif key.value == b'NEW':
+        elif key_name == b'NEW':
             return NewSearchCriteria(params)
-        elif key.value == b'BEFORE':
+        elif key_name == b'BEFORE':
             return DateSearchCriteria(key.filter_datetime, '<', params)
-        elif key.value == b'ON':
+        elif key_name == b'ON':
             return DateSearchCriteria(key.filter_datetime, '=', params)
-        elif key.value == b'SINCE':
-            return DateSearchCriteria(key.filter_datetime, '>', params)
-        elif key.value == b'SENTBEFORE':
+        elif key_name == b'SINCE':
+            return DateSearchCriteria(key.filter_datetime, '>=', params)
+        elif key_name == b'SENTBEFORE':
             return HeaderDateSearchCriteria(key.filter_datetime, '<', params)
-        elif key.value == b'SENTON':
+        elif key_name == b'SENTON':
             return HeaderDateSearchCriteria(key.filter_datetime, '=', params)
-        elif key.value == b'SENTSINCE':
-            return HeaderDateSearchCriteria(key.filter_datetime, '>', params)
-        elif key.value == b'SMALLER':
+        elif key_name == b'SENTSINCE':
+            return HeaderDateSearchCriteria(key.filter_datetime, '>=', params)
+        elif key_name == b'SMALLER':
             return SizeSearchCriteria(key.filter_int, '<', params)
-        elif key.value == b'LARGER':
+        elif key_name == b'LARGER':
             return SizeSearchCriteria(key.filter_int, '>', params)
-        elif key.value in (b'BCC', b'CC', b'FROM', b'SUBJECT', b'TO'):
-            return EnvelopeSearchCriteria(key.value, key.filter_str, params)
-        elif key.value == b'HEADER':
+        elif key_name in (b'BCC', b'CC', b'FROM', b'SUBJECT', b'TO'):
+            return EnvelopeSearchCriteria(key_name, key.filter_str, params)
+        elif key_name == b'HEADER':
             name, value = key.filter_header
             return HeaderSearchCriteria(name, value, params)
-        elif key.value in (b'BODY', b'TEXT'):
-            value = key.filter_str
-            return BodySearchCriteria(value, key.value == b'TEXT', params)
-        raise SearchNotAllowed(key.value)
+        elif key_name in (b'BODY', b'TEXT'):
+            return BodySearchCriteria(key.filter_str, params)
+        raise SearchNotAllowed(key_name)
 
 
 class SearchCriteriaSet(SearchCriteria):
@@ -265,10 +271,10 @@ class NewSearchCriteria(SearchCriteria):
 class DateSearchCriteria(SearchCriteria):
     """Matches by comparing against the internal date of the message."""
 
-    def __init__(self, when: datetime, cmp: str, params: SearchParams) -> None:
+    def __init__(self, when: datetime, op: str, params: SearchParams) -> None:
         super().__init__(params)
         self.when = when.date()
-        self.cmp = cmp
+        self.op = op
 
     @classmethod
     def _get_msg_date(cls, msg: MessageInterface) -> Optional[datetime]:
@@ -279,13 +285,13 @@ class DateSearchCriteria(SearchCriteria):
         if msg_datetime is None:
             return False
         msg_date = msg_datetime.date()
-        if self.cmp == '<':  # BEFORE
+        if self.op == '<':  # BEFORE
             return msg_date < self.when
-        elif self.cmp == '=':  # ON
+        elif self.op == '=':  # ON
             return msg_date == self.when
-        elif self.cmp == '>':  # SINCE
-            return msg_date > self.when
-        raise ValueError(self.cmp)
+        elif self.op == '>=':  # SINCE
+            return msg_date >= self.when
+        raise ValueError(self.op)
 
 
 class HeaderDateSearchCriteria(DateSearchCriteria):
@@ -300,18 +306,18 @@ class HeaderDateSearchCriteria(DateSearchCriteria):
 class SizeSearchCriteria(SearchCriteria):
     """Matches by comparing against the size of the message."""
 
-    def __init__(self, size: int, cmp: str, params: SearchParams) -> None:
+    def __init__(self, size: int, op: str, params: SearchParams) -> None:
         super().__init__(params)
         self.size = size
-        self.cmp = cmp
+        self.op = op
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         size = msg.get_size()
-        if self.cmp == '<':
+        if self.op == '<':
             return size < self.size
-        elif self.cmp == '>':
+        elif self.op == '>':
             return size > self.size
-        raise ValueError(self.cmp)
+        raise ValueError(self.op)
 
 
 class EnvelopeSearchCriteria(SearchCriteria):
@@ -330,23 +336,24 @@ class EnvelopeSearchCriteria(SearchCriteria):
         if self.key == b'BCC':
             if not envelope.bcc:
                 return False
-            return any(self.value in str(bcc) for bcc in envelope.bcc)
+            return any(self._in(self.value, str(bcc)) for bcc in envelope.bcc)
         elif self.key == b'CC':
             if not envelope.cc:
                 return False
-            return any(self.value in str(cc) for cc in envelope.cc)
+            return any(self._in(self.value, str(cc)) for cc in envelope.cc)
         elif self.key == b'FROM':
             if not envelope.from_:
                 return False
-            return any(self.value in str(from_) for from_ in envelope.from_)
+            return any(self._in(self.value, str(from_))
+                       for from_ in envelope.from_)
         elif self.key == b'SUBJECT':
             if not envelope.subject:
                 return False
-            return self.value in str(envelope.subject)
+            return self._in(self.value, str(envelope.subject))
         elif self.key == b'TO':
             if not envelope.to:
                 return False
-            return any(self.value in str(to) for to in envelope.to)
+            return any(self._in(self.value, str(to)) for to in envelope.to)
         raise ValueError(self.key)
 
 
@@ -360,18 +367,15 @@ class HeaderSearchCriteria(SearchCriteria):
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         values = msg.get_header(self.name)
-        return any(self.value in str(value) for value in values)
+        return any(self._in(self.value, str(value)) for value in values)
 
 
 class BodySearchCriteria(SearchCriteria):
     """Matches if the message body contains a value."""
 
-    def __init__(self, value: str, with_headers: bool,
-                 params: SearchParams) -> None:
+    def __init__(self, value: str, params: SearchParams) -> None:
         super().__init__(params)
-        self.with_headers = with_headers
         self.value = bytes(value, 'utf-8', 'replace')
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
-        data = msg.get_body() if self.with_headers else msg.get_text()
-        return data is not None and self.value in data
+        return msg.contains(self.value)

@@ -9,6 +9,7 @@ from .sequenceset import SequenceSet
 from .. import Params, Parseable, ExpectedParseable, Space
 from ..exceptions import NotParseable, UnexpectedType
 from ..primitives import Atom, Number, QuotedString, ListP
+from ...bytes import rev
 
 __all__ = ['SearchKey']
 
@@ -32,7 +33,7 @@ class SearchKey(Parseable[bytes]):
 
     """
 
-    _not_pattern = re.compile(br'NOT +', re.I)
+    _not_pattern = rev.compile(br'NOT +', re.I)
 
     def __init__(self, key: bytes,
                  filter_: _FilterType = None,
@@ -127,12 +128,14 @@ class SearchKey(Parseable[bytes]):
         return super().__ne__(other)
 
     @classmethod
-    def _parse_astring_filter(cls, buf: bytes, params: Params):
+    def _parse_astring_filter(cls, buf: memoryview, params: Params) \
+            -> Tuple[str, memoryview]:
         ret, after = AString.parse(buf, params)
         return ret.value.decode(params.charset or 'ascii'), after
 
     @classmethod
-    def _parse_date_filter(cls, buf: bytes, params: Params):
+    def _parse_date_filter(cls, buf: memoryview, params: Params) \
+            -> Tuple[datetime, memoryview]:
         params_copy = params.copy(expected=[Atom, QuotedString])
         atom, after = ExpectedParseable.parse(buf, params_copy)
         date_str = str(atom.value, 'ascii', 'ignore')
@@ -143,7 +146,8 @@ class SearchKey(Parseable[bytes]):
         return date, after
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['SearchKey', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['SearchKey', memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:
@@ -171,6 +175,7 @@ class SearchKey(Parseable[bytes]):
             return cls(b'KEYSET', key_list, inverse), buf
         atom, after = Atom.parse(buf, params)
         key = atom.value.upper()
+        filter_: _FilterType
         if key in (b'ALL', b'ANSWERED', b'DELETED', b'FLAGGED', b'NEW', b'OLD',
                    b'RECENT', b'SEEN', b'UNANSWERED', b'UNDELETED',
                    b'UNFLAGGED', b'UNSEEN', b'DRAFT', b'UNDRAFT'):

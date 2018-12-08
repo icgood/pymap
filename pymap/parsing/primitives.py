@@ -8,7 +8,7 @@ from typing import cast, Type, Tuple, Any, List, Union, Iterable, Sequence, \
 
 from . import Parseable, ExpectedParseable, NotParseable, Params
 from .exceptions import RequiresContinuation
-from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat
+from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat, rev
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
@@ -17,7 +17,7 @@ __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
 class Nil(Parseable[None]):
     """Represents a ``NIL`` object from an IMAP stream."""
 
-    _nil_pattern = re.compile(b'^NIL$', re.I)
+    _nil_pattern = rev.compile(b'^NIL$', re.I)
 
     __slots__ = []  # type: ignore
 
@@ -41,7 +41,8 @@ class Nil(Parseable[None]):
         return super().__eq__(other)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Nil', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Nil', memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -61,7 +62,7 @@ class Number(Parseable[int]):
 
     """
 
-    _num_pattern = re.compile(br'^\d+$')
+    _num_pattern = rev.compile(br'^\d+$')
 
     __slots__ = ['num', '_raw']
 
@@ -76,7 +77,8 @@ class Number(Parseable[int]):
         return self.num
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Number', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Number', memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -127,7 +129,8 @@ class Atom(Parseable[bytes]):
         return self._value
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Atom', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Atom', memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -136,7 +139,7 @@ class Atom(Parseable[bytes]):
         return cls(atom), buf[match.end(0):]
 
     def __bytes__(self) -> bytes:
-        return bytes(self.value)
+        return self.value
 
     def __hash__(self) -> int:
         return hash((Atom, self.value))
@@ -173,7 +176,8 @@ class String(Parseable[bytes]):
         return self.string
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['String', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['String', memoryview]:
         try:
             return QuotedString.parse(buf, params)
         except NotParseable:
@@ -181,7 +185,8 @@ class String(Parseable[bytes]):
         return LiteralString.parse(buf, params)
 
     @classmethod
-    def build(cls, value: Any, binary: bool = False) -> Union[Nil, 'String']:
+    def build(cls, value: Any, binary: bool = False,
+              fallback: Any = None) -> Union[Nil, 'String']:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
@@ -189,15 +194,19 @@ class String(Parseable[bytes]):
         Args:
             value: The string to serialize.
             binary: True if the string should be transmitted as binary.
+            fallback: The default value to use if ``value`` is None.
 
         """
         if value is None:
-            return Nil()
+            if fallback is None:
+                return Nil()
+            else:
+                return cls.build(fallback, binary)
         elif not value:
             return QuotedString(b'')
         elif isinstance(value, bytes):
             ascii_ = value
-        elif hasattr(value, '__bytes__'):
+        elif isinstance(value, memoryview) or hasattr(value, '__bytes__'):
             ascii_ = bytes(value)
         elif isinstance(value, str) or hasattr(value, '__str__'):
             value = str(value)
@@ -236,8 +245,8 @@ class QuotedString(String):
 
     """
 
-    _quoted_pattern = re.compile(br'(?:\r|\n|\\.|\")')
-    _quoted_specials_pattern = re.compile(br'[\"\\]')
+    _quoted_pattern = rev.compile(br'(?:\r|\n|\\.|\")')
+    _quoted_specials_pattern = rev.compile(br'[\"\\]')
 
     __slots__ = []  # type: ignore
 
@@ -245,7 +254,8 @@ class QuotedString(String):
         super().__init__(string, raw)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['QuotedString', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['QuotedString', memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'"':
             raise NotParseable(buf)
@@ -266,7 +276,7 @@ class QuotedString(String):
             else:
                 end = match.end(0)
                 quoted = buf[start:end + 1]
-                return cls(bytes(unquoted), quoted), buf[end:]
+                return cls(bytes(unquoted), bytes(quoted)), buf[end:]
         raise NotParseable(buf)
 
     def __bytes__(self) -> bytes:
@@ -291,7 +301,7 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = re.compile(br'(~?){(\d+)(\+?)}\r?\n')
+    _literal_pattern = rev.compile(br'(~?){(\d+)(\+?)}\r?\n')
 
     __slots__ = ['binary']
 
@@ -308,8 +318,8 @@ class LiteralString(String):
         return max_len is not None and length > max_len
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['LiteralString', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['LiteralString', memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._literal_pattern.match(buf, start)
         if not match:
@@ -320,12 +330,12 @@ class LiteralString(String):
             raise NotParseable(buf, b'TOOBIG')
         elif match.group(3) == b'+':
             buf = buf[match.end(0):]
-            literal = buf[0:literal_length]
+            literal = bytes(buf[0:literal_length])
         elif len(buf) > match.end(0):
             raise NotParseable(buf[match.end(0):])
         elif params.continuations:
             buf = params.continuations.pop(0)
-            literal = buf[0:literal_length]
+            literal = bytes(buf[0:literal_length])
         else:
             raise RequiresContinuation(b'Literal string', literal_length)
         if len(literal) != literal_length:
@@ -351,7 +361,7 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
 
     """
 
-    _end_pattern = re.compile(br' *\)')
+    _end_pattern = rev.compile(br' *\)')
 
     __slots__ = ['items']
 
@@ -378,8 +388,8 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
         return len(self.value)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['ListP', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['ListP', memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)

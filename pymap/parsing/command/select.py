@@ -4,10 +4,11 @@ from typing import Tuple, Sequence, List, Iterable, Optional, ClassVar
 
 from . import CommandSelect, CommandNoArgs
 from .. import Params, Space, EndLine
-from ..exceptions import NotParseable, CommandInvalid
+from ..exceptions import NotParseable
 from ..primitives import Atom, ListP
 from ..specials import AString, Mailbox, SequenceSet, Flag, FetchAttribute, \
     SearchKey, ExtensionOptions
+from ...bytes import rev
 from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -61,8 +62,8 @@ class ExpungeCommand(CommandSelect):
         self.uid_set = uid_set
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['ExpungeCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['ExpungeCommand', memoryview]:
         uid_set: Optional[SequenceSet] = None
         if params.uid:
             _, buf = Space.parse(buf, params)
@@ -99,7 +100,8 @@ class CopyCommand(CommandSelect):
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['CopyCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['CopyCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -136,8 +138,8 @@ class FetchCommand(CommandSelect):
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
-    def _check_macros(cls, buf: bytes, params: Params) \
-            -> Tuple[Sequence[FetchAttribute], bytes]:
+    def _check_macros(cls, buf: memoryview, params: Params) \
+            -> Tuple[Sequence[FetchAttribute], memoryview]:
         atom, after = Atom.parse(buf, params)
         macro = atom.value.upper()
         if macro == b'ALL':
@@ -161,7 +163,8 @@ class FetchCommand(CommandSelect):
         raise NotParseable(buf)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['FetchCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['FetchCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -204,7 +207,7 @@ class StoreCommand(CommandSelect):
     command = b'STORE'
     uid: ClassVar[bool] = False
 
-    _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
+    _info_pattern = rev.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': FlagOp.REPLACE, b'+': FlagOp.ADD, b'-': FlagOp.DELETE}
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
@@ -218,8 +221,8 @@ class StoreCommand(CommandSelect):
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
-    def _parse_store_info(cls, buf: bytes, params: Params) \
-            -> Tuple[FlagOp, bool, bytes]:
+    def _parse_store_info(cls, buf: memoryview, params: Params) \
+            -> Tuple[FlagOp, bool, memoryview]:
         info, after = Atom.parse(buf, params)
         match = cls._info_pattern.match(info.value)
         if not match:
@@ -229,8 +232,8 @@ class StoreCommand(CommandSelect):
         return mode, silent, after
 
     @classmethod
-    def _parse_flag_list(cls, buf: bytes, params: Params) \
-            -> Tuple[Sequence[Flag], bytes]:
+    def _parse_flag_list(cls, buf: memoryview, params: Params) \
+            -> Tuple[Sequence[Flag], memoryview]:
         try:
             params_copy = params.copy(list_expected=[Flag])
             flag_list_p, buf = ListP.parse(buf, params_copy)
@@ -248,7 +251,8 @@ class StoreCommand(CommandSelect):
                 return flag_list, buf
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['StoreCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['StoreCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -286,8 +290,8 @@ class SearchCommand(CommandSelect):
         self.options = options or ExtensionOptions.empty()
 
     @classmethod
-    def _parse_charset(cls, buf: bytes, params: Params) \
-            -> Tuple[Optional[str], bytes]:
+    def _parse_charset(cls, buf: memoryview, params: Params) \
+            -> Tuple[Optional[str], memoryview]:
         try:
             _, after = Space.parse(buf, params)
             atom, after = Atom.parse(after, params)
@@ -306,18 +310,18 @@ class SearchCommand(CommandSelect):
         return None, buf
 
     @classmethod
-    def _parse_options(cls, buf: bytes, params: Params) \
-            -> Tuple[ExtensionOptions, bytes]:
+    def _parse_options(cls, buf: memoryview, params: Params) \
+            -> Tuple[ExtensionOptions, memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 6] == b'RETURN':
             return ExtensionOptions.parse(buf[start + 6:], params)
         else:
-            options, _ = ExtensionOptions.parse(b'', params)
+            options, _ = ExtensionOptions.parse(memoryview(b''), params)
             return options, buf
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['SearchCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['SearchCommand', memoryview]:
         options, buf = cls._parse_options(buf, params)
         charset, buf = cls._parse_charset(buf, params)
         search_keys = []
@@ -350,7 +354,8 @@ class UidCommand(CommandSelect):
     compound = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['UidCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['UidCommand', memoryview]:
         raise NotImplementedError
 
 
@@ -365,8 +370,8 @@ class UidCopyCommand(CopyCommand):
     uid = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['UidCopyCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['UidCopyCommand', memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidCopyCommand):
             raise TypeError(ret)
@@ -384,8 +389,8 @@ class UidExpungeCommand(ExpungeCommand):
     uid = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['UidExpungeCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['UidExpungeCommand', memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidExpungeCommand):
             raise TypeError(ret)
@@ -403,8 +408,8 @@ class UidFetchCommand(FetchCommand):
     uid = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['UidFetchCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['UidFetchCommand', memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidFetchCommand):
             raise TypeError(ret)
@@ -422,8 +427,8 @@ class UidSearchCommand(SearchCommand):
     uid = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['UidSearchCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['UidSearchCommand', memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidSearchCommand):
             raise TypeError(ret)
@@ -441,8 +446,8 @@ class UidStoreCommand(StoreCommand):
     uid = True
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['UidStoreCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['UidStoreCommand', memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidStoreCommand):
             raise TypeError(ret)
@@ -469,17 +474,27 @@ class IdleCommand(CommandSelect):
     #: The string used to end the command.
     continuation = b'DONE'
 
+    _pattern = rev.compile(br'^(.*?)\r?\n')
+
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['IdleCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['IdleCommand', memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag), buf
 
-    def parse_done(self, buf: bytes, params: Params) -> bytes:
-        try:
-            cont_len = len(self.continuation)
-            if bytes(buf[0:cont_len]).upper() != self.continuation:
-                raise NotParseable(buf)
-            _, buf = EndLine.parse(buf[cont_len:], params)
-            return buf
-        except NotParseable as exc:
-            raise CommandInvalid(params.tag, self.command) from exc
+    def parse_done(self, buf: memoryview, params: Params) \
+            -> Tuple[bool, memoryview]:
+        """Parse the continuation line sent by the client to end the ``IDLE``
+        command.
+
+        Args:
+            buf: The continuation line to parse.
+            params: The parsing parameters.
+
+        """
+        match = self._pattern.match(buf)
+        if not match:
+            raise NotParseable(buf)
+        done = match.group(1).upper() == self.continuation
+        buf = buf[match.end(0):]
+        return done, buf

@@ -107,6 +107,17 @@ class EnvelopeStructure:
         self.in_reply_to = in_reply_to
         self.message_id = message_id
 
+    @classmethod
+    def empty(cls) -> 'EnvelopeStructure':
+        """Return an empty envelope structure object.
+
+        See Also:
+            `RFC 2180 4.1.3
+            <https://tools.ietf.org/html/rfc2180#section-4.1.3>`_
+
+        """
+        return _EmptyEnvelopeStructure()
+
     def _addresses(self, headers: Optional[Sequence[AddressHeader]],
                    fallback: Optional[Sequence[AddressHeader]] = None) \
             -> SupportsBytes:
@@ -160,6 +171,17 @@ class BodyStructure:
         self.content_disposition = content_disposition
         self.content_language = content_language
         self.content_location = content_location
+
+    @classmethod
+    def empty(cls) -> 'BodyStructure':
+        """Return an empty body structure object.
+
+        See Also:
+            `RFC 2180 4.1.3
+            <https://tools.ietf.org/html/rfc2180#section-4.1.3>`_
+
+        """
+        return _EmptyBodyStructure()
 
     @property
     def _value(self) -> ListP:
@@ -258,7 +280,8 @@ class ContentBodyStructure(BodyStructure):
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
                       String.build(self.content_description),
-                      String.build(self.content_transfer_encoding),
+                      String.build(self.content_transfer_encoding,
+                                   fallback=b'7BIT'),
                       Number(self.size)])
 
     @property
@@ -268,7 +291,8 @@ class ContentBodyStructure(BodyStructure):
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
                       String.build(self.content_description),
-                      String.build(self.content_transfer_encoding),
+                      String.build(self.content_transfer_encoding,
+                                   fallback=b'7BIT'),
                       Number(self.size),
                       String.build(self.body_md5),
                       String.build(self.content_disposition),
@@ -316,7 +340,8 @@ class TextBodyStructure(ContentBodyStructure):
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
                       String.build(self.content_description),
-                      String.build(self.content_transfer_encoding),
+                      String.build(self.content_transfer_encoding,
+                                   fallback=b'7BIT'),
                       Number(self.size), Number(self.lines)])
 
     @property
@@ -326,7 +351,8 @@ class TextBodyStructure(ContentBodyStructure):
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
                       String.build(self.content_description),
-                      String.build(self.content_transfer_encoding),
+                      String.build(self.content_transfer_encoding,
+                                   fallback=b'7BIT'),
                       Number(self.size), Number(self.lines),
                       String.build(self.body_md5),
                       String.build(self.content_disposition),
@@ -378,7 +404,8 @@ class MessageBodyStructure(ContentBodyStructure):
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
                       String.build(self.content_description),
-                      String.build(self.content_transfer_encoding),
+                      String.build(self.content_transfer_encoding,
+                                   fallback=b'7BIT'),
                       Number(self.size),
                       self.envelope_structure,
                       self.body_structure,
@@ -391,7 +418,8 @@ class MessageBodyStructure(ContentBodyStructure):
                       _ParamsList(self.content_type_params),
                       String.build(self.content_id),
                       String.build(self.content_description),
-                      String.build(self.content_transfer_encoding),
+                      String.build(self.content_transfer_encoding,
+                                   fallback=b'7BIT'),
                       Number(self.size),
                       self.envelope_structure,
                       self.body_structure.extended,
@@ -400,3 +428,17 @@ class MessageBodyStructure(ContentBodyStructure):
                       String.build(self.content_disposition),
                       String.build(self.content_language),
                       String.build(self.content_location)])
+
+
+class _EmptyEnvelopeStructure(EnvelopeStructure):
+
+    def __init__(self) -> None:
+        super().__init__(None, None, None, None, None, None, None, None,
+                         None, None)
+
+
+class _EmptyBodyStructure(TextBodyStructure):
+
+    def __init__(self) -> None:
+        super().__init__('plain', None, None, None, None, None,
+                         None, None, None, 0, 0)

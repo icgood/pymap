@@ -1,8 +1,8 @@
 
 from collections import OrderedDict
 from socket import getfqdn
-from typing import Optional, Any, Dict, Callable, Union, Tuple, Awaitable, \
-    AsyncIterable
+from typing import Optional, Any, Dict, List, Callable, Union, Tuple, \
+    Awaitable, AsyncIterable
 
 from pysasl import AuthenticationCredentials
 
@@ -22,6 +22,7 @@ from .parsing.command.auth import AppendCommand, CreateCommand, \
     SubscribeCommand, UnsubscribeCommand
 from .parsing.command.select import CheckCommand, CloseCommand, IdleCommand, \
     ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, SearchCommand
+from .parsing.commands import InvalidCommand
 from .parsing.primitives import ListP, Number, String, Nil
 from .parsing.response import Response, ResponseOk, ResponseNo, ResponseBad, \
         ResponseCode, ResponsePreAuth
@@ -106,12 +107,14 @@ class ConnectionState:
         self._session = await self.login(creds, self.config)
         self._capability.extend(self.config.login_capability)
         return ResponseOk(cmd.tag, b'Authentication successful.',
-                          self.capability)
+                          self.capability), None
 
-    async def do_login(self, cmd: LoginCommand,
-                       creds: AuthenticationCredentials) -> Response:
+    async def do_login(self, cmd: LoginCommand) -> Response:
         if b'LOGINDISABLED' in self.capability:
             raise CommandNotAllowed(b'LOGIN is disabled.')
+        creds = AuthenticationCredentials(
+            cmd.userid.decode('utf-8', 'surrogateescape'),
+            cmd.password.decode('utf-8', 'surrogateescape'))
         return await self.do_authenticate(cmd, creds)
 
     async def do_starttls(self, cmd: StartTLSCommand):
@@ -265,6 +268,8 @@ class ConnectionState:
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
         session_flags = self.selected.session_flags
         for msg_seq, msg in messages:
+            if msg.expunged:
+                resp.code = ResponseCode.of(b'EXPUNGEISSUED')
             fetch_data: Dict[FetchAttribute, Any] = OrderedDict()
             for attr in cmd.attributes:
                 if attr.value == b'UID':
@@ -277,6 +282,8 @@ class ConnectionState:
                         fetch_data[attr] = DateTime(msg.internal_date)
                     else:
                         fetch_data[attr] = Nil()
+                elif msg.expunged:
+                    continue
                 elif attr.value == b'ENVELOPE':
                     fetch_data[attr] = msg.get_envelope_structure()
                 elif attr.value == b'BODYSTRUCTURE':
@@ -323,31 +330,35 @@ class ConnectionState:
         messages, updates = await self.session.search_mailbox(
             self.selected, cmd.keys)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
-        if cmd.uid:
-            msg_ids = [msg.uid for _, msg in messages]
-        else:
-            msg_ids = [msg_seq for msg_seq, _ in messages]
+        msg_ids: List[int] = []
+        for msg_seq, msg in messages:
+            if msg.expunged:
+                resp.code = ResponseCode.of(b'EXPUNGEISSUED')
+            if cmd.uid:
+                msg_ids.append(msg.uid)
+            else:
+                msg_ids.append(msg_seq)
         resp.add_untagged(SearchResponse(msg_ids))
         return resp, updates
 
     async def do_store(self, cmd: StoreCommand):
         if not cmd.uid:
             self.selected.hide_expunged()
+        if cmd.silent:
+            self.selected.silence(cmd.sequence_set, cmd.flag_set, cmd.mode)
         messages, updates = await self.session.update_flags(
             self.selected, cmd.sequence_set, cmd.flag_set, cmd.mode)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
-        if cmd.silent:
-            self.selected.silence((msg.uid for _, msg in messages),
-                                  cmd.flag_set, cmd.mode)
-        else:
-            session_flags = self.selected.session_flags
-            for msg_seq, msg in messages:
-                flags = msg.get_flags(session_flags)
-                fetch_data: Dict[FetchAttribute, MaybeBytes] = \
-                    {FetchAttribute(b'FLAGS'): ListP(flags, sort=True)}
-                if cmd.uid:
-                    fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
-                resp.add_untagged(FetchResponse(msg_seq, fetch_data))
+        session_flags = self.selected.session_flags
+        for msg_seq, msg in messages:
+            if msg.expunged:
+                resp.code = ResponseCode.of(b'EXPUNGEISSUED')
+            flags = msg.get_flags(session_flags)
+            fetch_data: Dict[FetchAttribute, MaybeBytes] = \
+                {FetchAttribute(b'FLAGS'): ListP(flags, sort=True)}
+            if cmd.uid:
+                fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
+            resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
     async def do_idle(self, cmd: IdleCommand):
@@ -369,6 +380,17 @@ class ConnectionState:
                 yield resp
 
     @classmethod
+    def _get_bad_response(cls, cmd: InvalidCommand) -> ResponseBad:
+        if not cmd.command_name:
+            return ResponseBad(cmd.tag, b'Command not given.')
+        elif not cmd.command_type:
+            msg = b'%b: Command not implemented.' % cmd.command_name
+            return ResponseBad(cmd.tag, msg)
+        else:
+            msg = b'%b: Invalid arguments.' % cmd.command_name
+            return ResponseBad(cmd.tag, msg)
+
+    @classmethod
     def _get_func_name(cls, cmd: Command) -> str:
         cmd_type = type(cmd)
         while cmd_type.delegate:
@@ -377,7 +399,9 @@ class ConnectionState:
         return 'do_' + cmd_str
 
     async def do_command(self, cmd: Command):
-        if self._session and isinstance(cmd, CommandNonAuth):
+        if isinstance(cmd, InvalidCommand):
+            return self._get_bad_response(cmd)
+        elif self._session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
             return ResponseBad(cmd.tag, msg)
         elif not self._session and isinstance(cmd, CommandAuth):

@@ -2,8 +2,10 @@
 import unittest
 
 from pymap.flags import FlagOp, PermanentFlags, SessionFlags
+from pymap.message import BaseMessage
 from pymap.parsing.command.select import SearchCommand, UidSearchCommand
 from pymap.parsing.response import ResponseOk
+from pymap.parsing.specials import SequenceSet
 from pymap.parsing.specials.flag import Seen, Flagged
 from pymap.selected import SelectedMailbox
 
@@ -19,6 +21,10 @@ class TestSelectedMailbox(unittest.TestCase):
                                PermanentFlags([Seen, Flagged]),
                                SessionFlags([]))
 
+    @classmethod
+    def add_message(cls, selected: SelectedMailbox, uid, flags) -> None:
+        selected.add_messages([BaseMessage(uid, flags)])
+
     @property
     def command(self) -> SearchCommand:
         return SearchCommand(b'.', [], None)
@@ -31,11 +37,11 @@ class TestSelectedMailbox(unittest.TestCase):
         selected = self.new_selected()
         selected.session_flags.add_recent(1)
         selected.session_flags.add_recent(2)
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((1, frozenset()),
-                            (2, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 2, [])
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'. OK testing\r\n', bytes(self.response))
@@ -44,14 +50,14 @@ class TestSelectedMailbox(unittest.TestCase):
         selected = self.new_selected()
         selected.session_flags.add_recent(1)
         selected.session_flags.add_recent(2)
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()),
-                              (3, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
+        self.add_message(selected, 3, [])
         forked, _ = selected.fork(self.command)
         forked.session_flags.add_recent(3)
-        forked.add_messages((1, frozenset()),
-                            (2, frozenset()),
-                            (3, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 2, [])
+        self.add_message(forked, 3, [])
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 3 RECENT\r\n'
@@ -62,11 +68,11 @@ class TestSelectedMailbox(unittest.TestCase):
         selected = self.new_selected()
         selected.session_flags.add_recent(1)
         selected.session_flags.add_recent(2)
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()),
-                              (3, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
+        self.add_message(selected, 3, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((1, frozenset()))
+        self.add_message(forked, 1, [])
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 3 EXPUNGE\r\n'
@@ -76,24 +82,24 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_equal(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((1, frozenset()),
-                            (2, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 2, [])
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'. OK testing\r\n', bytes(self.response))
 
     def test_add_untagged_fetch(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((1, frozenset()),
-                            (2, frozenset([Seen])),
-                            (3, frozenset([Seen, Flagged])),
-                            (4, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 2, [Seen])
+        self.add_message(forked, 3, [Seen, Flagged])
+        self.add_message(forked, 4, [])
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 4 EXISTS\r\n'
@@ -104,13 +110,13 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_fetch_uid(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
         forked, _ = selected.fork(self.uid_command)
-        forked.add_messages((1, frozenset()),
-                            (2, frozenset([Seen])),
-                            (3, frozenset([Seen, Flagged])),
-                            (4, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 2, [Seen])
+        self.add_message(forked, 3, [Seen, Flagged])
+        self.add_message(forked, 4, [])
         _, untagged = forked.fork(self.uid_command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 4 EXISTS\r\n'
@@ -121,22 +127,25 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_fetch_silenced(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()),
-                              (3, frozenset([Seen, Flagged])),
-                              (4, frozenset([Seen, Flagged])),
-                              (5, frozenset([Flagged])),
-                              (6, frozenset([Seen])))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
+        self.add_message(selected, 3, [Seen, Flagged])
+        self.add_message(selected, 4, [Seen, Flagged])
+        self.add_message(selected, 5, [Flagged])
+        self.add_message(selected, 6, [Seen])
         forked, _ = selected.fork(self.uid_command)
-        forked.add_messages((1, frozenset([Seen, Flagged])),
-                            (2, frozenset([Seen])),
-                            (3, frozenset([])),
-                            (4, frozenset([Flagged])),
-                            (5, frozenset([Seen, Flagged])),
-                            (6, frozenset([Seen])))
-        forked.silence([1, 2], frozenset([Seen]), FlagOp.ADD)
-        forked.silence([3, 4], frozenset([Seen]), FlagOp.DELETE)
-        forked.silence([5, 6], frozenset([Seen]), FlagOp.REPLACE)
+        forked.silence(SequenceSet.build([1, 2], True),
+                       frozenset([Seen]), FlagOp.ADD)
+        forked.silence(SequenceSet.build([3, 4], True),
+                       frozenset([Seen]), FlagOp.DELETE)
+        forked.silence(SequenceSet.build([5, 6], True),
+                       frozenset([Seen]), FlagOp.REPLACE)
+        self.add_message(forked, 1, [Seen, Flagged])
+        self.add_message(forked, 2, [Seen])
+        self.add_message(forked, 3, [])
+        self.add_message(forked, 4, [Flagged])
+        self.add_message(forked, 5, [Seen, Flagged])
+        self.add_message(forked, 6, [Seen])
         _, untagged = forked.fork(self.uid_command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 1 FETCH (FLAGS (\\Flagged \\Seen) UID 1)\r\n'
@@ -146,14 +155,14 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_expunge_hidden(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()),
-                              (3, frozenset()),
-                              (4, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
+        self.add_message(selected, 3, [])
+        self.add_message(selected, 4, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((1, frozenset()),
-                            (4, frozenset()),
-                            (5, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 4, [])
+        self.add_message(forked, 5, [])
         forked.hide_expunged()
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
@@ -163,13 +172,13 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_expunge(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()),
-                              (2, frozenset()),
-                              (3, frozenset()),
-                              (4, frozenset()))
+        self.add_message(selected, 1, [])
+        self.add_message(selected, 2, [])
+        self.add_message(selected, 3, [])
+        self.add_message(selected, 4, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((1, frozenset()),
-                            (4, frozenset()))
+        self.add_message(forked, 1, [])
+        self.add_message(forked, 4, [])
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 3 EXPUNGE\r\n'
@@ -178,16 +187,16 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_all(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset([Flagged])),
-                              (2, frozenset()),
-                              (3, frozenset()))
+        self.add_message(selected, 1, [Flagged])
+        self.add_message(selected, 2, [])
+        self.add_message(selected, 3, [])
         forked, _ = selected.fork(self.uid_command)
         selected.session_flags.add_recent(6)
-        forked.add_messages((1, frozenset([Seen, Flagged])),
-                            (4, frozenset([Seen])),
-                            (5, frozenset([Seen])),
-                            (6, frozenset([Flagged])),
-                            (7, frozenset([Seen])))
+        self.add_message(forked, 1, [Seen, Flagged])
+        self.add_message(forked, 4, [Seen])
+        self.add_message(forked, 5, [Seen])
+        self.add_message(forked, 6, [Flagged])
+        self.add_message(forked, 7, [Seen])
         _, untagged = forked.fork(self.uid_command)
         self.response.add_untagged(*untagged)
         self.assertEqual(b'* 3 EXPUNGE\r\n'
@@ -203,9 +212,9 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_deleted_bye(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()))
+        self.add_message(selected, 1, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((2, frozenset()))
+        self.add_message(forked, 2, [])
         forked.set_deleted()
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
@@ -214,9 +223,9 @@ class TestSelectedMailbox(unittest.TestCase):
 
     def test_add_untagged_uid_validity_bye(self) -> None:
         selected = self.new_selected()
-        selected.add_messages((1, frozenset()))
+        self.add_message(selected, 1, [])
         forked, _ = selected.fork(self.command)
-        forked.add_messages((2, frozenset()))
+        self.add_message(forked, 2, [])
         forked.uid_validity = 456
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)

@@ -1,5 +1,4 @@
 
-import re
 from datetime import datetime
 from typing import ClassVar, Tuple, Sequence, Iterable, Optional, List
 
@@ -9,6 +8,7 @@ from ..exceptions import InvalidContent
 from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
+from ...bytes import rev
 from ...message import AppendMessage
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
@@ -30,8 +30,8 @@ class CommandMailboxArg(CommandAuth):
         return str(self.mailbox_obj)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['CommandMailboxArg', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['CommandMailboxArg', memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
@@ -56,12 +56,13 @@ class AppendCommand(CommandAuth):
     command = b'APPEND'
 
     def __init__(self, tag: bytes, mailbox: Mailbox,
-                 messages: Sequence[_AppendMsgArg]) -> None:
+                 messages: Iterable[_AppendMsgArg]) -> None:
         super().__init__(tag)
+        now = datetime.now()
         self.mailbox_obj = mailbox
         self.messages: Sequence[AppendMessage] = \
             [AppendMessage(message, frozenset(flags),
-                           when or datetime.now(), options)
+                           when or now, options)
              for message, flags, when, options in messages]
 
     @property
@@ -69,8 +70,8 @@ class AppendCommand(CommandAuth):
         return str(self.mailbox_obj)
 
     @classmethod
-    def _parse_msg(cls, buf: bytes, params: Params) \
-            -> Tuple['_AppendMsgArg', bytes]:
+    def _parse_msg(cls, buf: memoryview, params: Params) \
+            -> Tuple[_AppendMsgArg, memoryview]:
         _, buf = Space.parse(buf, params)
         try:
             params_copy = params.copy(list_expected=[Flag])
@@ -111,8 +112,8 @@ class AppendCommand(CommandAuth):
             return (message.value, flags, date_time, options), buf
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['AppendCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['AppendCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         first_msg, buf = cls._parse_msg(buf, params)
@@ -139,8 +140,8 @@ class CreateCommand(CommandMailboxArg):
         self.options = options
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['CreateCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['CreateCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -169,8 +170,8 @@ class ListCommand(CommandAuth):
     #: All mailboxes may be listed, not only subscribed mailboxes.
     only_subscribed: ClassVar[bool] = False
 
-    _list_mailbox_pattern = re.compile(br'[\x21\x23-\x27\x2A-\x5B'
-                                       br'\x5D-\x7A\x7C\x7E]+')
+    _list_mailbox_pattern = rev.compile(br'[\x21\x23-\x27\x2A-\x5B'
+                                        br'\x5D-\x7A\x7C\x7E]+')
 
     def __init__(self, tag: bytes, ref_name: str, filter_: str) -> None:
         super().__init__(tag)
@@ -178,7 +179,8 @@ class ListCommand(CommandAuth):
         self.filter = filter_
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['ListCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['ListCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         ref_name, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -232,8 +234,8 @@ class RenameCommand(CommandAuth):
         return str(self.to_mailbox_obj)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['RenameCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['RenameCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         from_mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -262,8 +264,8 @@ class SelectCommand(CommandMailboxArg):
         self.options = options
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['SelectCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['SelectCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -303,8 +305,8 @@ class StatusCommand(CommandMailboxArg):
         self.status_list = status_list
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['StatusCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['StatusCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
