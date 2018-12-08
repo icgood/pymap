@@ -78,6 +78,12 @@
 </dd></dl>
 
 <dl class="data">
+<dt id="pymap.backend.mailbox.MailboxDataT">
+<code class="descclassname">pymap.backend.mailbox.</code><code class="descname">MailboxDataT</code><em class="property"> = ~MailboxDataT</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
 <dt id="pymap.backend.mailbox.MailboxDataT_co">
 <code class="descclassname">pymap.backend.mailbox.</code><code class="descname">MailboxDataT_co</code><em class="property"> = +MailboxDataT_co</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariant type variable with an upper bound of
@@ -371,22 +377,23 @@ are resolved by the selected mailbox session.</p>
 
 <dl class="method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>uid</em>, <em>requirement=&lt;FetchRequirement.METADATA: 1&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the message with the given UID. If the UID has been
-expunged, a message with
-<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.expunged" title="pymap.interfaces.message.MessageInterface.expunged"><code class="xref py py-attr docutils literal notranslate"><span class="pre">expunged</span></code></a> set to
-True should be returned.</p>
+<code class="descname">get</code><span class="sig-paren">(</span><em>uid</em>, <em>cached_msg=None</em>, <em>requirement=&lt;FetchRequirement.METADATA: 1&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the message with the given UID.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</li>
+<li><strong>cached_msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The last known cached message.</li>
 <li><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a>) – The data required from each message.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~MessageT]</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IndexError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">IndexError</span></code></a> – The UID is not valid in the mailbox.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~MessageT]</p>
 </td>
 </tr>
 </tbody>
@@ -396,8 +403,8 @@ True should be returned.</p>
 <dl class="method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.save_flags">
 <code class="descname">save_flags</code><span class="sig-paren">(</span><em>messages</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.save_flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the flags currently stored in each message’s
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">permanent_flags</span></code> set.</p>
+<dd><p>Save the permanent flags currently returned by each message’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">get_flags</span></code> method.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -634,20 +641,11 @@ is created first.</li>
 <span id="pymap-backend-session"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.session</span></code><a class="headerlink" href="#module-pymap.backend.session" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymap.backend.session.BaseSession">
-<em class="property">class </em><code class="descclassname">pymap.backend.session.</code><code class="descname">BaseSession</code><span class="sig-paren">(</span><em>mailbox_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.session.SessionInterface</span></code></a></p>
+<em class="property">class </em><code class="descclassname">pymap.backend.session.</code><code class="descname">BaseSession</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.session.SessionInterface</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
 <p>Base implementation of
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> intended for use by
 most backends.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mailbox_set</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Mailboxsetinterface</span></code>[+MailboxDataT_co]) – Manages the set of mailboxes available to the
-authenticated user.</td>
-</tr>
-</tbody>
-</table>
 <dl class="method">
 <dt id="pymap.backend.session.BaseSession.append_messages">
 <code class="descname">append_messages</code><span class="sig-paren">(</span><em>name</em>, <em>messages</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.append_messages" title="Permalink to this definition">¶</a></dt>
@@ -860,7 +858,7 @@ set.</p>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.mailbox.Message" title="pymap.backend.mailbox.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -975,7 +973,7 @@ given search criteria.</p>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.mailbox.Message" title="pymap.backend.mailbox.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1098,47 +1096,13 @@ not the given folder name currently exists.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.mailbox.Message" title="pymap.backend.mailbox.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-pymap.backend.util">
-<span id="pymap-backend-util"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.util</span></code><a class="headerlink" href="#module-pymap.backend.util" title="Permalink to this headline">¶</a></h2>
-<dl class="data">
-<dt id="pymap.backend.util.AsyncEnumerateT">
-<code class="descclassname">pymap.backend.util.</code><code class="descname">AsyncEnumerateT</code><em class="property"> = ~AsyncEnumerateT</em><a class="headerlink" href="#pymap.backend.util.AsyncEnumerateT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Type variable bound to the enumerated element in <a class="reference internal" href="#pymap.backend.util.AsyncEnumerate" title="pymap.backend.util.AsyncEnumerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncEnumerate</span></code></a>.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="pymap.backend.util.AsyncEnumerate">
-<em class="property">class </em><code class="descclassname">pymap.backend.util.</code><code class="descname">AsyncEnumerate</code><span class="sig-paren">(</span><em>iterable</em>, <em>start=0</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.util.AsyncEnumerate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.AsyncIterable</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
-<p>Imitates Python’s <a class="reference external" href="https://docs.python.org/3/library/functions.html#enumerate" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">enumerate()</span></code></a> with async iterators.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>iterable</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Asynciterable</span></code>[~AsyncEnumerateT]) – The iterable to enumerate over.</li>
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The starting value of the index.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.backend.util.asyncenumerate">
-<code class="descclassname">pymap.backend.util.</code><code class="descname">asyncenumerate</code><a class="headerlink" href="#pymap.backend.util.asyncenumerate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.backend.util.AsyncEnumerate" title="pymap.backend.util.AsyncEnumerate"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.util.AsyncEnumerate</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -1155,7 +1119,6 @@ not the given folder name currently exists.</p>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a><ul>
 <li><a class="reference internal" href="#module-pymap.backend.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code></a></li>
 <li><a class="reference internal" href="#module-pymap.backend.session"><code class="docutils literal notranslate"><span class="pre">pymap.backend.session</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.backend.util"><code class="docutils literal notranslate"><span class="pre">pymap.backend.util</span></code></a></li>
 </ul>
 </li>
 </ul>

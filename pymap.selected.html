@@ -111,65 +111,6 @@ will not be chosen.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="pymap.selected.SelectedSnapshot">
-<em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSnapshot</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<p>Holds a snapshot of the selected mailbox as of the last fork.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>uid_validity</strong> – The UID validity of the selected mailbox.</li>
-<li><strong>next_uid</strong> – The predicted next message UID of the mailbox.</li>
-<li><strong>recent</strong> – The number of messages in the mailbox with <code class="docutils literal notranslate"><span class="pre">\Recent</span></code>.</li>
-<li><strong>messages</strong> – The message UIDs mapped to flags.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="pymap.selected.SelectedSnapshot.uid_validity">
-<code class="descname">uid_validity</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.uid_validity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.selected.SelectedSnapshot.next_uid">
-<code class="descname">next_uid</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.next_uid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.selected.SelectedSnapshot.recent">
-<code class="descname">recent</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.recent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.selected.SelectedSnapshot.messages">
-<code class="descname">messages</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.messages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.selected.SelectedSnapshot.exists">
-<code class="descname">exists</code><a class="headerlink" href="#pymap.selected.SelectedSnapshot.exists" title="Permalink to this definition">¶</a></dt>
-<dd><p>The total number of messages in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="pymap.selected.SelectedMailbox">
 <em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedMailbox</code><span class="sig-paren">(</span><em>name</em>, <em>readonly</em>, <em>permanent_flags</em>, <em>session_flags</em>, <em>selected_set=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
@@ -308,20 +249,6 @@ kept in in this set.</li>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymap.selected.SelectedMailbox.snapshot">
-<code class="descname">snapshot</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.snapshot" title="Permalink to this definition">¶</a></dt>
-<dd><p>A snapshot of the selected mailbox as of the last fork.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.selected.SelectedSnapshot" title="pymap.selected.SelectedSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedSnapshot</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="pymap.selected.SelectedMailbox.kwargs">
 <code class="descname">kwargs</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add keywords arguments to copy construction during <a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>.</p>
@@ -351,14 +278,13 @@ kept in in this set.</li>
 
 <dl class="method">
 <dt id="pymap.selected.SelectedMailbox.add_messages">
-<code class="descname">add_messages</code><span class="sig-paren">(</span><em>*messages</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.add_messages" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_messages</code><span class="sig-paren">(</span><em>messages</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.add_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a message that exists in the mailbox.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>messages</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]]) – The messages to add, each a tuple of UID and permanent
-flags.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The cached message objects to add.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
@@ -367,11 +293,26 @@ flags.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="pymap.selected.SelectedMailbox.get_message">
+<code class="descname">get_message</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.get_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cached message for the given message UID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pymap.selected.SelectedMailbox.silence">
-<code class="descname">silence</code><span class="sig-paren">(</span><em>uids</em>, <em>flag_set</em>, <em>flag_op</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.silence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the flags update against the flags at the last
-<a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>, to prevent untagged FETCH responses unless other
-updates have occurred.</p>
+<code class="descname">silence</code><span class="sig-paren">(</span><em>seq_set</em>, <em>flag_set</em>, <em>flag_op</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.silence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the flags update against the cached flags, to prevent untagged
+FETCH responses unless other updates have occurred.</p>
 <p>For example, if a session adds <code class="docutils literal notranslate"><span class="pre">\Deleted</span></code> and calls this method,
 the FETCH response will be silenced. But if another added <code class="docutils literal notranslate"><span class="pre">\Seen</span></code>
 at the same time, the FETCH response will be sent.</p>
@@ -380,7 +321,7 @@ at the same time, the FETCH response will be sent.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The set of message UIDs.</li>
+<li><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>[]) – Sequence set to be updated.</li>
 <li><strong>flag_set</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]) – The set of flags for the update operation.</li>
 <li><strong>flag_op</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagOp</span></code></a>) – The mode to change the flags.</li>
 </ul>

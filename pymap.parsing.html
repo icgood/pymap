@@ -66,7 +66,7 @@ sub-class.</p>
 
 <dl class="class">
 <dt id="pymap.parsing.Params">
-<em class="property">class </em><code class="descclassname">pymap.parsing.</code><code class="descname">Params</code><span class="sig-paren">(</span><em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=False</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.parsing.</code><code class="descname">Params</code><span class="sig-paren">(</span><em>*</em>, <em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=False</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Parameters used and passed around among the <a class="reference internal" href="#pymap.parsing.Parseable.parse" title="pymap.parsing.Parseable.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a>
 methods.</p>
@@ -75,7 +75,7 @@ methods.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>continuations</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – The continuation buffers remaining for parsing.</li>
+<li><strong>continuations</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]]) – The continuation buffers remaining for parsing.</li>
 <li><strong>expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT]]]]) – The types that are expected in the next parsed object.</li>
 <li><strong>list_expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT]]]]) – The types that are expect in a parsed list.</li>
 <li><strong>command_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The name of the command currently being parsed, if any.</li>
@@ -91,7 +91,7 @@ methods.</p>
 </table>
 <dl class="method">
 <dt id="pymap.parsing.Params.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=None</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>*</em>, <em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=None</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy the parameters, possibly replacing a subset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -136,12 +136,12 @@ formal syntax section.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -181,12 +181,12 @@ then returns the parsed object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>[~ParseableT], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -231,12 +231,12 @@ then returns the parsed object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Space" title="pymap.parsing.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.Space" title="pymap.parsing.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -298,12 +298,12 @@ has zero or more space characters followed by a new-line sequence.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.EndLine" title="pymap.parsing.EndLine"><code class="xref py py-class docutils literal notranslate"><span class="pre">EndLine</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.EndLine" title="pymap.parsing.EndLine"><code class="xref py py-class docutils literal notranslate"><span class="pre">EndLine</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -346,38 +346,10 @@ data formats.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The buffer with the parsing error.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The buffer with the parsing error.</td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="pymap.parsing.exceptions.NotParseable.before">
-<code class="descname">before</code><a class="headerlink" href="#pymap.parsing.exceptions.NotParseable.before" title="Permalink to this definition">¶</a></dt>
-<dd><p>The bytes before the parsing error was encountered.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.parsing.exceptions.NotParseable.after">
-<code class="descname">after</code><a class="headerlink" href="#pymap.parsing.exceptions.NotParseable.after" title="Permalink to this definition">¶</a></dt>
-<dd><p>The bytes after the parsing error was encountered.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="exception">
@@ -396,112 +368,102 @@ about the content did not fit what was expected by the special type.</p>
 failed to meet that expectation.</p>
 </dd></dl>
 
-<dl class="exception">
-<dt id="pymap.parsing.exceptions.BadCommand">
-<em class="property">exception </em><code class="descclassname">pymap.parsing.exceptions.</code><code class="descname">BadCommand</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.exceptions.BadCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
-<p>Base class for errors that occurred while parsing a command received
-from the client.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag value.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="pymap.parsing.exceptions.BadCommand.code">
-<code class="descname">code</code><a class="headerlink" href="#pymap.parsing.exceptions.BadCommand.code" title="Permalink to this definition">¶</a></dt>
-<dd><p>The optional response code.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.parsing.exceptions.BadCommand.get_response">
-<code class="descname">get_response</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.exceptions.BadCommand.get_response" title="Permalink to this definition">¶</a></dt>
-<dd><p>The response to send back to the client in response to the command
-parsing error.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.response.ResponseBad" title="pymap.parsing.response.ResponseBad"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseBad</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="pymap.parsing.exceptions.CommandNotFound">
-<em class="property">exception </em><code class="descclassname">pymap.parsing.exceptions.</code><code class="descname">CommandNotFound</code><span class="sig-paren">(</span><em>tag</em>, <em>command=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.exceptions.CommandNotFound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.parsing.exceptions.BadCommand" title="pymap.parsing.exceptions.BadCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.exceptions.BadCommand</span></code></a></p>
-<p>Error indicating the data was not parseable because the command was not
-found.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag value.</li>
-<li><strong>command</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The command name.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="exception">
-<dt id="pymap.parsing.exceptions.CommandInvalid">
-<em class="property">exception </em><code class="descclassname">pymap.parsing.exceptions.</code><code class="descname">CommandInvalid</code><span class="sig-paren">(</span><em>tag</em>, <em>command</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.exceptions.CommandInvalid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.parsing.exceptions.BadCommand" title="pymap.parsing.exceptions.BadCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.exceptions.BadCommand</span></code></a></p>
-<p>Error indicating the data was not parseable because the command had
+</div>
+<div class="section" id="module-pymap.parsing.commands">
+<span id="pymap-parsing-commands"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code><a class="headerlink" href="#module-pymap.parsing.commands" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymap.parsing.commands.InvalidCommand">
+<em class="property">class </em><code class="descclassname">pymap.parsing.commands.</code><code class="descname">InvalidCommand</code><span class="sig-paren">(</span><em>params</em>, <em>parse_exc</em>, <em>command=None</em>, <em>command_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.Command</span></code></a></p>
+<p>An invalid command, either because the tag or command name could not be
+parsed, the command name was not recognized, or a known command was given
 invalid arguments.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag value.</li>
-<li><strong>command</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command class.</li>
+<li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parsing parameters</li>
+<li><strong>parse_exc</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.parsing.exceptions.NotParseable" title="pymap.parsing.exceptions.NotParseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotParseable</span></code></a>]) – The exception that caused the failure, if any.</li>
+<li><strong>command</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The command name, if available.</li>
+<li><strong>command_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[]]]) – The command type, if available.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="pymap.parsing.exceptions.CommandInvalid.code">
-<code class="descname">code</code><a class="headerlink" href="#pymap.parsing.exceptions.CommandInvalid.code" title="Permalink to this definition">¶</a></dt>
-<dd><p>The optional response code.</p>
+<dt id="pymap.parsing.commands.InvalidCommand.value">
+<code class="descname">value</code><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The command name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymap.parsing.exceptions.CommandInvalid.cause">
-<code class="descname">cause</code><a class="headerlink" href="#pymap.parsing.exceptions.CommandInvalid.cause" title="Permalink to this definition">¶</a></dt>
-<dd><p>The parsing exception that caused this exception.</p>
+<dt id="pymap.parsing.commands.InvalidCommand.command_name">
+<code class="descname">command_name</code><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand.command_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The command name, if the name could be parsed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.exceptions.NotParseable" title="pymap.parsing.exceptions.NotParseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotParseable</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.commands.InvalidCommand.command_type">
+<code class="descname">command_type</code><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand.command_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The command type, if parsing failed due to invalid arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[]]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.commands.InvalidCommand.parse_exc">
+<code class="descname">parse_exc</code><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand.parse_exc" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parsing exception, if any.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.parsing.exceptions.NotParseable" title="pymap.parsing.exceptions.NotParseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotParseable</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.parsing.commands.InvalidCommand.parse">
+<em class="property">classmethod </em><code class="descname">parse</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implemented by sub-classes to define how to parse the given buffer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.commands.InvalidCommand" title="pymap.parsing.commands.InvalidCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -509,9 +471,6 @@ invalid arguments.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pymap.parsing.commands">
-<span id="pymap-parsing-commands"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code><a class="headerlink" href="#module-pymap.parsing.commands" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymap.parsing.commands.Commands">
 <em class="property">class </em><code class="descclassname">pymap.parsing.commands.</code><code class="descname">Commands</code><a class="headerlink" href="#pymap.parsing.commands.Commands" title="Permalink to this definition">¶</a></dt>
@@ -521,18 +480,20 @@ invalid arguments.</p>
 <dt id="pymap.parsing.commands.Commands.parse">
 <code class="descname">parse</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.Commands.parse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse the given bytes into a command. The basic syntax is a tag
-string, a command name, possibly some arguments, and then an endline.</p>
+string, a command name, possibly some arguments, and then an endline.
+If the command has a complete structure but cannot be parsed, an
+<a class="reference internal" href="#pymap.parsing.commands.InvalidCommand" title="pymap.parsing.commands.InvalidCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidCommand</span></code></a> is returned.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes to parse.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes to parse.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parsing parameters.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -604,12 +565,12 @@ string, a command name, possibly some arguments, and then an endline.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -633,12 +594,12 @@ that expects nothing.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.CommandNoArgs" title="pymap.parsing.command.CommandNoArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommandNoArgs</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.CommandNoArgs" title="pymap.parsing.command.CommandNoArgs"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommandNoArgs</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -661,12 +622,12 @@ that expects nothing.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -690,12 +651,12 @@ authenticated.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -719,12 +680,12 @@ authenticated.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -748,12 +709,12 @@ authenticated and a mailbox has been selected.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -811,12 +772,12 @@ mechanism.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.nonauth.AuthenticateCommand" title="pymap.parsing.command.nonauth.AuthenticateCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticateCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.nonauth.AuthenticateCommand" title="pymap.parsing.command.nonauth.AuthenticateCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticateCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -853,12 +814,12 @@ ID and password credentials in clear-text.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.nonauth.LoginCommand" title="pymap.parsing.command.nonauth.LoginCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.nonauth.LoginCommand" title="pymap.parsing.command.nonauth.LoginCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -893,7 +854,7 @@ place immediately after the server issues a
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag.</li>
 <li><strong>mailbox</strong> (<a class="reference internal" href="#pymap.parsing.specials.mailbox.Mailbox" title="pymap.parsing.specials.mailbox.Mailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mailbox</span></code></a>[]) – The mailbox name.</li>
-<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>], <a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions" title="pymap.parsing.specials.options.ExtensionOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtensionOptions</span></code></a>[]]]) – List of tuples containing the raw messages bytes, the
+<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>], <a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions" title="pymap.parsing.specials.options.ExtensionOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtensionOptions</span></code></a>[]]]) – List of tuples containing the raw messages bytes, the
 flags, and the internal timestamp to assign to the message.</li>
 </ul>
 </td>
@@ -909,12 +870,12 @@ flags, and the internal timestamp to assign to the message.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.AppendCommand" title="pymap.parsing.command.auth.AppendCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.AppendCommand" title="pymap.parsing.command.auth.AppendCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -937,12 +898,12 @@ flags, and the internal timestamp to assign to the message.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.CreateCommand" title="pymap.parsing.command.auth.CreateCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CreateCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.CreateCommand" title="pymap.parsing.command.auth.CreateCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CreateCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -991,12 +952,12 @@ flags, and the internal timestamp to assign to the message.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.ListCommand" title="pymap.parsing.command.auth.ListCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.ListCommand" title="pymap.parsing.command.auth.ListCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1051,12 +1012,12 @@ flags, and the internal timestamp to assign to the message.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.RenameCommand" title="pymap.parsing.command.auth.RenameCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">RenameCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.RenameCommand" title="pymap.parsing.command.auth.RenameCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">RenameCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1087,12 +1048,12 @@ that it must be.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1149,12 +1110,12 @@ selecting it.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.StatusCommand" title="pymap.parsing.command.auth.StatusCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatusCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.auth.StatusCommand" title="pymap.parsing.command.auth.StatusCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatusCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1232,12 +1193,12 @@ mailbox that contain the <code class="docutils literal notranslate"><span class=
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand" title="pymap.parsing.command.select.ExpungeCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpungeCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand" title="pymap.parsing.command.select.ExpungeCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpungeCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1278,12 +1239,12 @@ end of the destination mailbox.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.CopyCommand" title="pymap.parsing.command.select.CopyCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.CopyCommand" title="pymap.parsing.command.select.CopyCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1325,12 +1286,12 @@ attributes given in the command.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.FetchCommand" title="pymap.parsing.command.select.FetchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.FetchCommand" title="pymap.parsing.command.select.FetchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1372,12 +1333,12 @@ selected mailbox.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.StoreCommand" title="pymap.parsing.command.select.StoreCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">StoreCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.StoreCommand" title="pymap.parsing.command.select.StoreCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">StoreCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1418,12 +1379,12 @@ based on a set of search criteria.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.SearchCommand" title="pymap.parsing.command.select.SearchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.SearchCommand" title="pymap.parsing.command.select.SearchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1454,12 +1415,12 @@ to the RFC section for a complete description.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidCommand" title="pymap.parsing.command.select.UidCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidCommand" title="pymap.parsing.command.select.UidCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1489,12 +1450,12 @@ UIDs instead of sequence numbers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidCopyCommand" title="pymap.parsing.command.select.UidCopyCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidCopyCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidCopyCommand" title="pymap.parsing.command.select.UidCopyCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidCopyCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1524,12 +1485,12 @@ message UIDs instead of sequence numbers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidExpungeCommand" title="pymap.parsing.command.select.UidExpungeCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidExpungeCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidExpungeCommand" title="pymap.parsing.command.select.UidExpungeCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidExpungeCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1559,12 +1520,12 @@ UIDs instead of sequence numbers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidFetchCommand" title="pymap.parsing.command.select.UidFetchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidFetchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidFetchCommand" title="pymap.parsing.command.select.UidFetchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidFetchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1594,12 +1555,12 @@ UIDs instead of sequence numbers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidSearchCommand" title="pymap.parsing.command.select.UidSearchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidSearchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidSearchCommand" title="pymap.parsing.command.select.UidSearchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidSearchCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1629,12 +1590,12 @@ UIDs instead of sequence numbers.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidStoreCommand" title="pymap.parsing.command.select.UidStoreCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidStoreCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.UidStoreCommand" title="pymap.parsing.command.select.UidStoreCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">UidStoreCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1651,7 +1612,7 @@ UIDs instead of sequence numbers.</p>
 client. During this wait, the server may be sending untagged responses
 indicating concurrent updates to the mailbox.</p>
 <p>Parsing this command is a special case. The continuation string <code class="docutils literal notranslate"><span class="pre">DONE</span></code> is
-actually parsed by the <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_done()</span></code> method. The <a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.parse" title="pymap.parsing.command.select.IdleCommand.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a>
+actually parsed by the <a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.parse_done" title="pymap.parsing.command.select.IdleCommand.parse_done"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_done()</span></code></a> method. The <a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.parse" title="pymap.parsing.command.select.IdleCommand.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a>
 only parses the <code class="docutils literal notranslate"><span class="pre">IDLE</span> <span class="pre">&lt;CRLF&gt;</span></code> portion, and does not raise a
 <code class="xref py py-exc docutils literal notranslate"><span class="pre">RequiresContinuation</span></code> exception.</p>
 <div class="admonition seealso">
@@ -1673,12 +1634,34 @@ only parses the <code class="docutils literal notranslate"><span class="pre">IDL
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.IdleCommand" title="pymap.parsing.command.select.IdleCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdleCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.command.select.IdleCommand" title="pymap.parsing.command.select.IdleCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdleCommand</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.parsing.command.select.IdleCommand.parse_done">
+<code class="descname">parse_done</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.select.IdleCommand.parse_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the continuation line sent by the client to end the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code>
+command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The continuation line to parse.</li>
+<li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parsing parameters.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1719,12 +1702,12 @@ only parses the <code class="docutils literal notranslate"><span class="pre">IDL
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.Nil" title="pymap.parsing.primitives.Nil"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nil</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.Nil" title="pymap.parsing.primitives.Nil"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nil</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1769,12 +1752,12 @@ only parses the <code class="docutils literal notranslate"><span class="pre">IDL
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.Number" title="pymap.parsing.primitives.Number"><code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.Number" title="pymap.parsing.primitives.Number"><code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1819,12 +1802,12 @@ only parses the <code class="docutils literal notranslate"><span class="pre">IDL
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.Atom" title="pymap.parsing.primitives.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">Atom</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.Atom" title="pymap.parsing.primitives.Atom"><code class="xref py py-class docutils literal notranslate"><span class="pre">Atom</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1874,12 +1857,12 @@ instantiated directly, use one of its derivatives instead.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.String" title="pymap.parsing.primitives.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.String" title="pymap.parsing.primitives.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1888,7 +1871,7 @@ instantiated directly, use one of its derivatives instead.</p>
 
 <dl class="classmethod">
 <dt id="pymap.parsing.primitives.String.build">
-<em class="property">classmethod </em><code class="descname">build</code><span class="sig-paren">(</span><em>value</em>, <em>binary=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.String.build" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">build</code><span class="sig-paren">(</span><em>value</em>, <em>binary=False</em>, <em>fallback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.String.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce either a <a class="reference internal" href="#pymap.parsing.primitives.QuotedString" title="pymap.parsing.primitives.QuotedString"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuotedString</span></code></a> or <a class="reference internal" href="#pymap.parsing.primitives.LiteralString" title="pymap.parsing.primitives.LiteralString"><code class="xref py py-class docutils literal notranslate"><span class="pre">LiteralString</span></code></a>
 based on the contents of <code class="docutils literal notranslate"><span class="pre">data</span></code>. This is useful to improve
 readability of response data.</p>
@@ -1899,6 +1882,7 @@ readability of response data.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The string to serialize.</li>
 <li><strong>binary</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the string should be transmitted as binary.</li>
+<li><strong>fallback</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The default value to use if <code class="docutils literal notranslate"><span class="pre">value</span></code> is None.</li>
 </ul>
 </td>
 </tr>
@@ -1934,12 +1918,12 @@ double-quotes.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.QuotedString" title="pymap.parsing.primitives.QuotedString"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuotedString</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.QuotedString" title="pymap.parsing.primitives.QuotedString"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuotedString</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -1971,12 +1955,12 @@ syntax.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.LiteralString" title="pymap.parsing.primitives.LiteralString"><code class="xref py py-class docutils literal notranslate"><span class="pre">LiteralString</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.LiteralString" title="pymap.parsing.primitives.LiteralString"><code class="xref py py-class docutils literal notranslate"><span class="pre">LiteralString</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2039,12 +2023,12 @@ syntax.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.ListP" title="pymap.parsing.primitives.ListP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListP</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.primitives.ListP" title="pymap.parsing.primitives.ListP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListP</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2104,12 +2088,12 @@ character in the unquoted form.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.astring.AString" title="pymap.parsing.specials.astring.AString"><code class="xref py py-class docutils literal notranslate"><span class="pre">AString</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.astring.AString" title="pymap.parsing.specials.astring.AString"><code class="xref py py-class docutils literal notranslate"><span class="pre">AString</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2172,12 +2156,12 @@ character in the unquoted form.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.datetime_.DateTime" title="pymap.parsing.specials.datetime_.DateTime"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateTime</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.datetime_.DateTime" title="pymap.parsing.specials.datetime_.DateTime"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateTime</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2306,12 +2290,12 @@ the attribute name within square brackets, e.g. <code class="docutils literal no
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2370,12 +2354,12 @@ the attribute name within square brackets, e.g. <code class="docutils literal no
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2510,12 +2494,12 @@ IMAP.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.mailbox.Mailbox" title="pymap.parsing.specials.mailbox.Mailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mailbox</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.mailbox.Mailbox" title="pymap.parsing.specials.mailbox.Mailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mailbox</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2595,12 +2579,12 @@ IMAP.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2730,12 +2714,12 @@ few groups as possible.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2786,12 +2770,12 @@ few groups as possible.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.statusattr.StatusAttribute" title="pymap.parsing.specials.statusattr.StatusAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatusAttribute</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.statusattr.StatusAttribute" title="pymap.parsing.specials.statusattr.StatusAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatusAttribute</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2845,12 +2829,12 @@ associated value.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOption" title="pymap.parsing.specials.options.ExtensionOption"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtensionOption</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOption" title="pymap.parsing.specials.options.ExtensionOption"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtensionOption</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2901,12 +2885,12 @@ will not fail, it will just return an empty object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions" title="pymap.parsing.specials.options.ExtensionOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtensionOptions</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions" title="pymap.parsing.specials.options.ExtensionOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtensionOptions</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -2951,12 +2935,12 @@ will not fail, it will just return an empty object.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytes containing the data to be parsed.</li>
+<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</li>
 <li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.tag.Tag" title="pymap.parsing.specials.tag.Tag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.tag.Tag" title="pymap.parsing.specials.tag.Tag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tag</span></code></a>[], <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </td>
 </tr>
 </tbody>
@@ -3046,6 +3030,20 @@ indicate an untagged response.</li>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.parsing.response.Response.code">
+<code class="descname">code</code><a class="headerlink" href="#pymap.parsing.response.Response.code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional response code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.parsing.response.Response.add_untagged">
 <code class="descname">add_untagged</code><span class="sig-paren">(</span><em>*responses</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.Response.add_untagged" title="Permalink to this definition">¶</a></dt>
@@ -3093,6 +3091,21 @@ parent response.</p>
 <code class="descname">is_terminal</code><a class="headerlink" href="#pymap.parsing.response.Response.is_terminal" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the response contained an untagged <code class="docutils literal notranslate"><span class="pre">BYE</span></code> response
 indicating that the session should be terminated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.parsing.response.Response.is_bad">
+<code class="descname">is_bad</code><a class="headerlink" href="#pymap.parsing.response.Response.is_bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the response indicates an error in the command received from
+the client.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -3184,6 +3197,21 @@ error in responding to the command.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.parsing.response.ResponseBad.is_bad">
+<code class="descname">is_bad</code><a class="headerlink" href="#pymap.parsing.response.ResponseBad.is_bad" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the response indicates an error in the command received from
+the client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3440,6 +3468,24 @@ request.</p>
 </tr>
 </tbody>
 </table>
+<dl class="classmethod">
+<dt id="pymap.parsing.response.fetch.EnvelopeStructure.empty">
+<em class="property">classmethod </em><code class="descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.fetch.EnvelopeStructure.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an empty envelope structure object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc2180#section-4.1.3">RFC 2180 4.1.3</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.response.fetch.EnvelopeStructure" title="pymap.parsing.response.fetch.EnvelopeStructure"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvelopeStructure</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3464,6 +3510,24 @@ request. This class should not be used directly.</p>
 </tr>
 </tbody>
 </table>
+<dl class="classmethod">
+<dt id="pymap.parsing.response.fetch.BodyStructure.empty">
+<em class="property">classmethod </em><code class="descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.fetch.BodyStructure.empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an empty body structure object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc2180#section-4.1.3">RFC 2180 4.1.3</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.parsing.response.fetch.BodyStructure" title="pymap.parsing.response.fetch.BodyStructure"><code class="xref py py-class docutils literal notranslate"><span class="pre">BodyStructure</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="pymap.parsing.response.fetch.BodyStructure.extended">
 <code class="descname">extended</code><a class="headerlink" href="#pymap.parsing.response.fetch.BodyStructure.extended" title="Permalink to this definition">¶</a></dt>
