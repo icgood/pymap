@@ -15,7 +15,7 @@ class TestSearch(TestBase):
         self.transport.push_readline(
             b'search1 SEARCH DRAFT\r\n')
         self.transport.push_write(
-            b'search1 NO SEARCH DRAFT not allowed.\r\n')
+            b'search1 NO [CANNOT] SEARCH DRAFT not allowed.\r\n')
         self.transport.push_logout()
         await self.run()
 
@@ -63,7 +63,7 @@ class TestSearch(TestBase):
         self.transport.push_logout()
         await self.run()
 
-    async def test_search_all(self):
+    async def test_search_and(self):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
@@ -133,7 +133,7 @@ class TestSearch(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
-            b'search1 SEARCH SINCE 01-Jan-1995\r\n')
+            b'search1 SEARCH SINCE 01-Jan-2000\r\n')
         self.transport.push_write(
             b'* SEARCH 3 4\r\n'
             b'search1 OK SEARCH completed.\r\n')
@@ -210,7 +210,7 @@ class TestSearch(TestBase):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
-            b'search1 SEARCH TEXT "World"\r\n')
+            b'search1 SEARCH TEXT "WORLD"\r\n')
         self.transport.push_write(
             b'* SEARCH 4\r\n'
             b'search1 OK SEARCH completed.\r\n')

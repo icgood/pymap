@@ -1,21 +1,21 @@
 """Base implementations of the :mod:`pymap.interfaces.message` interfaces."""
 
+import re
 from datetime import datetime
 from email.generator import BytesGenerator
 from email.message import EmailMessage
 from email.parser import BytesParser
 from email.policy import SMTP
 from io import BytesIO
-from typing import Any, Tuple, Optional, Iterable, Set, Dict, FrozenSet, \
-    Sequence, List, NamedTuple, BinaryIO, TypeVar, Type
+from typing import cast, Any, Tuple, Optional, Iterable, Dict, FrozenSet, \
+    AbstractSet, Sequence, List, NamedTuple, BinaryIO, TypeVar, Type
 
 from .flags import FlagOp, SessionFlags
-from .interfaces.message import Header, MessageInterface
+from .interfaces.message import Header, CachedMessage, MessageInterface
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
-from .parsing.specials import ExtensionOptions
-from .parsing.specials.flag import Flag, Deleted
+from .parsing.specials import Flag, ExtensionOptions
 
 __all__ = ['AppendMessage', 'BaseMessage', 'MessageT', 'Policy', 'Policy7Bit']
 
@@ -27,6 +27,14 @@ Policy = SMTP.clone(cte_type='8bit', utf8=True)
 
 #: :class:`~email.policy.Policy` used for 7-bit serialization.
 Policy7Bit = Policy.clone(cte_type='7bit')
+
+
+class _NoContents(ValueError):
+    # Thrown when message contents are requested but the message object does
+    # not have contents loaded.
+
+    def __init__(self) -> None:
+        super().__init__('Message contents not available.')
 
 
 class AppendMessage(NamedTuple):
@@ -55,7 +63,7 @@ class _BodyOnlyBytesGenerator(BytesGenerator):
         pass
 
 
-class BaseMessage(MessageInterface):
+class BaseMessage(MessageInterface, CachedMessage):
     """Message metadata such as UID, permanent flags, and when the message
     was added to the system.
 
@@ -68,12 +76,15 @@ class BaseMessage(MessageInterface):
 
     """
 
+    __slots__ = ['_uid', '_permanent_flags', '_internal_date', '_expunged',
+                 '_metadata_hash', '_contents', '_kwargs']
+
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
                  internal_date: datetime = None, expunged: bool = False,
                  contents: EmailMessage = None, **kwargs: Any) -> None:
         super().__init__()
         self._uid = uid
-        self._permanent_flags = set(permanent_flags or [])
+        self._permanent_flags = frozenset(permanent_flags or [])
         self._internal_date = internal_date
         self._expunged = expunged
         self._contents = contents
@@ -110,10 +121,6 @@ class BaseMessage(MessageInterface):
         return self._expunged
 
     @property
-    def permanent_flags(self) -> Set[Flag]:
-        return self._permanent_flags
-
-    @property
     def internal_date(self) -> Optional[datetime]:
         return self._internal_date
 
@@ -121,28 +128,23 @@ class BaseMessage(MessageInterface):
     def contents(self) -> EmailMessage:
         """The MIME-parsed message object."""
         if self._contents is None:
-            raise ValueError('Message contents not available.')
+            raise _NoContents()
         return self._contents
 
     def copy(self: MessageT, new_uid: int) -> MessageT:
         cls = type(self)
-        return cls(new_uid, self.permanent_flags, self.internal_date,
+        return cls(new_uid, self._permanent_flags, self.internal_date,
                    self.expunged, self._contents, **self._kwargs)
 
     def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
-        if self.expunged:
-            return frozenset({Deleted})
-        elif session_flags:
-            return frozenset(self.permanent_flags | session_flags[self.uid])
+        if session_flags:
+            return self._permanent_flags | session_flags.get(self.uid)
         else:
-            return frozenset(self.permanent_flags)
+            return self._permanent_flags
 
-    def update_flags(self, flag_set: Iterable[Flag],
-                     flag_op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
-        new_flags = flag_op.apply(self.permanent_flags, flag_set)
-        self.permanent_flags.clear()
-        self.permanent_flags.update(new_flags)
-        return new_flags
+    def update_flags(self, flag_set: AbstractSet[Flag],
+                     flag_op: FlagOp = FlagOp.REPLACE) -> None:
+        self._permanent_flags = flag_op.apply(self._permanent_flags, flag_set)
 
     @classmethod
     def _get_subpart(cls: Type[MessageT], msg: MessageT, section) \
@@ -161,16 +163,24 @@ class BaseMessage(MessageInterface):
             return msg.contents
 
     def get_header(self, name: str) -> Sequence[Header]:
-        return self.contents.get_all(name, [])
+        try:
+            return self.contents.get_all(name, [])
+        except _NoContents:
+            return []
 
     def get_headers(self, section: Iterable[int] = None,
                     subset: Iterable[str] = None,
-                    inverse: bool = False) \
-            -> Optional[bytes]:
+                    inverse: bool = False) -> bytes:
         try:
             msg = self._get_subpart(self, section)
-        except IndexError:
-            return None
+        except (IndexError, _NoContents):
+            return b''
+        return self._get_headers(msg, subset, inverse)
+
+    @classmethod
+    def _get_headers(cls, msg: EmailMessage,
+                     subset: Iterable[str] = None,
+                     inverse: bool = False) -> bytes:
         ret: List[bytes] = []
         for key, value in msg.items():
             if subset is not None:
@@ -182,22 +192,22 @@ class BaseMessage(MessageInterface):
             linesep = Policy.linesep.encode('ascii')
             return b''.join(ret) + linesep
         else:
-            return None
+            return b''
 
     def get_body(self, section: Iterable[int] = None,
-                 binary: bool = False) -> Optional[bytes]:
+                 binary: bool = False) -> bytes:
         try:
             msg = self._get_subpart(self, section)
-        except IndexError:
-            return None
+        except (IndexError, _NoContents):
+            return b''
         return self._get_bytes(msg, binary)
 
     def get_text(self, section: Iterable[int] = None,
-                 binary: bool = False) -> Optional[bytes]:
+                 binary: bool = False) -> bytes:
         try:
             msg = self._get_subpart(self, section)
-        except IndexError:
-            return None
+        except (IndexError, _NoContents):
+            return b''
         return self._get_bytes(msg, binary, True)
 
     @classmethod
@@ -231,15 +241,21 @@ class BaseMessage(MessageInterface):
                  binary: bool = False) -> int:
         try:
             msg = self._get_subpart(self, section)
-        except IndexError:
+        except (IndexError, _NoContents):
             return 0
         return self._get_size(msg, binary)
 
     def get_envelope_structure(self) -> EnvelopeStructure:
-        return self._get_envelope_structure(self.contents)
+        try:
+            return self._get_envelope_structure(self.contents)
+        except _NoContents:
+            return EnvelopeStructure.empty()
 
     def get_body_structure(self) -> BodyStructure:
-        return self._get_body_structure(self.contents)
+        try:
+            return self._get_body_structure(self.contents)
+        except _NoContents:
+            return BodyStructure.empty()
 
     @classmethod
     def _get_envelope_structure(cls, msg: EmailMessage) -> EnvelopeStructure:
@@ -300,3 +316,18 @@ class BaseMessage(MessageInterface):
         return ContentBodyStructure(  # type: ignore
             maintype, subtype, params, disposition, language, location,
             content_id, content_desc, content_encoding, None, size)
+
+    def contains(self, value: bytes) -> bool:
+        if self._contents is None:
+            return False
+        pattern = re.compile(re.escape(value), re.I)
+        for part in self._contents.walk():
+            msg = cast(EmailMessage, part)
+            headers = self._get_headers(msg)
+            if pattern.search(headers) is not None:
+                return True
+            if msg.get_content_maintype() == 'text':
+                data = self._get_bytes(msg, True, True)
+                if pattern.search(data) is not None:
+                    return True
+        return False

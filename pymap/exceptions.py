@@ -68,7 +68,8 @@ class SearchNotAllowed(CommandNotAllowed):
 
     def __init__(self, key: bytes = None) -> None:
         command = b'SEARCH ' + key if key else b'SEARCH'
-        super().__init__(command + b' not allowed.')
+        super().__init__(command + b' not allowed.',
+                         ResponseCode.of(b'CANNOT'))
 
 
 class InvalidAuth(ResponseError):

@@ -36,7 +36,8 @@ class DateTime(Parseable[datetime]):
         return datetime.now().astimezone().tzinfo
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['DateTime', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['DateTime', memoryview]:
         string, after = QuotedString.parse(buf, params)
         try:
             when_str = str(string.value, 'ascii')

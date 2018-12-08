@@ -26,8 +26,8 @@ class AuthenticateCommand(CommandNonAuth):
         self.mech_name = mech_name
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['AuthenticateCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['AuthenticateCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         atom, after = Atom.parse(buf, params)
         _, after = EndLine.parse(after, params)
@@ -53,7 +53,8 @@ class LoginCommand(CommandNonAuth):
         self.password = password
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['LoginCommand', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['LoginCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         userid, buf = AString.parse(buf, params)
         _, buf = Space.parse(buf, params)

@@ -8,15 +8,16 @@ from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage, BaseMessage
 from pymap.parsing.specials import SequenceSet, FetchRequirement
 from pymap.parsing.specials.flag import get_system_flags, Flag, Recent, Seen
-from pymap.selected import SelectedSet, SelectedMailbox
-
-from .util import asyncenumerate
+from pymap.selected import CachedMessage, SelectedSet, SelectedMailbox
 
 __all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'Message',
-           'MessageT', 'MailboxDataT_co']
+           'MessageT', 'MailboxDataT', 'MailboxDataT_co']
 
 #: Type variable with an upper bound of :class:`Message`.
 MessageT = TypeVar('MessageT', bound='Message')
+
+#: Type variable with an upper bound of :class:`MailboxDataInterface`.
+MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface')
 
 #: Covariant type variable with an upper bound of
 #: :class:`MailboxDataInterface`.
@@ -111,17 +112,18 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    async def get(self, uid: int,
+    async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
             -> Optional[MessageT]:
-        """Return the message with the given UID. If the UID has been
-        expunged, a message with
-        :attr:`~pymap.interfaces.message.MessageInterface.expunged` set to
-        True should be returned.
+        """Return the message with the given UID.
 
         Args:
             uid: The message UID.
+            cached_msg: The last known cached message.
             requirement: The data required from each message.
+
+        Raises:
+            IndexError: The UID is not valid in the mailbox.
 
         """
         ...
@@ -149,8 +151,8 @@ class MailboxDataInterface(Protocol[MessageT]):
 
     @abstractmethod
     async def save_flags(self, messages: Iterable[MessageT]) -> None:
-        """Save the flags currently stored in each message's
-        :attr:`~pymap.interfaces.message.Message.permanent_flags` set.
+        """Save the permanent flags currently returned by each message's
+        :attr:`~pymap.interfaces.message.Message.get_flags` method.
 
         Args:
             messages: The message objects.
@@ -202,7 +204,8 @@ class MailboxDataInterface(Protocol[MessageT]):
         """
         mbx_uids = frozenset({uid async for uid in self.uids()})
         for seq, uid in selected.iter_set(seq_set, mbx_uids):
-            msg = await self.get(uid, requirement)
+            cached_msg = selected.get_message(uid)
+            msg = await self.get(uid, cached_msg, requirement)
             if msg is not None:
                 yield (seq, msg)
 
@@ -212,14 +215,14 @@ class MailboxDataInterface(Protocol[MessageT]):
         recent = 0
         unseen = 0
         first_unseen: Optional[int] = None
-        async for seq, msg in asyncenumerate(self.messages(), 1):
+        async for msg in self.messages():
             exists += 1
             if msg.recent:
                 recent += 1
-            if Seen not in msg.permanent_flags:
+            if Seen not in msg.get_flags():
                 unseen += 1
                 if first_unseen is None:
-                    first_unseen = seq
+                    first_unseen = exists
         return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
                                self.permanent_flags, self.session_flags,
                                exists, recent, unseen, first_unseen,

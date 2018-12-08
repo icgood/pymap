@@ -19,9 +19,3 @@
 
 .. automodule:: pymap.backend.session
    :members:
-
-``pymap.backend.util``
-----------------------------
-
-.. automodule:: pymap.backend.util
-   :members:

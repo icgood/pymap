@@ -6,6 +6,8 @@ import re
 from collections import deque
 from itertools import zip_longest
 
+import pytest  # type: ignore
+
 __all__ = ['MockTransport']
 
 
@@ -197,8 +199,8 @@ class MockTransport:
             try:
                 await asyncio.wait_for(wait.wait(), timeout=1.0)
             except asyncio.TimeoutError:
-                assert False, '\nTimeout: 1.0s' + \
-                              '\nWhere:   ' + where
+                pytest.fail('\nTimeout: 1.0s' +
+                            '\nWhere:   ' + where)
         return data
 
     async def readexactly(self, size: int) -> bytes:
@@ -212,8 +214,8 @@ class MockTransport:
             try:
                 await asyncio.wait_for(wait.wait(), timeout=1.0)
             except asyncio.TimeoutError:
-                assert False, '\nTimeout: 1.0s' + \
-                              '\nWhere:   ' + where
+                pytest.fail('\nTimeout: 1.0s' +
+                            '\nWhere:   ' + where)
         return data
 
     def write(self, data: bytes) -> None:
@@ -228,7 +230,7 @@ class MockTransport:
             try:
                 await asyncio.wait_for(wait.wait(), timeout=1.0)
             except asyncio.TimeoutError:
-                assert False, '\nTimeout: 1.0s'
+                pytest.fail('\nTimeout: 1.0s')
 
     def at_eof(self):
         return False

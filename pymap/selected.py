@@ -5,6 +5,7 @@ from weakref import WeakSet
 
 from .concurrent import Event
 from .flags import FlagOp, PermanentFlags, SessionFlags
+from .interfaces.message import CachedMessage
 from .parsing.command import Command
 from .parsing.primitives import ListP, Number
 from .parsing.response import Response, ResponseBye
@@ -13,13 +14,11 @@ from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
-__all__ = ['SelectedSet', 'SelectedSnapshot', 'SelectedMailbox', 'SelectedT']
+__all__ = ['SelectedSet', 'SelectedMailbox', 'SelectedT']
 
 #: Type variable with an upper bound of :class:`SelectedMailbox`.
 SelectedT = TypeVar('SelectedT', bound='SelectedMailbox')
 
-_Flags = FrozenSet[Flag]
-_Message = Tuple[int, _Flags]
 _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
 
@@ -60,26 +59,11 @@ class SelectedSet:
         return None
 
 
-class SelectedSnapshot(NamedTuple):
-    """Holds a snapshot of the selected mailbox as of the last fork.
-
-    Args:
-        uid_validity: The UID validity of the selected mailbox.
-        next_uid: The predicted next message UID of the mailbox.
-        recent: The number of messages in the mailbox with ``\\Recent``.
-        messages: The message UIDs mapped to flags.
-
-    """
-
+class _SelectedSnapshot(NamedTuple):
     uid_validity: Optional[int]
     next_uid: int
     recent: int
-    messages: Dict[int, _Flags]
-
-    @property
-    def exists(self) -> int:
-        """The total number of messages in the mailbox."""
-        return len(self.messages)
+    messages: Dict[int, int]
 
 
 class SelectedMailbox:
@@ -116,10 +100,10 @@ class SelectedMailbox:
         self._uid_validity: Optional[int] = None
         self._next_uid = 1
         self._is_deleted = False
-        self._messages: Dict[int, _Flags] = {}
-        self._hashed: Optional[Mapping[int, int]] = None
+        self._messages: Dict[int, int] = {}
+        self._cache: Dict[int, CachedMessage] = {}
         self._hide_expunged = False
-        self._snapshot: Optional[SelectedSnapshot] = None
+        self._snapshot: Optional[_SelectedSnapshot] = None
         if selected_set:
             selected_set.set.add(self)
 
@@ -177,13 +161,6 @@ class SelectedMailbox:
         return self._session_flags
 
     @property
-    def snapshot(self) -> SelectedSnapshot:
-        """A snapshot of the selected mailbox as of the last fork."""
-        if not self._snapshot:
-            raise RuntimeError()  # Must call fork() first.
-        return self._snapshot
-
-    @property
     def kwargs(self) -> Mapping[str, Any]:
         """Add keywords arguments to copy construction during :meth:`.fork`."""
         return {}
@@ -192,43 +169,58 @@ class SelectedMailbox:
         """Marks the selected mailbox as having been deleted."""
         self._is_deleted = True
 
-    def add_messages(self, *messages: _Message) -> None:
+    def add_messages(self, messages: Iterable[CachedMessage]) -> None:
         """Add a message that exists in the mailbox.
 
         Args:
-            messages: The messages to add, each a tuple of UID and permanent
-                flags.
+            messages: The cached message objects to add.
 
         """
-        for uid, permanent_flags in messages:
-            all_flags = permanent_flags | self.session_flags[uid]
-            self._messages[uid] = all_flags
+        _cache = self._cache
+        _messages = self._messages
+        session_flags = self.session_flags
+        for msg in messages:
+            uid = msg.uid
+            _cache[uid] = msg
+            _messages[uid] = hash(msg.get_flags(session_flags))
 
-    def silence(self, uids: Iterable[int], flag_set: FrozenSet[Flag],
+    def get_message(self, uid: int) -> Optional[CachedMessage]:
+        """Return the cached message for the given message UID.
+
+        Args:
+            uid: The message UID.
+
+        """
+        return self._cache.get(uid)
+
+    def silence(self, seq_set: SequenceSet, flag_set: FrozenSet[Flag],
                 flag_op: FlagOp) -> None:
-        """Runs the flags update against the flags at the last
-        :meth:`.fork`, to prevent untagged FETCH responses unless other
-        updates have occurred.
+        """Runs the flags update against the cached flags, to prevent untagged
+        FETCH responses unless other updates have occurred.
 
         For example, if a session adds ``\\Deleted`` and calls this method,
         the FETCH response will be silenced. But if another added ``\\Seen``
         at the same time, the FETCH response will be sent.
 
         Args:
-            uids: The set of message UIDs.
+            seq_set: Sequence set to be updated.
             flag_set: The set of flags for the update operation.
             flag_op: The mode to change the flags.
 
         """
-        permanent_flags = self.permanent_flags & flag_set
-        session_flags = self.session_flags & flag_set
-        defined_flags = permanent_flags | session_flags
+        session_flags = self.session_flags
+        permanent_flag_set = self.permanent_flags & flag_set
+        session_flag_set = session_flags & flag_set
+        defined_flag_set = permanent_flag_set | session_flag_set
         messages = self.snapshot.messages
-        for uid in uids:
-            orig_flags = messages.get(uid)
-            if orig_flags is not None:
-                new_flags = flag_op.apply(orig_flags, defined_flags)
-                self.snapshot.messages[uid] = new_flags
+        cache = self._cache
+        cached_uids = frozenset(cache.keys())
+        for _, uid in self.iter_set(seq_set, cached_uids):
+            cached_msg = cache.get(uid)
+            if cached_msg is not None:
+                cached_flags = cached_msg.get_flags(session_flags)
+                updated_flags = flag_op.apply(cached_flags, defined_flag_set)
+                messages[uid] = hash(updated_flags)
 
     def hide_expunged(self) -> None:
         """No untagged ``EXPUNGE`` responses will be generated, and message
@@ -284,8 +276,9 @@ class SelectedMailbox:
             messages.update(self._messages)
         else:
             messages = self._messages
-        copy._snapshot = SelectedSnapshot(self.uid_validity, self.next_uid,
-                                          self.recent, messages)
+        copy._cache = self._cache
+        copy._snapshot = _SelectedSnapshot(self.uid_validity, self.next_uid,
+                                           self.recent, messages)
         if self._selected_set:
             self._selected_set.set.discard(self)
             self._selected_set.set.add(copy)
@@ -294,9 +287,16 @@ class SelectedMailbox:
         else:
             return copy, []
 
+    @property
+    def snapshot(self) -> _SelectedSnapshot:
+        if not self._snapshot:
+            raise RuntimeError()  # Must call fork() first.
+        return self._snapshot
+
     def _compare(self, command: Command) -> Iterable[Response]:
         is_uid: bool = getattr(command, 'uid', False)
         before_uidval, _, before_recent, before = self.snapshot
+        session_flags = self.session_flags
         current = self._messages
         uidval = self.uid_validity
         if self._is_deleted:
@@ -321,7 +321,7 @@ class SelectedMailbox:
             sorted_before_uids = sorted(before_uids)
             for seq, uid in enumerate(sorted_before_uids, 1):
                 if uid in expunged_uids:
-                    del self.session_flags[uid]
+                    session_flags.remove(uid)
                     expunged.append(seq)
             for seq in reversed(expunged):
                 yield ExpungeResponse(seq)
@@ -335,16 +335,17 @@ class SelectedMailbox:
         if before_recent != self.recent:
             yield RecentResponse(self.recent)
         for seq, uid in both:
-            before_flags = before[uid]
-            current_flags = current[uid]
-            if hash(before_flags) != hash(current_flags):
+            before_hash = before[uid]
+            current_hash = current[uid]
+            if before_hash != current_hash:
+                current_flags = self._cache[uid].get_flags(session_flags)
                 fetch_data: Dict[FetchAttribute, SupportsBytes] = {
                     _flags_attr: ListP(current_flags, sort=True)}
                 if is_uid:
                     fetch_data[_uid_attr] = Number(uid)
                 yield FetchResponse(seq, fetch_data)
         for seq, uid in new:
-            current_flags = current[uid]
+            current_flags = self._cache[uid].get_flags(session_flags)
             fetch_data = {_flags_attr: ListP(current_flags, sort=True)}
             if is_uid:
                 fetch_data[_uid_attr] = Number(uid)

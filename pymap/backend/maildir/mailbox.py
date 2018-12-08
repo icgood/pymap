@@ -13,7 +13,7 @@ from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
 from pymap.message import AppendMessage
 from pymap.parsing.specials import Flag, FetchRequirement
-from pymap.selected import SelectedSet, SelectedMailbox
+from pymap.selected import CachedMessage, SelectedSet, SelectedMailbox
 
 from .flags import MaildirFlags
 from .io import NoChanges
@@ -86,7 +86,7 @@ class Message(_Message):
 
     @property
     def maildir_msg(self) -> MaildirMessage:
-        flag_str = self.maildir_flags.to_maildir(self.permanent_flags)
+        flag_str = self.maildir_flags.to_maildir(self.get_flags())
         msg_bytes = self.get_body(binary=True)
         maildir_msg = MaildirMessage(msg_bytes)
         maildir_msg.set_flags(flag_str)
@@ -184,15 +184,21 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_copy.recent = recent
         return msg_copy
 
-    async def get(self, uid: int,
+    async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
             -> Optional[Message]:
         async with UidList.with_read(self._path) as uidl:
             next_uid = uidl.next_uid
+            if uid < 1 or uid >= next_uid:
+                raise IndexError(uid)
             try:
                 key = uidl.get(uid).key
             except KeyError:
-                return None
+                if cached_msg is not None:
+                    return Message(cached_msg.uid, cached_msg.get_flags(),
+                                   cached_msg.internal_date, expunged=True)
+                else:
+                    return None
         metadata_only = (requirement == FetchRequirement.METADATA)
         async with self.messages_lock.read_lock():
             try:
@@ -201,8 +207,9 @@ class MailboxData(MailboxDataInterface[Message]):
                 else:
                     maildir_msg = self._maildir.get_message(key)
             except (KeyError, FileNotFoundError):
-                if uid < next_uid:
-                    return Message(uid, expunged=True)
+                if cached_msg is not None:
+                    return Message(cached_msg.uid, cached_msg.get_flags(),
+                                   cached_msg.internal_date, expunged=True)
                 else:
                     return None
             return Message.from_maildir(uid, maildir_msg, self.maildir_flags,
@@ -234,8 +241,7 @@ class MailboxData(MailboxDataInterface[Message]):
             for uid, rec in records.items():
                 key = rec.key
                 message = msgs_map[uid]
-                flag_set = message.permanent_flags
-                flag_str = self.maildir_flags.to_maildir(flag_set)
+                flag_str = self.maildir_flags.to_maildir(message.get_flags())
                 try:
                     maildir_msg = self._maildir.get_message_metadata(key)
                 except (KeyError, FileNotFoundError):

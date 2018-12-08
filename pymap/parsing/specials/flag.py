@@ -26,6 +26,7 @@ class Flag(Parseable[bytes]):
         else:
             value_bytes = bytes(value, 'ascii')
         self._value = self._capitalize(value_bytes)
+        self._hash = hash(self._value)
 
     @property
     def value(self) -> bytes:
@@ -45,9 +46,9 @@ class Flag(Parseable[bytes]):
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Flag):
-            return bytes(self) == bytes(other)
+            return self._value == other._value
         elif isinstance(other, bytes):
-            return bytes(self) == self._capitalize(other)
+            return self._value == self._capitalize(other)
         return super().__eq__(other)
 
     def __lt__(self, other) -> bool:
@@ -64,7 +65,7 @@ class Flag(Parseable[bytes]):
         return bytes(self) < other_bytes
 
     def __hash__(self) -> int:
-        return hash(bytes(self))
+        return self._hash
 
     def __repr__(self) -> str:
         return '<{0} value={1!r}>'.format(type(self).__name__, bytes(self))
@@ -73,7 +74,8 @@ class Flag(Parseable[bytes]):
         return self.value
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Flag', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Flag', memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

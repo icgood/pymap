@@ -6,7 +6,10 @@ command/response flow.
 import asyncio
 import binascii
 import re
-from asyncio import IncompleteReadError, StreamReader, StreamWriter
+import sys
+import traceback
+from asyncio import IncompleteReadError, StreamReader, StreamWriter, \
+    CancelledError
 from base64 import b64encode, b64decode
 from ssl import SSLContext
 from typing import List, Optional
@@ -14,7 +17,6 @@ from typing import List, Optional
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
-from .bytes import as_memoryview
 from .concurrent import Event, TimeoutError
 from .config import IMAPConfig
 from .context import current_command, socket_info
@@ -22,10 +24,9 @@ from .exceptions import ResponseError
 from .interfaces.session import LoginProtocol
 from .parsing.command import Command
 from .parsing.commands import Commands
-from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
-    StartTLSCommand
+from .parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
 from .parsing.command.select import IdleCommand
-from .parsing.exceptions import RequiresContinuation, BadCommand
+from .parsing.exceptions import RequiresContinuation
 from .parsing.response import ResponseContinuation, Response, ResponseCode, \
     ResponseBad, ResponseNo, ResponseBye, ResponseOk
 from .sockinfo import SocketInfo
@@ -66,7 +67,10 @@ class IMAPServer:
                        writer: StreamWriter) -> None:
         conn = IMAPConnection(self.commands, self.config, reader, writer)
         state = ConnectionState(self.login, self.config)
-        await conn.run(state)
+        try:
+            await conn.run(state)
+        except Exception:
+            traceback.print_exc()
 
 
 class IMAPConnection:
@@ -116,10 +120,13 @@ class IMAPConnection:
     def _noop_print(cls, prefix: str, output: bytes) -> None:
         pass
 
-    async def readline(self) -> bytes:
+    async def readline(self) -> memoryview:
         buf = bytearray(await self.reader.readline())
         while True:
-            lit_plus = self._literal_plus.search(buf)
+            if buf.endswith(b'+}\n') or buf.endswith(b'+}\r\n'):
+                lit_plus = self._literal_plus.search(buf)
+            else:
+                lit_plus = None
             if lit_plus:
                 literal_length = int(lit_plus.group(1))
                 try:
@@ -129,17 +136,17 @@ class IMAPConnection:
                 buf += await self.reader.readline()
             else:
                 self._print('%d -->|', buf)
-                return as_memoryview(buf)
+                return memoryview(buf)
 
-    async def read_continuation(self, literal_length: int) -> bytes:
+    async def read_continuation(self, literal_length: int) -> memoryview:
         try:
             extra_literal = await self.reader.readexactly(literal_length)
         except IncompleteReadError:
             raise Disconnected
-        extra_line: bytes = await self.readline()
-        extra = extra_literal + extra_line
+        extra_line = await self.readline()
+        extra = extra_literal + bytes(extra_line)
         self._print('%d -->|', extra)
-        return as_memoryview(extra)
+        return memoryview(extra)
 
     async def authenticate(self, state: ConnectionState, mech_name: bytes) \
             -> Optional[AuthenticationCredentials]:
@@ -154,18 +161,18 @@ class IMAPConnection:
                 chal_bytes = b64encode(chal.get_challenge())
                 cont = ResponseContinuation(chal_bytes)
                 await self.write_response(cont)
-                resp_bytes = await self.read_continuation(0)
+                resp_bytes = bytes(await self.read_continuation(0))
                 try:
                     chal.set_response(b64decode(resp_bytes))
                 except binascii.Error as exc:
                     raise AuthenticationError(exc)
-                if bytes(resp_bytes).rstrip(b'\r\n') == b'*':
+                if resp_bytes.rstrip(b'\r\n') == b'*':
                     raise AuthenticationError('Authentication canceled.')
                 responses.append(chal)
 
     async def read_command(self) -> Command:
         line = await self.readline()
-        conts: List[bytes] = []
+        conts: List[memoryview] = []
         while True:
             if self.reader.at_eof():
                 raise Disconnected
@@ -180,9 +187,10 @@ class IMAPConnection:
             else:
                 return cmd
 
-    async def read_idle_done(self, cmd: IdleCommand) -> None:
-        buf = await self.read_continuation(len(cmd.continuation))
-        cmd.parse_done(buf, self.params.copy(tag=cmd.tag))
+    async def read_idle_done(self, cmd: IdleCommand) -> bool:
+        buf = await self.read_continuation(0)
+        ok, _ = cmd.parse_done(buf, self.params.copy(tag=cmd.tag))
+        return ok
 
     async def write_response(self, resp: Response) -> None:
         raw = bytes(resp)
@@ -202,22 +210,18 @@ class IMAPConnection:
         self._print('%d <->|', b'<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
-        resp = ResponseBye(b'Unhandled server error.',
-                           ResponseCode.of(b'SERVERBUG'))
+        exc_type, exc, exc_tb = sys.exc_info()
+        if isinstance(exc, CancelledError):
+            resp = ResponseBye(b'Server has closed the connection.',
+                               ResponseCode.of(b'UNAVAILABLE'))
+        else:
+            resp = ResponseBye(b'Unhandled server error.',
+                               ResponseCode.of(b'SERVERBUG'))
         try:
             await self.write_response(resp)
             self.writer.close()
         except IOError:
             pass
-
-    async def write_bad_command(self, bad: BadCommand,
-                                bad_commands: int) -> bool:
-        resp = bad.get_response()
-        if self.bad_command_limit and bad_commands >= self.bad_command_limit:
-            bye = ResponseBye(b'Too many errors, disconnecting.')
-            resp.add_untagged(bye)
-        await self.write_response(resp)
-        return resp.is_terminal
 
     async def write_updates(self, state: ConnectionState,
                             cmd: IdleCommand, done: Event) -> None:
@@ -232,12 +236,12 @@ class IMAPConnection:
         await self.write_response(ResponseContinuation(b'Idling.'))
         task = asyncio.create_task(self.write_updates(state, cmd, done))
         try:
-            await self.read_idle_done(cmd)
-        except BadCommand as bad:
-            return bad.get_response()
+            ok = await self.read_idle_done(cmd)
         finally:
             done.set()
         await task
+        if not ok:
+            return ResponseBad(cmd.tag, b'Expected "DONE".')
         return response
 
     async def run(self, state: ConnectionState) -> None:
@@ -263,13 +267,12 @@ class IMAPConnection:
         while True:
             try:
                 cmd = await self.read_command()
-            except BadCommand as bad:
-                bad_commands += 1
-                if await self.write_bad_command(bad, bad_commands):
-                    break
             except (ConnectionResetError, BrokenPipeError):
                 break
             except Disconnected:
+                break
+            except CancelledError:
+                await self.send_error_disconnect()
                 break
             except Exception:
                 await self.send_error_disconnect()
@@ -280,12 +283,7 @@ class IMAPConnection:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
-                        response = await state.do_authenticate(cmd, creds)
-                    elif isinstance(cmd, LoginCommand):
-                        creds = AuthenticationCredentials(
-                            cmd.userid.decode('utf-8', 'surrogateescape'),
-                            cmd.password.decode('utf-8', 'surrogateescape'))
-                        response = await state.do_login(cmd, creds)
+                        response, _ = await state.do_authenticate(cmd, creds)
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)
                     else:
@@ -303,11 +301,20 @@ class IMAPConnection:
                     resp = ResponseNo(cmd.tag, b'Operation timed out.',
                                       ResponseCode.of(b'TIMEOUT'))
                     await self.write_response(resp)
+                except CancelledError:
+                    await self.send_error_disconnect()
+                    break
                 except Exception:
                     await self.send_error_disconnect()
                     raise
                 else:
                     await self.write_response(response)
+                    if response.is_bad:
+                        bad_commands += 1
+                        if self.bad_command_limit \
+                                and bad_commands >= self.bad_command_limit:
+                            msg = b'Too many errors, disconnecting.'
+                            response.add_untagged(ResponseBye(msg))
                     if response.is_terminal:
                         break
                     if isinstance(cmd, StartTLSCommand) and state.ssl_context \

@@ -82,10 +82,18 @@ class Config(IMAPConfig):
         return super().parse_args(args, demo_data=args.demo_data, **extra)
 
 
-class Session(BaseSession[MailboxData]):
+class Session(BaseSession[Message]):
     """The session implementation for the dict backend."""
 
     resource = __name__
+
+    def __init__(self, mailbox_set: MailboxSet) -> None:
+        super().__init__()
+        self._mailbox_set = mailbox_set
+
+    @property
+    def mailbox_set(self) -> MailboxSet:
+        return self._mailbox_set
 
     @classmethod
     async def login(cls: Type[_SessionT],

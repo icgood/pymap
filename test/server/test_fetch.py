@@ -36,7 +36,7 @@ class TestFetch(TestBase):
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "me" "example.com")) NIL NIL NIL NIL) '
-            b'BODY ("text" "plain" NIL NIL NIL NIL 1980 38))\r\n'
+            b'BODY ("text" "plain" NIL NIL NIL "7BIT" 1980 38))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()
         await self.run()
@@ -47,7 +47,7 @@ class TestFetch(TestBase):
         self.transport.push_readline(
             b'fetch1 FETCH * (BODYSTRUCTURE)\r\n')
         self.transport.push_write(
-            b'* 4 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL NIL '
+            b'* 4 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL "7BIT" '
             b'1980 38 NIL NIL NIL NIL))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()

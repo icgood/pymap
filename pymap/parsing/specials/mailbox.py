@@ -119,7 +119,8 @@ class Mailbox(Parseable[str]):
         return ''.join(parts)
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Mailbox', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Mailbox', memoryview]:
         atom, buf = AString.parse(buf, params)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':

@@ -35,7 +35,8 @@ class Command(Parseable[bytes]):
         return self.command
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Command', memoryview]:
         raise NotImplementedError
 
     def __bytes__(self) -> bytes:
@@ -52,8 +53,8 @@ class CommandNoArgs(Command):
     """
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) \
-            -> Tuple['CommandNoArgs', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['CommandNoArgs', memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag), buf
 
@@ -64,7 +65,8 @@ class CommandAny(Command):
     """
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Command', memoryview]:
         raise NotImplementedError
 
 
@@ -75,7 +77,8 @@ class CommandAuth(Command):
     """
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Command', memoryview]:
         raise NotImplementedError
 
 
@@ -88,7 +91,8 @@ class CommandNonAuth(Command):
     allow_updates = False
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Command', memoryview]:
         raise NotImplementedError
 
 
@@ -99,5 +103,6 @@ class CommandSelect(CommandAuth):
     """
 
     @classmethod
-    def parse(cls, buf: bytes, params: Params) -> Tuple['Command', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['Command', memoryview]:
         raise NotImplementedError

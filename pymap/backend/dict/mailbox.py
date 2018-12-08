@@ -8,7 +8,7 @@ from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import AppendMessage
 from pymap.parsing.specials import FetchRequirement
-from pymap.selected import SelectedSet, SelectedMailbox
+from pymap.selected import CachedMessage, SelectedSet, SelectedMailbox
 
 from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
 
@@ -70,14 +70,18 @@ class MailboxData(MailboxDataInterface[Message]):
             self._messages[msg_copy.uid] = msg_copy
             return msg_copy
 
-    async def get(self, uid: int,
+    async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
             -> Optional[Message]:
+        if uid < 1 or uid > self._max_uid:
+            raise IndexError(uid)
         async with self.messages_lock.read_lock():
             ret = self._messages.get(uid)
-            if ret is None and uid <= self._max_uid:
-                ret = Message(uid, expunged=True)
-            return ret
+            if ret is None and cached_msg is not None:
+                return Message(cached_msg.uid, cached_msg.get_flags(),
+                               cached_msg.internal_date, expunged=True)
+            else:
+                return ret
 
     async def delete(self, uids: Iterable[int]) -> None:
         async with self.messages_lock.write_lock():

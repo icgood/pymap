@@ -6,7 +6,7 @@ from . import AString, SequenceSet
 from .. import Params, Parseable
 from ..exceptions import NotParseable
 from ..primitives import Number, ListP
-from ...bytes import BytesFormat
+from ...bytes import BytesFormat, rev
 
 __all__ = ['ExtensionOption', 'ExtensionOptions']
 
@@ -24,7 +24,7 @@ class ExtensionOption(Parseable[bytes]):
 
     """
 
-    _opt_pattern = re.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
+    _opt_pattern = rev.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
 
     def __init__(self, option: bytes, arg: ListP) -> None:
         super().__init__()
@@ -58,8 +58,8 @@ class ExtensionOption(Parseable[bytes]):
         return self._raw_arg
 
     @classmethod
-    def _parse_arg(cls, buf: bytes, params: Params) \
-            -> Tuple[ListP, bytes]:
+    def _parse_arg(cls, buf: memoryview, params: Params) \
+            -> Tuple[ListP, memoryview]:
         try:
             num, buf = Number.parse(buf, params)
         except NotParseable:
@@ -82,8 +82,8 @@ class ExtensionOption(Parseable[bytes]):
         return ListP([]), buf
 
     @classmethod
-    def parse(cls, buf: bytes, params: 'Params') \
-            -> Tuple['ExtensionOption', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['ExtensionOption', memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._opt_pattern.match(buf, start)
         if not match:
@@ -143,15 +143,15 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
         return self._raw
 
     @classmethod
-    def _parse_paren(cls, buf: bytes, paren: bytes) -> bytes:
+    def _parse_paren(cls, buf: memoryview, paren: bytes) -> memoryview:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != paren:
             raise NotParseable(buf)
         return buf[start + 1:]
 
     @classmethod
-    def _parse(cls, buf: bytes, params: Params) \
-            -> Tuple['ExtensionOptions', bytes]:
+    def _parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['ExtensionOptions', memoryview]:
         buf = cls._parse_paren(buf, b'(')
         result: List[ExtensionOption] = []
         while True:
@@ -165,8 +165,8 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
         return cls(result), buf
 
     @classmethod
-    def parse(cls, buf: bytes, params: 'Params') \
-            -> Tuple['ExtensionOptions', bytes]:
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple['ExtensionOptions', memoryview]:
         try:
             return cls._parse(buf, params)
         except NotParseable:

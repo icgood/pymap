@@ -118,6 +118,11 @@ give clients easier and more powerful use.
 Adds the `IDLE` capability and command, which lets clients wait (without
 issuing commands) and receive mailbox updates as they happen without polling.
 
+#### [RFC 2180](https://tools.ietf.org/html/rfc2180)
+
+Defines some conventions for handling multi-access in scenarios such as
+`EXPUNGE` and mailbox deletion.
+
 #### [RFC 3502](https://tools.ietf.org/html/rfc3502)
 
 Adds the `MULTIAPPEND` capability, allowing multiple messages to be atomically
