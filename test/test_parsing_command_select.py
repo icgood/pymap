@@ -171,14 +171,14 @@ class TestIdleCommand(unittest.TestCase):
             IdleCommand.parse(b' STUFF\r\n', Params())
 
     def test_parse_done(self):
-        ok, buf = IdleCommand(b'tag').parse_done(b'DONE\r\nabc', Params())
+        ok, buf = IdleCommand(b'tag').parse_done(b'DONE\r\nabc')
         self.assertTrue(ok)
         self.assertEqual(b'abc', buf)
 
     def test_parse_done_bad(self):
-        ok, buf = IdleCommand(b'tag').parse_done(b' DONE\r\n', Params())
+        ok, buf = IdleCommand(b'tag').parse_done(b' DONE\r\n')
         self.assertFalse(ok)
         self.assertEqual(b'', buf)
-        ok, buf = IdleCommand(b'tag').parse_done(b'TEST\r\n', Params())
+        ok, buf = IdleCommand(b'tag').parse_done(b'TEST\r\n')
         self.assertFalse(ok)
         self.assertEqual(b'', buf)
