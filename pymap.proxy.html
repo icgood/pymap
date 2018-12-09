@@ -54,54 +54,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.proxy">
-<span id="pymap-proxy"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.proxy</span></code><a class="headerlink" href="#module-pymap.proxy" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pymap.proxy.ExecutorProxy">
-<em class="property">class </em><code class="descclassname">pymap.proxy.</code><code class="descname">ExecutorProxy</code><span class="sig-paren">(</span><em>executor</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.proxy.ExecutorProxy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Proxies calls to <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a>
-object or <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>
-functions through an <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>executor</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code>]) – The executor to proxy through, e.g. a thread pool, or None.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pymap.proxy.ExecutorProxy.wrap_login">
-<code class="descname">wrap_login</code><span class="sig-paren">(</span><em>login</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.proxy.ExecutorProxy.wrap_login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrap a login function so that it is called inside the executor.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.proxy.ExecutorProxy.wrap_session">
-<code class="descname">wrap_session</code><span class="sig-paren">(</span><em>session</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.proxy.ExecutorProxy.wrap_session" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrap a session object so that all its methods are called inside the
-executor.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="pymap-proxy">
+<h1><code class="docutils literal notranslate"><span class="pre">pymap.proxy</span></code><a class="headerlink" href="#pymap-proxy" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
