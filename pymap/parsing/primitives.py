@@ -3,8 +3,8 @@
 import re
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import cast, Type, Tuple, Any, List, Union, Iterable, Sequence, \
-    Optional, Iterator
+from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, \
+    Optional, Iterator, SupportsBytes
 
 from . import Parseable, ExpectedParseable, NotParseable, Params
 from .exceptions import RequiresContinuation
@@ -185,8 +185,8 @@ class String(Parseable[bytes]):
         return LiteralString.parse(buf, params)
 
     @classmethod
-    def build(cls, value: Any, binary: bool = False,
-              fallback: Any = None) -> Union[Nil, 'String']:
+    def build(cls, value: object, binary: bool = False,
+              fallback: object = None) -> Union[Nil, 'String']:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
@@ -206,8 +206,10 @@ class String(Parseable[bytes]):
             return QuotedString(b'')
         elif isinstance(value, bytes):
             ascii_ = value
-        elif isinstance(value, memoryview) or hasattr(value, '__bytes__'):
+        elif isinstance(value, memoryview):
             ascii_ = bytes(value)
+        elif hasattr(value, '__bytes__'):
+            ascii_ = bytes(cast(SupportsBytes, value))
         elif isinstance(value, str) or hasattr(value, '__str__'):
             value = str(value)
             try:

@@ -6,7 +6,7 @@ See Also:
 """
 
 import enum
-from typing import Iterable, AbstractSet, FrozenSet, Dict, Set
+from typing import Iterable, Mapping, AbstractSet, FrozenSet, Dict, Set
 
 from .parsing.specials.flag import Flag, Recent, Wildcard
 
@@ -184,6 +184,14 @@ class SessionFlags:
         self._recent.add(uid)
 
     @property
-    def recent_uids(self) -> FrozenSet[int]:
+    def recent_uids(self) -> AbstractSet[int]:
         """The message UIDs with the ``\\Recent`` flag."""
-        return frozenset(self._recent)
+        return self._recent
+
+    @property
+    def flags(self) -> Mapping[int, FrozenSet[Flag]]:
+        """The mapping of UID to its associated session flags, not including
+        ``\\Recent``.
+
+        """
+        return self._flags

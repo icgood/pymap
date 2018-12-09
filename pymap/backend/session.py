@@ -41,7 +41,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
             -> SelectedMailbox:
         selected.uid_validity = mbx.uid_validity
         selected.next_uid = mbx.next_uid
-        selected.add_messages([msg async for msg in mbx.messages()])
+        selected.set_messages([msg async for msg in mbx.messages()])
         return selected
 
     async def _load_updates(self, selected: Optional[SelectedMailbox],
