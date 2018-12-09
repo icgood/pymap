@@ -1648,21 +1648,16 @@ only parses the <code class="docutils literal notranslate"><span class="pre">IDL
 
 <dl class="method">
 <dt id="pymap.parsing.command.select.IdleCommand.parse_done">
-<code class="descname">parse_done</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.select.IdleCommand.parse_done" title="Permalink to this definition">¶</a></dt>
+<code class="descname">parse_done</code><span class="sig-paren">(</span><em>buf</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.select.IdleCommand.parse_done" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse the continuation line sent by the client to end the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code>
 command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The continuation line to parse.</li>
-<li><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parsing parameters.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The continuation line to parse.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
-</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
