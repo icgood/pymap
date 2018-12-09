@@ -7,12 +7,14 @@ import asyncio
 import binascii
 import re
 import sys
+import threading
 import traceback
 from asyncio import IncompleteReadError, StreamReader, StreamWriter, \
     CancelledError
 from base64 import b64encode, b64decode
+from contextvars import copy_context, Context
 from ssl import SSLContext
-from typing import List, Optional
+from typing import cast, TypeVar, List, Optional, Awaitable
 
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
@@ -33,6 +35,14 @@ from .sockinfo import SocketInfo
 from .state import ConnectionState
 
 __all__ = ['IMAPServer', 'IMAPConnection']
+
+_Ret = TypeVar('_Ret')
+
+
+class _EventLoopLocal(threading.local):
+
+    def __init__(self) -> None:
+        self.event_loop = asyncio.new_event_loop()
 
 
 class Disconnected(Exception):
@@ -88,7 +98,7 @@ class IMAPConnection:
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
 
     __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
-                 '_print', 'reader', 'writer']
+                 '_executor', '_local', '_print', 'reader', 'writer']
 
     def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
@@ -98,8 +108,10 @@ class IMAPConnection:
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
-        self._reset_streams(reader, writer)
+        self._executor = config.executor
+        self._local = _EventLoopLocal()
         self._print = self._real_print if config.debug else self._noop_print
+        self._reset_streams(reader, writer)
 
     def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
         self.reader = reader
@@ -119,6 +131,20 @@ class IMAPConnection:
     @classmethod
     def _noop_print(cls, prefix: str, output: bytes) -> None:
         pass
+
+    async def _exec(self, future: Awaitable[_Ret]) -> _Ret:
+        if self._executor is None:
+            return await future
+        else:
+            loop = asyncio.get_event_loop()
+            ctx = copy_context()
+            return await loop.run_in_executor(
+                self._executor, self._run_in_thread, future, ctx)
+
+    def _run_in_thread(self, future: Awaitable[_Ret], ctx: Context) -> _Ret:
+        loop = self._local.event_loop
+        ret = ctx.run(loop.run_until_complete, future)
+        return cast(_Ret, ret)
 
     async def readline(self) -> memoryview:
         buf = bytearray(await self.reader.readline())
@@ -225,11 +251,13 @@ class IMAPConnection:
 
     async def write_updates(self, state: ConnectionState,
                             cmd: IdleCommand, done: Event) -> None:
-        async for resp in state.receive_updates(cmd, done):
-            await self.write_response(resp)
+        while not done.is_set():
+            untagged = await self._exec(state.receive_updates(cmd, done))
+            for resp in untagged:
+                await self.write_response(resp)
 
     async def idle(self, state: ConnectionState, cmd: IdleCommand) -> Response:
-        response = await state.do_command(cmd)
+        response = await self._exec(state.do_command(cmd))
         if not isinstance(response, ResponseOk):
             return response
         done = self.config.new_event()
@@ -255,7 +283,7 @@ class IMAPConnection:
         self._print('%d +++|', bytes(socket_info.get()))
         bad_commands = 0
         try:
-            greeting = await state.do_greeting()
+            greeting = await self._exec(state.do_greeting())
         except ResponseError as exc:
             resp = exc.get_response(b'*')
             resp.condition = ResponseBye.condition
@@ -282,11 +310,12 @@ class IMAPConnection:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
-                        response, _ = await state.do_authenticate(cmd, creds)
+                        response, _ = await self._exec(
+                            state.do_authenticate(cmd, creds))
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)
                     else:
-                        response = await state.do_command(cmd)
+                        response = await self._exec(state.do_command(cmd))
                 except ResponseError as exc:
                     resp = exc.get_response(cmd.tag)
                     await self.write_response(resp)

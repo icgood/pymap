@@ -2,7 +2,7 @@
 from collections import OrderedDict
 from socket import getfqdn
 from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
-    AsyncIterable
+    Iterable
 
 from pysasl import AuthenticationCredentials
 
@@ -32,7 +32,6 @@ from .parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
 from .parsing.specials import DateTime, FetchAttribute, StatusAttribute
-from .proxy import ExecutorProxy
 from .selected import SelectedMailbox
 
 __all__ = ['ConnectionState']
@@ -56,27 +55,16 @@ class ConnectionState:
         self.config = config
         self.ssl_context = config.ssl_context
         self.auth = config.initial_auth
-        self._login = login
+        self.login = login
         self._session: Optional[SessionInterface] = None
         self._selected: Optional[SelectedMailbox] = None
         self._capability = list(config.initial_capability)
-        self._proxy = ExecutorProxy(config.executor)
-
-    @property
-    def login(self) -> LoginProtocol:
-        if self._proxy:
-            return self._proxy.wrap_login(self._login)
-        else:
-            return self._login
 
     @property
     def session(self) -> SessionInterface:
         if self._session is None:
             raise RuntimeError()  # State checking should prevent this.
-        if self._proxy:
-            return self._proxy.wrap_session(self._session)
-        else:
-            return self._session
+        return self._session
 
     @property
     def selected(self) -> SelectedMailbox:
@@ -371,13 +359,11 @@ class ConnectionState:
         raise CloseConnection()
 
     async def receive_updates(self, cmd: IdleCommand, done: Event) \
-            -> AsyncIterable[Response]:
-        while not done.is_set():
-            selected = await self.session.check_mailbox(
-                self.selected, wait_on=done)
-            self._selected, untagged = selected.fork(cmd)
-            for resp in untagged:
-                yield resp
+            -> Iterable[Response]:
+        selected = await self.session.check_mailbox(
+            self.selected, wait_on=done)
+        self._selected, untagged = selected.fork(cmd)
+        return untagged
 
     @classmethod
     def _get_bad_response(cls, cmd: InvalidCommand) -> ResponseBad:
