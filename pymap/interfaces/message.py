@@ -1,8 +1,8 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import TypeVar, Optional, Iterable, Sequence, FrozenSet, \
-    AbstractSet
+from typing import TypeVar, Optional, Iterable, Tuple, Sequence, \
+    FrozenSet, AbstractSet
 from typing_extensions import Protocol
 
 from ..flags import FlagOp, SessionFlags
@@ -56,6 +56,15 @@ class CachedMessage(Protocol):
 
         Args:
             session_flags: The current session flags.
+
+        """
+        ...
+
+    @property
+    @abstractmethod
+    def flags_key(self) -> Tuple[int, FrozenSet[Flag]]:
+        """Hashable value that represents the current flags of this
+        message, used for detecting mailbox updates.
 
         """
         ...

@@ -1,8 +1,8 @@
 
 from collections import OrderedDict
 from socket import getfqdn
-from typing import Optional, Any, Dict, List, Callable, Union, Tuple, \
-    Awaitable, AsyncIterable
+from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
+    AsyncIterable
 
 from pysasl import AuthenticationCredentials
 
@@ -270,7 +270,7 @@ class ConnectionState:
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
-            fetch_data: Dict[FetchAttribute, Any] = OrderedDict()
+            fetch_data: Dict[FetchAttribute, MaybeBytes] = OrderedDict()
             for attr in cmd.attributes:
                 if attr.value == b'UID':
                     fetch_data[attr] = Number(msg.uid)

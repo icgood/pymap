@@ -7,8 +7,9 @@ from email.message import EmailMessage
 from email.parser import BytesParser
 from email.policy import SMTP
 from io import BytesIO
-from typing import cast, Any, Tuple, Optional, Iterable, Dict, FrozenSet, \
-    AbstractSet, Sequence, List, NamedTuple, BinaryIO, TypeVar, Type
+from typing import cast, Any, Tuple, Iterable, Dict, FrozenSet, AbstractSet, \
+    Sequence, List, NamedTuple, BinaryIO, TypeVar, Type
+from typing_extensions import Final
 
 from .flags import FlagOp, SessionFlags
 from .interfaces.message import Header, CachedMessage, MessageInterface
@@ -76,17 +77,18 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     """
 
-    __slots__ = ['_uid', '_permanent_flags', '_internal_date', '_expunged',
-                 '_metadata_hash', '_contents', '_kwargs']
+    __slots__ = ['uid', 'internal_date', 'expunged', '_permanent_flags',
+                 '_flags_key', '_contents', '_kwargs']
 
     def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
                  internal_date: datetime = None, expunged: bool = False,
                  contents: EmailMessage = None, **kwargs: Any) -> None:
         super().__init__()
-        self._uid = uid
+        self.uid: Final = uid
+        self.internal_date: Final = internal_date
+        self.expunged: Final = expunged
         self._permanent_flags = frozenset(permanent_flags or [])
-        self._internal_date = internal_date
-        self._expunged = expunged
+        self._flags_key = (uid, self._permanent_flags)
         self._contents = contents
         self._kwargs = kwargs
 
@@ -113,18 +115,6 @@ class BaseMessage(MessageInterface, CachedMessage):
                    contents, **kwargs)
 
     @property
-    def uid(self) -> int:
-        return self._uid
-
-    @property
-    def expunged(self) -> bool:
-        return self._expunged
-
-    @property
-    def internal_date(self) -> Optional[datetime]:
-        return self._internal_date
-
-    @property
     def contents(self) -> EmailMessage:
         """The MIME-parsed message object."""
         if self._contents is None:
@@ -144,7 +134,13 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     def update_flags(self, flag_set: AbstractSet[Flag],
                      flag_op: FlagOp = FlagOp.REPLACE) -> None:
-        self._permanent_flags = flag_op.apply(self._permanent_flags, flag_set)
+        new_flags = flag_op.apply(self._permanent_flags, flag_set)
+        self._permanent_flags = new_flags
+        self._flags_key = (self.uid, new_flags)
+
+    @property
+    def flags_key(self) -> Tuple[int, FrozenSet[Flag]]:
+        return self._flags_key
 
     @classmethod
     def _get_subpart(cls: Type[MessageT], msg: MessageT, section) \

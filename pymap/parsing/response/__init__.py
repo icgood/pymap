@@ -1,5 +1,5 @@
 
-from typing import TypeVar, Type, Any, Optional, List, Dict, Tuple
+from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable
 
 from ...bytes import MaybeBytes, BytesFormat
 
@@ -10,7 +10,7 @@ __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
 #: Type variable with an upper bound of :class:`Response`.
 ResponseT = TypeVar('ResponseT', bound='Response')
 
-_Mergeable = Dict[Tuple[Type['Response'], Any], int]
+_Mergeable = Dict[Tuple[Type['Response'], Hashable], int]
 
 
 class ResponseCode:
@@ -159,7 +159,7 @@ class Response:
         return False
 
     @property
-    def merge_key(self) -> Any:
+    def merge_key(self) -> Hashable:
         """Returns a hashable value which can be compared to other
         :attr:`.merge_key` values of the same response type to see if the
         two responses can be merged.
