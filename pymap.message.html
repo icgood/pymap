@@ -141,6 +141,24 @@ was added to the system.</p>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.uid">
+<code class="descname">uid</code><a class="headerlink" href="#pymap.message.BaseMessage.uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message’s unique identifier in the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.internal_date">
+<code class="descname">internal_date</code><a class="headerlink" href="#pymap.message.BaseMessage.internal_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message’s internal date.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.expunged">
+<code class="descname">expunged</code><a class="headerlink" href="#pymap.message.BaseMessage.expunged" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this message has been expunged from the mailbox.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.message.BaseMessage.parse">
 <em class="property">classmethod </em><code class="descname">parse</code><span class="sig-paren">(</span><em>uid</em>, <em>data</em>, <em>permanent_flags=None</em>, <em>internal_date=None</em>, <em>expunged=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage.parse" title="Permalink to this definition">¶</a></dt>
@@ -161,48 +179,6 @@ into a <code class="xref py py-class docutils literal notranslate"><span class="
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~MessageT</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.message.BaseMessage.uid">
-<code class="descname">uid</code><a class="headerlink" href="#pymap.message.BaseMessage.uid" title="Permalink to this definition">¶</a></dt>
-<dd><p>The message’s unique identifier in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.message.BaseMessage.expunged">
-<code class="descname">expunged</code><a class="headerlink" href="#pymap.message.BaseMessage.expunged" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if this message has been expunged from the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.message.BaseMessage.internal_date">
-<code class="descname">internal_date</code><a class="headerlink" href="#pymap.message.BaseMessage.internal_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>The message’s internal date.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -270,6 +246,21 @@ into a <code class="xref py py-class docutils literal notranslate"><span class="
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.flags_key">
+<code class="descname">flags_key</code><a class="headerlink" href="#pymap.message.BaseMessage.flags_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hashable value that represents the current flags of this
+message, used for detecting mailbox updates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]]</td>
 </tr>
 </tbody>
 </table>
