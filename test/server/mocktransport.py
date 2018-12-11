@@ -6,8 +6,6 @@ import re
 from collections import deque
 from itertools import zip_longest
 
-import pytest  # type: ignore
-
 __all__ = ['MockTransport']
 
 
@@ -17,7 +15,6 @@ class _Type(enum.Enum):
     WRITE = "writer.write()"
     DRAIN = "writer.drain()"
     READ_EOF = "reader.at_eof()"
-    WRITE_CLOSE = "writer.close()"
 
 
 class _Socket:
@@ -42,6 +39,10 @@ class MockTransport:
         fields = inspect.getframeinfo(frame) if frame else ('?', '?')
         return '{0}:{1!s}'.format(fields[0], fields[1])
 
+    @classmethod
+    def _fail(cls, msg):
+        assert False, msg
+
     def push_readline(self, data: bytes, wait=None, set=None) -> None:
         where = self._caller(inspect.currentframe())
         self.queue.append((_Type.READLINE, where, data, wait, set))
@@ -58,10 +59,6 @@ class MockTransport:
     def push_read_eof(self, wait=None, set=None):
         where = self._caller(inspect.currentframe())
         self.queue.append((_Type.READ_EOF, where, None, wait, set))
-
-    def push_write_close(self, set=None):
-        where = self._caller(inspect.currentframe())
-        self.queue.append((_Type.WRITE_CLOSE, where, None, None, set))
 
     def push_login(self, wait=None, set=None):
         self.push_write(
@@ -81,8 +78,7 @@ class MockTransport:
             b'logout1 LOGOUT\r\n', wait=wait)
         self.push_write(
             b'* BYE Logging out.\r\n'
-            b'logout1 OK Logout successful.\r\n')
-        self.push_write_close(set=set)
+            b'logout1 OK Logout successful.\r\n', set=set)
 
     def push_select(self, mailbox, exists=None, recent=None, uidnext=None,
                     unseen=None, readonly=False, examine=False, wait=None,
@@ -199,8 +195,8 @@ class MockTransport:
             try:
                 await asyncio.wait_for(wait.wait(), timeout=1.0)
             except asyncio.TimeoutError:
-                pytest.fail('\nTimeout: 1.0s' +
-                            '\nWhere:   ' + where)
+                self._fail('\nTimeout: 1.0s' +
+                           '\nWhere:   ' + where)
         return data
 
     async def readexactly(self, size: int) -> bytes:
@@ -214,8 +210,8 @@ class MockTransport:
             try:
                 await asyncio.wait_for(wait.wait(), timeout=1.0)
             except asyncio.TimeoutError:
-                pytest.fail('\nTimeout: 1.0s' +
-                            '\nWhere:   ' + where)
+                self._fail('\nTimeout: 1.0s' +
+                           '\nWhere:   ' + where)
         return data
 
     def write(self, data: bytes) -> None:
@@ -230,13 +226,10 @@ class MockTransport:
             try:
                 await asyncio.wait_for(wait.wait(), timeout=1.0)
             except asyncio.TimeoutError:
-                pytest.fail('\nTimeout: 1.0s')
+                self._fail('\nTimeout: 1.0s')
 
     def at_eof(self):
         return False
 
     def close(self) -> None:
-        _, _, _, set = self._pop_expected(_Type.WRITE_CLOSE)
-        assert 0 == len(self.queue), 'Items left on queue: ' + repr(self.queue)
-        if set:
-            set.set()
+        pass

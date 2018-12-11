@@ -104,7 +104,6 @@ class TestMailbox(TestBase):
         self.transport.push_write(
             b'* BYE Selected mailbox deleted.\r\n'
             b'delete1 OK DELETE completed.\r\n')
-        self.transport.push_write_close()
         await self.run()
 
     async def test_rename(self):
@@ -170,7 +169,6 @@ class TestMailbox(TestBase):
         self.transport.push_write(
             b'* BYE [UIDVALIDITY ', (br'\d+', ), b'] UID validity changed.\r\n'
             b'rename1 OK RENAME completed.\r\n')
-        self.transport.push_write_close()
         await self.run()
 
     async def test_rename_selected(self):
@@ -181,7 +179,6 @@ class TestMailbox(TestBase):
         self.transport.push_write(
             b'* BYE Selected mailbox deleted.\r\n'
             b'rename1 OK RENAME completed.\r\n')
-        self.transport.push_write_close()
         await self.run()
 
     async def test_lsub(self):

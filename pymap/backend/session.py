@@ -1,9 +1,11 @@
 
 from abc import abstractmethod
+from asyncio import shield
 from typing import Tuple, Optional, FrozenSet, Iterable, Sequence, List
 from typing_extensions import Protocol
 
-from pymap.concurrent import Event, TimeoutError
+from pymap.concurrent import Event
+from pymap.config import IMAPConfig
 from pymap.exceptions import MailboxNotFound, MailboxReadOnly
 from pymap.flags import FlagOp, SessionFlags, PermanentFlags
 from pymap.listtree import ListTree
@@ -28,6 +30,11 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
     most backends.
 
     """
+
+    @property
+    @abstractmethod
+    def config(self) -> IMAPConfig:
+        ...
 
     @property
     @abstractmethod
@@ -64,15 +71,6 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         if selected and selected.name == mbx.name:
             return selected
         return mbx.selected_set.any_selected
-
-    @classmethod
-    async def _wait_for_updates(cls, mbx: MailboxDataInterface[MessageT],
-                                wait_on: Event) -> None:
-        try:
-            or_event = wait_on.or_event(mbx.selected_set.updated)
-            await or_event.wait(timeout=10.0)
-        except TimeoutError:
-            pass
 
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,
@@ -159,14 +157,15 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         snapshot = await mbx.snapshot()
         return snapshot, await self._load_selected(selected, mbx)
 
-    async def check_mailbox(self, selected: SelectedMailbox,
+    async def check_mailbox(self, selected: SelectedMailbox, *,
                             wait_on: Event = None,
                             housekeeping: bool = False) -> SelectedMailbox:
         mbx = await self.mailbox_set.get_mailbox(selected.name)
         if housekeeping:
-            await mbx.cleanup()
-        if wait_on:
-            await self._wait_for_updates(mbx, wait_on)
+            await shield(mbx.cleanup())
+        if wait_on is not None:
+            either_event = wait_on.or_event(mbx.selected_set.updated)
+            await either_event.wait()
         return await self._load_selected(selected, mbx)
 
     async def fetch_messages(self, selected: SelectedMailbox,
@@ -192,8 +191,8 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         mbx = await self.mailbox_set.get_mailbox(selected.name)
         req = FetchRequirement.reduce({key.requirement for key in keys})
         ret: List[Tuple[int, MessageT]] = []
-        params = SearchParams(selected, max_seq=selected.exists,
-                              max_uid=selected.next_uid - 1)
+        params = SearchParams(selected,
+                              disabled=self.config.disable_search_keys)
         search = SearchCriteriaSet(keys, params)
         async for seq, msg in mbx.find(SequenceSet.all(), selected, req):
             if search.matches(seq, msg):

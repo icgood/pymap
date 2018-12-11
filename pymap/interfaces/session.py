@@ -234,17 +234,17 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
-    async def check_mailbox(self, selected: SelectedMailbox,
+    async def check_mailbox(self, selected: SelectedMailbox, *,
                             wait_on: Event = None,
                             housekeeping: bool = False) -> SelectedMailbox:
         """Checks for any updates in the mailbox.
 
-        If ``wait_on`` is given, this method may block until there is a signal
-        from the event. Implementations should return sooner if they have
-        detected updates.
+        If ``wait_on`` is given, this method should block until either this
+        event is signalled or the mailbox has detected updates. This method may
+        be called continuously as long as ``wait_on`` is not signalled.
 
-        Optionally perform any house-keeping necessary by the mailbox
-        backend, which may be a slower operation.
+        If ``housekeeping`` is True, perform any house-keeping necessary by the
+        mailbox backend, which may be a slower operation.
 
         See Also:
             `RFC 3501 6.1.2.

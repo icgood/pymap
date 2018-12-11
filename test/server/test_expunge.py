@@ -8,7 +8,7 @@ pytestmark = pytest.mark.asyncio
 
 class TestExpunge(TestBase):
 
-    async def test_expunge(self) -> None:
+    async def test_expunge(self):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
@@ -25,7 +25,7 @@ class TestExpunge(TestBase):
         self.transport.push_logout()
         await self.run()
 
-    async def test_expunge_uid(self) -> None:
+    async def test_expunge_uid(self):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(
@@ -46,7 +46,7 @@ class TestExpunge(TestBase):
         self.transport.push_logout()
         await self.run()
 
-    async def test_concurrent_expunge_responses(self) -> None:
+    async def test_concurrent_expunge_responses(self):
         concurrent = self.new_transport()
         event1, event2 = self.new_events(2)
 
@@ -58,7 +58,7 @@ class TestExpunge(TestBase):
             b'* 1 FETCH (UID 101 FLAGS (\\Seen))\r\n'
             b'* 2 FETCH (UID 102 FLAGS (\\Answered \\Seen))\r\n'
             b'* 3 FETCH (UID 103 FLAGS (\\Flagged))\r\n'
-            b'* 4 FETCH (UID 104 FLAGS (\\Recent))\r\n'
+            b'* 4 FETCH (UID 104 FLAGS (\\Deleted \\Recent))\r\n'
             b'fetch1 OK [EXPUNGEISSUED] FETCH completed.\r\n')
         concurrent.push_readline(
             b'store2 STORE 1:* +FLAGS (\\Flagged)\r\n')
@@ -66,7 +66,7 @@ class TestExpunge(TestBase):
             b'* 1 FETCH (FLAGS (\\Flagged \\Seen))\r\n'
             b'* 2 FETCH (FLAGS (\\Answered \\Flagged \\Seen))\r\n'
             b'* 3 FETCH (FLAGS (\\Flagged))\r\n'
-            b'* 4 FETCH (FLAGS (\\Recent))\r\n'
+            b'* 4 FETCH (FLAGS (\\Deleted \\Recent))\r\n'
             b'store2 OK [EXPUNGEISSUED] STORE completed.\r\n')
         concurrent.push_readline(
             b'search1 SEARCH ALL\r\n')

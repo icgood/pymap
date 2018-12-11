@@ -1,6 +1,5 @@
 import pytest  # type: ignore
 
-from pymap.search import SearchParams
 from .base import TestBase
 
 pytestmark = pytest.mark.asyncio
@@ -9,7 +8,6 @@ pytestmark = pytest.mark.asyncio
 class TestSearch(TestBase):
 
     async def test_search_disabled(self):
-        SearchParams._disabled = [b'DRAFT']
         self.transport.push_login()
         self.transport.push_select(b'INBOX')
         self.transport.push_readline(

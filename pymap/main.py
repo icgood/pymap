@@ -63,9 +63,11 @@ def main() -> None:
             pass
 
 
-async def run(args: Namespace, backend: Type[BackendInterface]) -> None:
-    callback = await backend.init(args)
-    server = await asyncio.start_server(callback, port=args.port)
+async def run(args: Namespace, backend_cls: Type[BackendInterface]) -> None:
+    backend = await backend_cls.init(args)
+    backend.config.apply_context()
+
+    server = await asyncio.start_server(backend, port=args.port)
 
     # Typeshed currently has poor stubs for AbstractServer.
     async with server:  # type: ignore

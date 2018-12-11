@@ -341,6 +341,8 @@ class ConnectionState:
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
+            elif cmd.silent:
+                continue
             flags = msg.get_flags(session_flags)
             fetch_data: Dict[FetchAttribute, MaybeBytes] = \
                 {FetchAttribute(b'FLAGS'): ListP(flags, sort=True)}

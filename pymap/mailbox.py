@@ -3,6 +3,7 @@
 import random
 import time
 from typing import Optional, Iterable, FrozenSet
+from typing_extensions import Final
 
 from .interfaces.mailbox import MailboxInterface
 from .parsing.specials.flag import Flag, Recent
@@ -30,22 +31,26 @@ class MailboxSnapshot(MailboxInterface):
 
     """
 
+    __slots__ = ['name', 'readonly', 'uid_validity', 'permanent_flags',
+                 'session_flags', 'exists', 'recent', 'unseen', 'first_unseen',
+                 'next_uid']
+
     def __init__(self, name: str, readonly: bool, uid_validity: int,
                  permanent_flags: Iterable[Flag],
                  session_flags: FrozenSet[Flag],
                  exists: int, recent: int, unseen: int,
                  first_unseen: Optional[int], next_uid: int) -> None:
         super().__init__()
-        self._name = name
-        self._readonly = readonly
-        self._uid_validity = uid_validity
-        self._permanent_flags = frozenset(permanent_flags) - {Recent}
-        self._session_flags = frozenset(session_flags) | {Recent}
-        self._exists = exists
-        self._recent = recent
-        self._unseen = unseen
-        self._first_unseen = first_unseen
-        self._next_uid = next_uid
+        self.name: Final = name
+        self.readonly: Final = readonly
+        self.uid_validity: Final = uid_validity
+        self.permanent_flags: Final = frozenset(permanent_flags) - {Recent}
+        self.session_flags: Final = frozenset(session_flags) | {Recent}
+        self.exists: Final = exists
+        self.recent: Final = recent
+        self.unseen: Final = unseen
+        self.first_unseen: Final = first_unseen
+        self.next_uid: Final = next_uid
 
     @classmethod
     def new_uid_validity(cls) -> int:
@@ -58,45 +63,5 @@ class MailboxSnapshot(MailboxInterface):
         return (time_part << 20) + rand_part
 
     @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def readonly(self) -> bool:
-        return self._readonly
-
-    @property
-    def permanent_flags(self) -> FrozenSet[Flag]:
-        return self._permanent_flags
-
-    @property
-    def session_flags(self) -> FrozenSet[Flag]:
-        return self._session_flags
-
-    @property
     def flags(self) -> FrozenSet[Flag]:
         return self.permanent_flags | self.session_flags
-
-    @property
-    def uid_validity(self) -> int:
-        return self._uid_validity
-
-    @property
-    def exists(self) -> int:
-        return self._exists
-
-    @property
-    def recent(self) -> int:
-        return self._recent
-
-    @property
-    def unseen(self) -> int:
-        return self._unseen
-
-    @property
-    def first_unseen(self) -> Optional[int]:
-        return self._first_unseen
-
-    @property
-    def next_uid(self) -> int:
-        return self._next_uid

@@ -1,20 +1,24 @@
 import os.path
 import ssl
 from argparse import Namespace
-from concurrent.futures import Executor
 from ssl import SSLContext
-from typing import Sequence, Any, Optional, Mapping, TypeVar, Type, Callable
+from typing import Sequence, Any, Optional, Iterable, Mapping, TypeVar, Type
+from typing_extensions import Final
 
 from pysasl import SASLAuth, AuthenticationCredentials
 
-from .concurrent import Event, ReadWriteLock
+from .concurrent import Subsystem
+from .context import subsystem
 from .parsing import Params
 from .parsing.commands import Commands
 
-__all__ = ['IMAPConfig', 'ConfigT', 'ConfigT_contra']
+__all__ = ['IMAPConfig', 'ConfigT', 'ConfigT_co', 'ConfigT_contra']
 
 #: Type variable with an upper bound of :class:`IMAPConfig`.
 ConfigT = TypeVar('ConfigT', bound='IMAPConfig')
+
+#: Covariant type variable with an upper bound of :class:`IMAPConfig`.
+ConfigT_co = TypeVar('ConfigT_co', bound='IMAPConfig', covariant=True)
 
 #: Contravariant type variable with an upper bound of :class:`IMAPConfig`.
 ConfigT_contra = TypeVar('ConfigT_contra', bound='IMAPConfig',
@@ -28,8 +32,7 @@ class IMAPConfig:
     Args:
         args: The command-line arguments.
         debug: If true, prints all socket activity to stdout.
-        executor: If given, all backend operations will be run inside this
-            executor object, e.g. a thread pool.
+        subsystem: The concurrency subsystem in use by the backend.
         ssl_context: SSL context that will be used for opportunistic TLS.
             Alternatively, you can pass extra arguments ``cert_file`` and
             ``key_file`` and an SSL context will be created.
@@ -44,6 +47,8 @@ class IMAPConfig:
         bad_command_limit: The number of consecutive commands received from
             the client with parsing errors before the client is disconnected.
         disable_idle: Disable the ``IDLE`` capability.
+        max_idle_wait: If given, the ``IDLE`` command will transparently cancel
+            and re-issue its request for updates every *N* seconds.
         extra: Additional keywords used for special circumstances.
 
     Attributes:
@@ -51,27 +56,31 @@ class IMAPConfig:
 
     """
 
-    def __init__(self, args: Namespace,
+    def __init__(self, args: Namespace, *,
                  debug: bool = False,
-                 executor: Executor = None,
+                 subsystem: Subsystem = None,
                  ssl_context: SSLContext = None,
                  starttls_enabled: bool = True,
                  reject_insecure_auth: bool = True,
                  preauth_credentials: AuthenticationCredentials = None,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
+                 disable_search_keys: Iterable[bytes] = None,
                  disable_idle: bool = False,
+                 max_idle_wait: float = None,
                  **extra: Any) -> None:
         super().__init__()
         self.args = args
-        self._debug = debug
-        self._executor = executor
+        self.debug: Final = debug
+        self.subsystem: Final = subsystem
+        self.bad_command_limit: Final = bad_command_limit
+        self.disable_search_keys: Final = disable_search_keys or []
+        self.max_idle_wait: Final = max_idle_wait
         self._ssl_context = ssl_context
         self._starttls_enabled = starttls_enabled
         self._reject_insecure_auth = reject_insecure_auth
         self._preauth_credentials = preauth_credentials
         self._max_append_len = max_append_len
-        self._bad_command_limit = bad_command_limit
         self._disable_idle = disable_idle
         self._extra = extra
 
@@ -107,31 +116,13 @@ class IMAPConfig:
         params = cls.parse_args(args, **extra)
         return cls(args, **params)
 
-    @property
-    def debug(self) -> bool:
-        return self._debug
+    def apply_context(self) -> None:
+        """Apply the configured settings to any :mod:`~pymap.context`
+        variables.
 
-    @property
-    def executor(self) -> Optional[Executor]:
-        return self._executor
-
-    @property
-    def new_rwlock(self) -> Callable[[], ReadWriteLock]:
-        if self._executor is None:
-            return ReadWriteLock.for_asyncio
-        else:
-            return ReadWriteLock.for_threading
-
-    @property
-    def new_event(self) -> Callable[[], Event]:
-        if self._executor is None:
-            return Event.for_asyncio
-        else:
-            return Event.for_threading
-
-    @property
-    def bad_command_limit(self) -> Optional[int]:
-        return self._bad_command_limit
+        """
+        if self.subsystem is not None:
+            subsystem.set(self.subsystem)
 
     @property
     def ssl_context(self) -> Optional[SSLContext]:

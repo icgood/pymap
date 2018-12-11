@@ -4,6 +4,9 @@ from argparse import Namespace
 from asyncio import StreamReader, StreamWriter
 from typing_extensions import Protocol
 
+from .session import LoginProtocol
+from ..config import IMAPConfig
+
 __all__ = ['BackendInterface']
 
 
@@ -42,6 +45,21 @@ class BackendInterface(Protocol):
             args: The command-line arguments.
 
         """
+        ...
+
+    @property
+    @abstractmethod
+    def login(self) -> LoginProtocol:
+        """Login callback that takes authentication credentials and returns a
+        :class:`~pymap.interfaces.session.SessionInterface` object.
+
+        """
+        ...
+
+    @property
+    @abstractmethod
+    def config(self) -> IMAPConfig:
+        """The IMAP config in use by the backend."""
         ...
 
     @abstractmethod

@@ -15,12 +15,26 @@ class TestIdle(TestBase):
             b'idle1 IDLE\r\n')
         self.transport.push_write(
             b'+ Idling.\r\n')
-        self.transport.push_readexactly(
-            b'DONE')
+        self.transport.push_readexactly(b'')
         self.transport.push_readline(
-            b'\r\n')
+            b'DONE\r\n')
         self.transport.push_write(
             b'idle1 OK IDLE completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
+    async def test_idle_invalid(self):
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX', 4, 1, 105)
+        self.transport.push_readline(
+            b'idle1 IDLE\r\n')
+        self.transport.push_write(
+            b'+ Idling.\r\n')
+        self.transport.push_readexactly(b'')
+        self.transport.push_readline(
+            b'WHAT\r\n')
+        self.transport.push_write(
+            b'idle1 BAD Expected "DONE".\r\n')
         self.transport.push_logout()
         await self.run()
 
@@ -43,10 +57,9 @@ class TestIdle(TestBase):
             b'idle1 IDLE\r\n')
         concurrent.push_write(
             b'+ Idling.\r\n', set=event1)
-        concurrent.push_readexactly(
-            b'DONE')
+        concurrent.push_readexactly(b'')
         concurrent.push_readline(
-            b'\r\n', wait=event2)
+            b'DONE\r\n', wait=event2)
         concurrent.push_write(
             b'* 5 EXISTS\r\n')
         concurrent.push_write(
@@ -83,10 +96,9 @@ class TestIdle(TestBase):
             b'idle1 IDLE\r\n')
         concurrent.push_write(
             b'+ Idling.\r\n', set=event1)
-        concurrent.push_readexactly(
-            b'DONE')
+        concurrent.push_readexactly(b'')
         concurrent.push_readline(
-            b'\r\n', wait=event2)
+            b'DONE\r\n', wait=event2)
         concurrent.push_write(
             b'* 1 EXPUNGE\r\n')
         concurrent.push_write(

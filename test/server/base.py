@@ -3,27 +3,37 @@ import asyncio
 from argparse import Namespace
 from typing import Dict
 
+import pytest  # type: ignore
+
 from pymap.backend.dict import DictBackend
+from pymap.context import subsystem
 from .mocktransport import MockTransport
+
+
+class FakeArgs(Namespace):
+    debug = True
+    insecure_login = True
+    demo_data = True
+    demo_user = 'testuser'
+    demo_password = 'testpass'
 
 
 class TestBase:
 
-    class FakeArgs(Namespace):
-        debug = True
-        insecure_login = True
-        demo_data = True
-        demo_user = 'testuser'
-        demo_password = 'testpass'
+    @classmethod
+    @pytest.fixture(autouse=True)
+    async def init_backend(cls, request, args):
+        test = request.instance
+        test._fd = 1
+        test._run = server = await DictBackend.init(args)
+        test.config = server.config
+        test.config.disable_search_keys = [b'DRAFT']
+        test.matches: Dict[str, bytes] = {}
+        test.transport = test.new_transport()
 
-    def setup_method(self) -> None:
-        self._fd = 1
-        loop = asyncio.get_event_loop()
-        self._run = server = loop.run_until_complete(
-                DictBackend.init(self.FakeArgs()))
-        self.config = server.config
-        self.matches: Dict[str, bytes] = {}
-        self.transport = self.new_transport()
+    @pytest.fixture
+    def args(self):
+        return FakeArgs()
 
     def _incr_fd(self):
         fd = self._fd
@@ -35,11 +45,32 @@ class TestBase:
 
     def new_events(self, n=1):
         if n == 1:
-            return self.config.new_event()
+            return subsystem.get().new_event()
         else:
-            return (self.config.new_event() for _ in range(n))
+            return (subsystem.get().new_event() for _ in range(n))
+
+    def _check_queue(self, transport):
+        queue = transport.queue
+        assert 0 == len(queue), 'Items left on queue: ' + repr(queue)
+
+    async def _run_transport(self, transport):
+        return await self._run(transport, transport)
 
     async def run(self, *transports):
-        coros = [self._run(self.transport, self.transport)] + \
-            [self._run(transport, transport) for transport in transports]
-        await asyncio.gather(*coros)
+        failures = []
+        transport_tasks = [asyncio.create_task(
+            self._run_transport(transport)) for transport in transports]
+        try:
+            await self._run_transport(self.transport)
+        except Exception as exc:
+            failures.append(exc)
+        for task in transport_tasks:
+            try:
+                await task
+            except Exception as exc:
+                failures.append(exc)
+        if failures:
+            raise failures[0]
+        self._check_queue(self.transport)
+        for transport in transports:
+            self._check_queue(transport)
