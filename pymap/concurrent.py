@@ -17,7 +17,7 @@ from typing import cast, TypeVar, Optional, Sequence, MutableSet, Awaitable, \
     AsyncContextManager, AsyncIterator
 from weakref import WeakSet
 
-__all__ = ['Event', 'ReadWriteLock', 'FileLock']
+__all__ = ['Subsystem', 'Event', 'ReadWriteLock', 'FileLock', 'EventT', 'RetT']
 
 #: Type variable with an upper bound of :class:`Event`.
 EventT = TypeVar('EventT', bound='Event')
