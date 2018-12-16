@@ -24,7 +24,6 @@ Table of Contents
    pymap.mailbox
    pymap.message
    pymap.mime
-   pymap.proxy
    pymap.search
    pymap.selected
    pymap.server
