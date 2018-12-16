@@ -680,13 +680,13 @@ most backends.</p>
 
 <dl class="method">
 <dt id="pymap.backend.session.BaseSession.check_mailbox">
-<code class="descname">check_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>wait_on=None</em>, <em>housekeeping=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.check_mailbox" title="Permalink to this definition">¶</a></dt>
+<code class="descname">check_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>*</em>, <em>wait_on=None</em>, <em>housekeeping=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.check_mailbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks for any updates in the mailbox.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is given, this method may block until there is a signal
-from the event. Implementations should return sooner if they have
-detected updates.</p>
-<p>Optionally perform any house-keeping necessary by the mailbox
-backend, which may be a slower operation.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is given, this method should block until either this
+event is signalled or the mailbox has detected updates. This method may
+be called continuously as long as <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is not signalled.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">housekeeping</span></code> is True, perform any house-keeping necessary by the
+mailbox backend, which may be a slower operation.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.1.2">RFC 3501 6.1.2.</a>,

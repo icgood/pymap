@@ -59,7 +59,7 @@
 <p>Utilities for managing IMAP searches.</p>
 <dl class="class">
 <dt id="pymap.search.SearchParams">
-<em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">SearchParams</code><span class="sig-paren">(</span><em>selected</em>, <em>max_seq=None</em>, <em>max_uid=None</em>, <em>disabled=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchParams" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.search.</code><code class="descname">SearchParams</code><span class="sig-paren">(</span><em>selected</em>, <em>*</em>, <em>disabled=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Defines certain parameters and routines necessary to process any
 kind of search criteria. If a parameter is not supplied, or a method not
@@ -70,8 +70,8 @@ implemented, any search keys that require it will fail.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The active mailbox session.</li>
-<li><strong>max_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The highest message sequence ID in the mailbox.</li>
-<li><strong>max_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The highest message UID in the mailbox.</li>
+<li><strong>max_seq</strong> – The highest message sequence ID in the mailbox.</li>
+<li><strong>max_uid</strong> – The highest message UID in the mailbox.</li>
 <li><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Search keys that should be disabled.</li>
 </ul>
 </td>

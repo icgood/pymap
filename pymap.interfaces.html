@@ -91,6 +91,35 @@ the entry point registered by the backend.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.interfaces.backend.BackendInterface.login">
+<code class="descname">login</code><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login callback that takes authentication credentials and returns a
+<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.interfaces.backend.BackendInterface.config">
+<code class="descname">config</code><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IMAP config in use by the backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.interfaces.backend.BackendInterface.__call__">
 <code class="descname">__call__</code><span class="sig-paren">(</span><em>reader</em>, <em>writer</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.__call__" title="Permalink to this definition">¶</a></dt>
@@ -728,13 +757,13 @@ new IMAP session for the user.</p>
 
 <dl class="method">
 <dt id="pymap.interfaces.session.SessionInterface.check_mailbox">
-<code class="descname">check_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>wait_on=None</em>, <em>housekeeping=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.check_mailbox" title="Permalink to this definition">¶</a></dt>
+<code class="descname">check_mailbox</code><span class="sig-paren">(</span><em>selected</em>, <em>*</em>, <em>wait_on=None</em>, <em>housekeeping=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.check_mailbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks for any updates in the mailbox.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is given, this method may block until there is a signal
-from the event. Implementations should return sooner if they have
-detected updates.</p>
-<p>Optionally perform any house-keeping necessary by the mailbox
-backend, which may be a slower operation.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is given, this method should block until either this
+event is signalled or the mailbox has detected updates. This method may
+be called continuously as long as <code class="docutils literal notranslate"><span class="pre">wait_on</span></code> is not signalled.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">housekeeping</span></code> is True, perform any house-keeping necessary by the
+mailbox backend, which may be a slower operation.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.1.2">RFC 3501 6.1.2.</a>,

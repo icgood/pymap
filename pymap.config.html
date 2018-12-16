@@ -63,6 +63,12 @@
 </dd></dl>
 
 <dl class="data">
+<dt id="pymap.config.ConfigT_co">
+<code class="descclassname">pymap.config.</code><code class="descname">ConfigT_co</code><em class="property"> = +ConfigT_co</em><a class="headerlink" href="#pymap.config.ConfigT_co" title="Permalink to this definition">¶</a></dt>
+<dd><p>Covariant type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
+</dd></dl>
+
+<dl class="data">
 <dt id="pymap.config.ConfigT_contra">
 <code class="descclassname">pymap.config.</code><code class="descname">ConfigT_contra</code><em class="property"> = -ConfigT_contra</em><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contravariant type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
@@ -70,7 +76,7 @@
 
 <dl class="class">
 <dt id="pymap.config.IMAPConfig">
-<em class="property">class </em><code class="descclassname">pymap.config.</code><code class="descname">IMAPConfig</code><span class="sig-paren">(</span><em>args</em>, <em>debug=False</em>, <em>executor=None</em>, <em>ssl_context=None</em>, <em>starttls_enabled=True</em>, <em>reject_insecure_auth=True</em>, <em>preauth_credentials=None</em>, <em>max_append_len=1000000000</em>, <em>bad_command_limit=5</em>, <em>disable_idle=False</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.config.</code><code class="descname">IMAPConfig</code><span class="sig-paren">(</span><em>args</em>, <em>*</em>, <em>debug=False</em>, <em>subsystem=None</em>, <em>ssl_context=None</em>, <em>starttls_enabled=True</em>, <em>reject_insecure_auth=True</em>, <em>preauth_credentials=None</em>, <em>max_append_len=1000000000</em>, <em>bad_command_limit=5</em>, <em>disable_search_keys=None</em>, <em>disable_idle=False</em>, <em>max_idle_wait=None</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Configurable settings that control how the IMAP server operates and what
 extensions it supports.</p>
@@ -81,8 +87,7 @@ extensions it supports.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
 <li><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true, prints all socket activity to stdout.</li>
-<li><strong>executor</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code>]) – If given, all backend operations will be run inside this
-executor object, e.g. a thread pool.</li>
+<li><strong>subsystem</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code>]) – The concurrency subsystem in use by the backend.</li>
 <li><strong>ssl_context</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code></a>]) – SSL context that will be used for opportunistic TLS.
 Alternatively, you can pass extra arguments <code class="docutils literal notranslate"><span class="pre">cert_file</span></code> and
 <code class="docutils literal notranslate"><span class="pre">key_file</span></code> and an SSL context will be created.</li>
@@ -97,6 +102,8 @@ connection using these credentials.</li>
 <li><strong>bad_command_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The number of consecutive commands received from
 the client with parsing errors before the client is disconnected.</li>
 <li><strong>disable_idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Disable the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> capability.</li>
+<li><strong>max_idle_wait</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – If given, the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> command will transparently cancel
+and re-issue its request for updates every <em>N</em> seconds.</li>
 <li><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Additional keywords used for special circumstances.</li>
 </ul>
 </td>
@@ -149,6 +156,21 @@ arguments.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~ConfigT</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.config.IMAPConfig.apply_context">
+<code class="descname">apply_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.apply_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the configured settings to any <a class="reference internal" href="pymap.context.html#module-pymap.context" title="pymap.context"><code class="xref py py-mod docutils literal notranslate"><span class="pre">context</span></code></a>
+variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>

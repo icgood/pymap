@@ -59,19 +59,6 @@
 <p>Implements some concurrency utilities used by pymap. Each has
 an implementation using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a> concurrency
 primitives.</p>
-<dl class="data">
-<dt id="pymap.concurrent.EventT">
-<code class="descclassname">pymap.concurrent.</code><code class="descname">EventT</code><em class="property"> = ~EventT</em><a class="headerlink" href="#pymap.concurrent.EventT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="pymap.concurrent.TimeoutError">
-<em class="property">exception </em><code class="descclassname">pymap.concurrent.</code><code class="descname">TimeoutError</code><a class="headerlink" href="#pymap.concurrent.TimeoutError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures._base.Error</span></code></p>
-<p>The operation exceeded the given deadline.</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="pymap.concurrent.ReadWriteLock">
 <em class="property">class </em><code class="descclassname">pymap.concurrent.</code><code class="descname">ReadWriteLock</code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock" title="Permalink to this definition">¶</a></dt>
@@ -108,7 +95,7 @@ primitives.</p>
 <dl class="attribute">
 <dt id="pymap.concurrent.ReadWriteLock.subsystem">
 <code class="descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.subsystem" title="Permalink to this definition">¶</a></dt>
-<dd><p>The sub-system the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or
+<dd><p>The subsystem the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or
 <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -187,7 +174,7 @@ released.</p>
 <dl class="attribute">
 <dt id="pymap.concurrent.Event.subsystem">
 <code class="descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.Event.subsystem" title="Permalink to this definition">¶</a></dt>
-<dd><p>The sub-system the event was created for, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or
+<dd><p>The subsystem the event was created for, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or
 <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -202,15 +189,13 @@ released.</p>
 <dl class="method">
 <dt id="pymap.concurrent.Event.or_event">
 <code class="descname">or_event</code><span class="sig-paren">(</span><em>*events</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.or_event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new event that is signalled when either the current thread
-or any of the provided threads are signalled.</p>
+<dd><p>Return a new event that is signalled when either the current event
+or any of the provided events are signalled.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>events</strong> (<em>~EventT</em>) – Additional threads to be signalled by.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">~EventT</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~EventT</td>
 </tr>
 </tbody>
 </table>
@@ -260,15 +245,13 @@ or any of the provided threads are signalled.</p>
 
 <dl class="method">
 <dt id="pymap.concurrent.Event.wait">
-<code class="descname">wait</code><span class="sig-paren">(</span><em>timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wait until another thread signals.</p>
+<code class="descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait until another thread signals the event.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The timeout in seconds.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -287,7 +270,7 @@ block. Write-locks will create the file on acquire and remove it on
 release.</p>
 <p>The delay arguments are a sequence of floats used as the duration of
 successive <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.sleep" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sleep()</span></code></a> calls. If this sequence is exhausted
-before a lock is established, <a class="reference internal" href="#pymap.concurrent.TimeoutError" title="pymap.concurrent.TimeoutError"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
+before a lock is established, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -305,7 +288,7 @@ before a lock is established, <a class="reference internal" href="#pymap.concurr
 <dl class="attribute">
 <dt id="pymap.concurrent.FileLock.subsystem">
 <code class="descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.FileLock.subsystem" title="Permalink to this definition">¶</a></dt>
-<dd><p>The sub-system the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'file'</span></code>.</p>
+<dd><p>The subsystem the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'file'</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

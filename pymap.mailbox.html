@@ -85,6 +85,66 @@ mailbox snapshot every time a
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.name">
+<code class="descname">name</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.readonly">
+<code class="descname">readonly</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.readonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the mailbox is read-only or read-write.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.uid_validity">
+<code class="descname">uid_validity</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.uid_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox UID validity value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.permanent_flags">
+<code class="descname">permanent_flags</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The permanent flags allowed in the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.session_flags">
+<code class="descname">session_flags</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.session_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The session flags allowed in the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.exists">
+<code class="descname">exists</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of total messages in the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.recent">
+<code class="descname">recent</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of recent messages in the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.unseen">
+<code class="descname">unseen</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of unseen messages in the mailbox.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.first_unseen">
+<code class="descname">first_unseen</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.first_unseen" title="Permalink to this definition">¶</a></dt>
+<dd><p>The sequence number of the first unseen message.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.mailbox.MailboxSnapshot.next_uid">
+<code class="descname">next_uid</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.next_uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>The predicted next message UID.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.mailbox.MailboxSnapshot.new_uid_validity">
 <em class="property">classmethod </em><code class="descname">new_uid_validity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.new_uid_validity" title="Permalink to this definition">¶</a></dt>
@@ -101,62 +161,6 @@ two bytes are time-based and the second two bytes are random.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.name">
-<code class="descname">name</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.readonly">
-<code class="descname">readonly</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.readonly" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether the mailbox is read-only or read-write.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.permanent_flags">
-<code class="descname">permanent_flags</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.permanent_flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>The permanent flags allowed in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.session_flags">
-<code class="descname">session_flags</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.session_flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>The session flags allowed in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="pymap.mailbox.MailboxSnapshot.flags">
 <code class="descname">flags</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of all permanent and session flags available on the mailbox.</p>
@@ -165,90 +169,6 @@ two bytes are time-based and the second two bytes are random.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.uid_validity">
-<code class="descname">uid_validity</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.uid_validity" title="Permalink to this definition">¶</a></dt>
-<dd><p>The mailbox UID validity value.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.exists">
-<code class="descname">exists</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.exists" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of total messages in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.recent">
-<code class="descname">recent</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.recent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of recent messages in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.unseen">
-<code class="descname">unseen</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.unseen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of unseen messages in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.first_unseen">
-<code class="descname">first_unseen</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.first_unseen" title="Permalink to this definition">¶</a></dt>
-<dd><p>The sequence number of the first unseen message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.mailbox.MailboxSnapshot.next_uid">
-<code class="descname">next_uid</code><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.next_uid" title="Permalink to this definition">¶</a></dt>
-<dd><p>The predicted next message UID.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
 </tr>
 </tbody>
 </table>

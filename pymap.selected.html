@@ -64,7 +64,7 @@
 
 <dl class="class">
 <dt id="pymap.selected.SelectedSet">
-<em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSet</code><span class="sig-paren">(</span><em>updated=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSet</code><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Maintains a weak set of <a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a> objects that exist for
 a mailbox, across all sessions. This is useful for assigning the
@@ -73,7 +73,7 @@ a mailbox, across all sessions. This is useful for assigning the
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>updated</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – The event to notify when updates occur. Defaults to a new
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>updated</strong> – The event to notify when updates occur. Defaults to a new
 event using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> concurrency primitives.</td>
 </tr>
 </tbody>
@@ -384,6 +384,21 @@ of the object is also returned, ready for the next command.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>[]) – The command that was finished.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[~SelectedT, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.selected.SelectedMailbox.snapshot">
+<code class="descname">snapshot</code><a class="headerlink" href="#pymap.selected.SelectedMailbox.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>A snapshot of the selected mailbox at the time of the last
+<a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedSnapshot</span></code></td>
 </tr>
 </tbody>
 </table>
