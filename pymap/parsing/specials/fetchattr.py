@@ -68,7 +68,7 @@ class FetchAttribute(Parseable[bytes]):
 
         def __init__(self, parts: Sequence[int],
                      specifier: bytes = None,
-                     headers: FrozenSet[str] = None) -> None:
+                     headers: FrozenSet[bytes] = None) -> None:
             self.parts = parts
             self.specifier = specifier
             self.headers = frozenset(hdr.upper() for hdr in headers) \
@@ -147,8 +147,7 @@ class FetchAttribute(Parseable[bytes]):
             if self.section.specifier:
                 parts.append(self.section.specifier)
                 if self.section.headers:
-                    headers = [bytes(hdr, 'ascii')
-                               for hdr in self.section.headers]
+                    headers = self.section.headers
                     parts.append(b' ')
                     parts.append(bytes(ListP(headers, sort=True)))
             parts.append(b']')
@@ -197,7 +196,7 @@ class FetchAttribute(Parseable[bytes]):
         elif specifier in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             params = params.copy(list_expected=[AString])
             header_list_p, buf = ListP.parse(after, params)
-            header_list = frozenset([bytes(hdr).decode('ascii', 'ignore')
+            header_list = frozenset([bytes(hdr)
                                      for hdr in header_list_p.value])
             if not header_list:
                 raise NotParseable(after)

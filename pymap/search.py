@@ -340,12 +340,12 @@ class HeaderSearchCriteria(SearchCriteria):
 
     def __init__(self, name: str, value: str, params: SearchParams) -> None:
         super().__init__(params)
-        self.name = name
+        self.name = name.encode('ascii')
         self.value = value
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         values = msg.get_header(self.name)
-        return any(self._in(self.value, str(value)) for value in values)
+        return any(self._in(self.value, value) for value in values)
 
 
 class BodySearchCriteria(SearchCriteria):

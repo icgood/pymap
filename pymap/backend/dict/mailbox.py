@@ -1,6 +1,5 @@
 
 from collections import OrderedDict
-from io import BytesIO
 from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
@@ -60,8 +59,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._selected_set
 
     def parse_message(self, append_msg: AppendMessage) -> Message:
-        msg_data = BytesIO(append_msg.message)
-        return Message.parse(0, msg_data, append_msg.flag_set,
+        return Message.parse(0, append_msg.message, append_msg.flag_set,
                              append_msg.when, recent=True)
 
     async def add(self, message: Message, recent: bool = False) -> Message:

@@ -3,7 +3,7 @@ import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from contextlib import closing
 from datetime import datetime, timezone
-from typing import cast, Any, Mapping, Dict, BinaryIO, TypeVar, Type
+from typing import Any, Mapping, Dict, TypeVar, Type
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
@@ -163,9 +163,9 @@ class Session(BaseSession[Message]):
             msg_path = os.path.join(path, msg_name)
             message_stream = resource_stream(cls.resource, msg_path)
             with closing(message_stream):
-                msg_file = cast(BinaryIO, message_stream)
                 flags_line = message_stream.readline()
                 msg_timestamp = float(message_stream.readline())
+                msg_data = message_stream.read()
                 msg_dt = datetime.fromtimestamp(msg_timestamp, timezone.utc)
                 msg_flags = {Flag(flag) for flag in flags_line.split()}
                 if Recent in msg_flags:
@@ -173,5 +173,5 @@ class Session(BaseSession[Message]):
                     msg_recent = True
                 else:
                     msg_recent = False
-                msg = Message.parse(0, msg_file, msg_flags, msg_dt)
+                msg = Message.parse(0, msg_data, msg_flags, msg_dt)
             await mbx.add(msg, msg_recent)
