@@ -61,7 +61,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_type(self) -> Optional[ContentTypeHeader]:
-        """The ``Content-Type:`` header."""
+        """The ``Content-Type`` header."""
         try:
             return cast(ContentTypeHeader, self[b'content-type'][0])
         except (KeyError, IndexError):
@@ -69,7 +69,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def date(self) -> Optional[DateHeader]:
-        """The ``Date:`` header."""
+        """The ``Date`` header."""
         try:
             return cast(DateHeader, self[b'date'][0])
         except (KeyError, IndexError):
@@ -77,7 +77,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def subject(self) -> Optional[UnstructuredHeader]:
-        """The ``Subject:`` header."""
+        """The ``Subject`` header."""
         try:
             return cast(UnstructuredHeader, self[b'subject'][0])
         except (KeyError, IndexError):
@@ -85,7 +85,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def from_(self) -> Optional[Sequence[AddressHeader]]:
-        """The ``From:`` header."""
+        """The ``From`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'from'])
         except KeyError:
@@ -93,7 +93,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def sender(self) -> Optional[Sequence[SingleAddressHeader]]:
-        """The ``Sender:`` header."""
+        """The ``Sender`` header."""
         try:
             return cast(Sequence[SingleAddressHeader], self[b'sender'])
         except KeyError:
@@ -101,7 +101,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def reply_to(self) -> Optional[Sequence[AddressHeader]]:
-        """The ``Reply-To:`` header."""
+        """The ``Reply-To`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'reply-to'])
         except KeyError:
@@ -109,7 +109,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def to(self) -> Optional[Sequence[AddressHeader]]:
-        """The ``To:`` header."""
+        """The ``To`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'to'])
         except KeyError:
@@ -117,7 +117,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def cc(self) -> Optional[Sequence[AddressHeader]]:
-        """The ``Cc:`` header."""
+        """The ``Cc`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'cc'])
         except KeyError:
@@ -125,7 +125,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def bcc(self) -> Optional[Sequence[AddressHeader]]:
-        """The ``Bcc:`` header."""
+        """The ``Bcc`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'bcc'])
         except KeyError:
@@ -133,7 +133,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def in_reply_to(self) -> Optional[UnstructuredHeader]:
-        """The ``In-Reply-To:`` header."""
+        """The ``In-Reply-To`` header."""
         try:
             return cast(UnstructuredHeader, self[b'in-reply-to'][0])
         except (KeyError, IndexError):
@@ -141,7 +141,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def message_id(self) -> Optional[UnstructuredHeader]:
-        """The ``Message-Id:`` header."""
+        """The ``Message-Id`` header."""
         try:
             return cast(UnstructuredHeader, self[b'message-id'][0])
         except (KeyError, IndexError):
@@ -149,7 +149,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_disposition(self) -> Optional[ContentDispositionHeader]:
-        """The ``Content-Disposition:`` header."""
+        """The ``Content-Disposition`` header."""
         try:
             return cast(ContentDispositionHeader,
                         self[b'content-disposition'][0])
@@ -158,7 +158,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_language(self) -> Optional[UnstructuredHeader]:
-        """The ``Content-Language:`` header."""
+        """The ``Content-Language`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-language'][0])
         except (KeyError, IndexError):
@@ -166,7 +166,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_location(self) -> Optional[UnstructuredHeader]:
-        """The ``Content-Location:`` header."""
+        """The ``Content-Location`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-location'][0])
         except (KeyError, IndexError):
@@ -174,7 +174,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_id(self) -> Optional[UnstructuredHeader]:
-        """The ``Content-Id:`` header."""
+        """The ``Content-Id`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-id'][0])
         except (KeyError, IndexError):
@@ -182,7 +182,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_description(self) -> Optional[UnstructuredHeader]:
-        """The ``Content-Description:`` header."""
+        """The ``Content-Description`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-description'][0])
         except (KeyError, IndexError):
@@ -191,7 +191,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
     @property
     def content_transfer_encoding(self) \
             -> Optional[ContentTransferEncodingHeader]:
-        """The ``Content-Transfer-Encoding:`` header."""
+        """The ``Content-Transfer-Encoding`` header."""
         try:
             return cast(ContentTransferEncodingHeader,
                         self[b'content-transfer-encoding'][0])
