@@ -38,7 +38,7 @@ class Subsystem(metaclass=ABCMeta):
     def for_executor(cls, executor: Optional[Executor]) -> 'Subsystem':
         """Return a subsystem based on the given executor. If ``executor`` is
         None, use :mod:`asyncio`. If ``executor`` is a
-        :class:`concurrent.futures.ThreadPoolExecutor`
+        :class:`concurrent.futures.ThreadPoolExecutor`, use :mod:`threading`.
 
         Args:
             executor: The executor in use, if any.
@@ -71,7 +71,7 @@ class Subsystem(metaclass=ABCMeta):
     async def execute(self, future: Awaitable[RetT]) -> RetT:
         """Executes the future and returns its result in the subsystem. For
         :mod:`asyncio`, this simply means ``return await future``. For
-        :mod`threading`, it uses
+        :mod:`threading`, it uses
         :meth:`~asyncio.AbstractEventLoop.run_in_executor` to run the future in
         another thread.
 
