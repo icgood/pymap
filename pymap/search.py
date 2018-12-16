@@ -4,9 +4,9 @@ import re
 from abc import abstractmethod, ABCMeta
 from datetime import datetime
 from typing import AnyStr, FrozenSet, Optional, Iterable
+from typing_extensions import Final
 
 from .exceptions import SearchNotAllowed
-from .flags import SessionFlags
 from .interfaces.message import MessageInterface
 from .parsing.specials import SearchKey, SequenceSet
 from .parsing.specials.flag import Flag, Answered, Deleted, Draft, Flagged, \
@@ -29,38 +29,15 @@ class SearchParams:
 
     """
 
-    __slots__ = ['selected', '_max_seq', '_max_uid', '_disabled']
+    __slots__ = ['selected', 'disabled', 'max_seq', 'max_uid', 'session_flags']
 
-    def __init__(self, selected: SelectedMailbox,
-                 max_seq: int = None, max_uid: int = None,
+    def __init__(self, selected: SelectedMailbox, *,
                  disabled: Iterable[bytes] = None) -> None:
-        self.selected = selected
-        if max_seq is not None:
-            self._max_seq = max_seq
-        if max_uid is not None:
-            self._max_uid = max_uid
-        if disabled is not None:
-            self._disabled = frozenset(disabled)
-
-    @property
-    def session_flags(self) -> SessionFlags:
-        return self.selected.session_flags
-
-    @property
-    def max_seq(self) -> int:
-        if not hasattr(self, '_max_seq'):
-            raise SearchNotAllowed
-        return self._max_seq
-
-    @property
-    def max_uid(self) -> int:
-        if not hasattr(self, '_max_uid'):
-            raise SearchNotAllowed
-        return self._max_uid
-
-    @property
-    def disabled(self) -> FrozenSet[bytes]:
-        return getattr(self, '_disabled', frozenset())
+        self.selected: Final = selected
+        self.disabled: Final = frozenset(disabled or [])
+        self.max_seq: Final = selected.snapshot.max_seq
+        self.max_uid: Final = selected.snapshot.max_uid
+        self.session_flags: Final = selected.session_flags
 
 
 class SearchCriteria(metaclass=ABCMeta):

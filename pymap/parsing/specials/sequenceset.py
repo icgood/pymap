@@ -141,7 +141,8 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         return hash((tuple(self.sequences), self.uid))
 
     def __repr__(self) -> str:
-        return '<%s set=%r>' % (type(self).__name__, self.sequences)
+        attr = 'uidset' if self.uid else 'set'
+        return '<%s %s=%r>' % (type(self).__name__, attr, self.sequences)
 
     @classmethod
     def _parse_part(cls, buf: memoryview) -> Tuple[_SeqElem, memoryview]:

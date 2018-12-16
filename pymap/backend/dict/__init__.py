@@ -87,9 +87,14 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    def __init__(self, mailbox_set: MailboxSet) -> None:
+    def __init__(self, config: Config, mailbox_set: MailboxSet) -> None:
         super().__init__()
+        self._config = config
         self._mailbox_set = mailbox_set
+
+    @property
+    def config(self) -> Config:
+        return self._config
 
     @property
     def mailbox_set(self) -> MailboxSet:
@@ -114,7 +119,7 @@ class Session(BaseSession[Message]):
             if config.demo_data:
                 await cls._load_demo(mailbox_set)
             config.set_cache[user] = mailbox_set
-        return cls(mailbox_set)
+        return cls(config, mailbox_set)
 
     @classmethod
     async def get_password(cls, config: Config, user: str) -> str:

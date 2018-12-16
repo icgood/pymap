@@ -19,6 +19,16 @@ class TestStore(TestBase):
         self.transport.push_logout()
         await self.run()
 
+    async def test_store_silent(self):
+        self.transport.push_login()
+        self.transport.push_select(b'INBOX')
+        self.transport.push_readline(
+            b'store1 STORE * +FLAGS.SILENT (\\Seen)\r\n')
+        self.transport.push_write(
+            b'store1 OK STORE completed.\r\n')
+        self.transport.push_logout()
+        await self.run()
+
     async def test_uid_store(self):
         self.transport.push_login()
         self.transport.push_select(b'INBOX')

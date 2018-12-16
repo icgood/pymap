@@ -6,6 +6,7 @@ from typing import Any, Optional, Tuple, Mapping, TypeVar, Type
 
 from pysasl import AuthenticationCredentials
 
+from pymap.concurrent import Subsystem
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.backend import BackendInterface
@@ -96,10 +97,11 @@ class Config(IMAPConfig):
     @classmethod
     def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
         executor = ThreadPoolExecutor(args.concurrency)
+        subsystem = Subsystem.for_executor(executor)
         return super().parse_args(args, users_file=args.users_file,
                                   base_dir=args.base_dir,
                                   layout=args.layout,
-                                  executor=executor, **extra)
+                                  subsystem=subsystem, **extra)
 
 
 class Session(BaseSession[Message]):
@@ -107,9 +109,14 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    def __init__(self, mailbox_set: MailboxSet) -> None:
+    def __init__(self, config: Config, mailbox_set: MailboxSet) -> None:
         super().__init__()
+        self._config = config
         self._mailbox_set = mailbox_set
+
+    @property
+    def config(self) -> Config:
+        return self._config
 
     @property
     def mailbox_set(self) -> MailboxSet:
@@ -129,7 +136,7 @@ class Session(BaseSession[Message]):
             raise InvalidAuth()
         maildir, layout = cls._load_maildir(config, user_dir)
         mailbox_set = MailboxSet(maildir, layout)
-        return cls(mailbox_set)
+        return cls(config, mailbox_set)
 
     @classmethod
     async def find_user(cls, config: Config, user: str) \

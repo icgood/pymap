@@ -6,6 +6,7 @@ from typing import Any, TypeVar, Type, Optional, Tuple, Dict, Mapping, \
 from weakref import WeakSet
 
 from .concurrent import Event
+from .context import subsystem
 from .flags import FlagOp, PermanentFlags, SessionFlags
 from .interfaces.message import CachedMessage
 from .parsing.command import Command
@@ -36,12 +37,18 @@ class SelectedSet:
 
     """
 
-    __slots__ = ['set', '_updated']
+    __slots__ = ['_set', '_updated']
 
-    def __init__(self, updated: Event = None) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.set: MutableSet['SelectedMailbox'] = WeakSet()
-        self._updated = updated or Event.for_asyncio()
+        self._set: MutableSet['SelectedMailbox'] = WeakSet()
+        self._updated = subsystem.get().new_event()
+
+    def add(self, selected: 'SelectedMailbox', *,
+            replace: 'SelectedMailbox' = None) -> None:
+        if replace is not None:
+            self._set.discard(replace)
+        self._set.add(selected)
 
     @property
     def updated(self) -> Event:
@@ -55,19 +62,33 @@ class SelectedSet:
         will not be chosen.
 
         """
-        for selected in self.set:
+        for selected in self._set:
             if not selected.readonly:
                 return selected
         return None
 
 
-class _SelectedSnapshot(NamedTuple):
+class SelectedSnapshot(NamedTuple):
+    """Keeps a snapshot of the state of the selected mailbox at the time of
+    the last :meth:`.fork`.
+
+    """
     uid_validity: Optional[int]
     next_uid: int
     recent_uids: FrozenSet[int]
     uids: FrozenSet[int]
     msg_flags: FrozenSet[Tuple[int, FrozenSet[Flag]]]
     session_flags: FrozenSet[Tuple[int, FrozenSet[Flag]]]
+
+    @property
+    def max_seq(self) -> int:
+        """The highest message sequence in the mailbox."""
+        return len(self.uids)
+
+    @property
+    def max_uid(self) -> int:
+        """The highest message UID in the mailbox."""
+        return self.next_uid - 1
 
 
 class SelectedMailbox:
@@ -108,11 +129,11 @@ class SelectedMailbox:
         self._msg_flags: Set[Tuple[int, FrozenSet[Flag]]] = set()
         self._cache: Dict[int, CachedMessage] = {}
         self._hide_expunged = False
-        self._silenced: Set[Tuple[int, FrozenSet[Flag]]] = set()
-        self._snapshot: Optional[_SelectedSnapshot] = None
-
+        self._silenced_flags: Set[Tuple[int, FrozenSet[Flag]]] = set()
+        self._silenced_sflags: Set[Tuple[int, FrozenSet[Flag]]] = set()
+        self._snapshot: Optional[SelectedSnapshot] = None
         if selected_set:
-            selected_set.set.add(self)
+            selected_set.add(self)
 
     @property
     def name(self) -> str:
@@ -213,15 +234,19 @@ class SelectedMailbox:
         session_flags = self.session_flags
         permanent_flag_set = self.permanent_flags & flag_set
         session_flag_set = session_flags & flag_set
-        defined_flag_set = permanent_flag_set | session_flag_set
         cache = self._cache
         cached_uids = frozenset(cache.keys())
         for _, uid in self.iter_set(seq_set, cached_uids):
             cached_msg = cache.get(uid)
             if cached_msg is not None:
-                cached_flags = cached_msg.get_flags(session_flags)
-                updated_flags = flag_op.apply(cached_flags, defined_flag_set)
-                self._silenced.add((uid, updated_flags))
+                msg_flags = cached_msg.get_flags()
+                msg_sflags = session_flags.get(uid)
+                updated_flags = flag_op.apply(msg_flags, permanent_flag_set)
+                updated_sflags = flag_op.apply(msg_sflags, session_flag_set)
+                if msg_flags != updated_flags:
+                    self._silenced_flags.add((uid, updated_flags))
+                if msg_sflags != updated_sflags:
+                    self._silenced_sflags.add((uid, updated_sflags))
 
     def hide_expunged(self) -> None:
         """No untagged ``EXPUNGE`` responses will be generated, and message
@@ -273,26 +298,29 @@ class SelectedMailbox:
                    self._session_flags, self._selected_set, **self.kwargs)
         if self._hide_expunged and self._snapshot:
             uids = frozenset(self.snapshot.uids | self._uids)
-            msg_flags = frozenset(self.snapshot.msg_flags)
+            msg_flags = frozenset(self.snapshot.msg_flags | self._msg_flags)
         else:
             uids = frozenset(self._uids)
             msg_flags = frozenset(self._msg_flags)
         recent = frozenset(self.session_flags.recent_uids)
         session_flags = frozenset(self.session_flags.flags.items())
         copy._cache = self._cache
-        copy._snapshot = _SelectedSnapshot(self.uid_validity, self.next_uid,
-                                           recent, uids, msg_flags,
-                                           session_flags)
+        copy._snapshot = SelectedSnapshot(self.uid_validity, self.next_uid,
+                                          recent, uids, msg_flags,
+                                          session_flags)
         if self._selected_set:
-            self._selected_set.set.discard(self)
-            self._selected_set.set.add(copy)
+            self._selected_set.add(copy, replace=self)
         if self._snapshot:
             return copy, self._compare(command)
         else:
             return copy, []
 
     @property
-    def snapshot(self) -> _SelectedSnapshot:
+    def snapshot(self) -> SelectedSnapshot:
+        """A snapshot of the selected mailbox at the time of the last
+        :meth:`.fork`.
+
+        """
         if not self._snapshot:
             raise RuntimeError()  # Must call fork() first.
         return self._snapshot
@@ -331,12 +359,13 @@ class SelectedMailbox:
             yield RecentResponse(self.recent)
         current_seqs = {uid: seq for seq, uid in
                         enumerate(sorted(current_uids), 1)}
-        new_flags = current_flags - before_flags - self._silenced
-        new_recent = session_flags.recent_uids - snapshot.recent_uids
-        new_sflags = current_sflags - snapshot.session_flags
-        fetch_uids = chain((uid for uid, _ in new_flags),
-                           (uid for uid, _ in new_sflags),
-                           new_recent)
+        new_flags = (current_flags - before_flags - self._silenced_flags)
+        new_recent = (session_flags.recent_uids - snapshot.recent_uids)
+        new_sflags = (current_sflags - snapshot.session_flags -
+                      self._silenced_sflags)
+        fetch_uids = frozenset(chain((uid for uid, _ in new_flags),
+                                     (uid for uid, _ in new_sflags),
+                                     new_recent))
         for uid in sorted(fetch_uids):
             seq = current_seqs[uid]
             msg_flags = self._cache[uid].get_flags(session_flags)

@@ -8,7 +8,8 @@ from mailbox import Maildir as _Maildir, MaildirMessage  # type: ignore
 from typing import Tuple, Sequence, Dict, Optional, FrozenSet, \
     Iterable, AsyncIterable
 
-from pymap.concurrent import Event, ReadWriteLock
+from pymap.concurrent import ReadWriteLock
+from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
 from pymap.interfaces.message import CachedMessage
@@ -126,8 +127,8 @@ class MailboxData(MailboxDataInterface[Message]):
         self._uid_validity = 0
         self._next_uid = 0
         self._flags: Optional[MaildirFlags] = None
-        self._messages_lock = ReadWriteLock.for_threading()
-        self._selected_set = SelectedSet(Event.for_threading())
+        self._messages_lock = subsystem.get().new_rwlock()
+        self._selected_set = SelectedSet()
 
     @property
     def name(self) -> str:

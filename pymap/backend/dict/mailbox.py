@@ -4,6 +4,7 @@ from io import BytesIO
 from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
+from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.interfaces.message import CachedMessage
 from pymap.mailbox import MailboxSnapshot
@@ -25,7 +26,7 @@ class MailboxData(MailboxDataInterface[Message]):
     def __init__(self, name: str) -> None:
         self._name = name
         self._readonly = False
-        self._messages_lock = ReadWriteLock.for_asyncio()
+        self._messages_lock = subsystem.get().new_rwlock()
         self._selected_set = SelectedSet()
         self._reset_messages()
 
@@ -130,7 +131,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         super().__init__()
         self._inbox = MailboxData('INBOX')
         self._set: Dict[str, 'MailboxData'] = OrderedDict()
-        self._set_lock = ReadWriteLock.for_asyncio()
+        self._set_lock = subsystem.get().new_rwlock()
         self._subscribed: Dict[str, bool] = {}
 
     @property

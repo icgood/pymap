@@ -7,21 +7,18 @@ import asyncio
 import binascii
 import re
 import sys
-import threading
-import traceback
-from asyncio import IncompleteReadError, StreamReader, StreamWriter, \
+from asyncio import shield, IncompleteReadError, StreamReader, StreamWriter, \
     CancelledError
 from base64 import b64encode, b64decode
-from contextvars import copy_context, Context
 from ssl import SSLContext
-from typing import cast, TypeVar, List, Optional, Awaitable
+from typing import TypeVar, Iterable, List, Optional, Awaitable
 
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
-from .concurrent import Event, TimeoutError
+from .concurrent import Event
 from .config import IMAPConfig
-from .context import current_command, socket_info
+from .context import subsystem, current_command, socket_info
 from .exceptions import ResponseError
 from .interfaces.session import LoginProtocol
 from .parsing.command import Command
@@ -39,12 +36,6 @@ __all__ = ['IMAPServer', 'IMAPConnection']
 _Ret = TypeVar('_Ret')
 
 
-class _EventLoopLocal(threading.local):
-
-    def __init__(self) -> None:
-        self.event_loop = asyncio.new_event_loop()
-
-
 class Disconnected(Exception):
     """Thrown if the remote socket closes when the server expected input."""
     pass
@@ -60,27 +51,32 @@ class IMAPServer:
             object.
         config: Settings to use for the IMAP server.
 
-    Attributes:
-        config: Settings to use for the IMAP server.
-
     """
 
-    __slots__ = ['commands', 'login', 'config']
+    __slots__ = ['commands', '_login', '_config']
 
     def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
         self.commands = config.commands
-        self.login = login
-        self.config = config
+        self._login = login
+        self._config = config
+
+    @property
+    def login(self) -> LoginProtocol:
+        return self._login
+
+    @property
+    def config(self) -> IMAPConfig:
+        return self._config
 
     async def __call__(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
         conn = IMAPConnection(self.commands, self.config, reader, writer)
-        state = ConnectionState(self.login, self.config)
+        state = ConnectionState(self._login, self._config)
         try:
             await conn.run(state)
-        except Exception:
-            traceback.print_exc()
+        finally:
+            writer.close()
 
 
 class IMAPConnection:
@@ -98,7 +94,7 @@ class IMAPConnection:
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
 
     __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
-                 '_executor', '_local', '_print', 'reader', 'writer']
+                 '_print', 'reader', 'writer']
 
     def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
@@ -108,8 +104,6 @@ class IMAPConnection:
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
-        self._executor = config.executor
-        self._local = _EventLoopLocal()
         self._print = self._real_print if config.debug else self._noop_print
         self._reset_streams(reader, writer)
 
@@ -133,18 +127,7 @@ class IMAPConnection:
         pass
 
     async def _exec(self, future: Awaitable[_Ret]) -> _Ret:
-        if self._executor is None:
-            return await future
-        else:
-            loop = asyncio.get_event_loop()
-            ctx = copy_context()
-            return await loop.run_in_executor(
-                self._executor, self._run_in_thread, future, ctx)
-
-    def _run_in_thread(self, future: Awaitable[_Ret], ctx: Context) -> _Ret:
-        loop = self._local.event_loop
-        ret = ctx.run(loop.run_until_complete, future)
-        return cast(_Ret, ret)
+        return await subsystem.get().execute(future)
 
     async def readline(self) -> memoryview:
         buf = bytearray(await self.reader.readline())
@@ -169,9 +152,9 @@ class IMAPConnection:
             extra_literal = await self.reader.readexactly(literal_length)
         except IncompleteReadError:
             raise Disconnected
+        self._print('%d -->|', extra_literal)
         extra_line = await self.readline()
         extra = extra_literal + bytes(extra_line)
-        self._print('%d -->|', extra)
         return memoryview(extra)
 
     async def authenticate(self, state: ConnectionState, mech_name: bytes) \
@@ -245,32 +228,55 @@ class IMAPConnection:
                                ResponseCode.of(b'SERVERBUG'))
         try:
             await self.write_response(resp)
-            self.writer.close()
         except IOError:
             pass
 
-    async def write_updates(self, state: ConnectionState,
-                            cmd: IdleCommand, done: Event) -> None:
+    async def write_updates(self, untagged: Iterable[Response]) -> None:
+        for i, resp in enumerate(untagged):
+            await self.write_response(resp)
+
+    async def handle_updates(self, state: ConnectionState, done: Event,
+                             cmd: IdleCommand) -> None:
+        timeout = self.config.max_idle_wait
         while not done.is_set():
-            untagged = await self._exec(state.receive_updates(cmd, done))
-            for resp in untagged:
-                await self.write_response(resp)
+            receive_task = asyncio.create_task(
+                self._exec(state.receive_updates(cmd, done)))
+            try:
+                untagged = await asyncio.wait_for(receive_task, timeout)
+            except TimeoutError:
+                pass
+            else:
+                await shield(self.write_updates(untagged))
 
     async def idle(self, state: ConnectionState, cmd: IdleCommand) -> Response:
         response = await self._exec(state.do_command(cmd))
         if not isinstance(response, ResponseOk):
             return response
-        done = self.config.new_event()
         await self.write_response(ResponseContinuation(b'Idling.'))
-        task = asyncio.create_task(self.write_updates(state, cmd, done))
+        done = subsystem.get().new_event()
+        updates_task = asyncio.create_task(
+            self.handle_updates(state, done, cmd))
+        done_task = asyncio.create_task(self.read_idle_done(cmd))
+        updates_exc: Optional[Exception] = None
+        done_exc: Optional[Exception] = None
         try:
-            ok = await self.read_idle_done(cmd)
+            ok = await done_task
+        except Exception as exc:
+            done_exc = exc
         finally:
             done.set()
-        await task
-        if not ok:
+        try:
+            await updates_task
+        except Exception as exc:
+            updates_exc = exc
+        if updates_exc:
+            raise updates_exc
+        elif done_exc:
+            raise done_exc
+        elif not ok:
             return ResponseBad(cmd.tag, b'Expected "DONE".')
-        return response
+        else:
+            return response
 
     async def run(self, state: ConnectionState) -> None:
         """Start the socket communication with the IMAP greeting, and then
@@ -288,7 +294,6 @@ class IMAPConnection:
             resp = exc.get_response(b'*')
             resp.condition = ResponseBye.condition
             await self.write_response(resp)
-            self.writer.close()
             return
         else:
             await self.write_response(greeting)
@@ -353,4 +358,3 @@ class IMAPConnection:
                 finally:
                     current_command.reset(prev_cmd)
         self._print('%d ---|', b'<disconnected>')
-        self.writer.close()

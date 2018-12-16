@@ -9,22 +9,137 @@ import os.path
 import time
 from abc import abstractmethod, ABCMeta
 from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock
-from concurrent.futures import TimeoutError as _TimeoutError
+from concurrent.futures import Executor, ThreadPoolExecutor, TimeoutError
 from contextlib import asynccontextmanager
-from threading import Event as _threading_Event, Lock as _threading_Lock
-from typing import TypeVar, Sequence, MutableSet, AsyncContextManager, \
-    AsyncIterator
+from contextvars import copy_context, Context
+from threading import local, Event as _threading_Event, Lock as _threading_Lock
+from typing import cast, TypeVar, Optional, Sequence, MutableSet, Awaitable, \
+    AsyncContextManager, AsyncIterator
 from weakref import WeakSet
 
-__all__ = ['Event', 'ReadWriteLock', 'FileLock', 'TimeoutError', 'EventT']
+__all__ = ['Event', 'ReadWriteLock', 'FileLock']
 
 #: Type variable with an upper bound of :class:`Event`.
 EventT = TypeVar('EventT', bound='Event')
 
-# Alias for concurrent.futures.TimeoutError.
-TimeoutError = _TimeoutError
+#: Type variable for any return type.
+RetT = TypeVar('RetT')
 
 _Delay = Sequence[float]
+
+
+class Subsystem(metaclass=ABCMeta):
+    """Utility for creating concurrency primitives for a subsystem, either
+    :mod:`asyncio` or :mod:`threading`.
+
+    """
+
+    @classmethod
+    def for_executor(cls, executor: Optional[Executor]) -> 'Subsystem':
+        """Return a subsystem based on the given executor. If ``executor`` is
+        None, use :mod:`asyncio`. If ``executor`` is a
+        :class:`concurrent.futures.ThreadPoolExecutor`
+
+        Args:
+            executor: The executor in use, if any.
+
+        """
+        if isinstance(executor, ThreadPoolExecutor):
+            return _ThreadingSubsystem(executor)
+        elif executor is None:
+            return _AsyncioSubsystem()
+        else:
+            raise TypeError(executor)
+
+    @classmethod
+    def for_asyncio(cls) -> 'Subsystem':
+        """Return a subsystem for :mod:`asyncio`."""
+        return _AsyncioSubsystem()
+
+    @classmethod
+    def for_threading(cls, executor: ThreadPoolExecutor) -> 'Subsystem':
+        """Return a subsystem for :mod:`threading`."""
+        return _ThreadingSubsystem(executor)
+
+    @property
+    @abstractmethod
+    def subsystem(self) -> str:
+        """The subsystem name, ``'asyncio'`` or ``'threading'``."""
+        ...
+
+    @abstractmethod
+    async def execute(self, future: Awaitable[RetT]) -> RetT:
+        """Executes the future and returns its result in the subsystem. For
+        :mod:`asyncio`, this simply means ``return await future``. For
+        :mod`threading`, it uses
+        :meth:`~asyncio.AbstractEventLoop.run_in_executor` to run the future in
+        another thread.
+
+        Args:
+            future: An awaitable result to execute by the subsystem.
+
+        """
+        ...
+
+    @abstractmethod
+    def new_rwlock(self) -> 'ReadWriteLock':
+        """Return a new read-write lock."""
+        ...
+
+    @abstractmethod
+    def new_event(self) -> 'Event':
+        """Return a new concurrent event."""
+        ...
+
+
+class _AsyncioSubsystem(Subsystem):
+
+    @property
+    def subsystem(self) -> str:
+        return 'asyncio'
+
+    async def execute(self, future: Awaitable[RetT]) -> RetT:
+        return await future
+
+    def new_rwlock(self) -> '_AsyncioReadWriteLock':
+        return _AsyncioReadWriteLock()
+
+    def new_event(self) -> '_AsyncioEvent':
+        return _AsyncioEvent()
+
+
+class _ThreadingSubsystem(Subsystem):  # pragma: no cover
+
+    class _EventLoopLocal(local):
+
+        def __init__(self) -> None:
+            self.event_loop = asyncio.new_event_loop()
+
+    def __init__(self, executor: ThreadPoolExecutor) -> None:
+        super().__init__()
+        self._local = self._EventLoopLocal()
+        self._executor = executor
+
+    @property
+    def subsystem(self) -> str:
+        return 'threading'
+
+    async def execute(self, future: Awaitable[RetT]) -> RetT:
+        loop = asyncio.get_event_loop()
+        ctx = copy_context()
+        return await loop.run_in_executor(
+            self._executor, self._run_in_thread, future, ctx)
+
+    def _run_in_thread(self, future: Awaitable[RetT], ctx: Context) -> RetT:
+        loop = self._local.event_loop
+        ret = ctx.run(loop.run_until_complete, future)
+        return cast(RetT, ret)
+
+    def new_rwlock(self) -> '_ThreadingReadWriteLock':
+        return _ThreadingReadWriteLock()
+
+    def new_event(self) -> '_ThreadingEvent':
+        return _ThreadingEvent()
 
 
 class ReadWriteLock(metaclass=ABCMeta):
@@ -43,7 +158,7 @@ class ReadWriteLock(metaclass=ABCMeta):
     @property
     @abstractmethod
     def subsystem(self) -> str:
-        """The sub-system the read-write lock was created for, ``'asyncio'`` or
+        """The subsystem the read-write lock was created for, ``'asyncio'`` or
         ``'threading'``.
 
         """
@@ -83,7 +198,7 @@ class Event(metaclass=ABCMeta):
     @property
     @abstractmethod
     def subsystem(self) -> str:
-        """The sub-system the event was created for, ``'asyncio'`` or
+        """The subsystem the event was created for, ``'asyncio'`` or
         ``'threading'``.
 
         """
@@ -91,11 +206,8 @@ class Event(metaclass=ABCMeta):
 
     @abstractmethod
     def or_event(self: EventT, *events: EventT) -> EventT:
-        """Return a new event that is signalled when either the current thread
-        or any of the provided threads are signalled.
-
-        Args:
-            events: Additional threads to be signalled by.
+        """Return a new event that is signalled when either the current event
+        or any of the provided events are signalled.
 
         """
         ...
@@ -116,13 +228,8 @@ class Event(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def wait(self, timeout: float = None) -> None:
-        """Wait until another thread signals.
-
-        Args:
-            timeout: The timeout in seconds.
-
-        """
+    async def wait(self) -> None:
+        """Wait until another thread signals the event."""
         ...
 
 
@@ -164,7 +271,7 @@ class _AsyncioReadWriteLock(ReadWriteLock):
             yield
 
 
-class _ThreadingReadWriteLock(ReadWriteLock):
+class _ThreadingReadWriteLock(ReadWriteLock):  # pragma: no cover
 
     def __init__(self) -> None:
         super().__init__()
@@ -202,7 +309,7 @@ class _ThreadingReadWriteLock(ReadWriteLock):
             yield
 
 
-class FileLock(ReadWriteLock):
+class FileLock(ReadWriteLock):  # pragma: no cover
     """Uses the presence or absence of a file on the filesystem to simulate
     a read-write lock. If the file is present, other read- and write-locks will
     block until the file is gone. If the file is absent, read-locks will not
@@ -236,9 +343,7 @@ class FileLock(ReadWriteLock):
 
     @property
     def subsystem(self) -> str:
-        """The sub-system the read-write lock was created for, ``'file'``.
-
-        """
+        """The subsystem the read-write lock was created for, ``'file'``."""
         return 'file'
 
     def _check_lock(self) -> bool:
@@ -332,11 +437,11 @@ class _AsyncioEvent(Event):
     def clear(self) -> None:
         self._event.clear()
 
-    async def wait(self, timeout: float = None) -> None:
-        await asyncio.wait_for(self._event.wait(), timeout=timeout)
+    async def wait(self) -> None:
+        await self._event.wait()
 
 
-class _ThreadingEvent(Event):
+class _ThreadingEvent(Event):  # pragma: no cover
 
     def __init__(self) -> None:
         super().__init__()
@@ -365,6 +470,5 @@ class _ThreadingEvent(Event):
     def clear(self) -> None:
         self._event.clear()
 
-    async def wait(self, timeout: float = None) -> None:
-        if not self._event.wait(timeout=timeout):
-            raise TimeoutError()
+    async def wait(self) -> None:
+        self._event.wait()
