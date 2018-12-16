@@ -63,18 +63,6 @@
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.message.BaseMessage" title="pymap.message.BaseMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMessage</span></code></a>.</p>
 </dd></dl>
 
-<dl class="data">
-<dt id="pymap.message.Policy">
-<code class="descclassname">pymap.message.</code><code class="descname">Policy</code><em class="property"> = EmailPolicy(linesep='\r\n', cte_type='8bit', utf8=True)</em><a class="headerlink" href="#pymap.message.Policy" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.python.org/3/library/email.policy.html#email.policy.Policy" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a> used for 8-bit serialization.</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="pymap.message.Policy7Bit">
-<code class="descclassname">pymap.message.</code><code class="descname">Policy7Bit</code><em class="property"> = EmailPolicy(linesep='\r\n', cte_type='7bit', utf8=True)</em><a class="headerlink" href="#pymap.message.Policy7Bit" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://docs.python.org/3/library/email.policy.html#email.policy.Policy" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Policy</span></code></a> used for 7-bit serialization.</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="pymap.message.AppendMessage">
 <em class="property">class </em><code class="descclassname">pymap.message.</code><code class="descname">AppendMessage</code><a class="headerlink" href="#pymap.message.AppendMessage" title="Permalink to this definition">¶</a></dt>
@@ -122,7 +110,7 @@
 
 <dl class="class">
 <dt id="pymap.message.BaseMessage">
-<em class="property">class </em><code class="descclassname">pymap.message.</code><code class="descname">BaseMessage</code><span class="sig-paren">(</span><em>uid</em>, <em>permanent_flags=None</em>, <em>internal_date=None</em>, <em>expunged=False</em>, <em>contents=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.message.</code><code class="descname">BaseMessage</code><span class="sig-paren">(</span><em>uid</em>, <em>permanent_flags=None</em>, <em>internal_date=None</em>, <em>expunged=False</em>, <em>content=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.message.MessageInterface</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.message.CachedMessage</span></code></a></p>
 <p>Message metadata such as UID, permanent flags, and when the message
 was added to the system.</p>
@@ -135,7 +123,7 @@ was added to the system.</p>
 <li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]]) – Permanent flags for the message.</li>
 <li><strong>internal_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]) – The internal date of the message.</li>
 <li><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if this message has been expunged from the mailbox.</li>
-<li><strong>contents</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.message.html#email.message.EmailMessage" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailMessage</span></code></a>]) – The contents of the message.</li>
+<li><strong>content</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code>]) – The content of the message.</li>
 </ul>
 </td>
 </tr>
@@ -170,7 +158,7 @@ into a <code class="xref py py-class docutils literal notranslate"><span class="
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message.</li>
-<li><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Binaryio</span></code>) – The raw contents of the message.</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The raw contents of the message.</li>
 <li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>[]]]) – Permanent flags for the message.</li>
 <li><strong>internal_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]) – The internal date of the message.</li>
 <li><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if this message has been expunged from the mailbox.</li>
@@ -185,14 +173,14 @@ into a <code class="xref py py-class docutils literal notranslate"><span class="
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymap.message.BaseMessage.contents">
-<code class="descname">contents</code><a class="headerlink" href="#pymap.message.BaseMessage.contents" title="Permalink to this definition">¶</a></dt>
-<dd><p>The MIME-parsed message object.</p>
+<dt id="pymap.message.BaseMessage.content">
+<code class="descname">content</code><a class="headerlink" href="#pymap.message.BaseMessage.content" title="Permalink to this definition">¶</a></dt>
+<dd><p>The MIME-parsed message content.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/email.message.html#email.message.EmailMessage" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailMessage</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -274,9 +262,9 @@ message, used for detecting mailbox updates.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the header.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The name of the header.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.Header" title="pymap.interfaces.message.Header"><code class="xref py py-class docutils literal notranslate"><span class="pre">Header</span></code></a>]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -295,7 +283,7 @@ then index it for its 3rd sub-part.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]) – Optional nested list of sub-part indexes.</li>
-<li><strong>subset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – Subset of headers to get.</li>
+<li><strong>subset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Subset of headers to get.</li>
 <li><strong>inverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If <code class="docutils literal notranslate"><span class="pre">subset</span></code> is given, this flag will invert it so that
 the headers <em>not</em> in <code class="docutils literal notranslate"><span class="pre">subset</span></code> are returned.</li>
 </ul>
