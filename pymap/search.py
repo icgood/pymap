@@ -163,6 +163,21 @@ class SearchCriteriaSet(SearchCriteria):
         super().__init__(params)
         self.all_criteria = [SearchCriteria.of(key, params) for key in keys]
 
+    @property
+    def sequence_set(self) -> SequenceSet:
+        """The sequence set to use when finding the messages to match against.
+        This will default to all messages unless the search criteria set
+        contains a sequence set.
+
+        """
+        try:
+            seqset_crit = next(crit for crit in self.all_criteria
+                               if isinstance(crit, SequenceSetSearchCriteria))
+        except StopIteration:
+            return SequenceSet.all()
+        else:
+            return seqset_crit.seq_set
+
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         """The message matches if all the defined search key criteria match.
 

@@ -194,7 +194,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         params = SearchParams(selected,
                               disabled=self.config.disable_search_keys)
         search = SearchCriteriaSet(keys, params)
-        async for seq, msg in mbx.find(SequenceSet.all(), selected, req):
+        async for seq, msg in mbx.find(search.sequence_set, selected, req):
             if search.matches(seq, msg):
                 ret.append((seq, msg))
         return ret, await self._load_selected(selected, mbx)
