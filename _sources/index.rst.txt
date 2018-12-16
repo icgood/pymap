@@ -23,6 +23,7 @@ Table of Contents
    pymap.listtree
    pymap.mailbox
    pymap.message
+   pymap.mime
    pymap.proxy
    pymap.search
    pymap.selected
