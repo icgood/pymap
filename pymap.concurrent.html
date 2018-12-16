@@ -82,7 +82,7 @@ primitives.</p>
 <em class="property">classmethod </em><code class="descname">for_executor</code><span class="sig-paren">(</span><em>executor</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_executor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem based on the given executor. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is
 None, use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is a
-<a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a></p>
+<a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a>, use <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -170,7 +170,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <code class="descname">execute</code><span class="sig-paren">(</span><em>future</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the future and returns its result in the subsystem. For
 <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>, this simply means <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">await</span> <span class="pre">future</span></code>. For
-:mod`threading`, it uses
+<a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>, it uses
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">run_in_executor()</span></code> to run the future in
 another thread.</p>
 <table class="docutils field-list" frame="void" rules="none">
