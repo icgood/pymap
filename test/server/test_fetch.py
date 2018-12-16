@@ -107,12 +107,12 @@ class TestFetch(TestBase):
         self.transport.push_readline(
             b'fetch1 FETCH 1 (RFC822.HEADER)\r\n')
         self.transport.push_write(
-            b'* 1 FETCH (RFC822.HEADER {147}\r\n'
+            b'* 1 FETCH (RFC822.HEADER {142}\r\n'
             b'From: friend@example.com\r\n'
             b'To: me@example.com\r\n'
             b'Subject: Re: Re: Random question\r\n'
             b'Content-Type: text/plain\r\n'
-            b'Date: Thu, 01 Jan 1970 01:01:00 +0000\r\n'
+            b'Date: 01-Jan-1970 01:01:00 +0000\r\n'
             b'\r\n)\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         self.transport.push_logout()
@@ -137,7 +137,7 @@ class TestFetch(TestBase):
         await self.run()
 
     async def test_append_fetch_binary(self):
-        message = b'test\x00message\r\n'
+        message = b'\r\ntest\x00message\r\n'
         self.transport.push_login()
         self.transport.push_readline(
             b'append1 APPEND INBOX (\\Seen) ~{%i}\r\n' % len(message))

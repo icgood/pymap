@@ -9,21 +9,10 @@ from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
 
-__all__ = ['Header', 'CachedMessage', 'MessageInterface', 'MessageT']
+__all__ = ['CachedMessage', 'MessageInterface', 'MessageT']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
-
-
-class Header(Protocol):
-    """A message header value, which is convertible to a string with
-    :class:`str`.
-
-    """
-
-    @abstractmethod
-    def __str__(self) -> str:
-        ...
 
 
 class CachedMessage(Protocol):
@@ -127,7 +116,7 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_header(self, name: str) -> Sequence[Header]:
+    def get_header(self, name: bytes) -> Sequence[str]:
         """Get the values of a header from the message.
 
         Args:
@@ -138,7 +127,7 @@ class MessageInterface(Protocol):
 
     @abstractmethod
     def get_headers(self, section: Iterable[int] = None,
-                    subset: Iterable[str] = None,
+                    subset: Iterable[bytes] = None,
                     inverse: bool = False) -> bytes:
         """Get the headers from the message.
 

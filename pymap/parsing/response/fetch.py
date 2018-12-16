@@ -1,14 +1,17 @@
 
-from email.headerregistry import Address, AddressHeader, UnstructuredHeader, \
-    DateHeader, ContentDispositionHeader
+from email.headerregistry import Address, AddressHeader, SingleAddressHeader, \
+    UnstructuredHeader, DateHeader, ContentDispositionHeader, \
+    ContentTransferEncodingHeader
 from itertools import chain
-from typing import SupportsBytes, Optional, Dict, Sequence, Union
+from typing import Any, SupportsBytes, Optional, Mapping, Sequence, Union, List
 
 from ..primitives import ListP, Nil, Number, String
 from ..specials import DateTime
 
 __all__ = ['EnvelopeStructure', 'BodyStructure', 'MultipartBodyStructure',
            'ContentBodyStructure', 'TextBodyStructure', 'MessageBodyStructure']
+
+_CTEHeader = ContentTransferEncodingHeader
 
 
 class _Concatenated:
@@ -37,9 +40,14 @@ class _AddressList:
     @property
     def _value(self) -> SupportsBytes:
         if self.headers:
+            addresses: List[Address] = []
+            for header in self.headers:
+                if isinstance(header, SingleAddressHeader):
+                    addresses.append(header.address)
+                else:
+                    addresses.extend(header.addresses)
             return ListP([self._parse(address)
-                          for header in self.headers
-                          for address in header.addresses])
+                          for address in addresses])
         else:
             return Nil()
 
@@ -49,7 +57,7 @@ class _AddressList:
 
 class _ParamsList:
 
-    def __init__(self, params: Optional[Dict[str, str]]) -> None:
+    def __init__(self, params: Optional[Mapping[str, Any]]) -> None:
         super().__init__()
         self.params = params
 
@@ -88,7 +96,7 @@ class EnvelopeStructure:
     def __init__(self, date: Optional[DateHeader],
                  subject: Optional[UnstructuredHeader],
                  from_: Optional[Sequence[AddressHeader]],
-                 sender: Optional[Sequence[AddressHeader]],
+                 sender: Optional[Sequence[SingleAddressHeader]],
                  reply_to: Optional[Sequence[AddressHeader]],
                  to: Optional[Sequence[AddressHeader]],
                  cc: Optional[Sequence[AddressHeader]],
@@ -160,7 +168,7 @@ class BodyStructure:
     """
 
     def __init__(self, maintype: str, subtype: str,
-                 content_type_params: Optional[Dict[str, str]],
+                 content_type_params: Optional[Mapping[str, Any]],
                  content_disposition: Optional[ContentDispositionHeader],
                  content_language: Optional[UnstructuredHeader],
                  content_location: Optional[UnstructuredHeader]) -> None:
@@ -211,7 +219,7 @@ class MultipartBodyStructure(BodyStructure):
     """
 
     def __init__(self, subtype: str,
-                 content_type_params: Optional[Dict[str, str]],
+                 content_type_params: Optional[Mapping[str, Any]],
                  content_disposition: Optional[ContentDispositionHeader],
                  content_language: Optional[UnstructuredHeader],
                  content_location: Optional[UnstructuredHeader],
@@ -256,13 +264,13 @@ class ContentBodyStructure(BodyStructure):
     """
 
     def __init__(self, maintype: str, subtype: str,
-                 content_type_params: Optional[Dict[str, str]],
+                 content_type_params: Optional[Mapping[str, Any]],
                  content_disposition: Optional[ContentDispositionHeader],
                  content_language: Optional[UnstructuredHeader],
                  content_location: Optional[UnstructuredHeader],
                  content_id: Optional[UnstructuredHeader],
                  content_description: Optional[UnstructuredHeader],
-                 content_transfer_encoding: Optional[UnstructuredHeader],
+                 content_transfer_encoding: Optional[_CTEHeader],
                  body_md5: Optional[str],
                  size: int) -> None:
         super().__init__(maintype, subtype, content_type_params,
@@ -319,13 +327,13 @@ class TextBodyStructure(ContentBodyStructure):
     """
 
     def __init__(self, subtype: str,
-                 content_type_params: Optional[Dict[str, str]],
+                 content_type_params: Optional[Mapping[str, Any]],
                  content_disposition: Optional[ContentDispositionHeader],
                  content_language: Optional[UnstructuredHeader],
                  content_location: Optional[UnstructuredHeader],
                  content_id: Optional[UnstructuredHeader],
                  content_description: Optional[UnstructuredHeader],
-                 content_transfer_encoding: Optional[UnstructuredHeader],
+                 content_transfer_encoding: Optional[_CTEHeader],
                  body_md5: Optional[str],
                  size: int, lines: int) -> None:
         super().__init__('text', subtype, content_type_params,
@@ -379,13 +387,13 @@ class MessageBodyStructure(ContentBodyStructure):
 
     """
 
-    def __init__(self, content_type_params: Optional[Dict[str, str]],
+    def __init__(self, content_type_params: Optional[Mapping[str, Any]],
                  content_disposition: Optional[ContentDispositionHeader],
                  content_language: Optional[UnstructuredHeader],
                  content_location: Optional[UnstructuredHeader],
                  content_id: Optional[UnstructuredHeader],
                  content_description: Optional[UnstructuredHeader],
-                 content_transfer_encoding: Optional[UnstructuredHeader],
+                 content_transfer_encoding: Optional[_CTEHeader],
                  body_md5: Optional[str],
                  size: int, lines: int,
                  envelope_structure: EnvelopeStructure,

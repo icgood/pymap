@@ -3,7 +3,6 @@ import errno
 import os
 import os.path
 from datetime import datetime
-from io import BytesIO
 from mailbox import Maildir as _Maildir, MaildirMessage  # type: ignore
 from typing import Tuple, Sequence, Dict, Optional, FrozenSet, \
     Iterable, AsyncIterable
@@ -108,7 +107,7 @@ class Message(_Message):
             return cls(uid, flag_set, msg_dt, recent=recent,
                        maildir_flags=maildir_flags)
         else:
-            msg_data = BytesIO(bytes(maildir_msg))
+            msg_data = bytes(maildir_msg)
             return cls.parse(uid, msg_data, flag_set, msg_dt, recent=recent,
                              maildir_flags=maildir_flags)
 
@@ -166,8 +165,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._selected_set
 
     def parse_message(self, append_msg: AppendMessage) -> Message:
-        msg_data = BytesIO(append_msg.message)
-        return Message.parse(0, msg_data, append_msg.flag_set,
+        return Message.parse(0, append_msg.message, append_msg.flag_set,
                              append_msg.when, recent=True,
                              maildir_flags=self.maildir_flags)
 

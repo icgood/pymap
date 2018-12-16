@@ -184,7 +184,7 @@ class TestFetchAttribute(unittest.TestCase):
         self.assertEqual(b'BODY.PEEK', ret.value)
         self.assertEqual([1, 2], ret.section.parts)
         self.assertEqual(b'HEADER.FIELDS', ret.section.specifier)
-        self.assertEqual({'A', 'B'}, ret.section.headers)
+        self.assertEqual({b'A', b'B'}, ret.section.headers)
         self.assertEqual((4, 5), ret.partial)
         self.assertEqual(b'  ', buf)
 
@@ -239,7 +239,7 @@ class TestFetchAttribute(unittest.TestCase):
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         section = FetchAttribute.Section((1, 2), b'STUFF',
-                                         frozenset({'A', 'B'}))
+                                         frozenset({b'A', b'B'}))
         attr2 = FetchAttribute(b'BODY', section, (4, 5))
         self.assertEqual(b'BODY[1.2.STUFF (A B)]<4.5>', bytes(attr2))
         self.assertEqual(b'BODY[1.2.STUFF (A B)]<4>',
