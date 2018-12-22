@@ -7,6 +7,7 @@ from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
     InvalidContent
 from pymap.parsing.specials import AString, Tag, Mailbox, DateTime, Flag, \
     StatusAttribute, SequenceSet, FetchAttribute, SearchKey, ExtensionOptions
+from pymap.parsing.specials.sequenceset import MaxValue
 
 
 class TestAString(unittest.TestCase):
@@ -157,7 +158,8 @@ class TestSequenceSet(unittest.TestCase):
 
     def test_parse(self):
         ret, buf = SequenceSet.parse(b'12,*,1:*,*:1  ', Params())
-        self.assertEqual([12, '*', (1, '*'), ('*', 1)], ret.value)
+        self.assertEqual([12, MaxValue(), (1, MaxValue()), (MaxValue(), 1)],
+                         ret.value)
         self.assertEqual(b'  ', buf)
 
     def test_parse_error(self):

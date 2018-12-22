@@ -135,20 +135,24 @@ class ConnectionState:
         mailbox, updates = await self.session.select_mailbox(
             cmd.mailbox, cmd.readonly)
         if updates.readonly:
+            num_recent = mailbox.recent
             resp = ResponseOk(cmd.tag, b'Selected mailbox.',
                               ResponseCode.of(b'READ-ONLY'))
             resp.add_untagged_ok(b'Read-only mailbox.', PermanentFlags([]))
         else:
+            num_recent = updates.session_flags.recent
             resp = ResponseOk(cmd.tag, b'Selected mailbox.',
                               ResponseCode.of(b'READ-WRITE'))
             resp.add_untagged_ok(b'Flags permitted.',
                                  PermanentFlags(mailbox.permanent_flags))
+        messages = updates.messages
         resp.add_untagged(FlagsResponse(mailbox.flags))
-        resp.add_untagged(ExistsResponse(updates.exists))
-        resp.add_untagged(RecentResponse(updates.recent + mailbox.recent))
-        resp.add_untagged_ok(b'Predicted next UID.', UidNext(mailbox.next_uid))
+        resp.add_untagged(ExistsResponse(messages.exists))
+        resp.add_untagged(RecentResponse(num_recent))
+        resp.add_untagged_ok(b'Predicted next UID.',
+                             UidNext(messages.next_uid))
         resp.add_untagged_ok(b'UIDs valid.',
-                             UidValidity(mailbox.uid_validity))
+                             UidValidity(updates.uid_validity))
         if mailbox.first_unseen:
             resp.add_untagged_ok(b'First unseen message.',
                                  Unseen(mailbox.first_unseen))
@@ -183,8 +187,8 @@ class ConnectionState:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
             elif attr == b'RECENT':
-                if self._selected and self.selected.name == cmd.mailbox:
-                    data[attr] = Number(self.selected.recent)
+                if updates and updates.name == cmd.mailbox:
+                    data[attr] = Number(updates.session_flags.recent)
                 else:
                     data[attr] = Number(mailbox.recent)
             elif attr == b'UNSEEN':
@@ -250,7 +254,7 @@ class ConnectionState:
 
     async def do_fetch(self, cmd: FetchCommand):
         if not cmd.uid:
-            self.selected.hide_expunged()
+            self.selected.hide_expunged = True
         messages, updates = await self.session.fetch_messages(
             self.selected, cmd.sequence_set, frozenset(cmd.attributes))
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
@@ -314,7 +318,7 @@ class ConnectionState:
 
     async def do_search(self, cmd: SearchCommand):
         if not cmd.uid:
-            self.selected.hide_expunged()
+            self.selected.hide_expunged = True
         messages, updates = await self.session.search_mailbox(
             self.selected, cmd.keys)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
@@ -331,7 +335,7 @@ class ConnectionState:
 
     async def do_store(self, cmd: StoreCommand):
         if not cmd.uid:
-            self.selected.hide_expunged()
+            self.selected.hide_expunged = True
         if cmd.silent:
             self.selected.silence(cmd.sequence_set, cmd.flag_set, cmd.mode)
         messages, updates = await self.session.update_flags(

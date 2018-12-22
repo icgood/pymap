@@ -1,14 +1,14 @@
 
-from itertools import chain
-from typing import Any, TypeVar, Type, Optional, Tuple, Dict, Mapping, \
-    Set, MutableSet, AbstractSet, FrozenSet, NamedTuple, Iterable, List, \
-    SupportsBytes
+from bisect import bisect_right
+from itertools import chain, groupby
+from typing import Any, Optional, Tuple, Dict, Set, MutableSet, AbstractSet, \
+    FrozenSet, Iterable, List, Sequence, SupportsBytes
 from weakref import WeakSet
 
 from .concurrent import Event
 from .context import subsystem
 from .flags import FlagOp, PermanentFlags, SessionFlags
-from .interfaces.message import CachedMessage
+from .interfaces.message import CachedMessage, FlagsKey
 from .parsing.command import Command
 from .parsing.primitives import ListP, Number
 from .parsing.response import Response, ResponseBye
@@ -17,10 +17,7 @@ from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
-__all__ = ['SelectedSet', 'SelectedMailbox', 'SelectedT']
-
-#: Type variable with an upper bound of :class:`SelectedMailbox`.
-SelectedT = TypeVar('SelectedT', bound='SelectedMailbox')
+__all__ = ['SelectedSet', 'SelectedMailbox']
 
 _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
@@ -46,6 +43,15 @@ class SelectedSet:
 
     def add(self, selected: 'SelectedMailbox', *,
             replace: 'SelectedMailbox' = None) -> None:
+        """Add a new selected mailbox object to the set, which may then be
+        returned by :meth:`.any_selected`.
+
+        Args:
+            selected: The new selected mailbox object.
+            replace: An existing selected mailbox object that should be removed
+                from the weak set.
+
+        """
         if replace is not None:
             self._set.discard(replace)
         self._set.add(selected)
@@ -68,27 +74,114 @@ class SelectedSet:
         return None
 
 
-class SelectedSnapshot(NamedTuple):
-    """Keeps a snapshot of the state of the selected mailbox at the time of
-    the last :meth:`.fork`.
+class _Frozen:
 
-    """
-    uid_validity: Optional[int]
-    next_uid: int
-    recent_uids: FrozenSet[int]
-    uids: FrozenSet[int]
-    msg_flags: FrozenSet[Tuple[int, FrozenSet[Flag]]]
-    session_flags: FrozenSet[Tuple[int, FrozenSet[Flag]]]
+    def __init__(self, selected: 'SelectedMailbox') -> None:
+        super().__init__()
+        messages = selected.messages
+        session_flags = selected.session_flags
+        self.uid_validity = selected.uid_validity
+        self.is_deleted = selected._is_deleted
+        self.uids = messages._uids.copy()
+        self.sorted = messages._sorted.copy()
+        self.seqs_cache = messages._seqs_cache.copy()
+        self.flags = messages._flags_key_set.copy()
+        self.recent = session_flags.recent_uids & self.uids
+        self.sflags = frozenset(session_flags.flags.items())
+
+
+class SynchronizedMessages:
+    """Manages the message data that has been synchronized with the client."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._uids: Set[int] = set()
+        self._sorted: List[int] = []
+        self._seqs_cache: Dict[int, int] = {}
+        self._cache: Dict[int, CachedMessage] = {}
+        self._flags_key_map: Dict[int, FlagsKey] = {}
+        self._flags_key_set: Set[FlagsKey] = set()
+        self._pending_remove: Set[int] = set()
 
     @property
-    def max_seq(self) -> int:
-        """The highest message sequence in the mailbox."""
-        return len(self.uids)
+    def exists(self) -> int:
+        """The total number of messages in the mailbox."""
+        return len(self._uids)
 
     @property
-    def max_uid(self) -> int:
-        """The highest message UID in the mailbox."""
-        return self.next_uid - 1
+    def next_uid(self) -> int:
+        """The predicted next message UID value of the mailbox."""
+        try:
+            return self._sorted[-1] + 1
+        except IndexError:
+            return 1
+
+    def _update(self, messages: Sequence[CachedMessage]) -> None:
+        for msg in messages:
+            msg_uid = msg.uid
+            if msg_uid not in self._uids:
+                self._uids.add(msg_uid)
+                idx = bisect_right(self._sorted, msg_uid)
+                self._sorted.insert(idx, msg_uid)
+                self._seqs_cache[msg_uid] = idx + 1
+            self._cache[msg_uid] = msg
+            new_flags_key = msg.flags_key
+            old_flags_key = self._flags_key_map.get(msg_uid)
+            if old_flags_key is not None:
+                self._flags_key_set.discard(old_flags_key)
+            self._flags_key_map[msg_uid] = new_flags_key
+            self._flags_key_set.add(new_flags_key)
+
+    def _remove(self, uids: Iterable[int], pending: bool) -> None:
+        if pending:
+            self._pending_remove.update(uids)
+        else:
+            lowest_uid: Optional[int] = None
+            for msg_uid in chain(uids, self._pending_remove):
+                try:
+                    self._uids.remove(msg_uid)
+                except KeyError:
+                    pass
+                else:
+                    if lowest_uid is None or lowest_uid > msg_uid:
+                        lowest_uid = msg_uid
+                    flags_key = self._flags_key_map[msg_uid]
+                    self._flags_key_set.remove(flags_key)
+                    del self._flags_key_map[msg_uid]
+                    del self._cache[msg_uid]
+            self._pending_remove.clear()
+            self._sorted = sorted_uids = sorted(self._uids)
+            self._seqs_cache = {uid: seq for seq, uid in
+                                enumerate(sorted_uids, 1)}
+
+    def get(self, uid: int) -> Optional[CachedMessage]:
+        """Return the given cached message.
+
+        Args:
+            uid: The message UID.
+
+        """
+        return self._cache.get(uid)
+
+    def get_all(self, seq_set: SequenceSet) \
+            -> Sequence[Tuple[int, CachedMessage]]:
+        """Return the cached messages, and their sequence numbers, for the
+        given sequence set.
+
+        Args:
+            seq_set: The message sequence set.
+
+        """
+        if seq_set.uid:
+            all_uids = seq_set.flatten(self.next_uid - 1) & self._uids
+            return [(seq, self._cache[uid])
+                    for seq, uid in enumerate(self._sorted, 1)
+                    if uid in all_uids]
+        else:
+            all_seqs = seq_set.flatten(self.exists)
+            return [(seq, self._cache[uid])
+                    for seq, uid in enumerate(self._sorted, 1)
+                    if seq in all_seqs]
 
 
 class SelectedMailbox:
@@ -122,16 +215,17 @@ class SelectedMailbox:
         self._session_flags = session_flags
         self._selected_set = selected_set
         self._kwargs = kwargs
-        self._uid_validity: Optional[int] = None
-        self._next_uid = 1
+        self._uid_validity = 0
+        self._mod_sequence: Optional[int] = kwargs.get('_mod_sequence')
         self._is_deleted = False
-        self._uids: Set[int] = set()
-        self._msg_flags: Set[Tuple[int, FrozenSet[Flag]]] = set()
-        self._cache: Dict[int, CachedMessage] = {}
         self._hide_expunged = False
         self._silenced_flags: Set[Tuple[int, FrozenSet[Flag]]] = set()
         self._silenced_sflags: Set[Tuple[int, FrozenSet[Flag]]] = set()
-        self._snapshot: Optional[SelectedSnapshot] = None
+        self._prev: Optional[_Frozen] = kwargs.get('_prev')
+        try:
+            self._messages: SynchronizedMessages = kwargs['_messages']
+        except KeyError:
+            self._messages = SynchronizedMessages()
         if selected_set:
             selected_set.add(self)
 
@@ -141,7 +235,7 @@ class SelectedMailbox:
         return self._name
 
     @property
-    def uid_validity(self) -> Optional[int]:
+    def uid_validity(self) -> int:
         """The UID validity of the selected mailbox."""
         return self._uid_validity
 
@@ -150,13 +244,70 @@ class SelectedMailbox:
         self._uid_validity = uid_validity
 
     @property
-    def next_uid(self) -> int:
-        """The predicted next message UID value of the mailbox."""
-        return self._next_uid
+    def mod_sequence(self) -> Optional[int]:
+        """The highest modification sequence of the mailbox."""
+        return self._mod_sequence
 
-    @next_uid.setter
-    def next_uid(self, next_uid: int) -> None:
-        self._next_uid = next_uid
+    @mod_sequence.setter
+    def mod_sequence(self, mod_sequence: Optional[int]) -> None:
+        self._mod_sequence = mod_sequence
+
+    @property
+    def hide_expunged(self) -> bool:
+        """If True, no untagged ``EXPUNGE`` responses will be generated, and
+        message sequence numbers will not be adjusted, until the next
+        :meth:`.fork`.
+
+        """
+        return self._hide_expunged
+
+    @hide_expunged.setter
+    def hide_expunged(self, hide_expunged: bool) -> None:
+        self._hide_expunged = hide_expunged
+
+    def add_updates(self, messages: Sequence[CachedMessage],
+                    expunged: Iterable[int]) -> None:
+        """Update the messages in the selected mailboxes. The ``messages``
+        should include non-expunged messages in the mailbox that should be
+        checked for updates. The ``expunged`` argument is the set of UIDs that
+        have been expunged from the mailbox.
+
+        In an optimized implementation, ``messages`` only includes new messages
+        or messages with metadata updates.  This minimizes the comparison
+        needed to determine what untagged responses are necessary. The
+        :attr:`.mod_sequence` attribute may be used to support this
+        optimization.
+
+        If a backend implementation lacks the ability to determine the subset
+        of messages that have been updated, it should instead use
+        :meth:`.set_messages`.
+
+        Args:
+            messages: The cached message objects to add.
+            expunged: The set of message UIDs that have been expunged.
+
+        """
+        self._messages._update(messages)
+        self._messages._remove(expunged, self._hide_expunged)
+        if not self._hide_expunged:
+            self._session_flags.remove(expunged)
+
+    def set_messages(self, messages: Sequence[CachedMessage]) -> None:
+        """This is the non-optimized alternative to :meth:`.add_updates` for
+        backend implementations that cannot detect their own updates and must
+        instead compare the entire state of the mailbox.
+
+        The ``messages`` list should contain the entire set of messages in the
+        mailbox, ordered by UID. Any UID that previously existed and is not
+        included in ``messages`` will be expunged.
+
+        Args:
+            messages: The entire set of cached message objects.
+
+        """
+        uids = {msg.uid for msg in messages}
+        expunged = self._messages._uids - uids
+        return self.add_updates(messages, expunged)
 
     @property
     def readonly(self) -> bool:
@@ -164,18 +315,9 @@ class SelectedMailbox:
         return self._readonly
 
     @property
-    def exists(self) -> int:
-        """The total number of messages in the mailbox."""
-        return len(self._uids)
-
-    @property
-    def recent(self) -> int:
-        """The number of messages in the mailbox with ``\\Recent``."""
-        recent_uids = self.session_flags.recent_uids
-        if self._hide_expunged:
-            return len(recent_uids)
-        else:
-            return len(recent_uids & self._uids)
+    def messages(self) -> SynchronizedMessages:
+        """The messages in the mailbox, as synchronized with the client."""
+        return self._messages
 
     @property
     def permanent_flags(self) -> PermanentFlags:
@@ -187,36 +329,11 @@ class SelectedMailbox:
         """Session-only flags for the mailbox."""
         return self._session_flags
 
-    @property
-    def kwargs(self) -> Mapping[str, Any]:
-        """Add keywords arguments to copy construction during :meth:`.fork`."""
-        return {}
-
     def set_deleted(self) -> None:
         """Marks the selected mailbox as having been deleted."""
         self._is_deleted = True
 
-    def set_messages(self, messages: Iterable[CachedMessage]) -> None:
-        """Add a message that exists in the mailbox.
-
-        Args:
-            messages: The cached message objects to add.
-
-        """
-        self._cache.update({msg.uid: msg for msg in messages})
-        self._uids = {msg.uid for msg in messages}
-        self._msg_flags = {msg.flags_key for msg in messages}
-
-    def get_message(self, uid: int) -> Optional[CachedMessage]:
-        """Return the cached message for the given message UID.
-
-        Args:
-            uid: The message UID.
-
-        """
-        return self._cache.get(uid)
-
-    def silence(self, seq_set: SequenceSet, flag_set: Iterable[Flag],
+    def silence(self, seq_set: SequenceSet, flag_set: AbstractSet[Flag],
                 flag_op: FlagOp) -> None:
         """Runs the flags update against the cached flags, to prevent untagged
         FETCH responses unless other updates have occurred.
@@ -226,7 +343,7 @@ class SelectedMailbox:
         at the same time, the FETCH response will be sent.
 
         Args:
-            seq_set: Sequence set to be updated.
+            seq_set: The sequence set of messages.
             flag_set: The set of flags for the update operation.
             flag_op: The mode to change the flags.
 
@@ -234,57 +351,18 @@ class SelectedMailbox:
         session_flags = self.session_flags
         permanent_flag_set = self.permanent_flags & flag_set
         session_flag_set = session_flags & flag_set
-        cache = self._cache
-        cached_uids = frozenset(cache.keys())
-        for _, uid in self.iter_set(seq_set, cached_uids):
-            cached_msg = cache.get(uid)
-            if cached_msg is not None:
-                msg_flags = cached_msg.get_flags()
-                msg_sflags = session_flags.get(uid)
-                updated_flags = flag_op.apply(msg_flags, permanent_flag_set)
-                updated_sflags = flag_op.apply(msg_sflags, session_flag_set)
-                if msg_flags != updated_flags:
-                    self._silenced_flags.add((uid, updated_flags))
-                if msg_sflags != updated_sflags:
-                    self._silenced_sflags.add((uid, updated_sflags))
+        for seq, msg in self._messages.get_all(seq_set):
+            msg_flags = msg.get_flags()
+            msg_sflags = session_flags.get(msg.uid)
+            updated_flags = flag_op.apply(msg_flags, permanent_flag_set)
+            updated_sflags = flag_op.apply(msg_sflags, session_flag_set)
+            if msg_flags != updated_flags:
+                self._silenced_flags.add((msg.uid, updated_flags))
+            if msg_sflags != updated_sflags:
+                self._silenced_sflags.add((msg.uid, updated_sflags))
 
-    def hide_expunged(self) -> None:
-        """No untagged ``EXPUNGE`` responses will be generated, and message
-        sequence numbers will not be adjusted, until the next :meth:`.fork`.
-
-        """
-        self._hide_expunged = True
-
-    def iter_set(self, seq_set: SequenceSet, uids: AbstractSet[int]) \
-            -> Iterable[Tuple[int, int]]:
-        """Iterate through the given sequence set based on the message state at
-        the last fork.
-
-        Args:
-            seq_set: Sequence set to convert to UID set.
-            uids: The current set of UIDs in the mailbox.
-
-        """
-        if self._hide_expunged:
-            all_uids = uids | self.snapshot.uids
-        else:
-            all_uids = uids
-        sorted_uids = sorted(all_uids)
-        if seq_set.uid:
-            try:
-                max_uid = sorted_uids[-1]
-            except IndexError:
-                max_uid = 0
-            all_idx = frozenset(seq_set.iter(max_uid))
-        else:
-            all_idx = frozenset(seq_set.iter(len(all_uids)))
-        for seq, uid in enumerate(sorted_uids, 1):
-            idx = uid if seq_set.uid else seq
-            if idx in all_idx:
-                yield (seq, uid)
-
-    def fork(self: SelectedT, command: Command) \
-            -> Tuple[SelectedT, Iterable[Response]]:
+    def fork(self, command: Command) \
+            -> Tuple['SelectedMailbox', Iterable[Response]]:
         """Compares the state of the current object to that of the last fork,
         returning the untagged responses that reflect any changes. A new copy
         of the object is also returned, ready for the next command.
@@ -293,84 +371,50 @@ class SelectedMailbox:
             command: The command that was finished.
 
         """
-        cls: Type[SelectedT] = type(self)
-        copy = cls(self.name, self.readonly, self._permanent_flags,
-                   self._session_flags, self._selected_set, **self.kwargs)
-        if self._hide_expunged and self._snapshot:
-            uids = frozenset(self.snapshot.uids | self._uids)
-            msg_flags = frozenset(self.snapshot.msg_flags | self._msg_flags)
+        frozen = _Frozen(self)
+        cls = type(self)
+        copy = cls(self._name, self._readonly, self._permanent_flags,
+                   self._session_flags, self._selected_set,
+                   _mod_sequence=self._mod_sequence,
+                   _prev=frozen, _messages=self._messages)
+        if self._prev is not None:
+            with_uid: bool = getattr(command, 'uid', False)
+            untagged = self._compare(self._prev, frozen, with_uid)
         else:
-            uids = frozenset(self._uids)
-            msg_flags = frozenset(self._msg_flags)
-        recent = frozenset(self.session_flags.recent_uids)
-        session_flags = frozenset(self.session_flags.flags.items())
-        copy._cache = self._cache
-        copy._snapshot = SelectedSnapshot(self.uid_validity, self.next_uid,
-                                          recent, uids, msg_flags,
-                                          session_flags)
-        if self._selected_set:
-            self._selected_set.add(copy, replace=self)
-        if self._snapshot:
-            return copy, self._compare(command)
-        else:
-            return copy, []
+            untagged = []
+        return copy, untagged
 
-    @property
-    def snapshot(self) -> SelectedSnapshot:
-        """A snapshot of the selected mailbox at the time of the last
-        :meth:`.fork`.
-
-        """
-        if not self._snapshot:
-            raise RuntimeError()  # Must call fork() first.
-        return self._snapshot
-
-    def _compare(self, command: Command) -> Iterable[Response]:
-        is_uid: bool = getattr(command, 'uid', False)
-        session_flags = self.session_flags
-        uidval = self.uid_validity
-        snapshot = self.snapshot
-        if self._is_deleted:
+    def _compare(self, before: _Frozen, after: _Frozen,
+                 with_uid: bool) -> Iterable[Response]:
+        if after.is_deleted:
             yield ResponseBye(b'Selected mailbox deleted.')
             return
-        elif uidval is not None and snapshot.uid_validity != uidval:
-            yield ResponseBye(b'UID validity changed.', UidValidity(uidval))
+        elif after.uid_validity != before.uid_validity:
+            yield ResponseBye(b'UID validity changed.',
+                              UidValidity(after.uid_validity))
             return
-        before_flags = snapshot.msg_flags
-        current_flags = self._msg_flags
-        current_sflags = frozenset(self.session_flags.flags.items())
-        before_uids = snapshot.uids
-        current_uids = self._uids
-        expunged_uids = before_uids - current_uids
-        new_uids = current_uids - before_uids
-        if self._hide_expunged:
-            current_uids.update(expunged_uids)
-        else:
-            expunged: List[int] = []
-            sorted_before_uids = sorted(before_uids)
-            for seq, uid in enumerate(sorted_before_uids, 1):
-                if uid in expunged_uids:
-                    expunged.append(seq)
-            for seq in reversed(expunged):
-                yield ExpungeResponse(seq)
+        cache = self._messages._cache
+        session_flags = self._session_flags
+        expunged_uids = before.uids - after.uids
+        new_uids = after.uids - before.uids
+        if not self._hide_expunged and expunged_uids:
+            for uid in sorted(expunged_uids, reverse=True):
+                yield ExpungeResponse(before.seqs_cache[uid])
         if new_uids:
-            yield ExistsResponse(len(current_uids))
-        if len(snapshot.recent_uids) != self.recent:
-            yield RecentResponse(self.recent)
-        current_seqs = {uid: seq for seq, uid in
-                        enumerate(sorted(current_uids), 1)}
-        new_flags = (current_flags - before_flags - self._silenced_flags)
-        new_recent = (session_flags.recent_uids - snapshot.recent_uids)
-        new_sflags = (current_sflags - snapshot.session_flags -
-                      self._silenced_sflags)
-        fetch_uids = frozenset(chain((uid for uid, _ in new_flags),
-                                     (uid for uid, _ in new_sflags),
-                                     new_recent))
-        for uid in sorted(fetch_uids):
-            seq = current_seqs[uid]
-            msg_flags = self._cache[uid].get_flags(session_flags)
+            yield ExistsResponse(len(after.uids))
+        if len(after.recent) != len(before.recent):
+            yield RecentResponse(len(after.recent))
+        new_recent = (after.recent - before.recent)
+        new_flags = (after.flags - before.flags - self._silenced_flags)
+        new_sflags = (after.sflags - before.sflags - self._silenced_sflags)
+        fetch_uids = chain(new_recent,
+                           (uid for uid, _ in new_flags),
+                           (uid for uid, _ in new_sflags))
+        for uid, _ in groupby(sorted(fetch_uids)):
+            seq = after.seqs_cache[uid]
+            msg_flags = cache[uid].get_flags(session_flags)
             fetch_data: Dict[FetchAttribute, SupportsBytes] = {
                 _flags_attr: ListP(msg_flags, sort=True)}
-            if is_uid:
+            if with_uid:
                 fetch_data[_uid_attr] = Number(uid)
             yield FetchResponse(seq, fetch_data)

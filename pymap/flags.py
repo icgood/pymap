@@ -12,6 +12,8 @@ from .parsing.specials.flag import Flag, Recent, Wildcard
 
 __all__ = ['FlagOp', 'PermanentFlags', 'SessionFlags']
 
+_recent_set = frozenset({Recent})
+
 
 class FlagOp(enum.Enum):
     """Types of operations when updating flags."""
@@ -56,7 +58,7 @@ class PermanentFlags:
 
     def __init__(self, defined: Iterable[Flag]) -> None:
         super().__init__()
-        self._defined = frozenset(defined) - {Recent}
+        self._defined = frozenset(defined) - _recent_set
 
     @property
     def defined(self) -> FrozenSet[Flag]:
@@ -99,11 +101,9 @@ class SessionFlags:
 
     __slots__ = ['_defined', '_flags', '_recent']
 
-    _recent_set = frozenset({Recent})
-
     def __init__(self, defined: Iterable[Flag]):
         super().__init__()
-        self._defined = frozenset(defined) - self._recent_set
+        self._defined = frozenset(defined) - _recent_set
         self._flags: Dict[int, FrozenSet[Flag]] = {}
         self._recent: Set[int] = set()
 
@@ -142,19 +142,20 @@ class SessionFlags:
             uid: The message UID value.
 
         """
-        recent = self._recent_set if uid in self._recent else frozenset()
+        recent = _recent_set if uid in self._recent else frozenset()
         flags = self._flags.get(uid)
         return recent if flags is None else (flags | recent)
 
-    def remove(self, uid: int) -> None:
+    def remove(self, uids: Iterable[int]) -> None:
         """Remove any session flags for the given message.
 
         Args:
-            uid: The message UID value.
+            uids: The message UID values.
 
         """
-        self._recent.discard(uid)
-        self._flags.pop(uid, None)
+        for uid in uids:
+            self._recent.discard(uid)
+            self._flags.pop(uid, None)
 
     def update(self, uid: int, flag_set: Iterable[Flag],
                op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
@@ -182,6 +183,11 @@ class SessionFlags:
 
         """
         self._recent.add(uid)
+
+    @property
+    def recent(self) -> int:
+        """The number of messages with the ``\\Recent`` flag."""
+        return len(self._recent)
 
     @property
     def recent_uids(self) -> AbstractSet[int]:

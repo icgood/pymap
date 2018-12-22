@@ -7,7 +7,7 @@ from typing import Any, Tuple, Iterable, Mapping, FrozenSet, \
 from typing_extensions import Final
 
 from .flags import FlagOp, SessionFlags
-from .interfaces.message import CachedMessage, MessageInterface
+from .interfaces.message import CachedMessage, MessageInterface, FlagsKey
 from .mime import MessageContent
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
@@ -118,7 +118,7 @@ class BaseMessage(MessageInterface, CachedMessage):
         self._flags_key = (self.uid, new_flags)
 
     @property
-    def flags_key(self) -> Tuple[int, FrozenSet[Flag]]:
+    def flags_key(self) -> FlagsKey:
         return self._flags_key
 
     @classmethod

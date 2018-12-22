@@ -68,7 +68,7 @@ class Subsystem(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def execute(self, future: Awaitable[RetT]) -> RetT:
+    def execute(self, future: Awaitable[RetT]) -> Awaitable[RetT]:
         """Executes the future and returns its result in the subsystem. For
         :mod:`asyncio`, this simply means ``return await future``. For
         :mod:`threading`, it uses
@@ -98,8 +98,8 @@ class _AsyncioSubsystem(Subsystem):
     def subsystem(self) -> str:
         return 'asyncio'
 
-    async def execute(self, future: Awaitable[RetT]) -> RetT:
-        return await future
+    def execute(self, future: Awaitable[RetT]) -> Awaitable[RetT]:
+        return future
 
     def new_rwlock(self) -> '_AsyncioReadWriteLock':
         return _AsyncioReadWriteLock()

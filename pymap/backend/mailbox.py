@@ -101,6 +101,18 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
+    async def update_selected(self, selected: SelectedMailbox) \
+            -> SelectedMailbox:
+        """Populates and returns the selected mailbox object with the state
+        needed to discover updates.
+
+        Args:
+            selected: the selected mailbox object.
+
+        """
+        ...
+
+    @abstractmethod
     async def add(self, message: MessageT, recent: bool = False) -> MessageT:
         """Adds a new message to the end of the mailbox, returning a copy of
         message with its assigned UID.
@@ -203,10 +215,8 @@ class MailboxDataInterface(Protocol[MessageT]):
             requirement: The data required from each message.
 
         """
-        mbx_uids = frozenset({uid async for uid in self.uids()})
-        for seq, uid in selected.iter_set(seq_set, mbx_uids):
-            cached_msg = selected.get_message(uid)
-            msg = await self.get(uid, cached_msg, requirement)
+        for seq, cached_msg in selected.messages.get_all(seq_set):
+            msg = await self.get(cached_msg.uid, cached_msg, requirement)
             if msg is not None:
                 yield (seq, msg)
 

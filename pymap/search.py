@@ -35,8 +35,8 @@ class SearchParams:
                  disabled: Iterable[bytes] = None) -> None:
         self.selected: Final = selected
         self.disabled: Final = frozenset(disabled or [])
-        self.max_seq: Final = selected.snapshot.max_seq
-        self.max_uid: Final = selected.snapshot.max_uid
+        self.max_seq: Final = selected.messages.exists
+        self.max_uid: Final = selected.messages.next_uid - 1
         self.session_flags: Final = selected.session_flags
 
 
@@ -227,12 +227,16 @@ class SequenceSetSearchCriteria(SearchCriteria):
     def __init__(self, seq_set: SequenceSet, params: SearchParams) -> None:
         super().__init__(params)
         self.seq_set = seq_set
+        if seq_set.uid:
+            self.flat = seq_set.flatten(params.max_uid)
+        else:
+            self.flat = seq_set.flatten(params.max_seq)
 
     def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
         if self.seq_set.uid:
-            return self.seq_set.contains(msg.uid, self.params.max_uid)
+            return msg.uid in self.flat
         else:
-            return self.seq_set.contains(msg_seq, self.params.max_seq)
+            return msg_seq in self.flat
 
 
 class HasFlagSearchCriteria(SearchCriteria):
