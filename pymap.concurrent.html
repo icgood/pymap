@@ -16,6 +16,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.base.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
@@ -138,6 +139,26 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 </dd></dl>
 
 <dl class="method">
+<dt id="pymap.concurrent.Subsystem.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>future</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the future and returns its result in the subsystem. For
+<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>, this simply means <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">await</span> <span class="pre">future</span></code>. For
+<a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>, it uses
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">run_in_executor()</span></code> to run the future in
+another thread.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]) – An awaitable result to execute by the subsystem.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pymap.concurrent.Subsystem.new_rwlock">
 <code class="descname">new_rwlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.new_rwlock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new read-write lock.</p>
@@ -160,26 +181,6 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.concurrent.Subsystem.execute">
-<code class="descname">execute</code><span class="sig-paren">(</span><em>future</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Executes the future and returns its result in the subsystem. For
-<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>, this simply means <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">await</span> <span class="pre">future</span></code>. For
-<a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>, it uses
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">run_in_executor()</span></code> to run the future in
-another thread.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]) – An awaitable result to execute by the subsystem.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">~RetT</td>
 </tr>
 </tbody>
 </table>
@@ -541,7 +542,7 @@ released.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

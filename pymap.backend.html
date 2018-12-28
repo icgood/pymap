@@ -16,6 +16,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.base.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
@@ -426,6 +427,23 @@ are resolved by the selected mailbox session.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.backend.mailbox.MailboxDataInterface.update_selected">
+<code class="descname">update_selected</code><span class="sig-paren">(</span><em>selected</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.update_selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates and returns the selected mailbox object with the state
+needed to discover updates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – the selected mailbox object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -983,10 +1001,9 @@ given search criteria.</p>
 <dl class="method">
 <dt id="pymap.backend.session.BaseSession.select_mailbox">
 <code class="descname">select_mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>readonly=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.select_mailbox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Selects a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface" title="pymap.interfaces.mailbox.MailboxInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxInterface</span></code></a> object
-corresponding to an existing mailbox owned by the user. The returned
-session is then used as the <code class="docutils literal notranslate"><span class="pre">selected</span></code> argument to other methods to
-fetch mailbox updates.</p>
+<dd><p>Selects an existing mailbox owned by the user. The returned session
+is then used as the <code class="docutils literal notranslate"><span class="pre">selected</span></code> argument to other methods to fetch
+mailbox updates.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.1">RFC 3501 6.3.1.</a>,
@@ -1199,7 +1216,7 @@ not the given folder name currently exists.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
