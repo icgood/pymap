@@ -9,10 +9,14 @@ from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag
 
-__all__ = ['CachedMessage', 'MessageInterface', 'MessageT']
+__all__ = ['CachedMessage', 'MessageInterface', 'MessageT', 'FlagsKey']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
+
+#: Type alias for the value used as a key in set comparisons detecting flag
+#: updates.
+FlagsKey = Tuple[int, FrozenSet[Flag]]
 
 
 class CachedMessage(Protocol):
@@ -51,7 +55,7 @@ class CachedMessage(Protocol):
 
     @property
     @abstractmethod
-    def flags_key(self) -> Tuple[int, FrozenSet[Flag]]:
+    def flags_key(self) -> FlagsKey:
         """Hashable value that represents the current flags of this
         message, used for detecting mailbox updates.
 

@@ -212,10 +212,9 @@ class SessionInterface(Protocol):
     @abstractmethod
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple[MailboxInterface, SelectedMailbox]:
-        """Selects a :class:`~pymap.interfaces.mailbox.MailboxInterface` object
-        corresponding to an existing mailbox owned by the user. The returned
-        session is then used as the ``selected`` argument to other methods to
-        fetch mailbox updates.
+        """Selects an existing mailbox owned by the user. The returned session
+        is then used as the ``selected`` argument to other methods to fetch
+        mailbox updates.
 
         See Also:
             `RFC 3501 6.3.1.

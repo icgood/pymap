@@ -169,6 +169,13 @@ class MailboxData(MailboxDataInterface[Message]):
                              append_msg.when, recent=True,
                              maildir_flags=self.maildir_flags)
 
+    async def update_selected(self, selected: SelectedMailbox) \
+            -> SelectedMailbox:
+        selected.uid_validity = self.uid_validity
+        all_messages = [msg async for msg in self.messages()]
+        selected.set_messages(all_messages)
+        return selected
+
     async def add(self, message: Message, recent: bool = False) -> 'Message':
         async with self.messages_lock.write_lock():
             maildir_msg = message.maildir_msg

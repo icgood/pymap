@@ -1,16 +1,28 @@
-import heapq
-import math
+
 from itertools import chain
-from typing import Iterable, Tuple, Union, Sequence, Optional, List
+from typing import Iterable, Iterator, Tuple, Union, Sequence, Optional, \
+    List, FrozenSet
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
 from ...bytes import rev
 
-__all__ = ['SequenceSet']
+__all__ = ['MaxValue', 'SequenceSet']
 
-_SeqIdx = Union[None, str, int]
+_SeqIdx = Union['MaxValue', int]
 _SeqElem = Union[_SeqIdx, Tuple[_SeqIdx, _SeqIdx]]
+
+
+class MaxValue:
+    """The type used as a placeholder for the maximum value."""
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, MaxValue):
+            return True
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(type(self))
 
 
 class SequenceSet(Parseable[Sequence[_SeqElem]]):
@@ -26,96 +38,72 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
     """
 
     _num_pattern = rev.compile(br'[1-9]\d*')
+    _max = MaxValue()
 
     def __init__(self, sequences: Sequence[_SeqElem],
                  uid: bool = False) -> None:
         super().__init__()
         self.sequences = sequences
         self.uid = uid
-        self._flattened_cache = None
         self._raw: Optional[bytes] = None
 
     @classmethod
     def all(cls, uid: bool = False) -> 'SequenceSet':
         """A sequence set intended to contain all values."""
-        return SequenceSet([(1, '*')], uid)
+        return _AllSequenceSet(uid)
 
     @property
     def value(self) -> Sequence[_SeqElem]:
         """The sequence set data."""
         return self.sequences
 
-    @property
-    def _flattened(self):
-        if self._flattened_cache is None:
-            results = []
-            for group in self.value:
-                if isinstance(group, tuple):
-                    group_left, group_right = group
-                    if group_left == '*':
-                        group_left = math.inf
-                    if group_right == '*':
-                        group_right = math.inf
-                    high = max(group_left, group_right)
-                    low = min(group_left, group_right)
-                    heapq.heappush(results, (low, high))
-                elif group == '*':
-                    heapq.heappush(results, (math.inf, math.inf))
-                else:
-                    heapq.heappush(results, (group, group))
-            flattened = []
-            while results:
-                lowest_min, lowest_max = heapq.heappop(results)
-                while results:
-                    next_lowest_min, next_lowest_max = results[0]
-                    if lowest_max + 1 >= next_lowest_min:
-                        heapq.heappop(results)
-                        lowest_max = next_lowest_max
-                    else:
-                        break
-                flattened.append((lowest_min, lowest_max))
-            self._flattened_cache = flattened
-        return self._flattened_cache
-
-    def _get_flattened_bounded(self, max_value: int):
-        for low, high in self._flattened:
-            low = max_value if math.isinf(low) else low
-            high = max_value if math.isinf(high) else high
-            if low > max_value:
-                break
-            elif high > max_value:
-                yield (low, max_value)
-                break
+    @classmethod
+    def _get_range(cls, elem: _SeqElem, max_value: int) -> Iterable[int]:
+        if isinstance(elem, int):
+            if elem <= max_value:
+                return range(elem, elem + 1)
             else:
-                yield (low, high)
+                return ()
+        elif isinstance(elem, MaxValue):
+            return range(max_value, max_value + 1)
+        else:
+            left, right = elem
+            if isinstance(left, MaxValue):
+                left = max_value
+            if isinstance(right, MaxValue):
+                right = max_value
+            low = min(left, right)
+            if low <= max_value:
+                high = min(max(left, right), max_value)
+                return range(low, high + 1)
+            else:
+                return ()
 
-    def contains(self, num: int, max_value: int) -> bool:
-        """Check if the sequence set contains the given value, when bounded
-        by the given maximum value (in place of any ``'*'``).
+    def flatten(self, max_value: int) -> FrozenSet[int]:
+        """Return a set of all values contained in the sequence set.
 
         Args:
-            num: The number to check.
-            max_value: The maximum value of the set.
+            max_value: The maximum value, in place of any ``*``.
 
         """
-        for low, high in self._get_flattened_bounded(max_value):
-            if num < low:
-                break
-            elif num <= high:
-                return True
-        return False
+        return frozenset(self.iter(max_value))
 
-    def iter(self, max_value: int) -> Iterable:
+    def iter(self, max_value: int) -> Iterator[int]:
         """Iterates through the sequence numbers contained in the set, bounded
-        by the given maximum value (in place of any ``'*'``).
+        by the given maximum value (in place of any ``*``).
 
         Args:
             max_value: The maximum value of the set.
 
         """
         return chain.from_iterable(
-            [range(min(low, max_value), min(high, max_value) + 1)
-             for low, high in self._get_flattened_bounded(max_value)])
+            (self._get_range(elem, max_value) for elem in self.sequences))
+
+    def _elem_bytes(self, elem: _SeqIdx) -> bytes:
+        if isinstance(elem, MaxValue):
+            return b'*'
+        else:
+            return b'%d' % elem
 
     def __bytes__(self) -> bytes:
         if self._raw is not None:
@@ -123,31 +111,31 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         parts = []
         for group in self.value:
             if isinstance(group, tuple):
-                left = bytes(str(group[0]), 'ascii')
-                right = bytes(str(group[1]), 'ascii')
+                left = self._elem_bytes(group[0])
+                right = self._elem_bytes(group[1])
                 parts.append(b'%b:%b' % (left, right))
             else:
-                parts.append(bytes(str(group), 'ascii'))
+                parts.append(self._elem_bytes(group))
         self._raw = raw = b','.join(parts)
         return raw
 
     def __eq__(self, other) -> bool:
         if isinstance(other, SequenceSet):
             return self.uid == other.uid \
-                and self._flattened == other._flattened
+                and self.sequences == other.sequences
         return super().__eq__(other)
 
     def __hash__(self) -> int:
-        return hash((tuple(self.sequences), self.uid))
+        return hash((type(self), tuple(self.sequences), self.uid))
 
     def __repr__(self) -> str:
         attr = 'uidset' if self.uid else 'set'
-        return '<%s %s=%r>' % (type(self).__name__, attr, self.sequences)
+        return '<SequenceSet %s=%r>' % (attr, self.sequences)
 
     @classmethod
     def _parse_part(cls, buf: memoryview) -> Tuple[_SeqElem, memoryview]:
         if buf and buf[0] == 0x2a:
-            item1: _SeqIdx = '*'
+            item1: _SeqIdx = cls._max
             buf = buf[1:]
         else:
             match = cls._num_pattern.match(buf)
@@ -159,7 +147,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         if buf and buf[0] == 0x3a:
             buf = buf[1:]
             if buf and buf[0] == 0x2a:
-                return (item1, '*'), buf[1:]
+                return (item1, cls._max), buf[1:]
             match = cls._num_pattern.match(buf)
             if match:
                 buf = buf[match.end(0):]
@@ -214,3 +202,18 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         if not sequences:
             raise NotParseable(buf)
         return cls(sequences, uid=params.uid), buf
+
+
+class _AllSequenceSet(SequenceSet):
+
+    def __init__(self, uid: bool) -> None:
+        super().__init__([(1, self._max)], uid)
+
+    def iter(self, max_value: int) -> Iterator[int]:
+        return iter(range(1, max_value + 1))
+
+    def __bytes__(self) -> bytes:
+        return b'1:*'
+
+    def __repr__(self) -> str:
+        return '<SequenceSet set=all>'

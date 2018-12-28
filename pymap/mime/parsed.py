@@ -8,7 +8,7 @@ from typing import cast, Any, Optional, ClassVar, Iterable, Iterator, \
 
 __all__ = ['ParsedHeaders']
 
-_Headers = Mapping[bytes, Sequence[Sequence[memoryview]]]
+_Headers = Mapping[bytes, Sequence[Sequence[bytes]]]
 
 
 class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
@@ -48,10 +48,10 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
         return iter(self._headers.keys())
 
     @classmethod
-    def _parse(cls, values: Sequence[Sequence[memoryview]]) \
+    def _parse(cls, values: Sequence[Sequence[bytes]]) \
             -> Iterable[BaseHeader]:
         for value in values:
-            lines = [bytes(line).decode('ascii', 'surrogateescape')
+            lines = [line.decode('ascii', 'surrogateescape')
                      for line in value]
             hdr_name, hdr_val = SMTP.header_source_parse(lines)
             yield cls._registry(hdr_name, hdr_val)

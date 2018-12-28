@@ -42,15 +42,6 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
             -> MailboxSetInterface[MailboxDataInterface[MessageT]]:
         ...
 
-    @classmethod
-    async def _load_selected(cls, selected: SelectedMailbox,
-                             mbx: MailboxDataInterface[MessageT]) \
-            -> SelectedMailbox:
-        selected.uid_validity = mbx.uid_validity
-        selected.next_uid = mbx.next_uid
-        selected.set_messages([msg async for msg in mbx.messages()])
-        return selected
-
     async def _load_updates(self, selected: Optional[SelectedMailbox],
                             mbx: Optional[MailboxDataInterface[MessageT]]) \
             -> Optional[SelectedMailbox]:
@@ -61,7 +52,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
                 except MailboxNotFound:
                     selected.set_deleted()
                     return selected
-            return await self._load_selected(selected, mbx)
+            return await mbx.update_selected(selected)
         return selected
 
     @classmethod
@@ -155,7 +146,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         if not selected.readonly:
             await mbx.claim_recent(selected)
         snapshot = await mbx.snapshot()
-        return snapshot, await self._load_selected(selected, mbx)
+        return snapshot, await mbx.update_selected(selected)
 
     async def check_mailbox(self, selected: SelectedMailbox, *,
                             wait_on: Event = None,
@@ -166,7 +157,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         if wait_on is not None:
             either_event = wait_on.or_event(mbx.selected_set.updated)
             await either_event.wait()
-        return await self._load_selected(selected, mbx)
+        return await mbx.update_selected(selected)
 
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequence_set: SequenceSet,
@@ -183,7 +174,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
                 msg.update_flags(seen_set, FlagOp.ADD)
             await mbx.save_flags(msg for _, msg in ret)
             mbx.selected_set.updated.set()
-        return ret, await self._load_selected(selected, mbx)
+        return ret, await mbx.update_selected(selected)
 
     async def search_mailbox(self, selected: SelectedMailbox,
                              keys: FrozenSet[SearchKey]) \
@@ -197,7 +188,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         async for seq, msg in mbx.find(search.sequence_set, selected, req):
             if search.matches(seq, msg):
                 ret.append((seq, msg))
-        return ret, await self._load_selected(selected, mbx)
+        return ret, await mbx.update_selected(selected)
 
     async def expunge_mailbox(self, selected: SelectedMailbox,
                               uid_set: SequenceSet = None) -> SelectedMailbox:
@@ -212,7 +203,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
                 expunge_uids.append(msg.uid)
         await mbx.delete(expunge_uids)
         mbx.selected_set.updated.set()
-        return await self._load_selected(selected, mbx)
+        return await mbx.update_selected(selected)
 
     async def copy_messages(self, selected: SelectedMailbox,
                             sequence_set: SequenceSet,
@@ -234,7 +225,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
                 uids.append((source_uid, msg.uid))
         dest.selected_set.updated.set()
         return (CopyUid(dest.uid_validity, uids),
-                await self._load_selected(selected, mbx))
+                await mbx.update_selected(selected))
 
     async def update_flags(self, selected: SelectedMailbox,
                            sequence_set: SequenceSet,
@@ -253,4 +244,4 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
             messages.append((msg_seq, msg))
         await mbx.save_flags(msg for _, msg in messages)
         mbx.selected_set.updated.set()
-        return messages, await self._load_selected(selected, mbx)
+        return messages, await mbx.update_selected(selected)

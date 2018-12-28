@@ -126,8 +126,8 @@ class IMAPConnection:
     def _noop_print(cls, prefix: str, output: bytes) -> None:
         pass
 
-    async def _exec(self, future: Awaitable[_Ret]) -> _Ret:
-        return await subsystem.get().execute(future)
+    def _exec(self, future: Awaitable[_Ret]) -> Awaitable[_Ret]:
+        return subsystem.get().execute(future)
 
     async def readline(self) -> memoryview:
         buf = bytearray(await self.reader.readline())

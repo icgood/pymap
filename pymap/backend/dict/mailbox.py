@@ -1,6 +1,9 @@
 
+from bisect import bisect_left
 from collections import OrderedDict
-from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable
+from itertools import islice
+from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable, \
+    List, Set, AbstractSet
 
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
@@ -14,6 +17,60 @@ from pymap.selected import SelectedSet, SelectedMailbox
 from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
+
+
+class _ModSequenceMapping:
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._highest = 0
+        self._uids: Dict[int, int] = {}
+        self._updates: Dict[int, Set[int]] = {}
+        self._expunges: Dict[int, Set[int]] = {}
+        self._mod_seqs_order: List[int] = []
+
+    @property
+    def highest(self) -> int:
+        return self._highest
+
+    def _set(self, uids: Iterable[int], data: Dict[int, Set[int]]) -> None:
+        self._highest = mod_seq = self._highest + 1
+        self._mod_seqs_order.append(mod_seq)
+        new_uid_set = data.setdefault(mod_seq, set())
+        new_uid_set.update(uids)
+        for uid in uids:
+            prev_mod_seq = self._uids.get(uid, None)
+            self._uids[uid] = mod_seq
+            if prev_mod_seq is not None:
+                uid_set = self._updates[prev_mod_seq]
+                uid_set.discard(uid)
+                if not uid_set:
+                    del self._updates[prev_mod_seq]
+                    self._mod_seqs_order.remove(prev_mod_seq)
+
+    def update(self, uids: Iterable[int]) -> None:
+        return self._set(uids, self._updates)
+
+    def expunge(self, uids: Iterable[int]) -> None:
+        return self._set(uids, self._expunges)
+
+    def find_updated(self, mod_seq: int) \
+            -> Tuple[AbstractSet[int], AbstractSet[int]]:
+        updates_ret: Set[int] = set()
+        expunges_ret: Set[int] = set()
+        updates = self._updates
+        expunges = self._expunges
+        mod_seqs_order = self._mod_seqs_order
+        mod_seqs_len = len(mod_seqs_order)
+        idx = bisect_left(mod_seqs_order, mod_seq, 0, mod_seqs_len)
+        for newer_mod_seq in islice(mod_seqs_order, idx, mod_seqs_len):
+            updates_set = updates.get(newer_mod_seq)
+            expunges_set = expunges.get(newer_mod_seq)
+            if updates_set is not None:
+                updates_ret.update(updates_set)
+            if expunges_set is not None:
+                expunges_ret.update(expunges_set)
+        return updates_ret, expunges_ret
 
 
 class MailboxData(MailboxDataInterface[Message]):
@@ -32,6 +89,7 @@ class MailboxData(MailboxDataInterface[Message]):
     def _reset_messages(self) -> None:
         self._uid_validity = MailboxSnapshot.new_uid_validity()
         self._max_uid = 100
+        self._mod_sequences = _ModSequenceMapping()
         self._messages: Dict[int, Message] = OrderedDict()
 
     @property
@@ -62,12 +120,28 @@ class MailboxData(MailboxDataInterface[Message]):
         return Message.parse(0, append_msg.message, append_msg.flag_set,
                              append_msg.when, recent=True)
 
+    async def update_selected(self, selected: SelectedMailbox) \
+            -> SelectedMailbox:
+        selected.uid_validity = self.uid_validity
+        mod_sequence = selected.mod_sequence
+        selected.mod_sequence = self._mod_sequences.highest
+        if mod_sequence is None:
+            all_messages = list(self._messages.values())
+            selected.add_updates(all_messages, [])
+        else:
+            updated, expunged = self._mod_sequences.find_updated(mod_sequence)
+            updated_messages = [self._messages[uid] for uid in updated
+                                if uid in self._messages]
+            selected.add_updates(updated_messages, expunged)
+        return selected
+
     async def add(self, message: Message, recent: bool = False) -> Message:
         async with self.messages_lock.write_lock():
-            self._max_uid += 1
-            msg_copy = message.copy(self._max_uid)
+            self._max_uid = new_uid = self._max_uid + 1
+            msg_copy = message.copy(new_uid)
             msg_copy.recent = recent
-            self._messages[msg_copy.uid] = msg_copy
+            self._messages[new_uid] = msg_copy
+            self._mod_sequences.update([new_uid])
             return msg_copy
 
     async def get(self, uid: int, cached_msg: CachedMessage = None,
@@ -90,15 +164,20 @@ class MailboxData(MailboxDataInterface[Message]):
                     del self._messages[uid]
                 except KeyError:
                     pass
+        self._mod_sequences.expunge(uids)
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
+        uids: List[int] = []
         async for msg in self.messages():
             if msg.recent:
                 msg.recent = False
-                selected.session_flags.add_recent(msg.uid)
+                msg_uid = msg.uid
+                selected.session_flags.add_recent(msg_uid)
+                uids.append(msg_uid)
+        self._mod_sequences.update(uids)
 
     async def save_flags(self, messages: Iterable[Message]) -> None:
-        pass
+        self._mod_sequences.update(msg.uid for msg in messages)
 
     async def cleanup(self) -> None:
         pass

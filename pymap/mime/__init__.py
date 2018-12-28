@@ -60,15 +60,17 @@ class MessageContent:
 
         """
         lines = cls._find_lines(data)
-        return cls._parse(data, lines)
+        view = memoryview(data)
+        return cls._parse(data, view, lines)
 
     @classmethod
-    def _parse(cls, data: bytes, lines: _Lines) -> 'MessageContent':
+    def _parse(cls, data: bytes, view: memoryview,
+               lines: _Lines) -> 'MessageContent':
         header_lines, body_lines = cls._split_lines(data, lines)
-        header = MessageHeader._parse(data, header_lines)
+        header = MessageHeader._parse(data, view, header_lines)
         content_type = header.parsed.content_type
-        body = MessageBody._parse(data, body_lines, content_type)
-        raw = get_raw(data, header_lines, body_lines)
+        body = MessageBody._parse(data, view, body_lines, content_type)
+        raw = get_raw(view, header_lines, body_lines)
         num_lines = len(lines) - 1
         return cls(raw, num_lines, header, body)
 
@@ -127,10 +129,11 @@ class MessageHeader:
         self.parsed: Final = parsed
 
     @classmethod
-    def _parse(cls, data: bytes, lines: _Lines) -> 'MessageHeader':
+    def _parse(cls, data: bytes, view: memoryview,
+               lines: _Lines) -> 'MessageHeader':
         folds = cls._find_folds(data, lines)
-        folded, parsed = cls._parse_headers(data, folds)
-        raw = get_raw(data, lines)
+        folded, parsed = cls._parse_headers(data, view, folds)
+        raw = get_raw(view, lines)
         return cls(raw, len(lines), folded, parsed)
 
     @classmethod
@@ -149,11 +152,11 @@ class MessageHeader:
         return ret
 
     @classmethod
-    def _parse_headers(cls, data: bytes, folds: Sequence[_Lines]) \
+    def _parse_headers(cls, data: bytes, view: memoryview,
+                       folds: Sequence[_Lines]) \
             -> Tuple[_Folded, ParsedHeaders]:
-        headers: Dict[bytes, List[List[memoryview]]] = {}
+        headers: Dict[bytes, List[List[bytes]]] = {}
         folded: List[Tuple[bytes, memoryview]] = []
-        view = memoryview(data)
         for group in folds:
             start, end, _ = group[0]
             colon = data.find(b':', start, end)
@@ -161,8 +164,8 @@ class MessageHeader:
                 continue
             name = data[start:colon].strip().lower()
             values = headers.setdefault(name, [])
-            values.append([view[start:end] for start, end, _ in group])
-            folded.append((name, get_raw(data, group)))
+            values.append([data[start:end] for start, end, _ in group])
+            folded.append((name, get_raw(view, group)))
         return folded, ParsedHeaders(headers)
 
     @classmethod
@@ -214,7 +217,7 @@ class MessageBody(metaclass=ABCMeta):
         ...
 
     @classmethod
-    def _parse(cls, data: bytes, lines: _Lines,
+    def _parse(cls, data: bytes, view: memoryview, lines: _Lines,
                content_type: Optional[ContentTypeHeader]) -> 'MessageBody':
         if content_type is None:
             content_type = _default_type
@@ -223,10 +226,10 @@ class MessageBody(metaclass=ABCMeta):
             boundary = cls._get_boundary(content_type)
             if boundary:
                 return _MultipartBody._parse_body(
-                    data, lines, content_type, boundary)
+                    data, view, lines, content_type, boundary)
         elif maintype == 'message' and content_type.subtype == 'rfc822':
-            return _RFC822Body._parse_body(data, lines, content_type)
-        return _SinglepartBody._parse_body(data, lines, content_type)
+            return _RFC822Body._parse_body(data, view, lines, content_type)
+        return _SinglepartBody._parse_body(data, view, lines, content_type)
 
     @classmethod
     def _get_boundary(cls, content_type: ContentTypeHeader) -> Optional[bytes]:
@@ -262,22 +265,21 @@ class _MultipartBody(MessageBody):
         return self._nested
 
     @classmethod
-    def _parse_body(cls, data: bytes, lines: _Lines,
+    def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
                     content_type: ContentTypeHeader, boundary: bytes) \
             -> '_MultipartBody':
-        parts = cls._find_parts(data, lines, boundary)
+        parts = cls._find_parts(data, view, lines, boundary)
         nested: List[MessageContent] = []
         for part_lines in parts:
-            sub_content = MessageContent._parse(data, part_lines)
+            sub_content = MessageContent._parse(data, view, part_lines)
             nested.append(sub_content)
-        raw = get_raw(data, lines)
+        raw = get_raw(view, lines)
         return cls(raw, len(lines), content_type, nested)
 
     @classmethod
-    def _find_parts(cls, data: bytes, lines: _Lines, boundary: bytes) \
-            -> Sequence[_Lines]:
+    def _find_parts(cls, data: bytes, view: memoryview, lines: _Lines,
+                    boundary: bytes) -> Sequence[_Lines]:
         ret: List[List[_Line]] = []
-        view = memoryview(data)
         part_match = (b'--%s' % boundary, b'--%s' % boundary)
         stop_match = (b'--%s--' % boundary, b'--%s--' % boundary)
         for line in lines:
@@ -310,9 +312,9 @@ class _RFC822Body(MessageBody):
         return self._nested
 
     @classmethod
-    def _parse_body(cls, data: bytes, lines: _Lines,
+    def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
                     content_type: ContentTypeHeader) -> '_RFC822Body':
-        subpart = MessageContent._parse(data, lines)
+        subpart = MessageContent._parse(data, view, lines)
         return cls(subpart, content_type)
 
 
@@ -331,7 +333,7 @@ class _SinglepartBody(MessageBody):
         return []
 
     @classmethod
-    def _parse_body(cls, data: bytes, lines: _Lines,
+    def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
                     content_type: ContentTypeHeader) -> '_SinglepartBody':
-        raw = get_raw(data, lines)
+        raw = get_raw(view, lines)
         return cls(raw, len(lines), content_type)
