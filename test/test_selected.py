@@ -1,5 +1,6 @@
 
 import unittest
+from datetime import datetime
 
 from pymap.flags import FlagOp, PermanentFlags, SessionFlags
 from pymap.message import BaseMessage
@@ -26,7 +27,8 @@ class TestSelectedMailbox(unittest.TestCase):
     @classmethod
     def set_messages(cls, selected: SelectedMailbox,
                      expunged, messages) -> None:
-        updates = [BaseMessage(uid, flags) for uid, flags in messages]
+        updates = [BaseMessage(uid, flags, datetime.now())
+                   for uid, flags in messages]
         selected.add_updates(updates, expunged)
 
     @property

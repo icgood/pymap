@@ -3,7 +3,7 @@ import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from contextlib import closing
 from datetime import datetime, timezone
-from typing import Any, Mapping, Dict, TypeVar, Type
+from typing import Any, Mapping, Dict
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
@@ -18,8 +18,6 @@ from .mailbox import Message, MailboxData, MailboxSet
 from ..session import BaseSession
 
 __all__ = ['DictBackend', 'Config', 'Session']
-
-_SessionT = TypeVar('_SessionT', bound='Session')
 
 
 class DictBackend(IMAPServer, BackendInterface):
@@ -101,16 +99,15 @@ class Session(BaseSession[Message]):
         return self._mailbox_set
 
     @classmethod
-    async def login(cls: Type[_SessionT],
-                    credentials: AuthenticationCredentials,
-                    config: Config) -> _SessionT:
+    async def login(cls, credentials: AuthenticationCredentials,
+                    config: Config) -> 'Session':
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.
 
         """
         user = credentials.authcid
-        password = await cls.get_password(config, user)
+        password = cls._get_password(config, user)
         if not password or not credentials.check_secret(password):
             raise InvalidAuth()
         mailbox_set = config.set_cache.get(user)
@@ -122,18 +119,7 @@ class Session(BaseSession[Message]):
         return cls(config, mailbox_set)
 
     @classmethod
-    async def get_password(cls, config: Config, user: str) -> str:
-        """If the given user ID exists, return its expected password. Override
-        this method to implement custom login logic.
-
-        Args:
-            config: The dict config object.
-            user: The expected user ID.
-
-        Raises:
-            InvalidAuth: The user ID was not valid.
-
-        """
+    def _get_password(cls, config: Config, user: str) -> str:
         expected_user: str = config.demo_user
         expected_password: str = config.demo_password
         if user == expected_user:
@@ -174,4 +160,4 @@ class Session(BaseSession[Message]):
                 else:
                     msg_recent = False
                 msg = Message.parse(0, msg_data, msg_flags, msg_dt)
-            await mbx.add(msg, msg_recent)
+            await mbx.add(msg.append_msg, msg_recent)

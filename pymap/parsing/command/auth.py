@@ -9,7 +9,7 @@ from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
 from ...bytes import rev
-from ...message import AppendMessage
+from ...interfaces.message import AppendMessage
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',

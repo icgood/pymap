@@ -4,9 +4,9 @@ from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
     Iterable, AsyncIterable
 from typing_extensions import Protocol
 
-from pymap.interfaces.message import CachedMessage
+from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import AppendMessage, BaseMessage
+from pymap.message import BaseMessage
 from pymap.parsing.specials import SequenceSet, FetchRequirement
 from pymap.parsing.specials.flag import get_system_flags, Flag, Recent, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
@@ -69,12 +69,6 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @property
-    @abstractmethod
-    def next_uid(self) -> int:
-        """The predicted next message UID."""
-        ...
-
-    @property
     def permanent_flags(self) -> FrozenSet[Flag]:
         """The permanent flags allowed in the mailbox."""
         return get_system_flags() - {Recent}
@@ -91,13 +85,8 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    def parse_message(self, append_msg: AppendMessage) -> MessageT:
-        """Parse the raw message data into a loaded message object.
-
-        Args:
-            append_msg: A single message from the APPEND command.
-
-        """
+    async def get_next_uid(self) -> int:
+        """Return the predicted next message UID."""
         ...
 
     @abstractmethod
@@ -113,12 +102,13 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    async def add(self, message: MessageT, recent: bool = False) -> MessageT:
+    async def add(self, message: AppendMessage, recent: bool = False) \
+            -> MessageT:
         """Adds a new message to the end of the mailbox, returning a copy of
         message with its assigned UID.
 
         Args:
-            message: The loaded message object.
+            message: The new message data.
             recent: True if the message should be marked recent.
 
         """
@@ -237,17 +227,11 @@ class MailboxDataInterface(Protocol[MessageT]):
         return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
                                self.permanent_flags, self.session_flags,
                                exists, recent, unseen, first_unseen,
-                               self.next_uid)
+                               await self.get_next_uid())
 
 
 class MailboxSetInterface(Protocol[MailboxDataT_co]):
     """Manages the set of mailboxes available to the authenticated user."""
-
-    @property
-    @abstractmethod
-    def inbox(self) -> MailboxDataT_co:
-        """The INBOX mailbox, which must always exist."""
-        ...
 
     @property
     @abstractmethod

@@ -2,19 +2,20 @@
 
 import re
 from datetime import datetime
-from typing import Any, Tuple, Iterable, Mapping, FrozenSet, \
-    AbstractSet, Sequence, NamedTuple, TypeVar, Type
+from typing import Any, Tuple, Iterable, Mapping, FrozenSet, AbstractSet, \
+    Sequence, TypeVar, Type
 from typing_extensions import Final
 
 from .flags import FlagOp, SessionFlags
-from .interfaces.message import CachedMessage, MessageInterface, FlagsKey
+from .interfaces.message import AppendMessage, CachedMessage, \
+    MessageInterface, FlagsKey
 from .mime import MessageContent
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
 from .parsing.specials import Flag, ExtensionOptions
 
-__all__ = ['AppendMessage', 'BaseMessage', 'MessageT']
+__all__ = ['BaseMessage', 'MessageT']
 
 #: Type variable with an upper bound of :class:`BaseMessage`.
 MessageT = TypeVar('MessageT', bound='BaseMessage')
@@ -26,23 +27,6 @@ class _NoContent(ValueError):
 
     def __init__(self) -> None:
         super().__init__('Message content not available.')
-
-
-class AppendMessage(NamedTuple):
-    """A single message from the APPEND command.
-
-    Args:
-        message: The raw message bytes.
-        flag_set: The flags to assign to the message.
-        when: The internal timestamp to assign to the message.
-        options: The extension options in use for the message.
-
-    """
-
-    message: bytes
-    flag_set: FrozenSet[Flag]
-    when: datetime
-    options: ExtensionOptions
 
 
 class BaseMessage(MessageInterface, CachedMessage):
@@ -61,8 +45,8 @@ class BaseMessage(MessageInterface, CachedMessage):
     __slots__ = ['uid', 'internal_date', 'expunged', '_permanent_flags',
                  '_flags_key', '_content', '_kwargs']
 
-    def __init__(self, uid: int, permanent_flags: Iterable[Flag] = None,
-                 internal_date: datetime = None, expunged: bool = False,
+    def __init__(self, uid: int, permanent_flags: Iterable[Flag],
+                 internal_date: datetime, expunged: bool = False,
                  content: MessageContent = None, **kwargs: Any) -> None:
         super().__init__()
         self.uid: Final = uid
@@ -75,9 +59,8 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     @classmethod
     def parse(cls: Type[MessageT], uid: int, data: bytes,
-              permanent_flags: Iterable[Flag] = None,
-              internal_date: datetime = None, expunged: bool = False,
-              **kwargs: Any) -> MessageT:
+              permanent_flags: Iterable[Flag], internal_date: datetime,
+              expunged: bool = False, **kwargs: Any) -> MessageT:
         """Parse the given file object containing a MIME-encoded email message
         into a :class:`BaseLoadedMessage` object.
 
@@ -99,6 +82,12 @@ class BaseMessage(MessageInterface, CachedMessage):
         if self._content is None:
             raise _NoContent()
         return self._content
+
+    @property
+    def append_msg(self) -> AppendMessage:
+        data = self.content.raw.tobytes()
+        return AppendMessage(data, self._permanent_flags, self.internal_date,
+                             ExtensionOptions.empty())
 
     def copy(self: MessageT, new_uid: int) -> MessageT:
         cls = type(self)

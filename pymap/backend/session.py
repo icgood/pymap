@@ -10,11 +10,11 @@ from pymap.exceptions import MailboxNotFound, MailboxReadOnly
 from pymap.flags import FlagOp, SessionFlags, PermanentFlags
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import AppendMessage
 from pymap.parsing.specials import SequenceSet, SearchKey, \
     FetchAttribute, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Deleted, Seen
 from pymap.parsing.response.code import AppendUid, CopyUid
+from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import SessionInterface
 from pymap.search import SearchParams, SearchCriteriaSet
 from pymap.selected import SelectedMailbox
@@ -127,8 +127,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         dest_selected = self._find_selected(selected, mbx)
         uids: List[int] = []
         for append_msg in messages:
-            msg = mbx.parse_message(append_msg)
-            msg = await mbx.add(msg, recent=not dest_selected)
+            msg = await mbx.add(append_msg, recent=not dest_selected)
             if dest_selected:
                 dest_selected.session_flags.add_recent(msg.uid)
             uids.append(msg.uid)
@@ -219,7 +218,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         async for _, msg in mbx.find(sequence_set, selected, req):
             if not msg.expunged:
                 source_uid = msg.uid
-                msg = await dest.add(msg, recent=not dest_selected)
+                msg = await dest.add(msg.append_msg, recent=not dest_selected)
                 if dest_selected:
                     dest_selected.session_flags.add_recent(msg.uid)
                 uids.append((source_uid, msg.uid))

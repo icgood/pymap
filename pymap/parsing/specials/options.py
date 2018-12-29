@@ -118,6 +118,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
 
     @classmethod
     def empty(cls) -> 'ExtensionOptions':
+        """Return an empty set of command options."""
         if cls._empty is None:
             cls._empty = ExtensionOptions({})
         return cls._empty
