@@ -8,9 +8,8 @@ from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable, \
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict
-from pymap.interfaces.message import CachedMessage
+from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import AppendMessage
 from pymap.parsing.specials import FetchRequirement
 from pymap.selected import SelectedSet, SelectedMailbox
 
@@ -105,10 +104,6 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._uid_validity
 
     @property
-    def next_uid(self) -> int:
-        return self._max_uid + 1
-
-    @property
     def messages_lock(self) -> ReadWriteLock:
         return self._messages_lock
 
@@ -116,9 +111,8 @@ class MailboxData(MailboxDataInterface[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    def parse_message(self, append_msg: AppendMessage) -> Message:
-        return Message.parse(0, append_msg.message, append_msg.flag_set,
-                             append_msg.when, recent=True)
+    async def get_next_uid(self) -> int:
+        return self._max_uid + 1
 
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
@@ -135,14 +129,16 @@ class MailboxData(MailboxDataInterface[Message]):
             selected.add_updates(updated_messages, expunged)
         return selected
 
-    async def add(self, message: Message, recent: bool = False) -> Message:
+    async def add(self, append_msg: AppendMessage, recent: bool = False) \
+            -> Message:
         async with self.messages_lock.write_lock():
             self._max_uid = new_uid = self._max_uid + 1
-            msg_copy = message.copy(new_uid)
-            msg_copy.recent = recent
-            self._messages[new_uid] = msg_copy
+            message = Message.parse(new_uid, append_msg.message,
+                                    append_msg.flag_set, append_msg.when,
+                                    recent=recent)
+            self._messages[new_uid] = message
             self._mod_sequences.update([new_uid])
-            return msg_copy
+            return message
 
     async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
@@ -212,10 +208,6 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         self._subscribed: Dict[str, bool] = {}
 
     @property
-    def inbox(self) -> MailboxData:
-        return self._inbox
-
-    @property
     def delimiter(self) -> str:
         return '.'
 
@@ -235,7 +227,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
     async def get_mailbox(self, name: str,
                           try_create: bool = False) -> 'MailboxData':
         if name.upper() == 'INBOX':
-            return self.inbox
+            return self._inbox
         async with self._set_lock.read_lock():
             if name not in self._set:
                 raise MailboxNotFound(name, try_create)
@@ -265,10 +257,10 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         if before == 'INBOX':
             async with self._set_lock.write_lock():
                 self._set[after] = ret = MailboxData(after)
-                ret._uid_validity = self.inbox._uid_validity
-                ret._max_uid = self.inbox._max_uid
-                ret._messages = self.inbox._messages
-                self.inbox._reset_messages()
+                ret._uid_validity = self._inbox._uid_validity
+                ret._max_uid = self._inbox._max_uid
+                ret._messages = self._inbox._messages
+                self._inbox._reset_messages()
                 return ret
         else:
             async with self._set_lock.write_lock():

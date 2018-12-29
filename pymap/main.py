@@ -6,7 +6,7 @@ import traceback
 from argparse import ArgumentParser, Namespace, ArgumentDefaultsHelpFormatter
 from typing import Mapping, Type
 
-from pkg_resources import iter_entry_points
+from pkg_resources import iter_entry_points, DistributionNotFound
 
 from .core import __version__
 from .interfaces.backend import BackendInterface
@@ -18,6 +18,8 @@ def _load_backends(parser: ArgumentParser) \
     for entry_point in iter_entry_points('pymap.backend'):
         try:
             cls = entry_point.load()
+        except DistributionNotFound:
+            pass  # optional dependencies not installed
         except ImportError:
             traceback.print_exc()
             parser.exit(1, 'Error importing registered backend: %s\n'

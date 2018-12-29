@@ -16,11 +16,13 @@ class Mailbox(Parseable[str]):
     """
 
     def __init__(self, mailbox: str) -> None:
-        if mailbox.upper() == 'INBOX':
-            mailbox = 'INBOX'
         super().__init__()
-        self.mailbox = mailbox
-        self._raw: Optional[bytes] = None
+        if mailbox.upper() == 'INBOX':
+            self.mailbox = 'INBOX'
+            self._raw: Optional[bytes] = b'INBOX'
+        else:
+            self.mailbox = mailbox
+            self._raw = None
 
     @property
     def value(self) -> str:

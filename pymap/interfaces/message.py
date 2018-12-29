@@ -1,15 +1,16 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import TypeVar, Optional, Iterable, Tuple, Sequence, \
+from typing import TypeVar, Iterable, Tuple, NamedTuple, Sequence, \
     FrozenSet, AbstractSet
 from typing_extensions import Protocol
 
 from ..flags import FlagOp, SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
-from ..parsing.specials import Flag
+from ..parsing.specials import Flag, ExtensionOptions
 
-__all__ = ['CachedMessage', 'MessageInterface', 'MessageT', 'FlagsKey']
+__all__ = ['AppendMessage', 'CachedMessage', 'MessageInterface', 'MessageT',
+           'FlagsKey']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
@@ -17,6 +18,23 @@ MessageT = TypeVar('MessageT', bound='MessageInterface')
 #: Type alias for the value used as a key in set comparisons detecting flag
 #: updates.
 FlagsKey = Tuple[int, FrozenSet[Flag]]
+
+
+class AppendMessage(NamedTuple):
+    """A single message from the APPEND command.
+
+    Args:
+        message: The raw message bytes.
+        flag_set: The flags to assign to the message.
+        when: The internal timestamp to assign to the message.
+        options: The extension options in use for the message.
+
+    """
+
+    message: bytes
+    flag_set: FrozenSet[Flag]
+    when: datetime
+    options: ExtensionOptions
 
 
 class CachedMessage(Protocol):
@@ -38,7 +56,7 @@ class CachedMessage(Protocol):
 
     @property
     @abstractmethod
-    def internal_date(self) -> Optional[datetime]:
+    def internal_date(self) -> datetime:
         """The message's internal date."""
         ...
 
@@ -83,8 +101,14 @@ class MessageInterface(Protocol):
 
     @property
     @abstractmethod
-    def internal_date(self) -> Optional[datetime]:
+    def internal_date(self) -> datetime:
         """The message's internal date."""
+        ...
+
+    @property
+    @abstractmethod
+    def append_msg(self) -> AppendMessage:
+        """A copy of the message for appending to a mailbox."""
         ...
 
     @abstractmethod

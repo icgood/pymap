@@ -5,12 +5,11 @@ from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
 
-from .message import MessageInterface
+from .message import AppendMessage, MessageInterface
 from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import ConfigT_contra
 from ..flags import FlagOp
-from ..message import AppendMessage
 from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox

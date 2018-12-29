@@ -11,8 +11,7 @@ from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
-from pymap.interfaces.message import CachedMessage
-from pymap.message import AppendMessage
+from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.parsing.specials import Flag, FetchRequirement
 from pymap.selected import SelectedSet, SelectedMailbox
 
@@ -142,10 +141,6 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._uid_validity
 
     @property
-    def next_uid(self) -> int:
-        return self._next_uid
-
-    @property
     def maildir_flags(self) -> MaildirFlags:
         if self._flags is not None:
             return self._flags
@@ -164,10 +159,8 @@ class MailboxData(MailboxDataInterface[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    def parse_message(self, append_msg: AppendMessage) -> Message:
-        return Message.parse(0, append_msg.message, append_msg.flag_set,
-                             append_msg.when, recent=True,
-                             maildir_flags=self.maildir_flags)
+    async def get_next_uid(self) -> int:
+        return self._next_uid
 
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
@@ -176,7 +169,11 @@ class MailboxData(MailboxDataInterface[Message]):
         selected.set_messages(all_messages)
         return selected
 
-    async def add(self, message: Message, recent: bool = False) -> 'Message':
+    async def add(self, append_msg: AppendMessage, recent: bool = False) \
+            -> Message:
+        message = Message.parse(0, append_msg.message, append_msg.flag_set,
+                                append_msg.when, recent=True,
+                                maildir_flags=self.maildir_flags)
         async with self.messages_lock.write_lock():
             maildir_msg = message.maildir_msg
             if recent:
@@ -347,19 +344,15 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         self._cache: Dict[str, 'MailboxData'] = {}
 
     @property
-    def inbox(self) -> MailboxData:
-        return self._inbox
-
-    @property
     def delimiter(self) -> str:
         return '/'
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
-        async with Subscriptions.with_write(self.inbox._path) as subs:
+        async with Subscriptions.with_write(self._inbox._path) as subs:
             subs.set(name, subscribed)
 
     async def list_subscribed(self) -> Sequence[str]:
-        async with Subscriptions.with_read(self.inbox._path) as subs:
+        async with Subscriptions.with_read(self._inbox._path) as subs:
             subscribed = frozenset(subs.subscribed)
         return [name for name in self._layout.list_folders(self.delimiter)
                 if name in subscribed]
@@ -370,7 +363,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
     async def get_mailbox(self, name: str,
                           try_create: bool = False) -> 'MailboxData':
         if name == 'INBOX':
-            return await self.inbox.reset()
+            return await self._inbox.reset()
         try:
             maildir = self._layout.get_folder(name, self.delimiter)
         except FileNotFoundError:
@@ -414,10 +407,10 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             async with after_mbx.messages_lock.write_lock():
                 for maildir_msg in before_msgs:
                     after_mbx._maildir.add(maildir_msg)
-            async with self.inbox.messages_lock.write_lock():
-                self.inbox._maildir.clear()
-            async with UidList.write_lock(self.inbox._path):
-                UidList.delete(self.inbox._path)
+            async with self._inbox.messages_lock.write_lock():
+                self._inbox._maildir.clear()
+            async with UidList.write_lock(self._inbox._path):
+                UidList.delete(self._inbox._path)
         else:
             maildir = self._layout.rename_folder(before, after, self.delimiter)
             after_path = self._layout.get_path(after, self.delimiter)
