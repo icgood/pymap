@@ -129,7 +129,7 @@ the entry point registered by the backend.</p>
 <dl class="attribute">
 <dt id="pymap.backend.dict.Config.demo_user">
 <code class="descname">demo_user</code><a class="headerlink" href="#pymap.backend.dict.Config.demo_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by the default <a class="reference internal" href="#pymap.backend.dict.Session.get_password" title="pymap.backend.dict.Session.get_password"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_password()</span></code></a> implementation
+<dd><p>Used by the default <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_password()</span></code> implementation
 to retrieve the <code class="docutils literal notranslate"><span class="pre">--demo-user</span></code> command-line argument, which defaults
 to <code class="docutils literal notranslate"><span class="pre">demouser</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -145,7 +145,7 @@ to <code class="docutils literal notranslate"><span class="pre">demouser</span><
 <dl class="attribute">
 <dt id="pymap.backend.dict.Config.demo_password">
 <code class="descname">demo_password</code><a class="headerlink" href="#pymap.backend.dict.Config.demo_password" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by the default <a class="reference internal" href="#pymap.backend.dict.Session.get_password" title="pymap.backend.dict.Session.get_password"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_password()</span></code></a> implementation
+<dd><p>Used by the default <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_password()</span></code> implementation
 to retrieve the <code class="docutils literal notranslate"><span class="pre">--demo-password</span></code> command-line argument, which
 defaults to <code class="docutils literal notranslate"><span class="pre">demopass</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -189,31 +189,6 @@ constructor. Sub-classes should override this method as needed.</p>
 <dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
 <p>The session implementation for the dict backend.</p>
 <dl class="classmethod">
-<dt id="pymap.backend.dict.Session.get_password">
-<em class="property">classmethod </em><code class="descname">get_password</code><span class="sig-paren">(</span><em>config</em>, <em>user</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.Session.get_password" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the given user ID exists, return its expected password. Override
-this method to implement custom login logic.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>config</strong> (<a class="reference internal" href="#pymap.backend.dict.Config" title="pymap.backend.dict.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – The dict config object.</li>
-<li><strong>user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The expected user ID.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InvalidAuth</span></code> – The user ID was not valid.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
 <dt id="pymap.backend.dict.Session.login">
 <em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.Session.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the given credentials for a valid login and returns a new
@@ -223,7 +198,7 @@ sessions, but only for the lifetime of the process.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~_SessionT</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.dict.Session" title="pymap.backend.dict.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a></td>
 </tr>
 </tbody>
 </table>
