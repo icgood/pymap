@@ -10,6 +10,7 @@ from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren
+from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.parsing.specials import Flag, FetchRequirement
 from pymap.selected import SelectedSet, SelectedMailbox
@@ -85,7 +86,7 @@ class Message(_Message):
 
     @property
     def maildir_msg(self) -> MaildirMessage:
-        flag_str = self.maildir_flags.to_maildir(self.get_flags())
+        flag_str = self.maildir_flags.to_maildir(self.permanent_flags)
         msg_bytes = self.get_body(binary=True)
         maildir_msg = MaildirMessage(msg_bytes)
         maildir_msg.set_flags(flag_str)
@@ -198,7 +199,7 @@ class MailboxData(MailboxDataInterface[Message]):
                 key = uidl.get(uid).key
             except KeyError:
                 if cached_msg is not None:
-                    return Message(cached_msg.uid, cached_msg.get_flags(),
+                    return Message(cached_msg.uid, cached_msg.permanent_flags,
                                    cached_msg.internal_date, expunged=True)
                 else:
                     return None
@@ -211,7 +212,7 @@ class MailboxData(MailboxDataInterface[Message]):
                     maildir_msg = self._maildir.get_message(key)
             except (KeyError, FileNotFoundError):
                 if cached_msg is not None:
-                    return Message(cached_msg.uid, cached_msg.get_flags(),
+                    return Message(cached_msg.uid, cached_msg.permanent_flags,
                                    cached_msg.internal_date, expunged=True)
                 else:
                     return None
@@ -236,21 +237,23 @@ class MailboxData(MailboxDataInterface[Message]):
                 if rec.key in keys:
                     selected.session_flags.add_recent(rec.uid)
 
-    async def save_flags(self, messages: Iterable[Message]) -> None:
+    async def update_flags(self, messages: Iterable[Message],
+                           flag_set: FrozenSet[Flag], mode: FlagOp) -> None:
         msgs_map = {msg.uid: msg for msg in messages}
         async with UidList.with_read(self._path) as uidl:
             records = uidl.get_all(msgs_map.keys())
         async with self.messages_lock.write_lock():
             for uid, rec in records.items():
                 key = rec.key
-                message = msgs_map[uid]
-                flag_str = self.maildir_flags.to_maildir(message.get_flags())
+                msg = msgs_map[uid]
+                msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
+                flag_str = self.maildir_flags.to_maildir(msg.permanent_flags)
                 try:
                     maildir_msg = self._maildir.get_message_metadata(key)
                 except (KeyError, FileNotFoundError):
                     continue
                 maildir_msg.set_flags(flag_str)
-                maildir_msg.set_subdir('new' if message.recent else 'cur')
+                maildir_msg.set_subdir('new' if msg.recent else 'cur')
                 try:
                     self._maildir.update_metadata(key, maildir_msg)
                 except (KeyError, FileNotFoundError):

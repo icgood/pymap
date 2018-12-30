@@ -65,7 +65,7 @@ class SearchKey(Parseable[bytes]):
         elif key_name in (b'SENTBEFORE', b'SENTON', b'SENTSINCE', b'BCC',
                           b'CC', b'FROM', b'SUBJECT', b'TO', b'HEADER'):
             return FetchRequirement.HEADERS
-        elif key_name in (b'BODY', b'TEXT'):
+        elif key_name in (b'BODY', b'TEXT', b'LARGER', b'SMALLER'):
             return FetchRequirement.BODY
         else:
             return FetchRequirement.METADATA

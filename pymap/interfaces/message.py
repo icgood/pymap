@@ -1,11 +1,10 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import TypeVar, Iterable, Tuple, NamedTuple, Sequence, \
-    FrozenSet, AbstractSet
+from typing import TypeVar, Iterable, Tuple, NamedTuple, Sequence, FrozenSet
 from typing_extensions import Protocol
 
-from ..flags import FlagOp, SessionFlags
+from ..flags import SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag, ExtensionOptions
 
@@ -60,15 +59,10 @@ class CachedMessage(Protocol):
         """The message's internal date."""
         ...
 
+    @property
     @abstractmethod
-    def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
-        """Get the full set of permanent and session flags for the message. If
-        ``session_flags`` is not given, only permanent flags are returned.
-
-        Args:
-            session_flags: The current session flags.
-
-        """
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags for the message."""
         ...
 
     @property
@@ -76,6 +70,16 @@ class CachedMessage(Protocol):
     def flags_key(self) -> FlagsKey:
         """Hashable value that represents the current flags of this
         message, used for detecting mailbox updates.
+
+        """
+        ...
+
+    @abstractmethod
+    def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
+        """Get the full set of permanent and session flags for the message.
+
+        Args:
+            session_flags: The current session flags.
 
         """
         ...
@@ -101,6 +105,12 @@ class MessageInterface(Protocol):
 
     @property
     @abstractmethod
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags for the message."""
+        ...
+
+    @property
+    @abstractmethod
     def internal_date(self) -> datetime:
         """The message's internal date."""
         ...
@@ -122,23 +132,11 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
+    def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message.
 
         Args:
             session_flags: The current session flags.
-
-        """
-        ...
-
-    @abstractmethod
-    def update_flags(self, flag_set: AbstractSet[Flag],
-                     flag_op: FlagOp = FlagOp.REPLACE) -> None:
-        """Update the permanent flags for the message.
-
-        Args:
-            flag_set: The set of flags for the update operation.
-            flag_op: The mode to change the flags.
 
         """
         ...

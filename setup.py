@@ -27,7 +27,7 @@ with open('README.md', 'r') as fh:
 
 
 setup(name='pymap',
-      version='0.5.2',
+      version='0.6.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -38,10 +38,12 @@ setup(name='pymap',
       packages=find_packages(),
       install_requires=['pysasl', 'typing-extensions'],
       tests_require=['pytest', 'pytest-asyncio'],
+      extras_require={'redis': ['aioredis']},
       entry_points={'console_scripts': ['pymap = pymap.main:main'],
                     'pymap.backend': [
                         'dict = pymap.backend.dict:DictBackend',
-                        'maildir = pymap.backend.maildir:MaildirBackend']},
+                        'maildir = pymap.backend.maildir:MaildirBackend',
+                        'redis = pymap.backend.redis:RedisBackend [redis]']},
       package_data={'pymap.backend.dict': ['demo/']},
       classifiers=['Development Status :: 3 - Alpha',
                    'Topic :: Communications :: Email :: Post-Office',

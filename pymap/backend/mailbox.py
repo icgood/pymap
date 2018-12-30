@@ -4,6 +4,7 @@ from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
     Iterable, AsyncIterable
 from typing_extensions import Protocol
 
+from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage
@@ -154,12 +155,14 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    async def save_flags(self, messages: Iterable[MessageT]) -> None:
-        """Save the permanent flags currently returned by each message's
-        :attr:`~pymap.interfaces.message.Message.get_flags` method.
+    async def update_flags(self, messages: Sequence[MessageT],
+                           flag_set: FrozenSet[Flag], mode: FlagOp) -> None:
+        """Update the permanent flags of each messages.
 
         Args:
             messages: The message objects.
+            flag_set: The set of flags for the update operation.
+            flag_op: The mode to change the flags.
 
         """
         ...
@@ -221,7 +224,7 @@ class MailboxDataInterface(Protocol[MessageT]):
             exists += 1
             if msg.recent:
                 recent += 1
-            if Seen not in msg.get_flags():
+            if Seen not in msg.permanent_flags:
                 unseen += 1
                 if first_unseen is None:
                     first_unseen = exists

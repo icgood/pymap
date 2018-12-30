@@ -169,9 +169,8 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
                in mbx.find(sequence_set, selected, req)]
         if not selected.readonly and any(attr.set_seen for attr in attributes):
             seen_set = frozenset([Seen])
-            for _, msg in ret:
-                msg.update_flags(seen_set, FlagOp.ADD)
-            await mbx.save_flags(msg for _, msg in ret)
+            await mbx.update_flags([msg for _, msg in ret],
+                                   seen_set, FlagOp.ADD)
             mbx.selected_set.updated.set()
         return ret, await mbx.update_selected(selected)
 
@@ -235,9 +234,9 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         messages: List[Tuple[int, MessageT]] = []
         async for msg_seq, msg in mbx.find(sequence_set, selected):
             if not msg.expunged:
-                msg.update_flags(permanent_flags, mode)
                 selected.session_flags.update(msg.uid, flag_set, mode)
             messages.append((msg_seq, msg))
-        await mbx.save_flags(msg for _, msg in messages)
+        await mbx.update_flags([msg for _, msg in messages],
+                               permanent_flags, mode)
         mbx.selected_set.updated.set()
         return messages, await mbx.update_selected(selected)

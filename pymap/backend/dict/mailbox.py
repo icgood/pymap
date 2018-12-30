@@ -3,14 +3,15 @@ from bisect import bisect_left
 from collections import OrderedDict
 from itertools import islice
 from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable, \
-    List, Set, AbstractSet
+    List, Set, AbstractSet, FrozenSet
 
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
-from pymap.parsing.specials import FetchRequirement
+from pymap.parsing.specials import FetchRequirement, Flag
 from pymap.selected import SelectedSet, SelectedMailbox
 
 from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
@@ -148,7 +149,7 @@ class MailboxData(MailboxDataInterface[Message]):
         async with self.messages_lock.read_lock():
             ret = self._messages.get(uid)
             if ret is None and cached_msg is not None:
-                return Message(cached_msg.uid, cached_msg.get_flags(),
+                return Message(cached_msg.uid, cached_msg.permanent_flags,
                                cached_msg.internal_date, expunged=True)
             else:
                 return ret
@@ -172,8 +173,11 @@ class MailboxData(MailboxDataInterface[Message]):
                 uids.append(msg_uid)
         self._mod_sequences.update(uids)
 
-    async def save_flags(self, messages: Iterable[Message]) -> None:
+    async def update_flags(self, messages: Sequence[Message],
+                           flag_set: FrozenSet[Flag], mode: FlagOp) -> None:
         self._mod_sequences.update(msg.uid for msg in messages)
+        for msg in messages:
+            msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
 
     async def cleanup(self) -> None:
         pass

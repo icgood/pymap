@@ -36,7 +36,7 @@ class SearchParams:
         self.selected: Final = selected
         self.disabled: Final = frozenset(disabled or [])
         self.max_seq: Final = selected.messages.exists
-        self.max_uid: Final = selected.messages.next_uid - 1
+        self.max_uid: Final = selected.messages.max_uid
         self.session_flags: Final = selected.session_flags
 
 

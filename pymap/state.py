@@ -150,7 +150,7 @@ class ConnectionState:
         resp.add_untagged(ExistsResponse(messages.exists))
         resp.add_untagged(RecentResponse(num_recent))
         resp.add_untagged_ok(b'Predicted next UID.',
-                             UidNext(messages.next_uid))
+                             UidNext(mailbox.next_uid))
         resp.add_untagged_ok(b'UIDs valid.',
                              UidValidity(updates.uid_validity))
         if mailbox.first_unseen:
