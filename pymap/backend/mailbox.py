@@ -8,7 +8,8 @@ from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage
 from pymap.parsing.specials import SequenceSet, FetchRequirement
-from pymap.parsing.specials.flag import get_system_flags, Flag, Recent, Seen
+from pymap.parsing.specials.flag import get_system_flags, Flag, \
+    Deleted, Recent, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 
 __all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'Message',
@@ -175,21 +176,8 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    def uids(self) -> AsyncIterable[int]:
-        """Return all of the active message UIDs in the mailbox."""
-        ...
-
-    @abstractmethod
     def messages(self) -> AsyncIterable[MessageT]:
         """Return all of the active messages in the mailbox."""
-        ...
-
-    @abstractmethod
-    def items(self) -> AsyncIterable[Tuple[int, MessageT]]:
-        """Return all of the active message UID and message pairs in the
-        mailbox.
-
-        """
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox,
@@ -209,6 +197,19 @@ class MailboxDataInterface(Protocol[MessageT]):
             msg = await self.get(cached_msg.uid, cached_msg, requirement)
             if msg is not None:
                 yield (seq, msg)
+
+    async def find_deleted(self, seq_set: SequenceSet,
+                           selected: SelectedMailbox) -> Sequence[int]:
+        """Return all the active message UIDs that have the ``\\Deleted`` flag.
+
+        Args:
+            seq_set: The sequence set of the possible messages.
+            selected: The selected mailbox session.
+
+        """
+        session_flags = selected.session_flags
+        return [msg.uid async for _, msg in self.find(seq_set, selected)
+                if Deleted in msg.get_flags(session_flags)]
 
     async def snapshot(self) -> MailboxSnapshot:
         """Returns a snapshot of the current state of the mailbox."""

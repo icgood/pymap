@@ -1,6 +1,6 @@
 
 from bisect import bisect_right
-from itertools import chain, groupby
+from itertools import chain, groupby, islice
 from typing import Any, Optional, Tuple, Dict, Set, MutableSet, AbstractSet, \
     FrozenSet, Iterable, List, Sequence, SupportsBytes
 from weakref import WeakSet
@@ -17,7 +17,7 @@ from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
 
-__all__ = ['SelectedSet', 'SelectedMailbox']
+__all__ = ['SelectedSet', 'SynchronizedMessages', 'SelectedMailbox']
 
 _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
@@ -116,14 +116,16 @@ class SynchronizedMessages:
         except IndexError:
             return 1
 
-    def _update(self, messages: Sequence[CachedMessage]) -> None:
+    def _update(self, messages: Iterable[CachedMessage]) -> None:
+        lowest_idx: Optional[int] = None
         for msg in messages:
             msg_uid = msg.uid
             if msg_uid not in self._uids:
                 self._uids.add(msg_uid)
                 idx = bisect_right(self._sorted, msg_uid)
+                if lowest_idx is None or lowest_idx > idx:
+                    lowest_idx = idx
                 self._sorted.insert(idx, msg_uid)
-                self._seqs_cache[msg_uid] = idx + 1
             self._cache[msg_uid] = msg
             new_flags_key = msg.flags_key
             old_flags_key = self._flags_key_map.get(msg_uid)
@@ -131,28 +133,32 @@ class SynchronizedMessages:
                 self._flags_key_set.discard(old_flags_key)
             self._flags_key_map[msg_uid] = new_flags_key
             self._flags_key_set.add(new_flags_key)
+        if lowest_idx is not None:
+            needs_reset = islice(self._sorted, lowest_idx, len(self._sorted))
+            for seq, uid in enumerate(needs_reset, lowest_idx + 1):
+                self._seqs_cache[uid] = seq
 
     def _remove(self, uids: Iterable[int], pending: bool) -> None:
         if pending:
             self._pending_remove.update(uids)
         else:
-            lowest_uid: Optional[int] = None
+            any_removed = False
             for msg_uid in chain(uids, self._pending_remove):
                 try:
                     self._uids.remove(msg_uid)
                 except KeyError:
                     pass
                 else:
-                    if lowest_uid is None or lowest_uid > msg_uid:
-                        lowest_uid = msg_uid
                     flags_key = self._flags_key_map[msg_uid]
                     self._flags_key_set.remove(flags_key)
                     del self._flags_key_map[msg_uid]
                     del self._cache[msg_uid]
+                    any_removed = True
             self._pending_remove.clear()
-            self._sorted = sorted_uids = sorted(self._uids)
-            self._seqs_cache = {uid: seq for seq, uid in
-                                enumerate(sorted_uids, 1)}
+            if any_removed:
+                self._sorted = sorted_uids = sorted(self._uids)
+                self._seqs_cache = {uid: seq for seq, uid in
+                                    enumerate(sorted_uids, 1)}
 
     def get(self, uid: int) -> Optional[CachedMessage]:
         """Return the given cached message.
@@ -265,7 +271,7 @@ class SelectedMailbox:
     def hide_expunged(self, hide_expunged: bool) -> None:
         self._hide_expunged = hide_expunged
 
-    def add_updates(self, messages: Sequence[CachedMessage],
+    def add_updates(self, messages: Iterable[CachedMessage],
                     expunged: Iterable[int]) -> None:
         """Update the messages in the selected mailboxes. The ``messages``
         should include non-expunged messages in the mailbox that should be

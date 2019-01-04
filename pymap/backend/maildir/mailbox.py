@@ -4,8 +4,7 @@ import os
 import os.path
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage  # type: ignore
-from typing import Tuple, Sequence, Dict, Optional, FrozenSet, \
-    Iterable, AsyncIterable
+from typing import Sequence, Dict, Optional, FrozenSet, Iterable, AsyncIterable
 
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
@@ -271,15 +270,6 @@ class MailboxData(MailboxDataInterface[Message]):
                     new_rec = Record(rec.uid, rec.fields, filename)
                     uidl.set(new_rec)
 
-    async def uids(self) -> AsyncIterable[int]:
-        async with UidList.with_read(self._path) as uidl:
-            uids = {rec.uid: rec.key for rec in uidl.records}
-        async with self.messages_lock.read_lock():
-            keys = frozenset(self._maildir.keys())
-        for uid, key in uids.items():
-            if key in keys:
-                yield uid
-
     async def messages(self) -> AsyncIterable[Message]:
         async with UidList.with_read(self._path) as uidl:
             uids = {rec.uid: rec.key for rec in uidl.records}
@@ -291,19 +281,6 @@ class MailboxData(MailboxDataInterface[Message]):
                     pass
                 else:
                     yield Message.from_maildir(
-                        uid, maildir_msg, self.maildir_flags, True)
-
-    async def items(self) -> AsyncIterable[Tuple[int, Message]]:
-        async with UidList.with_read(self._path) as uidl:
-            uids = {rec.uid: rec.key for rec in uidl.records}
-        async with self.messages_lock.read_lock():
-            for uid, key in uids.items():
-                try:
-                    maildir_msg = self._maildir.get_message_metadata(key)
-                except (KeyError, FileNotFoundError):
-                    pass
-                else:
-                    yield uid, Message.from_maildir(
                         uid, maildir_msg, self.maildir_flags, True)
 
     async def reset(self) -> 'MailboxData':

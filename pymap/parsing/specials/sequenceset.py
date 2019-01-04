@@ -57,6 +57,20 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         """The sequence set data."""
         return self.sequences
 
+    @property
+    def is_all(self) -> bool:
+        """True if the sequence set starts at ``1`` and ends at the maximum
+        value.
+
+        This may be used to optimize cases of checking for a value in the set,
+        avoiding the need to provide ``max_value`` in :meth:`.flatten` or
+        :meth:`.iter`.
+
+        """
+        first = self.sequences[0]
+        return isinstance(first, tuple) \
+            and first[0] == 1 and isinstance(first[1], MaxValue)
+
     @classmethod
     def _get_range(cls, elem: _SeqElem, max_value: int) -> Iterable[int]:
         if isinstance(elem, int):

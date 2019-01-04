@@ -12,7 +12,7 @@ from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.parsing.specials import SequenceSet, SearchKey, \
     FetchAttribute, FetchRequirement
-from pymap.parsing.specials.flag import Flag, Deleted, Seen
+from pymap.parsing.specials.flag import Flag, Seen
 from pymap.parsing.response.code import AppendUid, CopyUid
 from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import SessionInterface
@@ -196,10 +196,7 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
         mbx = await self.mailbox_set.get_mailbox(selected.name)
         if not uid_set:
             uid_set = SequenceSet.all(uid=True)
-        expunge_uids: List[int] = []
-        async for _, msg in mbx.find(uid_set, selected):
-            if not msg.expunged and Deleted in msg.get_flags():
-                expunge_uids.append(msg.uid)
+        expunge_uids = await mbx.find_deleted(uid_set, selected)
         await mbx.delete(expunge_uids)
         mbx.selected_set.updated.set()
         return await mbx.update_selected(selected)

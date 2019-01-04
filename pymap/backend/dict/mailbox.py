@@ -178,20 +178,10 @@ class MailboxData(MailboxDataInterface[Message]):
     async def cleanup(self) -> None:
         pass
 
-    async def uids(self) -> AsyncIterable[int]:
-        async with self.messages_lock.read_lock():
-            for key in self._messages.keys():
-                yield key
-
     async def messages(self) -> AsyncIterable[Message]:
         async with self.messages_lock.read_lock():
             for msg in self._messages.values():
                 yield msg
-
-    async def items(self) -> AsyncIterable[Tuple[int, Message]]:
-        async with self.messages_lock.read_lock():
-            for key, msg in self._messages.items():
-                yield (key, msg)
 
 
 class MailboxSet(MailboxSetInterface[MailboxData]):
