@@ -2647,6 +2647,24 @@ IMAP.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.parsing.specials.sequenceset.SequenceSet.is_all">
+<code class="descname">is_all</code><a class="headerlink" href="#pymap.parsing.specials.sequenceset.SequenceSet.is_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the sequence set starts at <code class="docutils literal notranslate"><span class="pre">1</span></code> and ends at the maximum
+value.</p>
+<p>This may be used to optimize cases of checking for a value in the set,
+avoiding the need to provide <code class="docutils literal notranslate"><span class="pre">max_value</span></code> in <a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.flatten" title="pymap.parsing.specials.sequenceset.SequenceSet.flatten"><code class="xref py py-meth docutils literal notranslate"><span class="pre">flatten()</span></code></a> or
+<a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.iter" title="pymap.parsing.specials.sequenceset.SequenceSet.iter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">iter()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.parsing.specials.sequenceset.SequenceSet.flatten">
 <code class="descname">flatten</code><span class="sig-paren">(</span><em>max_value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.specials.sequenceset.SequenceSet.flatten" title="Permalink to this definition">¶</a></dt>
