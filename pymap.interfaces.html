@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.interfaces &#8212; pymap 0.5.2 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.6.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.sockinfo.html" title="pymap.sockinfo"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.5.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.6.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -261,18 +261,15 @@ should be implemented by the same classes in most cases.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="pymap.interfaces.message.CachedMessage.get_flags">
-<code class="descname">get_flags</code><span class="sig-paren">(</span><em>session_flags=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.CachedMessage.get_flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the full set of permanent and session flags for the message. If
-<code class="docutils literal notranslate"><span class="pre">session_flags</span></code> is not given, only permanent flags are returned.</p>
+<dl class="attribute">
+<dt id="pymap.interfaces.message.CachedMessage.permanent_flags">
+<code class="descname">permanent_flags</code><a class="headerlink" href="#pymap.interfaces.message.CachedMessage.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The permanent flags for the message.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a>]) – The current session flags.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -288,6 +285,22 @@ message, used for detecting mailbox updates.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.interfaces.message.CachedMessage.get_flags">
+<code class="descname">get_flags</code><span class="sig-paren">(</span><em>session_flags</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.CachedMessage.get_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the full set of permanent and session flags for the message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_flags</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a>) – The current session flags.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -324,6 +337,20 @@ flags, and when the message was added to the system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.interfaces.message.MessageInterface.permanent_flags">
+<code class="descname">permanent_flags</code><a class="headerlink" href="#pymap.interfaces.message.MessageInterface.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The permanent flags for the message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -375,36 +402,15 @@ flags, and when the message was added to the system.</p>
 
 <dl class="method">
 <dt id="pymap.interfaces.message.MessageInterface.get_flags">
-<code class="descname">get_flags</code><span class="sig-paren">(</span><em>session_flags=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.MessageInterface.get_flags" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_flags</code><span class="sig-paren">(</span><em>session_flags</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.MessageInterface.get_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the full set of permanent and session flags for the message.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a>]) – The current session flags.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>session_flags</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a>) – The current session flags.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.interfaces.message.MessageInterface.update_flags">
-<code class="descname">update_flags</code><span class="sig-paren">(</span><em>flag_set</em>, <em>flag_op=&lt;FlagOp.REPLACE: 1&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.MessageInterface.update_flags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the permanent flags for the message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The set of flags for the update operation.</li>
-<li><strong>flag_op</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagOp</span></code></a>) – The mode to change the flags.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
 </tr>
 </tbody>
 </table>
@@ -1328,7 +1334,7 @@ not the given folder name currently exists.</p>
         <li class="right" >
           <a href="pymap.sockinfo.html" title="pymap.sockinfo"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.5.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.6.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
