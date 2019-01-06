@@ -7,6 +7,7 @@
 
    pymap.backend.dict
    pymap.backend.maildir
+   pymap.backend.redis
 
 ``pymap.backend.mailbox``
 ----------------------------
