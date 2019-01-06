@@ -13,8 +13,6 @@ This project attempts to simplify the complexity of the [IMAP protocol][1] into
 a set of clean Python APIs that can be implemented by pluggable backends.
 Everything runs in an [asyncio][2] event loop.
 
-There are two backend plugins included in the package, dict and maildir.
-
 #### [API Documentation](http://icgood.github.io/pymap/)
 
 ### Table of Contents
@@ -77,6 +75,16 @@ Here are some other commands to try:
 . create "A New Folder"
 . store * +FLAGS (\Deleted)
 . expunge
+```
+
+Add new messages using the append command:
+
+```
+. append INBOX (\Flagged) {38+}
+From: user@example.com
+
+test message!
+
 ```
 
 ### maildir Plugin
