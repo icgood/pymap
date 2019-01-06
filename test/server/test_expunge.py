@@ -66,7 +66,7 @@ class TestExpunge(TestBase):
             b'* 1 FETCH (FLAGS (\\Flagged \\Seen))\r\n'
             b'* 2 FETCH (FLAGS (\\Answered \\Flagged \\Seen))\r\n'
             b'* 3 FETCH (FLAGS (\\Flagged))\r\n'
-            b'* 4 FETCH (FLAGS (\\Deleted \\Recent))\r\n'
+            b'* 4 FETCH (FLAGS (\\Deleted \\Flagged \\Recent))\r\n'
             b'store2 OK [EXPUNGEISSUED] STORE completed.\r\n')
         concurrent.push_readline(
             b'search1 SEARCH ALL\r\n')

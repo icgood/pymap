@@ -124,9 +124,7 @@ class FetchResponse(Response):
         if self.seq != other.seq:
             raise ValueError(other)
         new_data = {attr: val for attr, val in self.data.items()}
-        for attr, val in other.data.items():
-            if attr not in new_data:
-                new_data[attr] = val
+        new_data.update(other.data)
         return FetchResponse(self.seq, new_data)
 
     @property

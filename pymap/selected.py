@@ -109,12 +109,12 @@ class SynchronizedMessages:
         return len(self._uids)
 
     @property
-    def next_uid(self) -> int:
-        """The predicted next message UID value of the mailbox."""
+    def max_uid(self) -> int:
+        """The highest message UID value of the mailbox."""
         try:
-            return self._sorted[-1] + 1
+            return self._sorted[-1]
         except IndexError:
-            return 1
+            return 0
 
     def _update(self, messages: Iterable[CachedMessage]) -> None:
         lowest_idx: Optional[int] = None
@@ -179,7 +179,7 @@ class SynchronizedMessages:
 
         """
         if seq_set.uid:
-            all_uids = seq_set.flatten(self.next_uid - 1) & self._uids
+            all_uids = seq_set.flatten(self.max_uid) & self._uids
             return [(seq, self._cache[uid])
                     for seq, uid in enumerate(self._sorted, 1)
                     if uid in all_uids]
@@ -358,7 +358,7 @@ class SelectedMailbox:
         permanent_flag_set = self.permanent_flags & flag_set
         session_flag_set = session_flags & flag_set
         for seq, msg in self._messages.get_all(seq_set):
-            msg_flags = msg.get_flags()
+            msg_flags = msg.permanent_flags
             msg_sflags = session_flags.get(msg.uid)
             updated_flags = flag_op.apply(msg_flags, permanent_flag_set)
             updated_sflags = flag_op.apply(msg_sflags, session_flag_set)

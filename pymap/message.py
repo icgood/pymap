@@ -2,11 +2,11 @@
 
 import re
 from datetime import datetime
-from typing import Any, Tuple, Iterable, Mapping, FrozenSet, AbstractSet, \
-    Sequence, TypeVar, Type
+from typing import Any, Tuple, Iterable, Mapping, FrozenSet, Sequence, \
+    TypeVar, Type
 from typing_extensions import Final
 
-from .flags import FlagOp, SessionFlags
+from .flags import SessionFlags
 from .interfaces.message import AppendMessage, CachedMessage, \
     MessageInterface, FlagsKey
 from .mime import MessageContent
@@ -94,21 +94,29 @@ class BaseMessage(MessageInterface, CachedMessage):
         return cls(new_uid, self._permanent_flags, self.internal_date,
                    self.expunged, self._content, **self._kwargs)
 
-    def get_flags(self, session_flags: SessionFlags = None) -> FrozenSet[Flag]:
-        if session_flags:
-            return self._permanent_flags | session_flags.get(self.uid)
+    @property
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        return self._permanent_flags
+
+    @permanent_flags.setter
+    def permanent_flags(self, permanent_flags: FrozenSet[Flag]) -> None:
+        self._permanent_flags = permanent_flags
+        self._flags_key = (self.uid, permanent_flags)
+
+    def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
+        msg_sflags = session_flags.get(self.uid)
+        if msg_sflags:
+            return self._permanent_flags | msg_sflags
         else:
             return self._permanent_flags
-
-    def update_flags(self, flag_set: AbstractSet[Flag],
-                     flag_op: FlagOp = FlagOp.REPLACE) -> None:
-        new_flags = flag_op.apply(self._permanent_flags, flag_set)
-        self._permanent_flags = new_flags
-        self._flags_key = (self.uid, new_flags)
 
     @property
     def flags_key(self) -> FlagsKey:
         return self._flags_key
+
+    def __repr__(self) -> str:
+        type_name = type(self).__name__
+        return f'<{type_name} uid={self.uid} flags={self.permanent_flags}>'
 
     @classmethod
     def _get_subpart(cls: Type[MessageT], msg: MessageT, section) \

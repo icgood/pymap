@@ -22,6 +22,7 @@ There are two backend plugins included in the package, dict and maildir.
 * [Install and Usage](#install-and-usage)
   * [dict Plugin](#dict-plugin)
   * [maildir Plugin](#maildir-plugin)
+  * [redis Plugin](#redis-plugin)
 * [Supported Extensions](#supported-extensions)
 * [Development and Testing](#development-and-testing)
   * [Type Hinting](#type-hinting)
@@ -107,6 +108,47 @@ $ pymap --insecure-login --debug maildir /path/to/users.txt
 Once started, check out the dict plugin example above to connect and see it in
 action. The biggest difference is, when stop and restart the pymap server, your
 mail messages remain intact.
+
+### redis Plugin
+
+The redis plugin uses the [Redis][8] data structure store for mail and
+metadata. It requires [aioredis][9] and will not appear in the plugins list
+without it.
+
+```
+$ pip install aioredis
+$ pymap redis --help
+```
+
+Keys are composed of a heirarchy of prefixes separated by `:`. For example, the
+key containing the flags of a message might be:
+
+```
+3fd347cdfaee4b509f8847043d52b501:Sent:37:msg:9173:flags
+```
+
+In this example, the `3fd347cdfaee4b509f8847043d52b501` prefix was a randomly
+generated UUID acting as the namespace for the login user. The user has a
+mailbox `Sent` with UIDVALIDITY value `37` and a message with the UID `9173`.
+
+To create logins, a special key `_users` exists containing a dictionary mapping
+the username to the password.  For example:
+
+```
+127.0.0.1:6379> HSET _users john "s3cretp4ssword"
+(integer) 1
+127.0.0.1:6379> HSET _users sally "sallypass"
+(integer) 1
+```
+
+Try out the redis plugin:
+
+```
+$ pymap --insecure-login --debug redis redis://localhost
+```
+
+Once started, check out the dict plugin example above to connect and see it in
+action.
 
 ## Supported Extensions
 
@@ -203,3 +245,5 @@ no need to attempt `--strict` mode.
 [5]: https://docs.python.org/3/library/venv.html
 [6]: https://www.python.org/dev/peps/pep-0484/
 [7]: http://mypy-lang.org/
+[8]: https://redis.io/
+[9]: https://github.com/aio-libs/aioredis
