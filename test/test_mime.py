@@ -15,15 +15,15 @@ class TestMessageContents(unittest.TestCase):
         body = b'abc\n'
         raw = header + body
         msg = MessageContent.parse(raw)
-        self.assertEqual(raw, msg.raw)
-        self.assertEqual(header, bytes(msg.header.raw))
+        self.assertEqual(raw, bytes(msg))
+        self.assertEqual(header, bytes(msg.header))
         self.assertEqual({b'from': ['sender@example.com'],
                           b'to': ['user1@example.com, user2@example.com',
                                   'user3@example.com'],
                           b'subject': ['hello world \ufffd'],
                           b'test': [' more stuff']}, msg.header.parsed)
         self.assertEqual('hello world \ufffd', msg.header.parsed.subject)
-        self.assertEqual(body, msg.body.raw)
+        self.assertEqual(body, bytes(msg.body))
         self.assertFalse(msg.body.has_nested)
 
     def test_parse_rfc822(self) -> None:
@@ -34,17 +34,17 @@ class TestMessageContents(unittest.TestCase):
         body = sub_header + sub_body
         raw = header + body
         msg = MessageContent.parse(raw)
-        self.assertEqual(raw, msg.raw)
-        self.assertEqual(header, msg.header.raw)
+        self.assertEqual(raw, bytes(msg))
+        self.assertEqual(header, bytes(msg.header))
         self.assertEqual({b'subject': ['rfc822 test'],
                           b'content-type': ['message/rfc822']},
                          msg.header.parsed)
-        self.assertEqual(body, msg.body.raw)
+        self.assertEqual(body, bytes(msg.body))
         self.assertTrue(msg.body.has_nested)
         self.assertEqual(1, len(msg.body.nested))
-        self.assertEqual(body, bytes(msg.body.nested[0].raw))
-        self.assertEqual(sub_header, bytes(msg.body.nested[0].header.raw))
-        self.assertEqual(sub_body, bytes(msg.body.nested[0].body.raw))
+        self.assertEqual(body, bytes(msg.body.nested[0]))
+        self.assertEqual(sub_header, bytes(msg.body.nested[0].header))
+        self.assertEqual(sub_body, bytes(msg.body.nested[0].body))
         self.assertEqual({b'content-type': ['text/html']},
                          msg.body.nested[0].header.parsed)
 
@@ -64,17 +64,17 @@ class TestMessageContents(unittest.TestCase):
                b'epilogue\n'
         raw = header + body
         msg = MessageContent.parse(raw)
-        self.assertEqual(raw, msg.raw)
-        self.assertEqual(header, msg.header.raw)
+        self.assertEqual(raw, bytes(msg))
+        self.assertEqual(header, bytes(msg.header))
         self.assertEqual({b'subject': ['multipart test'],
                           b'content-type': ['multipart/mixed; '
                                             'boundary="testbound"']},
                          msg.header.parsed)
-        self.assertEqual(body, msg.body.raw)
+        self.assertEqual(body, bytes(msg.body))
         self.assertTrue(msg.body.has_nested)
         self.assertEqual(2, len(msg.body.nested))
-        self.assertEqual(part1, bytes(msg.body.nested[0].raw))
+        self.assertEqual(part1, bytes(msg.body.nested[0]))
         self.assertEqual({}, msg.body.nested[0].header.parsed)
-        self.assertEqual(part2, bytes(msg.body.nested[1].raw))
+        self.assertEqual(part2, bytes(msg.body.nested[1]))
         self.assertEqual({b'content-type': ['text/html']},
                          msg.body.nested[1].header.parsed)

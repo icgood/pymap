@@ -8,6 +8,7 @@ from typing_extensions import Final
 
 from .parsed import ParsedHeaders
 from ._util import whitespace, find_any, get_raw
+from ..bytes import WriteStream, Writeable
 
 __all__ = ['MessageContent', 'MessageHeader', 'MessageBody']
 
@@ -20,23 +21,22 @@ _Headers = Mapping[bytes, Sequence[Sequence[memoryview]]]
 _Folded = Sequence[Tuple[bytes, memoryview]]
 
 
-class MessageContent:
+class MessageContent(Writeable):
     """Contains the message content, parsed for IMAP processing.
 
     Attributes:
-        raw: The full message buffer, including headers and body.
         lines: The number of lines in the message content.
         header: The message header.
         body: The message body.
 
     """
 
-    __slots__ = ['raw', 'lines', 'header', 'body']
+    __slots__ = ['_raw', 'lines', 'header', 'body']
 
-    def __init__(self, raw: memoryview, lines: int,
+    def __init__(self, raw: Sequence[memoryview], lines: int,
                  header: 'MessageHeader', body: 'MessageBody') -> None:
         super().__init__()
-        self.raw: Final = raw
+        self._raw: Final = raw
         self.lines: Final = lines
         self.header: Final = header
         self.body: Final = body
@@ -64,14 +64,41 @@ class MessageContent:
         return cls._parse(data, view, lines)
 
     @classmethod
-    def _parse(cls, data: bytes, view: memoryview,
-               lines: _Lines) -> 'MessageContent':
+    def parse_split(cls, header: bytes, body: bytes) -> 'MessageContent':
+        """Parse the header and body bytestrings into message content.
+
+        Args:
+            header: The header bytestring to parse.
+            body: The body bytestring to parse.
+
+        """
+        header_lines = cls._find_lines(header)
+        body_lines = cls._find_lines(body)
+        header_view = memoryview(header)
+        body_view = memoryview(body)
+        return cls._parse_split([header_view, body_view], header, body,
+                                header_view, body_view,
+                                header_lines, body_lines)
+
+    @classmethod
+    def _parse(cls, data: bytes, view: memoryview, lines: _Lines) \
+            -> 'MessageContent':
         header_lines, body_lines = cls._split_lines(data, lines)
-        header = MessageHeader._parse(data, view, header_lines)
+        raw = get_raw(view, lines)
+        return cls._parse_split([raw], data, data, view, view,
+                                header_lines, body_lines)
+
+    @classmethod
+    def _parse_split(cls, raw: Sequence[memoryview],
+                     header_data: bytes, body_data: bytes,
+                     header_view: memoryview, body_view: memoryview,
+                     header_lines: _Lines, body_lines: _Lines) \
+            -> 'MessageContent':
+        header = MessageHeader._parse(header_data, header_view, header_lines)
         content_type = header.parsed.content_type
-        body = MessageBody._parse(data, view, body_lines, content_type)
-        raw = get_raw(view, header_lines, body_lines)
-        num_lines = len(lines) - 1
+        body = MessageBody._parse(body_data, body_view, body_lines,
+                                  content_type)
+        num_lines = len(header_lines) + len(body_lines) - 1
         return cls(raw, num_lines, header, body)
 
     @classmethod
@@ -101,14 +128,30 @@ class MessageContent:
                 return lines[0:i + 1], lines[i + 1:]
         return [], lines
 
+    def write(self, writer: WriteStream) -> None:
+        """Write the object to the stream, with one or more calls to
+        :meth:`~pymap.bytes.WriteStream.write`.
 
-class MessageHeader:
+        Args:
+            writer: The output stream.
+
+        """
+        for part in self._raw:
+            writer.write(bytes(part))
+
+    def __len__(self) -> int:
+        return sum(len(part) for part in self._raw)
+
+    def __bytes__(self) -> bytes:
+        return b''.join(bytes(part) for part in self._raw)
+
+
+class MessageHeader(Writeable):
     """The message header. Contains lines in the form of ``Header: value\\n``,
     possibly folded onto multiple lines where subsequent lines start with
     whitespace.
 
     Attributes:
-        raw: The message header buffer.
         lines: The number of lines in the message header.
         folded: A list of headers, as they occurred in the original data, as
             tuples of the lower-cased header name and the full header value,
@@ -118,12 +161,12 @@ class MessageHeader:
 
     """
 
-    __slots__ = ['raw', 'lines', 'folded', 'parsed']
+    __slots__ = ['_raw', 'lines', 'folded', 'parsed']
 
-    def __init__(self, raw: memoryview, lines: int, folded: _Folded,
+    def __init__(self, raw: Sequence[memoryview], lines: int, folded: _Folded,
                  parsed: ParsedHeaders) -> None:
         super().__init__()
-        self.raw: Final = raw
+        self._raw: Final = raw
         self.lines: Final = lines
         self.folded: Final = folded
         self.parsed: Final = parsed
@@ -134,7 +177,7 @@ class MessageHeader:
         folds = cls._find_folds(data, lines)
         folded, parsed = cls._parse_headers(data, view, folds)
         raw = get_raw(view, lines)
-        return cls(raw, len(lines), folded, parsed)
+        return cls([raw], len(lines), folded, parsed)
 
     @classmethod
     def _find_folds(cls, data: bytes, lines: _Lines) -> Sequence[_Lines]:
@@ -182,25 +225,41 @@ class MessageHeader:
             current = current_end
         return bytes(ret)
 
+    def write(self, writer: WriteStream) -> None:
+        """Write the object to the stream, with one or more calls to
+        :meth:`~pymap.bytes.WriteStream.write`.
 
-class MessageBody(metaclass=ABCMeta):
+        Args:
+            writer: The output stream.
+
+        """
+        for part in self._raw:
+            writer.write(bytes(part))
+
+    def __len__(self) -> int:
+        return sum(len(part) for part in self._raw)
+
+    def __bytes__(self) -> bytes:
+        return b''.join(bytes(part) for part in self._raw)
+
+
+class MessageBody(Writeable, metaclass=ABCMeta):
     """The message body, starting immediately after the header. The body may
     contain nested sub-parts, which are each valid :class:`MessageContent`
     objects.
 
     Attributes:
-        raw: The message body buffer.
         lines: The number of lines in the message body.
         content_type: The content type of the message body.
 
     """
 
-    __slots__ = ['raw', 'lines', 'content_type']
+    __slots__ = ['_raw', 'lines', 'content_type']
 
-    def __init__(self, raw: memoryview, lines: int,
+    def __init__(self, raw: Sequence[memoryview], lines: int,
                  content_type: ContentTypeHeader) -> None:
         super().__init__()
-        self.raw: Final = raw
+        self._raw: Final = raw
         self.lines: Final = lines
         self.content_type: Final = content_type
 
@@ -245,12 +304,29 @@ class MessageBody(metaclass=ABCMeta):
                     pass
         return None
 
+    def write(self, writer: WriteStream) -> None:
+        """Write the object to the stream, with one or more calls to
+        :meth:`~pymap.bytes.WriteStream.write`.
+
+        Args:
+            writer: The output stream.
+
+        """
+        for part in self._raw:
+            writer.write(bytes(part))
+
+    def __len__(self) -> int:
+        return sum(len(part) for part in self._raw)
+
+    def __bytes__(self) -> bytes:
+        return b''.join(bytes(part) for part in self._raw)
+
 
 class _MultipartBody(MessageBody):
 
     __slots__ = ['_nested']
 
-    def __init__(self, raw: memoryview, lines: int,
+    def __init__(self, raw: Sequence[memoryview], lines: int,
                  content_type: ContentTypeHeader,
                  nested: Sequence[MessageContent]) -> None:
         super().__init__(raw, lines, content_type)
@@ -274,7 +350,7 @@ class _MultipartBody(MessageBody):
             sub_content = MessageContent._parse(data, view, part_lines)
             nested.append(sub_content)
         raw = get_raw(view, lines)
-        return cls(raw, len(lines), content_type, nested)
+        return cls([raw], len(lines), content_type, nested)
 
     @classmethod
     def _find_parts(cls, data: bytes, view: memoryview, lines: _Lines,
@@ -300,7 +376,7 @@ class _RFC822Body(MessageBody):
 
     def __init__(self, subpart: MessageContent,
                  content_type: ContentTypeHeader) -> None:
-        super().__init__(subpart.raw, subpart.lines, content_type)
+        super().__init__(subpart._raw, subpart.lines, content_type)
         self._nested: Sequence[MessageContent] = [subpart]
 
     @property
@@ -320,7 +396,7 @@ class _RFC822Body(MessageBody):
 
 class _SinglepartBody(MessageBody):
 
-    def __init__(self, raw: memoryview, lines: int,
+    def __init__(self, raw: Sequence[memoryview], lines: int,
                  content_type: ContentTypeHeader) -> None:
         super().__init__(raw, lines, content_type)
 
@@ -336,4 +412,4 @@ class _SinglepartBody(MessageBody):
     def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
                     content_type: ContentTypeHeader) -> '_SinglepartBody':
         raw = get_raw(view, lines)
-        return cls(raw, len(lines), content_type)
+        return cls([raw], len(lines), content_type)

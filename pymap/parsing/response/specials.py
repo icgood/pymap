@@ -3,9 +3,10 @@ from itertools import chain
 from typing import ClassVar, Iterable, List, Mapping, Optional
 
 from . import Response
+from ..modutf7 import modutf7_encode
 from ..primitives import Nil, ListP, QuotedString, Number
 from ..specials import Mailbox, FetchAttribute, StatusAttribute
-from ...bytes import MaybeBytes, BytesFormat
+from ...bytes import MaybeBytes, BytesFormat, WriteStream
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
@@ -130,8 +131,13 @@ class FetchResponse(Response):
     @property
     def text(self) -> bytes:
         data_list = ListP(chain.from_iterable(self.data.items()))
-        text = BytesFormat(b'%b FETCH %b') % (b'%i' % self.seq, data_list)
-        return super().text + text
+        return BytesFormat(b'%i FETCH %b') % (self.seq, data_list)
+
+    def write(self, writer: WriteStream) -> None:
+        writer.write(b'%b %i FETCH ' % (self.tag, self.seq))
+        data_list = ListP(chain.from_iterable(self.data.items()))
+        data_list.write(writer)
+        writer.write(b'\r\n')
 
 
 class SearchResponse(Response):
@@ -230,7 +236,7 @@ class ListResponse(Response):
     @property
     def text(self) -> bytes:
         if self.sep:
-            sep_obj: MaybeBytes = QuotedString(self.sep.encode('utf-8'))
+            sep_obj: MaybeBytes = QuotedString(modutf7_encode(self.sep))
         else:
             sep_obj = Nil()
         attrs_obj = ListP([b'\\' + attr for attr in self.attrs])

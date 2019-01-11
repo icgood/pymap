@@ -203,7 +203,7 @@ class IMAPConnection:
 
     async def write_response(self, resp: Response) -> None:
         raw = bytes(resp)
-        self.writer.write(raw)
+        resp.write(self.writer)
         await self.writer.drain()
         self._print('%d <--|', raw)
 

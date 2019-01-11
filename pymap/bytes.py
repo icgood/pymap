@@ -1,39 +1,136 @@
 """Defines useful types and utilities for working with bytestrings."""
 
 import re
+from abc import abstractmethod, ABCMeta
 from itertools import chain
-from typing import cast, TypeVar, ByteString, SupportsBytes, Union, Callable, \
-    Iterable, Optional, Pattern, Match
+from typing import cast, Any, TypeVar, ByteString, SupportsBytes, Union, \
+    Callable, Iterable, Optional, Pattern, Match
+from typing_extensions import Protocol
 
-__all__ = ['MaybeBytes', 'MaybeBytesT', 'as_memoryview', 'BytesFormat',
-           'ReView', 'rev']
+__all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
+           'BytesFormat', 'ReView', 'rev']
 
-#: A bytes object or an object with a ``__bytes__`` method.
-MaybeBytes = Union[ByteString, SupportsBytes]
+#: A bytes object, memoryview,  or an object with a ``__bytes__`` method.
+MaybeBytes = Union[ByteString, memoryview, SupportsBytes]
 
 #: A type variable bound to :class:`MaybeBytes`.
 MaybeBytesT = TypeVar('MaybeBytesT', bound=MaybeBytes)
 
+_FormatArg = Union[MaybeBytes, int]
 
-def as_memoryview(val: bytes) -> bytes:
-    """Wrap a bytestring in a :class:`memoryview` for performance, while
-    maintaining ``bytes`` type annotation.
 
-    Args:
-        val: The bytestring to wrap in a memoryview.
-
-    Note:
-        This is necessary because even though the :class:`~typing.ByteString`
-        docs state that ``bytes`` may be used to annotate memoryview objects,
-        it does not appear to work in practice. If/when this is resolved,
-        remove this function in factor of a simple ``... = memoryview(val)``
-        call.
+class WriteStream(Protocol):
+    """Typing protocol indicating the object implements the :meth:`.write`
+    method.
 
     See Also:
-        `python/mypy#4871 <https://github.com/python/mypy/issues/4871>`_
+        :class:`~asyncio.StreamWriter`, :class:`~typing.BinaryIO`
 
     """
-    return cast(bytes, memoryview(val))
+
+    @abstractmethod
+    def write(self, data: bytes) -> Any:
+        """Defines an abstract method where ``data`` is written to a stream or
+        buffer.
+
+        Args:
+            data: The data to write.
+
+        """
+        ...
+
+
+class Writeable(metaclass=ABCMeta):
+    """Base class for types that can be written to a stream."""
+
+    @classmethod
+    def empty(cls) -> 'Writeable':
+        """Return a :class:`Writeable` for an empty string."""
+        return _EmptyWriteable()
+
+    @classmethod
+    def wrap(cls, data: MaybeBytes) -> 'Writeable':
+        """Wrap the bytes in a :class:`Writeable`.
+
+        Args:
+            data: The object to wrap.
+
+        """
+        return _WrappedWriteable(data)
+
+    @classmethod
+    def concat(cls, data: Iterable[MaybeBytes]) -> 'Writeable':
+        """Wrap the iterable in a :class:`Writeable` that will write eachitem.
+
+        Args:
+            data: The iterable to wrap.
+
+        """
+        return _ConcatWriteable(data)
+
+    def write(self, writer: WriteStream) -> None:
+        """Write the object to the stream, with one or more calls to
+        :meth:`~WriteStream.write`.
+
+        Args:
+            writer: The output stream.
+
+        """
+        writer.write(bytes(self))
+
+    def __len__(self) -> int:
+        return len(bytes(self))
+
+    @abstractmethod
+    def __bytes__(self) -> bytes:
+        ...
+
+
+class _EmptyWriteable(Writeable):
+
+    def write(self, writer: WriteStream) -> None:
+        pass
+
+    def __bytes__(self) -> bytes:
+        return b''
+
+    def __repr__(self) -> str:
+        return '<Writeable empty>'
+
+
+class _WrappedWriteable(Writeable):
+
+    __slots__ = ['data']
+
+    def __init__(self, data: MaybeBytes) -> None:
+        self.data = data
+
+    def __bytes__(self) -> bytes:
+        return bytes(self.data)
+
+    def __repr__(self) -> str:
+        return f'<Writeable {repr(self.data)}>'
+
+
+class _ConcatWriteable(Writeable):
+
+    __slots__ = ['data']
+
+    def __init__(self, data: Iterable[MaybeBytes]) -> None:
+        self.data = list(data)
+
+    def write(self, writer: WriteStream) -> None:
+        for item in self.data:
+            if isinstance(item, Writeable):
+                item.write(writer)
+            else:
+                writer.write(bytes(item))
+
+    def __bytes__(self) -> bytes:
+        return BytesFormat(b'').join(self.data)
+
+    def __repr__(self) -> str:
+        return f'<Writeable {repr(self.data)}>'
 
 
 class BytesFormat:
@@ -52,7 +149,7 @@ class BytesFormat:
         super().__init__()
         self.how = how
 
-    def __mod__(self, other: Union[MaybeBytes, Iterable[MaybeBytes]]) -> bytes:
+    def __mod__(self, other: Union[_FormatArg, Iterable[_FormatArg]]) -> bytes:
         """String interpolation, shortcut for :meth:`.format`.
 
         Args:
@@ -69,7 +166,14 @@ class BytesFormat:
             return self.format([bytes(item) for item in items])
         return NotImplemented
 
-    def format(self, data: Iterable[MaybeBytes]) -> bytes:
+    @classmethod
+    def _fix_format_arg(cls, data: _FormatArg) -> Any:
+        if isinstance(data, int):
+            return data
+        else:
+            return bytes(data)
+
+    def format(self, data: Iterable[_FormatArg]) -> bytes:
         """String interpolation into the format string.
 
         Args:
@@ -82,7 +186,8 @@ class BytesFormat:
                 BytesFormat(b'%b, %b!') % (b'Hello', b'World')
 
         """
-        return self.how % tuple(bytes(item) for item in data)
+        fix_arg = self._fix_format_arg
+        return self.how % tuple(fix_arg(item) for item in data)
 
     def join(self, *data: Iterable[MaybeBytes]) -> bytes:
         """Iterable join on a delimiter.

@@ -1,7 +1,8 @@
 
+from io import BytesIO
 from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable
 
-from ...bytes import MaybeBytes, BytesFormat
+from ...bytes import MaybeBytes, BytesFormat, WriteStream, Writeable
 
 __all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
            'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth',
@@ -46,7 +47,7 @@ class _AnonymousResponseCode(ResponseCode):
         return BytesFormat(b'[%b]') % self.code
 
 
-class Response:
+class Response(Writeable):
     """Base class for all responses sent from the server to the client. These
     responses may be sent unsolicited (e.g. idle timeouts) or in response to a
     tagged command from the client.
@@ -183,11 +184,23 @@ class Response:
         """
         raise TypeError(self)
 
+    def write(self, writer: WriteStream) -> None:
+        """Write the object to the stream, with one or more calls to
+        :meth:`~asyncio.WriteStream.write`.
+
+        Args:
+            writer: The output stream.
+
+        """
+        for untagged in self._untagged:
+            untagged.write(writer)
+        writer.write(b'%b %b\r\n' % (self.tag, self.text))
+
     def __bytes__(self) -> bytes:
-        if self._raw is not None:
-            return self._raw
-        resp_line = BytesFormat(b'%b %b\r\n') % (self.tag, self.text)
-        self._raw = BytesFormat(b'').join(self._untagged, [resp_line])
+        if self._raw is None:
+            out = BytesIO()
+            self.write(out)
+            self._raw = out.getvalue()
         return self._raw
 
 

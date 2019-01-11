@@ -23,7 +23,7 @@ from .parsing.command.auth import AppendCommand, CreateCommand, \
 from .parsing.command.select import CheckCommand, CloseCommand, IdleCommand, \
     ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, SearchCommand
 from .parsing.commands import InvalidCommand
-from .parsing.primitives import ListP, Number, String, Nil
+from .parsing.primitives import ListP, Number, LiteralString, Nil
 from .parsing.response import Response, ResponseOk, ResponseNo, ResponseBad, \
         ResponseCode, ResponsePreAuth
 from .parsing.response.code import Capability, PermanentFlags, UidNext, \
@@ -284,31 +284,31 @@ class ConnectionState:
                     if not attr.section:
                         fetch_data[attr] = msg.get_body_structure()
                     elif not attr.section.specifier:
-                        fetch_data[attr] = String.build(msg.get_body(
+                        fetch_data[attr] = LiteralString(msg.get_body(
                             attr.section.parts))
                     elif attr.section.specifier == b'TEXT':
-                        fetch_data[attr] = String.build(msg.get_text(
+                        fetch_data[attr] = LiteralString(msg.get_text(
                             attr.section.parts))
                     elif attr.section.specifier in (b'HEADER', b'MIME'):
-                        fetch_data[attr] = String.build(msg.get_headers(
+                        fetch_data[attr] = LiteralString(msg.get_headers(
                             attr.section.parts))
                     elif attr.section.specifier == b'HEADER.FIELDS':
-                        fetch_data[attr] = String.build(msg.get_headers(
+                        fetch_data[attr] = LiteralString(msg.get_headers(
                             attr.section.parts, attr.section.headers))
                     elif attr.section.specifier == b'HEADER.FIELDS.NOT':
-                        fetch_data[attr] = String.build(msg.get_headers(
+                        fetch_data[attr] = LiteralString(msg.get_headers(
                             attr.section.parts, attr.section.headers, True))
                 elif attr.value == b'RFC822':
-                    fetch_data[attr] = String.build(msg.get_body())
+                    fetch_data[attr] = LiteralString(msg.get_body())
                 elif attr.value == b'RFC822.HEADER':
-                    fetch_data[attr] = String.build(msg.get_headers())
+                    fetch_data[attr] = LiteralString(msg.get_headers())
                 elif attr.value == b'RFC822.TEXT':
-                    fetch_data[attr] = String.build(msg.get_text())
+                    fetch_data[attr] = LiteralString(msg.get_text())
                 elif attr.value == b'RFC822.SIZE':
                     fetch_data[attr] = Number(msg.get_size())
                 elif attr.value in (b'BINARY', b'BINARY.PEEK'):
                     parts = attr.section.parts if attr.section else None
-                    fetch_data[attr] = String.build(
+                    fetch_data[attr] = LiteralString(
                         msg.get_body(parts, True), True)
                 elif attr.value == b'BINARY.SIZE':
                     parts = attr.section.parts if attr.section else None

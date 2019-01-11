@@ -1,8 +1,7 @@
 
 import asyncio
 from datetime import datetime
-from typing import Optional, Sequence, List, Tuple, FrozenSet, Iterable, \
-    AsyncIterable
+from typing import Optional, Sequence, List, Tuple, FrozenSet, Iterable
 
 from aioredis import Redis, MultiExecError, WatchVariableError  # type: ignore
 
@@ -10,7 +9,9 @@ from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
-from pymap.parsing.specials import FetchRequirement, Mailbox, SequenceSet
+from pymap.mime import MessageContent
+from pymap.parsing.modutf7 import modutf7_encode, modutf7_decode
+from pymap.parsing.specials import FetchRequirement, SequenceSet
 from pymap.parsing.specials.flag import Flag, Deleted, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 
@@ -70,12 +71,6 @@ class MailboxData(MailboxDataInterface[Message]):
         return Message.parse(0, append_msg.message, append_msg.flag_set,
                              append_msg.when, recent=True)
 
-    async def get_next_uid(self) -> int:
-        redis = self._redis
-        prefix = self._prefix
-        max_uid = await redis.get(prefix + b':max-uid')
-        return int(max_uid or 0) + 1
-
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
         selected.uid_validity = self.uid_validity
@@ -91,6 +86,7 @@ class MailboxData(MailboxDataInterface[Message]):
         prefix = self._prefix
         is_deleted = Deleted in append_msg.flag_set
         is_unseen = Seen not in append_msg.flag_set
+        msg_content = MessageContent.parse(append_msg.message)
         msg_flags = [flag.value for flag in append_msg.flag_set]
         msg_time = append_msg.when.isoformat().encode('ascii')
         while True:
@@ -115,7 +111,8 @@ class MailboxData(MailboxDataInterface[Message]):
             if msg_flags:
                 multi.sadd(msg_prefix + b':flags', *msg_flags)
             multi.set(msg_prefix + b':time', msg_time)
-            multi.set(msg_prefix + b':data', append_msg.message)
+            multi.set(msg_prefix + b':header', bytes(msg_content.header))
+            multi.set(msg_prefix + b':body', bytes(msg_content.body))
             try:
                 await multi.execute()
             except MultiExecError:
@@ -123,8 +120,8 @@ class MailboxData(MailboxDataInterface[Message]):
                     raise
             else:
                 break
-        return Message.parse(new_uid, append_msg.message, append_msg.flag_set,
-                             append_msg.when, recent=recent)
+        return Message(new_uid, append_msg.flag_set, append_msg.when,
+                       recent=recent, content=msg_content)
 
     async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
@@ -137,12 +134,16 @@ class MailboxData(MailboxDataInterface[Message]):
         multi.smembers(msg_prefix + b':flags')
         multi.get(msg_prefix + b':time')
         multi.sismember(prefix + b':recent', uid)
-        if requirement & FetchRequirement.BODY \
-                or requirement & FetchRequirement.HEADERS:
-            multi.get(msg_prefix + b':data')
+        if requirement & FetchRequirement.BODY:
+            multi.get(msg_prefix + b':header')
+            multi.get(msg_prefix + b':body')
+        elif requirement & FetchRequirement.HEADERS:
+            multi.get(msg_prefix + b':header')
+            multi.echo(b'')
         else:
             multi.echo(b'')
-        exists, flags, time, recent, data = await multi.execute()
+            multi.echo(b'')
+        exists, flags, time, recent, header, body = await multi.execute()
         if not exists:
             if cached_msg is None:
                 return None
@@ -152,9 +153,10 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_flags = {Flag(flag) for flag in flags}
         msg_time = datetime.fromisoformat(time.decode('ascii'))
         msg_recent = bool(recent)
-        if data:
-            return Message.parse(uid, data, msg_flags, msg_time,
-                                 recent=msg_recent)
+        if header:
+            msg_content = MessageContent.parse_split(header, body)
+            return Message(uid, msg_flags, msg_time, recent=msg_recent,
+                           content=msg_content)
         else:
             return Message(uid, msg_flags, msg_time, recent=msg_recent)
 
@@ -277,9 +279,6 @@ class MailboxData(MailboxDataInterface[Message]):
         deleted = await redis.smembers(prefix + b':deleted')
         return [int(uid) for uid in deleted]
 
-    def messages(self) -> AsyncIterable[Message]:
-        raise NotImplementedError()
-
     async def snapshot(self) -> MailboxSnapshot:
         redis = self._redis
         prefix = self._prefix
@@ -381,17 +380,17 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             await self._redis.srem(self._sub_key, name)
 
     async def list_subscribed(self) -> Sequence[str]:
-        return [Mailbox.decode_name(name) for name in
+        return [modutf7_decode(name) for name in
                 await self._redis.smembers(self._sub_key)]
 
     async def list_mailboxes(self) -> Sequence[str]:
-        return [Mailbox.decode_name(name) for name in
+        return [modutf7_decode(name) for name in
                 await self._redis.zrange(self._mbx_key)]
 
     async def get_mailbox(self, name: str,
                           try_create: bool = False) -> 'MailboxData':
         redis = self._redis
-        name_key = Mailbox.encode_name(name)
+        name_key = modutf7_encode(name)
         multi = redis.multi_exec()
         multi.zscore(self._mbx_key, name_key)
         multi.hget(self._uidv_key, name_key)
@@ -403,7 +402,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     async def add_mailbox(self, name: str) -> 'MailboxData':
         redis = self._redis
-        name_key = Mailbox.encode_name(name)
+        name_key = modutf7_encode(name)
         while True:
             await redis.watch(self._mbx_key)
             exists = await redis.zscore(self._mbx_key, name_key)
@@ -426,7 +425,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     async def delete_mailbox(self, name: str) -> None:
         redis = self._redis
-        name_key = Mailbox.encode_name(name)
+        name_key = modutf7_encode(name)
         multi = redis.multi_exec()
         multi.hget(self._uidv_key, name_key)
         multi.zrem(self._mbx_key, name_key)

@@ -4,7 +4,7 @@ from abc import abstractmethod, ABCMeta
 from typing import Any, Type, TypeVar, Generic, Tuple, Sequence, Dict, List
 
 from .exceptions import NotParseable, UnexpectedType
-from ..bytes import rev
+from ..bytes import rev, Writeable
 
 __all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine',
            'ParseableT']
@@ -79,7 +79,7 @@ class Params:
         return Params(**kwargs)
 
 
-class Parseable(Generic[ParseableT], metaclass=ABCMeta):
+class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
 
@@ -106,10 +106,6 @@ class Parseable(Generic[ParseableT], metaclass=ABCMeta):
         if match:
             return match.end(0) - start
         return 0
-
-    @abstractmethod
-    def __bytes__(self) -> bytes:
-        ...
 
     def __eq__(self, other) -> bool:
         if isinstance(other, (bytes, memoryview)):
