@@ -9,8 +9,7 @@ from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage
 from pymap.parsing.specials import SequenceSet, FetchRequirement
-from pymap.parsing.specials.flag import get_system_flags, Flag, \
-    Deleted, Recent, Seen
+from pymap.parsing.specials.flag import get_system_flags, Flag, Deleted, Recent
 from pymap.selected import SelectedSet, SelectedMailbox
 
 __all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'Message',
@@ -84,11 +83,6 @@ class MailboxDataInterface(Protocol[MessageT]):
     @abstractmethod
     def selected_set(self) -> SelectedSet:
         """The set of selected mailbox sessions currently active."""
-        ...
-
-    @abstractmethod
-    async def get_next_uid(self) -> int:
-        """Return the predicted next message UID."""
         ...
 
     @abstractmethod
@@ -179,8 +173,8 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    def messages(self) -> AsyncIterable[MessageT]:
-        """Return all of the active messages in the mailbox."""
+    async def snapshot(self) -> MailboxSnapshot:
+        """Returns a snapshot of the current state of the mailbox."""
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox,
@@ -213,25 +207,6 @@ class MailboxDataInterface(Protocol[MessageT]):
         session_flags = selected.session_flags
         return [msg.uid async for _, msg in self.find(seq_set, selected)
                 if Deleted in msg.get_flags(session_flags)]
-
-    async def snapshot(self) -> MailboxSnapshot:
-        """Returns a snapshot of the current state of the mailbox."""
-        exists = 0
-        recent = 0
-        unseen = 0
-        first_unseen: Optional[int] = None
-        async for msg in self.messages():
-            exists += 1
-            if msg.recent:
-                recent += 1
-            if Seen not in msg.permanent_flags:
-                unseen += 1
-                if first_unseen is None:
-                    first_unseen = exists
-        return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
-                               self.permanent_flags, self.session_flags,
-                               exists, recent, unseen, first_unseen,
-                               await self.get_next_uid())
 
 
 class MailboxSetInterface(Protocol[MailboxDataT_co]):

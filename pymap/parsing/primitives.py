@@ -1,14 +1,17 @@
 """Primitive parseable objects in the IMAP protocol."""
 
 import re
+from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, \
+from io import BytesIO
+from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, Match, \
     Optional, Iterator, SupportsBytes
 
 from . import Parseable, ExpectedParseable, NotParseable, Params
 from .exceptions import RequiresContinuation
-from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat, rev
+from ..bytes import rev, MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
+    Writeable
 
 __all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
            'QuotedString', 'LiteralString']
@@ -69,7 +72,7 @@ class Number(Parseable[int]):
     def __init__(self, num: int) -> None:
         super().__init__()
         self.num = num
-        self._raw = bytes(str(self.value), 'ascii')
+        self._raw = b'%d' % num
 
     @property
     def value(self) -> int:
@@ -150,30 +153,27 @@ class Atom(Parseable[bytes]):
         return super().__eq__(other)
 
 
-class String(Parseable[bytes]):
+class String(Parseable[bytes], metaclass=ABCMeta):
     """Represents a string object from an IMAP string. This object may not be
     instantiated directly, use one of its derivatives instead.
-
-    Attributes:
-        string: The string value.
-        binary: True if the string should be transmitted as binary.
 
     """
 
     _MAX_LEN = 4096
 
-    __slots__ = ['string', 'binary', '_raw']
-
-    def __init__(self, string: bytes, raw: Optional[bytes]) -> None:
-        super().__init__()
-        self.string = string
-        self.binary = False
-        self._raw = raw
+    __slots__ = []  # type: ignore
 
     @property
-    def value(self) -> bytes:
-        """The string value."""
-        return self.string
+    @abstractmethod
+    def binary(self) -> bool:
+        """True if the string should be transmitted as binary."""
+        ...
+
+    @property
+    @abstractmethod
+    def length(self) -> int:
+        """The length of the string value."""
+        ...
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
@@ -250,10 +250,25 @@ class QuotedString(String):
     _quoted_pattern = rev.compile(br'(?:\r|\n|\\.|\")')
     _quoted_specials_pattern = rev.compile(br'[\"\\]')
 
-    __slots__ = []  # type: ignore
+    __slots__ = ['_string', '_raw']
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:
-        super().__init__(string, raw)
+        super().__init__()
+        self._string = string
+        self._raw = raw
+
+    @property
+    def value(self) -> bytes:
+        """The string value."""
+        return self._string
+
+    @property
+    def binary(self) -> bool:
+        return False
+
+    @property
+    def length(self) -> int:
+        return len(self._string)
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
@@ -281,15 +296,15 @@ class QuotedString(String):
                 return cls(bytes(unquoted), bytes(quoted)), buf[end:]
         raise NotParseable(buf)
 
+    @classmethod
+    def _escape_quoted_specials(cls, match: Match) -> bytes:
+        return b'\\' + match.group(0)
+
     def __bytes__(self) -> bytes:
         if self._raw is not None:
             return bytes(self._raw)
-
-        def escape_quoted_specials(match):
-            return b'\\' + match.group(0)
-
         pat = self._quoted_specials_pattern
-        quoted_string = pat.sub(escape_quoted_specials, self.value)
+        quoted_string = pat.sub(self._escape_quoted_specials, self.value)
         self._raw = BytesFormat(b'"%b"') % (quoted_string, )
         return self._raw
 
@@ -299,17 +314,38 @@ class LiteralString(String):
     syntax.
 
     Args:
-        string: The string value.
+        string: The string value parts.
 
     """
 
     _literal_pattern = rev.compile(br'(~?){(\d+)(\+?)}\r?\n')
 
-    __slots__ = ['binary']
+    __slots__ = ['_string', '_length', '_binary', '_raw']
 
-    def __init__(self, string: bytes, binary: bool = False) -> None:
-        super().__init__(string, None)
-        self.binary = binary
+    def __init__(self, string: Union[bytes, Writeable],
+                 binary: bool = False) -> None:
+        super().__init__()
+        self._string = string
+        self._length = len(string)
+        self._binary = binary
+        self._raw: Optional[bytes] = None
+
+    @property
+    def value(self) -> bytes:
+        return bytes(self._string)
+
+    @property
+    def binary(self) -> bool:
+        return self._binary
+
+    @property
+    def length(self) -> int:
+        return self._length
+
+    @property
+    def _prefix(self) -> bytes:
+        binary_prefix = b'~' if self.binary else b''
+        return b'%b{%d}\r\n' % (binary_prefix, self.length)
 
     @classmethod
     def _check_too_big(cls, params: Params, length: int) -> bool:
@@ -344,13 +380,21 @@ class LiteralString(String):
             raise NotParseable(buf)
         return cls(literal, binary), buf[literal_length:]
 
+    def write(self, writer: WriteStream) -> None:
+        writer.write(self._prefix)
+        if isinstance(self._string, Writeable):
+            self._string.write(writer)
+        else:
+            writer.write(self._string)
+
+    def __len__(self) -> int:
+        return len(self._prefix) + self.length
+
     def __bytes__(self) -> bytes:
-        if self._raw is not None:
-            return bytes(self._raw)
-        binary_prefix = b'~' if self.binary else b''
-        length_bytes = bytes(str(len(self.value)), 'ascii')
-        self._raw = BytesFormat(b'%b{%b}\r\n%b') \
-            % (binary_prefix, length_bytes, self.value)
+        if self._raw is None:
+            out = BytesIO()
+            self.write(out)
+            self._raw = out.getvalue()
         return self._raw
 
 
@@ -370,8 +414,11 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
     def __init__(self, items: Iterable[MaybeBytes],
                  sort: bool = False) -> None:
         super().__init__()
-        self.items: Sequence[MaybeBytes] = \
-            sorted(items) if sort else list(items)
+        if sort:
+            items_list = sorted(items)
+        else:
+            items_list = list(items)
+        self.items: Sequence[MaybeBytes] = items_list
 
     @property
     def value(self) -> Sequence[MaybeBytes]:
@@ -407,9 +454,23 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
             item, buf = ExpectedParseable.parse(buf, params_copy)
             items.append(item)
 
+    def write(self, writer: WriteStream) -> None:
+        writer.write(b'(')
+        is_first = True
+        for i, item in enumerate(self.items):
+            if is_first:
+                is_first = False
+            else:
+                writer.write(b' ')
+            if isinstance(item, Writeable):
+                item.write(writer)
+            else:
+                writer.write(bytes(item))
+        writer.write(b')')
+
     def __bytes__(self) -> bytes:
         raw_items = BytesFormat(b' ').join(self.items)
-        return BytesFormat(b'(%b)') % (raw_items, )
+        return b'(%b)' % raw_items
 
     def __hash__(self) -> int:
         return hash((ListP, self.value))

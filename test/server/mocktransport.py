@@ -12,7 +12,6 @@ __all__ = ['MockTransport']
 class _Type(enum.Enum):
     READLINE = "reader.readline()"
     READEXACTLY = "reader.readexactly()"
-    WRITE = "writer.write()"
     DRAIN = "writer.drain()"
     READ_EOF = "reader.at_eof()"
 
@@ -32,6 +31,7 @@ class MockTransport:
         self.queue = deque()
         self.matches = matches
         self.socket = _Socket(fd)
+        self._write_batch = []
 
     @classmethod
     def _caller(cls, frame):
@@ -53,8 +53,7 @@ class MockTransport:
 
     def push_write(self, *data, wait=None, set=None) -> None:
         where = self._caller(inspect.currentframe())
-        self.queue.append((_Type.WRITE, where, data, None, None))
-        self.queue.append((_Type.DRAIN, where, None, wait, set))
+        self.queue.append((_Type.DRAIN, where, data, wait, set))
 
     def push_read_eof(self, wait=None, set=None):
         where = self._caller(inspect.currentframe())
@@ -215,11 +214,13 @@ class MockTransport:
         return data
 
     def write(self, data: bytes) -> None:
-        where, expected, _, _ = self._pop_expected(_Type.WRITE)
-        self._match_write(where, expected, data)
+        self._write_batch.append(data)
 
     async def drain(self) -> None:
-        _, _, wait, set = self._pop_expected(_Type.DRAIN)
+        where, expected, wait, set = self._pop_expected(_Type.DRAIN)
+        data = b''.join(self._write_batch)
+        self._write_batch = []
+        self._match_write(where, expected, data)
         if set:
             set.set()
         if wait:

@@ -5,6 +5,7 @@ from typing import ClassVar, Tuple, Sequence, Iterable, Optional, List
 from . import CommandAuth
 from .. import NotParseable, UnexpectedType, Space, EndLine, Params
 from ..exceptions import InvalidContent
+from ..modutf7 import modutf7_decode
 from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
@@ -188,10 +189,10 @@ class ListCommand(CommandAuth):
         if match:
             filter_raw = match.group(0)
             buf = buf[match.end(0):]
-            filter_ = Mailbox.decode_name(filter_raw)
+            filter_ = modutf7_decode(filter_raw)
         else:
             filter_str, buf = String.parse(buf, params)
-            filter_ = Mailbox.decode_name(filter_str.value)
+            filter_ = modutf7_decode(filter_str.value)
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag, ref_name.value, filter_), buf
 

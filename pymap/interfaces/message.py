@@ -1,9 +1,10 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import TypeVar, Iterable, Tuple, NamedTuple, Sequence, FrozenSet
+from typing import TypeVar, Tuple, NamedTuple, Sequence, FrozenSet, Collection
 from typing_extensions import Protocol
 
+from ..bytes import Writeable
 from ..flags import SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag, ExtensionOptions
@@ -152,9 +153,9 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_headers(self, section: Iterable[int] = None,
-                    subset: Iterable[bytes] = None,
-                    inverse: bool = False) -> bytes:
+    def get_headers(self, section: Sequence[int] = None,
+                    subset: Collection[bytes] = None,
+                    inverse: bool = False) -> Writeable:
         """Get the headers from the message.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -171,8 +172,8 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_body(self, section: Iterable[int] = None,
-                 binary: bool = False) -> bytes:
+    def get_body(self, section: Sequence[int] = None,
+                 binary: bool = False) -> Writeable:
         """Get the full body of the message part, including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -187,8 +188,8 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_text(self, section: Iterable[int] = None,
-                 binary: bool = False) -> bytes:
+    def get_text(self, section: Sequence[int] = None,
+                 binary: bool = False) -> Writeable:
         """Get the text of the message part, not including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -203,7 +204,7 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_size(self, section: Iterable[int] = None,
+    def get_size(self, section: Sequence[int] = None,
                  binary: bool = False) -> int:
         """Return the size of the message, in octets.
 

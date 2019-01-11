@@ -3,9 +3,10 @@
 import re
 from datetime import datetime
 from typing import Any, Tuple, Iterable, Mapping, FrozenSet, Sequence, \
-    TypeVar, Type
+    Collection, TypeVar, Type
 from typing_extensions import Final
 
+from .bytes import Writeable
 from .flags import SessionFlags
 from .interfaces.message import AppendMessage, CachedMessage, \
     MessageInterface, FlagsKey
@@ -85,7 +86,7 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     @property
     def append_msg(self) -> AppendMessage:
-        data = self.content.raw.tobytes()
+        data = bytes(self.content)
         return AppendMessage(data, self._permanent_flags, self.internal_date,
                              ExtensionOptions.empty())
 
@@ -140,60 +141,57 @@ class BaseMessage(MessageInterface, CachedMessage):
         except (KeyError, _NoContent):
             return []
 
-    def get_headers(self, section: Iterable[int] = None,
-                    subset: Iterable[bytes] = None,
-                    inverse: bool = False) -> bytes:
+    def get_headers(self, section: Sequence[int] = None,
+                    subset: Collection[bytes] = None,
+                    inverse: bool = False) -> Writeable:
         try:
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
-            return b''
+            return Writeable.empty()
         return self._get_headers(msg, subset, inverse)
 
     @classmethod
     def _get_headers(cls, msg: MessageContent,
-                     subset: Iterable[bytes] = None,
-                     inverse: bool = False) -> bytes:
-        ret = bytearray()
-        for key, value in msg.header.folded:
-            if subset is None or inverse != (key in subset):
-                ret += value
-        if ret:
-            ret += b'\r\n'
-        return bytes(ret)
+                     subset: Collection[bytes] = None,
+                     inverse: bool = False) -> Writeable:
+        if subset is None:
+            return msg.header
+        return Writeable.concat(value for key, value in msg.header.folded
+                                if inverse != (key in subset))
 
-    def get_body(self, section: Iterable[int] = None,
-                 binary: bool = False) -> bytes:
+    def get_body(self, section: Sequence[int] = None,
+                 binary: bool = False) -> Writeable:
         try:
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
-            return b''
+            return Writeable.empty()
         return self._get_bytes(msg, binary)
 
-    def get_text(self, section: Iterable[int] = None,
-                 binary: bool = False) -> bytes:
+    def get_text(self, section: Sequence[int] = None,
+                 binary: bool = False) -> Writeable:
         try:
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
-            return b''
+            return Writeable.empty()
         return self._get_bytes(msg, binary, True)
 
     @classmethod
     def _get_bytes(cls, msg: MessageContent, binary: bool = False,
-                   body_only: bool = False) -> bytes:
+                   body_only: bool = False) -> Writeable:
         if body_only:
-            return bytes(msg.body.raw)
+            return msg.body
         else:
-            return bytes(msg.raw)
+            return msg
 
     @classmethod
     def _get_size(cls, msg: MessageContent, binary: bool = False) -> int:
-        return len(msg.raw)
+        return len(msg)
 
     @classmethod
     def _get_size_with_lines(cls, msg: MessageContent) -> Tuple[int, int]:
-        return len(msg.raw), msg.lines
+        return len(msg), msg.lines
 
-    def get_size(self, section: Iterable[int] = None,
+    def get_size(self, section: Sequence[int] = None,
                  binary: bool = False) -> int:
         try:
             msg = self._get_subpart(self, section)
@@ -268,10 +266,10 @@ class BaseMessage(MessageInterface, CachedMessage):
         pattern = re.compile(re.escape(value), re.I)
         for part in self._content.walk():
             headers = self._get_headers(part)
-            if pattern.search(headers) is not None:
+            if pattern.search(bytes(headers)) is not None:
                 return True
             elif part.body.content_type.maintype == 'text':
-                data = self._get_bytes(part, True, True)
-                if pattern.search(data) is not None:
+                body = self._get_bytes(part, True, True)
+                if pattern.search(bytes(body)) is not None:
                     return True
         return False

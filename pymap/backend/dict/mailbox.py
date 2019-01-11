@@ -11,7 +11,8 @@ from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.mailbox import MailboxSnapshot
-from pymap.parsing.specials import FetchRequirement, Flag
+from pymap.parsing.specials import FetchRequirement
+from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 
 from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
@@ -112,9 +113,6 @@ class MailboxData(MailboxDataInterface[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    async def get_next_uid(self) -> int:
-        return self._max_uid + 1
-
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
         selected.uid_validity = self.uid_validity
@@ -186,6 +184,24 @@ class MailboxData(MailboxDataInterface[Message]):
         async with self.messages_lock.read_lock():
             for msg in self._messages.values():
                 yield msg
+
+    async def snapshot(self) -> MailboxSnapshot:
+        exists = 0
+        recent = 0
+        unseen = 0
+        first_unseen: Optional[int] = None
+        next_uid = self._max_uid + 1
+        async for msg in self.messages():
+            exists += 1
+            if msg.recent:
+                recent += 1
+            if Seen not in msg.permanent_flags:
+                unseen += 1
+                if first_unseen is None:
+                    first_unseen = exists
+        return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
+                               self.permanent_flags, self.session_flags,
+                               exists, recent, unseen, first_unseen, next_uid)
 
 
 class MailboxSet(MailboxSetInterface[MailboxData]):
