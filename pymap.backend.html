@@ -192,20 +192,6 @@ session to SELECT the mailbox will negate this value and apply the
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="pymap.backend.mailbox.MailboxDataInterface.messages">
-<code class="descname">messages</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.messages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all of the active messages in the mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asynciterable</span></code>[~MessageT]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.session_flags">
 <code class="descname">session_flags</code><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.session_flags" title="Permalink to this definition">¶</a></dt>
@@ -359,20 +345,6 @@ are resolved by the selected mailbox session.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~MessageT]</p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.backend.mailbox.MailboxDataInterface.get_next_uid">
-<code class="descname">get_next_uid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.get_next_uid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the predicted next message UID.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
 </tr>
 </tbody>
 </table>
