@@ -1,7 +1,8 @@
 
 import asyncio
 from datetime import datetime
-from typing import Optional, Sequence, List, Tuple, FrozenSet, Iterable
+from typing import Optional, Sequence, List, Dict, Tuple, FrozenSet, \
+    Iterable, Awaitable
 
 from aioredis import Redis, MultiExecError, WatchVariableError  # type: ignore
 
@@ -75,7 +76,10 @@ class MailboxData(MailboxDataInterface[Message]):
             -> SelectedMailbox:
         selected.uid_validity = self.uid_validity
         last_mod_seq = selected.mod_sequence
-        mod_seq, updated, expunged = await self._get_updated(last_mod_seq)
+        if last_mod_seq is None:
+            mod_seq, updated, expunged = await self._get_initial()
+        else:
+            mod_seq, updated, expunged = await self._get_updated(last_mod_seq)
         selected.mod_sequence = mod_seq
         selected.add_updates(updated, expunged)
         return selected
@@ -226,31 +230,34 @@ class MailboxData(MailboxDataInterface[Message]):
         uids = {msg.uid: msg for msg in messages}
         while True:
             await redis.watch(prefix + b':max-mod')
-            existing_uids = await redis.smembers(prefix + b':uids')
+            pipe = redis.pipeline()
+            pipe.smembers(prefix + b':uids')
+            pipe.get(prefix + b':max-mod')
+            existing_uids, max_mod = await pipe.execute()
             update_uids = uids.keys() & {int(uid) for uid in existing_uids}
             if not update_uids:
                 await redis.unwatch()
                 break
-            for uid in update_uids:
-                msg_prefix = prefix + b':msg:%d' % uid
-                cur_flags = await redis.smembers(msg_prefix + b':flags')
-                uids[uid].permanent_flags = frozenset(
-                    Flag(flag) for flag in cur_flags)
-            max_mod = await redis.get(prefix + b':max-mod')
             new_mod = int(max_mod or 0) + 1
+            new_flags: Dict[int, Awaitable[Sequence[bytes]]] = {}
             multi = redis.multi_exec()
             multi.set(prefix + b':max-mod', new_mod)
             for msg in messages:
                 msg_uid = msg.uid
-                msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
                 if msg_uid not in update_uids:
                     continue
                 msg_prefix = prefix + b':msg:%d' % msg_uid
-                msg_flags = [flag.value for flag in msg.permanent_flags]
+                flag_vals = (flag.value for flag in flag_set)
                 multi.zadd(prefix + b':mod-sequence', new_mod, msg_uid)
-                multi.unlink(msg_prefix + b':flags')
-                if msg_flags:
-                    multi.sadd(msg_prefix + b':flags', *msg_flags)
+                if mode == FlagOp.REPLACE:
+                    multi.unlink(msg_prefix + b':flags')
+                    if flag_set:
+                        multi.sadd(msg_prefix + b':flags', *flag_vals)
+                elif mode == FlagOp.ADD and flag_set:
+                    multi.sadd(msg_prefix + b':flags', *flag_vals)
+                elif mode == FlagOp.DELETE and flag_set:
+                    multi.srem(msg_prefix + b':flags', *flag_vals)
+                new_flags[msg_uid] = multi.smembers(msg_prefix + b':flags')
                 if Deleted in msg.permanent_flags:
                     multi.sadd(prefix + b':deleted', msg_uid)
                 else:
@@ -265,6 +272,10 @@ class MailboxData(MailboxDataInterface[Message]):
                 if await _check_errors(multi):
                     raise
             else:
+                for msg_uid, msg_flags in new_flags.items():
+                    msg = uids[msg_uid]
+                    msg.permanent_flags = frozenset(
+                        Flag(flag) for flag in await msg_flags)
                 break
 
     async def cleanup(self) -> None:
@@ -298,7 +309,6 @@ class MailboxData(MailboxDataInterface[Message]):
                 first_unseen: Optional[int] = None
                 break
             else:
-
                 first_uid = int(unseen[0])
                 multi = redis.multi_exec()
                 multi.zrank(prefix + b':sequence', first_uid)
@@ -314,24 +324,15 @@ class MailboxData(MailboxDataInterface[Message]):
                                exists, num_recent, num_unseen, first_unseen,
                                next_uid)
 
-    async def _get_updated(self, last_mod_seq: Optional[int]) \
+    async def _get_initial(self) \
             -> Tuple[int, Sequence[Message], Sequence[int]]:
         redis = self._redis
         prefix = self._prefix
         while True:
             await redis.watch(prefix + b':max-mod')
-            mod_seq = int(await redis.get(prefix + b':max-mod') or 0)
-            if last_mod_seq is None:
-                uids = await redis.zrange(prefix + b':sequence')
-                expunged: List[int] = []
-            else:
-                uids = await redis.zrangebyscore(
-                    prefix + b':mod-sequence', last_mod_seq, mod_seq)
-                expunged_bytes = await redis.zrangebyscore(
-                    prefix + b':expunged', last_mod_seq, mod_seq)
-                expunged = [int(uid) for uid in expunged_bytes]
+            uids = await redis.zrange(prefix + b':sequence')
             multi = redis.multi_exec()
-            multi.echo(b'')
+            multi.get(prefix + b':max-mod')
             for uid in uids:
                 msg_prefix = prefix + b':msg:' + uid
                 multi.echo(uid)
@@ -344,8 +345,43 @@ class MailboxData(MailboxDataInterface[Message]):
                     raise
             else:
                 break
+        mod_seq = int(results[0] or 0)
         updated: List[Message] = []
         for i in range(1, len(results), 3):
+            msg_uid = int(results[i])
+            msg_flags = {Flag(flag) for flag in results[i + 1]}
+            msg_time = datetime.fromisoformat(results[i + 2].decode('ascii'))
+            msg = Message(msg_uid, msg_flags, msg_time)
+            updated.append(msg)
+        return mod_seq, updated, []
+
+    async def _get_updated(self, last_mod_seq: int) \
+            -> Tuple[int, Sequence[Message], Sequence[int]]:
+        redis = self._redis
+        prefix = self._prefix
+        while True:
+            await redis.watch(prefix + b':max-mod')
+            uids = await redis.zrangebyscore(
+                prefix + b':mod-sequence', last_mod_seq)
+            multi = redis.multi_exec()
+            multi.get(prefix + b':max-mod')
+            multi.zrangebyscore(prefix + b':expunged', last_mod_seq)
+            for uid in uids:
+                msg_prefix = prefix + b':msg:' + uid
+                multi.echo(uid)
+                multi.smembers(msg_prefix + b':flags')
+                multi.get(msg_prefix + b':time')
+            try:
+                results = await multi.execute()
+            except MultiExecError:
+                if await _check_errors(multi):
+                    raise
+            else:
+                break
+        mod_seq = int(results[0] or 0)
+        expunged = [int(uid) for uid in results[1]]
+        updated: List[Message] = []
+        for i in range(2, len(results), 3):
             msg_uid = int(results[i])
             msg_flags = {Flag(flag) for flag in results[i + 1]}
             msg_time = datetime.fromisoformat(results[i + 2].decode('ascii'))
