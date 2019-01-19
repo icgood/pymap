@@ -34,6 +34,15 @@ class _ModSequenceMapping:
     def highest(self) -> int:
         return self._highest
 
+    def _remove_prev(self, uid: int, prev_mod_seq: int,
+                     data: Dict[int, Set[int]]) -> None:
+        uid_set = data.get(prev_mod_seq, None)
+        if uid_set is not None:
+            uid_set.discard(uid)
+            if not uid_set:
+                del data[prev_mod_seq]
+                self._mod_seqs_order.remove(prev_mod_seq)
+
     def _set(self, uids: Iterable[int], data: Dict[int, Set[int]]) -> None:
         self._highest = mod_seq = self._highest + 1
         self._mod_seqs_order.append(mod_seq)
@@ -43,11 +52,8 @@ class _ModSequenceMapping:
             prev_mod_seq = self._uids.get(uid, None)
             self._uids[uid] = mod_seq
             if prev_mod_seq is not None:
-                uid_set = self._updates[prev_mod_seq]
-                uid_set.discard(uid)
-                if not uid_set:
-                    del self._updates[prev_mod_seq]
-                    self._mod_seqs_order.remove(prev_mod_seq)
+                self._remove_prev(uid, prev_mod_seq, self._updates)
+                self._remove_prev(uid, prev_mod_seq, self._expunges)
 
     def update(self, uids: Iterable[int]) -> None:
         return self._set(uids, self._updates)

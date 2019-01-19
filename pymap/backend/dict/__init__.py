@@ -108,7 +108,7 @@ class Session(BaseSession[Message]):
         """
         user = credentials.authcid
         password = cls._get_password(config, user)
-        if not password or not credentials.check_secret(password):
+        if not credentials.check_secret(password):
             raise InvalidAuth()
         mailbox_set = config.set_cache.get(user)
         if not mailbox_set:

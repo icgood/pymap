@@ -157,7 +157,7 @@ class BaseMessage(MessageInterface, CachedMessage):
         if subset is None:
             return msg.header
         return Writeable.concat(value for key, value in msg.header.folded
-                                if inverse != (key in subset))
+                                if inverse != (key.upper() in subset))
 
     def get_body(self, section: Sequence[int] = None,
                  binary: bool = False) -> Writeable:

@@ -21,6 +21,7 @@ Everything runs in an [asyncio][2] event loop.
   * [dict Plugin](#dict-plugin)
   * [maildir Plugin](#maildir-plugin)
   * [redis Plugin](#redis-plugin)
+* [Admin Tool](#admin-tool)
 * [Supported Extensions](#supported-extensions)
 * [Development and Testing](#development-and-testing)
   * [Type Hinting](#type-hinting)
@@ -158,6 +159,44 @@ $ pymap --insecure-login --debug redis redis://localhost
 Once started, check out the dict plugin example above to connect and see it in
 action.
 
+## Admin Tool
+
+The `pymap-admin` tool can be used to perform various admin functions against a
+running pymap server. This is a separate [grpc][10] service using [grpclib][11]
+listening on a UNIX socket, typically `/tmp/pymap/admin-<pid>.sock`.
+
+The admin tool and service have extra dependencies you must install first:
+
+```
+pip install grpclib protobuf
+```
+
+#### `append` Command
+
+To append a message directly to a mailbox, without using IMAP, use the
+`append` admin command. First, check out the help:
+
+```
+$ pymap-admin append --help
+```
+
+As a basic example, you can append a message to a `dict` plugin backend like
+this:
+
+```
+$ cat <<EOF | pymap-admin append demouser
+> From: user@example.com
+>
+> test message!
+> EOF
+validity: 1784302999
+uid: 101
+```
+
+The output is the UID validity value of the mailbox the message was appended
+to, and the UID of the appended message. In this example, `demouser` is the
+login user and the default mailbox is `INBOX`.
+
 ## Supported Extensions
 
 In addition to [RFC 3501][1], pymap supports a number of IMAP extensions to
@@ -255,3 +294,5 @@ no need to attempt `--strict` mode.
 [7]: http://mypy-lang.org/
 [8]: https://redis.io/
 [9]: https://github.com/aio-libs/aioredis
+[10]: https://grpc.io/
+[11]: https://github.com/vmagamedov/grpclib
