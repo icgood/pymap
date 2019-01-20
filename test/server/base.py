@@ -25,8 +25,8 @@ class TestBase:
     async def init_backend(cls, request, args):
         test = request.instance
         test._fd = 1
-        test._run = server = await DictBackend.init(args)
-        test.config = server.config
+        test.backend = await DictBackend.init(args)
+        test.config = test.backend.config
         test.config.disable_search_keys = [b'DRAFT']
         test.matches: Dict[str, bytes] = {}
         test.transport = test.new_transport()
@@ -54,7 +54,7 @@ class TestBase:
         assert 0 == len(queue), 'Items left on queue: ' + repr(queue)
 
     async def _run_transport(self, transport):
-        return await self._run(transport, transport)
+        return await self.backend(transport, transport)
 
     async def run(self, *transports):
         failures = []

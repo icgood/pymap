@@ -108,7 +108,7 @@ class Session(BaseSession[Message]):
         password, _, prefix = await multi.execute()
         if password is None:
             raise InvalidAuth()
-        if ldap_context is None:
+        elif ldap_context is None or not credentials.has_secret:
             if not credentials.check_secret(password):
                 raise InvalidAuth()
         elif not ldap_context.verify(credentials.secret, password):

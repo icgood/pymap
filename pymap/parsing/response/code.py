@@ -119,8 +119,10 @@ class AppendUid(ResponseCode):
 
     def __init__(self, validity: int, uids: Iterable[int]) -> None:
         super().__init__()
-        uid_set = SequenceSet.build(uids)
-        self._raw = b'[APPENDUID %i %b]' % (validity, bytes(uid_set))
+        self.validity = validity
+        self.uids = frozenset(uids)
+        self._raw = BytesFormat(b'[APPENDUID %i %b]') \
+            % (validity, SequenceSet.build(self.uids))
 
     def __bytes__(self) -> bytes:
         return self._raw

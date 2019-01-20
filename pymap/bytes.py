@@ -162,8 +162,8 @@ class BytesFormat:
             supports_bytes = cast(SupportsBytes, other)
             return self.format([bytes(supports_bytes)])
         elif hasattr(other, '__iter__'):
-            items = cast(Iterable[MaybeBytes], other)
-            return self.format([bytes(item) for item in items])
+            items = cast(Iterable[_FormatArg], other)
+            return self.format(items)
         return NotImplemented
 
     @classmethod

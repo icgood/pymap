@@ -27,7 +27,7 @@ with open('README.md', 'r') as fh:
 
 
 setup(name='pymap',
-      version='0.6.0',
+      version='0.7.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -38,13 +38,19 @@ setup(name='pymap',
       packages=find_packages(),
       install_requires=['pysasl', 'typing-extensions'],
       tests_require=['pytest', 'pytest-asyncio'],
-      extras_require={'redis': ['aioredis']},
-      entry_points={'console_scripts': ['pymap = pymap.main:main'],
+      extras_require={'redis': ['aioredis'],
+                      'grpc': ['grpclib', 'protobuf']},
+      entry_points={'console_scripts': [
+                        'pymap = pymap.main:main',
+                        'pymap-admin = pymap.admin.client:main [grpc]'],
                     'pymap.backend': [
                         'dict = pymap.backend.dict:DictBackend',
                         'maildir = pymap.backend.maildir:MaildirBackend',
-                        'redis = pymap.backend.redis:RedisBackend [redis]']},
-      package_data={'pymap.backend.dict': ['demo/']},
+                        'redis = pymap.backend.redis:RedisBackend [redis]'],
+                    'pymap.service': [
+                        'admin = pymap.admin:AdminService [grpc]']},
+      package_data={'pymap': ['py.taped'],
+                    'pymap.backend.dict': ['demo/']},
       classifiers=['Development Status :: 3 - Alpha',
                    'Topic :: Communications :: Email :: Post-Office',
                    'Topic :: Communications :: Email :: Post-Office :: IMAP',

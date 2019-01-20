@@ -1,13 +1,13 @@
 
 from abc import abstractmethod
-from argparse import Namespace
+from argparse import Namespace, ArgumentParser
 from asyncio import StreamReader, StreamWriter
 from typing_extensions import Protocol
 
 from .session import LoginProtocol
 from ..config import IMAPConfig
 
-__all__ = ['BackendInterface']
+__all__ = ['BackendInterface', 'ServiceInterface']
 
 
 class BackendInterface(Protocol):
@@ -72,6 +72,47 @@ class BackendInterface(Protocol):
         Args:
             reader: The socket input stream.
             writer: The socket output stream.
+
+        """
+        ...
+
+
+class ServiceInterface(Protocol):
+    """Defines the abstract base class that is expected for services that
+    register themselves on the ``pymap.service`` entry point.
+
+    """
+
+    @classmethod
+    @abstractmethod
+    def add_arguments(cls, parser: ArgumentParser) -> None:
+        """Add the arguments or argument group used to configure the service.
+        For example::
+
+            group = parser.add_argument_group('foo service arguments')
+            group.add_argument(...)
+
+        Args:
+            parser: The argument parser.
+
+        """
+        ...
+
+    @classmethod
+    @abstractmethod
+    async def init(cls, backend: BackendInterface) -> 'ServiceInterface':
+        """Initialize service and return the instance.
+
+        Args:
+            backend: The backend object.
+
+        """
+        ...
+
+    @abstractmethod
+    async def run_forever(self) -> None:
+        """Start and run the service indefinitely. This coroutine should
+        gracefully exit if :exc:`~asyncio.CancelledError` is raised.
 
         """
         ...

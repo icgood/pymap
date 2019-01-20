@@ -6,3 +6,5 @@ pytest-cov
 pytest-mypy
 pytest-flake8
 aioredis
+grpclib
+protobuf

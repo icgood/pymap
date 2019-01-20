@@ -82,7 +82,6 @@ class IMAPConfig:
         self._preauth_credentials = preauth_credentials
         self._max_append_len = max_append_len
         self._disable_idle = disable_idle
-        self._extra = extra
 
     @classmethod
     def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
