@@ -31,6 +31,7 @@ Table of Contents
    pymap.interfaces
    pymap.parsing
    pymap.backend
+   pymap.admin
 
 Indices and tables
 ==================
