@@ -18,6 +18,9 @@ class GrpcHandlers(AdminBase):
     """The GRPC handlers, executed when an admin request is received. Each
     handler should receive a request, take action, and send the response.
 
+    See Also:
+        :class:`grpclib.server.Server`
+
     """
 
     def __init__(self, backend: BackendInterface) -> None:
@@ -37,7 +40,8 @@ class GrpcHandlers(AdminBase):
         See ``pymap-admin append --help`` for more options.
 
         Args:
-            stream: The stream for the request and response.
+            stream (:class:`~grpclib.server.Stream`): The stream for the
+                request and response.
 
         """
         from .grpc.admin_pb2 import AppendRequest, AppendResponse, \

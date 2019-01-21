@@ -70,7 +70,12 @@ class Config(IMAPConfig):
 
     @property
     def address(self) -> str:
-        """The redis server address. The default is ``redis://localhost``."""
+        """The redis server address. Defaults to a connection to localhost.
+
+        See Also:
+            :func:`aioredis.create_connection`
+
+        """
         return self._address
 
     @property

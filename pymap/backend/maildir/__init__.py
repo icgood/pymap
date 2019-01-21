@@ -105,7 +105,7 @@ class Config(IMAPConfig):
         """The Maildir directory layout name.
 
         See Also:
-            :class`~pymap.backend.maildir.layout.MaildirLayout`
+            :class:`~pymap.backend.maildir.layout.MaildirLayout`
 
         """
         return self._layout
