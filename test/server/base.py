@@ -13,6 +13,8 @@ from .mocktransport import MockTransport
 class FakeArgs(Namespace):
     debug = True
     insecure_login = True
+    cert = None
+    key = None
     demo_data = True
     demo_user = 'testuser'
     demo_password = 'testpass'

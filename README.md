@@ -140,15 +140,19 @@ In this example, the `3fd347cdfaee4b509f8847043d52b501` prefix was a randomly
 generated UUID acting as the namespace for the login user. The user has a
 mailbox `Sent` with UIDVALIDITY value `37` and a message with the UID `9173`.
 
-To create logins, a special key `_users` exists containing a dictionary mapping
-the username to the password.  For example:
+The default way to create logins is to simply set a key of only the username to
+its password. For example:
 
 ```
-127.0.0.1:6379> HSET _users john "s3cretp4ssword"
+127.0.0.1:6379> SET john "s3cretp4ssword"
 (integer) 1
-127.0.0.1:6379> HSET _users sally "sallypass"
+127.0.0.1:6379> SET sally "sallypass"
 (integer) 1
 ```
+
+Logins may also be looked up from a hash, with a templated key, or where the
+value is a JSON string with a `"password"` field. See the plugin help and API
+documentation for more details.
 
 Try out the redis plugin:
 

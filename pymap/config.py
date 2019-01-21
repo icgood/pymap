@@ -82,38 +82,34 @@ class IMAPConfig:
         self._preauth_credentials = preauth_credentials
         self._max_append_len = max_append_len
         self._disable_idle = disable_idle
+        self._extra = extra
 
     @classmethod
-    def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
+    def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         """Given command-line arguments, return a dictionary of keywords that
         should be passed in to the :class:`IMAPConfig` (or sub-class)
         constructor. Sub-classes should override this method as needed.
 
         Args:
             args: The arguments parsed from the command-line.
-            extra: Additional keywords used by sub-classes.
 
         """
-        ret = {'debug': args.debug,
-               'reject_insecure_auth': not args.insecure_login}
-        for key, val in extra.items():
-            if val is not None:
-                ret[key] = val
-        return ret
+        return {}
 
     @classmethod
-    def from_args(cls: Type[ConfigT], args: Namespace,
-                  **extra: Any) -> ConfigT:
+    def from_args(cls: Type[ConfigT], args: Namespace) -> ConfigT:
         """Build and return a new :class:`IMAPConfig` using command-line
         arguments.
 
         Args:
             args: The arguments parsed from the command-line.
-            extra: Additional keywords used by sub-classes.
 
         """
-        params = cls.parse_args(args, **extra)
-        return cls(args, **params)
+        parsed_args = cls.parse_args(args)
+        return cls(args, debug=args.debug,
+                   reject_insecure_auth=not args.insecure_login,
+                   cert_file=args.cert, key_file=args.key,
+                   **parsed_args)
 
     def apply_context(self) -> None:
         """Apply the configured settings to any :mod:`~pymap.context`
@@ -126,10 +122,10 @@ class IMAPConfig:
     @property
     def ssl_context(self) -> Optional[SSLContext]:
         if self._ssl_context is None:
-            cert_file: Optional[str] = getattr(self.args, 'cert', None)
+            cert_file: Optional[str] = self._extra.get('cert_file')
             if cert_file is None:
                 return None
-            key_file: str = getattr(self.args, 'key', cert_file)
+            key_file: str = self._extra.get('key_file', cert_file)
             cert_path = os.path.realpath(cert_file)
             key_path = os.path.realpath(key_file)
             ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
