@@ -89,7 +89,7 @@ class Message(_Message):
     @property
     def maildir_msg(self) -> MaildirMessage:
         flag_str = self.maildir_flags.to_maildir(self.permanent_flags)
-        msg_bytes = self.get_body(binary=True)
+        msg_bytes = bytes(self.get_body(binary=True))
         maildir_msg = MaildirMessage(msg_bytes)
         maildir_msg.set_flags(flag_str)
         maildir_msg.set_subdir('new' if self.recent else 'cur')

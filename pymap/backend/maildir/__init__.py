@@ -1,6 +1,6 @@
 
 import os.path
-from argparse import Namespace
+from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional, Tuple, Mapping, TypeVar, Type
 
@@ -30,15 +30,16 @@ class MaildirBackend(IMAPServer, BackendInterface):
 
     @classmethod
     def add_subparser(cls, subparsers) -> None:
-        parser = subparsers.add_parser('maildir', help='on-disk backend')
-        parser.add_argument('users_file', metavar='PATH',
-                            help='Path the the users file.')
-        parser.add_argument('-d', '--base-dir', metavar='DIR',
-                            help='Base directory for mailbox relative paths.')
-        parser.add_argument('-t', '--concurrency', metavar='NUM', type=int,
-                            help='Maximum number of IO workers.')
-        parser.add_argument('-l', '--layout', metavar='TYPE',
-                            help='Maildir directory layout.')
+        parser = subparsers.add_parser(
+            'maildir', help='on-disk backend',
+            formatter_class=ArgumentDefaultsHelpFormatter)
+        parser.add_argument('users_file', help='path the the users file')
+        parser.add_argument('--base-dir', metavar='DIR',
+                            help='base directory for mailbox relative paths')
+        parser.add_argument('--concurrency', metavar='NUM', type=int,
+                            help='maximum number of IO workers')
+        parser.add_argument('--layout', metavar='TYPE', default='++',
+                            help='maildir directory layout')
 
     @classmethod
     async def init(cls, args: Namespace) -> 'MaildirBackend':
@@ -50,19 +51,18 @@ class Config(IMAPConfig):
 
     Args:
         args: The command-line arguments.
-        users_file: The path to the users file, see :attr:`.users_file`.
+        users_file: The path to the users file.
         base_dir: The base directory for all relative mailbox paths.
         layout: The Maildir directory layout.
 
     """
 
-    def __init__(self, args: Namespace, users_file: str = None,
-                 base_dir: str = None, layout: str = '++',
-                 **extra: Any) -> None:
+    def __init__(self, args: Namespace, *, users_file: str,
+                 base_dir: Optional[str], layout: str, **extra: Any) -> None:
         super().__init__(args, **extra)
         self._users_file = users_file
-        self.base_dir = self._get_base_dir(base_dir, users_file)
-        self.layout = layout
+        self._base_dir = self._get_base_dir(base_dir, users_file)
+        self._layout = layout
 
     @classmethod
     def _get_base_dir(cls, base_dir: Optional[str],
@@ -90,18 +90,34 @@ class Config(IMAPConfig):
         relative path.
 
         """
-        if not self._users_file:
-            raise ValueError('users_file', self._users_file)
         return self._users_file
 
+    @property
+    def base_dir(self) -> str:
+        """The base directory for all relative mailbox paths. The default is
+        the directory containing the users file.
+
+        """
+        return self._base_dir
+
+    @property
+    def layout(self) -> str:
+        """The Maildir directory layout name.
+
+        See Also:
+            :class`~pymap.backend.maildir.layout.MaildirLayout`
+
+        """
+        return self._layout
+
     @classmethod
-    def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
+    def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         executor = ThreadPoolExecutor(args.concurrency)
         subsystem = Subsystem.for_executor(executor)
-        return super().parse_args(args, users_file=args.users_file,
-                                  base_dir=args.base_dir,
-                                  layout=args.layout,
-                                  subsystem=subsystem, **extra)
+        return {'users_file': args.users_file,
+                'base_dir': args.base_dir,
+                'layout': args.layout,
+                'subsystem': subsystem}
 
 
 class Session(BaseSession[Message]):
@@ -164,4 +180,5 @@ class Session(BaseSession[Message]):
             -> Tuple[Maildir, MaildirLayout]:
         full_path = os.path.join(config.base_dir, user_dir)
         layout = MaildirLayout.get(full_path, config.layout, Maildir)
-        return Maildir(full_path, create=True), layout
+        create = not os.path.exists(full_path)
+        return Maildir(full_path, create=create), layout

@@ -31,11 +31,11 @@ class DictBackend(IMAPServer, BackendInterface):
         parser = subparsers.add_parser(
             'dict', help='in-memory backend',
             formatter_class=ArgumentDefaultsHelpFormatter)
-        parser.add_argument('-d', '--demo-data', action='store_true',
+        parser.add_argument('--demo-data', action='store_true',
                             help='load initial demo data')
-        parser.add_argument('-u', '--demo-user', default='demouser',
+        parser.add_argument('--demo-user', default='demouser',
                             metavar='VAL', help='demo user ID')
-        parser.add_argument('-p', '--demo-password', default='demopass',
+        parser.add_argument('--demo-password', default='demopass',
                             metavar='VAL', help='demo user password')
 
     @classmethod
@@ -44,40 +44,42 @@ class DictBackend(IMAPServer, BackendInterface):
 
 
 class Config(IMAPConfig):
-    """The config implementation for the dict backend.
+    """The config implementation for the dict backend."""
 
-    Args:
-        args: The command-line arguments.
-        demo_data: Load the demo data, used by integration tests.
-
-    """
-
-    def __init__(self, args: Namespace, demo_data: bool, **extra: Any) -> None:
+    def __init__(self, args: Namespace, *, demo_data: bool,
+                 demo_user: str, demo_password: str, **extra: Any) -> None:
         super().__init__(args, **extra)
-        self.demo_data = demo_data
+        self._demo_data = demo_data
+        self._demo_user = demo_user
+        self._demo_password = demo_password
         self.set_cache: Dict[str, MailboxSet] = {}
 
     @property
+    def demo_data(self) -> bool:
+        """True if demo data should be loaded at startup."""
+        return self._demo_data
+
+    @property
     def demo_user(self) -> str:
-        """Used by the default :meth:`~Session.get_password` implementation
-        to retrieve the ``--demo-user`` command-line argument, which defaults
-        to ``demouser``.
+        """A login name that is valid at startup, which defaults to
+        ``demouser``.
 
         """
-        return self.args.demo_user
+        return self._demo_user
 
     @property
     def demo_password(self) -> str:
-        """Used by the default :meth:`~Session.get_password` implementation
-        to retrieve the ``--demo-password`` command-line argument, which
-        defaults to ``demopass``.
+        """The password for the :attr:`.demo_user` login name, which defaults
+        to ``demopass``.
 
         """
-        return self.args.demo_password
+        return self._demo_password
 
     @classmethod
-    def parse_args(cls, args: Namespace, **extra: Any) -> Mapping[str, Any]:
-        return super().parse_args(args, demo_data=args.demo_data, **extra)
+    def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
+        return {'demo_data': args.demo_data,
+                'demo_user': args.demo_user,
+                'demo_password': args.demo_password}
 
 
 class Session(BaseSession[Message]):

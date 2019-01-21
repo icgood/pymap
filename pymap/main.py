@@ -44,7 +44,7 @@ def main() -> None:
     service.add_argument('--no-services', action='store_true',
                          help='do not run any registered services')
     service.add_argument('--no-service', dest='skip_services', action='append',
-                         help='do not run the given service')
+                         metavar='NAME', help='do not run the given service')
     listener = parser.add_argument_group('server arguments')
     listener.add_argument('--port', action='store', type=int, default=1143,
                           help='the port to listen on')
