@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Ian C. Good
+# Copyright (c) 2019 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,43 +19,8 @@
 # THE SOFTWARE.
 #
 
-from setuptools import setup, find_packages  # type: ignore
+from setuptools import setup  # type: ignore
+from setuptools.config import read_configuration  # type: ignore
 
-
-with open('README.md', 'r') as fh:
-    long_description = fh.read()
-
-
-setup(name='pymap',
-      version='0.7.1',
-      author='Ian Good',
-      author_email='icgood@gmail.com',
-      description='Lightweight, asynchronous IMAP serving in Python.',
-      long_description=long_description,
-      long_description_content_type='text/markdown',
-      license='MIT',
-      url='https://github.com/icgood/pymap/',
-      packages=find_packages(),
-      install_requires=['pysasl', 'typing-extensions'],
-      tests_require=['pytest', 'pytest-asyncio'],
-      extras_require={'redis': ['aioredis'],
-                      'grpc': ['grpclib', 'protobuf']},
-      entry_points={'console_scripts': [
-                        'pymap = pymap.main:main',
-                        'pymap-admin = pymap.admin.client:main [grpc]'],
-                    'pymap.backend': [
-                        'dict = pymap.backend.dict:DictBackend',
-                        'maildir = pymap.backend.maildir:MaildirBackend',
-                        'redis = pymap.backend.redis:RedisBackend [redis]'],
-                    'pymap.service': [
-                        'admin = pymap.admin:AdminService [grpc]']},
-      package_data={'pymap': ['py.taped'],
-                    'pymap.backend.dict': ['demo/']},
-      classifiers=['Development Status :: 3 - Alpha',
-                   'Topic :: Communications :: Email :: Post-Office',
-                   'Topic :: Communications :: Email :: Post-Office :: IMAP',
-                   'Intended Audience :: Developers',
-                   'Intended Audience :: Information Technology',
-                   'License :: OSI Approved :: MIT License',
-                   'Programming Language :: Python',
-                   'Programming Language :: Python :: 3.7'])
+conf_dict = read_configuration('setup.cfg')
+setup(**conf_dict['metadata'], **conf_dict['options'])
