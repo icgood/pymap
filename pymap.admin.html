@@ -121,6 +121,10 @@ gracefully exit if <a class="reference external" href="https://docs.python.org/3
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.admin.grpc.admin_grpc.AdminBase</span></code></p>
 <p>The GRPC handlers, executed when an admin request is received. Each
 handler should receive a request, take action, and send the response.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Server" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">grpclib.server.Server</span></code></a></p>
+</div>
 <dl class="method">
 <dt id="pymap.admin.handlers.GrpcHandlers.Append">
 <code class="descname">Append</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.GrpcHandlers.Append" title="Permalink to this definition">¶</a></dt>
@@ -133,7 +137,8 @@ handler should receive a request, take action, and send the response.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> – The stream for the request and response.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
+request and response.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
