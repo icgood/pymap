@@ -23,4 +23,7 @@ from setuptools import setup  # type: ignore
 from setuptools.config import read_configuration  # type: ignore
 
 conf_dict = read_configuration('setup.cfg')
-setup(**conf_dict['metadata'], **conf_dict['options'])
+setup_param = dict()
+setup_param.update(conf_dict['metadata'])
+setup_param.update(conf_dict['options'])
+setup(**setup_param)
