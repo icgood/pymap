@@ -19,6 +19,7 @@ Table of Contents
    pymap.config
    pymap.context
    pymap.exceptions
+   pymap.filter
    pymap.flags
    pymap.listtree
    pymap.mailbox
@@ -32,6 +33,7 @@ Table of Contents
    pymap.parsing
    pymap.backend
    pymap.admin
+   pymap.sieve
 
 Indices and tables
 ==================

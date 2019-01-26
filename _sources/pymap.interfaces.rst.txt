@@ -29,3 +29,10 @@
 .. automodule:: pymap.interfaces.session
    :members:
    :special-members: __call__
+
+``pymap.interfaces.filter``
+---------------------------
+
+.. automodule:: pymap.interfaces.filter
+   :members:
+   :special-members: __call__
