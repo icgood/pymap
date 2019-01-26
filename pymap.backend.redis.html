@@ -218,9 +218,23 @@ constructor. Sub-classes should override this method as needed.</p>
 
 <dl class="class">
 <dt id="pymap.backend.redis.Session">
-<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>config</em>, <em>mailbox_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
 <p>The session implementation for the redis backend.</p>
+<dl class="attribute">
+<dt id="pymap.backend.redis.Session.filter_set">
+<code class="descname">filter_set</code><a class="headerlink" href="#pymap.backend.redis.Session.filter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the active and inactive filters for the logoin user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSet</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.backend.redis.Session.login">
 <em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session.login" title="Permalink to this definition">¶</a></dt>

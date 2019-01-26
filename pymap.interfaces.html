@@ -848,6 +848,20 @@ new IMAP session for the user.</p>
 <em class="property">class </em><code class="descclassname">pymap.interfaces.session.</code><code class="descname">SessionInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
 <p>Corresponds to a single, authenticated IMAP session.</p>
+<dl class="attribute">
+<dt id="pymap.interfaces.session.SessionInterface.filter_set">
+<code class="descname">filter_set</code><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.filter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the active and inactive filters for the logoin user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.interfaces.session.SessionInterface.append_messages">
 <code class="descname">append_messages</code><span class="sig-paren">(</span><em>name</em>, <em>messages</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.append_messages" title="Permalink to this definition">¶</a></dt>
