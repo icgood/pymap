@@ -9,7 +9,9 @@ from pysasl import AuthenticationCredentials
 from pymap.concurrent import Subsystem
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
+from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
+from pymap.interfaces.filter import FilterInterface
 from pymap.server import IMAPServer
 
 from .layout import MaildirLayout
@@ -120,15 +122,40 @@ class Config(IMAPConfig):
                 'subsystem': subsystem}
 
 
+class FilterSet(EntryPointFilterSet[bytes], SingleFilterSet):
+
+    def __init__(self, user_dir: str) -> None:
+        super().__init__()
+        self._user_dir = user_dir
+
+    @property
+    def entry_point(self) -> str:
+        return 'sieve'
+
+    async def get_active(self) -> Optional[FilterInterface]:
+        path = os.path.join(self._user_dir, 'dovecot.sieve')
+        try:
+            with open(path, 'rb') as sieve_file:
+                sieve_data = sieve_file.read()
+        except FileNotFoundError:
+            return None
+        try:
+            return self.get_filter(sieve_data)
+        except LookupError:
+            return None
+
+
 class Session(BaseSession[Message]):
     """The session implementation for the maildir backend."""
 
     resource = __name__
 
-    def __init__(self, config: Config, mailbox_set: MailboxSet) -> None:
+    def __init__(self, config: Config, mailbox_set: MailboxSet,
+                 filter_set: FilterSet) -> None:
         super().__init__()
         self._config = config
         self._mailbox_set = mailbox_set
+        self._filter_set = filter_set
 
     @property
     def config(self) -> Config:
@@ -137,6 +164,10 @@ class Session(BaseSession[Message]):
     @property
     def mailbox_set(self) -> MailboxSet:
         return self._mailbox_set
+
+    @property
+    def filter_set(self) -> FilterSet:
+        return self._filter_set
 
     @classmethod
     async def login(cls: Type[_SessionT],
@@ -152,7 +183,8 @@ class Session(BaseSession[Message]):
             raise InvalidAuth()
         maildir, layout = cls._load_maildir(config, user_dir)
         mailbox_set = MailboxSet(maildir, layout)
-        return cls(config, mailbox_set)
+        filter_set = FilterSet(user_dir)
+        return cls(config, mailbox_set, filter_set)
 
     @classmethod
     async def find_user(cls, config: Config, user: str) \

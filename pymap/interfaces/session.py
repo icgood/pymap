@@ -5,6 +5,7 @@ from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
 
+from .filter import FilterSetInterface
 from .message import AppendMessage, MessageInterface
 from .mailbox import MailboxInterface
 from ..concurrent import Event
@@ -41,6 +42,12 @@ class LoginProtocol(Protocol[ConfigT_contra]):
 
 class SessionInterface(Protocol):
     """Corresponds to a single, authenticated IMAP session."""
+
+    @property
+    @abstractmethod
+    def filter_set(self) -> Optional[FilterSetInterface]:
+        """Manages the active and inactive filters for the logoin user."""
+        ...
 
     @abstractmethod
     async def list_mailboxes(self, ref_name: str, filter_: str,
