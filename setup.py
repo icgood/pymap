@@ -19,8 +19,14 @@
 # THE SOFTWARE.
 #
 
+from typing import Dict, Any
+
 from setuptools import setup  # type: ignore
 from setuptools.config import read_configuration  # type: ignore
 
 conf_dict = read_configuration('setup.cfg')
-setup(**conf_dict['metadata'], **conf_dict['options'])
+
+setup_kwargs: Dict[str, Any] = {}
+setup_kwargs.update(conf_dict['metadata'])
+setup_kwargs.update(conf_dict['options'])
+setup(**setup_kwargs)
