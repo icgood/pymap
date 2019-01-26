@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='admin',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1cpymap/admin/grpc/admin.proto\x12\x05\x61\x64min\"Y\n\rAppendRequest\x12\x0c\n\x04user\x18\x01 \x01(\t\x12\x0f\n\x07mailbox\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\r\n\x05\x66lags\x18\x04 \x03(\t\x12\x0c\n\x04when\x18\x05 \x01(\x01\"N\n\x0e\x41ppendResponse\x12\x1d\n\x06result\x18\x01 \x01(\x0e\x32\r.admin.Result\x12\x10\n\x08validity\x18\x02 \x01(\r\x12\x0b\n\x03uid\x18\x03 \x01(\r*@\n\x06Result\x12\x0b\n\x07SUCCESS\x10\x00\x12\x12\n\x0eUSER_NOT_FOUND\x10\x01\x12\x15\n\x11MAILBOX_NOT_FOUND\x10\x02\x32@\n\x05\x41\x64min\x12\x37\n\x06\x41ppend\x12\x14.admin.AppendRequest\x1a\x15.admin.AppendResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x1cpymap/admin/grpc/admin.proto\x12\x05\x61\x64min\"|\n\rAppendRequest\x12\x0c\n\x04user\x18\x01 \x01(\t\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x11\n\trecipient\x18\x03 \x01(\t\x12\x0f\n\x07mailbox\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x12\r\n\x05\x66lags\x18\x06 \x03(\t\x12\x0c\n\x04when\x18\x07 \x01(\x04\"\x8b\x01\n\x0e\x41ppendResponse\x12\x1d\n\x06result\x18\x01 \x01(\x0e\x32\r.admin.Result\x12\x12\n\nerror_type\x18\x02 \x01(\t\x12\x16\n\x0e\x65rror_response\x18\x03 \x01(\x0c\x12\x0f\n\x07mailbox\x18\x04 \x01(\t\x12\x10\n\x08validity\x18\x05 \x01(\r\x12\x0b\n\x03uid\x18\x06 \x01(\r*)\n\x06Result\x12\x0b\n\x07SUCCESS\x10\x00\x12\x12\n\x0e\x45RROR_RESPONSE\x10\x01\x32@\n\x05\x41\x64min\x12\x37\n\x06\x41ppend\x12\x14.admin.AppendRequest\x1a\x15.admin.AppendResponse\"\x00\x62\x06proto3')
 )
 
 _RESULT = _descriptor.EnumDescriptor(
@@ -34,25 +34,20 @@ _RESULT = _descriptor.EnumDescriptor(
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='USER_NOT_FOUND', index=1, number=1,
-      serialized_options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MAILBOX_NOT_FOUND', index=2, number=2,
+      name='ERROR_RESPONSE', index=1, number=1,
       serialized_options=None,
       type=None),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=210,
-  serialized_end=274,
+  serialized_start=307,
+  serialized_end=348,
 )
 _sym_db.RegisterEnumDescriptor(_RESULT)
 
 Result = enum_type_wrapper.EnumTypeWrapper(_RESULT)
 SUCCESS = 0
-USER_NOT_FOUND = 1
-MAILBOX_NOT_FOUND = 2
+ERROR_RESPONSE = 1
 
 
 
@@ -71,30 +66,44 @@ _APPENDREQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='mailbox', full_name='admin.AppendRequest.mailbox', index=1,
+      name='sender', full_name='admin.AppendRequest.sender', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='data', full_name='admin.AppendRequest.data', index=2,
-      number=3, type=12, cpp_type=9, label=1,
+      name='recipient', full_name='admin.AppendRequest.recipient', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mailbox', full_name='admin.AppendRequest.mailbox', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='admin.AppendRequest.data', index=4,
+      number=5, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='flags', full_name='admin.AppendRequest.flags', index=3,
-      number=4, type=9, cpp_type=9, label=3,
+      name='flags', full_name='admin.AppendRequest.flags', index=5,
+      number=6, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='when', full_name='admin.AppendRequest.when', index=4,
-      number=5, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      name='when', full_name='admin.AppendRequest.when', index=6,
+      number=7, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -111,7 +120,7 @@ _APPENDREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=39,
-  serialized_end=128,
+  serialized_end=163,
 )
 
 
@@ -130,15 +139,36 @@ _APPENDRESPONSE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='validity', full_name='admin.AppendResponse.validity', index=1,
-      number=2, type=13, cpp_type=3, label=1,
+      name='error_type', full_name='admin.AppendResponse.error_type', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='error_response', full_name='admin.AppendResponse.error_response', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mailbox', full_name='admin.AppendResponse.mailbox', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='validity', full_name='admin.AppendResponse.validity', index=4,
+      number=5, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='uid', full_name='admin.AppendResponse.uid', index=2,
-      number=3, type=13, cpp_type=3, label=1,
+      name='uid', full_name='admin.AppendResponse.uid', index=5,
+      number=6, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -155,8 +185,8 @@ _APPENDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=130,
-  serialized_end=208,
+  serialized_start=166,
+  serialized_end=305,
 )
 
 _APPENDRESPONSE.fields_by_name['result'].enum_type = _RESULT
@@ -187,8 +217,8 @@ _ADMIN = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=276,
-  serialized_end=340,
+  serialized_start=350,
+  serialized_end=414,
   methods=[
   _descriptor.MethodDescriptor(
     name='Append',

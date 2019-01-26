@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 from typing_extensions import Final
 
-from pymap.exceptions import InvalidAuth, MailboxNotFound
+from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import SessionInterface
@@ -11,10 +11,10 @@ from pysasl.external import ExternalResult
 
 from .grpc.admin_grpc import AdminBase
 
-__all__ = ['GrpcHandlers']
+__all__ = ['AdminHandlers']
 
 
-class GrpcHandlers(AdminBase):
+class AdminHandlers(AdminBase):
     """The GRPC handlers, executed when an admin request is received. Each
     handler should receive a request, take action, and send the response.
 
@@ -33,7 +33,15 @@ class GrpcHandlers(AdminBase):
         return await self.login(creds, self.config)
 
     async def Append(self, stream) -> None:
-        """Append a message directly to a user's mailbox. For example::
+        """Append a message directly to a user's mailbox.
+
+        If the backend session defines a
+        :attr:`~pymap.interfaces.session.SessionInterface.filter_set`, the
+        active filter implementation will be applied to the appended message,
+        such that the message may be discarded, modified, or placed into a
+        specific mailbox.
+
+        For example, using the CLI client::
 
             $ cat message.txt | pymap-admin append user@example.com
 
@@ -45,22 +53,35 @@ class GrpcHandlers(AdminBase):
 
         """
         from .grpc.admin_pb2 import AppendRequest, AppendResponse, \
-            USER_NOT_FOUND, MAILBOX_NOT_FOUND
+            ERROR_RESPONSE
         request: AppendRequest = await stream.recv_message()
+        mailbox = request.mailbox or 'INBOX'
         flag_set = frozenset(Flag(flag) for flag in request.flags)
         when = datetime.fromtimestamp(request.when, timezone.utc)
         append_msg = AppendMessage(request.data, flag_set, when,
                                    ExtensionOptions.empty())
         try:
             session = await self._login_as(request.user)
+            if session.filter_set is not None:
+                filter_ = await session.filter_set.get_active()
+                if filter_ is not None:
+                    new_mailbox, append_msg = await filter_.apply(
+                        request.sender, request.recipient, mailbox, append_msg)
+                    if new_mailbox is None:
+                        await stream.send_message(AppendResponse())
+                        return
+                    else:
+                        mailbox = new_mailbox
             append_uid, _ = await session.append_messages(
-                request.mailbox, [append_msg])
-        except InvalidAuth:
-            resp = AppendResponse(result=USER_NOT_FOUND)
-        except MailboxNotFound:
-            resp = AppendResponse(result=MAILBOX_NOT_FOUND)
+                mailbox, [append_msg])
+        except ResponseError as exc:
+            resp = AppendResponse(result=ERROR_RESPONSE,
+                                  error_type=type(exc).__name__,
+                                  error_response=bytes(exc.get_response(b'.')),
+                                  mailbox=mailbox)
+            await stream.send_message(resp)
         else:
             validity = append_uid.validity
             uid = next(iter(append_uid.uids))
-            resp = AppendResponse(validity=validity, uid=uid)
-        await stream.send_message(resp)
+            resp = AppendResponse(mailbox=mailbox, validity=validity, uid=uid)
+            await stream.send_message(resp)

@@ -9,7 +9,9 @@ from pysasl import AuthenticationCredentials
 
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth, MailboxConflict
+from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
+from pymap.interfaces.filter import FilterInterface
 from pymap.server import IMAPServer
 
 from .mailbox import Message, MailboxSet
@@ -115,15 +117,41 @@ class Config(IMAPConfig):
                 'users_json': args.users_json}
 
 
+class FilterSet(EntryPointFilterSet[bytes], SingleFilterSet):
+
+    def __init__(self, redis: Redis, prefix: bytes) -> None:
+        super().__init__()
+        self._redis = redis
+        self._prefix = prefix
+
+    @property
+    def entry_point(self) -> str:
+        return 'sieve'
+
+    async def get_active(self) -> Optional[FilterInterface]:
+        value: Optional[bytes] = await self._redis.get(
+            self._prefix + b':sieve')
+        if value is None:
+            return None
+        else:
+            try:
+                return self.get_filter(value)
+            except LookupError:
+                # The filter entry point was not found or dependencies missing.
+                return None
+
+
 class Session(BaseSession[Message]):
     """The session implementation for the redis backend."""
 
     resource = __name__
 
-    def __init__(self, config: Config, mailbox_set: MailboxSet) -> None:
+    def __init__(self, config: Config, mailbox_set: MailboxSet,
+                 filter_set: FilterSet) -> None:
         super().__init__()
         self._config = config
         self._mailbox_set = mailbox_set
+        self._filter_set = filter_set
 
     @property
     def config(self) -> IMAPConfig:
@@ -132,6 +160,10 @@ class Session(BaseSession[Message]):
     @property
     def mailbox_set(self) -> MailboxSet:
         return self._mailbox_set
+
+    @property
+    def filter_set(self) -> FilterSet:
+        return self._filter_set
 
     @classmethod
     async def login(cls, credentials: AuthenticationCredentials,
@@ -147,7 +179,8 @@ class Session(BaseSession[Message]):
             await mailbox_set.add_mailbox('INBOX')
         except MailboxConflict:
             pass
-        return cls(config, mailbox_set)
+        filter_set = FilterSet(redis, prefix)
+        return cls(config, mailbox_set, filter_set)
 
     @classmethod
     async def _check_user(cls, redis: Redis, config: Config,

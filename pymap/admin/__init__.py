@@ -9,7 +9,7 @@ from typing_extensions import Final
 from grpclib.server import Server  # type: ignore
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 
-from .handlers import GrpcHandlers
+from .handlers import AdminHandlers
 
 __all__ = ['AdminService']
 
@@ -40,7 +40,7 @@ class AdminService(ServiceInterface):
             pid = os.getpid()
             path = os.path.join(os.sep, 'tmp', 'pymap', f'admin-{pid}.sock')
         cls._create_dir(path)
-        handlers = GrpcHandlers(backend)
+        handlers = AdminHandlers(backend)
         server = Server([handlers], loop=asyncio.get_event_loop())
         return cls(path, server)
 

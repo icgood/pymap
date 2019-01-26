@@ -1,0 +1,55 @@
+require ["fileinto", "envelope", "reject"];
+
+if header :is "Subject" "reject this" {
+    reject "message rejected";
+}
+
+if header :is "Subject" "discard this" {
+    discard;
+}
+
+if address :is :all "from" "foo@example.com" {
+    fileinto "Test 1";
+}
+
+if address :contains :domain "from" "foo" {
+    fileinto "Test 2";
+}
+
+if address :matches :localpart "to" "*foo?" {
+    fileinto "Test 3";
+}
+
+if envelope :is :all "from" "foo@example.com" {
+    fileinto "Test 4";
+}
+
+if envelope :contains :domain "from" "foo" {
+    fileinto "Test 5";
+}
+
+if envelope :matches :localpart "to" "*foo?" {
+    fileinto "Test 6";
+}
+
+if exists ["X-Foo", "X-Bar"] {
+    fileinto "Test 7";
+}
+
+if header :is ["X-Caffeine"] ["C8H10N4O2"] {
+    fileinto "Test 8";
+}
+
+if allof(not size :under 1234, not size :over 1234) {
+    fileinto "Test 9";
+}
+
+if allof (true, false) {
+    discard;
+} elsif false {
+    discard;
+} elsif not true {
+    discard;
+} else {
+    keep;
+}

@@ -8,14 +8,14 @@ from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.exceptions import MailboxNotFound, MailboxReadOnly
 from pymap.flags import FlagOp, SessionFlags, PermanentFlags
+from pymap.interfaces.message import AppendMessage
+from pymap.interfaces.session import SessionInterface
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.parsing.specials import SequenceSet, SearchKey, \
     FetchAttribute, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
 from pymap.parsing.response.code import AppendUid, CopyUid
-from pymap.interfaces.message import AppendMessage
-from pymap.interfaces.session import SessionInterface
 from pymap.search import SearchParams, SearchCriteriaSet
 from pymap.selected import SelectedMailbox
 

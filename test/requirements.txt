@@ -8,3 +8,4 @@ pytest-flake8
 aioredis
 grpclib
 protobuf
+sievelib

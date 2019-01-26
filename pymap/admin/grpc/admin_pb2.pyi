@@ -34,22 +34,25 @@ class Result(int):
     @classmethod
     def items(cls) -> typing___List[typing___Tuple[str, Result]]: ...
 SUCCESS = typing___cast(Result, 0)
-USER_NOT_FOUND = typing___cast(Result, 1)
-MAILBOX_NOT_FOUND = typing___cast(Result, 2)
+ERROR_RESPONSE = typing___cast(Result, 1)
 
 class AppendRequest(google___protobuf___message___Message):
     user = ... # type: typing___Text
+    sender = ... # type: typing___Text
+    recipient = ... # type: typing___Text
     mailbox = ... # type: typing___Text
     data = ... # type: bytes
     flags = ... # type: google___protobuf___internal___containers___RepeatedScalarFieldContainer[typing___Text]
-    when = ... # type: float
+    when = ... # type: int
 
     def __init__(self,
         user : typing___Optional[typing___Text] = None,
+        sender : typing___Optional[typing___Text] = None,
+        recipient : typing___Optional[typing___Text] = None,
         mailbox : typing___Optional[typing___Text] = None,
         data : typing___Optional[bytes] = None,
         flags : typing___Optional[typing___Iterable[typing___Text]] = None,
-        when : typing___Optional[float] = None,
+        when : typing___Optional[int] = None,
         ) -> None: ...
     @classmethod
     def FromString(cls, s: bytes) -> AppendRequest: ...
@@ -58,11 +61,17 @@ class AppendRequest(google___protobuf___message___Message):
 
 class AppendResponse(google___protobuf___message___Message):
     result = ... # type: Result
+    error_type = ... # type: typing___Text
+    error_response = ... # type: bytes
+    mailbox = ... # type: typing___Text
     validity = ... # type: int
     uid = ... # type: int
 
     def __init__(self,
         result : typing___Optional[Result] = None,
+        error_type : typing___Optional[typing___Text] = None,
+        error_response : typing___Optional[bytes] = None,
+        mailbox : typing___Optional[typing___Text] = None,
         validity : typing___Optional[int] = None,
         uid : typing___Optional[int] = None,
         ) -> None: ...
