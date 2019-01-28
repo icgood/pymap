@@ -1,7 +1,6 @@
 
 from abc import abstractmethod
 from argparse import Namespace, ArgumentParser
-from asyncio import StreamReader, StreamWriter
 from typing_extensions import Protocol
 
 from .session import LoginProtocol
@@ -60,20 +59,6 @@ class BackendInterface(Protocol):
     @abstractmethod
     def config(self) -> IMAPConfig:
         """The IMAP config in use by the backend."""
-        ...
-
-    @abstractmethod
-    async def __call__(self, reader: StreamReader, writer: StreamWriter) \
-            -> None:
-        """Client callback for :func:`~asyncio.start_server`. Most backends
-        should inherit :class:`~pymap.server.IMAPServer` to implement this
-        method.
-
-        Args:
-            reader: The socket input stream.
-            writer: The socket output stream.
-
-        """
         ...
 
 

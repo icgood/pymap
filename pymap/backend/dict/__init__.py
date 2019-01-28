@@ -13,8 +13,8 @@ from pymap.exceptions import InvalidAuth
 from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.filter import FilterInterface
+from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.specials.flag import Flag, Recent
-from pymap.server import IMAPServer
 
 from .mailbox import Message, MailboxData, MailboxSet
 from ..session import BaseSession
@@ -22,11 +22,24 @@ from ..session import BaseSession
 __all__ = ['DictBackend', 'Config', 'Session']
 
 
-class DictBackend(IMAPServer, BackendInterface):
+class DictBackend(BackendInterface):
     """Defines a backend that uses an in-memory dictionary for example usage
     and integration testing.
 
     """
+
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+        super().__init__()
+        self._login = login
+        self._config = config
+
+    @property
+    def login(self) -> LoginProtocol:
+        return self._login
+
+    @property
+    def config(self) -> IMAPConfig:
+        return self._config
 
     @classmethod
     def add_subparser(cls, subparsers) -> None:

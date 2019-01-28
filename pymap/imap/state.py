@@ -4,35 +4,35 @@ from socket import getfqdn
 from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
     Iterable
 
-from pysasl import AuthenticationCredentials
-
-from .bytes import MaybeBytes
-from .concurrent import Event
-from .config import IMAPConfig
-from .exceptions import CommandNotAllowed, CloseConnection
-from .interfaces.session import SessionInterface, LoginProtocol
-from .parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
+from pymap.bytes import MaybeBytes
+from pymap.concurrent import Event
+from pymap.config import IMAPConfig
+from pymap.exceptions import CommandNotAllowed, CloseConnection
+from pymap.interfaces.session import SessionInterface, LoginProtocol
+from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
-from .parsing.command.any import CapabilityCommand, LogoutCommand, \
+from pymap.parsing.command.any import CapabilityCommand, LogoutCommand, \
     NoOpCommand
-from .parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
+from pymap.parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
     StartTLSCommand
-from .parsing.command.auth import AppendCommand, CreateCommand, \
+from pymap.parsing.command.auth import AppendCommand, CreateCommand, \
     DeleteCommand, ListCommand, RenameCommand, SelectCommand, StatusCommand, \
     SubscribeCommand, UnsubscribeCommand
-from .parsing.command.select import CheckCommand, CloseCommand, IdleCommand, \
-    ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, SearchCommand
-from .parsing.commands import InvalidCommand
-from .parsing.primitives import ListP, Number, LiteralString, Nil
-from .parsing.response import Response, ResponseOk, ResponseNo, ResponseBad, \
-        ResponseCode, ResponsePreAuth
-from .parsing.response.code import Capability, PermanentFlags, UidNext, \
+from pymap.parsing.command.select import CheckCommand, CloseCommand, \
+    IdleCommand, ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, \
+    SearchCommand
+from pymap.parsing.commands import InvalidCommand
+from pymap.parsing.primitives import ListP, Number, LiteralString, Nil
+from pymap.parsing.response import Response, ResponseOk, ResponseNo, \
+    ResponseBad,  ResponseCode, ResponsePreAuth
+from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
     UidValidity, Unseen
-from .parsing.response.specials import FlagsResponse, ExistsResponse, \
+from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from .parsing.specials import DateTime, FetchAttribute, StatusAttribute
-from .selected import SelectedMailbox
+from pymap.parsing.specials import DateTime, FetchAttribute, StatusAttribute
+from pymap.selected import SelectedMailbox
+from pysasl import AuthenticationCredentials
 
 __all__ = ['ConnectionState']
 

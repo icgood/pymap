@@ -32,6 +32,8 @@ class IMAPConfig:
     Args:
         args: The command-line arguments.
         debug: If true, prints all socket activity to stdout.
+        host: The IMAP server host.
+        port: The IMAP server port.
         subsystem: The concurrency subsystem in use by the backend.
         ssl_context: SSL context that will be used for opportunistic TLS.
             Alternatively, you can pass extra arguments ``cert_file`` and
@@ -58,6 +60,8 @@ class IMAPConfig:
 
     def __init__(self, args: Namespace, *,
                  debug: bool = False,
+                 host: Optional[str] = None,
+                 port: int = 143,
                  subsystem: Subsystem = None,
                  ssl_context: SSLContext = None,
                  starttls_enabled: bool = True,
@@ -72,6 +76,8 @@ class IMAPConfig:
         super().__init__()
         self.args = args
         self.debug: Final = debug
+        self.host: Final = host
+        self.port: Final = port
         self.subsystem: Final = subsystem
         self.bad_command_limit: Final = bad_command_limit
         self.disable_search_keys: Final = disable_search_keys or []
@@ -106,7 +112,7 @@ class IMAPConfig:
 
         """
         parsed_args = cls.parse_args(args)
-        return cls(args, debug=args.debug,
+        return cls(args, debug=args.debug, host=args.host, port=args.port,
                    reject_insecure_auth=not args.insecure_login,
                    cert_file=args.cert, key_file=args.key,
                    **parsed_args)

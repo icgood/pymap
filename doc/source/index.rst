@@ -27,11 +27,11 @@ Table of Contents
    pymap.mime
    pymap.search
    pymap.selected
-   pymap.server
    pymap.sockinfo
    pymap.interfaces
    pymap.parsing
    pymap.backend
+   pymap.imap
    pymap.admin
    pymap.sieve
 

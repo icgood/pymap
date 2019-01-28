@@ -8,7 +8,7 @@ from typing import Any, Type, Sequence, Mapping
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
-from .core import __version__
+from . import __version__
 from .interfaces.backend import BackendInterface, ServiceInterface
 
 _Backends = Mapping[str, Type[BackendInterface]]
@@ -38,20 +38,10 @@ def main() -> None:
                         help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
                         version='%(prog)s' + __version__)
+    parser.add_argument('--no-service', dest='skip_services', action='append',
+                        metavar='NAME', help='do not run the given service')
     subparsers = parser.add_subparsers(dest='backend',
                                        help='which pymap backend to use')
-    service = parser.add_argument_group('service arguments')
-    service.add_argument('--no-services', action='store_true',
-                         help='do not run any registered services')
-    service.add_argument('--no-service', dest='skip_services', action='append',
-                         metavar='NAME', help='do not run the given service')
-    listener = parser.add_argument_group('server arguments')
-    listener.add_argument('--port', action='store', type=int, default=1143,
-                          help='the port to listen on')
-    listener.add_argument('--cert', action='store', help='cert file for TLS')
-    listener.add_argument('--key', action='store', help='key file for TLS')
-    listener.add_argument('--insecure-login', action='store_true',
-                          help='allow plaintext login without TLS')
 
     backends: _Backends = _load_entry_points(parser, 'pymap.backend')
     services: _Services = _load_entry_points(parser, 'pymap.service')
@@ -63,20 +53,18 @@ def main() -> None:
     parser.set_defaults(skip_services=[])
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.WARNING)
+    log_level = logging.DEBUG if args.debug else logging.WARNING
+    logging.basicConfig(level=log_level)
 
     if not args.backend:
         parser.error('Expected backend name')
-    backend = backends[args.backend]
+    backend_type = backends[args.backend]
 
-    if not args.no_services:
-        run_services = [service for name, service in services.items()
-                        if name not in args.skip_services]
-    else:
-        run_services = []
+    service_types = [service for name, service in services.items()
+                     if name not in args.skip_services]
 
     try:
-        return asyncio.run(run(args, backend, run_services), debug=False)
+        return asyncio.run(run(args, backend_type, service_types), debug=False)
     except KeyboardInterrupt:
         pass
 
@@ -87,12 +75,7 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
     backend.config.apply_context()
     services = [await service.init(backend) for service in service_types]
 
-    server = await asyncio.start_server(backend, port=args.port)
-
-    # Typeshed currently has poor stubs for AbstractServer.
-    async with server:  # type: ignore
-        await asyncio.gather(server.serve_forever(),  # type: ignore
-                             *(service.run_forever() for service in services))
+    await asyncio.gather(*(service.run_forever() for service in services))
 
 
 if __name__ == '__main__':

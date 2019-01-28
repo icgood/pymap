@@ -12,7 +12,7 @@ from pymap.exceptions import InvalidAuth, MailboxConflict
 from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.filter import FilterInterface
-from pymap.server import IMAPServer
+from pymap.interfaces.session import LoginProtocol
 
 from .mailbox import Message, MailboxSet
 from ..session import BaseSession
@@ -25,10 +25,23 @@ except ImportError:
 __all__ = ['RedisBackend', 'Config', 'Session']
 
 
-class RedisBackend(IMAPServer, BackendInterface):
+class RedisBackend(BackendInterface):
     """Defines a backend that uses redis data structures for mailbox storage.
 
     """
+
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+        super().__init__()
+        self._login = login
+        self._config = config
+
+    @property
+    def login(self) -> LoginProtocol:
+        return self._login
+
+    @property
+    def config(self) -> IMAPConfig:
+        return self._config
 
     @classmethod
     def add_subparser(cls, subparsers) -> None:

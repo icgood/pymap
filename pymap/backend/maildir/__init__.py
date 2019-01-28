@@ -12,7 +12,7 @@ from pymap.exceptions import InvalidAuth
 from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.filter import FilterInterface
-from pymap.server import IMAPServer
+from pymap.interfaces.session import LoginProtocol
 
 from .layout import MaildirLayout
 from .mailbox import Message, Maildir, MailboxSet
@@ -23,12 +23,25 @@ __all__ = ['MaildirBackend', 'Config', 'Session']
 _SessionT = TypeVar('_SessionT', bound='Session')
 
 
-class MaildirBackend(IMAPServer, BackendInterface):
+class MaildirBackend(BackendInterface):
     """Defines an on-disk backend that uses :class:`~mailbox.Maildir` for
     mailbox storage and `MailboxFormat/Maildir
     <https://wiki2.dovecot.org/MailboxFormat/Maildir>`_ for metadata storage.
 
     """
+
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+        super().__init__()
+        self._login = login
+        self._config = config
+
+    @property
+    def login(self) -> LoginProtocol:
+        return self._login
+
+    @property
+    def config(self) -> IMAPConfig:
+        return self._config
 
     @classmethod
     def add_subparser(cls, subparsers) -> None:

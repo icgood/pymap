@@ -7,11 +7,13 @@ import pytest  # type: ignore
 
 from pymap.backend.dict import DictBackend
 from pymap.context import subsystem
+from pymap.imap import IMAPServer
 from .mocktransport import MockTransport
 
 
 class FakeArgs(Namespace):
     debug = True
+    port = None
     insecure_login = True
     cert = None
     key = None
@@ -32,6 +34,7 @@ class TestBase:
         test.config.disable_search_keys = [b'DRAFT']
         test.matches: Dict[str, bytes] = {}
         test.transport = test.new_transport()
+        test.server = IMAPServer(test.backend.login, test.backend.config)
 
     @pytest.fixture
     def args(self):
@@ -56,7 +59,7 @@ class TestBase:
         assert 0 == len(queue), 'Items left on queue: ' + repr(queue)
 
     async def _run_transport(self, transport):
-        return await self.backend(transport, transport)
+        return await self.server(transport, transport)
 
     async def run(self, *transports):
         failures = []

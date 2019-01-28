@@ -27,8 +27,8 @@ class AdminService(ServiceInterface):
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
-        admin = parser.add_argument_group('admin arguments')
-        admin.add_argument('--admin-path', metavar='PATH',
+        group = parser.add_argument_group('admin service')
+        group.add_argument('--admin-path', metavar='PATH',
                            help='path to POSIX socket file')
 
     @classmethod

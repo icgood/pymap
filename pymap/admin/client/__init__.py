@@ -7,7 +7,7 @@ import asyncio
 from argparse import ArgumentParser, Namespace
 
 from grpclib.client import Channel  # type: ignore
-from pymap.core import __version__
+from pymap import __version__
 
 from .append import AppendCommand
 from .command import ClientCommand
