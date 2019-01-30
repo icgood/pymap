@@ -179,3 +179,7 @@ class IMAPConfig:
         if self._reject_insecure_auth:
             ret.append(b'LOGINDISABLED')
         return ret
+
+    @property
+    def max_filter_len(self) -> Optional[int]:
+        return self._max_append_len

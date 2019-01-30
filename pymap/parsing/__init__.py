@@ -28,11 +28,14 @@ class Params:
         tag: The next parsed command uses this tag bytestring.
         max_append_len: The maximum allowed length of the message body to an
             ``APPEND`` command.
+        allow_continuations: Allow literal strings that require continuation
+            data.
 
     """
 
     __slots__ = ['continuations', 'expected', 'list_expected', 'command_name',
-                 'uid', 'charset', 'tag', 'max_append_len']
+                 'uid', 'charset', 'tag', 'max_append_len',
+                 'allow_continuations']
 
     def __init__(self, *, continuations: List[memoryview] = None,
                  expected: Sequence[Type['Parseable']] = None,
@@ -41,7 +44,8 @@ class Params:
                  uid: bool = False,
                  charset: str = None,
                  tag: bytes = None,
-                 max_append_len: int = None) -> None:
+                 max_append_len: int = None,
+                 allow_continuations: bool = True) -> None:
         super().__init__()
         self.continuations = continuations or []
         self.expected = expected or []
@@ -51,6 +55,7 @@ class Params:
         self.charset = charset
         self.tag = tag or b'*'
         self.max_append_len = max_append_len
+        self.allow_continuations = allow_continuations
 
     def _set_if_none(self, kwargs: Dict[str, Any], attr: str, value) -> None:
         if value is not None:
@@ -65,7 +70,8 @@ class Params:
              uid: bool = None,
              charset: str = None,
              tag: bytes = None,
-             max_append_len: int = None) -> 'Params':
+             max_append_len: int = None,
+             allow_continuations: bool = None) -> 'Params':
         """Copy the parameters, possibly replacing a subset."""
         kwargs: Dict[str, Any] = {}
         self._set_if_none(kwargs, 'continuations', continuations)
@@ -76,6 +82,7 @@ class Params:
         self._set_if_none(kwargs, 'charset', charset)
         self._set_if_none(kwargs, 'tag', tag)
         self._set_if_none(kwargs, 'max_append_len', max_append_len)
+        self._set_if_none(kwargs, 'allow_continuations', allow_continuations)
         return Params(**kwargs)
 
 
