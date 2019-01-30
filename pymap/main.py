@@ -2,7 +2,6 @@
 
 import asyncio
 import logging
-import traceback
 from argparse import ArgumentParser, Namespace, ArgumentDefaultsHelpFormatter
 from typing import Any, Type, Sequence, Mapping
 
@@ -15,7 +14,7 @@ _Backends = Mapping[str, Type[BackendInterface]]
 _Services = Mapping[str, Type[ServiceInterface]]
 
 
-def _load_entry_points(parser: ArgumentParser, group: str) \
+def _load_entry_points(group: str) \
         -> Mapping[str, Type[Any]]:
     ret = {}
     for entry_point in iter_entry_points(group):
@@ -23,9 +22,6 @@ def _load_entry_points(parser: ArgumentParser, group: str) \
             cls = entry_point.load()
         except DistributionNotFound:
             pass  # optional dependencies not installed
-        except ImportError:
-            traceback.print_exc()
-            parser.exit(1, f'Error importing: {group}:{entry_point.name}\n')
         else:
             ret[entry_point.name] = cls
     return ret
@@ -43,8 +39,8 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest='backend',
                                        help='which pymap backend to use')
 
-    backends: _Backends = _load_entry_points(parser, 'pymap.backend')
-    services: _Services = _load_entry_points(parser, 'pymap.service')
+    backends: _Backends = _load_entry_points('pymap.backend')
+    services: _Services = _load_entry_points('pymap.service')
 
     for backend_cls in backends.values():
         backend_cls.add_subparser(subparsers)
@@ -53,8 +49,11 @@ def main() -> None:
     parser.set_defaults(skip_services=[])
     args = parser.parse_args()
 
-    log_level = logging.DEBUG if args.debug else logging.WARNING
-    logging.basicConfig(level=log_level)
+    if args.debug:
+        logging.basicConfig(level=logging.INFO)
+        logging.getLogger(__package__).setLevel(logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.WARNING)
 
     if not args.backend:
         parser.error('Expected backend name')
@@ -76,7 +75,3 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
     services = [await service.init(backend) for service in service_types]
 
     await asyncio.gather(*(service.run_forever() for service in services))
-
-
-if __name__ == '__main__':
-    main()

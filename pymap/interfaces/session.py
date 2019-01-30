@@ -1,6 +1,6 @@
 
 from abc import abstractmethod
-from typing import Tuple, Optional, FrozenSet, Iterable, Sequence
+from typing import Any, Tuple, Optional, FrozenSet, Iterable, Sequence
 from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
@@ -45,8 +45,14 @@ class SessionInterface(Protocol):
 
     @property
     @abstractmethod
-    def filter_set(self) -> Optional[FilterSetInterface]:
-        """Manages the active and inactive filters for the logoin user."""
+    def owner(self) -> str:
+        """The SASL authorization identity of the logged-in user."""
+        ...
+
+    @property
+    @abstractmethod
+    def filter_set(self) -> Optional[FilterSetInterface[Any]]:
+        """Manages the active and inactive filters for the login user."""
         ...
 
     @abstractmethod

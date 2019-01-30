@@ -13,13 +13,13 @@ from .mocktransport import MockTransport
 
 class FakeArgs(Namespace):
     debug = True
-    port = None
     insecure_login = True
-    cert = None
-    key = None
     demo_data = True
     demo_user = 'testuser'
     demo_password = 'testpass'
+
+    def __getattr__(self, key: str) -> None:
+        return None
 
 
 class TestBase:

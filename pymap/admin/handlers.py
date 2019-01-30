@@ -32,6 +32,10 @@ class AdminHandlers(AdminBase):
         creds = ExternalResult(user)
         return await self.login(creds, self.config)
 
+    @property
+    def _with_filter(self) -> bool:
+        return not self.config.args.no_filter
+
     async def Append(self, stream) -> None:
         """Append a message directly to a user's mailbox.
 
@@ -62,9 +66,10 @@ class AdminHandlers(AdminBase):
                                    ExtensionOptions.empty())
         try:
             session = await self._login_as(request.user)
-            if session.filter_set is not None:
-                filter_ = await session.filter_set.get_active()
-                if filter_ is not None:
+            if self._with_filter and session.filter_set is not None:
+                filter_value = await session.filter_set.get_active()
+                if filter_value is not None:
+                    filter_ = await session.filter_set.compile(filter_value)
                     new_mailbox, append_msg = await filter_.apply(
                         request.sender, request.recipient, mailbox, append_msg)
                     if new_mailbox is None:

@@ -30,6 +30,8 @@ class AdminService(ServiceInterface):
         group = parser.add_argument_group('admin service')
         group.add_argument('--admin-path', metavar='PATH',
                            help='path to POSIX socket file')
+        group.add_argument('--no-filter', action='store_true',
+                           help='do not filter appended messages')
 
     @classmethod
     async def init(cls, backend: BackendInterface) -> 'AdminService':

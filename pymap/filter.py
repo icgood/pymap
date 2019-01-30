@@ -1,91 +1,125 @@
 
-from abc import abstractmethod, ABCMeta
-from typing import TypeVar, Generic, Callable, Optional, NoReturn
+from abc import abstractmethod
+from typing import Generic, Type, Optional, Tuple, Sequence
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
-from .interfaces.filter import FilterInterface, FilterSetInterface
+from .interfaces.filter import FilterValueT, FilterInterface, \
+    FilterSetInterface
 
-__all__ = ['FilterValueT', 'EntryPointFilterSet', 'SingleFilterSet']
-
-#: Type variable for the value used to instantiate an
-#: :class:`EntryPointFilter`.
-FilterValueT = TypeVar('FilterValueT')
-
-_FilterFactory = Callable[[FilterValueT], FilterInterface]
+__all__ = ['FilterCompiler', 'EntryPointFilterSet', 'SingleFilterSet']
 
 
-class EntryPointFilterSet(Generic[FilterValueT], FilterSetInterface,
-                          metaclass=ABCMeta):
-    """Base class for filter set implementations that use a filter
-    implementation declared in the ``pymap.filter`` entry point.
-
-    The entry points should be classes or callable factories that take a single
-    value and return a filter instance.
+class FilterCompiler(Generic[FilterValueT]):
+    """Abstract base class for classes which can compile a filter value into an
+    implementation.
 
     """
 
-    @property
     @abstractmethod
-    def entry_point(self) -> str:
-        """The name of the ``pymap.filter`` entry point used to implement the
-        filter.
-
-        If the entry point is found, it must implement :class:`FilterInterface`
-        for the filter value type. If the entry point is not found, no filter
-        is applied to new messages.
-
-        """
-        ...
-
-    def get_filter(self, value: FilterValueT) -> FilterInterface:
-        """Find the filter implementation, and return an instance of it with
-        the given filter value.
+    async def compile(self, value: FilterValueT) -> FilterInterface:
+        """Compile the filter value and return the resulting implementation.
 
         Args:
             value: The filter value.
 
-        Raises:
-            :class:`LookupError`
-
         """
-        filter_factory: Optional[_FilterFactory] = None
-        name = self.entry_point
-        for entry_point in iter_entry_points('pymap.filter', name):
-            try:
-                filter_factory = entry_point.load()
-            except DistributionNotFound:
-                pass  # optional dependencies not installed
-        if filter_factory is None:
-            raise LookupError(name)
-        return filter_factory(value)
+        ...
 
 
-class SingleFilterSet(FilterSetInterface, metaclass=ABCMeta):
+class EntryPointFilterSet(FilterSetInterface[FilterValueT]):
+    """Base class for filter set implementations that use a filter compiler
+    declared in the ``pymap.filter`` entry point. The declared entry points
+    must sub-class :class:`FilterCompiler`.
+
+    Args:
+        entry_point: The entry point name.
+        group: The entry point group.
+
+    """
+
+    def __init__(self, entry_point: str, *,
+                 group: str = 'pymap.filter') -> None:
+        super().__init__()
+        self._group = group
+        self._entry_point = entry_point
+        self._filter_compiler: Optional[FilterCompiler] = None
+
+    @property
+    def filter_compiler(self) -> FilterCompiler:
+        if self._filter_compiler is None:
+            filter_cls: Optional[Type[FilterCompiler]] = None
+            name = self._entry_point
+            for entry_point in iter_entry_points(self._group, name):
+                try:
+                    filter_cls = entry_point.load()
+                except DistributionNotFound:
+                    pass  # optional dependencies not installed
+            if filter_cls is None:
+                raise LookupError(f'{self._group}:{name}')
+            self._filter_compiler = filter_cls()
+        return self._filter_compiler
+
+    async def compile(self, value: FilterValueT) -> FilterInterface:
+        return await self.filter_compiler.compile(value)
+
+
+class SingleFilterSet(FilterSetInterface[FilterValueT]):
     """Base class for a filter set that does not use named filter
     implementations, it contains only a single active filter implementation.
 
     """
 
-    async def put(self, name: str, value: FilterInterface,
-                  check: bool = False) -> NoReturn:
+    @property
+    def name(self) -> str:
+        """The permanent name for the active filter."""
+        return 'active'
+
+    async def put(self, name: str, value: FilterValueT) -> None:
+        if name == self.name:
+            await self.replace_active(value)
+
+    async def delete(self, name: str) -> None:
+        if name == self.name:
+            await self.replace_active(None)
+        else:
+            raise KeyError(name)
+
+    async def rename(self, before_name: str, after_name: str) -> None:
         raise NotImplementedError()
 
-    async def delete(self, name: str) -> NoReturn:
-        raise NotImplementedError()
+    async def set_active(self, name: Optional[str]) -> None:
+        if name is None:
+            await self.replace_active(None)
+        elif name != self.name:
+            raise KeyError(name)
 
-    async def rename(self, before_name: str, after_name: str) -> NoReturn:
-        raise NotImplementedError()
+    async def get(self, name: str) -> FilterValueT:
+        if name == self.name:
+            value = await self.get_active()
+            if value is None:
+                raise KeyError(name)
+            else:
+                return value
+        else:
+            raise KeyError(name)
 
-    async def set_active(self, name: Optional[str]) -> NoReturn:
-        raise NotImplementedError()
+    async def get_all(self) -> Tuple[Optional[str], Sequence[str]]:
+        value = await self.get_active()
+        if value is None:
+            return None, []
+        else:
+            return self.name, [self.name]
 
-    async def get(self, name: str) -> NoReturn:
+    async def replace_active(self, value: Optional[FilterValueT]) -> None:
+        """Replace the current active filter value with a new value.
+
+        Args:
+            value: The new filter value.
+
+        """
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_active(self) -> Optional[FilterInterface]:
+    async def get_active(self) -> Optional[FilterValueT]:
         ...
-
-    async def get_all(self) -> NoReturn:
-        raise NotImplementedError()
