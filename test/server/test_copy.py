@@ -8,32 +8,35 @@ pytestmark = pytest.mark.asyncio
 
 class TestCopy(TestBase):
 
-    async def test_copy(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX')
-        self.transport.push_readline(
+    async def test_copy(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
             b'copy1 COPY 1:* Sent\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'copy1 OK [COPYUID ', (br'\d+', ), b' 101:104 102:105]'
             b' COPY completed.\r\n')
-        self.transport.push_select(b'Sent', 5, 4)
-        self.transport.push_logout()
-        await self.run()
+        transport.push_select(b'Sent', 5, 4)
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_uid_copy(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX')
-        self.transport.push_readline(
+    async def test_uid_copy(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
             b'copy1 UID COPY 1:* Sent\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'copy1 OK [COPYUID ', (br'\d+', ), b' 101:104 102:105]'
             b' UID COPY completed.\r\n')
-        self.transport.push_select(b'Sent', 5, 4)
-        self.transport.push_logout()
-        await self.run()
+        transport.push_select(b'Sent', 5, 4)
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_concurrent_copy_fetch(self):
-        concurrent = self.new_transport()
+    async def test_concurrent_copy_fetch(self, imap_server):
+        transport = self.new_transport(imap_server)
+        concurrent = self.new_transport(imap_server)
         event1, event2, event3 = self.new_events(3)
 
         concurrent.push_login()
@@ -50,13 +53,13 @@ class TestCopy(TestBase):
             b'noop1 OK NOOP completed.\r\n')
         concurrent.push_logout()
 
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', wait=event1, set=event2)
-        self.transport.push_readline(
+        transport.push_login()
+        transport.push_select(b'INBOX', wait=event1, set=event2)
+        transport.push_readline(
             b'copy1 COPY 1:* Sent\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'copy1 OK [COPYUID ', (br'\d+', ), b' 101:104 102:105]'
             b' COPY completed.\r\n', set=event2)
-        self.transport.push_logout()
+        transport.push_logout()
 
-        await self.run(concurrent)
+        await self.run(transport, concurrent)

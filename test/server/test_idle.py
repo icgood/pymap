@@ -8,47 +8,51 @@ pytestmark = pytest.mark.asyncio
 
 class TestIdle(TestBase):
 
-    async def test_idle(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105)
-        self.transport.push_readline(
+    async def test_idle(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 1, 105)
+        transport.push_readline(
             b'idle1 IDLE\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'+ Idling.\r\n')
-        self.transport.push_readexactly(b'')
-        self.transport.push_readline(
+        transport.push_readexactly(b'')
+        transport.push_readline(
             b'DONE\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'idle1 OK IDLE completed.\r\n')
-        self.transport.push_logout()
-        await self.run()
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_idle_invalid(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105)
-        self.transport.push_readline(
+    async def test_idle_invalid(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 1, 105)
+        transport.push_readline(
             b'idle1 IDLE\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'+ Idling.\r\n')
-        self.transport.push_readexactly(b'')
-        self.transport.push_readline(
+        transport.push_readexactly(b'')
+        transport.push_readline(
             b'WHAT\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'idle1 BAD Expected "DONE".\r\n')
-        self.transport.push_logout()
-        await self.run()
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_idle_noselect(self):
-        self.transport.push_login()
-        self.transport.push_readline(
+    async def test_idle_noselect(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_readline(
             b'idle1 IDLE\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'idle1 BAD IDLE: Must select a mailbox first.\r\n')
-        self.transport.push_logout()
-        await self.run()
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_concurrent_idle_append(self):
-        concurrent = self.new_transport()
+    async def test_concurrent_idle_append(self, imap_server):
+        transport = self.new_transport(imap_server)
+        concurrent = self.new_transport(imap_server)
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
@@ -70,24 +74,25 @@ class TestIdle(TestBase):
             b'idle1 OK IDLE completed.\r\n')
         concurrent.push_logout()
 
-        self.transport.push_login()
-        self.transport.push_readline(
+        transport.push_login()
+        transport.push_readline(
             b'append1 APPEND INBOX (\\Seen) {9}\r\n', wait=event1)
-        self.transport.push_write(
+        transport.push_write(
             b'+ Literal string\r\n')
-        self.transport.push_readexactly(
+        transport.push_readexactly(
             b'testing\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'append1 OK [APPENDUID ', None, b' 105] APPEND completed.\r\n',
             set=event2)
-        self.transport.push_logout()
+        transport.push_logout()
 
-        await self.run(concurrent)
+        await self.run(transport, concurrent)
 
-    async def test_concurrent_idle_expunge(self):
-        concurrent = self.new_transport()
+    async def test_concurrent_idle_expunge(self, imap_server):
+        transport = self.new_transport(imap_server)
+        concurrent = self.new_transport(imap_server)
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
@@ -105,16 +110,16 @@ class TestIdle(TestBase):
             b'idle1 OK IDLE completed.\r\n')
         concurrent.push_logout()
 
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 0, 105, wait=event1)
-        self.transport.push_readline(
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 0, 105, wait=event1)
+        transport.push_readline(
             b'store1 STORE 1 +FLAGS.SILENT (\\Deleted)\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'store1 OK STORE completed.\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'close1 CLOSE\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'close1 OK CLOSE completed.\r\n', set=event2)
-        self.transport.push_logout()
+        transport.push_logout()
 
-        await self.run(concurrent)
+        await self.run(transport, concurrent)

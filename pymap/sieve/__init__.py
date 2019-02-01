@@ -27,7 +27,11 @@ class SieveCompiler(FilterCompiler[bytes]):
 
     async def compile(self, value: bytes) -> 'SieveFilter':
         parser = self.parser
-        if parser.parse(value):
+        try:
+            success = parser.parse(value)
+        except Exception as exc:
+            raise SieveParseError('Unhandled parsing error') from exc
+        if success:
             runner = SieveRunner(parser.result)
             return SieveFilter(runner)
         else:
