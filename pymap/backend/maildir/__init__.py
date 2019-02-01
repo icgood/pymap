@@ -2,7 +2,7 @@
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Optional, Tuple, Mapping, TypeVar, Type
+from typing import TypeVar, Any, Type, Optional, Tuple, Mapping
 
 from pysasl import AuthenticationCredentials
 
@@ -11,8 +11,7 @@ from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.filter import FilterInterface
-from pymap.server import IMAPServer
+from pymap.interfaces.session import LoginProtocol
 
 from .layout import MaildirLayout
 from .mailbox import Message, Maildir, MailboxSet
@@ -23,12 +22,25 @@ __all__ = ['MaildirBackend', 'Config', 'Session']
 _SessionT = TypeVar('_SessionT', bound='Session')
 
 
-class MaildirBackend(IMAPServer, BackendInterface):
+class MaildirBackend(BackendInterface):
     """Defines an on-disk backend that uses :class:`~mailbox.Maildir` for
     mailbox storage and `MailboxFormat/Maildir
     <https://wiki2.dovecot.org/MailboxFormat/Maildir>`_ for metadata storage.
 
     """
+
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+        super().__init__()
+        self._login = login
+        self._config = config
+
+    @property
+    def login(self) -> LoginProtocol:
+        return self._login
+
+    @property
+    def config(self) -> IMAPConfig:
+        return self._config
 
     @classmethod
     def add_subparser(cls, subparsers) -> None:
@@ -122,26 +134,29 @@ class Config(IMAPConfig):
                 'subsystem': subsystem}
 
 
-class FilterSet(EntryPointFilterSet[bytes], SingleFilterSet):
+class FilterSet(EntryPointFilterSet[bytes], SingleFilterSet[bytes]):
 
     def __init__(self, user_dir: str) -> None:
-        super().__init__()
+        super().__init__('sieve')
         self._user_dir = user_dir
 
-    @property
-    def entry_point(self) -> str:
-        return 'sieve'
+    async def replace_active(self, value: Optional[bytes]) -> None:
+        path = os.path.join(self._user_dir, 'dovecot.sieve')
+        if value is None:
+            try:
+                os.unlink(path)
+            except FileNotFoundError:
+                pass
+        else:
+            with open(path, 'wb') as sieve_file:
+                sieve_file.write(value)
 
-    async def get_active(self) -> Optional[FilterInterface]:
+    async def get_active(self) -> Optional[bytes]:
         path = os.path.join(self._user_dir, 'dovecot.sieve')
         try:
             with open(path, 'rb') as sieve_file:
-                sieve_data = sieve_file.read()
+                return sieve_file.read()
         except FileNotFoundError:
-            return None
-        try:
-            return self.get_filter(sieve_data)
-        except LookupError:
             return None
 
 
@@ -150,9 +165,9 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    def __init__(self, config: Config, mailbox_set: MailboxSet,
+    def __init__(self, owner: str, config: Config, mailbox_set: MailboxSet,
                  filter_set: FilterSet) -> None:
-        super().__init__()
+        super().__init__(owner)
         self._config = config
         self._mailbox_set = mailbox_set
         self._filter_set = filter_set
@@ -179,12 +194,14 @@ class Session(BaseSession[Message]):
         """
         user = credentials.authcid
         password, user_dir = await cls.find_user(config, user)
-        if not credentials.check_secret(password):
+        if user != credentials.identity:
+            raise InvalidAuth()
+        elif not credentials.check_secret(password):
             raise InvalidAuth()
         maildir, layout = cls._load_maildir(config, user_dir)
         mailbox_set = MailboxSet(maildir, layout)
-        filter_set = FilterSet(user_dir)
-        return cls(config, mailbox_set, filter_set)
+        filter_set = FilterSet(layout.path)
+        return cls(credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     async def find_user(cls, config: Config, user: str) \

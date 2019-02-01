@@ -20,9 +20,10 @@ from .concurrent import Subsystem
 from .parsing.command import Command
 from .sockinfo import SocketInfo
 
-__all__ = ['subsystem', 'current_command', 'socket_info']
+__all__ = ['subsystem', 'current_command', 'socket_info', 'language_code']
 
 subsystem: ContextVar[Subsystem] = ContextVar(
     'subsystem', default=Subsystem.for_asyncio())
 current_command: ContextVar[Command] = ContextVar('current_command')
 socket_info: ContextVar[SocketInfo] = ContextVar('socket_info')
+language_code: ContextVar[str] = ContextVar('language_code')

@@ -374,8 +374,10 @@ class LiteralString(String):
         elif params.continuations:
             buf = params.continuations.pop(0)
             literal = bytes(buf[0:literal_length])
-        else:
+        elif params.allow_continuations:
             raise RequiresContinuation(b'Literal string', literal_length)
+        else:
+            raise NotParseable(buf)
         if len(literal) != literal_length:
             raise NotParseable(buf)
         return cls(literal, binary), buf[literal_length:]

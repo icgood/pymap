@@ -10,26 +10,30 @@ pytestmark = pytest.mark.asyncio
 
 class TestSession(TestBase):
 
-    async def test_login_logout(self):
-        self.transport.push_login()
-        self.transport.push_logout()
-        await self.run()
+    async def test_login_logout(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_select(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105, 3)
-        self.transport.push_logout()
-        await self.run()
+    async def test_select(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 1, 105, 3)
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_select_clears_recent(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105, 3)
-        self.transport.push_select(b'INBOX', 4, 0, 105, 3)
-        self.transport.push_logout()
-        await self.run()
+    async def test_select_clears_recent(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 1, 105, 3)
+        transport.push_select(b'INBOX', 4, 0, 105, 3)
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_concurrent_select_clears_recent(self):
-        concurrent = self.new_transport()
+    async def test_concurrent_select_clears_recent(self, imap_server):
+        transport = self.new_transport(imap_server)
+        concurrent = self.new_transport(imap_server)
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
@@ -41,31 +45,31 @@ class TestSession(TestBase):
         concurrent.push_select(b'INBOX', 4, 0, 105, 3, wait=event2)
         concurrent.push_logout()
 
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 1, 105, 3,
-                                   wait=event1, set=event2)
-        self.transport.push_logout()
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 1, 105, 3, wait=event1, set=event2)
+        transport.push_logout()
 
-        await self.run(concurrent)
+        await self.run(transport, concurrent)
 
-    async def test_auth_plain(self):
-        self.transport.push_write(
+    async def test_auth_plain(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_write(
             b'* OK [CAPABILITY IMAP4rev1',
             (br'(?:\s+[a-zA-Z0-9=+-]+)*', ),
             b' AUTH=PLAIN',
             (br'(?:\s+[a-zA-Z0-9=+-]+)*',),
             b'] Server ready ',
             (br'\S+',), b'\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'auth1 AUTHENTICATE PLAIN\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'+ \r\n')
-        self.transport.push_readexactly(b'')
-        self.transport.push_readline(
+        transport.push_readexactly(b'')
+        transport.push_readline(
             base64.b64encode(b'\x00testuser\x00testpass') + b'\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'auth1 OK [CAPABILITY IMAP4rev1',
             (br'(?:\s+[a-zA-Z0-9=+-]+)*', ),
             b'] Authentication successful.\r\n')
-        self.transport.push_logout()
-        await self.run()
+        transport.push_logout()
+        await self.run(transport)

@@ -8,46 +8,49 @@ pytestmark = pytest.mark.asyncio
 
 class TestExpunge(TestBase):
 
-    async def test_expunge(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX')
-        self.transport.push_readline(
+    async def test_expunge(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
             b'store1 STORE * +FLAGS (\\Deleted)\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'* 4 FETCH (FLAGS (\\Deleted \\Recent))\r\n'
             b'store1 OK STORE completed.\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'expunge1 EXPUNGE\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'* 4 EXPUNGE\r\n'
             b'* 0 RECENT\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
-        self.transport.push_logout()
-        await self.run()
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_expunge_uid(self):
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX')
-        self.transport.push_readline(
+    async def test_expunge_uid(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
             b'store1 UID STORE * +FLAGS (\\Deleted)\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'* 4 FETCH (FLAGS (\\Deleted \\Recent) UID 104)\r\n'
             b'store1 OK UID STORE completed.\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'expunge1 UID EXPUNGE 101:103\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'expunge1 OK UID EXPUNGE completed.\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'expunge1 UID EXPUNGE 101:*\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'* 4 EXPUNGE\r\n'
             b'* 0 RECENT\r\n'
             b'expunge1 OK UID EXPUNGE completed.\r\n')
-        self.transport.push_logout()
-        await self.run()
+        transport.push_logout()
+        await self.run(transport)
 
-    async def test_concurrent_expunge_responses(self):
-        concurrent = self.new_transport()
+    async def test_concurrent_expunge_responses(self, imap_server):
+        transport = self.new_transport(imap_server)
+        concurrent = self.new_transport(imap_server)
         event1, event2 = self.new_events(2)
 
         concurrent.push_login()
@@ -81,18 +84,18 @@ class TestExpunge(TestBase):
             b'noop1 OK NOOP completed.\r\n')
         concurrent.push_logout()
 
-        self.transport.push_login()
-        self.transport.push_select(b'INBOX', 4, 0, wait=event1)
-        self.transport.push_readline(
+        transport.push_login()
+        transport.push_select(b'INBOX', 4, 0, wait=event1)
+        transport.push_readline(
             b'store1 STORE * +FLAGS (\\Deleted)\r\n')
-        self.transport.push_write(
+        transport.push_write(
             b'* 4 FETCH (FLAGS (\\Deleted))\r\n'
             b'store1 OK STORE completed.\r\n')
-        self.transport.push_readline(
+        transport.push_readline(
             b'expunge1 EXPUNGE\r\n', set=event2)
-        self.transport.push_write(
+        transport.push_write(
             b'* 4 EXPUNGE\r\n'
             b'expunge1 OK EXPUNGE completed.\r\n')
-        self.transport.push_logout()
+        transport.push_logout()
 
-        await self.run(concurrent)
+        await self.run(transport, concurrent)

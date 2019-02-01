@@ -1,13 +1,14 @@
 
 from abc import abstractmethod
 from asyncio import shield
-from typing import Tuple, Optional, FrozenSet, Iterable, Sequence, List
-from typing_extensions import Protocol
+from typing import Generic, Tuple, Optional, FrozenSet, Iterable, \
+    Sequence, List
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.exceptions import MailboxNotFound, MailboxReadOnly
 from pymap.flags import FlagOp, SessionFlags, PermanentFlags
+from pymap.interfaces.filter import FilterSetInterface
 from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import SessionInterface
 from pymap.listtree import ListTree
@@ -24,12 +25,23 @@ from .mailbox import MailboxDataInterface, MailboxSetInterface, MessageT
 __all__ = ['BaseSession']
 
 
-class BaseSession(SessionInterface, Protocol[MessageT]):
+class BaseSession(SessionInterface, Generic[MessageT]):
     """Base implementation of
     :class:`~pymap.interfaces.session.SessionInterface` intended for use by
     most backends.
 
+    Args:
+        owner: The logged-in user name.
+
     """
+
+    def __init__(self, owner: str) -> None:
+        super().__init__()
+        self._owner = owner
+
+    @property
+    def owner(self) -> str:
+        return self._owner
 
     @property
     @abstractmethod
@@ -41,6 +53,10 @@ class BaseSession(SessionInterface, Protocol[MessageT]):
     def mailbox_set(self) \
             -> MailboxSetInterface[MailboxDataInterface[MessageT]]:
         ...
+
+    @property
+    def filter_set(self) -> Optional[FilterSetInterface]:
+        return None
 
     async def _load_updates(self, selected: Optional[SelectedMailbox],
                             mbx: Optional[MailboxDataInterface[MessageT]]) \

@@ -1,13 +1,33 @@
 
-from typing import Optional, Type, Tuple, Dict, List
+from typing import Optional, Type, Tuple, Dict, List, Collection
 
 from . import Space, Params
-from .command import Command, any, auth, nonauth, select
+from .command import Command
+from .command.any import CapabilityCommand, LogoutCommand, NoOpCommand
+from .command.auth import AppendCommand, CreateCommand, DeleteCommand, \
+    ExamineCommand, ListCommand, LSubCommand, RenameCommand, SelectCommand, \
+    StatusCommand, SubscribeCommand, UnsubscribeCommand
+from .command.nonauth import AuthenticateCommand, LoginCommand, StartTLSCommand
+from .command.select import CheckCommand, CloseCommand, ExpungeCommand, \
+    CopyCommand, FetchCommand, StoreCommand, SearchCommand, UidCommand, \
+    UidCopyCommand, UidExpungeCommand, UidFetchCommand, UidSearchCommand, \
+    UidStoreCommand, IdleCommand
 from .exceptions import NotParseable
 from .primitives import Atom
 from .specials import Tag
 
-__all__ = ['InvalidCommand', 'Commands']
+__all__ = ['builtin_commands', 'InvalidCommand', 'Commands']
+
+#: List of built-in commands. These commands are automatically registered by a
+#: new :class:`Commands` object.
+builtin_commands: Collection[Type[Command]] = [
+    CapabilityCommand, LogoutCommand, NoOpCommand, AppendCommand,
+    CreateCommand, DeleteCommand, ExamineCommand, ListCommand, LSubCommand,
+    RenameCommand, SelectCommand, StatusCommand, SubscribeCommand,
+    UnsubscribeCommand, AuthenticateCommand, LoginCommand, StartTLSCommand,
+    CheckCommand, CloseCommand, ExpungeCommand, CopyCommand, FetchCommand,
+    StoreCommand, SearchCommand, UidCommand, UidCopyCommand, UidExpungeCommand,
+    UidFetchCommand, UidSearchCommand, UidStoreCommand, IdleCommand]
 
 
 class InvalidCommand(Command):
@@ -59,7 +79,7 @@ class InvalidCommand(Command):
 
 
 class Commands:
-    """Contains the set of all known IMAP commands and the ability to parse."""
+    """Manages the set of all known IMAP commands and the ability to parse."""
 
     __slots__ = ['commands']
 
@@ -69,10 +89,27 @@ class Commands:
         self._load_commands()
 
     def _load_commands(self):
-        for mod in (any, auth, nonauth, select):
-            for command_name in mod.__all__:
-                command = getattr(mod, command_name)
-                self.commands[command.command] = command
+        for cmd in builtin_commands:
+            self.register(cmd)
+
+    def register(self, cmd: Type[Command]) -> None:
+        """Register a new IMAP command.
+
+        Args:
+            cmd: The new command type.
+
+        """
+        self.commands[cmd.command] = cmd
+
+    def deregister(self, name: bytes) -> None:
+        """Deregister an IMAP command by name. Does nothing if the command is
+        not registered.
+
+        Args:
+            name: The IMAP command name.
+
+        """
+        self.commands.pop(name.upper(), None)
 
     def parse(self, buf: memoryview, params: Params) \
             -> Tuple[Command, memoryview]:

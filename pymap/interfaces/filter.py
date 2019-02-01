@@ -1,11 +1,14 @@
 
 from abc import abstractmethod
-from typing import Optional, Tuple, Mapping
+from typing import TypeVar, Optional, Tuple, Sequence
 from typing_extensions import Protocol
 
 from .message import AppendMessage
 
-__all__ = ['FilterInterface', 'FilterSetInterface']
+__all__ = ['FilterValueT', 'FilterInterface', 'FilterSetInterface']
+
+#: Type variable for the filter value representation.
+FilterValueT = TypeVar('FilterValueT')
 
 
 class FilterInterface(Protocol):
@@ -37,7 +40,7 @@ class FilterInterface(Protocol):
         ...
 
 
-class FilterSetInterface(Protocol):
+class FilterSetInterface(Protocol[FilterValueT]):
     """Protocol defining the interface for accessing and managing the set of
     message filters currently active and available. This interface
     intentionally resembles that of a ManageSieve server.
@@ -48,28 +51,36 @@ class FilterSetInterface(Protocol):
     """
 
     @abstractmethod
-    async def put(self, name: str, value: FilterInterface,
-                  check: bool = False) -> None:
-        """Add or update the named filter implementation.
+    async def compile(self, value: FilterValueT) -> FilterInterface:
+        """Compile the given filter value into a filter implementation.
+
+        Args:
+            value: The filter value.
+
+        """
+        ...
+
+    @abstractmethod
+    async def put(self, name: str, value: FilterValueT) -> None:
+        """Add or update the named filter value.
 
         Args:
             name: The filter name.
             value: The filter value.
-            check: Do not add or update the filter, but throw any errors that
-                would have occurred.
 
         """
         ...
 
     @abstractmethod
     async def delete(self, name: str) -> None:
-        """Delete the named filter.
+        """Delete the named filter. If the named filter is active,
+        :class:`ValueError` is raised.
 
         Args:
             name: The filter name.
 
         Raises:
-            :class:`KeyError`
+            :class:`KeyError`, :class:`ValueError`
 
         """
         ...
@@ -98,11 +109,14 @@ class FilterSetInterface(Protocol):
         Args:
             name: The filter name.
 
+        Raises:
+            :class:`KeyError`
+
         """
 
     @abstractmethod
-    async def get(self, name: str) -> FilterInterface:
-        """Return the named filter implementation.
+    async def get(self, name: str) -> FilterValueT:
+        """Return the named filter value.
 
         Args:
             name: The filter name.
@@ -114,15 +128,11 @@ class FilterSetInterface(Protocol):
         ...
 
     @abstractmethod
-    async def get_active(self) -> Optional[FilterInterface]:
-        """Return the active filter implementation, if any."""
+    async def get_active(self) -> Optional[FilterValueT]:
+        """Return the active filter value, if any."""
         ...
 
     @abstractmethod
-    async def get_all(self) \
-            -> Tuple[Optional[str], Mapping[str, FilterInterface]]:
-        """Return the active filter name and a mapping of filter names to
-        implementation.
-
-        """
+    async def get_all(self) -> Tuple[Optional[str], Sequence[str]]:
+        """Return the active filter name and a list of all filter names."""
         ...

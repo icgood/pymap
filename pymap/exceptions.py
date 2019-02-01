@@ -78,8 +78,11 @@ class InvalidAuth(ResponseError):
 
     """
 
+    def __init__(self) -> None:
+        super().__init__('Invalid authentication credentials.')
+
     def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, b'Invalid authentication credentials.',
+        return ResponseNo(tag, str(self).encode('ascii'),
                           ResponseCode.of(b'AUTHENTICATIONFAILED'))
 
 

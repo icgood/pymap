@@ -27,7 +27,8 @@ class _Socket:
 
 class MockTransport:
 
-    def __init__(self, matches, fd):
+    def __init__(self, server, matches, fd):
+        self.server = server
         self.queue = deque()
         self.matches = matches
         self.socket = _Socket(fd)

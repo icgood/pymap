@@ -1,44 +1,74 @@
-"""Defines socket interaction, accepting connections and handling a basic
-command/response flow.
-
-"""
 
 import asyncio
 import binascii
+import logging
 import re
 import sys
-from asyncio import shield, IncompleteReadError, StreamReader, StreamWriter, \
-    CancelledError
+from argparse import ArgumentParser
+from asyncio import shield, StreamReader, StreamWriter, CancelledError
 from base64 import b64encode, b64decode
 from ssl import SSLContext
 from typing import TypeVar, Iterable, List, Optional, Awaitable
 
+from pymap.concurrent import Event
+from pymap.config import IMAPConfig
+from pymap.context import subsystem, current_command, socket_info
+from pymap.exceptions import ResponseError
+from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.interfaces.session import LoginProtocol
+from pymap.parsing.command import Command
+from pymap.parsing.commands import Commands
+from pymap.parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
+from pymap.parsing.command.select import IdleCommand
+from pymap.parsing.exceptions import RequiresContinuation
+from pymap.parsing.response import ResponseContinuation, Response, \
+    ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk
+from pymap.sockinfo import SocketInfo
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 
-from .concurrent import Event
-from .config import IMAPConfig
-from .context import subsystem, current_command, socket_info
-from .exceptions import ResponseError
-from .interfaces.session import LoginProtocol
-from .parsing.command import Command
-from .parsing.commands import Commands
-from .parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
-from .parsing.command.select import IdleCommand
-from .parsing.exceptions import RequiresContinuation
-from .parsing.response import ResponseContinuation, Response, ResponseCode, \
-    ResponseBad, ResponseNo, ResponseBye, ResponseOk
-from .sockinfo import SocketInfo
 from .state import ConnectionState
 
-__all__ = ['IMAPServer', 'IMAPConnection']
+__all__ = ['IMAPService', 'IMAPServer', 'IMAPConnection']
 
 _Ret = TypeVar('_Ret')
+_log = logging.getLogger(__name__)
 
 
-class Disconnected(Exception):
-    """Thrown if the remote socket closes when the server expected input."""
-    pass
+class IMAPService(ServiceInterface):
+    """A pymap service implementing an IMAP server."""
+
+    def __init__(self, config: IMAPConfig, imap_server: 'IMAPServer') -> None:
+        super().__init__()
+        self._config = config
+        self._imap_server = imap_server
+
+    @classmethod
+    def add_arguments(cls, parser: ArgumentParser) -> None:
+        group = parser.add_argument_group('imap service')
+        group.add_argument('--host', metavar='IFACE', action='append',
+                           help='the network interface to listen on')
+        group.add_argument('--port', metavar='NUM', type=int, default=1143,
+                           help='the port to listen on')
+        group.add_argument('--cert', metavar='FILE', help='cert file for TLS')
+        group.add_argument('--key', metavar='FILE', help='key file for TLS')
+        group.add_argument('--insecure-login', action='store_true',
+                           help='allow plaintext login without TLS')
+
+    @classmethod
+    async def init(cls, backend: BackendInterface) -> 'IMAPService':
+        imap_server = IMAPServer(backend.login, backend.config)
+        return cls(backend.config, imap_server)
+
+    async def run_forever(self) -> None:
+        host = self._config.host
+        port = self._config.port
+        server = await asyncio.start_server(self._imap_server,
+                                            host=host, port=port)
+
+        # Typeshed currently has poor stubs for AbstractServer.
+        async with server:  # type: ignore
+            await server.serve_forever()  # type: ignore
 
 
 class IMAPServer:
@@ -46,9 +76,8 @@ class IMAPServer:
     when :func:`asyncio.start_server` receives a new connection.
 
     Args:
-        login: Login callback that takes authentication credentials and
-            returns a :class:`~pymap.interfaces.session.SessionInterface`
-            object.
+        login: Login callback that takes authentication credentials and returns
+            a :class:`~pymap.interfaces.session.SessionInterface` object.
         config: Settings to use for the IMAP server.
 
     """
@@ -61,17 +90,9 @@ class IMAPServer:
         self._login = login
         self._config = config
 
-    @property
-    def login(self) -> LoginProtocol:
-        return self._login
-
-    @property
-    def config(self) -> IMAPConfig:
-        return self._config
-
     async def __call__(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
-        conn = IMAPConnection(self.commands, self.config, reader, writer)
+        conn = IMAPConnection(self.commands, self._config, reader, writer)
         state = ConnectionState(self._login, self._config)
         try:
             await conn.run(state)
@@ -94,7 +115,7 @@ class IMAPConnection:
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
 
     __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
-                 '_print', 'reader', 'writer']
+                 'reader', 'writer']
 
     def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
@@ -104,27 +125,24 @@ class IMAPConnection:
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
-        self._print = self._real_print if config.debug else self._noop_print
         self._reset_streams(reader, writer)
 
-    def _reset_streams(self, reader: StreamReader, writer: StreamWriter):
+    def _reset_streams(self, reader: StreamReader,
+                       writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
         socket_info.set(SocketInfo(writer))
 
     @classmethod
-    def _real_print(cls, prefix: str, output: bytes) -> None:
-        prefix = prefix % socket_info.get().socket.fileno()
-        lines = cls._lines.split(output)
-        if not lines[-1]:
-            lines = lines[:-1]
-        for line in lines:
-            line_str = str(line, 'utf-8', 'replace')
-            print(prefix, line_str)
-
-    @classmethod
-    def _noop_print(cls, prefix: str, output: bytes) -> None:
-        pass
+    def _print(cls, log_format: str, output: bytes) -> None:
+        if _log.isEnabledFor(logging.DEBUG):
+            fd = socket_info.get().socket.fileno()
+            lines = cls._lines.split(output)
+            if not lines[-1]:
+                lines = lines[:-1]
+            for line in lines:
+                line_str = str(line, 'utf-8', 'replace')
+                _log.debug(log_format, fd, line_str)
 
     def _exec(self, future: Awaitable[_Ret]) -> Awaitable[_Ret]:
         return subsystem.get().execute(future)
@@ -132,27 +150,23 @@ class IMAPConnection:
     async def readline(self) -> memoryview:
         buf = bytearray(await self.reader.readline())
         while True:
-            if buf.endswith(b'+}\n') or buf.endswith(b'+}\r\n'):
+            if not buf.endswith(b'\n'):
+                raise EOFError()
+            elif buf.endswith(b'+}\n') or buf.endswith(b'+}\r\n'):
                 lit_plus = self._literal_plus.search(buf)
             else:
                 lit_plus = None
             if lit_plus:
                 literal_length = int(lit_plus.group(1))
-                try:
-                    buf += await self.reader.readexactly(literal_length)
-                except IncompleteReadError:
-                    raise Disconnected
+                buf += await self.reader.readexactly(literal_length)
                 buf += await self.reader.readline()
             else:
-                self._print('%d -->|', buf)
+                self._print('%d -->| %s', buf)
                 return memoryview(buf)
 
     async def read_continuation(self, literal_length: int) -> memoryview:
-        try:
-            extra_literal = await self.reader.readexactly(literal_length)
-        except IncompleteReadError:
-            raise Disconnected
-        self._print('%d -->|', extra_literal)
+        extra_literal = await self.reader.readexactly(literal_length)
+        self._print('%d -->| %s', extra_literal)
         extra_line = await self.readline()
         extra = extra_literal + bytes(extra_line)
         return memoryview(extra)
@@ -165,7 +179,7 @@ class IMAPConnection:
         responses: List[ServerChallenge] = []
         while True:
             try:
-                return mech.server_attempt(responses)
+                creds, final = mech.server_attempt(responses)
             except ServerChallenge as chal:
                 chal_bytes = b64encode(chal.get_challenge())
                 cont = ResponseContinuation(chal_bytes)
@@ -178,13 +192,17 @@ class IMAPConnection:
                 if resp_bytes.rstrip(b'\r\n') == b'*':
                     raise AuthenticationError('Authentication canceled.')
                 responses.append(chal)
+            else:
+                if final is not None:
+                    cont = ResponseContinuation(b64encode(final))
+                    await self.write_response(cont)
+                    await self.read_continuation(0)
+                return creds
 
     async def read_command(self) -> Command:
         line = await self.readline()
         conts: List[memoryview] = []
         while True:
-            if self.reader.at_eof():
-                raise Disconnected
             try:
                 cmd, _ = self.commands.parse(
                     line, self.params.copy(continuations=conts.copy()))
@@ -202,10 +220,13 @@ class IMAPConnection:
         return ok
 
     async def write_response(self, resp: Response) -> None:
-        raw = bytes(resp)
         resp.write(self.writer)
-        await self.writer.drain()
-        self._print('%d <--|', raw)
+        try:
+            await self.writer.drain()
+        except ConnectionError:
+            pass
+        else:
+            self._print('%d <--| %s', bytes(resp))
 
     async def start_tls(self, ssl_context: SSLContext) -> None:
         loop = asyncio.get_event_loop()
@@ -216,7 +237,7 @@ class IMAPConnection:
         protocol._stream_reader = StreamReader(loop=loop)
         protocol._client_connected_cb = self._reset_streams
         protocol.connection_made(new_transport)
-        self._print('%d <->|', b'<TLS handshake>')
+        self._print('%d <->| %s', b'<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
         exc_type, exc, exc_tb = sys.exc_info()
@@ -286,7 +307,7 @@ class IMAPConnection:
             state: Defines the interaction with the backend plugin.
 
         """
-        self._print('%d +++|', bytes(socket_info.get()))
+        self._print('%d +++| %s', bytes(socket_info.get()))
         bad_commands = 0
         try:
             greeting = await self._exec(state.do_greeting())
@@ -300,9 +321,7 @@ class IMAPConnection:
         while True:
             try:
                 cmd = await self.read_command()
-            except (ConnectionResetError, BrokenPipeError):
-                break
-            except Disconnected:
+            except (ConnectionError, EOFError):
                 break
             except CancelledError:
                 await self.send_error_disconnect()
@@ -357,4 +376,4 @@ class IMAPConnection:
                         await self.start_tls(state.ssl_context)
                 finally:
                     current_command.reset(prev_cmd)
-        self._print('%d ---|', b'<disconnected>')
+        self._print('%d ---| %s', b'<disconnected>')

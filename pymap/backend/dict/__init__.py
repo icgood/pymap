@@ -3,30 +3,42 @@ import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from contextlib import closing
 from datetime import datetime, timezone
-from typing import Any, Optional, Tuple, Mapping, Dict
+from typing import Any, Tuple, Mapping, Dict
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
 
 from pymap.config import IMAPConfig
 from pymap.exceptions import InvalidAuth
-from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.filter import FilterInterface
+from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.specials.flag import Flag, Recent
-from pymap.server import IMAPServer
 
+from .filter import FilterSet
 from .mailbox import Message, MailboxData, MailboxSet
 from ..session import BaseSession
 
 __all__ = ['DictBackend', 'Config', 'Session']
 
 
-class DictBackend(IMAPServer, BackendInterface):
+class DictBackend(BackendInterface):
     """Defines a backend that uses an in-memory dictionary for example usage
     and integration testing.
 
     """
+
+    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+        super().__init__()
+        self._login = login
+        self._config = config
+
+    @property
+    def login(self) -> LoginProtocol:
+        return self._login
+
+    @property
+    def config(self) -> IMAPConfig:
+        return self._config
 
     @classmethod
     def add_subparser(cls, subparsers) -> None:
@@ -54,7 +66,7 @@ class Config(IMAPConfig):
         self._demo_data = demo_data
         self._demo_user = demo_user
         self._demo_password = demo_password
-        self.set_cache: Dict[str, Tuple[MailboxSet, 'FilterSet']] = {}
+        self.set_cache: Dict[str, Tuple[MailboxSet, FilterSet]] = {}
 
     @property
     def demo_data(self) -> bool:
@@ -84,37 +96,14 @@ class Config(IMAPConfig):
                 'demo_password': args.demo_password}
 
 
-class FilterSet(EntryPointFilterSet[bytes], SingleFilterSet):
-
-    def __init__(self) -> None:
-        super().__init__()
-        self._sieve: Optional[bytes] = None
-
-    @property
-    def entry_point(self) -> str:
-        return 'sieve'
-
-    def set_sieve(self, sieve: bytes) -> None:
-        self._sieve = sieve
-
-    async def get_active(self) -> Optional[FilterInterface]:
-        if self._sieve is None:
-            return None
-        else:
-            try:
-                return self.get_filter(self._sieve)
-            except LookupError:
-                return None
-
-
 class Session(BaseSession[Message]):
     """The session implementation for the dict backend."""
 
     resource = __name__
 
-    def __init__(self, config: Config, mailbox_set: MailboxSet,
+    def __init__(self, owner: str, config: Config, mailbox_set: MailboxSet,
                  filter_set: FilterSet) -> None:
-        super().__init__()
+        super().__init__(owner)
         self._config = config
         self._mailbox_set = mailbox_set
         self._filter_set = filter_set
@@ -141,7 +130,9 @@ class Session(BaseSession[Message]):
         """
         user = credentials.authcid
         password = cls._get_password(config, user)
-        if not credentials.check_secret(password):
+        if user != credentials.identity:
+            raise InvalidAuth()
+        elif not credentials.check_secret(password):
             raise InvalidAuth()
         mailbox_set, filter_set = config.set_cache.get(user, (None, None))
         if not mailbox_set or not filter_set:
@@ -150,7 +141,7 @@ class Session(BaseSession[Message]):
             if config.demo_data:
                 await cls._load_demo(mailbox_set, filter_set)
             config.set_cache[user] = (mailbox_set, filter_set)
-        return cls(config, mailbox_set, filter_set)
+        return cls(credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     def _get_password(cls, config: Config, user: str) -> str:
@@ -168,18 +159,19 @@ class Session(BaseSession[Message]):
         mbx_names = sorted(resource_listdir(cls.resource, 'demo'))
         for name in mbx_names:
             if name == 'sieve':
-                cls._load_demo_sieve(name, filter_set)
+                await cls._load_demo_sieve(name, filter_set)
             elif name != 'INBOX':
                 mbx = await mailbox_set.add_mailbox(name)
                 await cls._load_demo_mailbox(name, mbx)
 
     @classmethod
-    def _load_demo_sieve(cls, name: str, filter_set: FilterSet) -> None:
+    async def _load_demo_sieve(cls, name: str, filter_set: FilterSet) -> None:
         path = os.path.join('demo', name)
         sieve_stream = resource_stream(cls.resource, path)
         with closing(sieve_stream):
             sieve = sieve_stream.read()
-        filter_set.set_sieve(sieve)
+        await filter_set.put('demo', sieve)
+        await filter_set.set_active('demo')
 
     @classmethod
     async def _load_demo_mailbox(cls, name: str, mbx: MailboxData) -> None:
