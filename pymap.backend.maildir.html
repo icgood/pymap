@@ -61,9 +61,38 @@
 <dl class="class">
 <dt id="pymap.backend.maildir.MaildirBackend">
 <em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">MaildirBackend</code><span class="sig-paren">(</span><em>login</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.server.html#pymap.server.IMAPServer" title="pymap.server.IMAPServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.server.IMAPServer</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.BackendInterface</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.BackendInterface</span></code></a></p>
 <p>Defines an on-disk backend that uses <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
 mailbox storage and <a class="reference external" href="https://wiki2.dovecot.org/MailboxFormat/Maildir">MailboxFormat/Maildir</a> for metadata storage.</p>
+<dl class="attribute">
+<dt id="pymap.backend.maildir.MaildirBackend.login">
+<code class="descname">login</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login callback that takes authentication credentials and returns a
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.maildir.MaildirBackend.config">
+<code class="descname">config</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IMAP config in use by the backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.backend.maildir.MaildirBackend.add_subparser">
 <em class="property">classmethod </em><code class="descname">add_subparser</code><span class="sig-paren">(</span><em>subparsers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.add_subparser" title="Permalink to this definition">¶</a></dt>
@@ -206,13 +235,13 @@ constructor. Sub-classes should override this method as needed.</p>
 
 <dl class="class">
 <dt id="pymap.backend.maildir.Session">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>owner</em>, <em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
 <p>The session implementation for the maildir backend.</p>
 <dl class="attribute">
 <dt id="pymap.backend.maildir.Session.filter_set">
 <code class="descname">filter_set</code><a class="headerlink" href="#pymap.backend.maildir.Session.filter_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Manages the active and inactive filters for the logoin user.</p>
+<dd><p>Manages the active and inactive filters for the login user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

@@ -599,11 +599,47 @@ is created first.</li>
 <span id="pymap-backend-session"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.session</span></code><a class="headerlink" href="#module-pymap.backend.session" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymap.backend.session.BaseSession">
-<em class="property">class </em><code class="descclassname">pymap.backend.session.</code><code class="descname">BaseSession</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.session.SessionInterface</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<em class="property">class </em><code class="descclassname">pymap.backend.session.</code><code class="descname">BaseSession</code><span class="sig-paren">(</span><em>owner</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.session.SessionInterface</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
 <p>Base implementation of
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> intended for use by
 most backends.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>owner</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The logged-in user name.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.backend.session.BaseSession.owner">
+<code class="descname">owner</code><a class="headerlink" href="#pymap.backend.session.BaseSession.owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>The SASL authorization identity of the logged-in user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.session.BaseSession.filter_set">
+<code class="descname">filter_set</code><a class="headerlink" href="#pymap.backend.session.BaseSession.filter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the active and inactive filters for the login user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a>[~FilterValueT]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.backend.session.BaseSession.append_messages">
 <code class="descname">append_messages</code><span class="sig-paren">(</span><em>name</em>, <em>messages</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.append_messages" title="Permalink to this definition">¶</a></dt>

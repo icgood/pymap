@@ -53,18 +53,9 @@
             
   <div class="section" id="module-pymap.sieve">
 <span id="pymap-sieve"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code><a class="headerlink" href="#module-pymap.sieve" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-pymap.sieve.filter">
-<span id="pymap-sieve-filter"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.filter</span></code><a class="headerlink" href="#module-pymap.sieve.filter" title="Permalink to this headline">¶</a></h2>
-<dl class="exception">
-<dt id="pymap.sieve.filter.SieveParseError">
-<em class="property">exception </em><code class="descclassname">pymap.sieve.filter.</code><code class="descname">SieveParseError</code><a class="headerlink" href="#pymap.sieve.filter.SieveParseError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
-<p>Parsing the sieve script failed.</p>
-</dd></dl>
-
 <dl class="class">
-<dt id="pymap.sieve.filter.SieveFilter">
-<em class="property">class </em><code class="descclassname">pymap.sieve.filter.</code><code class="descname">SieveFilter</code><span class="sig-paren">(</span><em>script</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.filter.SieveFilter" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.sieve.SieveFilter">
+<em class="property">class </em><code class="descclassname">pymap.sieve.</code><code class="descname">SieveFilter</code><span class="sig-paren">(</span><em>runner</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.SieveFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.filter.FilterInterface</span></code></a></p>
 <p>Filter implementation for applying sieve scripts to the appended
 message. The sieve script applies various conditions and controls to
@@ -73,13 +64,13 @@ ultimately produce a set of actions to apply to the message.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>script</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The sieve script contents.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>runner</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SieveRunner</span></code>) – The sieve script runner.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="pymap.sieve.filter.SieveFilter.apply">
-<code class="descname">apply</code><span class="sig-paren">(</span><em>sender</em>, <em>recipient</em>, <em>mailbox</em>, <em>append_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.filter.SieveFilter.apply" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.sieve.SieveFilter.apply">
+<code class="descname">apply</code><span class="sig-paren">(</span><em>sender</em>, <em>recipient</em>, <em>mailbox</em>, <em>append_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.SieveFilter.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the filter and return the mailbox where it should be appended,
 or None to discard, and the message to be appended, which is usually
 the same as <code class="docutils literal notranslate"><span class="pre">append_msg</span></code>.</p>
@@ -107,6 +98,8 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 
 </dd></dl>
 
+<div class="section" id="pymap-sieve-filter">
+<h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.filter</span></code><a class="headerlink" href="#pymap-sieve-filter" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -119,7 +112,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.sieve.filter"><code class="docutils literal notranslate"><span class="pre">pymap.sieve.filter</span></code></a></li>
+<li><a class="reference internal" href="#pymap-sieve-filter"><code class="docutils literal notranslate"><span class="pre">pymap.sieve.filter</span></code></a></li>
 </ul>
 </li>
 </ul>

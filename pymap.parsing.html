@@ -67,7 +67,7 @@ sub-class.</p>
 
 <dl class="class">
 <dt id="pymap.parsing.Params">
-<em class="property">class </em><code class="descclassname">pymap.parsing.</code><code class="descname">Params</code><span class="sig-paren">(</span><em>*</em>, <em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=False</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.parsing.</code><code class="descname">Params</code><span class="sig-paren">(</span><em>*</em>, <em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=False</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em>, <em>allow_continuations=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Parameters used and passed around among the <a class="reference internal" href="#pymap.parsing.Parseable.parse" title="pymap.parsing.Parseable.parse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code></a>
 methods.</p>
@@ -85,6 +85,8 @@ methods.</p>
 <li><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The next parsed command uses this tag bytestring.</li>
 <li><strong>max_append_len</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The maximum allowed length of the message body to an
 <code class="docutils literal notranslate"><span class="pre">APPEND</span></code> command.</li>
+<li><strong>allow_continuations</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Allow literal strings that require continuation
+data.</li>
 </ul>
 </td>
 </tr>
@@ -92,7 +94,7 @@ methods.</p>
 </table>
 <dl class="method">
 <dt id="pymap.parsing.Params.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>*</em>, <em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=None</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>*</em>, <em>continuations=None</em>, <em>expected=None</em>, <em>list_expected=None</em>, <em>command_name=None</em>, <em>uid=None</em>, <em>charset=None</em>, <em>tag=None</em>, <em>max_append_len=None</em>, <em>allow_continuations=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Params.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy the parameters, possibly replacing a subset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -372,6 +374,13 @@ failed to meet that expectation.</p>
 </div>
 <div class="section" id="module-pymap.parsing.commands">
 <span id="pymap-parsing-commands"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code><a class="headerlink" href="#module-pymap.parsing.commands" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="pymap.parsing.commands.builtin_commands">
+<code class="descclassname">pymap.parsing.commands.</code><code class="descname">builtin_commands</code><em class="property"> = [&lt;class 'pymap.parsing.command.any.CapabilityCommand'&gt;, &lt;class 'pymap.parsing.command.any.LogoutCommand'&gt;, &lt;class 'pymap.parsing.command.any.NoOpCommand'&gt;, &lt;class 'pymap.parsing.command.auth.AppendCommand'&gt;, &lt;class 'pymap.parsing.command.auth.CreateCommand'&gt;, &lt;class 'pymap.parsing.command.auth.DeleteCommand'&gt;, &lt;class 'pymap.parsing.command.auth.ExamineCommand'&gt;, &lt;class 'pymap.parsing.command.auth.ListCommand'&gt;, &lt;class 'pymap.parsing.command.auth.LSubCommand'&gt;, &lt;class 'pymap.parsing.command.auth.RenameCommand'&gt;, &lt;class 'pymap.parsing.command.auth.SelectCommand'&gt;, &lt;class 'pymap.parsing.command.auth.StatusCommand'&gt;, &lt;class 'pymap.parsing.command.auth.SubscribeCommand'&gt;, &lt;class 'pymap.parsing.command.auth.UnsubscribeCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.AuthenticateCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.LoginCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.StartTLSCommand'&gt;, &lt;class 'pymap.parsing.command.select.CheckCommand'&gt;, &lt;class 'pymap.parsing.command.select.CloseCommand'&gt;, &lt;class 'pymap.parsing.command.select.ExpungeCommand'&gt;, &lt;class 'pymap.parsing.command.select.CopyCommand'&gt;, &lt;class 'pymap.parsing.command.select.FetchCommand'&gt;, &lt;class 'pymap.parsing.command.select.StoreCommand'&gt;, &lt;class 'pymap.parsing.command.select.SearchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidCopyCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidExpungeCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidFetchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidSearchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidStoreCommand'&gt;, &lt;class 'pymap.parsing.command.select.IdleCommand'&gt;]</em><a class="headerlink" href="#pymap.parsing.commands.builtin_commands" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of built-in commands. These commands are automatically registered by a
+new <a class="reference internal" href="#pymap.parsing.commands.Commands" title="pymap.parsing.commands.Commands"><code class="xref py py-class docutils literal notranslate"><span class="pre">Commands</span></code></a> object.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.parsing.commands.InvalidCommand">
 <em class="property">class </em><code class="descclassname">pymap.parsing.commands.</code><code class="descname">InvalidCommand</code><span class="sig-paren">(</span><em>params</em>, <em>parse_exc</em>, <em>command=None</em>, <em>command_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.InvalidCommand" title="Permalink to this definition">¶</a></dt>
@@ -476,7 +485,40 @@ invalid arguments.</p>
 <dt id="pymap.parsing.commands.Commands">
 <em class="property">class </em><code class="descclassname">pymap.parsing.commands.</code><code class="descname">Commands</code><a class="headerlink" href="#pymap.parsing.commands.Commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Contains the set of all known IMAP commands and the ability to parse.</p>
+<p>Manages the set of all known IMAP commands and the ability to parse.</p>
+<dl class="method">
+<dt id="pymap.parsing.commands.Commands.register">
+<code class="descname">register</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.Commands.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a new IMAP command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cmd</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>]) – The new command type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.parsing.commands.Commands.deregister">
+<code class="descname">deregister</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.Commands.deregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deregister an IMAP command by name. Does nothing if the command is
+not registered.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The IMAP command name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.parsing.commands.Commands.parse">
 <code class="descname">parse</code><span class="sig-paren">(</span><em>buf</em>, <em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.commands.Commands.parse" title="Permalink to this definition">¶</a></dt>

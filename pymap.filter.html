@@ -57,53 +57,60 @@
             
   <div class="section" id="module-pymap.filter">
 <span id="pymap-filter"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code><a class="headerlink" href="#module-pymap.filter" title="Permalink to this headline">¶</a></h1>
-<dl class="data">
-<dt id="pymap.filter.FilterValueT">
-<code class="descclassname">pymap.filter.</code><code class="descname">FilterValueT</code><em class="property"> = ~FilterValueT</em><a class="headerlink" href="#pymap.filter.FilterValueT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Type variable for the value used to instantiate an
-<code class="xref py py-class docutils literal notranslate"><span class="pre">EntryPointFilter</span></code>.</p>
-</dd></dl>
-
 <dl class="class">
-<dt id="pymap.filter.EntryPointFilterSet">
-<em class="property">class </em><code class="descclassname">pymap.filter.</code><code class="descname">EntryPointFilterSet</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.filter.FilterSetInterface</span></code></a></p>
-<p>Base class for filter set implementations that use a filter
-implementation declared in the <code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code> entry point.</p>
-<p>The entry points should be classes or callable factories that take a single
-value and return a filter instance.</p>
-<dl class="attribute">
-<dt id="pymap.filter.EntryPointFilterSet.entry_point">
-<code class="descname">entry_point</code><a class="headerlink" href="#pymap.filter.EntryPointFilterSet.entry_point" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the <code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code> entry point used to implement the
-filter.</p>
-<p>If the entry point is found, it must implement <code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code>
-for the filter value type. If the entry point is not found, no filter
-is applied to new messages.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<dt id="pymap.filter.FilterCompiler">
+<em class="property">class </em><code class="descclassname">pymap.filter.</code><code class="descname">FilterCompiler</code><a class="headerlink" href="#pymap.filter.FilterCompiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<p>Abstract base class for classes which can compile a filter value into an
+implementation.</p>
 <dl class="method">
-<dt id="pymap.filter.EntryPointFilterSet.get_filter">
-<code class="descname">get_filter</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet.get_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the filter implementation, and return an instance of it with
-the given filter value.</p>
+<dt id="pymap.filter.FilterCompiler.compile">
+<code class="descname">compile</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.FilterCompiler.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile the filter value and return the resulting implementation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#LookupError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LookupError</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></td>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.filter.EntryPointFilterSet">
+<em class="property">class </em><code class="descclassname">pymap.filter.</code><code class="descname">EntryPointFilterSet</code><span class="sig-paren">(</span><em>entry_point</em>, <em>*</em>, <em>group='pymap.filter'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.filter.FilterSetInterface</span></code></a></p>
+<p>Base class for filter set implementations that use a filter compiler
+declared in the <code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code> entry point. The declared entry points
+must sub-class <a class="reference internal" href="#pymap.filter.FilterCompiler" title="pymap.filter.FilterCompiler"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterCompiler</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>entry_point</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The entry point name.</li>
+<li><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The entry point group.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pymap.filter.EntryPointFilterSet.compile">
+<code class="descname">compile</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile the given filter value into a filter implementation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -117,19 +124,34 @@ the given filter value.</p>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.filter.FilterSetInterface</span></code></a></p>
 <p>Base class for a filter set that does not use named filter
 implementations, it contains only a single active filter implementation.</p>
+<dl class="attribute">
+<dt id="pymap.filter.SingleFilterSet.name">
+<code class="descname">name</code><a class="headerlink" href="#pymap.filter.SingleFilterSet.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The permanent name for the active filter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.filter.SingleFilterSet.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the named filter.</p>
+<dd><p>Delete the named filter. If the named filter is active,
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> is raised.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filter name.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">_Specialform</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -138,7 +160,7 @@ implementations, it contains only a single active filter implementation.</p>
 <dl class="method">
 <dt id="pymap.filter.SingleFilterSet.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the named filter implementation.</p>
+<dd><p>Return the named filter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -147,7 +169,7 @@ implementations, it contains only a single active filter implementation.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">_Specialform</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~FilterValueT</td>
 </tr>
 </tbody>
 </table>
@@ -156,12 +178,12 @@ implementations, it contains only a single active filter implementation.</p>
 <dl class="method">
 <dt id="pymap.filter.SingleFilterSet.get_active">
 <code class="descname">get_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.get_active" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the active filter implementation, if any.</p>
+<dd><p>Return the active filter value, if any.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~FilterValueT]</td>
 </tr>
 </tbody>
 </table>
@@ -170,13 +192,12 @@ implementations, it contains only a single active filter implementation.</p>
 <dl class="method">
 <dt id="pymap.filter.SingleFilterSet.get_all">
 <code class="descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the active filter name and a mapping of filter names to
-implementation.</p>
+<dd><p>Return the active filter name and a list of all filter names.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">_Specialform</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>
@@ -184,21 +205,19 @@ implementation.</p>
 
 <dl class="method">
 <dt id="pymap.filter.SingleFilterSet.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.put" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add or update the named filter implementation.</p>
+<code class="descname">put</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add or update the named filter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filter name.</li>
-<li><strong>value</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a>) – The filter value.</li>
-<li><strong>check</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Do not add or update the filter, but throw any errors that
-would have occurred.</li>
+<li><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">_Specialform</span></code></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -224,8 +243,24 @@ exists.</p>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">_Specialform</span></code></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.filter.SingleFilterSet.replace_active">
+<code class="descname">replace_active</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.replace_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the current active filter value with a new value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~FilterValueT]) – The new filter value.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -242,7 +277,9 @@ exists.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The filter name.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">_Specialform</span></code></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>

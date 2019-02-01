@@ -121,29 +121,6 @@ the entry point registered by the backend.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="pymap.interfaces.backend.BackendInterface.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>reader</em>, <em>writer</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Client callback for <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">start_server()</span></code></a>. Most backends
-should inherit <a class="reference internal" href="pymap.server.html#pymap.server.IMAPServer" title="pymap.server.IMAPServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPServer</span></code></a> to implement this
-method.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>reader</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamReader</span></code>) – The socket input stream.</li>
-<li><strong>writer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code>) – The socket output stream.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="classmethod">
 <dt id="pymap.interfaces.backend.BackendInterface.init">
 <em class="property">classmethod </em><code class="descname">init</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.init" title="Permalink to this definition">¶</a></dt>
@@ -849,14 +826,28 @@ new IMAP session for the user.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
 <p>Corresponds to a single, authenticated IMAP session.</p>
 <dl class="attribute">
-<dt id="pymap.interfaces.session.SessionInterface.filter_set">
-<code class="descname">filter_set</code><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.filter_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Manages the active and inactive filters for the logoin user.</p>
+<dt id="pymap.interfaces.session.SessionInterface.owner">
+<code class="descname">owner</code><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>The SASL authorization identity of the logged-in user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.interfaces.session.SessionInterface.filter_set">
+<code class="descname">filter_set</code><a class="headerlink" href="#pymap.interfaces.session.SessionInterface.filter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the active and inactive filters for the login user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Filtersetinterface</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>
@@ -1323,6 +1314,12 @@ not the given folder name currently exists.</p>
 </div>
 <div class="section" id="module-pymap.interfaces.filter">
 <span id="pymap-interfaces-filter"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.filter</span></code><a class="headerlink" href="#module-pymap.interfaces.filter" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="pymap.interfaces.filter.FilterValueT">
+<code class="descclassname">pymap.interfaces.filter.</code><code class="descname">FilterValueT</code><em class="property"> = ~FilterValueT</em><a class="headerlink" href="#pymap.interfaces.filter.FilterValueT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable for the filter value representation.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.interfaces.filter.FilterInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.filter.</code><code class="descname">FilterInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterInterface" title="Permalink to this definition">¶</a></dt>
@@ -1373,16 +1370,33 @@ intentionally resembles that of a ManageSieve server.</p>
 <p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc5804">RFC 5804</a></p>
 </div>
 <dl class="method">
+<dt id="pymap.interfaces.filter.FilterSetInterface.compile">
+<code class="descname">compile</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile the given filter value into a filter implementation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pymap.interfaces.filter.FilterSetInterface.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the named filter.</p>
+<dd><p>Delete the named filter. If the named filter is active,
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> is raised.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filter name.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
@@ -1393,7 +1407,7 @@ intentionally resembles that of a ManageSieve server.</p>
 <dl class="method">
 <dt id="pymap.interfaces.filter.FilterSetInterface.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the named filter implementation.</p>
+<dd><p>Return the named filter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1402,7 +1416,7 @@ intentionally resembles that of a ManageSieve server.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~FilterValueT</td>
 </tr>
 </tbody>
 </table>
@@ -1411,12 +1425,12 @@ intentionally resembles that of a ManageSieve server.</p>
 <dl class="method">
 <dt id="pymap.interfaces.filter.FilterSetInterface.get_active">
 <code class="descname">get_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.get_active" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the active filter implementation, if any.</p>
+<dd><p>Return the active filter value, if any.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~FilterValueT]</td>
 </tr>
 </tbody>
 </table>
@@ -1425,13 +1439,12 @@ intentionally resembles that of a ManageSieve server.</p>
 <dl class="method">
 <dt id="pymap.interfaces.filter.FilterSetInterface.get_all">
 <code class="descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.get_all" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the active filter name and a mapping of filter names to
-implementation.</p>
+<dd><p>Return the active filter name and a list of all filter names.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a>]]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>
@@ -1439,17 +1452,15 @@ implementation.</p>
 
 <dl class="method">
 <dt id="pymap.interfaces.filter.FilterSetInterface.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.put" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add or update the named filter implementation.</p>
+<code class="descname">put</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add or update the named filter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filter name.</li>
-<li><strong>value</strong> (<a class="reference internal" href="#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a>) – The filter value.</li>
-<li><strong>check</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Do not add or update the filter, but throw any errors that
-would have occurred.</li>
+<li><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</li>
 </ul>
 </td>
 </tr>
@@ -1497,7 +1508,9 @@ exists.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The filter name.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
