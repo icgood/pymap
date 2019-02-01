@@ -49,6 +49,8 @@ class RedisBackend(BackendInterface):
             formatter_class=ArgumentDefaultsHelpFormatter)
         parser.add_argument('address', nargs='?', default='redis://localhost',
                             help='the redis server address')
+        parser.add_argument('--prefix', metavar='VAL', default='',
+                            help='the prefix for redis keys')
         parser.add_argument('--users-hash', metavar='KEY',
                             help='the hash key for user lookup')
         parser.add_argument('--users-key', metavar='FORMAT', default='{name}',
@@ -67,17 +69,19 @@ class Config(IMAPConfig):
     Args:
         args: The command-line arguments.
         address: The redis server address.
+        prefix: The prefix for redis keys.
         users_hash: The hash key for user lookup.
         users_key: The user lookup key template.
         users_json: True if the user lookup value contains JSON.
 
     """
 
-    def __init__(self, args: Namespace, *, address: str,
+    def __init__(self, args: Namespace, *, address: str, prefix: str,
                  users_hash: Optional[str], users_key: str,
                  users_json: bool, **extra: Any) -> None:
         super().__init__(args, **extra)
         self._address = address
+        self._prefix = prefix
         self._users_hash = users_hash
         self._users_key = users_key
         self._users_json = users_json
@@ -91,6 +95,14 @@ class Config(IMAPConfig):
 
         """
         return self._address
+
+    @property
+    def prefix(self) -> str:
+        """The prefix for redis keys. This prefix does not apply to user
+        lookup, e.g. :attr:`.users_hash` or :attr:`.users_key`.
+
+        """
+        return self._prefix
 
     @property
     def users_hash(self) -> Optional[str]:
@@ -121,9 +133,23 @@ class Config(IMAPConfig):
         """
         return self._users_json
 
+    @property
+    def prefix_override_hash(self) -> str:
+        """The name of a hash used to override user prefixes -- not needed for
+        normal operation.
+
+        Typically, the keys used for user data after login are prefixed with
+        :attr:`.prefix` and the SHA-1 hash of the login name.  However, if a
+        login name is changed, it can still use to its old data by setting
+        :attr:`.users_key` in this hash to the prefix before the name change.
+
+        """
+        return f'{self.prefix}_prefix'
+
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         return {'address': args.address,
+                'prefix': args.prefix,
                 'users_hash': args.users_hash,
                 'users_key': args.users_key,
                 'users_json': args.users_json}
@@ -193,10 +219,10 @@ class Session(BaseSession[Message]):
             multi.get(key)
         else:
             multi.hget(config.users_hash, key)
-        multi.hget('_prefixes', key)
+        multi.hget(config.prefix_override_hash, key)
         value, prefix = await multi.execute()
         if prefix is None:
-            prefix = cls._get_prefix(name)
+            prefix = cls._get_prefix(name, config.prefix)
         if value is None:
             raise InvalidAuth()
         elif config.users_json:
@@ -209,9 +235,9 @@ class Session(BaseSession[Message]):
             return value.decode('utf-8'), prefix
 
     @classmethod
-    def _get_prefix(cls, name: str) -> bytes:
-        name_bytes = name.encode('utf-8', 'ignore')
+    def _get_prefix(cls, name: str, root_prefix: str) -> bytes:
+        name_bytes = name.encode('utf-8')
         hash_obj = hashlib.sha1()
         hash_obj.update(name_bytes)
-        digest = hash_obj.hexdigest()
-        return digest.encode('ascii')
+        prefix = root_prefix + hash_obj.hexdigest()
+        return prefix.encode('utf-8')
