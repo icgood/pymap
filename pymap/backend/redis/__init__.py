@@ -49,6 +49,8 @@ class RedisBackend(BackendInterface):
             formatter_class=ArgumentDefaultsHelpFormatter)
         parser.add_argument('address', nargs='?', default='redis://localhost',
                             help='the redis server address')
+        parser.add_argument('--select', metavar='DB', type=int,
+                            help='the redis database for mail data')
         parser.add_argument('--prefix', metavar='VAL', default='',
                             help='the prefix for redis keys')
         parser.add_argument('--users-hash', metavar='KEY',
@@ -69,18 +71,21 @@ class Config(IMAPConfig):
     Args:
         args: The command-line arguments.
         address: The redis server address.
-        prefix: The prefix for redis keys.
+        select: The redis database for mail data.
+        prefix: The prefix for mail data keys.
         users_hash: The hash key for user lookup.
         users_key: The user lookup key template.
         users_json: True if the user lookup value contains JSON.
 
     """
 
-    def __init__(self, args: Namespace, *, address: str, prefix: str,
+    def __init__(self, args: Namespace, *, address: str,
+                 select: Optional[int], prefix: str,
                  users_hash: Optional[str], users_key: str,
                  users_json: bool, **extra: Any) -> None:
         super().__init__(args, **extra)
         self._address = address
+        self._select = select
         self._prefix = prefix
         self._users_hash = users_hash
         self._users_key = users_key
@@ -97,8 +102,18 @@ class Config(IMAPConfig):
         return self._address
 
     @property
+    def select(self) -> Optional[int]:
+        """The redis database for mail data. If given, the `SELECT`_ command is
+        called after successful user lookup.
+
+        .. _SELECT: https://redis.io/commands/select
+
+        """
+        return self._select
+
+    @property
     def prefix(self) -> str:
-        """The prefix for redis keys. This prefix does not apply to user
+        """The prefix for mail data keys. This prefix does not apply to user
         lookup, e.g. :attr:`.users_hash` or :attr:`.users_key`.
 
         """
@@ -149,6 +164,7 @@ class Config(IMAPConfig):
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         return {'address': args.address,
+                'select': args.select,
                 'prefix': args.prefix,
                 'users_hash': args.users_hash,
                 'users_key': args.users_key,
@@ -188,6 +204,8 @@ class Session(BaseSession[Message]):
         """
         redis = await create_redis(config.address)
         prefix = await cls._check_user(redis, config, credentials)
+        if config.select is not None:
+            await redis.select(config.select)
         mailbox_set = MailboxSet(redis, prefix)
         try:
             await mailbox_set.add_mailbox('INBOX')
