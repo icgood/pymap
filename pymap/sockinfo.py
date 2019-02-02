@@ -1,6 +1,6 @@
 
+import socket as _socket
 from asyncio import BaseTransport, StreamWriter
-from socket import socket as _socket
 from typing import Any, Union, Optional, Tuple, Mapping
 
 __all__ = ['SocketInfo']
@@ -8,6 +8,11 @@ __all__ = ['SocketInfo']
 _Transport = Union[BaseTransport, StreamWriter]
 _PeerName = Union[Tuple[str, int], Tuple[str, int, int, int], str]
 _PeerCert = Mapping[str, Any]  # {'issuer': ..., ...}
+
+try:
+    _localhost = _socket.getaddrinfo('localhost', None)
+except _socket.error:
+    _localhost = []
 
 
 class SocketInfo:
@@ -30,7 +35,7 @@ class SocketInfo:
         self._transport = transport
 
     @property
-    def socket(self) -> _socket:
+    def socket(self) -> _socket.socket:
         sock = self._transport.get_extra_info('socket')
         if sock is None:
             raise ValueError('socket')
@@ -46,6 +51,25 @@ class SocketInfo:
     @property
     def peercert(self) -> Optional[_PeerCert]:
         return self._transport.get_extra_info('peercert')
+
+    @property
+    def from_localhost(self) -> bool:
+        """True if :attr:`.peername` is a connection from a ``localhost``
+        address.
+
+        """
+        sock_family = self.socket.family
+        if sock_family == _socket.AF_UNIX:
+            return True
+        elif sock_family not in (_socket.AF_INET, _socket.AF_INET6):
+            return False
+        sock_address, *_ = self.peername
+        for family, *_, (address, *_) in _localhost:
+            if family != sock_family:
+                continue
+            elif address == sock_address:
+                return True
+        return False
 
     def __getattr__(self, name: str) -> Any:
         return self._transport.get_extra_info(name)

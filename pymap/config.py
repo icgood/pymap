@@ -1,4 +1,5 @@
 import os.path
+import socket
 import ssl
 from argparse import Namespace
 from ssl import SSLContext
@@ -151,7 +152,7 @@ class IMAPConfig:
             return SASLAuth()
 
     @property
-    def starttls_auth(self) -> SASLAuth:
+    def insecure_auth(self) -> SASLAuth:
         return SASLAuth()
 
     @property
@@ -161,6 +162,11 @@ class IMAPConfig:
     @property
     def parsing_params(self) -> Params:
         return Params(max_append_len=self._max_append_len)
+
+    @property
+    def greeting(self) -> bytes:
+        fqdn = socket.getfqdn().encode('ascii')
+        return b'Server ready ' + fqdn
 
     @property
     def login_capability(self) -> Sequence[bytes]:
@@ -176,8 +182,6 @@ class IMAPConfig:
         ret = [b'LITERAL+']
         if self._starttls_enabled:
             ret.append(b'STARTTLS')
-        if self._reject_insecure_auth:
-            ret.append(b'LOGINDISABLED')
         return ret
 
     @property
