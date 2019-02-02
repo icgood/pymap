@@ -1,12 +1,12 @@
 
 from collections import OrderedDict
-from socket import getfqdn
 from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
     Iterable
 
 from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
+from pymap.context import socket_info
 from pymap.exceptions import CommandNotAllowed, CloseConnection
 from pymap.interfaces.session import SessionInterface, LoginProtocol
 from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
@@ -39,8 +39,6 @@ __all__ = ['ConnectionState']
 _AuthCommands = Union[AuthenticateCommand, LoginCommand]
 _CommandFunc = Callable[[Command],
                         Awaitable[Tuple[Response, SelectedMailbox]]]
-
-fqdn = getfqdn().encode('ascii')
 
 
 class ConnectionState:
@@ -77,7 +75,11 @@ class ConnectionState:
         if self._session:
             return Capability(self._capability)
         else:
-            return Capability(self._capability +
+            if self.auth.get_server(b'PLAIN') is None:
+                logindisabled = [b'LOGINDISABLED']
+            else:
+                logindisabled = []
+            return Capability(self._capability + logindisabled +
                               [b'AUTH=%b' % mech.name for mech in
                                self.auth.server_mechanisms])
 
@@ -85,8 +87,10 @@ class ConnectionState:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
             self._session = await self.login(preauth_creds, self.config)
+        elif socket_info.get().from_localhost:
+            self.auth = self.config.insecure_auth
         resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
-        return resp_cls(b'*', b'Server ready ' + fqdn, self.capability)
+        return resp_cls(b'*', self.config.greeting, self.capability)
 
     async def do_authenticate(self, cmd: _AuthCommands,
                               creds: Optional[AuthenticationCredentials]):
@@ -112,11 +116,7 @@ class ConnectionState:
             self._capability.remove(b'STARTTLS')
         except ValueError:
             raise CommandNotAllowed(b'STARTTLS not available.')
-        try:
-            self._capability.remove(b'LOGINDISABLED')
-        except ValueError:
-            pass
-        self.auth = self.config.starttls_auth
+        self.auth = self.config.insecure_auth
         return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 
     async def do_capability(self, cmd: CapabilityCommand):
