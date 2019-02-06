@@ -8,6 +8,7 @@ from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.context import socket_info
 from pymap.exceptions import CommandNotAllowed, CloseConnection
+from pymap.fetch import MessageAttributes
 from pymap.interfaces.session import SessionInterface, LoginProtocol
 from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
@@ -22,7 +23,7 @@ from pymap.parsing.command.select import CheckCommand, CloseCommand, \
     IdleCommand, ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, \
     SearchCommand
 from pymap.parsing.commands import InvalidCommand
-from pymap.parsing.primitives import ListP, Number, LiteralString, Nil
+from pymap.parsing.primitives import ListP, Number
 from pymap.parsing.response import Response, ResponseOk, ResponseNo, \
     ResponseBad,  ResponseCode, ResponsePreAuth
 from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
@@ -30,7 +31,7 @@ from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from pymap.parsing.specials import DateTime, FetchAttribute, StatusAttribute
+from pymap.parsing.specials import FetchAttribute, StatusAttribute
 from pymap.selected import SelectedMailbox
 from pysasl import AuthenticationCredentials
 
@@ -39,6 +40,9 @@ __all__ = ['ConnectionState']
 _AuthCommands = Union[AuthenticateCommand, LoginCommand]
 _CommandFunc = Callable[[Command],
                         Awaitable[Tuple[Response, SelectedMailbox]]]
+
+_flags_attr = FetchAttribute(b'FLAGS')
+_uid_attr = FetchAttribute(b'UID')
 
 
 class ConnectionState:
@@ -258,61 +262,11 @@ class ConnectionState:
         messages, updates = await self.session.fetch_messages(
             self.selected, cmd.sequence_set, frozenset(cmd.attributes))
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
-        session_flags = self.selected.session_flags
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
-            fetch_data: Dict[FetchAttribute, MaybeBytes] = OrderedDict()
-            for attr in cmd.attributes:
-                if attr.value == b'UID':
-                    fetch_data[attr] = Number(msg.uid)
-                elif attr.value == b'FLAGS':
-                    flags = msg.get_flags(session_flags)
-                    fetch_data[attr] = ListP(flags, sort=True)
-                elif attr.value == b'INTERNALDATE':
-                    if msg.internal_date:
-                        fetch_data[attr] = DateTime(msg.internal_date)
-                    else:
-                        fetch_data[attr] = Nil()
-                elif msg.expunged:
-                    continue
-                elif attr.value == b'ENVELOPE':
-                    fetch_data[attr] = msg.get_envelope_structure()
-                elif attr.value == b'BODYSTRUCTURE':
-                    fetch_data[attr] = msg.get_body_structure().extended
-                elif attr.value in (b'BODY', b'BODY.PEEK'):
-                    if not attr.section:
-                        fetch_data[attr] = msg.get_body_structure()
-                    elif not attr.section.specifier:
-                        fetch_data[attr] = LiteralString(msg.get_body(
-                            attr.section.parts))
-                    elif attr.section.specifier == b'TEXT':
-                        fetch_data[attr] = LiteralString(msg.get_text(
-                            attr.section.parts))
-                    elif attr.section.specifier in (b'HEADER', b'MIME'):
-                        fetch_data[attr] = LiteralString(msg.get_headers(
-                            attr.section.parts))
-                    elif attr.section.specifier == b'HEADER.FIELDS':
-                        fetch_data[attr] = LiteralString(msg.get_headers(
-                            attr.section.parts, attr.section.headers))
-                    elif attr.section.specifier == b'HEADER.FIELDS.NOT':
-                        fetch_data[attr] = LiteralString(msg.get_headers(
-                            attr.section.parts, attr.section.headers, True))
-                elif attr.value == b'RFC822':
-                    fetch_data[attr] = LiteralString(msg.get_body())
-                elif attr.value == b'RFC822.HEADER':
-                    fetch_data[attr] = LiteralString(msg.get_headers())
-                elif attr.value == b'RFC822.TEXT':
-                    fetch_data[attr] = LiteralString(msg.get_text())
-                elif attr.value == b'RFC822.SIZE':
-                    fetch_data[attr] = Number(msg.get_size())
-                elif attr.value in (b'BINARY', b'BINARY.PEEK'):
-                    parts = attr.section.parts if attr.section else None
-                    fetch_data[attr] = LiteralString(
-                        msg.get_body(parts, True), True)
-                elif attr.value == b'BINARY.SIZE':
-                    parts = attr.section.parts if attr.section else None
-                    fetch_data[attr] = Number(msg.get_size(parts, True))
+            msg_attrs = MessageAttributes(msg, self.selected)
+            fetch_data = msg_attrs.get_all(cmd.attributes)
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
@@ -348,10 +302,10 @@ class ConnectionState:
             elif cmd.silent:
                 continue
             flags = msg.get_flags(session_flags)
-            fetch_data: Dict[FetchAttribute, MaybeBytes] = \
-                {FetchAttribute(b'FLAGS'): ListP(flags, sort=True)}
+            fetch_data: List[Tuple[FetchAttribute, MaybeBytes]] = [
+                (_flags_attr, ListP(flags, sort=True))]
             if cmd.uid:
-                fetch_data[FetchAttribute(b'UID')] = Number(msg.uid)
+                fetch_data.append((_uid_attr, Number(msg.uid)))
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 

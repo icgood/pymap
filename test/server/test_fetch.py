@@ -143,6 +143,107 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
+    async def test_fetch_body_section_header(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (BODY[3.HEADER])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODY[3.HEADER] {172}\r\n'
+            b'From: corp@example.com\r\n'
+            b'To: me@example.com\r\n'
+            b'Subject: Important notice regarding your account\r\n'
+            b'Priority: high\r\n'
+            b'Content-Type: text/plain\r\n'
+            b'Date: 01-Jan-2000 01:01:00 +0000\r\n'
+            b'\r\n FLAGS (\\Draft \\Seen))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'fetch2 FETCH 2 (BODY[1.HEADER])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODY[1.HEADER] {0}\r\n'
+            b')\r\n'
+            b'fetch2 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_fetch_body_section_header_fields(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (BODY[3.HEADER.FIELDS (FROM TO DATE)])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODY[3.HEADER.FIELDS (DATE FROM TO)] {80}\r\n'
+            b'From: corp@example.com\r\n'
+            b'To: me@example.com\r\n'
+            b'Date: 01-Jan-2000 01:01:00 +0000\r\n'
+            b'\r\n FLAGS (\\Draft \\Seen))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_fetch_body_section_text(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (FLAGS)\r\n')
+        transport.push_write(
+            b'* 2 FETCH (FLAGS (\\Draft))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'fetch2 FETCH 2 (BODY[3.TEXT])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODY[3.TEXT] {33}\r\n'
+            b'This is some important stuff!\r\n\r\n'
+            b' FLAGS (\\Draft \\Seen))\r\n'
+            b'fetch2 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'fetch3 FETCH 2 (BODY[1.TEXT])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODY[1.TEXT] {0}\r\n'
+            b')\r\n'
+            b'fetch3 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_fetch_binary_section(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (BINARY.SIZE[1] BINARY[1])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BINARY.SIZE[1] 28 BINARY[1] ~{28}\r\n'
+            + 'ᎻéⅬⅬՕ ᎳоᏒⅬⅮ'.encode('utf-8') +
+            b' FLAGS (\\Draft \\Seen))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'fetch2 FETCH 2 (BINARY.SIZE[2] BINARY[2])\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BINARY.SIZE[2] 16 BINARY[2] ~{16}\r\n'
+            + 'foo=bar+ßaz\r\n\r\n'.encode('utf-8') +
+            b')\r\n'
+            b'fetch2 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_fetch_binary_section_partial(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (BINARY[1]<5.22>)\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BINARY[1]<5> ~{17}\r\n'
+            + 'ⅬⅬՕ ᎳоᏒ'.encode('utf-8') +
+            b' FLAGS (\\Draft \\Seen))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
     async def test_append_fetch_binary(self, imap_server):
         transport = self.new_transport(imap_server)
         message = b'\r\ntest\x00message\r\n'

@@ -11,12 +11,13 @@ from .flags import SessionFlags
 from .interfaces.message import AppendMessage, CachedMessage, \
     MessageInterface, FlagsKey
 from .mime import MessageContent
+from .mime.cte import MessageDecoder
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
 from .parsing.specials import Flag, ExtensionOptions
 
-__all__ = ['BaseMessage', 'MessageT']
+__all__ = ['MessageT', 'BaseMessage']
 
 #: Type variable with an upper bound of :class:`BaseMessage`.
 MessageT = TypeVar('MessageT', bound='BaseMessage')
@@ -141,23 +142,13 @@ class BaseMessage(MessageInterface, CachedMessage):
         except (KeyError, _NoContent):
             return []
 
-    def get_headers(self, section: Sequence[int] = None,
-                    subset: Collection[bytes] = None,
-                    inverse: bool = False) -> Writeable:
+    def get_headers(self, section: Sequence[int]) -> Writeable:
         try:
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
             return Writeable.empty()
-        return self._get_headers(msg, subset, inverse)
-
-    @classmethod
-    def _get_headers(cls, msg: MessageContent,
-                     subset: Collection[bytes] = None,
-                     inverse: bool = False) -> Writeable:
-        if subset is None:
+        else:
             return msg.header
-        return Writeable.concat(value for key, value in msg.header.folded
-                                if inverse != (key.upper() in subset))
 
     def get_body(self, section: Sequence[int] = None,
                  binary: bool = False) -> Writeable:
@@ -165,39 +156,58 @@ class BaseMessage(MessageInterface, CachedMessage):
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
             return Writeable.empty()
-        return self._get_bytes(msg, binary)
+        if binary:
+            decoded = MessageDecoder.of(msg.header).decode(msg.body)
+            if not section:
+                return Writeable.concat((msg.header, decoded))
+            else:
+                return decoded
+        else:
+            if not section:
+                return msg
+            else:
+                return msg.body
 
-    def get_text(self, section: Sequence[int] = None,
-                 binary: bool = False) -> Writeable:
+    def get_message_headers(self, section: Sequence[int] = None,
+                            subset: Collection[bytes] = None,
+                            inverse: bool = False) -> Writeable:
         try:
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
             return Writeable.empty()
-        return self._get_bytes(msg, binary, True)
+        if section:
+            if msg.is_rfc822:
+                msg = msg.body.nested[0]
+            else:
+                return Writeable.empty()
+        if subset is None:
+            return msg.header
+        headers = Writeable.concat(value for key, value in msg.header.folded
+                                   if inverse != (key.upper() in subset))
+        return Writeable.concat((headers, Writeable.wrap(b'\r\n')))
 
-    @classmethod
-    def _get_bytes(cls, msg: MessageContent, binary: bool = False,
-                   body_only: bool = False) -> Writeable:
-        if body_only:
-            return msg.body
-        else:
-            return msg
-
-    @classmethod
-    def _get_size(cls, msg: MessageContent, binary: bool = False) -> int:
-        return len(msg)
+    def get_message_text(self, section: Sequence[int] = None) -> Writeable:
+        try:
+            msg = self._get_subpart(self, section)
+        except (IndexError, _NoContent):
+            return Writeable.empty()
+        if section:
+            if msg.is_rfc822:
+                msg = msg.body.nested[0]
+            else:
+                return Writeable.empty()
+        return msg.body
 
     @classmethod
     def _get_size_with_lines(cls, msg: MessageContent) -> Tuple[int, int]:
         return len(msg), msg.lines
 
-    def get_size(self, section: Sequence[int] = None,
-                 binary: bool = False) -> int:
+    def get_size(self, section: Sequence[int] = None) -> int:
         try:
             msg = self._get_subpart(self, section)
         except (IndexError, _NoContent):
             return 0
-        return self._get_size(msg, binary)
+        return len(msg)
 
     def get_envelope_structure(self) -> EnvelopeStructure:
         try:
@@ -255,7 +265,7 @@ class BaseMessage(MessageInterface, CachedMessage):
             return TextBodyStructure(
                 subtype, params, disposition, language, location,
                 content_id, content_desc, content_encoding, None, size, lines)
-        size = cls._get_size(msg, True)
+        size = len(msg)
         return ContentBodyStructure(
             maintype, subtype, params, disposition, language, location,
             content_id, content_desc, content_encoding, None, size)
@@ -265,11 +275,9 @@ class BaseMessage(MessageInterface, CachedMessage):
             return False
         pattern = re.compile(re.escape(value), re.I)
         for part in self._content.walk():
-            headers = self._get_headers(part)
-            if pattern.search(bytes(headers)) is not None:
+            if pattern.search(bytes(part.header)) is not None:
                 return True
             elif part.body.content_type.maintype == 'text':
-                body = self._get_bytes(part, True, True)
-                if pattern.search(bytes(body)) is not None:
+                if pattern.search(bytes(part.body)) is not None:
                     return True
         return False

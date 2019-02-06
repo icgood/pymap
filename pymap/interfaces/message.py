@@ -153,10 +153,25 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_headers(self, section: Sequence[int] = None,
-                    subset: Collection[bytes] = None,
-                    inverse: bool = False) -> Writeable:
-        """Get the headers from the message.
+    def get_headers(self, section: Sequence[int]) -> Writeable:
+        """Get the headers from the message part.
+
+        The ``section`` argument indexes a nested sub-part of the message. For
+        example, ``[2, 3]`` would get the 2nd sub-part of the message and then
+        index it for its 3rd sub-part.
+
+        Args:
+            section: Nested list of sub-part indexes.
+
+        """
+        ...
+
+    @abstractmethod
+    def get_message_headers(self, section: Sequence[int] = None,
+                            subset: Collection[bytes] = None,
+                            inverse: bool = False) -> Writeable:
+        """Get the headers from the message or a ``message/rfc822`` sub-part of
+        the message..
 
         The ``section`` argument can index a nested sub-part of the message.
         For example, ``[2, 3]`` would get the 2nd sub-part of the message and
@@ -172,6 +187,20 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
+    def get_message_text(self, section: Sequence[int] = None) -> Writeable:
+        """Get the text of the message part, not including headers.
+
+        The ``section`` argument can index a nested sub-part of the message.
+        For example, ``[2, 3]`` would get the 2nd sub-part of the message and
+        then index it for its 3rd sub-part.
+
+        Args:
+            section: Optional nested list of sub-part indexes.
+
+        """
+        ...
+
+    @abstractmethod
     def get_body(self, section: Sequence[int] = None,
                  binary: bool = False) -> Writeable:
         """Get the full body of the message part, including headers.
@@ -182,35 +211,18 @@ class MessageInterface(Protocol):
 
         Args:
             section: Optional nested list of sub-part indexes.
-            binary: True if the result uses 8-bit encoding.
+            binary: True if the result has decoded any
+                Content-Transfer-Encoding.
 
         """
         ...
 
     @abstractmethod
-    def get_text(self, section: Sequence[int] = None,
-                 binary: bool = False) -> Writeable:
-        """Get the text of the message part, not including headers.
-
-        The ``section`` argument can index a nested sub-part of the message.
-        For example, ``[2, 3]`` would get the 2nd sub-part of the message and
-        then index it for its 3rd sub-part.
-
-        Args:
-            section: Optional nested list of sub-part indexes.
-            binary: True if the result uses 8-bit encoding.
-
-        """
-        ...
-
-    @abstractmethod
-    def get_size(self, section: Sequence[int] = None,
-                 binary: bool = False) -> int:
+    def get_size(self, section: Sequence[int] = None) -> int:
         """Return the size of the message, in octets.
 
         Args:
             section: Optional nested list of sub-part indexes.
-            binary: True if the result uses 8-bit encoding.
 
         """
         ...

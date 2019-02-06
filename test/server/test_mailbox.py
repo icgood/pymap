@@ -14,7 +14,7 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'list1 LIST "" ""\r\n')
         transport.push_write(
-            b'* LIST (\\Noselect) "." ""\r\n'
+            b'* LIST (\\Noselect) "/" ""\r\n'
             b'list1 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -25,9 +25,9 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'list1 LIST "" *\r\n')
         transport.push_write(
-            b'* LIST (\\HasNoChildren) "." INBOX\r\n'
-            b'* LIST (\\HasNoChildren) "." Sent\r\n'
-            b'* LIST (\\HasNoChildren) "." Trash\r\n'
+            b'* LIST (\\HasNoChildren) "/" INBOX\r\n'
+            b'* LIST (\\HasNoChildren) "/" Sent\r\n'
+            b'* LIST (\\HasNoChildren) "/" Trash\r\n'
             b'list1 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -42,10 +42,10 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'list1 LIST "" *\r\n')
         transport.push_write(
-            b'* LIST (\\HasNoChildren) "." INBOX\r\n'
-            b'* LIST (\\HasNoChildren) "." Sent\r\n'
-            b'* LIST (\\HasNoChildren) "." Trash\r\n'
-            b'* LIST (\\HasNoChildren) "." "test mailbox"\r\n'
+            b'* LIST (\\HasNoChildren) "/" INBOX\r\n'
+            b'* LIST (\\HasNoChildren) "/" Sent\r\n'
+            b'* LIST (\\HasNoChildren) "/" Trash\r\n'
+            b'* LIST (\\HasNoChildren) "/" "test mailbox"\r\n'
             b'list1 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -54,14 +54,14 @@ class TestMailbox(TestBase):
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
-            b'create1 CREATE "Trash.test mailbox"\r\n')
+            b'create1 CREATE "Trash/test mailbox"\r\n')
         transport.push_write(
             b'create1 OK CREATE completed.\r\n')
         transport.push_readline(
             b'list1 LIST "Trash" *\r\n')
         transport.push_write(
-            b'* LIST (\\HasChildren) "." Trash\r\n'
-            b'* LIST (\\HasNoChildren) "." "Trash.test mailbox"\r\n'
+            b'* LIST (\\HasChildren) "/" Trash\r\n'
+            b'* LIST (\\HasNoChildren) "/" "Trash/test mailbox"\r\n'
             b'list1 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -76,8 +76,8 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'list2 LIST "" *\r\n')
         transport.push_write(
-            b'* LIST (\\HasNoChildren) "." INBOX\r\n'
-            b'* LIST (\\HasNoChildren) "." Trash\r\n'
+            b'* LIST (\\HasNoChildren) "/" INBOX\r\n'
+            b'* LIST (\\HasNoChildren) "/" Trash\r\n'
             b'list2 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -86,7 +86,7 @@ class TestMailbox(TestBase):
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
-            b'create1 CREATE "Trash.test mailbox"\r\n')
+            b'create1 CREATE "Trash/test mailbox"\r\n')
         transport.push_write(
             b'create1 OK CREATE completed.\r\n')
         transport.push_readline(
@@ -96,8 +96,8 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'list1 LIST "Trash" *\r\n')
         transport.push_write(
-            b'* LIST (\\Noselect \\HasChildren) "." Trash\r\n'
-            b'* LIST (\\HasNoChildren) "." "Trash.test mailbox"\r\n'
+            b'* LIST (\\Noselect \\HasChildren) "/" Trash\r\n'
+            b'* LIST (\\HasNoChildren) "/" "Trash/test mailbox"\r\n'
             b'list1 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -105,7 +105,7 @@ class TestMailbox(TestBase):
     async def test_delete_selected(self, imap_server):
         transport = self.new_transport(imap_server)
         transport.push_login()
-        transport.push_select(b'Sent', unseen=False)
+        transport.push_select(b'Sent')
         transport.push_readline(
             b'delete1 DELETE Sent\r\n')
         transport.push_write(
@@ -119,7 +119,7 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'status1 STATUS Sent (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
         transport.push_write(
-            b'* STATUS Sent (MESSAGES 1 UIDNEXT 102 '
+            b'* STATUS Sent (MESSAGES 2 UIDNEXT 103 '
             b'UIDVALIDITY ', (br'\d+', b'uidval1'), b')\r\n'
             b'status1 OK STATUS completed.\r\n')
         transport.push_readline(
@@ -133,7 +133,7 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'status1 STATUS "Sent Test" (MESSAGES UIDNEXT UIDVALIDITY)\r\n')
         transport.push_write(
-            b'* STATUS "Sent Test" (MESSAGES 1 UIDNEXT 102 '
+            b'* STATUS "Sent Test" (MESSAGES 2 UIDNEXT 103 '
             b'UIDVALIDITY ', (br'\d+', b'uidval2'), b')\r\n'
             b'status1 OK STATUS completed.\r\n')
         transport.push_logout()
@@ -184,7 +184,7 @@ class TestMailbox(TestBase):
     async def test_rename_selected(self, imap_server):
         transport = self.new_transport(imap_server)
         transport.push_login()
-        transport.push_select(b'Sent', unseen=False)
+        transport.push_select(b'Sent')
         transport.push_readline(
             b'rename1 RENAME Sent "Sent Test"\r\n')
         transport.push_write(
@@ -198,7 +198,7 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'lsub1 LSUB "" *\r\n')
         transport.push_write(
-            b'* LSUB (\\HasNoChildren) "." INBOX\r\n'
+            b'* LSUB (\\HasNoChildren) "/" INBOX\r\n'
             b'lsub1 OK LSUB completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -221,8 +221,8 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'lsub1 LSUB "" *\r\n')
         transport.push_write(
-            b'* LSUB (\\HasNoChildren) "." INBOX\r\n'
-            b'* LSUB (\\HasNoChildren) "." Sent\r\n'
+            b'* LSUB (\\HasNoChildren) "/" INBOX\r\n'
+            b'* LSUB (\\HasNoChildren) "/" Sent\r\n'
             b'lsub1 OK LSUB completed.\r\n')
         transport.push_logout()
         await self.run(transport)

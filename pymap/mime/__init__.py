@@ -51,6 +51,15 @@ class MessageContent(Writeable):
         else:
             return [self]
 
+    @property
+    def is_rfc822(self) -> bool:
+        """True if the content-type of the message is ``message/rfc822``."""
+        ct_hdr = self.header.parsed.content_type
+        if ct_hdr is None:
+            return False
+        else:
+            return ct_hdr.content_type == 'message/rfc822'
+
     @classmethod
     def parse(cls, data: bytes) -> 'MessageContent':
         """Parse the bytestring into message content.

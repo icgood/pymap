@@ -159,8 +159,8 @@ class MockTransport:
                  'Got:      ' + repr((data, )),
                  'Where:    ' + where,
                  '---------------------------------------------------']
-        raw_regex = str(full_regex.replace(b'\r', b''), 'ascii').splitlines()
-        raw_data = str(data, 'ascii', 'replace').splitlines()
+        raw_regex = str(full_regex.replace(b'\r', b''), 'utf-8').splitlines()
+        raw_data = str(data, 'utf-8').splitlines()
         for regex_line, data_line in zip_longest(raw_regex, raw_data):
             if regex_line:
                 parts.append('regex: ' + regex_line.lstrip('^'))
