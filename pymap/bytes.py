@@ -103,10 +103,13 @@ class _WrappedWriteable(Writeable):
     __slots__ = ['data']
 
     def __init__(self, data: MaybeBytes) -> None:
-        self.data = data
+        if isinstance(data, bytes):
+            self.data = data
+        else:
+            self.data = bytes(data)
 
     def __bytes__(self) -> bytes:
-        return bytes(self.data)
+        return self.data
 
     def __repr__(self) -> str:
         return f'<Writeable {repr(self.data)}>'

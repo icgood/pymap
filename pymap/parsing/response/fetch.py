@@ -7,6 +7,7 @@ from typing import Any, SupportsBytes, Optional, Mapping, Sequence, Union, List
 
 from ..primitives import ListP, Nil, Number, String
 from ..specials import DateTime
+from ...bytes import Writeable, WriteStream
 
 __all__ = ['EnvelopeStructure', 'BodyStructure', 'MultipartBodyStructure',
            'ContentBodyStructure', 'TextBodyStructure', 'MessageBodyStructure']
@@ -14,17 +15,21 @@ __all__ = ['EnvelopeStructure', 'BodyStructure', 'MultipartBodyStructure',
 _CTEHeader = ContentTransferEncodingHeader
 
 
-class _Concatenated:
+class _Concatenated(Writeable):
 
     def __init__(self, parts: Sequence[SupportsBytes]) -> None:
         super().__init__()
         self.parts = parts
 
+    def write(self, writer: WriteStream) -> None:
+        for part in self.parts:
+            writer.write(bytes(part))
+
     def __bytes__(self) -> bytes:
         return b''.join([bytes(part) for part in self.parts])
 
 
-class _AddressList:
+class _AddressList(Writeable):
 
     def __init__(self, headers: Optional[Sequence[AddressHeader]]) -> None:
         super().__init__()
@@ -38,7 +43,7 @@ class _AddressList:
         return ListP([realname, Nil(), localpart, domain])
 
     @property
-    def _value(self) -> SupportsBytes:
+    def _value(self) -> Writeable:
         if self.headers:
             addresses: List[Address] = []
             for header in self.headers:
@@ -51,18 +56,21 @@ class _AddressList:
         else:
             return Nil()
 
+    def write(self, writer: WriteStream) -> None:
+        self._value.write(writer)
+
     def __bytes__(self) -> bytes:
         return bytes(self._value)
 
 
-class _ParamsList:
+class _ParamsList(Writeable):
 
     def __init__(self, params: Optional[Mapping[str, Any]]) -> None:
         super().__init__()
         self.params = params
 
     @property
-    def _value(self) -> SupportsBytes:
+    def _value(self) -> Writeable:
         if self.params:
             values = [(String.build(key), String.build(value))
                       for key, value in self.params.items()]
@@ -70,11 +78,14 @@ class _ParamsList:
         else:
             return Nil()
 
+    def write(self, writer: WriteStream) -> None:
+        self._value.write(writer)
+
     def __bytes__(self) -> bytes:
         return bytes(self._value)
 
 
-class EnvelopeStructure:
+class EnvelopeStructure(Writeable):
     """Builds the response to an `RFC 3501 7.4.2
     <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_ FETCH ENVELOPE
     request.
@@ -134,7 +145,7 @@ class EnvelopeStructure:
         return _AddressList(headers)
 
     @property
-    def _value(self) -> SupportsBytes:
+    def _value(self) -> Writeable:
         datetime: Union[DateTime, Nil] = \
             DateTime(self.date.datetime) if self.date else Nil()
         return ListP([datetime,
@@ -148,11 +159,14 @@ class EnvelopeStructure:
                       String.build(self.in_reply_to),
                       String.build(self.message_id)])
 
+    def write(self, writer: WriteStream) -> None:
+        self._value.write(writer)
+
     def __bytes__(self) -> bytes:
         return bytes(self._value)
 
 
-class BodyStructure:
+class BodyStructure(Writeable):
     """Parent class for the response to an `RFC 3501 7.4.2
     <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_ FETCH BODYSTRUCTURE
     request. This class should not be used directly.
@@ -194,6 +208,9 @@ class BodyStructure:
     @property
     def _value(self) -> ListP:
         raise NotImplementedError
+
+    def write(self, writer: WriteStream) -> None:
+        self._value.write(writer)
 
     def __bytes__(self) -> bytes:
         return bytes(self._value)

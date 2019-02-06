@@ -38,7 +38,7 @@ class TestExpungeResponse(unittest.TestCase):
 class TestFetchResponse(unittest.TestCase):
 
     def test_bytes(self):
-        resp = FetchResponse(56, {FetchAttribute(b'KEY1'): b'VAL1'})
+        resp = FetchResponse(56, [(FetchAttribute(b'KEY1'), b'VAL1')])
         self.assertEqual(b'* 56 FETCH (KEY1 VAL1)\r\n', bytes(resp))
 
 

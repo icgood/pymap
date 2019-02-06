@@ -1,6 +1,7 @@
 
+from collections import OrderedDict
 from itertools import chain
-from typing import ClassVar, Iterable, List, Mapping, Optional
+from typing import ClassVar, Tuple, Iterable, Sequence, List, Mapping, Optional
 
 from . import Response
 from ..modutf7 import modutf7_encode
@@ -12,6 +13,8 @@ __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
            'ESearchResponse', 'StatusResponse', 'ListResponse',
            'LSubResponse']
+
+_FetchData = Sequence[Tuple[FetchAttribute, MaybeBytes]]
 
 
 class FlagsResponse(Response):
@@ -96,11 +99,10 @@ class FetchResponse(Response):
 
     """
 
-    def __init__(self, seq: int, data: Mapping[FetchAttribute, MaybeBytes]) \
-            -> None:
+    def __init__(self, seq: int, data: _FetchData) -> None:
         super().__init__(b'*')
         self.seq = seq
-        self.data = data
+        self.data = list(data)
 
     @property
     def merge_key(self) -> int:
@@ -124,18 +126,18 @@ class FetchResponse(Response):
         """
         if self.seq != other.seq:
             raise ValueError(other)
-        new_data = {attr: val for attr, val in self.data.items()}
+        new_data = OrderedDict(self.data)
         new_data.update(other.data)
-        return FetchResponse(self.seq, new_data)
+        return FetchResponse(self.seq, list(new_data.items()))
 
     @property
     def text(self) -> bytes:
-        data_list = ListP(chain.from_iterable(self.data.items()))
+        data_list = ListP(chain.from_iterable(self.data))
         return BytesFormat(b'%i FETCH %b') % (self.seq, data_list)
 
     def write(self, writer: WriteStream) -> None:
         writer.write(b'%b %i FETCH ' % (self.tag, self.seq))
-        data_list = ListP(chain.from_iterable(self.data.items()))
+        data_list = ListP(chain.from_iterable(self.data))
         data_list.write(writer)
         writer.write(b'\r\n')
 

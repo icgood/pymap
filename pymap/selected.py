@@ -419,8 +419,8 @@ class SelectedMailbox:
         for uid, _ in groupby(sorted(fetch_uids)):
             seq = after.seqs_cache[uid]
             msg_flags = cache[uid].get_flags(session_flags)
-            fetch_data: Dict[FetchAttribute, SupportsBytes] = {
-                _flags_attr: ListP(msg_flags, sort=True)}
+            fetch_data: List[Tuple[FetchAttribute, SupportsBytes]] = [
+                (_flags_attr, ListP(msg_flags, sort=True))]
             if with_uid:
-                fetch_data[_uid_attr] = Number(uid)
+                fetch_data.append((_uid_attr, Number(uid)))
             yield FetchResponse(seq, fetch_data)

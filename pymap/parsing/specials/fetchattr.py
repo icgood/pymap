@@ -113,6 +113,8 @@ class FetchAttribute(Parseable[bytes]):
     def set_seen(self) -> bool:
         if self.value == b'BODY' and self.section:
             return True
+        elif self.value == b'BINARY':
+            return True
         elif self.value in (b'RFC822', b'RFC822.TEXT'):
             return True
         return False
@@ -136,7 +138,7 @@ class FetchAttribute(Parseable[bytes]):
             parts = [b'BODY']
         else:
             parts = [self.value]
-        if self.section:
+        if self.section and not self.value.startswith(b'RFC822'):
             parts.append(b'[')
             if self.section.parts:
                 part_raw = BytesFormat(b'.').join(
@@ -211,10 +213,18 @@ class FetchAttribute(Parseable[bytes]):
             raise NotParseable(buf)
         attr = match.group(1).upper()
         after = buf[match.end(0):]
-        if attr in (b'ENVELOPE', b'FLAGS', b'INTERNALDATE', b'UID', b'RFC822',
-                    b'RFC822.HEADER', b'RFC822.SIZE', b'RFC822.TEXT',
-                    b'BODYSTRUCTURE'):
+        if attr in (b'ENVELOPE', b'FLAGS', b'INTERNALDATE', b'UID',
+                    b'RFC822.SIZE',  b'BODYSTRUCTURE'):
             return cls(attr), after
+        elif attr == b'RFC822':
+            section = cls.Section([])
+            return cls(attr, section), after
+        elif attr == b'RFC822.HEADER':
+            section = cls.Section([], b'HEADER')
+            return cls(attr, section), after
+        elif attr == b'RFC822.TEXT':
+            section = cls.Section([], b'TEXT')
+            return cls(attr, section), after
         elif attr not in (b'BODY', b'BODY.PEEK',
                           b'BINARY', b'BINARY.PEEK', b'BINARY.SIZE'):
             raise NotParseable(buf)

@@ -1,0 +1,34 @@
+\Draft
+946684900.0
+From: me@example.com
+To: colleague@example.com
+Subject: Fwd: Important notice regarding your account
+Content-Type: multipart/mixed;
+ boundary="test=_71EBCB1C"
+
+--test=_71EBCB1C
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+
+4Y67w6nihazihazVlSDhjrPQvuGPkuKFrOKFrg==
+
+--test=_71EBCB1C
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+
+foo=3Dbar+=C3=9Faz
+
+--test=_71EBCB1C
+Content-Disposition: attachment; filename="Notice.eml"
+Content-Type: message/rfc822
+
+From: corp@example.com
+To: me@example.com
+Subject: Important notice regarding your account
+Priority: high
+Content-Type: text/plain
+Date: 01-Jan-2000 01:01:00 +0000
+
+This is some important stuff!
+
+--test=_71EBCB1C--

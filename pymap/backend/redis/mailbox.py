@@ -407,7 +407,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     @property
     def delimiter(self) -> str:
-        return '.'
+        return '/'
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
         if subscribed:
