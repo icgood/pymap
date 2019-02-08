@@ -5,7 +5,8 @@ import logging
 import re
 import sys
 from argparse import ArgumentParser
-from asyncio import shield, StreamReader, StreamWriter, CancelledError
+from asyncio import shield, Task, StreamReader, StreamWriter, AbstractServer, \
+    CancelledError
 from base64 import b64encode, b64decode
 from ssl import SSLContext
 from typing import TypeVar, Iterable, List, Optional, Awaitable
@@ -38,37 +39,38 @@ _log = logging.getLogger(__name__)
 class IMAPService(ServiceInterface):
     """A pymap service implementing an IMAP server."""
 
-    def __init__(self, config: IMAPConfig, imap_server: 'IMAPServer') -> None:
+    def __init__(self, server: AbstractServer) -> None:
         super().__init__()
-        self._config = config
-        self._imap_server = imap_server
+        self._server = server
+        self._task = asyncio.create_task(self._run())
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('imap service')
         group.add_argument('--host', metavar='IFACE', action='append',
                            help='the network interface to listen on')
-        group.add_argument('--port', metavar='NUM', type=int, default=1143,
-                           help='the port to listen on')
+        group.add_argument('--port', metavar='NUM', default='imap',
+                           help='the port or service name to listen on')
         group.add_argument('--cert', metavar='FILE', help='cert file for TLS')
         group.add_argument('--key', metavar='FILE', help='key file for TLS')
         group.add_argument('--insecure-login', action='store_true',
                            help='allow plaintext login without TLS')
 
     @classmethod
-    async def init(cls, backend: BackendInterface) -> 'IMAPService':
-        imap_server = IMAPServer(backend.login, backend.config)
-        return cls(backend.config, imap_server)
+    async def start(cls, backend: BackendInterface,
+                    config: IMAPConfig) -> 'IMAPService':
+        imap_server = IMAPServer(backend.login, config)
+        server = await asyncio.start_server(
+            imap_server, host=config.host, port=config.port)
+        return cls(server)
 
-    async def run_forever(self) -> None:
-        host = self._config.host
-        port = self._config.port
-        server = await asyncio.start_server(self._imap_server,
-                                            host=host, port=port)
+    @property
+    def task(self) -> 'Task[None]':
+        return self._task
 
-        # Typeshed currently has poor stubs for AbstractServer.
-        async with server:  # type: ignore
-            await server.serve_forever()  # type: ignore
+    async def _run(self) -> None:
+        async with self._server:  # type: ignore
+            await self._server.serve_forever()  # type: ignore
 
 
 class IMAPServer:

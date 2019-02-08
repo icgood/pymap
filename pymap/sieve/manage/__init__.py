@@ -2,11 +2,11 @@
 import asyncio
 import logging
 import re
-from argparse import ArgumentParser, Namespace
-from asyncio import StreamReader, StreamWriter
+from argparse import ArgumentParser
+from asyncio import Task, StreamReader, StreamWriter, AbstractServer
 from base64 import b64encode, b64decode
 from collections import OrderedDict
-from typing import Optional, Mapping, Dict, List
+from typing import Optional, Union, Mapping, Dict, List
 
 from pymap import __version__
 from pymap.bytes import BytesFormat
@@ -41,34 +41,36 @@ class ManageSieveService(ServiceInterface):
 
     """
 
-    def __init__(self, managesieve_server: 'ManageSieveServer',
-                 args: Namespace) -> None:
+    def __init__(self, server: AbstractServer) -> None:
         super().__init__()
-        self._managesieve_server = managesieve_server
-        self._args = args
+        self._server = server
+        self._task = asyncio.create_task(self._run())
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('managesieve service')
         group.add_argument('--sieve-host', action='append', metavar='IFACE',
                            help='the network interface to listen on')
-        group.add_argument('--sieve-port', type=int, default=4190,
-                           metavar='NUM', help='the port to listen on')
+        group.add_argument('--sieve-port',  metavar='NUM', default='sieve',
+                           help='the port or service name to listen on')
 
     @classmethod
-    async def init(cls, backend: BackendInterface) -> 'ManageSieveService':
+    async def start(cls, backend: BackendInterface,
+                    config: IMAPConfig) -> 'ManageSieveService':
         managesieve_server = ManageSieveServer(backend.login, backend.config)
-        return cls(managesieve_server, backend.config.args)
+        host: Optional[str] = config.args.sieve_host
+        port: Union[str, int] = config.args.sieve_port
+        server = await asyncio.start_server(
+            managesieve_server, host=host, port=port)
+        return cls(server)
 
-    async def run_forever(self) -> None:
-        host = self._args.sieve_host
-        port = self._args.sieve_port
-        server = await asyncio.start_server(self._managesieve_server,
-                                            host=host, port=port)
+    @property
+    def task(self) -> 'Task[None]':
+        return self._task
 
-        # Typeshed currently has poor stubs for AbstractServer.
-        async with server:  # type: ignore
-            await server.serve_forever()  # type: ignore
+    async def _run(self) -> None:
+        async with self._server:  # type: ignore
+            await self._server.serve_forever()  # type: ignore
 
 
 class ManageSieveServer:

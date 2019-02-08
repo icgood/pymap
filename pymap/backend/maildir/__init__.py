@@ -56,8 +56,9 @@ class MaildirBackend(BackendInterface):
                             help='maildir directory layout')
 
     @classmethod
-    async def init(cls, args: Namespace) -> 'MaildirBackend':
-        return cls(Session.login, Config.from_args(args))
+    async def init(cls, args: Namespace) -> Tuple['MaildirBackend', 'Config']:
+        config = Config.from_args(args)
+        return cls(Session.login, config), config
 
 
 class Config(IMAPConfig):

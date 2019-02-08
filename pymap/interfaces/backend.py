@@ -1,6 +1,8 @@
 
 from abc import abstractmethod
 from argparse import Namespace, ArgumentParser
+from asyncio import Task
+from typing import Tuple
 from typing_extensions import Protocol
 
 from .session import LoginProtocol
@@ -37,7 +39,8 @@ class BackendInterface(Protocol):
 
     @classmethod
     @abstractmethod
-    async def init(cls, args: Namespace) -> 'BackendInterface':
+    async def init(cls, args: Namespace) \
+            -> Tuple['BackendInterface', IMAPConfig]:
         """Initialize the backend and return an instance.
 
         Args:
@@ -68,6 +71,12 @@ class ServiceInterface(Protocol):
 
     """
 
+    @property
+    @abstractmethod
+    def task(self) -> 'Task[None]':
+        """The service's task that can waited or cancelled."""
+        ...
+
     @classmethod
     @abstractmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
@@ -85,19 +94,13 @@ class ServiceInterface(Protocol):
 
     @classmethod
     @abstractmethod
-    async def init(cls, backend: BackendInterface) -> 'ServiceInterface':
-        """Initialize service and return the instance.
+    async def start(cls, backend: BackendInterface,
+                    config: IMAPConfig) -> 'ServiceInterface':
+        """Start the service and return the instance.
 
         Args:
             backend: The backend object.
-
-        """
-        ...
-
-    @abstractmethod
-    async def run_forever(self) -> None:
-        """Start and run the service indefinitely. This coroutine should
-        gracefully exit if :exc:`~asyncio.CancelledError` is raised.
+            config: The config in use by the backend.
 
         """
         ...

@@ -1,9 +1,12 @@
+
+import os
 import os.path
 import socket
 import ssl
 from argparse import Namespace
 from ssl import SSLContext
-from typing import Sequence, Any, Optional, Iterable, Mapping, TypeVar, Type
+from typing import Any, TypeVar, Type, Union, Optional, Iterable, \
+    Sequence, Mapping
 from typing_extensions import Final
 
 from pysasl import SASLAuth, AuthenticationCredentials
@@ -32,9 +35,9 @@ class IMAPConfig:
 
     Args:
         args: The command-line arguments.
-        debug: If true, prints all socket activity to stdout.
         host: The IMAP server host.
-        port: The IMAP server port.
+        port: The IMAP server port or service name.
+        debug: If true, prints all socket activity to stdout.
         subsystem: The concurrency subsystem in use by the backend.
         ssl_context: SSL context that will be used for opportunistic TLS.
             Alternatively, you can pass extra arguments ``cert_file`` and
@@ -60,9 +63,9 @@ class IMAPConfig:
     """
 
     def __init__(self, args: Namespace, *,
+                 host: Optional[str],
+                 port: Union[str, int],
                  debug: bool = False,
-                 host: Optional[str] = None,
-                 port: int = 143,
                  subsystem: Subsystem = None,
                  ssl_context: SSLContext = None,
                  starttls_enabled: bool = True,
@@ -113,7 +116,7 @@ class IMAPConfig:
 
         """
         parsed_args = cls.parse_args(args)
-        return cls(args, debug=args.debug, host=args.host, port=args.port,
+        return cls(args, host=args.host, port=args.port, debug=args.debug,
                    reject_insecure_auth=not args.insecure_login,
                    cert_file=args.cert, key_file=args.key,
                    **parsed_args)
@@ -132,7 +135,9 @@ class IMAPConfig:
             cert_file: Optional[str] = self._extra.get('cert_file')
             if cert_file is None:
                 return None
-            key_file: str = self._extra.get('key_file', cert_file)
+            key_file: Optional[str] = self._extra.get('key_file')
+            if key_file is None:
+                key_file = cert_file
             cert_path = os.path.realpath(cert_file)
             key_path = os.path.realpath(key_file)
             ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
@@ -147,13 +152,13 @@ class IMAPConfig:
     @property
     def initial_auth(self) -> SASLAuth:
         if self._reject_insecure_auth:
-            return SASLAuth.secure()
+            return SASLAuth([])
         else:
-            return SASLAuth()
+            return self.insecure_auth
 
     @property
     def insecure_auth(self) -> SASLAuth:
-        return SASLAuth()
+        return SASLAuth.plaintext()
 
     @property
     def preauth_credentials(self) -> Optional[AuthenticationCredentials]:

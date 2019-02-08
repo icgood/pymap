@@ -45,7 +45,7 @@ the server is restarted.
 You can try out the dict plugin with demo data:
 
 ```bash
-$ pymap --insecure-login --debug dict --demo-data
+$ pymap --port 1143 --debug dict --demo-data
 ```
 
 In another terminal, connect to port 1143 and run some commands:
@@ -111,7 +111,7 @@ will use the user ID as a relative path.
 Try out the maildir plugin:
 
 ```
-$ pymap --insecure-login --debug maildir /path/to/users.txt
+$ pymap --port 1143 --debug maildir /path/to/users.txt
 ```
 
 Once started, check out the dict plugin example above to connect and see it in
@@ -157,7 +157,7 @@ documentation for more details.
 Try out the redis plugin:
 
 ```
-$ pymap --insecure-login --debug redis redis://localhost
+$ pymap --port 1143 --debug redis redis://localhost
 ```
 
 Once started, check out the dict plugin example above to connect and see it in

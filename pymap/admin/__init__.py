@@ -1,12 +1,14 @@
 
+import asyncio
 import os
 import os.path
-import asyncio
+import tempfile
 from argparse import ArgumentParser
-from asyncio import CancelledError
-from typing_extensions import Final
+from asyncio import Task, AbstractServer, CancelledError
+from typing import Optional, Sequence
 
 from grpclib.server import Server  # type: ignore
+from pymap.config import IMAPConfig
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 
 from .handlers import AdminHandlers
@@ -20,49 +22,67 @@ class AdminService(ServiceInterface):
 
     """
 
-    def __init__(self, path: str, server: Server) -> None:
+    def __init__(self, path: str, server: AbstractServer) -> None:
         super().__init__()
-        self.path: Final = path
-        self.server: Final = server
+        self._path = path
+        self._server = server
+        self._task = asyncio.create_task(self._run())
+
+    @classmethod
+    def get_socket_paths(cls) -> Sequence[str]:
+        """Return the prioritized list of locations to create or check for the
+        UNIX socket file listening for admin requests.
+
+        """
+        basename = 'pymap-admin.sock'
+        return [os.path.join(os.sep, 'var', 'run', basename),
+                os.path.join(tempfile.gettempdir(), basename)]
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('admin service')
-        group.add_argument('--admin-path', metavar='PATH',
-                           help='path to POSIX socket file')
+        group.add_argument('--socket', metavar='PATH', dest='admin_sock',
+                           help='path to socket file')
         group.add_argument('--no-filter', action='store_true',
                            help='do not filter appended messages')
 
     @classmethod
-    async def init(cls, backend: BackendInterface) -> 'AdminService':
+    async def start(cls, backend: BackendInterface,
+                    config: IMAPConfig) -> 'AdminService':
         config = backend.config
-        if config.args.admin_path is not None:
-            path = config.args.admin_path
-        else:
-            pid = os.getpid()
-            path = os.path.join(os.sep, 'tmp', 'pymap', f'admin-{pid}.sock')
-        cls._create_dir(path)
+        path: Optional[str] = config.args.admin_sock
         handlers = AdminHandlers(backend)
         server = Server([handlers], loop=asyncio.get_event_loop())
+        path = await cls._start(path, server)
         return cls(path, server)
 
     @classmethod
-    def _create_dir(cls, path: str) -> None:
-        try:
-            dirname = os.path.dirname(path)
-            os.mkdir(dirname, 0o755)
-        except FileExistsError:
-            pass
+    async def _start(cls, path: Optional[str], server: Server) -> str:
+        if path:
+            await server.start(path=path)
+            return path
+        else:
+            last_exc: Optional[OSError] = None
+            for path in cls.get_socket_paths():
+                try:
+                    await server.start(path=path)
+                    return path
+                except OSError as exc:
+                    last_exc = exc
+            raise RuntimeError('Failed starting admin service') from last_exc
+
+    @property
+    def task(self) -> 'Task[None]':
+        return self._task
 
     def _unlink_path(self) -> None:
         try:
-            os.unlink(self.path)
+            os.unlink(self._path)
         except OSError:
             pass
 
-    async def run_forever(self) -> None:
-        server = self.server
-        await server.start(path=self.path)
+    async def _run(self) -> None:
+        server = self._server
         try:
             await server.wait_closed()
         except CancelledError:

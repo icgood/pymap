@@ -47,8 +47,8 @@ class TestBase:
 
     @pytest.fixture
     async def backend(self, args):
-        backend = await DictBackend.init(args)
-        backend.config.disable_search_keys = [b'DRAFT']
+        backend, config = await DictBackend.init(args)
+        config.disable_search_keys = [b'DRAFT']
         return backend
 
     def _incr_fd(self):
