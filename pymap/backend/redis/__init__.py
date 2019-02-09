@@ -61,8 +61,9 @@ class RedisBackend(BackendInterface):
                             help='the user lookup value contains JSON')
 
     @classmethod
-    async def init(cls, args: Namespace) -> 'RedisBackend':
-        return cls(Session.login, Config.from_args(args))
+    async def init(cls, args: Namespace) -> Tuple['RedisBackend', 'Config']:
+        config = Config.from_args(args)
+        return cls(Session.login, config), config
 
 
 class Config(IMAPConfig):

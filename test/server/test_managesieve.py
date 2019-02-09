@@ -11,7 +11,7 @@ class TestManageSieve(TestBase):
     def _push_capabilities(self, transport):
         transport.push_write(
             b'"IMPLEMENTATION" "pymap managesieve', (br'.*?', ), b'"\r\n'
-            b'"SASL" "PLAIN LOGIN CRAM-MD5"\r\n'
+            b'"SASL" "PLAIN LOGIN"\r\n'
             b'"SIEVE" ""\r\n'
             b'"STARTTLS"\r\n'
             b'"UNAUTHENTICATE"\r\n'
