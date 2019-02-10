@@ -86,7 +86,7 @@ class IMAPConfig:
         self.bad_command_limit: Final = bad_command_limit
         self.disable_search_keys: Final = disable_search_keys or []
         self.max_idle_wait: Final = max_idle_wait
-        self._ssl_context = ssl_context
+        self._ssl_context = ssl_context or self._load_certs(extra)
         self._starttls_enabled = starttls_enabled
         self._reject_insecure_auth = reject_insecure_auth
         self._preauth_credentials = preauth_credentials
@@ -129,20 +129,22 @@ class IMAPConfig:
         if self.subsystem is not None:
             subsystem.set(self.subsystem)
 
+    @classmethod
+    def _load_certs(cls, extra: Mapping[str, Any]) -> Optional[SSLContext]:
+        cert_file: Optional[str] = extra.get('cert_file')
+        if cert_file is None:
+            return None
+        key_file: Optional[str] = extra.get('key_file')
+        if key_file is None:
+            key_file = cert_file
+        cert_path = os.path.realpath(cert_file)
+        key_path = os.path.realpath(key_file)
+        ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_context.load_cert_chain(cert_path, key_path)
+        return ssl_context
+
     @property
     def ssl_context(self) -> Optional[SSLContext]:
-        if self._ssl_context is None:
-            cert_file: Optional[str] = self._extra.get('cert_file')
-            if cert_file is None:
-                return None
-            key_file: Optional[str] = self._extra.get('key_file')
-            if key_file is None:
-                key_file = cert_file
-            cert_path = os.path.realpath(cert_file)
-            key_path = os.path.realpath(key_file)
-            ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-            ssl_context.load_cert_chain(cert_path, key_path)
-            self._ssl_context = ssl_context
         return self._ssl_context
 
     @property
