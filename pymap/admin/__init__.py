@@ -72,7 +72,7 @@ class AdminService(ServiceInterface):
             raise RuntimeError('Failed starting admin service') from last_exc
 
     @property
-    def task(self) -> 'Task[None]':
+    def task(self) -> Task:
         return self._task
 
     def _unlink_path(self) -> None:

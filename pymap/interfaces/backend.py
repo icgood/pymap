@@ -73,7 +73,7 @@ class ServiceInterface(Protocol):
 
     @property
     @abstractmethod
-    def task(self) -> 'Task[None]':
+    def task(self) -> Task:
         """The service's task that can waited or cancelled."""
         ...
 

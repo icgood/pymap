@@ -1,4 +1,5 @@
 
+import ipaddress
 import socket as _socket
 from asyncio import BaseTransport, StreamWriter
 from typing import Any, Union, Optional, Tuple, Mapping
@@ -64,12 +65,10 @@ class SocketInfo:
         elif sock_family not in (_socket.AF_INET, _socket.AF_INET6):
             return False
         sock_address, *_ = self.peername
-        for family, *_, (address, *_) in _localhost:
-            if family != sock_family:
-                continue
-            elif address == sock_address:
-                return True
-        return False
+        ip = ipaddress.ip_address(sock_address)
+        if ip.version == 6 and ip.ipv4_mapped is not None:
+            ip = ipaddress.ip_address(ip.ipv4_mapped)
+        return ip.is_loopback
 
     def __getattr__(self, name: str) -> Any:
         return self._transport.get_extra_info(name)

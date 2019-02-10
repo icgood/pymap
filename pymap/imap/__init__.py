@@ -9,7 +9,7 @@ from asyncio import shield, Task, StreamReader, StreamWriter, AbstractServer, \
     CancelledError
 from base64 import b64encode, b64decode
 from ssl import SSLContext
-from typing import TypeVar, Iterable, List, Optional, Awaitable
+from typing import TypeVar, Iterable, Sequence, List, Optional, Awaitable
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
@@ -24,6 +24,7 @@ from pymap.parsing.command.select import IdleCommand
 from pymap.parsing.exceptions import RequiresContinuation
 from pymap.parsing.response import ResponseContinuation, Response, \
     ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk
+from pymap.sockets import InheritedSockets
 from pymap.sockinfo import SocketInfo
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
@@ -39,10 +40,13 @@ _log = logging.getLogger(__name__)
 class IMAPService(ServiceInterface):
     """A pymap service implementing an IMAP server."""
 
-    def __init__(self, server: AbstractServer) -> None:
+    def __init__(self, servers: Sequence[AbstractServer]) -> None:
         super().__init__()
-        self._server = server
-        self._task = asyncio.create_task(self._run())
+        self._task = asyncio.create_task(self._run_all(servers))
+
+    @property
+    def task(self) -> Task:
+        return self._task
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
@@ -53,6 +57,9 @@ class IMAPService(ServiceInterface):
                            help='the port or service name to listen on')
         group.add_argument('--cert', metavar='FILE', help='cert file for TLS')
         group.add_argument('--key', metavar='FILE', help='key file for TLS')
+        group.add_argument('--systemd-sockets', action='store_const',
+                           dest='inherited_sockets', const='systemd',
+                           help='use systemd inherited sockets')
         group.add_argument('--insecure-login', action='store_true',
                            help='allow plaintext login without TLS')
 
@@ -60,17 +67,25 @@ class IMAPService(ServiceInterface):
     async def start(cls, backend: BackendInterface,
                     config: IMAPConfig) -> 'IMAPService':
         imap_server = IMAPServer(backend.login, config)
-        server = await asyncio.start_server(
-            imap_server, host=config.host, port=config.port)
-        return cls(server)
+        if config.args.inherited_sockets:
+            sockets = InheritedSockets.of(config.args.inherited_sockets).get()
+            if not sockets:
+                raise ValueError('No inherited sockets found')
+            return cls([await asyncio.start_server(imap_server, sock=sock)
+                        for sock in sockets])
+        else:
+            server = await asyncio.start_server(
+                imap_server, host=config.host, port=config.port)
+            return cls([server])
 
-    @property
-    def task(self) -> 'Task[None]':
-        return self._task
+    @classmethod
+    async def _run_all(cls, servers: Sequence[AbstractServer]) -> None:
+        await asyncio.gather(*[cls._run(server) for server in servers])
 
-    async def _run(self) -> None:
-        async with self._server:  # type: ignore
-            await self._server.serve_forever()  # type: ignore
+    @classmethod
+    async def _run(cls, server: AbstractServer) -> None:
+        async with server:  # type: ignore
+            await server.serve_forever()  # type: ignore
 
 
 class IMAPServer:

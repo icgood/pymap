@@ -37,10 +37,11 @@ def _load_entry_points(group: str) \
 def _get_argv() -> Optional[Sequence[str]]:
     pre_parser = ArgumentParser(add_help=False)
     pre_parser.add_argument('--args', nargs=argparse.REMAINDER)
-    pre_args, _ = pre_parser.parse_known_args()
+    pre_args, before = pre_parser.parse_known_args()
     if pre_args.args:
         args = pre_args.args
-        return list(chain.from_iterable(shlex.split(arg) for arg in args))
+        return before + list(chain.from_iterable(
+            shlex.split(arg) for arg in args))
     else:
         return None
 
