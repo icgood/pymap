@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.imap &#8212; pymap 0.9.3 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.9.4 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.9.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.9.4 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -59,9 +59,23 @@
 <span id="pymap-imap"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code><a class="headerlink" href="#module-pymap.imap" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pymap.imap.IMAPService">
-<em class="property">class </em><code class="descclassname">pymap.imap.</code><code class="descname">IMAPService</code><span class="sig-paren">(</span><em>server</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.imap.</code><code class="descname">IMAPService</code><span class="sig-paren">(</span><em>servers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.ServiceInterface</span></code></a></p>
 <p>A pymap service implementing an IMAP server.</p>
+<dl class="attribute">
+<dt id="pymap.imap.IMAPService.task">
+<code class="descname">task</code><a class="headerlink" href="#pymap.imap.IMAPService.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>The service’s task that can waited or cancelled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.imap.IMAPService.add_arguments">
 <em class="property">classmethod </em><code class="descname">add_arguments</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.add_arguments" title="Permalink to this definition">¶</a></dt>
@@ -81,12 +95,6 @@ For example:</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.imap.IMAPService.task">
-<code class="descname">task</code><a class="headerlink" href="#pymap.imap.IMAPService.task" title="Permalink to this definition">¶</a></dt>
-<dd><p>The service’s task that can waited or cancelled.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -246,7 +254,7 @@ enter the command/response cycle.</p>
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.9.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.9.4 documentation</a> &#187;</li>
  
       </ul>
     </div>
