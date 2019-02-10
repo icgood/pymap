@@ -1,0 +1,87 @@
+
+import socket
+from abc import abstractmethod, ABCMeta
+from typing import Optional, Sequence, List
+
+try:
+    import systemd.daemon  # type: ignore
+except ImportError as exc:
+    systemd_import_exc: Optional[ImportError] = exc
+else:
+    systemd_import_exc = None
+
+__all__ = ['InheritedSockets']
+
+
+class InheritedSockets(metaclass=ABCMeta):
+    """Abstracts the ability to retrieve inherited sockets from the calling
+    process, usually a service management framework.
+
+    """
+
+    @abstractmethod
+    def get(self) -> Sequence[socket.socket]:
+        """Return the sockets inherited by the process."""
+        ...
+
+    @classmethod
+    def of(cls, service_manager: str) -> 'InheritedSockets':
+        """Return the inherited sockets for the given service manager.
+
+        Note:
+            Only ``'systemd'`` is implemented at this time.
+
+        Args:
+            service_manager: The service manager name.
+
+        """
+        if service_manager == 'systemd':
+            return cls.for_systemd()
+        else:
+            raise KeyError(service_manager)
+
+    @classmethod
+    def for_systemd(cls) -> 'InheritedSockets':
+        """Return the inherited sockets for `systemd`_. The `python-systemd`_
+        library must be installed.
+
+        See Also:
+            `systemd.socket`_, `sd_listen_fds`_
+
+        .. _systemd: https://freedesktop.org/wiki/Software/systemd/
+        .. _systemd.socket: https://www.freedesktop.org/software/systemd/man/systemd.socket.html
+        .. _sd_listen_fds: https://www.freedesktop.org/software/systemd/man/sd_listen_fds.html
+        .. _python-systemd: https://github.com/systemd/python-systemd
+
+        Raises:
+            :exc:`NotImplementedError`
+
+        """  # noqa: E501
+        if systemd_import_exc:
+            raise systemd_import_exc
+        return _SystemdSockets()
+
+
+class _SystemdSockets(InheritedSockets):
+
+    def __init__(self) -> None:
+        super().__init__()
+        fds: Sequence[int] = systemd.daemon.listen_fds()
+        sockets: List[socket.socket] = []
+        for fd in fds:
+            family = self._get_family(fd)
+            sock = socket.fromfd(fd, family, socket.SOCK_STREAM)
+            sockets.append(sock)
+        self._sockets = sockets
+
+    def get(self) -> Sequence[socket.socket]:
+        return self._sockets
+
+    @classmethod
+    def _get_family(cls, fd: int) -> int:
+        if systemd.daemon.is_socket(fd, socket.AF_UNIX):
+            return socket.AF_UNIX
+        elif systemd.daemon.is_socket(fd, socket.AF_INET6):
+            return socket.AF_INET6
+        else:
+            return socket.AF_INET

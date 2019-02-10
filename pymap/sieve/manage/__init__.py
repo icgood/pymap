@@ -65,7 +65,7 @@ class ManageSieveService(ServiceInterface):
         return cls(server)
 
     @property
-    def task(self) -> 'Task[None]':
+    def task(self) -> Task:
         return self._task
 
     async def _run(self) -> None:
