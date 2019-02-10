@@ -5,12 +5,10 @@ import asyncio
 import logging
 import logging.config
 import os
-import shlex
 from argparse import ArgumentParser, Namespace
 from grp import getgrnam
-from itertools import chain
 from pwd import getpwnam
-from typing import Any, Type, Optional, Sequence, Mapping
+from typing import Any, Type, Sequence, Mapping
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
@@ -32,18 +30,6 @@ def _load_entry_points(group: str) \
         else:
             ret[entry_point.name] = cls
     return ret
-
-
-def _get_argv() -> Optional[Sequence[str]]:
-    pre_parser = ArgumentParser(add_help=False)
-    pre_parser.add_argument('--args', nargs=argparse.REMAINDER)
-    pre_args, before = pre_parser.parse_known_args()
-    if pre_args.args:
-        args = pre_args.args
-        return before + list(chain.from_iterable(
-            shlex.split(arg) for arg in args))
-    else:
-        return None
 
 
 def _drop_privileges(args: Namespace) -> None:
@@ -69,8 +55,6 @@ def main() -> None:
                         help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
-    parser.add_argument('--args', nargs=argparse.REMAINDER,
-                        help='additional command-line arguments')
     parser.add_argument('--set-uid', metavar='USER',
                         help='drop privileges to user name or uid')
     parser.add_argument('--set-gid', metavar='GROUP',
@@ -90,7 +74,7 @@ def main() -> None:
     for service_cls in services.values():
         service_cls.add_arguments(parser)
     parser.set_defaults(skip_services=[])
-    args = parser.parse_args(_get_argv())
+    args = parser.parse_args()
 
     if args.logging_cfg:
         logging.config.fileConfig(args.logging_config)
