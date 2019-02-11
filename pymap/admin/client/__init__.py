@@ -1,8 +1,6 @@
 """Admin functions for a running pymap server."""
 
 import asyncio
-import os
-import os.path
 import sys
 from argparse import ArgumentParser, Namespace, FileType
 from typing import Type
@@ -14,13 +12,6 @@ from .append import AppendCommand
 from .command import ClientCommand
 from .. import AdminService
 from ..grpc.admin_grpc import AdminStub
-
-
-def _find_path(parser: ArgumentParser) -> str:
-    for path in AdminService.get_socket_paths():
-        if os.path.exists(path):
-            return path
-    return ''
 
 
 def main() -> int:
@@ -47,7 +38,7 @@ def main() -> int:
 async def run(parser: ArgumentParser, args: Namespace,
               command_cls: Type[ClientCommand]) -> int:
     loop = asyncio.get_event_loop()
-    path = args.socket or _find_path(parser)
+    path = args.socket or AdminService.get_socket_path()
     channel = Channel(path=path, loop=loop)
     stub = AdminStub(channel)
     command = command_cls(stub, args)

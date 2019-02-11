@@ -3,9 +3,9 @@ import asyncio
 import os
 import os.path
 import tempfile
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from asyncio import Task, AbstractServer, CancelledError
-from typing import Optional, Sequence
+from typing import Optional
 
 from grpclib.server import Server  # type: ignore
 from pymap.config import IMAPConfig
@@ -29,19 +29,17 @@ class AdminService(ServiceInterface):
         self._task = asyncio.create_task(self._run())
 
     @classmethod
-    def get_socket_paths(cls) -> Sequence[str]:
+    def get_socket_path(cls) -> str:
         """Return the prioritized list of locations to create or check for the
         UNIX socket file listening for admin requests.
 
         """
-        basename = 'pymap-admin.sock'
-        return [os.path.join(os.sep, 'var', 'run', basename),
-                os.path.join(tempfile.gettempdir(), basename)]
+        return os.path.join(tempfile.gettempdir(), 'pymap-admin.sock')
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('admin service')
-        group.add_argument('--socket', metavar='PATH', dest='admin_sock',
+        group.add_argument('--admin-socket', metavar='PATH', dest='admin_sock',
                            help='path to socket file')
         group.add_argument('--no-filter', action='store_true',
                            help='do not filter appended messages')
@@ -54,6 +52,7 @@ class AdminService(ServiceInterface):
         handlers = AdminHandlers(backend)
         server = Server([handlers], loop=asyncio.get_event_loop())
         path = await cls._start(path, server)
+        cls._chown(path, config.args)
         return cls(path, server)
 
     @classmethod
@@ -62,14 +61,16 @@ class AdminService(ServiceInterface):
             await server.start(path=path)
             return path
         else:
-            last_exc: Optional[OSError] = None
-            for path in cls.get_socket_paths():
-                try:
-                    await server.start(path=path)
-                    return path
-                except OSError as exc:
-                    last_exc = exc
-            raise RuntimeError('Failed starting admin service') from last_exc
+            path = cls.get_socket_path()
+            await server.start(path=path)
+            return path
+
+    @classmethod
+    def _chown(cls, path: str, args: Namespace) -> None:
+        uid = args.set_uid or -1
+        gid = args.set_gid or -1
+        if uid >= 0 or gid >= 0:
+            os.chown(path, uid, gid)
 
     @property
     def task(self) -> Task:
