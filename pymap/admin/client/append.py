@@ -2,19 +2,28 @@
 
 import sys
 import time
-from argparse import ArgumentParser, FileType, Namespace
-from typing import Tuple
+import traceback
+from argparse import ArgumentParser, FileType
+from typing import Type, Tuple, TextIO
 
 from .command import ClientCommand
-from ..grpc.admin_grpc import AdminStub
-from ..grpc.admin_pb2 import AppendRequest, AppendResponse
+from ..grpc.admin_pb2 import AppendRequest, AppendResponse, \
+    SUCCESS, ERROR_RESPONSE
 
 
 class AppendCommand(ClientCommand):
 
+    success = '2.0.0 Message delivered'
+    messages = {'InvalidAuth': '5.7.8 Authentication credentials invalid',
+                'TimedOut': '4.4.2 Connection timed out',
+                'ConnectionFailed': '4.3.0 Connection failed',
+                'UnhandledError': '4.3.0 Unhandled system error',
+                'MailboxNotFound': '4.2.0 Message not deliverable',
+                'AppendFailure': '4.2.0 Message not deliverable'}
+
     @classmethod
     def init(cls, parser: ArgumentParser, subparsers) \
-            -> Tuple[str, 'AppendCommand']:
+            -> Tuple[str, Type['AppendCommand']]:
         subparser = subparsers.add_parser(
             'append', description=__doc__,
             help='append a message to a mailbox')
@@ -43,13 +52,38 @@ class AppendCommand(ClientCommand):
                            const='\\Deleted', help='the message is deleted')
         flags.add_argument('--answered', dest='flags', action='append_const',
                            const='\\Answered', help='the message is answered')
-        return 'append', cls()
+        return 'append', cls
 
-    async def run(self, stub: AdminStub, args: Namespace) -> AppendResponse:
+    async def run(self, fileobj: TextIO) -> int:
+        args = self.args
         recipient = args.recipient or args.user
         data = args.data.read()
         when: int = args.timestamp or int(time.time())
         req = AppendRequest(user=args.user, sender=args.sender,
                             recipient=recipient, mailbox=args.mailbox,
                             data=data, flags=args.flags, when=when)
-        return await stub.Append(req)
+        try:
+            res = await self.stub.Append(req)
+        except OSError:
+            traceback.print_exc()
+            code, msg = 1, self.messages['ConnectionFailed']
+        except Exception:
+            traceback.print_exc()
+            code, msg = 1, self.messages['UnhandledError']
+        else:
+            print(res, file=sys.stderr)
+            code, msg = self._parse(res)
+        print(msg, file=fileobj)
+        return code
+
+    def _parse(self, response: AppendResponse) -> Tuple[int, str]:
+        if response.result == SUCCESS:
+            return 0, self.success
+        elif response.result == ERROR_RESPONSE:
+            try:
+                msg = self.messages[response.error_type]
+            except KeyError:
+                msg = self.messages['UnhandledError']
+            return 1, msg
+        else:
+            raise NotImplementedError(response.result)

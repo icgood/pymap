@@ -1,5 +1,5 @@
 
-from io import BytesIO
+from io import BytesIO, StringIO
 from argparse import ArgumentParser, Namespace
 from typing import Any, Optional
 
@@ -229,16 +229,17 @@ class TestAdminClient:
     async def test_append(self):
         parser = ArgumentParser()
         subparsers = parser.add_subparsers(dest='test')
-        name, command = AppendCommand.init(parser, subparsers)
-        stub = _Stub('append response')
+        name, command_cls = AppendCommand.init(parser, subparsers)
+        stub = _Stub(AppendResponse(result=SUCCESS))
         args = Namespace(user='testuser', sender=None, recipient=None,
                          mailbox='INBOX', data=BytesIO(b'test data'),
                          flags=['\\Flagged', '\\Seen'],
                          timestamp=1234567890)
-        response = await command.run(stub, args)
+        command = command_cls(stub, args)
+        code = await command.run(StringIO())
         request = stub.request
         assert 'Append' == stub.method
-        assert 'append response' == response
+        assert 0 == code
         assert b'test data' == request.data
         assert 1234567890.0 == request.when
         assert ['\\Flagged', '\\Seen'] == request.flags

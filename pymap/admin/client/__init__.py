@@ -3,7 +3,9 @@
 import asyncio
 import os
 import os.path
-from argparse import ArgumentParser, Namespace
+import sys
+from argparse import ArgumentParser, Namespace, FileType
+from typing import Type
 
 from grpclib.client import Channel  # type: ignore
 from pymap import __version__
@@ -18,13 +20,16 @@ def _find_path(parser: ArgumentParser) -> str:
     for path in AdminService.get_socket_paths():
         if os.path.exists(path):
             return path
-    parser.error('Cannot determine admin socket path')
+    return ''
 
 
-def main() -> None:
+def main() -> int:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version',
                         version='%(prog)s' + __version__)
+    parser.add_argument('--outfile', metavar='PATH',
+                        type=FileType('w'), default=sys.stdout,
+                        help='the output file (default: stdout)')
     parser.add_argument('--socket', metavar='PATH', help='path to socket file')
 
     subparsers = parser.add_subparsers(dest='command',
@@ -36,17 +41,18 @@ def main() -> None:
         parser.error('Expected command name.')
     command = commands[args.command]
 
-    asyncio.run(run(parser, args, command), debug=False)
+    return asyncio.run(run(parser, args, command), debug=False)
 
 
 async def run(parser: ArgumentParser, args: Namespace,
-              command: ClientCommand) -> None:
+              command_cls: Type[ClientCommand]) -> int:
     loop = asyncio.get_event_loop()
     path = args.socket or _find_path(parser)
     channel = Channel(path=path, loop=loop)
     stub = AdminStub(channel)
+    command = command_cls(stub, args)
     try:
-        ret = await command.run(stub, args)
-        print(ret)
+        code = await command.run(args.outfile)
     finally:
         channel.close()
+    return code
