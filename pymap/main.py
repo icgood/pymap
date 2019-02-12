@@ -13,6 +13,15 @@ from pkg_resources import iter_entry_points, DistributionNotFound
 from . import __version__
 from .interfaces.backend import BackendInterface, ServiceInterface
 
+try:
+    import systemd.daemon  # type: ignore
+except ImportError:
+    def notify_ready() -> None:
+        pass
+else:
+    def notify_ready() -> None:
+        systemd.daemon.notify('READY=1')
+
 _Backends = Mapping[str, Type[BackendInterface]]
 _Services = Mapping[str, Type[ServiceInterface]]
 
@@ -74,6 +83,7 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
                 for service in service_types]
 
     _drop_privileges(args)
+    notify_ready()
     await asyncio.gather(*[service.task for service in services])
 
 
