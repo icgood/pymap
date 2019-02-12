@@ -260,6 +260,7 @@ class ManageSieveConnection:
         protocol.connection_made(new_transport)
         self._print('%d <->| %s', b'<TLS handshake>')
         self._offer_starttls = False
+        self.auth = self.config.insecure_auth
         return CapabilitiesResponse(self.capabilities)
 
     async def run(self, login: LoginProtocol):

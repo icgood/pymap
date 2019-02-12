@@ -1,22 +1,34 @@
 
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 from argparse import ArgumentParser, Namespace
-from typing import Any, Tuple
-from typing_extensions import Protocol
+from typing import Type, Tuple, TextIO
+from typing_extensions import Final
 
 from ..grpc.admin_grpc import AdminStub
 
 __all__ = ['ClientCommand']
 
 
-class ClientCommand(Protocol):
+class ClientCommand(metaclass=ABCMeta):
+    """Interface for client command implementations.
+
+    Args:
+        stub: The GRPC stub for executing commands.
+        args: The command line arguments.
+
+    """
+
+    def __init__(self, stub: AdminStub, args: Namespace) -> None:
+        super().__init__()
+        self.stub: Final = stub
+        self.args: Final = args
 
     @classmethod
     @abstractmethod
     def init(cls, parser: ArgumentParser, subparsers) \
-            -> Tuple[str, 'ClientCommand']:
+            -> Tuple[str, Type['ClientCommand']]:
         """Initialize the client command, adding its subparser and returning
-        the command name and object.
+        the command name and class.
 
         Args:
             parser: The argument parser object.
@@ -27,12 +39,11 @@ class ClientCommand(Protocol):
         ...
 
     @abstractmethod
-    async def run(self, stub: AdminStub, args: Namespace) -> Any:
-        """Run the command and return its result.
+    async def run(self, fileobj: TextIO) -> int:
+        """Run the command and return the exit code.
 
         Args:
-            stub: The GRPC stub for executing commands.
-            args: The command line arguments.
+            fileobj: The file object to print the output to.
 
         """
         ...

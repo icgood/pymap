@@ -5,9 +5,7 @@ import asyncio
 import logging
 import logging.config
 import os
-from argparse import ArgumentParser, Namespace
-from grp import getgrnam
-from pwd import getpwnam
+from argparse import ArgumentParser, Namespace, ArgumentTypeError
 from typing import Any, Type, Sequence, Mapping
 
 from pkg_resources import iter_entry_points, DistributionNotFound
@@ -19,34 +17,6 @@ _Backends = Mapping[str, Type[BackendInterface]]
 _Services = Mapping[str, Type[ServiceInterface]]
 
 
-def _load_entry_points(group: str) \
-        -> Mapping[str, Type[Any]]:
-    ret = {}
-    for entry_point in iter_entry_points(group):
-        try:
-            cls = entry_point.load()
-        except DistributionNotFound:
-            pass  # optional dependencies not installed
-        else:
-            ret[entry_point.name] = cls
-    return ret
-
-
-def _drop_privileges(args: Namespace) -> None:
-    if args.set_gid is not None:
-        try:
-            gid = int(args.set_gid)
-        except ValueError:
-            gid = getgrnam(args.set_gid).gr_gid
-        os.setgid(gid)
-    if args.set_uid is not None:
-        try:
-            uid = int(args.set_uid)
-        except ValueError:
-            uid = getpwnam(args.set_uid).pw_uid
-        os.setuid(uid)
-
-
 def main() -> None:
     parser = ArgumentParser(
         description=__doc__,
@@ -55,9 +25,9 @@ def main() -> None:
                         help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
-    parser.add_argument('--set-uid', metavar='USER',
+    parser.add_argument('--set-uid', metavar='USER', type=_get_pwd,
                         help='drop privileges to user name or uid')
-    parser.add_argument('--set-gid', metavar='GROUP',
+    parser.add_argument('--set-gid', metavar='GROUP', type=_get_grp,
                         help='drop privileges to group name or gid')
     parser.add_argument('--logging-cfg', metavar='PATH',
                         help='config file for logging')
@@ -105,3 +75,53 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
 
     _drop_privileges(args)
     await asyncio.gather(*[service.task for service in services])
+
+
+def _load_entry_points(group: str) \
+        -> Mapping[str, Type[Any]]:
+    ret = {}
+    for entry_point in iter_entry_points(group):
+        try:
+            cls = entry_point.load()
+        except DistributionNotFound:
+            pass  # optional dependencies not installed
+        else:
+            ret[entry_point.name] = cls
+    return ret
+
+
+def _get_pwd(setuid: str) -> int:
+    from pwd import getpwnam, getpwuid
+    try:
+        try:
+            uid = int(setuid)
+        except ValueError:
+            entry = getpwnam(setuid)
+        else:
+            entry = getpwuid(uid)
+    except KeyError as exc:
+        raise ArgumentTypeError(f'Invalid user: {setuid}') from exc
+    else:
+        return entry.pw_uid
+
+
+def _get_grp(setgid: str) -> int:
+    from grp import getgrnam, getgrgid
+    try:
+        try:
+            gid = int(setgid)
+        except ValueError:
+            entry = getgrnam(setgid)
+        else:
+            entry = getgrgid(gid)
+    except KeyError as exc:
+        raise ArgumentTypeError(f'Invalid group: {setgid}') from exc
+    else:
+        return entry.gr_gid
+
+
+def _drop_privileges(args: Namespace) -> None:
+    if args.set_gid is not None:
+        os.setgid(args.set_gid)
+    if args.set_uid is not None:
+        os.setuid(args.set_uid)

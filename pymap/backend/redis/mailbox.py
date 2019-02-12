@@ -253,19 +253,27 @@ class MailboxData(MailboxDataInterface[Message]):
                     multi.unlink(msg_prefix + b':flags')
                     if flag_set:
                         multi.sadd(msg_prefix + b':flags', *flag_vals)
+                    if Deleted in flag_set:
+                        multi.sadd(prefix + b':deleted', msg_uid)
+                    else:
+                        multi.srem(prefix + b':deleted', msg_uid)
+                    if Seen not in flag_set:
+                        multi.zadd(prefix + b':unseen', msg_uid, msg_uid)
+                    else:
+                        multi.zrem(prefix + b':unseen', msg_uid)
                 elif mode == FlagOp.ADD and flag_set:
                     multi.sadd(msg_prefix + b':flags', *flag_vals)
+                    if Deleted in flag_set:
+                        multi.sadd(prefix + b':deleted', msg_uid)
+                    if Seen in flag_set:
+                        multi.zrem(prefix + b':unseen', msg_uid)
                 elif mode == FlagOp.DELETE and flag_set:
                     multi.srem(msg_prefix + b':flags', *flag_vals)
+                    if Deleted in flag_set:
+                        multi.srem(prefix + b':deleted', msg_uid)
+                    if Seen in flag_set:
+                        multi.zadd(prefix + b':unseen', msg_uid, msg_uid)
                 new_flags[msg_uid] = multi.smembers(msg_prefix + b':flags')
-                if Deleted in msg.permanent_flags:
-                    multi.sadd(prefix + b':deleted', msg_uid)
-                else:
-                    multi.srem(prefix + b':deleted', msg_uid)
-                if Seen not in msg.permanent_flags:
-                    multi.zadd(prefix + b':unseen', msg_uid, msg_uid)
-                else:
-                    multi.zrem(prefix + b':unseen', msg_uid)
             try:
                 await multi.execute()
             except MultiExecError:
