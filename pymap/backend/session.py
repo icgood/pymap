@@ -57,6 +57,9 @@ class BaseSession(SessionInterface, Generic[MessageT]):
     def filter_set(self) -> Optional[FilterSetInterface]:
         return None
 
+    async def cleanup(self) -> None:
+        pass
+
     async def _load_updates(self, selected: Optional[SelectedMailbox],
                             mbx: Optional[MailboxDataInterface[MessageT]]) \
             -> Optional[SelectedMailbox]:

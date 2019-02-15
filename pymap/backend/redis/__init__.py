@@ -177,9 +177,10 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    def __init__(self, owner: str, config: Config, mailbox_set: MailboxSet,
-                 filter_set: FilterSet) -> None:
+    def __init__(self, redis: Redis, owner: str, config: Config,
+                 mailbox_set: MailboxSet, filter_set: FilterSet) -> None:
         super().__init__(owner)
+        self._redis = redis
         self._config = config
         self._mailbox_set = mailbox_set
         self._filter_set = filter_set
@@ -195,6 +196,9 @@ class Session(BaseSession[Message]):
     @property
     def filter_set(self) -> FilterSet:
         return self._filter_set
+
+    async def cleanup(self) -> None:
+        await self._redis.discard()
 
     @classmethod
     async def login(cls, credentials: AuthenticationCredentials,
@@ -213,7 +217,8 @@ class Session(BaseSession[Message]):
         except MailboxConflict:
             pass
         filter_set = FilterSet(redis, namespace)
-        return cls(credentials.identity, config, mailbox_set, filter_set)
+        return cls(redis, credentials.identity, config,
+                   mailbox_set, filter_set)
 
     @classmethod
     async def _check_user(cls, redis: Redis, config: Config,

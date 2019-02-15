@@ -87,6 +87,12 @@ class ConnectionState:
                               [b'AUTH=%b' % mech.name for mech in
                                self.auth.server_mechanisms])
 
+    async def do_cleanup(self) -> None:
+        try:
+            await self.session.cleanup()
+        except Exception:
+            pass
+
     async def do_greeting(self) -> Response:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:

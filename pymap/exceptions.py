@@ -1,22 +1,24 @@
 """Module containing the general exceptions that may be used by pymap."""
 
-from typing import Optional
+from abc import abstractmethod, ABCMeta
+from typing import Any, Optional
 
 from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
 
-__all__ = ['ResponseError', 'CloseConnection', 'CommandNotAllowed',
-           'SearchNotAllowed', 'InvalidAuth', 'MailboxError',
-           'MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
-           'MailboxReadOnly', 'AppendFailure']
+__all__ = ['ResponseError', 'NotSupportedError', 'CloseConnection',
+           'CommandNotAllowed', 'SearchNotAllowed', 'InvalidAuth',
+           'MailboxError', 'MailboxNotFound', 'MailboxConflict',
+           'MailboxHasChildren', 'MailboxReadOnly', 'AppendFailure']
 
 
-class ResponseError(Exception):
+class ResponseError(Exception, metaclass=ABCMeta):
     """The base exception for all custom errors that are used to generate a
     response to an IMAP command.
 
     """
 
+    @abstractmethod
     def get_response(self, tag: bytes) -> Response:
         """Build an IMAP response for the error.
 
@@ -24,7 +26,18 @@ class ResponseError(Exception):
             tag: The command tag that generated the error.
 
         """
-        raise NotImplementedError
+        ...
+
+
+class NotSupportedError(ResponseError, NotImplementedError):
+    """Raised when an action is taken that is not supported by the server or
+    backend.
+
+    """
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, b'Operation not supported.',
+                          ResponseCode.of(b'CANNOT'))
 
 
 class CloseConnection(ResponseError):
@@ -105,6 +118,31 @@ class MailboxError(ResponseError):
 
     def get_response(self, tag: bytes) -> ResponseNo:
         return ResponseNo(tag, self.message, self.code)
+
+
+class MailboxAbort(MailboxError):
+    """An unrecoverable failure has aborted an operation on the mailbox. The
+    operation may or may not succeed again.
+
+    """
+
+    def __init__(self) -> None:
+        super().__init__(None, b'Mailbox operation aborted.',
+                         ResponseCode.of(b'INUSE'))
+
+    @classmethod
+    def assertFalse(cls, cond: Any) -> None:
+        """Asserts that `cond` is False.
+
+        Args:
+            cond: The condition to check.
+
+        Raises:
+            :exc:`MailboxAbort`
+
+        """
+        if cond:
+            raise cls()
 
 
 class MailboxNotFound(MailboxError):

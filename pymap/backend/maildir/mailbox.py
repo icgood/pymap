@@ -9,7 +9,7 @@ from typing import Dict, Optional, FrozenSet, Iterable, AsyncIterable
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
-    MailboxHasChildren
+    MailboxHasChildren, NotSupportedError
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.listtree import ListTree
@@ -398,6 +398,6 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     async def rename_mailbox(self, before: str, after: str) -> None:
         if before == 'INBOX':
-            raise NotImplementedError()  # TODO
+            raise NotSupportedError()  # TODO
         else:
             self._layout.rename_folder(before, after, self.delimiter)

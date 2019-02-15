@@ -56,6 +56,17 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
+    async def cleanup(self) -> None:
+        """Called after ever operation, success or failure, to allow the
+        backend to clean up resources.
+
+        Note:
+            Any exception raised by this method will be silently ignored.
+
+        """
+        ...
+
+    @abstractmethod
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,
                              selected: SelectedMailbox = None) \
