@@ -1,6 +1,5 @@
 
-import hashlib
-import struct
+import random
 from collections import OrderedDict
 from typing import IO, Any, Optional, Iterable, Mapping, Dict, \
     NamedTuple, ClassVar, TypeVar, Type
@@ -57,7 +56,7 @@ class UidList(FileWriteable):
         self._base_dir = base_dir
         self.uid_validity = uid_validity
         self.next_uid = next_uid
-        self.global_uid = global_uid or self._create_guid(base_dir)
+        self.global_uid = global_uid or self._create_guid()
         self._records: Dict[int, Record] = OrderedDict()
 
     @property
@@ -124,12 +123,6 @@ class UidList(FileWriteable):
         return Record(num, fields, filename.rstrip())
 
     @classmethod
-    def _read_guid_hex(cls, field: str) -> bytes:
-        split = int(len(field) / 2)
-        left, right = int(field[0:split], 16), int(field[split:], 16)
-        return struct.pack('=QQ', left, right)
-
-    @classmethod
     def _read_header(cls: Type[_UDT], base_dir: str, line: str) -> _UDT:
         data = line.split()
         if data[0] != '3':
@@ -143,25 +136,20 @@ class UidList(FileWriteable):
             elif field[0] == 'N':
                 next_uid = int(field[1:])
             elif field[0] == 'G':
-                global_uid = cls._read_guid_hex(field[1:])
+                global_uid = field[1:].encode('ascii')
         if uid_validity is None or next_uid is None or global_uid is None:
             raise ValueError(line)
         return cls(base_dir, uid_validity, next_uid, global_uid)
 
-    def _create_guid(self, base_dir: str) -> bytes:
-        ret = hashlib.sha256()
-        ret.update(base_dir.encode('utf-8', 'replace'))
-        ret.update(struct.pack('=L', self.uid_validity))
-        return ret.digest()[0:16]
-
-    def _get_guid_hex(self) -> str:
-        left, right = struct.unpack('=QQ', self.global_uid)
-        return format(left, 'x') + format(right, 'x')
+    @classmethod
+    def _create_guid(cls) -> bytes:
+        return b'%032x' % random.getrandbits(128)
 
     def _build_header(self) -> str:
+        global_uid = self.global_uid.decode('ascii')
         return ''.join(['3 V', str(self.uid_validity),
                         ' N', str(self.next_uid),
-                        ' G', self._get_guid_hex(), '\r\n'])
+                        ' G', global_uid, '\r\n'])
 
     @classmethod
     def get_file(cls) -> str:

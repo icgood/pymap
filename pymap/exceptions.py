@@ -96,7 +96,7 @@ class MailboxError(ResponseError):
 
     """
 
-    def __init__(self, mailbox: str, message: bytes,
+    def __init__(self, mailbox: Optional[str], message: bytes,
                  code: Optional[ResponseCode] = None) -> None:
         super().__init__()
         self.mailbox = mailbox
@@ -157,11 +157,10 @@ class MailboxReadOnly(MailboxError):
 
     """
 
-    def __init__(self, mailbox: str) -> None:
+    def __init__(self, mailbox: Optional[str] = None) -> None:
         super().__init__(mailbox, b'Mailbox is read-only.',
                          ResponseCode.of(b'READ-ONLY'))
 
 
 class AppendFailure(MailboxError):
     """The mailbox append operation failed."""
-    pass

@@ -1,5 +1,6 @@
 
 import asyncio
+import random
 from datetime import datetime
 from typing import Optional, Sequence, List, Dict, Tuple, FrozenSet, \
     Iterable, Awaitable
@@ -9,6 +10,7 @@ from aioredis import Redis, MultiExecError, WatchVariableError  # type: ignore
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
+from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.mime import MessageContent
 from pymap.parsing.modutf7 import modutf7_encode, modutf7_decode
@@ -43,18 +45,18 @@ class MailboxData(MailboxDataInterface[Message]):
 
     """
 
-    def __init__(self, redis: Redis, name: str, prefix: bytes,
+    def __init__(self, redis: Redis, guid: bytes, prefix: bytes,
                  uid_validity: int) -> None:
         super().__init__()
         self._redis = redis
+        self._guid = guid
         self._prefix = prefix
         self._uid_validity = uid_validity
-        self._name = name
         self._selected_set = SelectedSet()
 
     @property
-    def name(self) -> str:
-        return self._name
+    def guid(self) -> bytes:
+        return self._guid
 
     @property
     def readonly(self) -> bool:
@@ -74,7 +76,6 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
-        selected.uid_validity = self.uid_validity
         last_mod_seq = selected.mod_sequence
         if last_mod_seq is None:
             mod_seq, updated, expunged = await self._get_initial()
@@ -327,7 +328,7 @@ class MailboxData(MailboxDataInterface[Message]):
                         raise
                 else:
                     break
-        return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
+        return MailboxSnapshot(self.guid, self.readonly, self.uid_validity,
                                self.permanent_flags, self.session_flags,
                                exists, num_recent, num_unseen, first_unseen,
                                next_uid)
@@ -408,10 +409,11 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         super().__init__()
         self._redis = redis
         self._prefix = prefix
-        self._order_key = prefix + b':mbx-order'
         self._mbx_key = prefix + b':mailboxes'
-        self._sub_key = prefix + b':subscribed'
+        self._max_order_key = prefix + b':mbx-max-order'
+        self._order_key = prefix + b':mbx-order'
         self._uidv_key = prefix + b':uid-validity'
+        self._sub_key = prefix + b':subscribed'
 
     @property
     def delimiter(self) -> str:
@@ -423,61 +425,111 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         else:
             await self._redis.srem(self._sub_key, name)
 
-    async def list_subscribed(self) -> Sequence[str]:
-        return [modutf7_decode(name) for name in
-                await self._redis.smembers(self._sub_key)]
+    async def list_subscribed(self) -> ListTree:
+        mailboxes = [modutf7_decode(name) for name in
+                     await self._redis.smembers(self._sub_key)]
+        return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
-    async def list_mailboxes(self) -> Sequence[str]:
-        return [modutf7_decode(name) for name in
-                await self._redis.zrange(self._mbx_key)]
+    async def list_mailboxes(self) -> ListTree:
+        multi = self._redis.multi_exec()
+        multi.hgetall(self._mbx_key)
+        multi.zrange(self._order_key)
+        mailboxes, mbx_order = await multi.execute()
+        rev_mbx = {guid: key for key, guid in mailboxes.items()}
+        mailboxes = [modutf7_decode(rev_mbx[guid]) for guid in mbx_order
+                     if guid in rev_mbx]
+        return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
     async def get_mailbox(self, name: str,
                           try_create: bool = False) -> 'MailboxData':
         redis = self._redis
         name_key = modutf7_encode(name)
-        multi = redis.multi_exec()
-        multi.zscore(self._mbx_key, name_key)
-        multi.hget(self._uidv_key, name_key)
-        exists, uidval = await multi.execute()
-        if not exists:
-            raise MailboxNotFound(name, try_create)
-        mbx_prefix = b':'.join((self._prefix, name_key, uidval))
-        return MailboxData(redis, name, mbx_prefix, int(uidval))
-
-    async def add_mailbox(self, name: str) -> 'MailboxData':
-        redis = self._redis
-        name_key = modutf7_encode(name)
         while True:
             await redis.watch(self._mbx_key)
-            exists = await redis.zscore(self._mbx_key, name_key)
-            if exists:
+            mbx_guid = await redis.hget(self._mbx_key, name_key)
+            if mbx_guid is None:
                 await redis.unwatch()
-                raise MailboxConflict(name)
-            order = await redis.incr(self._order_key)
+                raise MailboxNotFound(name, try_create)
             multi = redis.multi_exec()
-            multi.hincrby(self._uidv_key, name_key)
-            multi.zadd(self._mbx_key, order, name_key)
+            multi.hget(self._uidv_key, name_key)
             try:
-                uidval, _ = await multi.execute()
+                uidval, *_ = await multi.execute()
             except MultiExecError:
                 if await _check_errors(multi):
                     raise
             else:
-                mbx_prefix = b':'.join(
-                    (self._prefix, name_key, b'%d' % uidval))
-                return MailboxData(redis, name, mbx_prefix, uidval)
+                mbx_prefix = b'%b:%b' % (self._prefix, mbx_guid)
+                return MailboxData(redis, mbx_guid, mbx_prefix, int(uidval))
+
+    async def add_mailbox(self, name: str) -> None:
+        redis = self._redis
+        name_key = modutf7_encode(name)
+        while True:
+            await redis.watch(self._mbx_key)
+            mbx_guid = b'%032x' % random.getrandbits(128)
+            pipe = redis.pipeline()
+            pipe.incr(self._max_order_key)
+            pipe.hexists(self._mbx_key, name_key)
+            order, exists = await pipe.execute()
+            if exists:
+                await redis.unwatch()
+                raise MailboxConflict(name)
+            multi = redis.multi_exec()
+            multi.hset(self._mbx_key, name_key, mbx_guid)
+            multi.zadd(self._order_key, order, mbx_guid)
+            multi.hincrby(self._uidv_key, name_key)
+            try:
+                _, _, uidval = await multi.execute()
+            except MultiExecError:
+                if await _check_errors(multi):
+                    raise
+            else:
+                break
 
     async def delete_mailbox(self, name: str) -> None:
         redis = self._redis
         name_key = modutf7_encode(name)
         multi = redis.multi_exec()
-        multi.hget(self._uidv_key, name_key)
-        multi.zrem(self._mbx_key, name_key)
-        uidval, exists = await multi.execute()
-        if not exists:
+        multi.hget(self._mbx_key, name_key)
+        multi.hdel(self._mbx_key, name_key)
+        mbx_guid, _ = await multi.execute()
+        if mbx_guid is None:
             raise MailboxNotFound(name)
-        mbx_prefix = b':'.join((self._prefix, name_key, uidval))
+        await redis.zrem(self._order_key, mbx_guid)
+        mbx_prefix = b'%b:%b' % (self._prefix, mbx_guid)
         asyncio.create_task(_delete_keys(redis, [mbx_prefix]))
 
-    async def rename_mailbox(self, before: str, after: str) -> 'MailboxData':
-        raise NotImplementedError()  # TODO
+    async def rename_mailbox(self, before: str, after: str) -> None:
+        redis = self._redis
+        while True:
+            await redis.watch(self._mbx_key)
+            all_keys = await redis.hgetall(self._mbx_key)
+            all_mbx = {modutf7_decode(key): ns for key, ns in all_keys.items()}
+            tree = ListTree(self.delimiter).update('INBOX', *all_mbx.keys())
+            before_entry = tree.get(before)
+            after_entry = tree.get(after)
+            if before_entry is None:
+                await redis.unwatch()
+                raise MailboxNotFound(before)
+            elif after_entry is not None:
+                await redis.unwatch()
+                raise MailboxConflict(after)
+            multi = redis.multi_exec()
+            for before_name, after_name in tree.get_renames(before, after):
+                before_guid = all_mbx[before_name]
+                before_key = modutf7_encode(before_name)
+                after_key = modutf7_encode(after_name)
+                multi.hset(self._mbx_key, after_key, before_guid)
+                multi.hdel(self._mbx_key, before_key)
+                multi.hincrby(self._uidv_key, after_key)
+            if before == 'INBOX':
+                inbox_guid = b'%032x' % random.getrandbits(128)
+                multi.hset(self._mbx_key, b'INBOX', inbox_guid)
+                multi.hincrby(self._uidv_key, b'INBOX')
+            try:
+                await multi.execute()
+            except MultiExecError:
+                if await _check_errors(multi):
+                    raise
+            else:
+                break

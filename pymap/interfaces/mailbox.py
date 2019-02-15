@@ -15,8 +15,14 @@ class MailboxInterface(Protocol):
 
     @property
     @abstractmethod
-    def name(self) -> str:
-        """The name of the mailbox."""
+    def guid(self) -> bytes:
+        """The mailbox GUID. Typically a 128-bit hex bytestring.
+
+        This value must have no relationship to the mailbox name, e.g. a
+        renamed mailbox should have the same GUID but a deleted/re-created
+        mailbox of the same name must have a different GUID.
+
+        """
         ...
 
     @property

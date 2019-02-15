@@ -1,4 +1,5 @@
 
+import random
 from bisect import bisect_left
 from collections import OrderedDict
 from itertools import islice
@@ -10,6 +11,7 @@ from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
+from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.parsing.specials import FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
@@ -86,22 +88,23 @@ class MailboxData(MailboxDataInterface[Message]):
 
     """
 
-    def __init__(self, name: str) -> None:
-        self._name = name
+    def __init__(self) -> None:
+        self._guid = self._new_guid()
         self._readonly = False
         self._messages_lock = subsystem.get().new_rwlock()
         self._selected_set = SelectedSet()
-        self._reset_messages()
-
-    def _reset_messages(self) -> None:
         self._uid_validity = MailboxSnapshot.new_uid_validity()
         self._max_uid = 100
         self._mod_sequences = _ModSequenceMapping()
         self._messages: Dict[int, Message] = OrderedDict()
 
+    @classmethod
+    def _new_guid(cls) -> bytes:
+        return b'%032x' % random.getrandbits(128)
+
     @property
-    def name(self) -> str:
-        return self._name
+    def guid(self) -> bytes:
+        return self._guid
 
     @property
     def readonly(self) -> bool:
@@ -121,7 +124,6 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
-        selected.uid_validity = self.uid_validity
         mod_sequence = selected.mod_sequence
         selected.mod_sequence = self._mod_sequences.highest
         if mod_sequence is None:
@@ -205,7 +207,7 @@ class MailboxData(MailboxDataInterface[Message]):
                 unseen += 1
                 if first_unseen is None:
                     first_unseen = exists
-        return MailboxSnapshot(self.name, self.readonly, self.uid_validity,
+        return MailboxSnapshot(self.guid, self.readonly, self.uid_validity,
                                self.permanent_flags, self.session_flags,
                                exists, recent, unseen, first_unseen, next_uid)
 
@@ -218,7 +220,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     def __init__(self) -> None:
         super().__init__()
-        self._inbox = MailboxData('INBOX')
+        self._inbox = MailboxData()
         self._set: Dict[str, 'MailboxData'] = OrderedDict()
         self._set_lock = subsystem.get().new_rwlock()
         self._subscribed: Dict[str, bool] = {}
@@ -231,14 +233,16 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         async with self._set_lock.write_lock():
             self._subscribed[name] = subscribed
 
-    async def list_subscribed(self) -> Sequence[str]:
+    async def list_subscribed(self) -> ListTree:
         async with self._set_lock.read_lock():
-            return [child for child in self._set.keys()
-                    if self._subscribed.get(child)]
+            mailboxes = [child for child in self._set.keys()
+                         if self._subscribed.get(child)]
+        return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
-    async def list_mailboxes(self) -> Sequence[str]:
+    async def list_mailboxes(self) -> ListTree:
         async with self._set_lock.read_lock():
-            return list(self._set.keys())
+            mailboxes = list(self._set.keys())
+        return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
     async def get_mailbox(self, name: str,
                           try_create: bool = False) -> 'MailboxData':
@@ -249,13 +253,12 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
                 raise MailboxNotFound(name, try_create)
             return self._set[name]
 
-    async def add_mailbox(self, name: str) -> 'MailboxData':
+    async def add_mailbox(self, name: str) -> None:
         async with self._set_lock.read_lock():
             if name in self._set:
                 raise MailboxConflict(name)
         async with self._set_lock.write_lock():
-            self._set[name] = ret = MailboxData(name)
-        return ret
+            self._set[name] = MailboxData()
 
     async def delete_mailbox(self, name: str) -> None:
         async with self._set_lock.read_lock():
@@ -264,22 +267,20 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         async with self._set_lock.write_lock():
             del self._set[name]
 
-    async def rename_mailbox(self, before: str, after: str) -> 'MailboxData':
+    async def rename_mailbox(self, before: str, after: str) -> None:
         async with self._set_lock.read_lock():
-            if before != 'INBOX' and before not in self._set:
+            tree = ListTree(self.delimiter).update('INBOX', *self._set.keys())
+            before_entry = tree.get(before)
+            after_entry = tree.get(after)
+            if before_entry is None:
                 raise MailboxNotFound(before)
-            elif after in self._set:
+            elif after_entry is not None:
                 raise MailboxConflict(after)
-        if before == 'INBOX':
-            async with self._set_lock.write_lock():
-                self._set[after] = ret = MailboxData(after)
-                ret._uid_validity = self._inbox._uid_validity
-                ret._max_uid = self._inbox._max_uid
-                ret._messages = self._inbox._messages
-                self._inbox._reset_messages()
-                return ret
-        else:
-            async with self._set_lock.write_lock():
-                self._set[after] = self._set[before]
-                del self._set[before]
-                return self._set[after]
+        async with self._set_lock.write_lock():
+            for before_name, after_name in tree.get_renames(before, after):
+                if before_name == 'INBOX':
+                    self._set[after_name] = self._inbox
+                    self._inbox = MailboxData()
+                else:
+                    self._set[after_name] = self._set[before_name]
+                    del self._set[before_name]

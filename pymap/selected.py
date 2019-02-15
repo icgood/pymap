@@ -12,7 +12,6 @@ from .interfaces.message import CachedMessage, FlagsKey
 from .parsing.command import Command
 from .parsing.primitives import ListP, Number
 from .parsing.response import Response, ResponseBye
-from .parsing.response.code import UidValidity
 from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
 from .parsing.specials import FetchAttribute, Flag, SequenceSet
@@ -80,7 +79,6 @@ class _Frozen:
         super().__init__()
         messages = selected.messages
         session_flags = selected.session_flags
-        self.uid_validity = selected.uid_validity
         self.is_deleted = selected._is_deleted
         self.uids = messages._uids.copy()
         self.sorted = messages._sorted.copy()
@@ -200,7 +198,7 @@ class SelectedMailbox:
     untagged responses that should be added to the response.
 
     Args:
-        name: The name of the selected mailbox.
+        guid: The globally unique identifier of the selected mailbox.
         readonly: Indicates the mailbox is selected as read-only.
         permanent_flags: The defined permanent flags for the mailbox.
         session_flags: Session-only flags for the mailbox.
@@ -209,19 +207,24 @@ class SelectedMailbox:
 
     """
 
-    def __init__(self, name: str, readonly: bool,
+    __slots__ = ['_guid', '_readonly', '_permanent_flags', '_session_flags',
+                 '_selected_set', '_kwargs', '_lookup', '_mod_sequence',
+                 '_is_deleted', '_hide_expunged', '_silenced_flags',
+                 '_silenced_sflags', '_prev', '_messages', '__weakref__']
+
+    def __init__(self, guid: bytes, readonly: bool,
                  permanent_flags: PermanentFlags,
                  session_flags: SessionFlags,
                  selected_set: SelectedSet = None,
-                 **kwargs: Any) -> None:
+                 lookup: Any = None, **kwargs: Any) -> None:
         super().__init__()
-        self._name = name
+        self._guid = guid
         self._readonly = readonly
         self._permanent_flags = permanent_flags
         self._session_flags = session_flags
         self._selected_set = selected_set
         self._kwargs = kwargs
-        self._uid_validity = 0
+        self._lookup: Any = lookup
         self._mod_sequence: Optional[int] = kwargs.get('_mod_sequence')
         self._is_deleted = False
         self._hide_expunged = False
@@ -236,18 +239,22 @@ class SelectedMailbox:
             selected_set.add(self)
 
     @property
-    def name(self) -> str:
-        """The name of the selected mailbox."""
-        return self._name
+    def guid(self) -> bytes:
+        """The selected mailbox GUID, typically a 128-bit hex string."""
+        return self._guid
 
     @property
-    def uid_validity(self) -> int:
-        """The UID validity of the selected mailbox."""
-        return self._uid_validity
+    def lookup(self) -> Any:
+        """The lookup value, if any, needed by backends that cannot lookup
+        mailboxes by :attr:`.guid`. A typical lookup value might be the name of
+        the mailbox.
 
-    @uid_validity.setter
-    def uid_validity(self, uid_validity: int) -> None:
-        self._uid_validity = uid_validity
+        """
+        return self._lookup
+
+    @lookup.setter
+    def lookup(self, lookup: Any) -> None:
+        self._lookup = lookup
 
     @property
     def mod_sequence(self) -> Optional[int]:
@@ -379,8 +386,8 @@ class SelectedMailbox:
         """
         frozen = _Frozen(self)
         cls = type(self)
-        copy = cls(self._name, self._readonly, self._permanent_flags,
-                   self._session_flags, self._selected_set,
+        copy = cls(self._guid, self._readonly, self._permanent_flags,
+                   self._session_flags, self._selected_set, self._lookup,
                    _mod_sequence=self._mod_sequence,
                    _prev=frozen, _messages=self._messages)
         if self._prev is not None:
@@ -393,11 +400,7 @@ class SelectedMailbox:
     def _compare(self, before: _Frozen, after: _Frozen,
                  with_uid: bool) -> Iterable[Response]:
         if after.is_deleted:
-            yield ResponseBye(b'Selected mailbox deleted.')
-            return
-        elif after.uid_validity != before.uid_validity:
-            yield ResponseBye(b'UID validity changed.',
-                              UidValidity(after.uid_validity))
+            yield ResponseBye(b'Selected mailbox no longer exists.')
             return
         cache = self._messages._cache
         session_flags = self._session_flags

@@ -1,11 +1,12 @@
 mypy
-flake8 < 3.7
+flake8
 pytest
 pytest-asyncio
 pytest-cov
 pytest-mypy
 pytest-flake8
 aioredis
+hiredis
 grpclib
 protobuf
 sievelib

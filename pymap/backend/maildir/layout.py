@@ -90,8 +90,8 @@ class MaildirLayout(Protocol):
         ...
 
     @abstractmethod
-    def add_folder(self, name: str, delimiter: str) -> Maildir:
-        """Add and return a new sub-folder.
+    def add_folder(self, name: str, delimiter: str) -> None:
+        """Add a new sub-folder.
 
         Args:
             name: The delimited sub-folder name, not including inbox.
@@ -121,7 +121,7 @@ class MaildirLayout(Protocol):
 
     @abstractmethod
     def rename_folder(self, source_name: str, dest_name: str,
-                      delimiter: str) -> Maildir:
+                      delimiter: str) -> None:
         """Rename the existing sub-folder to the destination.
 
         Args:
@@ -174,7 +174,7 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
 
     @abstractmethod
     def _rename_folder(self, source_parts: _Parts,
-                       dest_parts: _Parts) -> Maildir:
+                       dest_parts: _Parts) -> None:
         ...
 
     def get_path(self, name: str, delimiter: str) -> str:
@@ -194,18 +194,17 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
         except NoSuchMailboxError:
             raise FileNotFoundError(path)
 
-    def add_folder(self, name: str, delimiter: str) -> Maildir:
+    def add_folder(self, name: str, delimiter: str) -> None:
         parts = self._split(name, delimiter)
         for i in range(1, len(parts) - 1):
             path = self._get_path(parts[0:i])
             if not os.path.isdir(path):
                 raise FileNotFoundError(path)
         path = self._get_path(parts)
-        maildir = self._maildir(path, create=True)
+        self._maildir(path, create=True)
         maildirfolder = os.path.join(path, 'maildirfolder')
         with open(maildirfolder, 'x'):
             pass
-        return maildir
 
     def remove_folder(self, name: str, delimiter: str) -> None:
         parts = self._split(name, delimiter)
@@ -222,7 +221,7 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
         os.rmdir(path)
 
     def rename_folder(self, source_name: str, dest_name: str,
-                      delimiter: str) -> Maildir:
+                      delimiter: str) -> None:
         source_parts = self._split(source_name, delimiter)
         dest_parts = self._split(dest_name, delimiter)
         for i in range(1, len(dest_parts) - 1):
@@ -231,7 +230,7 @@ class _BaseLayout(MaildirLayout, metaclass=ABCMeta):
             if not os.path.isdir(path):
                 name = self._join(parts, delimiter)
                 self.add_folder(name, delimiter)
-        return self._rename_folder(source_parts, dest_parts)
+        self._rename_folder(source_parts, dest_parts)
 
 
 class DefaultLayout(_BaseLayout):
@@ -277,11 +276,9 @@ class DefaultLayout(_BaseLayout):
                 if os.path.isdir(elem_path):
                     yield self._get_parts(elem)
 
-    def _rename_folder(self, source_parts: _Parts,
-                       dest_parts: _Parts) -> Maildir:
+    def _rename_folder(self, source_parts: _Parts, dest_parts: _Parts) -> None:
         subdir = self._get_subdir(source_parts)
         dest_subdir = self._get_subdir(dest_parts)
-        dest_path = self._get_path(dest_parts)
         for elem in os.listdir(self._path):
             if elem == subdir or elem.startswith(subdir + '.'):
                 elem_path = os.path.join(self._path, elem)
@@ -289,7 +286,6 @@ class DefaultLayout(_BaseLayout):
                     dest_elem = dest_subdir + elem[len(subdir):]
                     dest_elem_path = os.path.join(self._path, dest_elem)
                     os.rename(elem_path, dest_elem_path)
-        return self._maildir(dest_path, create=False)
 
 
 class FilesystemLayout(_BaseLayout):
@@ -328,9 +324,7 @@ class FilesystemLayout(_BaseLayout):
                 for sub_parts in self._list_folders(list(parts) + [elem]):
                     yield sub_parts
 
-    def _rename_folder(self, source_parts: _Parts,
-                       dest_parts: _Parts) -> Maildir:
+    def _rename_folder(self, source_parts: _Parts, dest_parts: _Parts) -> None:
         path = self._get_path(source_parts)
         dest_path = self._get_path(dest_parts)
         os.rename(path, dest_path)
-        return self._maildir(dest_path, create=False)

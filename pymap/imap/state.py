@@ -156,7 +156,7 @@ class ConnectionState:
         resp.add_untagged_ok(b'Predicted next UID.',
                              UidNext(mailbox.next_uid))
         resp.add_untagged_ok(b'UIDs valid.',
-                             UidValidity(updates.uid_validity))
+                             UidValidity(mailbox.uid_validity))
         if mailbox.first_unseen:
             resp.add_untagged_ok(b'First unseen message.',
                                  Unseen(mailbox.first_unseen))
@@ -191,7 +191,7 @@ class ConnectionState:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
             elif attr == b'RECENT':
-                if updates and updates.name == cmd.mailbox:
+                if updates and updates.guid == mailbox.guid:
                     data[attr] = Number(updates.session_flags.recent)
                 else:
                     data[attr] = Number(mailbox.recent)
