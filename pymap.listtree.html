@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.listtree &#8212; pymap 0.9.7 documentation</title>
+    <title>pymap.listtree &#8212; pymap 0.10.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.flags.html" title="pymap.flags"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.9.7 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -178,6 +178,51 @@ attributes.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pymap.listtree.ListTree.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the named entry in the list tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The entry name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListEntry</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.listtree.ListTree.get_renames">
+<code class="descname">get_renames</code><span class="sig-paren">(</span><em>from_name</em>, <em>to_name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.get_renames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of tuples for all mailboxes that must be renamed, for
+the given rename operation. This should include
+<code class="docutils literal notranslate"><span class="pre">(from_name,</span> <span class="pre">to_name)</span></code> as well as all inferior names in the heirarchy
+that must also be renamed. If <code class="docutils literal notranslate"><span class="pre">from_name</span></code> does not exist, an empty
+list is returned.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-6.3.5">RFC 3501 6.3.5</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>from_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The original name of the mailbox.</li>
+<li><strong>to_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The intended new name of the mailbox.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pymap.listtree.ListTree.list">
 <code class="descname">list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all the entries in the list tree.</p>
@@ -289,7 +334,7 @@ attributes.</p>
         <li class="right" >
           <a href="pymap.flags.html" title="pymap.flags"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.9.7 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
