@@ -18,7 +18,7 @@ class MailboxSnapshot(MailboxInterface):
     :class:`~pymap.interfaces.mailbox.MailboxInterface` is required.
 
     Args:
-        name: The name of the mailbox.
+        guid: The mailbox GUID.
         readonly: If ``True``, the mailbox is read-only.
         uid_validity: The UID validity value for mailbox consistency.
         permanent_flags: The permanent flags defined in the mailbox.
@@ -31,17 +31,17 @@ class MailboxSnapshot(MailboxInterface):
 
     """
 
-    __slots__ = ['name', 'readonly', 'uid_validity', 'permanent_flags',
+    __slots__ = ['guid', 'readonly', 'uid_validity', 'permanent_flags',
                  'session_flags', 'exists', 'recent', 'unseen', 'first_unseen',
                  'next_uid']
 
-    def __init__(self, name: str, readonly: bool, uid_validity: int,
+    def __init__(self, guid: bytes, readonly: bool, uid_validity: int,
                  permanent_flags: Iterable[Flag],
                  session_flags: FrozenSet[Flag],
                  exists: int, recent: int, unseen: int,
                  first_unseen: Optional[int], next_uid: int) -> None:
         super().__init__()
-        self.name: Final = name
+        self.guid: Final = guid
         self.readonly: Final = readonly
         self.uid_validity: Final = uid_validity
         self.permanent_flags: Final = frozenset(permanent_flags) - {Recent}

@@ -1,7 +1,8 @@
 
 import re
 from collections import OrderedDict
-from typing import Optional, Dict, Iterable, Sequence, List, NamedTuple
+from typing import Optional, Pattern, Tuple, Dict, Iterable, Sequence, List, \
+    NamedTuple
 
 __all__ = ['ListEntry', 'ListTree']
 
@@ -67,14 +68,6 @@ class _TreeNode:
         else:
             child.add(*extra)
 
-    def flatten(self, delimiter: str) -> str:
-        node = self
-        parts: List[str] = []
-        while node.parent is not None:
-            parts.append(node.name)
-            node = node.parent
-        return delimiter.join(reversed(parts))
-
 
 class ListTree:
     """Constructs a tree of hierarchical mailbox names. If a mailbox name
@@ -86,9 +79,7 @@ class ListTree:
 
     """
 
-    _asterisk_escape = re.escape('*')
-    _percent_escape = re.escape('%')
-    _anything = '.*?'
+    _wildcards = re.compile(r'([\*\%])')
 
     __slots__ = ['_delimiter', '_no_delimiter', '_root', '_marked']
 
@@ -129,19 +120,85 @@ class ListTree:
         else:
             self._marked.pop(name, None)
 
-    def _iter(self, node: _TreeNode) -> Iterable[ListEntry]:
+    def _iter(self, node: _TreeNode, name: str) -> Iterable[ListEntry]:
         if node.parent is not None:
-            name = node.flatten(self._delimiter)
             marked = self._marked.get(name)
             yield ListEntry(name, node.exists, marked, bool(node.children))
         for child in node.children.values():
-            for entry in self._iter(child):
+            if name:
+                child_name = self._delimiter.join((name, child.name))
+            else:
+                child_name = child.name
+            for entry in self._iter(child, child_name):
                 yield entry
+
+    def _find(self, node: _TreeNode, node_name: str, *extra: str) -> _TreeNode:
+        child = node.children[node_name]
+        if extra:
+            return self._find(child, *extra)
+        else:
+            return child
+
+    def get(self, name: str) -> Optional[ListEntry]:
+        """Return the named entry in the list tree.
+
+        Args:
+            name: The entry name.
+
+        """
+        parts = name.split(self._delimiter)
+        try:
+            node = self._find(self._root, *parts)
+        except KeyError:
+            return None
+        else:
+            marked = self._marked.get(name)
+            return ListEntry(name, node.exists, marked, bool(node.children))
+
+    def get_renames(self, from_name: str, to_name: str) \
+            -> Sequence[Tuple[str, str]]:
+        """Return a list of tuples for all mailboxes that must be renamed, for
+        the given rename operation. This should include
+        ``(from_name, to_name)`` as well as all inferior names in the heirarchy
+        that must also be renamed. If ``from_name`` does not exist, an empty
+        list is returned.
+
+        See Also:
+            `RFC 3501 6.3.5
+            <https://tools.ietf.org/html/rfc3501#section-6.3.5>`_
+
+        Args:
+            from_name: The original name of the mailbox.
+            to_name: The intended new name of the mailbox.
+
+        """
+        from_parts = from_name.split(self._delimiter)
+        try:
+            from_node = self._find(self._root, *from_parts)
+        except KeyError:
+            return []
+        from_names = (entry.name for entry in self._iter(from_node, from_name)
+                      if entry.exists)
+        to_names = (entry.name for entry in self._iter(from_node, to_name)
+                    if entry.exists)
+        return list(zip(from_names, to_names))
 
     def list(self) -> Iterable[ListEntry]:
         """Return all the entries in the list tree."""
-        for entry in self._iter(self._root):
+        for entry in self._iter(self._root, ''):
             yield entry
+
+    def _get_pattern(self, query: str) -> Tuple[Pattern, Pattern]:
+        pattern_parts: List[str] = []
+        for part in self._wildcards.split(query):
+            if part == '*':
+                pattern_parts.append('.*?')
+            elif part == '%':
+                pattern_parts.append(self._no_delimiter)
+            else:
+                pattern_parts.append(re.escape(part))
+        pattern = '^' + ''.join(pattern_parts) + '$'
+        return re.compile(pattern), re.compile(pattern, re.IGNORECASE)
 
     def list_matching(self, ref_name: str, filter_: str) \
             -> Iterable[ListEntry]:
@@ -152,15 +209,10 @@ class ListTree:
             filter_: Mailbox name with possible wildcards.
 
         """
-        re_interpreted = '^' + re.escape(ref_name + filter_) + '$'
-        re_interpreted = re_interpreted.replace(
-            self._asterisk_escape, self._anything)
-        re_interpreted = re_interpreted.replace(
-            self._percent_escape, self._no_delimiter)
-        compiled_canonical = re.compile(re_interpreted)
+        canonical, canonical_i = self._get_pattern(ref_name + filter_)
         for entry in self.list():
             if entry.name == 'INBOX':
-                if re.match(re_interpreted, 'INBOX', re.IGNORECASE):
+                if canonical_i.match('INBOX'):
                     yield entry
-            elif compiled_canonical.match(entry.name):
+            elif canonical.match(entry.name):
                 yield entry

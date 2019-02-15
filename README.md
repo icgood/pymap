@@ -133,12 +133,13 @@ Keys are composed of a heirarchy of prefixes separated by `:`. For example, the
 key containing the flags of a message might be:
 
 ```
-3fd347cdfaee4b509f8847043d52b501:Sent:37:msg:9173:flags
+eacb1cf1558741d0b5419b3f838882f5:daddd3075d7b42e78a7edb1d87ee5800:msg:9173:flags
 ```
 
-In this example, the `3fd347cdfaee4b509f8847043d52b501` prefix was a randomly
-generated UUID acting as the namespace for the login user. The user has a
-mailbox `Sent` with UIDVALIDITY value `37` and a message with the UID `9173`.
+In this example, the `eacb1cf1558741d0b5419b3f838882f5` and
+`daddd3075d7b42e78a7edb1d87ee5800` prefixes are randomly generated UUIDs acting
+as the namespaces for the login user and mailbox, respectively, and the message
+has UID `9173`.
 
 The default way to create logins is to simply set a key of only the username to
 its password. For example:

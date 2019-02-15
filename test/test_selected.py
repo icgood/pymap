@@ -19,8 +19,8 @@ class TestSelectedMailbox(unittest.TestCase):
         self.response = ResponseOk(b'.', b'testing')
 
     @classmethod
-    def new_selected(cls) -> SelectedMailbox:
-        return SelectedMailbox('test', False,
+    def new_selected(cls, guid: bytes = b'test') -> SelectedMailbox:
+        return SelectedMailbox(guid, False,
                                PermanentFlags([Seen, Flagged]),
                                SessionFlags([_Keyword]))
 
@@ -219,18 +219,5 @@ class TestSelectedMailbox(unittest.TestCase):
         forked.set_deleted()
         _, untagged = forked.fork(self.command)
         self.response.add_untagged(*untagged)
-        self.assertEqual(b'* BYE Selected mailbox deleted.\r\n'
-                         b'. OK testing\r\n', bytes(self.response))
-
-    def test_add_untagged_uid_validity_bye(self) -> None:
-        selected = self.new_selected()
-        self.set_messages(selected, [],
-                          [(1, [])])
-        forked, _ = selected.fork(self.command)
-        self.set_messages(forked, [1],
-                          [(2, [])])
-        forked.uid_validity = 456
-        _, untagged = forked.fork(self.command)
-        self.response.add_untagged(*untagged)
-        self.assertEqual(b'* BYE [UIDVALIDITY 456] UID validity changed.\r\n'
+        self.assertEqual(b'* BYE Selected mailbox no longer exists.\r\n'
                          b'. OK testing\r\n', bytes(self.response))

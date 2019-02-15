@@ -1,6 +1,6 @@
 
-import hashlib
 import json
+import uuid
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from typing import Any, Optional, Tuple, Mapping
 
@@ -150,17 +150,17 @@ class Config(IMAPConfig):
         return self._users_json
 
     @property
-    def prefix_override_hash(self) -> str:
-        """The name of a hash used to override user prefixes -- not needed for
-        normal operation.
+    def namespace_hash(self) -> str:
+        """The name of a hash used to override user namespace prefixes -- not
+        needed for normal operation.
 
-        Typically, the keys used for user data after login are prefixed with
-        :attr:`.prefix` and the SHA-1 hash of the login name.  However, if a
-        login name is changed, it can still use to its old data by setting
-        :attr:`.users_key` in this hash to the prefix before the name change.
+        Typically, when a user first logs in it is assigned a random hex string
+        used to namespace all the keys related to its mailbox data. That means
+        another user name can be assigned the same string, to share the mailbox
+        or rename it.
 
         """
-        return f'{self.prefix}_prefix'
+        return f'{self.prefix}_namespace'
 
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
@@ -204,22 +204,22 @@ class Session(BaseSession[Message]):
 
         """
         redis = await create_redis(config.address)
-        prefix = await cls._check_user(redis, config, credentials)
+        namespace = await cls._check_user(redis, config, credentials)
         if config.select is not None:
             await redis.select(config.select)
-        mailbox_set = MailboxSet(redis, prefix)
+        mailbox_set = MailboxSet(redis, namespace)
         try:
             await mailbox_set.add_mailbox('INBOX')
         except MailboxConflict:
             pass
-        filter_set = FilterSet(redis, prefix)
+        filter_set = FilterSet(redis, namespace)
         return cls(credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     async def _check_user(cls, redis: Redis, config: Config,
                           credentials: AuthenticationCredentials) -> bytes:
         user = credentials.authcid
-        password, prefix = await cls._get_password(redis, config, user)
+        password, namespace = await cls._get_password(redis, config, user)
         if user != credentials.identity:
             raise InvalidAuth()
         elif ldap_context is None or not credentials.has_secret:
@@ -227,7 +227,7 @@ class Session(BaseSession[Message]):
                 raise InvalidAuth()
         elif not ldap_context.verify(credentials.secret, password):
             raise InvalidAuth()
-        return prefix
+        return namespace
 
     @classmethod
     async def _get_password(cls, redis: Redis, config: Config,
@@ -238,25 +238,17 @@ class Session(BaseSession[Message]):
             multi.get(key)
         else:
             multi.hget(config.users_hash, key)
-        multi.hget(config.prefix_override_hash, key)
-        value, prefix = await multi.execute()
-        if prefix is None:
-            prefix = cls._get_prefix(name, config.prefix)
+        new_namespace = uuid.uuid4().hex.encode('ascii')
+        multi.hsetnx(config.namespace_hash, key, new_namespace)
+        multi.hget(config.namespace_hash, key)
+        value, _, namespace = await multi.execute()
         if value is None:
             raise InvalidAuth()
         elif config.users_json:
             value_obj = json.loads(value)
             try:
-                return value_obj['password'], prefix
+                return value_obj['password'], namespace
             except KeyError as exc:
                 raise InvalidAuth() from exc
         else:
-            return value.decode('utf-8'), prefix
-
-    @classmethod
-    def _get_prefix(cls, name: str, root_prefix: str) -> bytes:
-        name_bytes = name.encode('utf-8')
-        hash_obj = hashlib.sha1()
-        hash_obj.update(name_bytes)
-        prefix = root_prefix + hash_obj.hexdigest()
-        return prefix.encode('utf-8')
+            return value.decode('utf-8'), namespace

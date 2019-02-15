@@ -6,6 +6,7 @@ from typing_extensions import Protocol
 
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
+from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage
 from pymap.parsing.specials import SequenceSet, FetchRequirement
@@ -53,8 +54,13 @@ class MailboxDataInterface(Protocol[MessageT]):
 
     @property
     @abstractmethod
-    def name(self) -> str:
-        """The name of the mailbox."""
+    def guid(self) -> bytes:
+        """The mailbox GUID.
+
+        See Also:
+            :attr:`~pymap.interfaces.mailbox.MailboxInterface.guid`
+
+        """
         ...
 
     @property
@@ -234,7 +240,7 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
         ...
 
     @abstractmethod
-    async def list_subscribed(self) -> Sequence[str]:
+    async def list_subscribed(self) -> ListTree:
         """Return a list of all subscribed mailboxes.
 
         See Also:
@@ -244,7 +250,7 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
         ...
 
     @abstractmethod
-    async def list_mailboxes(self) -> Sequence[str]:
+    async def list_mailboxes(self) -> ListTree:
         """Return a list of all mailboxes.
 
         See Also:
@@ -256,7 +262,7 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
     @abstractmethod
     async def get_mailbox(self, name: str, try_create: bool = False) \
             -> MailboxDataT_co:
-        """Return an existing mailbox.
+        """Return an existing mailbox by name.
 
         Args:
             name: The name of the mailbox.
@@ -270,7 +276,7 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
         ...
 
     @abstractmethod
-    async def add_mailbox(self, name: str) -> MailboxDataT_co:
+    async def add_mailbox(self, name: str) -> None:
         """Create a new mailbox.
 
         See Also:
@@ -303,7 +309,7 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
         ...
 
     @abstractmethod
-    async def rename_mailbox(self, before: str, after: str) -> MailboxDataT_co:
+    async def rename_mailbox(self, before: str, after: str) -> None:
         """Rename an existing mailbox.
 
         See Also:
@@ -314,6 +320,8 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
             after: The name of the destination mailbox.
 
         Raises:
+            :exc:`~pymap.exceptions.MailboxNotFound`
+            :exc:`~pymap.exceptions.MailboxConflict`
 
         """
         ...

@@ -27,7 +27,7 @@ class TestListTree(unittest.TestCase):
                     'Sent',
                     'Trash',
                     'Important/One',
-                    'Important/Two',
+                    'Important/Two/Three',
                     'To Do',
                     'To Do/Quickly')
         tree.set_marked('To Do', marked=True)
@@ -40,7 +40,8 @@ class TestListTree(unittest.TestCase):
                           ListEntry('Trash', True, None, False),
                           ListEntry('Important', False, None, True),
                           ListEntry('Important/One', True, None, False),
-                          ListEntry('Important/Two', True, None, False),
+                          ListEntry('Important/Two', False, None, True),
+                          ListEntry('Important/Two/Three', True, None, False),
                           ListEntry('To Do', True, True, True),
                           ListEntry('To Do/Quickly', True, False, False)],
                          list(self.tree.list()))
@@ -48,5 +49,19 @@ class TestListTree(unittest.TestCase):
     def test_list_matching(self) -> None:
         self.assertEqual([ListEntry('Important', False, None, True),
                           ListEntry('Important/One', True, None, False),
-                          ListEntry('Important/Two', True, None, False)],
+                          ListEntry('Important/Two', False, None, True),
+                          ListEntry('Important/Two/Three', True, None, False)],
                          list(self.tree.list_matching('Important', '*')))
+        self.assertEqual([ListEntry('Important/One', True, None, False),
+                          ListEntry('Important/Two', False, None, True)],
+                         list(self.tree.list_matching('Important/', '%')))
+        self.assertEqual([ListEntry('INBOX', True, None, False)],
+                         list(self.tree.list_matching('inbox', '')))
+
+    def test_get_renames(self) -> None:
+        self.assertEqual([], self.tree.get_renames('Missing', 'Test'))
+        self.assertEqual([('Important/One', 'Trivial/One'),
+                          ('Important/Two/Three', 'Trivial/Two/Three')],
+                         self.tree.get_renames('Important', 'Trivial'))
+        self.assertEqual([('Important/Two/Three', 'Trivial/Two/Three')],
+                         self.tree.get_renames('Important/Two', 'Trivial/Two'))

@@ -162,7 +162,8 @@ class Session(BaseSession[Message]):
             if name == 'sieve':
                 await cls._load_demo_sieve(name, filter_set)
             elif name != 'INBOX':
-                mbx = await mailbox_set.add_mailbox(name)
+                await mailbox_set.add_mailbox(name)
+                mbx = await mailbox_set.get_mailbox(name)
                 await cls._load_demo_mailbox(name, mbx)
 
     @classmethod
