@@ -60,7 +60,7 @@ class Writeable(metaclass=ABCMeta):
 
     @classmethod
     def concat(cls, data: Iterable[MaybeBytes]) -> 'Writeable':
-        """Wrap the iterable in a :class:`Writeable` that will write eachitem.
+        """Wrap the iterable in a :class:`Writeable` that will write each item.
 
         Args:
             data: The iterable to wrap.

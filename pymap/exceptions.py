@@ -8,8 +8,9 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
 
 __all__ = ['ResponseError', 'NotSupportedError', 'CloseConnection',
            'CommandNotAllowed', 'SearchNotAllowed', 'InvalidAuth',
-           'MailboxError', 'MailboxNotFound', 'MailboxConflict',
-           'MailboxHasChildren', 'MailboxReadOnly', 'AppendFailure']
+           'MailboxError', 'MailboxAbort', 'MailboxNotFound',
+           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
+           'AppendFailure']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):

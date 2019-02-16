@@ -1,7 +1,7 @@
 
 from abc import abstractmethod, ABCMeta
-from argparse import ArgumentParser, Namespace
-from typing import Type, Tuple, TextIO
+from argparse import Namespace
+from typing import TextIO
 from typing_extensions import Final
 
 from ..grpc.admin_grpc import AdminStub
@@ -25,13 +25,11 @@ class ClientCommand(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def init(cls, parser: ArgumentParser, subparsers) \
-            -> Tuple[str, Type['ClientCommand']]:
-        """Initialize the client command, adding its subparser and returning
-        the command name and class.
+    def add_subparser(cls, name: str, subparsers) -> None:
+        """Add the command-line argument subparser for the command.
 
         Args:
-            parser: The argument parser object.
+            name: The name to use for the subparser.
             subparsers: The special action object as returned by
                 :meth:`~argparse.ArgumentParser.add_subparsers`.
 

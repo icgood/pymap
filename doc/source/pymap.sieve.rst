@@ -5,8 +5,8 @@
 .. automodule:: pymap.sieve
    :members:
 
-``pymap.sieve.filter``
+``pymap.sieve.manage``
 ----------------------
 
-.. automodule:: pymap.sieve.filter
+.. automodule:: pymap.sieve.manage
    :members:

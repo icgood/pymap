@@ -18,7 +18,7 @@ from contextvars import ContextVar
 
 from .concurrent import Subsystem
 from .parsing.command import Command
-from .sockinfo import SocketInfo
+from .sockets import SocketInfo
 
 __all__ = ['subsystem', 'current_command', 'socket_info', 'language_code']
 

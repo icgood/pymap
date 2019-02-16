@@ -24,8 +24,7 @@ from pymap.parsing.command.select import IdleCommand
 from pymap.parsing.exceptions import RequiresContinuation
 from pymap.parsing.response import ResponseContinuation, Response, \
     ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk
-from pymap.sockets import InheritedSockets
-from pymap.sockinfo import SocketInfo
+from pymap.sockets import InheritedSockets, SocketInfo
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
 

@@ -3,8 +3,8 @@
 import sys
 import time
 import traceback
-from argparse import ArgumentParser, FileType
-from typing import Type, Tuple, TextIO
+from argparse import FileType
+from typing import Tuple, TextIO
 
 from .command import ClientCommand
 from ..grpc.admin_pb2 import AppendRequest, AppendResponse, \
@@ -22,10 +22,9 @@ class AppendCommand(ClientCommand):
                 'AppendFailure': '4.2.0 Message not deliverable'}
 
     @classmethod
-    def init(cls, parser: ArgumentParser, subparsers) \
-            -> Tuple[str, Type['AppendCommand']]:
+    def add_subparser(cls, name: str, subparsers) -> None:
         subparser = subparsers.add_parser(
-            'append', description=__doc__,
+            name, description=__doc__,
             help='append a message to a mailbox')
         subparser.add_argument('--from', metavar='ADDRESS', dest='sender',
                                default='', help='the message envelope sender')
@@ -52,7 +51,6 @@ class AppendCommand(ClientCommand):
                            const='\\Deleted', help='the message is deleted')
         flags.add_argument('--answered', dest='flags', action='append_const',
                            const='\\Answered', help='the message is answered')
-        return 'append', cls
 
     async def run(self, fileobj: TextIO) -> int:
         args = self.args
