@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.admin &#8212; pymap 0.10.1 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.10.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -178,6 +178,67 @@ request and response.</td>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pymap.admin.client">
+<span id="pymap-admin-client"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.client</span></code><a class="headerlink" href="#module-pymap.admin.client" title="Permalink to this headline">¶</a></h2>
+<p>Admin functions for a running pymap server.</p>
+<span class="target" id="module-pymap.admin.client.command"></span><dl class="class">
+<dt id="pymap.admin.client.command.ClientCommand">
+<em class="property">class </em><code class="descclassname">pymap.admin.client.command.</code><code class="descname">ClientCommand</code><span class="sig-paren">(</span><em>stub</em>, <em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.client.command.ClientCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Interface for client command implementations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stub</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AdminStub</span></code>) – The GRPC stub for executing commands.</li>
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command line arguments.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="pymap.admin.client.command.ClientCommand.add_subparser">
+<em class="property">classmethod </em><code class="descname">add_subparser</code><span class="sig-paren">(</span><em>name</em>, <em>subparsers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.client.command.ClientCommand.add_subparser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the command-line argument subparser for the command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</li>
+<li><strong>subparsers</strong> – The special action object as returned by
+<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.admin.client.command.ClientCommand.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>fileobj</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.client.command.ClientCommand.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the command and return the exit code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileobj</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Textio</span></code>) – The file object to print the output to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -190,6 +251,7 @@ request and response.</td>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a><ul>
 <li><a class="reference internal" href="#module-pymap.admin.handlers"><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.admin.client"><code class="docutils literal notranslate"><span class="pre">pymap.admin.client</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -262,7 +324,7 @@ request and response.</td>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
  
       </ul>
     </div>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.sieve &#8212; pymap 0.10.1 documentation</title>
+    <title>pymap.sieve &#8212; pymap 0.10.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -98,8 +98,128 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 
 </dd></dl>
 
-<div class="section" id="pymap-sieve-filter">
-<h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.filter</span></code><a class="headerlink" href="#pymap-sieve-filter" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pymap.sieve.manage">
+<span id="pymap-sieve-manage"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.manage</span></code><a class="headerlink" href="#module-pymap.sieve.manage" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymap.sieve.manage.ManageSieveService">
+<em class="property">class </em><code class="descclassname">pymap.sieve.manage.</code><code class="descname">ManageSieveService</code><span class="sig-paren">(</span><em>server</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.ServiceInterface</span></code></a></p>
+<p>A pymap service that implements a ManageSieve server to control the
+sieve scripts associated with a login.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc5804">RFC 5804</a>,
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a></p>
+</div>
+<dl class="classmethod">
+<dt id="pymap.sieve.manage.ManageSieveService.add_arguments">
+<em class="property">classmethod </em><code class="descname">add_arguments</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService.add_arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the arguments or argument group used to configure the service.
+For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;foo service arguments&#39;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.sieve.manage.ManageSieveService.task">
+<code class="descname">task</code><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>The service’s task that can waited or cancelled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.sieve.manage.ManageSieveService.start">
+<em class="property">classmethod </em><code class="descname">start</code><span class="sig-paren">(</span><em>backend</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the service and return the instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendInterface</span></code></a>) – The backend object.</li>
+<li><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – The config in use by the backend.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#pymap.sieve.manage.ManageSieveService" title="pymap.sieve.manage.ManageSieveService"><code class="xref py py-class docutils literal notranslate"><span class="pre">ManageSieveService</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.sieve.manage.ManageSieveServer">
+<em class="property">class </em><code class="descclassname">pymap.sieve.manage.</code><code class="descname">ManageSieveServer</code><span class="sig-paren">(</span><em>login</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Callable object that creates and runs <a class="reference internal" href="#pymap.sieve.manage.ManageSieveConnection" title="pymap.sieve.manage.ManageSieveConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ManageSieveConnection</span></code></a>
+objects when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]) – Login callback that takes authentication credentials and returns
+a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.sieve.manage.ManageSieveConnection">
+<em class="property">class </em><code class="descclassname">pymap.sieve.manage.</code><code class="descname">ManageSieveConnection</code><span class="sig-paren">(</span><em>config</em>, <em>reader</em>, <em>writer</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Runs a single ManageSieve connection from start to finish.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reader</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamReader</span></code>) – The input stream for the socket.</li>
+<li><strong>writer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code>) – The output stream for the socket.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pymap.sieve.manage.ManageSieveConnection.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>login</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the socket communication with the server greeting, and then
+enter the command/response cycle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]) – The login/authentication function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -112,7 +232,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a><ul>
-<li><a class="reference internal" href="#pymap-sieve-filter"><code class="docutils literal notranslate"><span class="pre">pymap.sieve.filter</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.sieve.manage"><code class="docutils literal notranslate"><span class="pre">pymap.sieve.manage</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -177,7 +297,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
  
       </ul>
     </div>

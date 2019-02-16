@@ -1,0 +1,240 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pymap.sockets &#8212; pymap 0.10.2 documentation</title>
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.base.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pymap.interfaces" href="pymap.interfaces.html" />
+    <link rel="prev" title="pymap.selected" href="pymap.selected.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.interfaces.html" title="pymap.interfaces"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.selected.html" title="pymap.selected"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pymap.sockets">
+<span id="pymap-sockets"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code><a class="headerlink" href="#module-pymap.sockets" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pymap.sockets.InheritedSockets">
+<em class="property">class </em><code class="descclassname">pymap.sockets.</code><code class="descname">InheritedSockets</code><a class="headerlink" href="#pymap.sockets.InheritedSockets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Abstracts the ability to retrieve inherited sockets from the calling
+process, usually a service management framework.</p>
+<dl class="method">
+<dt id="pymap.sockets.InheritedSockets.get">
+<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockets.InheritedSockets.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the sockets inherited by the process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">socket</span></code>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.sockets.InheritedSockets.of">
+<em class="property">classmethod </em><code class="descname">of</code><span class="sig-paren">(</span><em>service_manager</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockets.InheritedSockets.of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the inherited sockets for the given service manager.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only <code class="docutils literal notranslate"><span class="pre">'systemd'</span></code> is implemented at this time.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service_manager</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The service manager name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.sockets.InheritedSockets" title="pymap.sockets.InheritedSockets"><code class="xref py py-class docutils literal notranslate"><span class="pre">InheritedSockets</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.sockets.InheritedSockets.for_systemd">
+<em class="property">classmethod </em><code class="descname">for_systemd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockets.InheritedSockets.for_systemd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the inherited sockets for <a class="reference external" href="https://freedesktop.org/wiki/Software/systemd/">systemd</a>. The <a class="reference external" href="https://github.com/systemd/python-systemd">python-systemd</a>
+library must be installed.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://www.freedesktop.org/software/systemd/man/systemd.socket.html">systemd.socket</a>, <a class="reference external" href="https://www.freedesktop.org/software/systemd/man/sd_listen_fds.html">sd_listen_fds</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.sockets.InheritedSockets" title="pymap.sockets.InheritedSockets"><code class="xref py py-class docutils literal notranslate"><span class="pre">InheritedSockets</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.sockets.SocketInfo">
+<em class="property">class </em><code class="descclassname">pymap.sockets.</code><code class="descname">SocketInfo</code><span class="sig-paren">(</span><em>transport</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockets.SocketInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Information about a connected socket, which may be useful for
+server-side logic such as authentication and authorization.</p>
+<p>Attribute access is passed directly into
+<a class="reference external" href="https://docs.python.org/3/library/asyncio-protocol.html#asyncio.BaseTransport.get_extra_info" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_extra_info()</span></code></a>, decorated in some cases with
+type hints and checks.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://docs.python.org/3/library/asyncio-protocol.html#asyncio.BaseTransport.get_extra_info" title="(in Python v3.7)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_extra_info()</span></code></a></p>
+</div>
+<dl class="attribute">
+<dt id="pymap.sockets.SocketInfo.from_localhost">
+<code class="descname">from_localhost</code><a class="headerlink" href="#pymap.sockets.SocketInfo.from_localhost" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if <code class="xref py py-attr docutils literal notranslate"><span class="pre">peername</span></code> is a connection from a <code class="docutils literal notranslate"><span class="pre">localhost</span></code>
+address.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="pymap.selected.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code></a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="pymap.interfaces.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pymap.sockets.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.interfaces.html" title="pymap.interfaces"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.selected.html" title="pymap.selected"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
