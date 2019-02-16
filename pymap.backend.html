@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend &#8212; pymap 0.10.0 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.10.1 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -714,6 +714,25 @@ housekeeping operations if necessary.</li>
 </dd></dl>
 
 <dl class="method">
+<dt id="pymap.backend.session.BaseSession.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after ever operation, success or failure, to allow the
+backend to clean up resources.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Any exception raised by this method will be silently ignored.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="pymap.backend.session.BaseSession.copy_messages">
 <code class="descname">copy_messages</code><span class="sig-paren">(</span><em>selected</em>, <em>sequence_set</em>, <em>mailbox</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.copy_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Copy a set of messages into the given mailbox.</p>
@@ -1188,7 +1207,7 @@ not the given folder name currently exists.</p>
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
  
       </ul>
     </div>

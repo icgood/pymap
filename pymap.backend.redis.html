@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend.redis &#8212; pymap 0.10.0 documentation</title>
+    <title>pymap.backend.redis &#8212; pymap 0.10.1 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
@@ -298,7 +298,7 @@ constructor. Sub-classes should override this method as needed.</p>
 
 <dl class="class">
 <dt id="pymap.backend.redis.Session">
-<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>owner</em>, <em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>redis</em>, <em>owner</em>, <em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
 <p>The session implementation for the redis backend.</p>
 <dl class="attribute">
@@ -310,6 +310,25 @@ constructor. Sub-classes should override this method as needed.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSet</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.backend.redis.Session.cleanup">
+<code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after ever operation, success or failure, to allow the
+backend to clean up resources.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Any exception raised by this method will be silently ignored.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -407,7 +426,7 @@ session.</p>
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
