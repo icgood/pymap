@@ -7,7 +7,7 @@ from typing import Optional, Sequence, List, Dict, Tuple, FrozenSet, \
 
 from aioredis import Redis, MultiExecError, WatchVariableError  # type: ignore
 
-from pymap.exceptions import MailboxNotFound, MailboxConflict
+from pymap.exceptions import MailboxAbort, MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.listtree import ListTree
@@ -51,6 +51,7 @@ class MailboxData(MailboxDataInterface[Message]):
         self._redis = redis
         self._guid = guid
         self._prefix = prefix
+        self._abort_key = prefix + b':abort'
         self._uid_validity = uid_validity
         self._selected_set = SelectedSet()
 
@@ -95,9 +96,10 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_flags = [flag.value for flag in append_msg.flag_set]
         msg_time = append_msg.when.isoformat().encode('ascii')
         while True:
-            await redis.watch(prefix + b':max-mod')
-            max_uid, max_mod = await redis.mget(prefix + b':max-uid',
-                                                prefix + b':max-mod')
+            await redis.watch(prefix + b':max-mod', self._abort_key)
+            max_uid, max_mod, abort = await redis.mget(
+                prefix + b':max-uid', prefix + b':max-mod', self._abort_key)
+            MailboxAbort.assertFalse(abort)
             new_uid = int(max_uid or 0) + 1
             new_mod = int(max_mod or 0) + 1
             msg_prefix = prefix + b':msg:%d' % new_uid
@@ -148,7 +150,10 @@ class MailboxData(MailboxDataInterface[Message]):
         else:
             multi.echo(b'')
             multi.echo(b'')
-        exists, flags, time, recent, header, body = await multi.execute()
+        multi.get(self._abort_key)
+        exists, flags, time, recent, header, body, abort = \
+            await multi.execute()
+        MailboxAbort.assertFalse(abort)
         if not exists:
             if cached_msg is None:
                 return None
@@ -172,8 +177,10 @@ class MailboxData(MailboxDataInterface[Message]):
         if not uids:
             return
         while True:
-            await redis.watch(prefix + b':max-mod')
-            max_mod = await redis.get(prefix + b':max-mod')
+            await redis.watch(prefix + b':max-mod', self._abort_key)
+            max_mod, abort = await redis.mget(prefix + b':max-mod',
+                                              self._abort_key)
+            MailboxAbort.assertFalse(abort)
             new_mod = int(max_mod or 0) + 1
             multi = redis.multi_exec()
             multi.set(prefix + b':max-mod', new_mod)
@@ -185,6 +192,7 @@ class MailboxData(MailboxDataInterface[Message]):
             multi.srem(prefix + b':recent', *uids)
             multi.srem(prefix + b':deleted', *uids)
             multi.zrem(prefix + b':unseen', *uids)
+            multi.sadd(prefix + b':cleanup', *uids)
             try:
                 await multi.execute()
             except MultiExecError:
@@ -192,19 +200,18 @@ class MailboxData(MailboxDataInterface[Message]):
                     raise
             else:
                 break
-        prefixes = (prefix + b':msg:%d' % uid for uid in uids)
-        asyncio.create_task(_delete_keys(redis, prefixes))
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
         redis = self._redis
         prefix = self._prefix
         while True:
-            await redis.watch(prefix + b':max-mod')
+            await redis.watch(prefix + b':max-mod', self._abort_key)
             recent = await redis.smembers(prefix + b':recent')
             if not recent:
-                await redis.unwatch()
                 break
-            max_mod = await redis.get(prefix + b':max-mod')
+            max_mod, abort = await redis.mget(prefix + b':max-mod',
+                                              self._abort_key)
+            MailboxAbort.assertFalse(abort)
             new_mod = int(max_mod or 0) + 1
             multi = self._redis.multi_exec()
             multi.set(prefix + b':max-mod', new_mod)
@@ -230,14 +237,15 @@ class MailboxData(MailboxDataInterface[Message]):
             return
         uids = {msg.uid: msg for msg in messages}
         while True:
-            await redis.watch(prefix + b':max-mod')
+            await redis.watch(prefix + b':max-mod', self._abort_key)
             pipe = redis.pipeline()
             pipe.smembers(prefix + b':uids')
             pipe.get(prefix + b':max-mod')
-            existing_uids, max_mod = await pipe.execute()
+            pipe.get(self._abort_key)
+            existing_uids, max_mod, abort = await pipe.execute()
+            MailboxAbort.assertFalse(abort)
             update_uids = uids.keys() & {int(uid) for uid in existing_uids}
             if not update_uids:
-                await redis.unwatch()
                 break
             new_mod = int(max_mod or 0) + 1
             new_flags: Dict[int, Awaitable[Sequence[bytes]]] = {}
@@ -288,7 +296,16 @@ class MailboxData(MailboxDataInterface[Message]):
                 break
 
     async def cleanup(self) -> None:
-        pass
+        redis = self._redis
+        prefix = self._prefix
+        while True:
+            # TODO: use spop with count= when aioredis > 1.2.0 is tagged
+            uids = await redis.srandmember(prefix + b':cleanup', 100)
+            if not uids:
+                break
+            prefixes = (prefix + b':msg:%b' % uid for uid in uids)
+            await _delete_keys(redis, prefixes)
+            await redis.srem(prefix + b':cleanup', *uids)
 
     async def find_deleted(self, seq_set: SequenceSet,
                            selected: SelectedMailbox) -> Sequence[int]:
@@ -303,18 +320,19 @@ class MailboxData(MailboxDataInterface[Message]):
         redis = self._redis
         prefix = self._prefix
         while True:
-            await redis.watch(prefix + b':sequence')
+            await redis.watch(prefix + b':sequence', self._abort_key)
             pipe = redis.pipeline()
             pipe.get(prefix + b':max-uid')
             pipe.zcard(prefix + b':sequence')
             pipe.scard(prefix + b':recent')
             pipe.zcard(prefix + b':unseen')
             pipe.zrange(prefix + b':unseen', 0, 0)
-            max_uid, exists, num_recent, num_unseen, unseen = \
+            pipe.get(self._abort_key)
+            max_uid, exists, num_recent, num_unseen, unseen, abort = \
                 await pipe.execute()
+            MailboxAbort.assertFalse(abort)
             next_uid = int(max_uid or 0) + 1
             if not unseen:
-                await redis.unwatch()
                 first_unseen: Optional[int] = None
                 break
             else:
@@ -338,8 +356,12 @@ class MailboxData(MailboxDataInterface[Message]):
         redis = self._redis
         prefix = self._prefix
         while True:
-            await redis.watch(prefix + b':max-mod')
-            uids = await redis.zrange(prefix + b':sequence')
+            await redis.watch(prefix + b':max-mod', self._abort_key)
+            pipe = redis.pipeline()
+            pipe.zrange(prefix + b':sequence')
+            pipe.get(self._abort_key)
+            uids, abort = await pipe.execute()
+            MailboxAbort.assertFalse(abort)
             multi = redis.multi_exec()
             multi.get(prefix + b':max-mod')
             for uid in uids:
@@ -369,9 +391,12 @@ class MailboxData(MailboxDataInterface[Message]):
         redis = self._redis
         prefix = self._prefix
         while True:
-            await redis.watch(prefix + b':max-mod')
-            uids = await redis.zrangebyscore(
-                prefix + b':mod-sequence', last_mod_seq)
+            await redis.watch(prefix + b':max-mod', self._abort_key)
+            pipe = redis.pipeline()
+            pipe.zrangebyscore(prefix + b':mod-sequence', last_mod_seq)
+            pipe.get(self._abort_key)
+            uids, abort = await pipe.execute()
+            MailboxAbort.assertFalse(abort)
             multi = redis.multi_exec()
             multi.get(prefix + b':max-mod')
             multi.zrangebyscore(prefix + b':expunged', last_mod_seq)
@@ -448,7 +473,6 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             await redis.watch(self._mbx_key)
             mbx_guid = await redis.hget(self._mbx_key, name_key)
             if mbx_guid is None:
-                await redis.unwatch()
                 raise MailboxNotFound(name, try_create)
             multi = redis.multi_exec()
             multi.hget(self._uidv_key, name_key)
@@ -472,7 +496,6 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             pipe.hexists(self._mbx_key, name_key)
             order, exists = await pipe.execute()
             if exists:
-                await redis.unwatch()
                 raise MailboxConflict(name)
             multi = redis.multi_exec()
             multi.hset(self._mbx_key, name_key, mbx_guid)
@@ -497,6 +520,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             raise MailboxNotFound(name)
         await redis.zrem(self._order_key, mbx_guid)
         mbx_prefix = b'%b:%b' % (self._prefix, mbx_guid)
+        await redis.set(mbx_prefix + b':abort', 1)
         asyncio.create_task(_delete_keys(redis, [mbx_prefix]))
 
     async def rename_mailbox(self, before: str, after: str) -> None:
@@ -509,10 +533,8 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             before_entry = tree.get(before)
             after_entry = tree.get(after)
             if before_entry is None:
-                await redis.unwatch()
                 raise MailboxNotFound(before)
             elif after_entry is not None:
-                await redis.unwatch()
                 raise MailboxConflict(after)
             multi = redis.multi_exec()
             for before_name, after_name in tree.get_renames(before, after):

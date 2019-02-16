@@ -392,5 +392,6 @@ class IMAPConnection:
                             and isinstance(response, ResponseOk):
                         await self.start_tls(state.ssl_context)
                 finally:
+                    await state.do_cleanup()
                     current_command.reset(prev_cmd)
         self._print('%d ---| %s', b'<disconnected>')
