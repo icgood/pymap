@@ -19,18 +19,15 @@ class BackendInterface(Protocol):
 
     @classmethod
     @abstractmethod
-    def add_subparser(cls, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers) -> None:
         """Add a command-line argument sub-parser that will be used to choose
         this backend. For example::
 
             parser = subparsers.add_parser('foo', help='foo backend')
             parser.add_argument(...)
 
-        Note:
-            The name of the added sub-parser must be the same as the name of
-            the entry point registered by the backend.
-
         Args:
+            name: The name to use for the subparser.
             subparsers: The special action object as returned by
                 :meth:`~argparse.ArgumentParser.add_subparsers`.
 

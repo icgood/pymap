@@ -1,6 +1,6 @@
 
 from io import BytesIO, StringIO
-from argparse import ArgumentParser, Namespace
+from argparse import Namespace
 from typing import Any, Optional
 
 import pytest  # type: ignore
@@ -227,15 +227,12 @@ class TestAdminHandlers(TestBase):
 class TestAdminClient:
 
     async def test_append(self):
-        parser = ArgumentParser()
-        subparsers = parser.add_subparsers(dest='test')
-        name, command_cls = AppendCommand.init(parser, subparsers)
         stub = _Stub(AppendResponse(result=SUCCESS))
         args = Namespace(user='testuser', sender=None, recipient=None,
                          mailbox='INBOX', data=BytesIO(b'test data'),
                          flags=['\\Flagged', '\\Seen'],
                          timestamp=1234567890)
-        command = command_cls(stub, args)
+        command = AppendCommand(stub, args)
         code = await command.run(StringIO())
         request = stub.request
         assert 'Append' == stub.method

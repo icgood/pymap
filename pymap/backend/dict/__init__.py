@@ -41,9 +41,9 @@ class DictBackend(BackendInterface):
         return self._config
 
     @classmethod
-    def add_subparser(cls, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers) -> None:
         parser = subparsers.add_parser(
-            'dict', help='in-memory backend',
+            name, help='in-memory backend',
             formatter_class=ArgumentDefaultsHelpFormatter)
         parser.add_argument('--demo-data', action='store_true',
                             help='load initial demo data')

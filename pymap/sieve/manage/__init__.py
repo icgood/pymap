@@ -17,7 +17,7 @@ from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.session import LoginProtocol, SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
-from pymap.sockinfo import SocketInfo
+from pymap.sockets import SocketInfo
 from pysasl import ServerChallenge, AuthenticationError
 
 from .command import Command, NoOpCommand, LogoutCommand, CapabilityCommand, \

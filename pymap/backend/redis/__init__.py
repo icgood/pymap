@@ -43,9 +43,9 @@ class RedisBackend(BackendInterface):
         return self._config
 
     @classmethod
-    def add_subparser(cls, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers) -> None:
         parser = subparsers.add_parser(
-            'redis', help='redis backend',
+            name, help='redis backend',
             formatter_class=ArgumentDefaultsHelpFormatter)
         parser.add_argument('address', nargs='?', default='redis://localhost',
                             help='the redis server address')

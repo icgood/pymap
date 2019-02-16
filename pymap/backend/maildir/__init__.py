@@ -43,9 +43,9 @@ class MaildirBackend(BackendInterface):
         return self._config
 
     @classmethod
-    def add_subparser(cls, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers) -> None:
         parser = subparsers.add_parser(
-            'maildir', help='on-disk backend',
+            name, help='on-disk backend',
             formatter_class=ArgumentDefaultsHelpFormatter)
         parser.add_argument('users_file', help='path the the users file')
         parser.add_argument('--base-dir', metavar='DIR',

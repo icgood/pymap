@@ -3,12 +3,12 @@
 import asyncio
 import sys
 from argparse import ArgumentParser, Namespace, FileType
-from typing import Type
+from typing import Type, Mapping
 
 from grpclib.client import Channel  # type: ignore
+from pkg_resources import iter_entry_points, DistributionNotFound
 from pymap import __version__
 
-from .append import AppendCommand
 from .command import ClientCommand
 from .. import AdminService
 from ..grpc.admin_grpc import AdminStub
@@ -25,7 +25,9 @@ def main() -> int:
 
     subparsers = parser.add_subparsers(dest='command',
                                        help='which admin command to run')
-    commands = dict([AppendCommand.init(parser, subparsers)])
+    commands = _load_entry_points('pymap.admin.client')
+    for command_name, command_cls in commands.items():
+        command_cls.add_subparser(command_name, subparsers)
     args = parser.parse_args()
 
     if not args.command:
@@ -47,3 +49,15 @@ async def run(parser: ArgumentParser, args: Namespace,
     finally:
         channel.close()
     return code
+
+
+def _load_entry_points(group: str) -> Mapping[str, Type[ClientCommand]]:
+    ret = {}
+    for entry_point in iter_entry_points(group):
+        try:
+            cls = entry_point.load()
+        except DistributionNotFound:
+            pass  # optional dependencies not installed
+        else:
+            ret[entry_point.name] = cls
+    return ret

@@ -19,17 +19,18 @@ Table of Contents
    pymap.config
    pymap.context
    pymap.exceptions
+   pymap.fetch
    pymap.filter
    pymap.flags
    pymap.listtree
    pymap.mailbox
    pymap.message
-   pymap.mime
    pymap.search
    pymap.selected
-   pymap.sockinfo
+   pymap.sockets
    pymap.interfaces
    pymap.parsing
+   pymap.mime
    pymap.backend
    pymap.imap
    pymap.admin

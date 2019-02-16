@@ -48,8 +48,8 @@ def main() -> None:
     backends: _Backends = _load_entry_points('pymap.backend')
     services: _Services = _load_entry_points('pymap.service')
 
-    for backend_cls in backends.values():
-        backend_cls.add_subparser(subparsers)
+    for backend_name, backend_cls in backends.items():
+        backend_cls.add_subparser(backend_name, subparsers)
     for service_cls in services.values():
         service_cls.add_arguments(parser)
     parser.set_defaults(skip_services=[])
@@ -87,8 +87,7 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
     await asyncio.gather(*[service.task for service in services])
 
 
-def _load_entry_points(group: str) \
-        -> Mapping[str, Type[Any]]:
+def _load_entry_points(group: str) -> Mapping[str, Type[Any]]:
     ret = {}
     for entry_point in iter_entry_points(group):
         try:
