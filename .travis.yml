@@ -2,7 +2,6 @@ language: python
 python:
   - "3.7"
 dist: xenial     # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
-sudo: required   # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
 install:
   - travis_retry pip install -r doc/requirements.txt
   - travis_retry pip install -r test/requirements.txt
