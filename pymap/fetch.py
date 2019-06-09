@@ -1,5 +1,5 @@
 
-from typing import Union, Tuple, Iterable, Sequence, List
+from typing import Optional, Tuple, Iterable, Sequence, List
 from typing_extensions import Final
 
 from .bytes import MaybeBytes, Writeable
@@ -10,7 +10,7 @@ from .selected import SelectedMailbox
 
 __all__ = ['NotFetchable', 'MessageAttributes']
 
-_Partial = Union[None, Tuple[int, int], Tuple[int]]
+_Partial = Optional[Tuple[int, Optional[int]]]
 
 
 def _not_expunged(orig):
@@ -114,10 +114,8 @@ class MessageAttributes:
         if partial is None:
             return data
         full = bytes(data)
-        start = int(partial[0])
-        try:
-            end = int(partial[1])
-        except IndexError:
+        start, end = partial
+        if end is None:
             end = len(full)
         return Writeable.wrap(full[start:end])
 

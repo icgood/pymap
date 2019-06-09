@@ -1,6 +1,6 @@
 import enum
 from functools import total_ordering, reduce
-from typing import Tuple, Optional, Union, Iterable, Sequence, FrozenSet
+from typing import Tuple, Optional, Iterable, Sequence, FrozenSet
 
 from . import AString
 from .. import Params, Parseable
@@ -86,7 +86,7 @@ class FetchAttribute(Parseable[bytes]):
 
     def __init__(self, attribute: bytes,
                  section: Section = None,
-                 partial: Union[Tuple[int, int], Tuple[int]] = None) -> None:
+                 partial: Tuple[int, Optional[int]] = None) -> None:
         super().__init__()
         self.attribute = attribute.upper()
         self.section = section
@@ -106,7 +106,7 @@ class FetchAttribute(Parseable[bytes]):
                 self._for_response = self
             else:
                 self._for_response = FetchAttribute(
-                    self.value, self.section, (self.partial[0], ))
+                    self.value, self.section, (self.partial[0], None))
         return self._for_response
 
     @property
@@ -155,7 +155,7 @@ class FetchAttribute(Parseable[bytes]):
             parts.append(b']')
         if self.partial:
             partial = BytesFormat(b'.').join(
-                [b'%i' % num for num in self.partial])
+                [b'%i' % num for num in self.partial if num is not None])
             parts += [b'<', partial, b'>']
         self._raw = raw = b''.join(parts)
         return raw
