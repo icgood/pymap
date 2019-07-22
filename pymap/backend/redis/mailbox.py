@@ -299,13 +299,11 @@ class MailboxData(MailboxDataInterface[Message]):
         redis = self._redis
         prefix = self._prefix
         while True:
-            # TODO: use spop with count= when aioredis > 1.2.0 is tagged
-            uids = await redis.srandmember(prefix + b':cleanup', 100)
+            uids = await redis.spop(prefix + b':cleanup', 100)
             if not uids:
                 break
             prefixes = (prefix + b':msg:%b' % uid for uid in uids)
             await _delete_keys(redis, prefixes)
-            await redis.srem(prefix + b':cleanup', *uids)
 
     async def find_deleted(self, seq_set: SequenceSet,
                            selected: SelectedMailbox) -> Sequence[int]:

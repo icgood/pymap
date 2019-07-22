@@ -69,7 +69,8 @@ class AdminHandlers(AdminBase):
             if self._with_filter and session.filter_set is not None:
                 filter_value = await session.filter_set.get_active()
                 if filter_value is not None:
-                    filter_ = await session.filter_set.compile(filter_value)
+                    compiler = session.filter_set.compiler
+                    filter_ = await compiler.compile(filter_value)
                     new_mailbox, append_msg = await filter_.apply(
                         request.sender, request.recipient, mailbox, append_msg)
                     if new_mailbox is None:

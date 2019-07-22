@@ -1,30 +1,13 @@
 
 from abc import abstractmethod
-from typing import Generic, Type, Optional, Tuple, Sequence
+from typing import Type, Optional, Tuple, Sequence
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
-from .interfaces.filter import FilterValueT, FilterInterface, \
+from .interfaces.filter import FilterValueT, FilterCompilerInterface, \
     FilterSetInterface
 
-__all__ = ['FilterCompiler', 'EntryPointFilterSet', 'SingleFilterSet']
-
-
-class FilterCompiler(Generic[FilterValueT]):
-    """Abstract base class for classes which can compile a filter value into an
-    implementation.
-
-    """
-
-    @abstractmethod
-    async def compile(self, value: FilterValueT) -> FilterInterface:
-        """Compile the filter value and return the resulting implementation.
-
-        Args:
-            value: The filter value.
-
-        """
-        ...
+__all__ = ['EntryPointFilterSet', 'SingleFilterSet']
 
 
 class EntryPointFilterSet(FilterSetInterface[FilterValueT]):
@@ -38,17 +21,18 @@ class EntryPointFilterSet(FilterSetInterface[FilterValueT]):
 
     """
 
-    def __init__(self, entry_point: str, *,
+    def __init__(self, entry_point: str, value_type: Type[FilterValueT], *,
                  group: str = 'pymap.filter') -> None:
         super().__init__()
         self._group = group
         self._entry_point = entry_point
-        self._filter_compiler: Optional[FilterCompiler] = None
+        self._value_type = value_type
+        self._compiler: Optional[FilterCompilerInterface[FilterValueT]] = None
 
     @property
-    def filter_compiler(self) -> FilterCompiler:
-        if self._filter_compiler is None:
-            filter_cls: Optional[Type[FilterCompiler]] = None
+    def compiler(self) -> FilterCompilerInterface[FilterValueT]:
+        if self._compiler is None:
+            filter_cls: Optional[Type[FilterCompilerInterface]] = None
             name = self._entry_point
             for entry_point in iter_entry_points(self._group, name):
                 try:
@@ -57,11 +41,12 @@ class EntryPointFilterSet(FilterSetInterface[FilterValueT]):
                     pass  # optional dependencies not installed
             if filter_cls is None:
                 raise LookupError(f'{self._group}:{name}')
-            self._filter_compiler = filter_cls()
-        return self._filter_compiler
-
-    async def compile(self, value: FilterValueT) -> FilterInterface:
-        return await self.filter_compiler.compile(value)
+            compiler = filter_cls()
+            if not issubclass(compiler.value_type, self._value_type):
+                raise TypeError(f'{self._group}:{name} does not support '
+                                f'{self._value_type}')
+            self._compiler = compiler
+        return self._compiler
 
 
 class SingleFilterSet(FilterSetInterface[FilterValueT]):

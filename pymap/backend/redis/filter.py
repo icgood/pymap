@@ -21,7 +21,7 @@ class FilterSet(EntryPointFilterSet[bytes]):
     _active_name = b''
 
     def __init__(self, redis: Redis, prefix: bytes) -> None:
-        super().__init__('sieve')
+        super().__init__('sieve', bytes)
         self._redis = redis
         self._prefix = prefix
 

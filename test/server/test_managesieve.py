@@ -12,7 +12,7 @@ class TestManageSieve(TestBase):
         transport.push_write(
             b'"IMPLEMENTATION" "pymap managesieve', (br'.*?', ), b'"\r\n'
             b'"SASL" "PLAIN LOGIN"\r\n'
-            b'"SIEVE" ""\r\n'
+            b'"SIEVE" "fileinto reject envelope body"\r\n'
             b'"STARTTLS"\r\n'
             b'"UNAUTHENTICATE"\r\n'
             b'"VERSION" "1.0"\r\n'
@@ -59,7 +59,7 @@ class TestManageSieve(TestBase):
             b'capability\r\n')
         transport.push_write(
             b'"IMPLEMENTATION" "pymap managesieve', (br'.*?', ), b'"\r\n'
-            b'"SIEVE" ""\r\n'
+            b'"SIEVE" "fileinto reject envelope body"\r\n'
             b'"OWNER" "testuser"\r\n'
             b'"UNAUTHENTICATE"\r\n'
             b'"VERSION" "1.0"\r\n'

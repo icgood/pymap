@@ -1,11 +1,12 @@
 
 from abc import abstractmethod
-from typing import TypeVar, Optional, Tuple, Sequence
+from typing import TypeVar, Type, Optional, Tuple, Sequence
 from typing_extensions import Protocol
 
 from .message import AppendMessage
 
-__all__ = ['FilterValueT', 'FilterInterface', 'FilterSetInterface']
+__all__ = ['FilterValueT', 'FilterInterface',
+           'FilterCompilerInterface', 'FilterSetInterface']
 
 #: Type variable for the filter value representation.
 FilterValueT = TypeVar('FilterValueT')
@@ -40,6 +41,35 @@ class FilterInterface(Protocol):
         ...
 
 
+class FilterCompilerInterface(Protocol[FilterValueT]):
+    """Protocol for classes which can compile a filter value into an
+    implementation.
+
+    """
+
+    @property
+    @abstractmethod
+    def value_type(self) -> Type[FilterValueT]:
+        """The filter value type."""
+        ...
+
+    @property
+    @abstractmethod
+    def filter_type(self) -> Type[FilterInterface]:
+        """The filter implementation type."""
+        ...
+
+    @abstractmethod
+    async def compile(self, value: FilterValueT) -> FilterInterface:
+        """Compile the filter value and return the resulting implementation.
+
+        Args:
+            value: The filter value:
+
+        """
+        ...
+
+
 class FilterSetInterface(Protocol[FilterValueT]):
     """Protocol defining the interface for accessing and managing the set of
     message filters currently active and available. This interface
@@ -50,14 +80,10 @@ class FilterSetInterface(Protocol[FilterValueT]):
 
     """
 
+    @property
     @abstractmethod
-    async def compile(self, value: FilterValueT) -> FilterInterface:
-        """Compile the given filter value into a filter implementation.
-
-        Args:
-            value: The filter value.
-
-        """
+    def compiler(self) -> FilterCompilerInterface[FilterValueT]:
+        """Compiles filter values into an implementation."""
         ...
 
     @abstractmethod

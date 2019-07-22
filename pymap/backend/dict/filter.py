@@ -9,7 +9,7 @@ __all__ = ['FilterSet']
 class FilterSet(EntryPointFilterSet[bytes]):
 
     def __init__(self) -> None:
-        super().__init__('sieve')
+        super().__init__('sieve', bytes)
         self._filters: Dict[str, bytes] = {}
         self._active: Optional[str] = None
 

@@ -138,7 +138,7 @@ class Config(IMAPConfig):
 class FilterSet(EntryPointFilterSet[bytes], SingleFilterSet[bytes]):
 
     def __init__(self, user_dir: str) -> None:
-        super().__init__('sieve')
+        super().__init__('sieve', bytes)
         self._user_dir = user_dir
 
     async def replace_active(self, value: Optional[bytes]) -> None:
