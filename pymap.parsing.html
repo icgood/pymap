@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pymap.parsing &#8212; pymap 0.10.2 documentation</title>
+    <title>pymap.parsing &#8212; pymap 0.10.3 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -835,7 +835,7 @@ flags, and the internal timestamp to assign to the message.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag.</p></li>
 <li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The mailbox reference name.</p></li>
-<li><p><strong>filter</strong> – The mailbox filter string.</p></li>
+<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The mailbox filter string.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2246,9 +2246,9 @@ the attribute name within square brackets, e.g. <code class="docutils literal no
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The search key.</p></li>
-<li><p><strong>filter</strong> – The filter object, used by most search keys.</p></li>
+<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>, <a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>], <a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>, <a class="reference internal" href="#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]) – The filter object, used by most search keys.</p></li>
 <li><p><strong>inverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If the search key was inverted with <code class="docutils literal notranslate"><span class="pre">NOT</span></code>.</p></li>
-<li><p><strong>filter</strong> – The filter object, used by most search keys.</p></li>
+<li><p><strong>filter_</strong> – The filter object, used by most search keys.</p></li>
 <li><p><strong>inverse</strong> – If the search key was inverted with <code class="docutils literal notranslate"><span class="pre">NOT</span></code>.</p></li>
 </ul>
 </dd>
@@ -2986,7 +2986,7 @@ already logged in.</p>
 <p>Indicates the next unique identifier value of the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>next</strong> – The next available message UID.</p>
+<dd class="field-odd"><p><strong>next_</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The next available message UID.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3011,7 +3011,7 @@ already logged in.</p>
 <code class="docutils literal notranslate"><span class="pre">\Seen</span></code> flag.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>next</strong> – The sequence ID of the message.</p>
+<dd class="field-odd"><p><strong>next_</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The sequence ID of the message.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3059,7 +3059,7 @@ request.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.DateHeader" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateHeader</span></code></a>]) – Original date of the message.</p></li>
 <li><p><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]) – <code class="docutils literal notranslate"><span class="pre">Subject:</span></code> header.</p></li>
-<li><p><strong>from</strong> – <code class="docutils literal notranslate"><span class="pre">From:</span></code> headers.</p></li>
+<li><p><strong>from_</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">From:</span></code> headers.</p></li>
 <li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.SingleAddressHeader" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleAddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">Sender:</span></code> headers.</p></li>
 <li><p><strong>reply_to</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">Reply-To:</span></code> headers.</p></li>
 <li><p><strong>to</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">To:</span></code> headers.</p></li>
@@ -3680,7 +3680,7 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -3688,7 +3688,7 @@ commands. This response should be mutually exclusive with SEARCH responses.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>pymap.filter &#8212; pymap 0.10.2 documentation</title>
+    <title>pymap.filter &#8212; pymap 0.10.3 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="pymap.fetch.html" title="pymap.fetch"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -56,34 +56,12 @@
   <div class="section" id="module-pymap.filter">
 <span id="pymap-filter"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code><a class="headerlink" href="#module-pymap.filter" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="pymap.filter.FilterCompiler">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.filter.</code><code class="sig-name descname">FilterCompiler</code><a class="headerlink" href="#pymap.filter.FilterCompiler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
-<p>Abstract base class for classes which can compile a filter value into an
-implementation.</p>
-<dl class="method">
-<dt id="pymap.filter.FilterCompiler.compile">
-<em class="property">abstract async </em><code class="sig-name descname">compile</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.FilterCompiler.compile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compile the filter value and return the resulting implementation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="pymap.filter.EntryPointFilterSet">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.filter.</code><code class="sig-name descname">EntryPointFilterSet</code><span class="sig-paren">(</span><em class="sig-param">entry_point</em>, <em class="sig-param">*</em>, <em class="sig-param">group='pymap.filter'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.filter.</code><code class="sig-name descname">EntryPointFilterSet</code><span class="sig-paren">(</span><em class="sig-param">entry_point</em>, <em class="sig-param">value_type</em>, <em class="sig-param">*</em>, <em class="sig-param">group='pymap.filter'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.filter.FilterSetInterface</span></code></a></p>
 <p>Base class for filter set implementations that use a filter compiler
 declared in the <code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code> entry point. The declared entry points
-must sub-class <a class="reference internal" href="#pymap.filter.FilterCompiler" title="pymap.filter.FilterCompiler"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterCompiler</span></code></a>.</p>
+must sub-class <code class="xref py py-class docutils literal notranslate"><span class="pre">FilterCompiler</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -93,15 +71,12 @@ must sub-class <a class="reference internal" href="#pymap.filter.FilterCompiler"
 </dd>
 </dl>
 <dl class="method">
-<dt id="pymap.filter.EntryPointFilterSet.compile">
-<em class="property">async </em><code class="sig-name descname">compile</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet.compile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compile the given filter value into a filter implementation.</p>
+<dt id="pymap.filter.EntryPointFilterSet.compiler">
+<em class="property">property </em><code class="sig-name descname">compiler</code><a class="headerlink" href="#pymap.filter.EntryPointFilterSet.compiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compiles filter values into an implementation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>~FilterValueT</em>) – The filter value.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterInterface" title="pymap.interfaces.filter.FilterInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterInterface</span></code></a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Filtercompilerinterface</span></code>[~FilterValueT]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -328,7 +303,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.fetch.html" title="pymap.fetch"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -336,7 +311,7 @@ exists.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
