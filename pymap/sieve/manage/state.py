@@ -9,7 +9,7 @@ from .command import Command, HaveSpaceCommand, PutScriptCommand, \
     DeleteScriptCommand, RenameScriptCommand, CheckScriptCommand
 from .response import Condition, Response, GetScriptResponse, \
     ListScriptsResponse
-from .. import SieveParseError, SieveCompiler
+from .. import SieveParseError
 
 __all__ = ['FilterState']
 
@@ -17,11 +17,11 @@ __all__ = ['FilterState']
 class FilterState:
 
     def __init__(self, filter_set: FilterSetInterface[bytes],
-                 config: IMAPConfig) -> None:
+                 owner: bytes, config: IMAPConfig) -> None:
         super().__init__()
         self.filter_set: Final = filter_set
+        self.owner: Final = owner
         self.config: Final = config
-        self.compiler: Final = SieveCompiler()
 
     async def _do_have_space(self, cmd: HaveSpaceCommand) -> Response:
         max_len = self.config.max_filter_len
@@ -82,7 +82,7 @@ class FilterState:
 
     async def _do_check_script(self, cmd: CheckScriptCommand) -> Response:
         try:
-            await self.compiler.compile(cmd.script_data)
+            await self.filter_set.compiler.compile(cmd.script_data)
         except SieveParseError as exc:
             return Response(Condition.NO, text=str(exc))
         else:

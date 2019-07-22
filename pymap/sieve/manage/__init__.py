@@ -25,6 +25,7 @@ from .command import Command, NoOpCommand, LogoutCommand, CapabilityCommand, \
 from .response import Condition, Response, BadCommandResponse, NoOpResponse, \
     CapabilitiesResponse
 from .state import FilterState
+from .. import SieveCompiler
 
 __all__ = ['ManageSieveService', 'ManageSieveServer', 'ManageSieveConnection']
 
@@ -117,7 +118,7 @@ class ManageSieveConnection:
         self.auth = config.initial_auth
         self.params = config.parsing_params.copy(allow_continuations=False)
         self._offer_starttls = b'STARTTLS' in config.initial_capability
-        self._session: Optional[SessionInterface] = None
+        self._state: Optional[FilterState] = None
         self._reset_streams(reader, writer)
 
     def _reset_streams(self, reader: StreamReader,
@@ -126,22 +127,28 @@ class ManageSieveConnection:
         self.writer = writer
         socket_info.set(SocketInfo(writer))
 
+    def _get_state(self, session: SessionInterface) -> FilterState:
+        owner = session.owner.encode('utf-8')
+        if session.filter_set is None:
+            raise ValueError('Filters not supported.')
+        return FilterState(session.filter_set, owner, self.config)
+
     @property
     def capabilities(self) -> Mapping[bytes, Optional[bytes]]:
         ret: Dict[bytes, Optional[bytes]] = OrderedDict()
         ret[b'IMPLEMENTATION'] = self._impl
-        if self._session is None:
+        if self._state is None:
             ret[b'SASL'] = b' '.join(
                 mech.name for mech in self.auth.server_mechanisms)
-        ret[b'SIEVE'] = b''
-        if self._offer_starttls and self._session is None:
+        ret[b'SIEVE'] = b' '.join(SieveCompiler.extensions)
+        if self._offer_starttls and self._state is None:
             ret[b'STARTTLS'] = None
         try:
             ret[b'LANGUAGE'] = language_code.get().encode('ascii')
         except LookupError:
             pass
-        if self._session is not None:
-            ret[b'OWNER'] = self._session.owner.encode('utf-8')
+        if self._state is not None:
+            ret[b'OWNER'] = self._state.owner
         ret[b'UNAUTHENTICATE'] = None
         ret[b'VERSION'] = b'1.0'
         return ret
@@ -185,12 +192,15 @@ class ManageSieveConnection:
         else:
             self._print('%d <--| %s', bytes(resp))
 
-    async def _do_greeting(self, login: LoginProtocol) -> None:
+    async def _do_greeting(self, login: LoginProtocol) -> Response:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
-            self._session = await login(preauth_creds, self.config)
-        greeting = CapabilitiesResponse(self.capabilities)
-        await self._write_response(greeting)
+            session = await login(preauth_creds, self.config)
+            try:
+                self._state = self._get_state(session)
+            except ValueError as exc:
+                return Response(Condition.NO, text=str(exc))
+        return CapabilitiesResponse(self.capabilities)
 
     async def _do_authenticate(self, login: LoginProtocol,
                                cmd: AuthenticateCommand) -> Response:
@@ -229,17 +239,17 @@ class ManageSieveConnection:
             session = await login(creds, self.config)
         except InvalidAuth as exc:
             return Response(Condition.NO, text=str(exc))
-        else:
-            if session.filter_set is None:
-                return Response(Condition.NO, text='Filters not supported.')
-            self._session = session
-            return Response(Condition.OK, code=code)
+        try:
+            self._state = self._get_state(session)
+        except ValueError as exc:
+            return Response(Condition.NO, text=str(exc))
+        return Response(Condition.OK, code=code)
 
     async def _do_unauthenticate(self) -> Response:
-        if self._session is None:
+        if self._state is None:
             return Response(Condition.NO, text='Not authenticated.')
         else:
-            self._session = None
+            self._state = None
             return Response(Condition.OK)
 
     async def _do_starttls(self) -> Response:
@@ -272,7 +282,8 @@ class ManageSieveConnection:
 
         """
         self._print('%d +++| %s', bytes(socket_info.get()))
-        await self._do_greeting(login)
+        greeting = await self._do_greeting(login)
+        await self._write_response(greeting)
         while True:
             resp: Response
             try:
@@ -289,7 +300,7 @@ class ManageSieveConnection:
                         resp = Response(Condition.BYE)
                     elif isinstance(cmd, CapabilityCommand):
                         resp = CapabilitiesResponse(self.capabilities)
-                    elif self._session is None:
+                    elif self._state is None:
                         if isinstance(cmd, AuthenticateCommand):
                             resp = await self._do_authenticate(login, cmd)
                         elif isinstance(cmd, StartTLSCommand):
@@ -300,10 +311,7 @@ class ManageSieveConnection:
                         if isinstance(cmd, UnauthenticateCommand):
                             resp = await self._do_unauthenticate()
                         else:
-                            assert self._session.filter_set is not None
-                            state = FilterState(self._session.filter_set,
-                                                self.config)
-                            resp = await state.run(cmd)
+                            resp = await self._state.run(cmd)
                 except Exception:
                     _log.exception('Unhandled exception')
                     resp = Response(Condition.NO, text='Server error.')

@@ -113,7 +113,7 @@ class IMAPServer:
         try:
             await conn.run(state)
         finally:
-            writer.close()
+            conn.close()
 
 
 class IMAPConnection:
@@ -148,6 +148,9 @@ class IMAPConnection:
         self.reader = reader
         self.writer = writer
         socket_info.set(SocketInfo(writer))
+
+    def close(self) -> None:
+        self.writer.close()
 
     @classmethod
     def _print(cls, log_format: str, output: bytes) -> None:

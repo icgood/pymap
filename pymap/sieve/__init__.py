@@ -1,9 +1,8 @@
 
-from typing import Optional, Tuple
+from typing import Type, Optional, Tuple, List
 
 from pymap.exceptions import AppendFailure
-from pymap.filter import FilterCompiler
-from pymap.interfaces.filter import FilterInterface
+from pymap.interfaces.filter import FilterInterface, FilterCompilerInterface
 from pymap.interfaces.session import AppendMessage
 from sievelib.parser import Parser  # type: ignore
 
@@ -18,12 +17,24 @@ class SieveParseError(ValueError):
     pass
 
 
-class SieveCompiler(FilterCompiler[bytes]):
+class SieveCompiler(FilterCompilerInterface[bytes]):
     """Compiles sieve scripts into :class:`SieveFilter` objects."""
+
+    #: The list of Sieve extensions supported by the compiler.
+    extensions: List[bytes] = [
+        b'fileinto', b'reject', b'envelope', b'body']
 
     def __init__(self) -> None:
         super().__init__()
         self.parser = Parser()
+
+    @property
+    def value_type(self) -> Type[bytes]:
+        return bytes
+
+    @property
+    def filter_type(self) -> Type['SieveFilter']:
+        return SieveFilter
 
     async def compile(self, value: bytes) -> 'SieveFilter':
         parser = self.parser
