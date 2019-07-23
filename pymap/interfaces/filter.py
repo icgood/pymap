@@ -34,7 +34,7 @@ class FilterInterface(Protocol):
             mailbox: The intended mailbox to append the message.
             append_msg: The message to be appended.
 
-        raises:
+        Raises:
             :exc:`~pymap.exceptions.AppendFailure`
 
         """

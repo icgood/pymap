@@ -47,7 +47,8 @@ class FlagOp(enum.Enum):
 class PermanentFlags:
     """Keeps track of the defined permanent flags on a mailbox. Because the
     permanent flags can include the special ``\\*`` wildcard flag, a simple
-    set union operation is not enough to filter out unknown permanent flags.
+    set intersect operation is not enough to filter out unknown permanent
+    flags.
 
     Args:
         defined: The defined session flags for the mailbox.
@@ -73,7 +74,7 @@ class PermanentFlags:
         The ``&`` operator is an alias of this method, making these two
         calls equivalent::
 
-            perm_flags.union(other_flags)
+            perm_flags.intersect(other_flags)
             perm_flags & other_flags
 
         Args:
@@ -120,7 +121,7 @@ class SessionFlags:
         The ``&`` operator is an alias of this method, making these two
         calls equivalent::
 
-            session_flags.union(other_flags)
+            session_flags.intersect(other_flags)
             session_flags & other_flags
 
         Args:

@@ -30,8 +30,8 @@ class AdminService(ServiceInterface):
 
     @classmethod
     def get_socket_path(cls) -> str:
-        """Return the prioritized list of locations to create or check for the
-        UNIX socket file listening for admin requests.
+        """Return the default location of the UNIX socket file listening for
+        admin requests.
 
         """
         return os.path.join(tempfile.gettempdir(), 'pymap-admin.sock')
@@ -57,13 +57,10 @@ class AdminService(ServiceInterface):
 
     @classmethod
     async def _start(cls, path: Optional[str], server: Server) -> str:
-        if path:
-            await server.start(path=path)
-            return path
-        else:
+        if not path:
             path = cls.get_socket_path()
-            await server.start(path=path)
-            return path
+        await server.start(path=path)
+        return path
 
     @classmethod
     def _chown(cls, path: str, args: Namespace) -> None:
