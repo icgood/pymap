@@ -9,7 +9,7 @@ from sievelib.parser import Parser  # type: ignore
 from .runner import SieveRunner
 from .util import unquote
 
-__all__ = ['SieveParseError' 'SieveCompiler', 'SieveFilter']
+__all__ = ['SieveParseError', 'SieveCompiler', 'SieveFilter']
 
 
 class SieveParseError(ValueError):
