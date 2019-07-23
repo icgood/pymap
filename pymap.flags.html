@@ -108,7 +108,8 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Keeps track of the defined permanent flags on a mailbox. Because the
 permanent flags can include the special <code class="docutils literal notranslate"><span class="pre">\*</span></code> wildcard flag, a simple
-set union operation is not enough to filter out unknown permanent flags.</p>
+set intersect operation is not enough to filter out unknown permanent
+flags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>defined</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The defined session flags for the mailbox.</p>
@@ -133,7 +134,7 @@ set union operation is not enough to filter out unknown permanent flags.</p>
 <code class="docutils literal notranslate"><span class="pre">other</span></code> are returned.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> operator is an alias of this method, making these two
 calls equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">perm_flags</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other_flags</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">perm_flags</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">other_flags</span><span class="p">)</span>
 <span class="n">perm_flags</span> <span class="o">&amp;</span> <span class="n">other_flags</span>
 </pre></div>
 </div>
@@ -180,7 +181,7 @@ they do not persist. The <code class="docutils literal notranslate"><span class=
 <code class="docutils literal notranslate"><span class="pre">other</span></code> are returned.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> operator is an alias of this method, making these two
 calls equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">session_flags</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">other_flags</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">session_flags</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">other_flags</span><span class="p">)</span>
 <span class="n">session_flags</span> <span class="o">&amp;</span> <span class="n">other_flags</span>
 </pre></div>
 </div>
