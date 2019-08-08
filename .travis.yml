@@ -20,6 +20,5 @@ deploy:
   github_token: $GH_TOKEN
   keep_history: true
   on:
-    python: "3.7"
     branch: master
   local_dir: doc/build/html
