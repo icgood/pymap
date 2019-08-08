@@ -24,7 +24,7 @@ import cloud_sptheme as csp
 # -- Project information -----------------------------------------------------
 
 project = 'pymap'
-copyright = '2018, Ian Good'
+copyright = '2019, Ian Good'
 author = 'Ian Good'
 
 # The short X.Y version
@@ -48,6 +48,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'sphinx.ext.githubpages',
     'sphinx_autodoc_typehints',
 ]
 
@@ -192,7 +193,7 @@ epub_exclude_files = ['search.html']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None,
-                       'https://pysasl.readthedocs.io/en/latest/': None,
+                       'https://pysasl.readthedocs.io/': None,
                        'https://aioredis.readthedocs.io/en/latest/': None,
                        'https://grpclib.readthedocs.io/en/latest/': None}
 

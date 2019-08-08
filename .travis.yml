@@ -1,7 +1,7 @@
 language: python
 python:
   - "3.7"
-dist: xenial     # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
+dist: bionic     # https://docs.travis-ci.com/user/languages/python/#python-37-and-higher
 install:
   - travis_retry pip install -r doc/requirements.txt
   - travis_retry pip install -r test/requirements.txt
@@ -10,10 +10,16 @@ install:
 script: py.test --flake8 --mypy --cov=pymap
 after_success:
   - coveralls
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./doc/push.sh; fi'
+  - make -C doc html
 branches:
   only:
     - master
-env:
-  global:
-    - secure: "FYGb/4uVR9YFfS9/rPKCm1fo0XAajPaZXRlJVP8EeyuHrMe/UtMeVmQxF1BCAxphsHlKw5l/MtDu269qXJ0l9+13H8A8+VxQBHRgBm81RWhxqGoksnBv232skKG8kBwni9DrHMuLwFKLenqulgQKeoJ2Br0/dK0f+YW9QTIvOEY="
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GH_TOKEN
+  keep_history: true
+  on:
+    python: "3.7"
+    branch: master
+  local_dir: doc/build/html
