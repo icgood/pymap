@@ -249,6 +249,11 @@ Adds the `APPENDLIMIT=` capability, declaring the maximum message size a server
 will accept from an `APPEND` command. Mailbox-specific limitations defined
 by the RFC are not supported.
 
+#### [RFC 8474](https://tools.ietf.org/html/rfc8474)
+
+Adds the `OBJECTID` capability, assigning unique IDs to mailboxes, messages,
+and threads to improve client caching and display.
+
 ## Development and Testing
 
 You will need to do some additional setup to develop and test plugins. First

@@ -1,11 +1,12 @@
 
-import random
+import hashlib
 from bisect import bisect_left
 from collections import OrderedDict
 from itertools import islice
 from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable, \
     List, Set, AbstractSet, FrozenSet
 
+from pymap.bytes import HashStream
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict
@@ -13,9 +14,11 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
-from pymap.parsing.specials import FetchRequirement
+from pymap.mime import MessageContent
+from pymap.parsing.specials import ObjectId, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
+from pymap.threads import ThreadKey
 
 from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
 
@@ -88,8 +91,11 @@ class MailboxData(MailboxDataInterface[Message]):
 
     """
 
-    def __init__(self) -> None:
-        self._guid = self._new_guid()
+    def __init__(self, email_ids: Dict[bytes, ObjectId],
+                 thread_ids: Dict[ThreadKey, ObjectId]) -> None:
+        self._mailbox_id = ObjectId.random_mailbox_id()
+        self._email_ids = email_ids
+        self._thread_ids = thread_ids
         self._readonly = False
         self._messages_lock = subsystem.get().new_rwlock()
         self._selected_set = SelectedSet()
@@ -98,13 +104,9 @@ class MailboxData(MailboxDataInterface[Message]):
         self._mod_sequences = _ModSequenceMapping()
         self._messages: Dict[int, Message] = OrderedDict()
 
-    @classmethod
-    def _new_guid(cls) -> bytes:
-        return b'%032x' % random.getrandbits(128)
-
     @property
-    def guid(self) -> bytes:
-        return self._guid
+    def mailbox_id(self) -> ObjectId:
+        return self._mailbox_id
 
     @property
     def readonly(self) -> bool:
@@ -136,13 +138,35 @@ class MailboxData(MailboxDataInterface[Message]):
             selected.add_updates(updated_messages, expunged)
         return selected
 
-    async def add(self, append_msg: AppendMessage, recent: bool = False) \
-            -> Message:
+    def _find_email_id(self, content: MessageContent) -> ObjectId:
+        msg_hash = HashStream(hashlib.sha1()).digest(content)
+        return self._email_ids.setdefault(msg_hash, ObjectId.random_email_id())
+
+    def _find_thread_id(self, content: MessageContent) -> ObjectId:
+        thread_keys = ThreadKey.get_all(content.header)
+        for thread_key in thread_keys:
+            thread_id = self._thread_ids.get(thread_key)
+            if thread_id is not None:
+                break
+        else:
+            thread_id = ObjectId.random_thread_id()
+        for thread_key in thread_keys:
+            self._thread_ids.setdefault(thread_key, thread_id)
+        return thread_id
+
+    async def add(self, append_msg: AppendMessage, *, recent: bool = False,
+                  email_id: ObjectId = None,
+                  thread_id: ObjectId = None) -> Message:
+        content = MessageContent.parse(append_msg.message)
+        if email_id is None:
+            email_id = self._find_email_id(content)
+        if thread_id is None:
+            thread_id = self._find_thread_id(content)
         async with self.messages_lock.write_lock():
             self._max_uid = new_uid = self._max_uid + 1
-            message = Message.parse(new_uid, append_msg.message,
-                                    append_msg.flag_set, append_msg.when,
-                                    recent=recent)
+            message = Message(new_uid, append_msg.when, append_msg.flag_set,
+                              recent=recent, content=content,
+                              email_id=email_id, thread_id=thread_id)
             self._messages[new_uid] = message
             self._mod_sequences.update([new_uid])
             return message
@@ -155,8 +179,8 @@ class MailboxData(MailboxDataInterface[Message]):
         async with self.messages_lock.read_lock():
             ret = self._messages.get(uid)
             if ret is None and cached_msg is not None:
-                return Message(cached_msg.uid, cached_msg.permanent_flags,
-                               cached_msg.internal_date, expunged=True)
+                return Message(cached_msg.uid, cached_msg.internal_date,
+                               cached_msg.permanent_flags, expunged=True)
             else:
                 return ret
 
@@ -207,9 +231,10 @@ class MailboxData(MailboxDataInterface[Message]):
                 unseen += 1
                 if first_unseen is None:
                     first_unseen = exists
-        return MailboxSnapshot(self.guid, self.readonly, self.uid_validity,
-                               self.permanent_flags, self.session_flags,
-                               exists, recent, unseen, first_unseen, next_uid)
+        return MailboxSnapshot(self.mailbox_id, self.readonly,
+                               self.uid_validity, self.permanent_flags,
+                               self.session_flags, exists, recent, unseen,
+                               first_unseen, next_uid)
 
 
 class MailboxSet(MailboxSetInterface[MailboxData]):
@@ -220,7 +245,9 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     def __init__(self) -> None:
         super().__init__()
-        self._inbox = MailboxData()
+        self._email_ids: Dict[bytes, ObjectId] = {}
+        self._thread_ids: Dict[ThreadKey, ObjectId] = {}
+        self._inbox = MailboxData(self._email_ids, self._thread_ids)
         self._set: Dict[str, 'MailboxData'] = OrderedDict()
         self._set_lock = subsystem.get().new_rwlock()
         self._subscribed: Dict[str, bool] = {}
@@ -253,12 +280,14 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
                 raise MailboxNotFound(name, try_create)
             return self._set[name]
 
-    async def add_mailbox(self, name: str) -> None:
+    async def add_mailbox(self, name: str) -> ObjectId:
         async with self._set_lock.read_lock():
             if name in self._set:
                 raise MailboxConflict(name)
         async with self._set_lock.write_lock():
-            self._set[name] = MailboxData()
+            self._set[name] = mbx = MailboxData(
+                self._email_ids, self._thread_ids)
+            return mbx.mailbox_id
 
     async def delete_mailbox(self, name: str) -> None:
         async with self._set_lock.read_lock():
@@ -280,7 +309,8 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             for before_name, after_name in tree.get_renames(before, after):
                 if before_name == 'INBOX':
                     self._set[after_name] = self._inbox
-                    self._inbox = MailboxData()
+                    self._inbox = MailboxData(
+                        self._email_ids, self._thread_ids)
                 else:
                     self._set[after_name] = self._set[before_name]
                     del self._set[before_name]

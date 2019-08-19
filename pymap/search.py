@@ -8,7 +8,7 @@ from typing_extensions import Final
 
 from .exceptions import SearchNotAllowed
 from .interfaces.message import MessageInterface
-from .parsing.specials import SearchKey, SequenceSet
+from .parsing.specials import ObjectId, SearchKey, SequenceSet
 from .parsing.specials.flag import Flag, Answered, Deleted, Draft, Flagged, \
     Recent, Seen
 from .selected import SelectedMailbox
@@ -80,7 +80,7 @@ class SearchCriteria(metaclass=ABCMeta):
         """
         key_name = key.value
         if key_name in params.disabled:
-            raise SearchNotAllowed(key_name)
+            raise SearchNotAllowed(key)
         elif key.inverse:
             return InverseSearchCriteria(key.not_inverse, params)
         elif key_name == b'SEQSET':
@@ -92,6 +92,10 @@ class SearchCriteria(metaclass=ABCMeta):
         elif key_name == b'OR':
             left_key, right_key = key.filter_key_or
             return OrSearchCriteria(left_key, right_key, params)
+        elif key_name == b'EMAILID':
+            return HasEmailIdSearchCriteria(key.filter_object_id, params)
+        elif key_name == b'THREADID':
+            return HasThreadIdSearchCriteria(key.filter_object_id, params)
         elif key_name == b'ANSWERED':
             return HasFlagSearchCriteria(Answered, True, params)
         elif key_name == b'UNANSWERED':
@@ -145,7 +149,7 @@ class SearchCriteria(metaclass=ABCMeta):
             return HeaderSearchCriteria(name, value, params)
         elif key_name in (b'BODY', b'TEXT'):
             return BodySearchCriteria(key.filter_str, params)
-        raise SearchNotAllowed(key_name)
+        raise SearchNotAllowed(key)
 
 
 class SearchCriteriaSet(SearchCriteria):
@@ -237,6 +241,34 @@ class SequenceSetSearchCriteria(SearchCriteria):
             return msg.uid in self.flat
         else:
             return msg_seq in self.flat
+
+
+class HasEmailIdSearchCriteria(SearchCriteria):
+    """Matches if the message has the same
+    :attr:`~pymap.interfaces.message.MessageInterface.email_id` value.
+
+    """
+
+    def __init__(self, email_id: ObjectId, params: SearchParams) -> None:
+        super().__init__(params)
+        self.email_id = email_id
+
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
+        return self.email_id == msg.email_id
+
+
+class HasThreadIdSearchCriteria(SearchCriteria):
+    """Matches if the message has the same
+    :attr:`~pymap.interfaces.message.MessageInterface.thread_id` value.
+
+    """
+
+    def __init__(self, thread_id: ObjectId, params: SearchParams) -> None:
+        super().__init__(params)
+        self.thread_id = thread_id
+
+    def matches(self, msg_seq: int, msg: MessageInterface) -> bool:
+        return self.thread_id == msg.thread_id
 
 
 class HasFlagSearchCriteria(SearchCriteria):

@@ -3,8 +3,9 @@ from typing import Optional, Tuple, Iterable, Sequence, List
 from typing_extensions import Final
 
 from .bytes import MaybeBytes, Writeable
+from .exceptions import NotSupportedError
 from .interfaces.message import MessageInterface
-from .parsing.primitives import Number, ListP, LiteralString
+from .parsing.primitives import Nil, Number, ListP, LiteralString
 from .parsing.specials import DateTime, FetchAttribute
 from .selected import SelectedMailbox
 
@@ -129,6 +130,19 @@ class MessageAttributes:
 
     def _get_INTERNALDATE(self, attr: FetchAttribute) -> MaybeBytes:
         return DateTime(self.message.internal_date)
+
+    @_not_expunged
+    def _get_EMAILID(self, attr: FetchAttribute) -> MaybeBytes:
+        if self.message.email_id is None:
+            raise NotSupportedError('EMAILID not supported.')
+        return self.message.email_id.parens
+
+    @_not_expunged
+    def _get_THREADID(self, attr: FetchAttribute) -> MaybeBytes:
+        if self.message.thread_id is None:
+            return Nil()
+        else:
+            return self.message.thread_id.parens
 
     @_not_expunged
     def _get_ENVELOPE(self, attr: FetchAttribute) -> MaybeBytes:

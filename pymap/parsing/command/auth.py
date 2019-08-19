@@ -62,8 +62,7 @@ class AppendCommand(CommandAuth):
         now = datetime.now()
         self.mailbox_obj = mailbox
         self.messages: Sequence[AppendMessage] = \
-            [AppendMessage(message, frozenset(flags),
-                           when or now, options)
+            [AppendMessage(message, when or now, frozenset(flags), options)
              for message, flags, when, options in messages]
 
     @property

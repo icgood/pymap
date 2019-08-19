@@ -1,13 +1,14 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import TypeVar, Tuple, NamedTuple, Sequence, FrozenSet, Collection
+from typing import TypeVar, Optional, Tuple, NamedTuple, Sequence, FrozenSet, \
+    Collection
 from typing_extensions import Protocol
 
 from ..bytes import Writeable
 from ..flags import SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
-from ..parsing.specials import Flag, ExtensionOptions
+from ..parsing.specials import Flag, ExtensionOptions, ObjectId
 
 __all__ = ['AppendMessage', 'CachedMessage', 'MessageInterface', 'MessageT',
            'FlagsKey']
@@ -25,15 +26,15 @@ class AppendMessage(NamedTuple):
 
     Args:
         message: The raw message bytes.
-        flag_set: The flags to assign to the message.
         when: The internal timestamp to assign to the message.
+        flag_set: The flags to assign to the message.
         options: The extension options in use for the message.
 
     """
 
     message: bytes
-    flag_set: FrozenSet[Flag]
     when: datetime
+    flag_set: FrozenSet[Flag]
     options: ExtensionOptions
 
 
@@ -114,6 +115,28 @@ class MessageInterface(Protocol):
     @abstractmethod
     def internal_date(self) -> datetime:
         """The message's internal date."""
+        ...
+
+    @property
+    @abstractmethod
+    def email_id(self) -> Optional[ObjectId]:
+        """The message's content object ID, which can identify its content.
+
+        See Also:
+            `RFC 8474 5.1. <https://tools.ietf.org/html/rfc8474#section-5.1>`_
+
+        """
+        ...
+
+    @property
+    @abstractmethod
+    def thread_id(self) -> Optional[ObjectId]:
+        """The message's thread object ID, which groups messages together.
+
+        See Also:
+            `RFC 8474 5.2. <https://tools.ietf.org/html/rfc8474#section-5.2>`_
+
+        """
         ...
 
     @property

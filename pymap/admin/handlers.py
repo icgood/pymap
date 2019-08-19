@@ -62,7 +62,7 @@ class AdminHandlers(AdminBase):
         mailbox = request.mailbox or 'INBOX'
         flag_set = frozenset(Flag(flag) for flag in request.flags)
         when = datetime.fromtimestamp(request.when, timezone.utc)
-        append_msg = AppendMessage(request.data, flag_set, when,
+        append_msg = AppendMessage(request.data, when, flag_set,
                                    ExtensionOptions.empty())
         try:
             session = await self._login_as(request.user)

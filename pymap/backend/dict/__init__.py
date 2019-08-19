@@ -8,10 +8,12 @@ from typing import Any, Tuple, Mapping, Dict
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
 
-from pymap.config import IMAPConfig
+from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.backend import BackendInterface
+from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import LoginProtocol
+from pymap.parsing.specials import ExtensionOptions
 from pymap.parsing.specials.flag import Flag, Recent
 
 from .filter import FilterSet
@@ -68,6 +70,10 @@ class Config(IMAPConfig):
         self._demo_user = demo_user
         self._demo_password = demo_password
         self.set_cache: Dict[str, Tuple[MailboxSet, FilterSet]] = {}
+
+    @property
+    def backend_capability(self) -> BackendCapability:
+        return BackendCapability(idle=True, object_id=True, multi_append=True)
 
     @property
     def demo_data(self) -> bool:
@@ -198,5 +204,6 @@ class Session(BaseSession[Message]):
                     msg_recent = True
                 else:
                     msg_recent = False
-                msg = Message.parse(0, msg_data, msg_flags, msg_dt)
-            await mbx.add(msg.append_msg, msg_recent)
+            msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags),
+                                ExtensionOptions.empty())
+            await mbx.add(msg, recent=msg_recent)

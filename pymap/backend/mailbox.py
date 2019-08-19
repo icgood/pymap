@@ -1,5 +1,6 @@
 
 from abc import abstractmethod
+from datetime import datetime
 from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
     Iterable, AsyncIterable
 from typing_extensions import Protocol
@@ -9,7 +10,8 @@ from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage
-from pymap.parsing.specials import SequenceSet, FetchRequirement
+from pymap.mime import MessageContent
+from pymap.parsing.specials import ObjectId, SequenceSet, FetchRequirement
 from pymap.parsing.specials.flag import get_system_flags, Flag, Deleted, Recent
 from pymap.selected import SelectedSet, SelectedMailbox
 
@@ -35,6 +37,18 @@ class Message(BaseMessage):
 
     """
 
+    __slots__ = ['_recent']
+
+    def __init__(self, uid: int, internal_date: datetime,
+                 permanent_flags: Iterable[Flag], *,
+                 email_id: ObjectId = None, thread_id: ObjectId = None,
+                 expunged: bool = False, content: MessageContent = None,
+                 recent: bool = False) -> None:
+        super().__init__(uid, internal_date, permanent_flags,
+                         email_id=email_id, thread_id=thread_id,
+                         expunged=expunged, content=content)
+        self._recent = recent
+
     @property
     def recent(self) -> bool:
         """True if the message is considered new in the mailbox. The next
@@ -42,11 +56,11 @@ class Message(BaseMessage):
         ``\\Recent`` session flag to the message.
 
         """
-        return self._kwargs.get('recent', False)
+        return self._recent
 
     @recent.setter
     def recent(self, recent: bool) -> None:
-        self._kwargs['recent'] = recent
+        self._recent = recent
 
 
 class MailboxDataInterface(Protocol[MessageT]):
@@ -54,11 +68,11 @@ class MailboxDataInterface(Protocol[MessageT]):
 
     @property
     @abstractmethod
-    def guid(self) -> bytes:
-        """The mailbox GUID.
+    def mailbox_id(self) -> ObjectId:
+        """The mailbox object ID.
 
         See Also:
-            :attr:`~pymap.interfaces.mailbox.MailboxInterface.guid`
+            :attr:`~pymap.interfaces.mailbox.MailboxInterface.mailbox_id`
 
         """
         ...
@@ -104,14 +118,17 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    async def add(self, message: AppendMessage, recent: bool = False) \
-            -> MessageT:
+    async def add(self, message: AppendMessage, *, recent: bool = False,
+                  email_id: ObjectId = None,
+                  thread_id: ObjectId = None) -> MessageT:
         """Adds a new message to the end of the mailbox, returning a copy of
         message with its assigned UID.
 
         Args:
             message: The new message data.
             recent: True if the message should be marked recent.
+            email_id: An explicit email object ID to assign to the message.
+            thread_id: An explicit email thread ID to assign to the message.
 
         """
         ...
@@ -276,8 +293,8 @@ class MailboxSetInterface(Protocol[MailboxDataT_co]):
         ...
 
     @abstractmethod
-    async def add_mailbox(self, name: str) -> None:
-        """Create a new mailbox.
+    async def add_mailbox(self, name: str) -> ObjectId:
+        """Create a new mailbox, returning its object ID.
 
         See Also:
             :meth:`~pymap.interfaces.session.SessionInterface.create_mailbox`

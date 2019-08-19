@@ -34,6 +34,31 @@ class TestCopy(TestBase):
         transport.push_logout()
         await self.run(transport)
 
+    async def test_copy_email_id(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'copy1 COPY 4 INBOX\r\n')
+        transport.push_write(
+            b'* 5 EXISTS\r\n'
+            b'* 2 RECENT\r\n'
+            b'* 5 FETCH (FLAGS (\\Recent))\r\n'
+            b'copy1 OK [COPYUID ', (br'\d+', ), b' 104 105]'
+            b' COPY completed.\r\n')
+        transport.push_readline(
+            b'fetch1 FETCH 4,5 (EMAILID THREADID)\r\n')
+        transport.push_write(
+            b'* 4 FETCH (EMAILID (', (br'M[a-f0-9]+', b'mid1'), b')'
+            b' THREADID (', (br'T[a-f0-9]+', b'tid1'), b'))\r\n'
+            b'* 5 FETCH (EMAILID (', (br'M[a-f0-9]+', b'mid2'), b')'
+            b' THREADID (', (br'T[a-f0-9]+', b'tid2'), b'))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+        assert self.matches['mid1'] == self.matches['mid2']
+        assert self.matches['tid1'] == self.matches['tid2']
+
     async def test_concurrent_copy_fetch(self, imap_server):
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)

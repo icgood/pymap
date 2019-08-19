@@ -14,7 +14,7 @@ class TestSearch(TestBase):
         transport.push_readline(
             b'search1 SEARCH DRAFT\r\n')
         transport.push_write(
-            b'search1 NO [CANNOT] SEARCH DRAFT not allowed.\r\n')
+            b'search1 NO [CANNOT] SEARCH DRAFT not supported.\r\n')
         transport.push_logout()
         await self.run(transport)
 
@@ -231,5 +231,51 @@ class TestSearch(TestBase):
         transport.push_write(
             b'* SEARCH 4\r\n'
             b'search1 OK SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_search_emailid(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'fetch1 FETCH 1,2 (EMAILID)\r\n')
+        transport.push_write(
+            b'* 1 FETCH (EMAILID (', (b'M[a-f0-9]+', b'id1'), b'))\r\n'
+            b'* 2 FETCH (EMAILID (', (b'M[a-f0-9]+', b'id2'), b'))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'search1 SEARCH EMAILID %(id1)b\r\n')
+        transport.push_write(
+            b'* SEARCH 1\r\n'
+            b'search1 OK SEARCH completed.\r\n')
+        transport.push_readline(
+            b'search2 SEARCH EMAILID %(id2)b\r\n')
+        transport.push_write(
+            b'* SEARCH 2\r\n'
+            b'search2 OK SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_search_threadid(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'fetch1 FETCH 1,2 (THREADID)\r\n')
+        transport.push_write(
+            b'* 1 FETCH (THREADID (', (b'T[a-f0-9]+', b'id1'), b'))\r\n'
+            b'* 2 FETCH (THREADID (', (b'T[a-f0-9]+', b'id2'), b'))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'search1 SEARCH THREADID %(id1)b\r\n')
+        transport.push_write(
+            b'* SEARCH 1\r\n'
+            b'search1 OK SEARCH completed.\r\n')
+        transport.push_readline(
+            b'search2 SEARCH THREADID %(id2)b\r\n')
+        transport.push_write(
+            b'* SEARCH 2\r\n'
+            b'search2 OK SEARCH completed.\r\n')
         transport.push_logout()
         await self.run(transport)

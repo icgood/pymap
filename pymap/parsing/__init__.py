@@ -99,7 +99,7 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
     _atom_pattern = rev.compile(
         br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5E-\x7A\x7C\x7E]+')
 
-    __slots__ = []  # type: ignore
+    __slots__: List[str] = []
 
     @property
     @abstractmethod

@@ -6,7 +6,7 @@ from pymap.flags import FlagOp, PermanentFlags, SessionFlags
 from pymap.message import BaseMessage
 from pymap.parsing.command.select import SearchCommand, UidSearchCommand
 from pymap.parsing.response import ResponseOk
-from pymap.parsing.specials import SequenceSet
+from pymap.parsing.specials import SequenceSet, ObjectId
 from pymap.parsing.specials.flag import Seen, Flagged, Flag
 from pymap.selected import SelectedMailbox
 
@@ -20,14 +20,14 @@ class TestSelectedMailbox(unittest.TestCase):
 
     @classmethod
     def new_selected(cls, guid: bytes = b'test') -> SelectedMailbox:
-        return SelectedMailbox(guid, False,
+        return SelectedMailbox(ObjectId(guid), False,
                                PermanentFlags([Seen, Flagged]),
                                SessionFlags([_Keyword]))
 
     @classmethod
     def set_messages(cls, selected: SelectedMailbox,
                      expunged, messages) -> None:
-        updates = [BaseMessage(uid, flags, datetime.now())
+        updates = [BaseMessage(uid, datetime.now(), flags)
                    for uid, flags in messages]
         selected.add_updates(updates, expunged)
 

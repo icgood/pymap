@@ -17,7 +17,7 @@ class StatusAttribute(Parseable[bytes]):
 
     #: The set of valid status attributes.
     valid_statuses = {b'MESSAGES', b'RECENT', b'UIDNEXT', b'UIDVALIDITY',
-                      b'UNSEEN'}
+                      b'UNSEEN', b'MAILBOXID'}
 
     def __init__(self, status: bytes) -> None:
         super().__init__()

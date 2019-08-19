@@ -39,6 +39,36 @@ class WriteStream(Protocol):
         ...
 
 
+class HashStream(WriteStream):
+    """A stream that a :class:`Writeable` can use to generate a secure hash,
+    using a hash algorithm as returned by a :mod:`hashlib` constructor.
+
+    Args:
+        algo: The hash algorithm object.
+
+    """
+
+    __slots__ = ['_algo']
+
+    def __init__(self, algo: Any) -> None:
+        super().__init__()
+        self._algo = algo
+
+    def write(self, data: bytes) -> None:
+        self._algo.update(data)
+
+    def digest(self, data: 'Writeable' = None) -> bytes:
+        """Return the digest of the data written to the hash stream.
+
+        Args:
+            data: The data to write before computing the digest.
+
+        """
+        if data is not None:
+            data.write(self)
+        return self._algo.digest()
+
+
 class Writeable(metaclass=ABCMeta):
     """Base class for types that can be written to a stream."""
 

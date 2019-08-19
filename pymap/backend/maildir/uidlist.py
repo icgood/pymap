@@ -1,8 +1,8 @@
 
 import random
 from collections import OrderedDict
-from typing import IO, Any, Optional, Iterable, Mapping, Dict, \
-    NamedTuple, ClassVar, TypeVar, Type
+from typing import IO, Optional, Iterable, Mapping, Dict, NamedTuple, \
+    ClassVar, TypeVar, Type
 
 from pymap.mailbox import MailboxSnapshot
 
@@ -24,7 +24,7 @@ class Record(NamedTuple):
     """
 
     uid: int
-    fields: Mapping[str, Any]
+    fields: Mapping[str, str]
     filename: str
 
     @property
@@ -103,9 +103,10 @@ class UidList(FileWriteable):
     def _build_line(cls, rec: Record) -> str:
         parts = ['%d' % rec.uid]
         for key, val in sorted(rec.fields.items()):
-            parts.append(' ')
-            parts.append(key[0:1])
-            parts.append(str(val))
+            if val is not None:
+                parts.append(' ')
+                parts.append(key[0:1])
+                parts.append(val)
         parts.append(' :')
         parts.append(rec.filename)
         parts.append('\r\n')

@@ -2,8 +2,8 @@
 
 import re
 from datetime import datetime
-from typing import Any, Tuple, Iterable, Mapping, FrozenSet, Sequence, \
-    Collection, TypeVar, Type
+from typing import Any, Optional, Tuple, Iterable, Mapping, FrozenSet, \
+    Sequence, Collection, TypeVar, Type
 from typing_extensions import Final
 
 from .bytes import Writeable
@@ -15,7 +15,7 @@ from .mime.cte import MessageDecoder
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
-from .parsing.specials import Flag, ExtensionOptions
+from .parsing.specials import Flag, ObjectId, ExtensionOptions
 
 __all__ = ['MessageT', 'BaseMessage']
 
@@ -37,46 +37,40 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     Args:
         uid: The UID of the message.
-        permanent_flags: Permanent flags for the message.
         internal_date: The internal date of the message.
+        permanent_flags: Permanent flags for the message.
+        email_id: The message content identifier for the message.
+        thread_id: The thread identifier for the message.
         expunged: True if this message has been expunged from the mailbox.
         content: The content of the message.
 
     """
 
     __slots__ = ['uid', 'internal_date', 'expunged', '_permanent_flags',
-                 '_flags_key', '_content', '_kwargs']
+                 '_email_id', '_thread_id', '_flags_key', '_content']
 
-    def __init__(self, uid: int, permanent_flags: Iterable[Flag],
-                 internal_date: datetime, expunged: bool = False,
-                 content: MessageContent = None, **kwargs: Any) -> None:
+    def __init__(self, uid: int, internal_date: datetime,
+                 permanent_flags: Iterable[Flag], *,
+                 email_id: ObjectId = None, thread_id: ObjectId = None,
+                 expunged: bool = False,
+                 content: MessageContent = None) -> None:
         super().__init__()
         self.uid: Final = uid
         self.internal_date: Final = internal_date
         self.expunged: Final = expunged
+        self._email_id = email_id
+        self._thread_id = thread_id
         self._permanent_flags = frozenset(permanent_flags or [])
         self._flags_key = (uid, self._permanent_flags)
         self._content = content
-        self._kwargs = kwargs
 
-    @classmethod
-    def parse(cls: Type[MessageT], uid: int, data: bytes,
-              permanent_flags: Iterable[Flag], internal_date: datetime,
-              expunged: bool = False, **kwargs: Any) -> MessageT:
-        """Parse the given file object containing a MIME-encoded email message
-        into a :class:`BaseLoadedMessage` object.
+    @property
+    def email_id(self) -> Optional[ObjectId]:
+        return self._email_id
 
-        Args:
-            uid: The UID of the message.
-            data: The raw contents of the message.
-            permanent_flags: Permanent flags for the message.
-            internal_date: The internal date of the message.
-            expunged: True if this message has been expunged from the mailbox.
-
-        """
-        content = MessageContent.parse(data)
-        return cls(uid, permanent_flags, internal_date, expunged,
-                   content, **kwargs)
+    @property
+    def thread_id(self) -> Optional[ObjectId]:
+        return self._thread_id
 
     @property
     def content(self) -> MessageContent:
@@ -88,13 +82,14 @@ class BaseMessage(MessageInterface, CachedMessage):
     @property
     def append_msg(self) -> AppendMessage:
         data = bytes(self.content)
-        return AppendMessage(data, self._permanent_flags, self.internal_date,
+        return AppendMessage(data, self.internal_date, self._permanent_flags,
                              ExtensionOptions.empty())
 
     def copy(self: MessageT, new_uid: int) -> MessageT:
         cls = type(self)
-        return cls(new_uid, self._permanent_flags, self.internal_date,
-                   self.expunged, self._content, **self._kwargs)
+        return cls(new_uid, self.internal_date, self._permanent_flags,
+                   email_id=self._email_id, thread_id=self._thread_id,
+                   expunged=self.expunged, content=self._content)
 
     @property
     def permanent_flags(self) -> FrozenSet[Flag]:

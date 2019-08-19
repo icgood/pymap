@@ -7,7 +7,7 @@ from typing import Any, Optional, Tuple, Mapping
 from aioredis import create_redis, Redis  # type: ignore
 from pysasl import AuthenticationCredentials
 
-from pymap.config import IMAPConfig
+from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import InvalidAuth, MailboxConflict
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
@@ -91,6 +91,10 @@ class Config(IMAPConfig):
         self._users_hash = users_hash
         self._users_key = users_key
         self._users_json = users_json
+
+    @property
+    def backend_capability(self) -> BackendCapability:
+        return BackendCapability(idle=True, object_id=True, multi_append=True)
 
     @property
     def address(self) -> str:
