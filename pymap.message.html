@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.message &#8212; pymap 0.10.3 documentation</title>
+    <title>pymap.message &#8212; pymap 0.11.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -66,7 +66,7 @@
 
 <dl class="class">
 <dt id="pymap.message.BaseMessage">
-<em class="property">class </em><code class="descclassname">pymap.message.</code><code class="descname">BaseMessage</code><span class="sig-paren">(</span><em>uid</em>, <em>permanent_flags</em>, <em>internal_date</em>, <em>expunged=False</em>, <em>content=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.message.</code><code class="descname">BaseMessage</code><span class="sig-paren">(</span><em>uid</em>, <em>internal_date</em>, <em>permanent_flags</em>, <em>*</em>, <em>email_id=None</em>, <em>thread_id=None</em>, <em>expunged=False</em>, <em>content=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.message.MessageInterface</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.message.CachedMessage</span></code></a></p>
 <p>Message metadata such as UID, permanent flags, and when the message
 was added to the system.</p>
@@ -76,8 +76,10 @@ was added to the system.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message.</li>
-<li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – Permanent flags for the message.</li>
 <li><strong>internal_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>) – The internal date of the message.</li>
+<li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – Permanent flags for the message.</li>
+<li><strong>email_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]) – The message content identifier for the message.</li>
+<li><strong>thread_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]) – The thread identifier for the message.</li>
 <li><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if this message has been expunged from the mailbox.</li>
 <li><strong>content</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>]) – The content of the message.</li>
 </ul>
@@ -103,26 +105,37 @@ was added to the system.</p>
 <dd><p>True if this message has been expunged from the mailbox.</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="pymap.message.BaseMessage.parse">
-<em class="property">classmethod </em><code class="descname">parse</code><span class="sig-paren">(</span><em>uid</em>, <em>data</em>, <em>permanent_flags</em>, <em>internal_date</em>, <em>expunged=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the given file object containing a MIME-encoded email message
-into a <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseLoadedMessage</span></code> object.</p>
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.email_id">
+<code class="descname">email_id</code><a class="headerlink" href="#pymap.message.BaseMessage.email_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message’s content object ID, which can identify its content.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc8474#section-5.1">RFC 8474 5.1.</a></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message.</li>
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The raw contents of the message.</li>
-<li><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – Permanent flags for the message.</li>
-<li><strong>internal_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>) – The internal date of the message.</li>
-<li><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if this message has been expunged from the mailbox.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~MessageT</p>
-</td>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.thread_id">
+<code class="descname">thread_id</code><a class="headerlink" href="#pymap.message.BaseMessage.thread_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message’s thread object ID, which groups messages together.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc8474#section-5.2">RFC 8474 5.2.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -469,7 +482,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>

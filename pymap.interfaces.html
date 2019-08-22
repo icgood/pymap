@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.interfaces &#8212; pymap 0.10.3 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.11.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -230,8 +230,8 @@ updates.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>message</strong> – The raw message bytes.</li>
-<li><strong>flag_set</strong> – The flags to assign to the message.</li>
 <li><strong>when</strong> – The internal timestamp to assign to the message.</li>
+<li><strong>flag_set</strong> – The flags to assign to the message.</li>
 <li><strong>options</strong> – The extension options in use for the message.</li>
 </ul>
 </td>
@@ -245,14 +245,14 @@ updates.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymap.interfaces.message.AppendMessage.flag_set">
-<code class="descname">flag_set</code><a class="headerlink" href="#pymap.interfaces.message.AppendMessage.flag_set" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.interfaces.message.AppendMessage.when">
+<code class="descname">when</code><a class="headerlink" href="#pymap.interfaces.message.AppendMessage.when" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="pymap.interfaces.message.AppendMessage.when">
-<code class="descname">when</code><a class="headerlink" href="#pymap.interfaces.message.AppendMessage.when" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.interfaces.message.AppendMessage.flag_set">
+<code class="descname">flag_set</code><a class="headerlink" href="#pymap.interfaces.message.AppendMessage.flag_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
@@ -406,6 +406,42 @@ flags, and when the message was added to the system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.interfaces.message.MessageInterface.email_id">
+<code class="descname">email_id</code><a class="headerlink" href="#pymap.interfaces.message.MessageInterface.email_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message’s content object ID, which can identify its content.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc8474#section-5.1">RFC 8474 5.1.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.interfaces.message.MessageInterface.thread_id">
+<code class="descname">thread_id</code><a class="headerlink" href="#pymap.interfaces.message.MessageInterface.thread_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The message’s thread object ID, which groups messages together.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc8474#section-5.2">RFC 8474 5.2.</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -644,17 +680,21 @@ optimized to only search headers and <code class="docutils literal notranslate">
 <p>Describes a mailbox as it exists in an IMAP backend, whether or not it
 is currently selected.</p>
 <dl class="attribute">
-<dt id="pymap.interfaces.mailbox.MailboxInterface.guid">
-<code class="descname">guid</code><a class="headerlink" href="#pymap.interfaces.mailbox.MailboxInterface.guid" title="Permalink to this definition">¶</a></dt>
-<dd><p>The mailbox GUID. Typically a 128-bit hex bytestring.</p>
+<dt id="pymap.interfaces.mailbox.MailboxInterface.mailbox_id">
+<code class="descname">mailbox_id</code><a class="headerlink" href="#pymap.interfaces.mailbox.MailboxInterface.mailbox_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox object ID.</p>
 <p>This value must have no relationship to the mailbox name, e.g. a
-renamed mailbox should have the same GUID but a deleted/re-created
-mailbox of the same name must have a different GUID.</p>
+renamed mailbox should have the same ID but a deleted/re-created
+mailbox of the same name must have a different ID.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc8474#section-4">RFC 8474 4.</a></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -1012,7 +1052,7 @@ backend to clean up resources.</p>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxConflict" title="pymap.exceptions.MailboxConflict"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxConflict</span></code></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
 </td>
 </tr>
 </tbody>
@@ -1694,7 +1734,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>

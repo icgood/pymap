@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.exceptions &#8212; pymap 0.10.3 documentation</title>
+    <title>pymap.exceptions &#8212; pymap 0.11.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -83,30 +83,6 @@ response to an IMAP command.</p>
 </dd></dl>
 
 <dl class="exception">
-<dt id="pymap.exceptions.NotSupportedError">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">NotSupportedError</code><a class="headerlink" href="#pymap.exceptions.NotSupportedError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a></p>
-<p>Raised when an action is taken that is not supported by the server or
-backend.</p>
-<dl class="method">
-<dt id="pymap.exceptions.NotSupportedError.get_response">
-<code class="descname">get_response</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotSupportedError.get_response" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an IMAP response for the error.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
 <dt id="pymap.exceptions.CloseConnection">
 <em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">CloseConnection</code><a class="headerlink" href="#pymap.exceptions.CloseConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
@@ -131,25 +107,14 @@ the provided response.</p>
 </dd></dl>
 
 <dl class="exception">
-<dt id="pymap.exceptions.CommandNotAllowed">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">CommandNotAllowed</code><span class="sig-paren">(</span><em>message</em>, <em>code=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.CommandNotAllowed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
-<p>The command is syntactically valid, but not allowed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The message to display in the response.</li>
-<li><strong>code</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]) – Optional response code for the error.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="pymap.exceptions.NotSupportedError">
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">NotSupportedError</code><span class="sig-paren">(</span><em>msg='Operation not supported.'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotSupportedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a></p>
+<p>Raised when an action is taken that might be syntactically valid, but is
+not supported by the server or backend.</p>
 <dl class="method">
-<dt id="pymap.exceptions.CommandNotAllowed.get_response">
-<code class="descname">get_response</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.CommandNotAllowed.get_response" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.exceptions.NotSupportedError.get_response">
+<code class="descname">get_response</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotSupportedError.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -157,7 +122,7 @@ the provided response.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -167,15 +132,15 @@ the provided response.</p>
 
 <dl class="exception">
 <dt id="pymap.exceptions.SearchNotAllowed">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">SearchNotAllowed</code><span class="sig-paren">(</span><em>key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.SearchNotAllowed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.CommandNotAllowed" title="pymap.exceptions.CommandNotAllowed"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.CommandNotAllowed</span></code></a></p>
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">SearchNotAllowed</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.SearchNotAllowed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.NotSupportedError" title="pymap.exceptions.NotSupportedError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.NotSupportedError</span></code></a></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">SEARCH</span></code> command contained a search key that could not be
 executed by the mailbox.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The search key that failed.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>) – The search key that failed.</td>
 </tr>
 </tbody>
 </table>
@@ -416,7 +381,7 @@ allowed.</p>
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>

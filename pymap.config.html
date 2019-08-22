@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.config &#8212; pymap 0.10.3 documentation</title>
+    <title>pymap.config &#8212; pymap 0.11.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -73,6 +73,27 @@
 <dt id="pymap.config.ConfigT_contra">
 <code class="descclassname">pymap.config.</code><code class="descname">ConfigT_contra</code><em class="property"> = -ConfigT_contra</em><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contravariant type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.config.BackendCapability">
+<em class="property">class </em><code class="descclassname">pymap.config.</code><code class="descname">BackendCapability</code><span class="sig-paren">(</span><em>*</em>, <em>idle</em>, <em>object_id</em>, <em>multi_append</em>, <em>custom=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.BackendCapability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterable</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
+<p>Declares the IMAP capabilities that the backend supports.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> extension is supported.</li>
+<li><strong>object_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">OBJECTID</span></code> extension is supported.</li>
+<li><strong>multi_append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">MULTIAPPEND</span></code> extension is supported.</li>
+<li><strong>custom</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Optional list of custom capability strings to declare.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
@@ -169,6 +190,21 @@ variables.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.config.IMAPConfig.backend_capability">
+<code class="descname">backend_capability</code><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows backends to declare support for IMAP extensions and other
+capabilities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -246,7 +282,7 @@ variables.</p>
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.10.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.11.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
