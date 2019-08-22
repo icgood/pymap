@@ -5,13 +5,14 @@ primitives.
 
 __all__ = ['AString', 'DateTime', 'FetchAttribute', 'FetchRequirement',
            'Flag', 'Mailbox', 'SearchKey', 'SequenceSet', 'StatusAttribute',
-           'Tag', 'ExtensionOption', 'ExtensionOptions']
+           'Tag', 'ExtensionOption', 'ExtensionOptions', 'ObjectId']
 
 from .astring import AString
 from .datetime_ import DateTime
 from .fetchattr import FetchAttribute, FetchRequirement
 from .flag import Flag
 from .mailbox import Mailbox
+from .objectid import ObjectId
 from .searchkey import SearchKey
 from .sequenceset import SequenceSet
 from .statusattr import StatusAttribute

@@ -3,10 +3,12 @@ import os
 import os.path
 import socket
 import ssl
+from abc import abstractmethod, ABCMeta
 from argparse import Namespace
+from collections import OrderedDict
 from ssl import SSLContext
-from typing import Any, TypeVar, Type, Union, Optional, Iterable, \
-    Sequence, Mapping
+from typing import Any, TypeVar, Type, Union, Optional, Iterable, Iterator, \
+    Sequence, Mapping, Dict
 from typing_extensions import Final
 
 from pysasl import SASLAuth, AuthenticationCredentials
@@ -16,7 +18,8 @@ from .context import subsystem
 from .parsing import Params
 from .parsing.commands import Commands
 
-__all__ = ['IMAPConfig', 'ConfigT', 'ConfigT_co', 'ConfigT_contra']
+__all__ = ['ConfigT', 'ConfigT_co', 'ConfigT_contra',
+           'BackendCapability', 'IMAPConfig']
 
 #: Type variable with an upper bound of :class:`IMAPConfig`.
 ConfigT = TypeVar('ConfigT', bound='IMAPConfig')
@@ -29,7 +32,57 @@ ConfigT_contra = TypeVar('ConfigT_contra', bound='IMAPConfig',
                          contravariant=True)
 
 
-class IMAPConfig:
+class BackendCapability(Iterable[bytes]):
+    """Declares the IMAP capabilities that the backend supports.
+
+    Args:
+        idle: The ``IDLE`` extension is supported.
+        object_id: The ``OBJECTID`` extension is supported.
+        multi_append: The ``MULTIAPPEND`` extension is supported.
+        custom: Optional list of custom capability strings to declare.
+
+    """
+
+    __slots__ = ['_capability']
+
+    def __init__(self, *,
+                 idle: bool,
+                 object_id: bool,
+                 multi_append: bool,
+                 custom: Sequence[bytes] = None) -> None:
+        super().__init__()
+        capability: Dict[bytes, bool] = OrderedDict()
+        if idle:
+            capability[b'IDLE'] = True
+        if object_id:
+            capability[b'OBJECTID'] = True
+        if multi_append:
+            capability[b'MULTIAPPEND'] = True
+        if custom is not None:
+            for cap in custom:
+                capability[cap] = True
+        self._capability: Final = tuple(capability.keys())
+
+    def __iter__(self) -> Iterator[bytes]:
+        return iter(self._capability)
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, BackendCapability):
+            return self._capability == other._capability
+        if isinstance(other, tuple):
+            return self._capability == other
+        if isinstance(other, list):
+            return list(self._capability) == other
+        return super().__eq__(other)
+
+    def __hash__(self) -> int:
+        return hash(self._capability)
+
+    def __repr__(self) -> str:
+        return repr([cap.decode('ascii') for cap in self._capability])
+
+
+class IMAPConfig(metaclass=ABCMeta):
     """Configurable settings that control how the IMAP server operates and what
     extensions it supports.
 
@@ -129,6 +182,15 @@ class IMAPConfig:
         if self.subsystem is not None:
             subsystem.set(self.subsystem)
 
+    @property
+    @abstractmethod
+    def backend_capability(self) -> BackendCapability:
+        """Allows backends to declare support for IMAP extensions and other
+        capabilities.
+
+        """
+        ...
+
     @classmethod
     def _load_certs(cls, extra: Mapping[str, Any]) -> Optional[SSLContext]:
         cert_file: Optional[str] = extra.get('cert_file')
@@ -177,11 +239,10 @@ class IMAPConfig:
 
     @property
     def login_capability(self) -> Sequence[bytes]:
-        ret = [b'BINARY', b'UIDPLUS', b'MULTIAPPEND', b'CHILDREN']
-        if not self._disable_idle:
-            ret.append(b'IDLE')
+        ret = [b'BINARY', b'UIDPLUS', b'CHILDREN']
         if self._max_append_len is not None:
             ret.append(b'APPENDLIMIT=%i' % self._max_append_len)
+        ret.extend(self.backend_capability)
         return ret
 
     @property

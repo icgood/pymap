@@ -140,6 +140,14 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
+    def references(self) -> Optional[UnstructuredHeader]:
+        """The ``References`` header."""
+        try:
+            return cast(UnstructuredHeader, self[b'references'][0])
+        except (KeyError, IndexError):
+            return None
+
+    @property
     def message_id(self) -> Optional[UnstructuredHeader]:
         """The ``Message-Id`` header."""
         try:

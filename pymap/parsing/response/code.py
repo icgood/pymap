@@ -2,11 +2,11 @@ from typing import Iterable, Optional, Sequence, Tuple
 
 from . import ResponseCode
 from ..primitives import ListP
-from ..specials import SequenceSet
+from ..specials import SequenceSet, ObjectId
 from ...bytes import MaybeBytes, BytesFormat
 
 __all__ = ['Capability', 'PermanentFlags', 'UidNext', 'UidValidity', 'Unseen',
-           'AppendUid', 'CopyUid']
+           'AppendUid', 'CopyUid', 'MailboxId']
 
 
 class Capability(ResponseCode):
@@ -115,6 +115,9 @@ class AppendUid(ResponseCode):
         validity: The UID validity value.
         uids: The UIDs of the appended messages.
 
+    See Also:
+        `RFC 4315 3. <https://tools.ietf.org/html/rfc4315#section-3>`_
+
     """
 
     def __init__(self, validity: int, uids: Iterable[int]) -> None:
@@ -136,6 +139,9 @@ class CopyUid(ResponseCode):
         validity: The UID validity value.
         uids: The pairs of source UID mapped to destination UID.
 
+    See Also:
+        `RFC 4315 3. <https://tools.ietf.org/html/rfc4315#section-3>`_
+
     """
 
     def __init__(self, validity: int, uids: Iterable[Tuple[int, int]]) -> None:
@@ -145,6 +151,27 @@ class CopyUid(ResponseCode):
         dest_uid_set = SequenceSet.build(dest_uids)
         self._raw = b'[COPYUID %i %b %b]' \
             % (validity, bytes(source_uid_set), bytes(dest_uid_set))
+
+    def __bytes__(self) -> bytes:
+        return self._raw
+
+
+class MailboxId(ResponseCode):
+    """Indicates the mailbox ID, which can be used to correlate mailboxes
+    between renames.
+
+    Args:
+        object_id: The mailbox ID bytestring.
+
+    See Also:
+        `RFC 8474 4.1. <https://tools.ietf.org/html/rfc8474#section-4.1>`_,
+        `RFC 8474 4.2. <https://tools.ietf.org/html/rfc8474#section-4.2>`_
+
+    """
+
+    def __init__(self, object_id: ObjectId) -> None:
+        super().__init__()
+        self._raw = BytesFormat(b'[MAILBOXID %b]') % (object_id.parens, )
 
     def __bytes__(self) -> bytes:
         return self._raw

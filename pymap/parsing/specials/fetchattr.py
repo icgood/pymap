@@ -214,7 +214,8 @@ class FetchAttribute(Parseable[bytes]):
         attr = match.group(1).upper()
         after = buf[match.end(0):]
         if attr in (b'ENVELOPE', b'FLAGS', b'INTERNALDATE', b'UID',
-                    b'RFC822.SIZE',  b'BODYSTRUCTURE'):
+                    b'RFC822.SIZE',  b'BODYSTRUCTURE', b'EMAILID',
+                    b'THREADID'):
             return cls(attr), after
         elif attr == b'RFC822':
             section = cls.Section([])

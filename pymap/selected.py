@@ -14,7 +14,7 @@ from .parsing.primitives import ListP, Number
 from .parsing.response import Response, ResponseBye
 from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
-from .parsing.specials import FetchAttribute, Flag, SequenceSet
+from .parsing.specials import ObjectId, FetchAttribute, Flag, SequenceSet
 
 __all__ = ['SelectedSet', 'SynchronizedMessages', 'SelectedMailbox']
 
@@ -198,7 +198,7 @@ class SelectedMailbox:
     untagged responses that should be added to the response.
 
     Args:
-        guid: The globally unique identifier of the selected mailbox.
+        mailbox_id: The globally unique identifier of the selected mailbox.
         readonly: Indicates the mailbox is selected as read-only.
         permanent_flags: The defined permanent flags for the mailbox.
         session_flags: Session-only flags for the mailbox.
@@ -207,18 +207,19 @@ class SelectedMailbox:
 
     """
 
-    __slots__ = ['_guid', '_readonly', '_permanent_flags', '_session_flags',
-                 '_selected_set', '_kwargs', '_lookup', '_mod_sequence',
-                 '_is_deleted', '_hide_expunged', '_silenced_flags',
-                 '_silenced_sflags', '_prev', '_messages', '__weakref__']
+    __slots__ = ['_mailbox_id', '_readonly', '_permanent_flags',
+                 '_session_flags', '_selected_set', '_kwargs', '_lookup',
+                 '_mod_sequence', '_is_deleted', '_hide_expunged',
+                 '_silenced_flags', '_silenced_sflags', '_prev', '_messages',
+                 '__weakref__']
 
-    def __init__(self, guid: bytes, readonly: bool,
+    def __init__(self, mailbox_id: ObjectId, readonly: bool,
                  permanent_flags: PermanentFlags,
                  session_flags: SessionFlags,
                  selected_set: SelectedSet = None,
                  lookup: Any = None, **kwargs: Any) -> None:
         super().__init__()
-        self._guid = guid
+        self._mailbox_id = mailbox_id
         self._readonly = readonly
         self._permanent_flags = permanent_flags
         self._session_flags = session_flags
@@ -239,15 +240,20 @@ class SelectedMailbox:
             selected_set.add(self)
 
     @property
-    def guid(self) -> bytes:
-        """The selected mailbox GUID, typically a 128-bit hex string."""
-        return self._guid
+    def mailbox_id(self) -> ObjectId:
+        """The selected mailbox object ID.
+
+        See Also:
+            :attr:`~pymap.interfaces.mailbox.MailboxInterface.mailbox_id`
+
+        """
+        return self._mailbox_id
 
     @property
     def lookup(self) -> Any:
         """The lookup value, if any, needed by backends that cannot lookup
-        mailboxes by :attr:`.guid`. A typical lookup value might be the name of
-        the mailbox.
+        mailboxes by :attr:`.mailbox_id`. A typical lookup value might be the
+        name of the mailbox.
 
         """
         return self._lookup
@@ -386,7 +392,7 @@ class SelectedMailbox:
         """
         frozen = _Frozen(self)
         cls = type(self)
-        copy = cls(self._guid, self._readonly, self._permanent_flags,
+        copy = cls(self._mailbox_id, self._readonly, self._permanent_flags,
                    self._session_flags, self._selected_set, self._lookup,
                    _mod_sequence=self._mod_sequence,
                    _prev=frozen, _messages=self._messages)

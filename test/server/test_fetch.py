@@ -268,3 +268,29 @@ class TestFetch(TestBase):
             b'fetch1 OK FETCH completed.\r\n')
         transport.push_logout()
         await self.run(transport)
+
+    async def test_fetch_email_id(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'fetch1 FETCH 1:* (EMAILID)\r\n')
+        transport.push_write(
+            b'* 1 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id1'), b'))\r\n'
+            b'* 2 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id2'), b'))\r\n'
+            b'* 3 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id3'), b'))\r\n'
+            b'* 4 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id4'), b'))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_readline(
+            b'fetch2 FETCH 1:* (EMAILID)\r\n')
+        transport.push_write(
+            b'* 1 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id5'), b'))\r\n'
+            b'* 2 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id6'), b'))\r\n'
+            b'* 3 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id7'), b'))\r\n'
+            b'* 4 FETCH (EMAILID (', (br'M[a-f0-9]+', b'id8'), b'))\r\n'
+            b'fetch2 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+        assert len({self.matches[f'id{n}'] for n in range(1, 5)}) == 4
+        for n in range(1, 5):
+            assert self.matches[f'id{n}'] == self.matches[f'id{n+4}']

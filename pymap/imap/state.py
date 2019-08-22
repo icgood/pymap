@@ -7,7 +7,7 @@ from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.context import socket_info
-from pymap.exceptions import CommandNotAllowed, CloseConnection
+from pymap.exceptions import NotSupportedError, CloseConnection
 from pymap.fetch import MessageAttributes
 from pymap.interfaces.session import SessionInterface, LoginProtocol
 from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
@@ -27,7 +27,7 @@ from pymap.parsing.primitives import ListP, Number
 from pymap.parsing.response import Response, ResponseOk, ResponseNo, \
     ResponseBad,  ResponseCode, ResponsePreAuth
 from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
-    UidValidity, Unseen
+    UidValidity, Unseen, MailboxId
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
@@ -113,7 +113,7 @@ class ConnectionState:
 
     async def do_login(self, cmd: LoginCommand) -> Response:
         if b'LOGINDISABLED' in self.capability:
-            raise CommandNotAllowed(b'LOGIN is disabled.')
+            raise NotSupportedError('LOGIN is disabled.')
         creds = AuthenticationCredentials(
             cmd.userid.decode('utf-8', 'surrogateescape'),
             cmd.password.decode('utf-8', 'surrogateescape'))
@@ -125,7 +125,7 @@ class ConnectionState:
         try:
             self._capability.remove(b'STARTTLS')
         except ValueError:
-            raise CommandNotAllowed(b'STARTTLS not available.')
+            raise NotSupportedError('STARTTLS not available.')
         self.auth = self.config.insecure_auth
         return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 
@@ -166,14 +166,16 @@ class ConnectionState:
         if mailbox.first_unseen:
             resp.add_untagged_ok(b'First unseen message.',
                                  Unseen(mailbox.first_unseen))
+        resp.add_untagged_ok(b'Object ID.', MailboxId(mailbox.mailbox_id))
         return resp, updates
 
     async def do_create(self, cmd: CreateCommand):
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot create INBOX.'), None
-        updates = await self.session.create_mailbox(
+        mailbox_id, updates = await self.session.create_mailbox(
             cmd.mailbox, selected=self._selected)
-        return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
+        return ResponseOk(cmd.tag, cmd.command + b' completed.',
+                          MailboxId(mailbox_id)), updates
 
     async def do_delete(self, cmd: DeleteCommand):
         if cmd.mailbox == 'INBOX':
@@ -192,12 +194,12 @@ class ConnectionState:
     async def do_status(self, cmd: StatusCommand):
         mailbox, updates = await self.session.get_mailbox(
             cmd.mailbox, selected=self._selected)
-        data: Dict[StatusAttribute, Number] = OrderedDict()
+        data: Dict[StatusAttribute, MaybeBytes] = OrderedDict()
         for attr in cmd.status_list:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
             elif attr == b'RECENT':
-                if updates and updates.guid == mailbox.guid:
+                if updates and updates.mailbox_id == mailbox.mailbox_id:
                     data[attr] = Number(updates.session_flags.recent)
                 else:
                     data[attr] = Number(mailbox.recent)
@@ -207,11 +209,15 @@ class ConnectionState:
                 data[attr] = Number(mailbox.next_uid)
             elif attr == b'UIDVALIDITY':
                 data[attr] = Number(mailbox.uid_validity)
+            elif attr == b'MAILBOXID':
+                data[attr] = mailbox.mailbox_id.parens
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
         resp.add_untagged(StatusResponse(cmd.mailbox, data))
         return resp, updates
 
     async def do_append(self, cmd: AppendCommand):
+        if len(cmd.messages) > 1 and b'MULTIAPPEND' not in self.capability:
+            raise NotSupportedError('MULTIAPPEND is disabled.')
         for msg in cmd.messages:
             if msg.message == b'':
                 return ResponseNo(cmd.tag, b'APPEND cancelled.'), None
@@ -317,7 +323,7 @@ class ConnectionState:
 
     async def do_idle(self, cmd: IdleCommand):
         if b'IDLE' not in self.capability:
-            raise CommandNotAllowed(b'IDLE is disabled.')
+            raise NotSupportedError('IDLE is disabled.')
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), None
 
     @classmethod

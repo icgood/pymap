@@ -7,7 +7,7 @@ from typing import TypeVar, Any, Type, Optional, Tuple, Mapping
 from pysasl import AuthenticationCredentials
 
 from pymap.concurrent import Subsystem
-from pymap.config import IMAPConfig
+from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.filter import EntryPointFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface
@@ -88,6 +88,10 @@ class Config(IMAPConfig):
             return os.path.dirname(users_file)
         else:
             raise ValueError('--base-dir', base_dir)
+
+    @property
+    def backend_capability(self) -> BackendCapability:
+        return BackendCapability(idle=True, object_id=True, multi_append=True)
 
     @property
     def users_file(self) -> str:

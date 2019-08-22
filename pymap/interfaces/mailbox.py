@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Optional, FrozenSet
 from typing_extensions import Protocol
 
-from ..parsing.specials import Flag
+from ..parsing.specials import Flag, ObjectId
 
 __all__ = ['MailboxInterface']
 
@@ -15,12 +15,15 @@ class MailboxInterface(Protocol):
 
     @property
     @abstractmethod
-    def guid(self) -> bytes:
-        """The mailbox GUID. Typically a 128-bit hex bytestring.
+    def mailbox_id(self) -> ObjectId:
+        """The mailbox object ID.
 
         This value must have no relationship to the mailbox name, e.g. a
-        renamed mailbox should have the same GUID but a deleted/re-created
-        mailbox of the same name must have a different GUID.
+        renamed mailbox should have the same ID but a deleted/re-created
+        mailbox of the same name must have a different ID.
+
+        See Also:
+            `RFC 8474 4. <https://tools.ietf.org/html/rfc8474#section-4>`_
 
         """
         ...

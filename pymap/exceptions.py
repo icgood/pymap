@@ -3,14 +3,14 @@
 from abc import abstractmethod, ABCMeta
 from typing import Any, Optional
 
+from .parsing.specials import SearchKey
 from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
 
-__all__ = ['ResponseError', 'NotSupportedError', 'CloseConnection',
-           'CommandNotAllowed', 'SearchNotAllowed', 'InvalidAuth',
-           'MailboxError', 'MailboxAbort', 'MailboxNotFound',
-           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
-           'AppendFailure']
+__all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
+           'SearchNotAllowed', 'InvalidAuth', 'MailboxError', 'MailboxAbort',
+           'MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
+           'MailboxReadOnly', 'AppendFailure']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -30,17 +30,6 @@ class ResponseError(Exception, metaclass=ABCMeta):
         ...
 
 
-class NotSupportedError(ResponseError, NotImplementedError):
-    """Raised when an action is taken that is not supported by the server or
-    backend.
-
-    """
-
-    def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, b'Operation not supported.',
-                          ResponseCode.of(b'CANNOT'))
-
-
 class CloseConnection(ResponseError):
     """Raised when the connection should be closed immediately after sending
     the provided response.
@@ -53,25 +42,21 @@ class CloseConnection(ResponseError):
         return response
 
 
-class CommandNotAllowed(ResponseError):
-    """The command is syntactically valid, but not allowed.
-
-    Args:
-        message: The message to display in the response.
-        code: Optional response code for the error.
+class NotSupportedError(ResponseError, NotImplementedError):
+    """Raised when an action is taken that might be syntactically valid, but is
+    not supported by the server or backend.
 
     """
 
-    def __init__(self, message: bytes, code: ResponseCode = None) -> None:
-        super().__init__()
-        self.message = message
-        self.code = code
+    def __init__(self, msg: str = 'Operation not supported.') -> None:
+        super().__init__(msg)
+        self._raw = msg.encode('utf-8')
 
-    def get_response(self, tag: bytes) -> Response:
-        return ResponseNo(tag, self.message, self.code)
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, self._raw, ResponseCode.of(b'CANNOT'))
 
 
-class SearchNotAllowed(CommandNotAllowed):
+class SearchNotAllowed(NotSupportedError):
     """The ``SEARCH`` command contained a search key that could not be
     executed by the mailbox.
 
@@ -80,10 +65,8 @@ class SearchNotAllowed(CommandNotAllowed):
 
     """
 
-    def __init__(self, key: bytes = None) -> None:
-        command = b'SEARCH ' + key if key else b'SEARCH'
-        super().__init__(command + b' not allowed.',
-                         ResponseCode.of(b'CANNOT'))
+    def __init__(self, key: SearchKey) -> None:
+        super().__init__(f'SEARCH {key.value_str} not supported.')
 
 
 class InvalidAuth(ResponseError):

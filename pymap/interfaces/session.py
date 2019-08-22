@@ -11,7 +11,8 @@ from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import ConfigT_contra
 from ..flags import FlagOp
-from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey
+from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey, \
+    ObjectId
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
 
@@ -109,7 +110,7 @@ class SessionInterface(Protocol):
     @abstractmethod
     async def create_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
-            -> Optional[SelectedMailbox]:
+            -> Tuple[ObjectId, Optional[SelectedMailbox]]:
         """Creates a new mailbox owned by the user.
 
         See Also:

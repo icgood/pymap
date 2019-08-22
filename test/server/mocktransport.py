@@ -33,6 +33,7 @@ class MockTransport:
         self.matches = matches
         self.socket = _Socket(fd)
         self._write_batch = []
+        self._select_count = 0
 
     @classmethod
     def _caller(cls, frame):
@@ -83,6 +84,7 @@ class MockTransport:
     def push_select(self, mailbox, exists=None, recent=None, uidnext=None,
                     unseen=None, readonly=False, examine=False, wait=None,
                     post_wait=None, set=None):
+        n = self._select_count = self._select_count + 1
         if unseen is False:
             unseen_line = (None, b'')
         elif unseen is None:
@@ -106,10 +108,10 @@ class MockTransport:
                              b'\\Answered \\Deleted \\Draft \\Flagged ' \
                              b'\\Seen)] Flags permitted.\r\n'
         if examine:
-            tag = b'examine1'
+            tag = b'examine%i' % (n, )
             cmd = b'EXAMINE'
         else:
-            tag = b'select1'
+            tag = b'select%i' % (n, )
             cmd = b'SELECT'
         self.push_readline(
             tag + b' ' + cmd + b' ' + mailbox + b'\r\n', wait=wait)
@@ -122,6 +124,8 @@ class MockTransport:
             b'* OK [UIDNEXT ', uidnext, b'] Predicted next UID.\r\n'
             b'* OK [UIDVALIDITY ', (br'\d+', ), b'] UIDs valid.\r\n',
             unseen_line,
+            b'* OK [MAILBOXID (', (br'F[a-f0-9]+', b'mbxid%i' % (n, )), b')] '
+            b'Object ID.\r\n',
             tag, b' OK [', ok_code, b'] Selected mailbox.\r\n',
             wait=post_wait, set=set)
 
@@ -145,7 +149,7 @@ class MockTransport:
             elif isinstance(part, int):
                 re_parts.append(b'%i' % part)
             else:
-                if len(part) == 1:
+                if len(part) == 1 or part[1] is None:
                     re_parts.append(part[0])
                 elif part[0] is None:
                     self._match_write_expected(part[1:], re_parts)
@@ -197,7 +201,8 @@ class MockTransport:
             except asyncio.TimeoutError:
                 self._fail('\nTimeout: 1.0s' +
                            '\nWhere:   ' + where)
-        return data
+        return data % {key.encode('ascii'): val
+                       for key, val in self.matches.items()}
 
     async def readexactly(self, size: int) -> bytes:
         where, data, wait, set = self._pop_expected(_Type.READEXACTLY)

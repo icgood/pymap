@@ -6,6 +6,7 @@ from typing import Any, TypeVar, Tuple, Union, Sequence, FrozenSet
 from .astring import AString
 from .fetchattr import FetchRequirement
 from .flag import Flag
+from .objectid import ObjectId
 from .sequenceset import SequenceSet
 from .. import Params, Parseable, ExpectedParseable, Space
 from ..exceptions import NotParseable, UnexpectedType
@@ -15,7 +16,7 @@ from ...bytes import rev
 __all__ = ['SearchKey']
 
 _FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
-                    Sequence['SearchKey'], SequenceSet, Flag,
+                    Sequence['SearchKey'], SequenceSet, Flag, ObjectId,
                     datetime, int, str]
 _FilterT = TypeVar('_FilterT', bound=_FilterType)
 
@@ -48,6 +49,11 @@ class SearchKey(Parseable[bytes]):
     def value(self) -> bytes:
         """The search key."""
         return self.key
+
+    @property
+    def value_str(self) -> str:
+        """The search key, as a string."""
+        return self.key.decode('ascii')
 
     @property
     def requirement(self) -> FetchRequirement:
@@ -110,7 +116,11 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_header(self) -> Tuple[str, str]:
-        return self._get_filter(tuple)  # type: ignore
+        return self._get_filter(tuple)
+
+    @property
+    def filter_object_id(self) -> ObjectId:
+        return self._get_filter(ObjectId)
 
     def __bytes__(self) -> bytes:
         raise NotImplementedError
@@ -185,6 +195,10 @@ class SearchKey(Parseable[bytes]):
             _, buf = Space.parse(after, params)
             filter_str, buf = cls._parse_astring_filter(buf, params)
             return cls(key, filter_str, inverse), buf
+        elif key in (b'EMAILID', b'THREADID'):
+            _, buf = Space.parse(after, params)
+            filter_id, buf = ObjectId.parse(buf, params)
+            return cls(key, filter_id, inverse), buf
         elif key in (b'BEFORE', b'ON', b'SINCE', b'SENTBEFORE', b'SENTON',
                      b'SENTSINCE'):
             _, buf = Space.parse(after, params)

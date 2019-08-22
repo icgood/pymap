@@ -5,7 +5,7 @@ from typing import ClassVar, Tuple, Iterable, Sequence, List, Mapping, Optional
 
 from . import Response
 from ..modutf7 import modutf7_encode
-from ..primitives import Nil, ListP, QuotedString, Number
+from ..primitives import Nil, ListP, QuotedString
 from ..specials import Mailbox, FetchAttribute, StatusAttribute
 from ...bytes import MaybeBytes, BytesFormat, WriteStream
 
@@ -204,7 +204,7 @@ class StatusResponse(Response):
     """
 
     def __init__(self, name: str,
-                 data: Mapping[StatusAttribute, Number]) -> None:
+                 data: Mapping[StatusAttribute, MaybeBytes]) -> None:
         super().__init__(b'*')
         self.name = name
         self.data = data

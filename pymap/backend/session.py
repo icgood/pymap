@@ -12,8 +12,8 @@ from pymap.interfaces.filter import FilterSetInterface
 from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import SessionInterface
 from pymap.mailbox import MailboxSnapshot
-from pymap.parsing.specials import SequenceSet, SearchKey, \
-    FetchAttribute, FetchRequirement
+from pymap.parsing.specials import SequenceSet, SearchKey, FetchAttribute, \
+    FetchRequirement, ObjectId
 from pymap.parsing.specials.flag import Flag, Seen
 from pymap.parsing.response.code import AppendUid, CopyUid
 from pymap.search import SearchParams, SearchCriteriaSet
@@ -64,7 +64,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                             mbx: Optional[MailboxDataInterface[MessageT]]) \
             -> Optional[SelectedMailbox]:
         if selected:
-            if not mbx or selected.guid != mbx.guid:
+            if not mbx or selected.mailbox_id != mbx.mailbox_id:
                 try:
                     mbx = await self._get_selected(selected)
                 except MailboxNotFound:
@@ -77,7 +77,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
     def _pick_selected(cls, selected: Optional[SelectedMailbox],
                        mbx: MailboxDataInterface[MessageT]) \
             -> Optional[SelectedMailbox]:
-        if selected and selected.guid == mbx.guid:
+        if selected and selected.mailbox_id == mbx.mailbox_id:
             return selected
         return mbx.selected_set.any_selected
 
@@ -110,9 +110,9 @@ class BaseSession(SessionInterface, Generic[MessageT]):
 
     async def create_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
-            -> Optional[SelectedMailbox]:
-        await self.mailbox_set.add_mailbox(name)
-        return await self._load_updates(selected, None)
+            -> Tuple[ObjectId, Optional[SelectedMailbox]]:
+        mailbox_id = await self.mailbox_set.add_mailbox(name)
+        return mailbox_id, await self._load_updates(selected, None)
 
     async def delete_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
@@ -157,7 +157,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple[MailboxSnapshot, SelectedMailbox]:
         mbx = await self.mailbox_set.get_mailbox(name)
-        selected = SelectedMailbox(mbx.guid, readonly or mbx.readonly,
+        selected = SelectedMailbox(mbx.mailbox_id, readonly or mbx.readonly,
                                    PermanentFlags(mbx.permanent_flags),
                                    SessionFlags(mbx.session_flags),
                                    selected_set=mbx.selected_set,
@@ -234,7 +234,9 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         async for _, msg in mbx.find(sequence_set, selected, req):
             if not msg.expunged:
                 source_uid = msg.uid
-                msg = await dest.add(msg.append_msg, recent=not dest_selected)
+                msg = await dest.add(msg.append_msg, recent=not dest_selected,
+                                     email_id=msg.email_id,
+                                     thread_id=msg.thread_id)
                 if dest_selected:
                     dest_selected.session_flags.add_recent(msg.uid)
                 uids.append((source_uid, msg.uid))

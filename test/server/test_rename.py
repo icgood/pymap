@@ -105,15 +105,18 @@ class TestMailbox(TestBase):
         transport.push_readline(
             b'create1 CREATE Test\r\n')
         transport.push_write(
-            b'create1 OK CREATE completed.\r\n')
+            b'create1 OK [MAILBOXID (', (br'F[a-f0-9]+', ), b')]'
+            b' CREATE completed.\r\n')
         transport.push_readline(
             b'create2 CREATE Test/One\r\n')
         transport.push_write(
-            b'create2 OK CREATE completed.\r\n')
+            b'create2 OK [MAILBOXID (', (br'F[a-f0-9]+', ), b')]'
+            b' CREATE completed.\r\n')
         transport.push_readline(
             b'create3 CREATE Test/One/Two\r\n')
         transport.push_write(
-            b'create3 OK CREATE completed.\r\n')
+            b'create3 OK [MAILBOXID (', (br'F[a-f0-9]+', ), b')]'
+            b' CREATE completed.\r\n')
         transport.push_readline(
             b'delete1 DELETE Test/One\r\n')
         transport.push_write(
@@ -135,3 +138,20 @@ class TestMailbox(TestBase):
             b'list2 OK LIST completed.\r\n')
         transport.push_logout()
         await self.run(transport)
+
+    async def test_rename_mailbox_id(self, imap_server):
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_readline(
+            b'create1 CREATE Test\r\n')
+        transport.push_write(
+            b'create1 OK [MAILBOXID (', (br'F[a-f0-9]+', b'mbxid'), b')]'
+            b' CREATE completed.\r\n')
+        transport.push_readline(
+            b'rename1 RENAME Test Foo\r\n')
+        transport.push_write(
+            b'rename1 OK RENAME completed.\r\n')
+        transport.push_select(b'Foo', unseen=False)
+        transport.push_logout()
+        await self.run(transport)
+        assert self.matches['mbxid1'] == self.matches['mbxid']

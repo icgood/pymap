@@ -22,7 +22,7 @@ class Nil(Parseable[None]):
 
     _nil_pattern = rev.compile(b'^NIL$', re.I)
 
-    __slots__ = []  # type: ignore
+    __slots__: List[str] = []
 
     def __init__(self) -> None:
         super().__init__()
@@ -161,7 +161,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
 
     _MAX_LEN = 4096
 
-    __slots__ = []  # type: ignore
+    __slots__: List[str] = []
 
     @property
     @abstractmethod
