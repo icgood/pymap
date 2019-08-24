@@ -61,6 +61,11 @@ class MessageContent(Writeable):
             return ct_hdr.content_type == 'message/rfc822'
 
     @classmethod
+    def empty(cls) -> 'MessageContent':
+        """Return an empty message content."""
+        return cls([], 0, MessageHeader._empty(), MessageBody._empty())
+
+    @classmethod
     def parse(cls, data: bytes) -> 'MessageContent':
         """Parse the bytestring into message content.
 
@@ -181,6 +186,10 @@ class MessageHeader(Writeable):
         self.parsed: Final = parsed
 
     @classmethod
+    def _empty(cls) -> 'MessageHeader':
+        return cls([], 0, [], ParsedHeaders({}))
+
+    @classmethod
     def _parse(cls, data: bytes, view: memoryview,
                lines: _Lines) -> 'MessageHeader':
         folds = cls._find_folds(data, lines)
@@ -283,6 +292,10 @@ class MessageBody(Writeable, metaclass=ABCMeta):
     def nested(self) -> Sequence[MessageContent]:
         """If :attr:`.has_nested` is True, contains the list of sub-parts."""
         ...
+
+    @classmethod
+    def _empty(cls) -> 'MessageBody':
+        return _SinglepartBody([], 0, _default_type)
 
     @classmethod
     def _parse(cls, data: bytes, view: memoryview, lines: _Lines,

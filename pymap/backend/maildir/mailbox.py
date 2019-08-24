@@ -14,6 +14,7 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
+from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
 from pymap.parsing.specials import ObjectId, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
@@ -24,8 +25,7 @@ from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
-from ..mailbox import MailboxDataInterface, MailboxSetInterface, \
-    Message as _Message
+from ..mailbox import MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Maildir', 'Message', 'MailboxData', 'MailboxSet']
 
@@ -82,7 +82,32 @@ class Maildir(_Maildir):
             self._toc[key] = new_subpath
 
 
-class Message(_Message):
+class Message(BaseMessage):
+
+    __slots__ = ['_recent', '_maildir_msg']
+
+    def __init__(self, uid: int, internal_date: datetime,
+                 permanent_flags: Iterable[Flag], *, expunged: bool = False,
+                 email_id: ObjectId = None, thread_id: ObjectId = None,
+                 recent: bool = False, maildir_msg: MaildirMessage = None) \
+            -> None:
+        super().__init__(uid, internal_date, permanent_flags,
+                         expunged=expunged, email_id=email_id,
+                         thread_id=thread_id)
+        self._recent = recent
+        self._maildir_msg = maildir_msg
+
+    @property
+    def recent(self) -> bool:
+        return self._recent
+
+    @recent.setter
+    def recent(self, recent: bool) -> None:
+        self._recent = recent
+
+    async def load_content(self, requirement: FetchRequirement) \
+            -> 'MaildirMessageContent':
+        return MaildirMessageContent(self, self._maildir_msg, requirement)
 
     @classmethod
     def to_maildir(cls, append_msg: AppendMessage, recent: bool,
@@ -98,17 +123,26 @@ class Message(_Message):
     def from_maildir(cls, uid: int, maildir_msg: MaildirMessage,
                      email_id: Optional[ObjectId],
                      thread_id: Optional[ObjectId],
-                     maildir_flags: 'MaildirFlags',
-                     metadata_only: bool) -> 'Message':
+                     maildir_flags: 'MaildirFlags') -> 'Message':
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         recent = maildir_msg.get_subdir() == 'new'
         msg_dt = datetime.fromtimestamp(maildir_msg.get_date())
-        if metadata_only:
-            content: Optional[MessageContent] = None
-        else:
-            content = MessageContent.parse(bytes(maildir_msg))
-        return cls(uid, msg_dt, flag_set, recent=recent, content=content,
-                   email_id=email_id, thread_id=thread_id)
+        return cls(uid, msg_dt, flag_set,
+                   email_id=email_id, thread_id=thread_id,
+                   recent=recent, maildir_msg=maildir_msg)
+
+
+class MaildirMessageContent(BaseLoadedMessage):
+    """
+
+    """
+
+    __slots__ = ['_content']
+
+    def __init__(self, message: Message, maildir_msg: MaildirMessage,
+                 requirement: FetchRequirement) -> None:
+        content = MessageContent.parse(bytes(maildir_msg))
+        super().__init__(message, content, requirement)
 
 
 class MailboxData(MailboxDataInterface[Message]):
@@ -174,7 +208,6 @@ class MailboxData(MailboxDataInterface[Message]):
     async def add(self, append_msg: AppendMessage, *, recent: bool = False,
                   email_id: ObjectId = None,
                   thread_id: ObjectId = None) -> Message:
-        content = MessageContent.parse(append_msg.message)
         if email_id is None:
             email_id = ObjectId.random_email_id()
         if thread_id is None:
@@ -191,7 +224,8 @@ class MailboxData(MailboxDataInterface[Message]):
             uidl.set(new_rec)
         email_id = key.encode('ascii')
         message = Message(new_rec.uid, append_msg.when, append_msg.flag_set,
-                          recent=recent, email_id=email_id, content=content)
+                          recent=recent, email_id=email_id,
+                          maildir_msg=maildir_msg)
         return message
 
     async def get(self, uid: int, cached_msg: CachedMessage = None,
@@ -209,7 +243,7 @@ class MailboxData(MailboxDataInterface[Message]):
                                    cached_msg.permanent_flags, expunged=True)
                 else:
                     return None
-        metadata_only = (requirement == FetchRequirement.METADATA)
+        metadata_only = not requirement.overlaps(FetchRequirement.CONTENT)
         key = record.key
         email_id = self._get_object_id(record, 'E')
         thread_id = self._get_object_id(record, 'T')
@@ -226,7 +260,7 @@ class MailboxData(MailboxDataInterface[Message]):
                 else:
                     return None
             return Message.from_maildir(uid, maildir_msg, email_id, thread_id,
-                                        self.maildir_flags, metadata_only)
+                                        self.maildir_flags)
 
     async def delete(self, uids: Iterable[int]) -> None:
         async with UidList.with_read(self._path) as uidl:
@@ -296,7 +330,7 @@ class MailboxData(MailboxDataInterface[Message]):
                 else:
                     yield Message.from_maildir(
                         uid, maildir_msg, email_id, thread_id,
-                        self.maildir_flags, True)
+                        self.maildir_flags)
 
     async def reset(self) -> 'MailboxData':
         keys = await self._get_keys()

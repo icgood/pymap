@@ -31,7 +31,8 @@ from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from pymap.parsing.specials import FetchAttribute, StatusAttribute
+from pymap.parsing.specials import StatusAttribute, FetchAttribute, \
+    FetchRequirement
 from pymap.selected import SelectedMailbox
 from pysasl import AuthenticationCredentials
 
@@ -271,13 +272,17 @@ class ConnectionState:
     async def do_fetch(self, cmd: FetchCommand):
         if not cmd.uid:
             self.selected.hide_expunged = True
+        set_seen = any(attr.set_seen for attr in cmd.attributes)
         messages, updates = await self.session.fetch_messages(
-            self.selected, cmd.sequence_set, frozenset(cmd.attributes))
+            self.selected, cmd.sequence_set, set_seen)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
+        requirement = FetchRequirement.reduce(
+            {attr.requirement for attr in cmd.attributes})
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
-            msg_attrs = MessageAttributes(msg, self.selected)
+            msg_content = await msg.load_content(requirement)
+            msg_attrs = MessageAttributes(msg, msg_content, self.selected)
             fetch_data = msg_attrs.get_all(cmd.attributes)
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates

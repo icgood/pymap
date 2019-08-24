@@ -13,6 +13,12 @@ from pymap.selected import SelectedMailbox
 _Keyword = Flag(b'$Keyword')
 
 
+class _Message(BaseMessage):
+
+    async def load_content(self, requirement):
+        raise RuntimeError()
+
+
 class TestSelectedMailbox(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -27,7 +33,7 @@ class TestSelectedMailbox(unittest.TestCase):
     @classmethod
     def set_messages(cls, selected: SelectedMailbox,
                      expunged, messages) -> None:
-        updates = [BaseMessage(uid, datetime.now(), flags)
+        updates = [_Message(uid, datetime.now(), flags)
                    for uid, flags in messages]
         selected.add_updates(updates, expunged)
 

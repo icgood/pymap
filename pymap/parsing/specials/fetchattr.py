@@ -17,15 +17,34 @@ class FetchRequirement(enum.Flag):
     Attributes:
         NONE: No data is required.
         METADATA: The IMAP metadata is required.
-        HEADERS: The message headers are required.
+        HEADER: The message header is required.
         BODY: The parsed MIME message body is required.
 
     """
 
     NONE = 0
     METADATA = enum.auto()
-    HEADERS = enum.auto()
+    HEADER = enum.auto()
     BODY = enum.auto()
+    CONTENT = HEADER | BODY
+
+    def overlaps(self, expected: 'FetchRequirement') -> bool:
+        """Checks if this fetch requirement overlaps one or more of the
+        expected fetch requirements.
+
+        Args:
+            expected: The expected fetch requirements.
+
+        """
+        return self & expected != FetchRequirement.NONE
+
+    @classmethod
+    def all(cls) -> 'FetchRequirement':
+        """Return all possible fetch requirements reduced into a single
+        requirement.
+
+        """
+        return cls.reduce(FetchRequirement)
 
     @classmethod
     def reduce(cls, requirements: Iterable['FetchRequirement']) \
@@ -126,9 +145,9 @@ class FetchAttribute(Parseable[bytes]):
         if attr_name in (b'UID', b'FLAGS', b'INTERNALDATE'):
             return FetchRequirement.METADATA
         elif attr_name in (b'ENVELOPE', b'RFC822.HEADER'):
-            return FetchRequirement.HEADERS
+            return FetchRequirement.HEADER
         else:
-            return FetchRequirement.BODY
+            return FetchRequirement.CONTENT
 
     @property
     def raw(self) -> bytes:

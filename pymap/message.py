@@ -3,32 +3,30 @@
 import re
 from datetime import datetime
 from typing import Any, Optional, Tuple, Iterable, Mapping, FrozenSet, \
-    Sequence, Collection, TypeVar, Type
+    Sequence, Collection
 from typing_extensions import Final
 
 from .bytes import Writeable
 from .flags import SessionFlags
-from .interfaces.message import AppendMessage, CachedMessage, \
-    MessageInterface, FlagsKey
+from .interfaces.message import FlagsKey, AppendMessage, CachedMessage, \
+    MessageInterface, LoadedMessageInterface
 from .mime import MessageContent
 from .mime.cte import MessageDecoder
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
-from .parsing.specials import Flag, ObjectId, ExtensionOptions
+from .parsing.specials import Flag, ObjectId, ExtensionOptions, \
+    FetchRequirement
 
-__all__ = ['MessageT', 'BaseMessage']
-
-#: Type variable with an upper bound of :class:`BaseMessage`.
-MessageT = TypeVar('MessageT', bound='BaseMessage')
+__all__ = ['BaseMessage', 'BaseLoadedMessage']
 
 
 class _NoContent(ValueError):
     # Thrown when message contents are requested but the message object does
     # not have contents loaded.
 
-    def __init__(self) -> None:
-        super().__init__('Message content not available.')
+    def __init__(self, expected: FetchRequirement) -> None:
+        super().__init__(f'Message {expected.name} not available.')
 
 
 class BaseMessage(MessageInterface, CachedMessage):
@@ -42,27 +40,24 @@ class BaseMessage(MessageInterface, CachedMessage):
         email_id: The message content identifier for the message.
         thread_id: The thread identifier for the message.
         expunged: True if this message has been expunged from the mailbox.
-        content: The content of the message.
 
     """
 
     __slots__ = ['uid', 'internal_date', 'expunged', '_permanent_flags',
-                 '_email_id', '_thread_id', '_flags_key', '_content']
+                 '_email_id', '_thread_id', '_flags_key']
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *,
                  email_id: ObjectId = None, thread_id: ObjectId = None,
-                 expunged: bool = False,
-                 content: MessageContent = None) -> None:
+                 expunged: bool = False) -> None:
         super().__init__()
         self.uid: Final = uid
         self.internal_date: Final = internal_date
         self.expunged: Final = expunged
         self._email_id = email_id
         self._thread_id = thread_id
-        self._permanent_flags = frozenset(permanent_flags or [])
+        self._permanent_flags = frozenset(permanent_flags or ())
         self._flags_key = (uid, self._permanent_flags)
-        self._content = content
 
     @property
     def email_id(self) -> Optional[ObjectId]:
@@ -71,25 +66,6 @@ class BaseMessage(MessageInterface, CachedMessage):
     @property
     def thread_id(self) -> Optional[ObjectId]:
         return self._thread_id
-
-    @property
-    def content(self) -> MessageContent:
-        """The MIME-parsed message content."""
-        if self._content is None:
-            raise _NoContent()
-        return self._content
-
-    @property
-    def append_msg(self) -> AppendMessage:
-        data = bytes(self.content)
-        return AppendMessage(data, self.internal_date, self._permanent_flags,
-                             ExtensionOptions.empty())
-
-    def copy(self: MessageT, new_uid: int) -> MessageT:
-        cls = type(self)
-        return cls(new_uid, self.internal_date, self._permanent_flags,
-                   email_id=self._email_id, thread_id=self._thread_id,
-                   expunged=self.expunged, content=self._content)
 
     @property
     def permanent_flags(self) -> FrozenSet[Flag]:
@@ -115,11 +91,47 @@ class BaseMessage(MessageInterface, CachedMessage):
         type_name = type(self).__name__
         return f'<{type_name} uid={self.uid} flags={self.permanent_flags}>'
 
-    @classmethod
-    def _get_subpart(cls: Type[MessageT], msg: MessageT, section) \
+
+class BaseLoadedMessage(LoadedMessageInterface):
+    """The loaded message content, implemented using an instance of
+    :class:`pymap.mime.MessageContent`.
+
+    Args:
+        message: The message object.
+        content: The MIME-parsed message content, if available.
+        requirement: The fetch requirement of the loaded content.
+
+    """
+
+    def __init__(self, message: MessageInterface,
+                 content: Optional[MessageContent],
+                 requirement: FetchRequirement) -> None:
+        super().__init__()
+        self.content: Final = content
+        self._message = message
+        self._requirement = requirement
+
+    @property
+    def message(self) -> MessageInterface:
+        return self._message
+
+    @property
+    def requirement(self) -> FetchRequirement:
+        return self._requirement
+
+    @property
+    def append_msg(self) -> AppendMessage:
+        assert self.content is not None
+        data = bytes(self.content)
+        when = self.message.internal_date
+        flag_set = self.message.permanent_flags
+        return AppendMessage(data, when, flag_set, ExtensionOptions.empty())
+
+    def _get_subpart(self, section, expected: FetchRequirement) \
             -> MessageContent:
+        assert self.content is not None
         if section:
-            subpart = msg.content
+            subpart = self.content
             for i in section:
                 if subpart.body.has_nested:
                     subpart = subpart.body.nested[i - 1]
@@ -129,18 +141,19 @@ class BaseMessage(MessageInterface, CachedMessage):
                     raise IndexError(i)
             return subpart
         else:
-            return msg.content
+            return self.content
 
     def get_header(self, name: bytes) -> Sequence[str]:
+        assert self.content is not None
         try:
             return self.content.header.parsed[name]
-        except (KeyError, _NoContent):
+        except KeyError:
             return []
 
     def get_headers(self, section: Sequence[int]) -> Writeable:
         try:
-            msg = self._get_subpart(self, section)
-        except (IndexError, _NoContent):
+            msg = self._get_subpart(section, FetchRequirement.HEADER)
+        except IndexError:
             return Writeable.empty()
         else:
             return msg.header
@@ -148,8 +161,8 @@ class BaseMessage(MessageInterface, CachedMessage):
     def get_body(self, section: Sequence[int] = None,
                  binary: bool = False) -> Writeable:
         try:
-            msg = self._get_subpart(self, section)
-        except (IndexError, _NoContent):
+            msg = self._get_subpart(section, FetchRequirement.CONTENT)
+        except IndexError:
             return Writeable.empty()
         if binary:
             decoded = MessageDecoder.of(msg.header).decode(msg.body)
@@ -167,7 +180,7 @@ class BaseMessage(MessageInterface, CachedMessage):
                             subset: Collection[bytes] = None,
                             inverse: bool = False) -> Writeable:
         try:
-            msg = self._get_subpart(self, section)
+            msg = self._get_subpart(section, FetchRequirement.HEADER)
         except (IndexError, _NoContent):
             return Writeable.empty()
         if section:
@@ -183,7 +196,7 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     def get_message_text(self, section: Sequence[int] = None) -> Writeable:
         try:
-            msg = self._get_subpart(self, section)
+            msg = self._get_subpart(section, FetchRequirement.CONTENT)
         except (IndexError, _NoContent):
             return Writeable.empty()
         if section:
@@ -199,18 +212,20 @@ class BaseMessage(MessageInterface, CachedMessage):
 
     def get_size(self, section: Sequence[int] = None) -> int:
         try:
-            msg = self._get_subpart(self, section)
+            msg = self._get_subpart(section, FetchRequirement.CONTENT)
         except (IndexError, _NoContent):
             return 0
         return len(msg)
 
     def get_envelope_structure(self) -> EnvelopeStructure:
+        assert self.content is not None
         try:
             return self._get_envelope_structure(self.content)
         except _NoContent:
             return EnvelopeStructure.empty()
 
     def get_body_structure(self) -> BodyStructure:
+        assert self.content is not None
         try:
             return self._get_body_structure(self.content)
         except _NoContent:
@@ -266,10 +281,9 @@ class BaseMessage(MessageInterface, CachedMessage):
             content_id, content_desc, content_encoding, None, size)
 
     def contains(self, value: bytes) -> bool:
-        if self._content is None:
-            return False
+        assert self.content is not None
         pattern = re.compile(re.escape(value), re.I)
-        for part in self._content.walk():
+        for part in self.content.walk():
             if pattern.search(bytes(part.header)) is not None:
                 return True
             elif part.body.content_type.maintype == 'text':

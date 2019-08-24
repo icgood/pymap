@@ -8,14 +8,18 @@ class TestMessageContents(unittest.TestCase):
 
     def test_parse(self) -> None:
         header = b'from: sender@example.com \n' \
-                 b'to: user1@example.com,\n user2@example.com\n' \
+                 b'to: user1@example.com,\n' \
+                 b' user2@example.com\n' \
                  b'to:  user3@example.com\r\n' \
                  b'subject: hello world \xff\r\n' \
-                 b'test:\n more stuff\n\n'
+                 b'test:\n' \
+                 b' more stuff\n' \
+                 b'\n'
         body = b'abc\n'
         raw = header + body
         msg = MessageContent.parse(raw)
         self.assertEqual(raw, bytes(msg))
+        self.assertEqual(9, msg.lines)
         self.assertEqual(header, bytes(msg.header))
         self.assertEqual({b'from': ['sender@example.com'],
                           b'to': ['user1@example.com, user2@example.com',
@@ -28,13 +32,16 @@ class TestMessageContents(unittest.TestCase):
 
     def test_parse_rfc822(self) -> None:
         header = b'subject: rfc822 test\n' \
-                 b'content-type: message/rfc822\n\n'
-        sub_header = b'content-type: text/html\n\n'
-        sub_body = b'<html><body><h1>part two</h1></body></html>'
+                 b'content-type: message/rfc822\n' \
+                 b'\n'
+        sub_header = b'content-type: text/html\n' \
+                     b'\n'
+        sub_body = b'<html><body><h1>part two</h1></body></html>\n'
         body = sub_header + sub_body
         raw = header + body
         msg = MessageContent.parse(raw)
         self.assertEqual(raw, bytes(msg))
+        self.assertEqual(6, msg.lines)
         self.assertEqual(header, bytes(msg.header))
         self.assertEqual({b'subject': ['rfc822 test'],
                           b'content-type': ['message/rfc822']},
@@ -50,9 +57,12 @@ class TestMessageContents(unittest.TestCase):
 
     def test_parse_multipart(self) -> None:
         header = b'subject: multipart test\n' \
-                 b'content-type: multipart/mixed;\n boundary="testbound"\n\n'
+                 b'content-type: multipart/mixed;\n' \
+                 b' boundary="testbound"\n' \
+                 b'\n'
         part1 = b'\n' \
-                b'part one!\n\n' \
+                b'part one!\n' \
+                b'\n' \
                 b'lorem ipsum etc.\n'
         part2 = b'content-type: text/html\n' \
                 b'\n' \
@@ -65,6 +75,7 @@ class TestMessageContents(unittest.TestCase):
         raw = header + body
         msg = MessageContent.parse(raw)
         self.assertEqual(raw, bytes(msg))
+        self.assertEqual(16, msg.lines)
         self.assertEqual(header, bytes(msg.header))
         self.assertEqual({b'subject': ['multipart test'],
                           b'content-type': ['multipart/mixed; '

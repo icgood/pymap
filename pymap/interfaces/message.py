@@ -8,10 +8,11 @@ from typing_extensions import Protocol
 from ..bytes import Writeable
 from ..flags import SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
-from ..parsing.specials import Flag, ExtensionOptions, ObjectId
+from ..parsing.specials import Flag, ExtensionOptions, ObjectId, \
+    FetchRequirement
 
-__all__ = ['AppendMessage', 'CachedMessage', 'MessageInterface', 'MessageT',
-           'FlagsKey']
+__all__ = ['MessageT', 'FlagsKey', 'AppendMessage', 'CachedMessage',
+           'MessageInterface', 'LoadedMessageInterface']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
@@ -88,8 +89,8 @@ class CachedMessage(Protocol):
 
 
 class MessageInterface(Protocol):
-    """Message data including content and metadata such as UID, permanent
-    flags, and when the message was added to the system.
+    """Message data such as UID, permanent flags, and when the message was
+    added to the system.
 
     """
 
@@ -139,22 +140,6 @@ class MessageInterface(Protocol):
         """
         ...
 
-    @property
-    @abstractmethod
-    def append_msg(self) -> AppendMessage:
-        """A copy of the message for appending to a mailbox."""
-        ...
-
-    @abstractmethod
-    def copy(self: MessageT, new_uid: int) -> MessageT:
-        """Return a copy of the message with a new UID.
-
-        Args:
-            new_uid: The copied message UID.
-
-        """
-        ...
-
     @abstractmethod
     def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message.
@@ -166,11 +151,55 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
+    async def load_content(self, requirement: FetchRequirement) \
+            -> 'LoadedMessageInterface':
+        """Loads the content of the message.
+
+        Args:
+            requirement: The data required from the message content.
+
+        """
+        ...
+
+
+class LoadedMessageInterface(Protocol):
+    """The loaded message content, which may include the header, the body,
+    both, or neither, depending on the requirements.
+
+    It is assumed that this object contains the entire content in-memory. As
+    such, when multiple :class:`MessageInterface` objects are being processed,
+    only one :class:`LoadedMessageInterface` should be in scope at a time.
+
+    """
+
+    @property
+    @abstractmethod
+    def requirement(self) -> FetchRequirement:
+        """The :class:`FetchRequirement` used to load the message content."""
+        ...
+
+    @property
+    @abstractmethod
+    def message(self) -> MessageInterface:
+        """The message that the content belongs to."""
+        ...
+
+    @property
+    @abstractmethod
+    def append_msg(self) -> AppendMessage:
+        """A copy of the message for appending to a mailbox."""
+        ...
+
+    @abstractmethod
     def get_header(self, name: bytes) -> Sequence[str]:
         """Get the values of a header from the message.
 
         Args:
             name: The name of the header.
+
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
 
         """
         ...
@@ -185,6 +214,10 @@ class MessageInterface(Protocol):
 
         Args:
             section: Nested list of sub-part indexes.
+
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
 
         """
         ...
@@ -206,6 +239,10 @@ class MessageInterface(Protocol):
             inverse: If ``subset`` is given, this flag will invert it so that
                 the headers *not* in ``subset`` are returned.
 
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
+
         """
         ...
 
@@ -219,6 +256,10 @@ class MessageInterface(Protocol):
 
         Args:
             section: Optional nested list of sub-part indexes.
+
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
 
         """
         ...
@@ -237,6 +278,10 @@ class MessageInterface(Protocol):
             binary: True if the result has decoded any
                 Content-Transfer-Encoding.
 
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
+
         """
         ...
 
@@ -246,6 +291,10 @@ class MessageInterface(Protocol):
 
         Args:
             section: Optional nested list of sub-part indexes.
+
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
 
         """
         ...
@@ -258,6 +307,10 @@ class MessageInterface(Protocol):
             `RFC 3501 2.3.5.
             <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
 
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
+
         """
         ...
 
@@ -269,6 +322,10 @@ class MessageInterface(Protocol):
             `RFC 3501 2.3.6
             <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
 
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
+
         """
         ...
 
@@ -279,6 +336,10 @@ class MessageInterface(Protocol):
 
         Args:
             value: The sub-string to find.
+
+        Raises:
+            ValueError: :attr:`.requirement` is not sufficient to return the
+                necessary data.
 
         """
         ...

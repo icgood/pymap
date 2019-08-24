@@ -1,25 +1,19 @@
 
 from abc import abstractmethod
-from datetime import datetime
 from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
     Iterable, AsyncIterable
 from typing_extensions import Protocol
 
 from pymap.flags import FlagOp
-from pymap.interfaces.message import AppendMessage, CachedMessage
+from pymap.interfaces.message import AppendMessage, CachedMessage, MessageT
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import BaseMessage
-from pymap.mime import MessageContent
 from pymap.parsing.specials import ObjectId, SequenceSet, FetchRequirement
 from pymap.parsing.specials.flag import get_system_flags, Flag, Deleted, Recent
 from pymap.selected import SelectedSet, SelectedMailbox
 
-__all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'Message',
-           'MessageT', 'MailboxDataT', 'MailboxDataT_co']
-
-#: Type variable with an upper bound of :class:`Message`.
-MessageT = TypeVar('MessageT', bound='Message')
+__all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'MailboxDataT',
+           'MailboxDataT_co']
 
 #: Type variable with an upper bound of :class:`MailboxDataInterface`.
 MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface')
@@ -28,39 +22,6 @@ MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface')
 #: :class:`MailboxDataInterface`.
 MailboxDataT_co = TypeVar('MailboxDataT_co', bound='MailboxDataInterface',
                           covariant=True)
-
-
-class Message(BaseMessage):
-    """Manages a single message. This message does not have its contents
-    (headers, body, etc.) loaded into memory, it is only the IMAP metadata
-    such as UID and flags.
-
-    """
-
-    __slots__ = ['_recent']
-
-    def __init__(self, uid: int, internal_date: datetime,
-                 permanent_flags: Iterable[Flag], *,
-                 email_id: ObjectId = None, thread_id: ObjectId = None,
-                 expunged: bool = False, content: MessageContent = None,
-                 recent: bool = False) -> None:
-        super().__init__(uid, internal_date, permanent_flags,
-                         email_id=email_id, thread_id=thread_id,
-                         expunged=expunged, content=content)
-        self._recent = recent
-
-    @property
-    def recent(self) -> bool:
-        """True if the message is considered new in the mailbox. The next
-        session to SELECT the mailbox will negate this value and apply the
-        ``\\Recent`` session flag to the message.
-
-        """
-        return self._recent
-
-    @recent.setter
-    def recent(self, recent: bool) -> None:
-        self._recent = recent
 
 
 class MailboxDataInterface(Protocol[MessageT]):

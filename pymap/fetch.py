@@ -4,7 +4,7 @@ from typing_extensions import Final
 
 from .bytes import MaybeBytes, Writeable
 from .exceptions import NotSupportedError
-from .interfaces.message import MessageInterface
+from .interfaces.message import MessageInterface, LoadedMessageInterface
 from .parsing.primitives import Nil, Number, ListP, LiteralString
 from .parsing.specials import DateTime, FetchAttribute
 from .selected import SelectedMailbox
@@ -48,14 +48,17 @@ class MessageAttributes:
 
     Args:
         message: The message object.
+        loaded_msg: The message content.
         selected: The selected mailbox.
 
     """
 
     def __init__(self, message: MessageInterface,
+                 loaded_msg: LoadedMessageInterface,
                  selected: SelectedMailbox) -> None:
         super().__init__()
         self.message: Final = message
+        self.loaded_msg: Final = loaded_msg
         self.selected: Final = selected
 
     def get_all(self, attrs: Iterable[FetchAttribute]) \
@@ -91,22 +94,22 @@ class MessageAttributes:
 
     def _get_data(self, section: FetchAttribute.Section, partial: _Partial, *,
                   binary: bool = False) -> Writeable:
-        msg = self.message
         specifier = section.specifier
         parts = section.parts
         headers = section.headers
+        content = self.loaded_msg
         if specifier is None:
-            data = msg.get_body(parts, binary)
+            data = content.get_body(parts, binary)
         elif specifier == b'MIME' and parts is not None:
-            data = msg.get_headers(parts)
+            data = content.get_headers(parts)
         elif specifier == b'TEXT':
-            data = msg.get_message_text(parts)
+            data = content.get_message_text(parts)
         elif specifier == b'HEADER':
-            data = msg.get_message_headers(parts)
+            data = content.get_message_headers(parts)
         elif specifier == b'HEADER.FIELDS':
-            data = msg.get_message_headers(parts, headers)
+            data = content.get_message_headers(parts, headers)
         elif specifier == b'HEADER.FIELDS.NOT':
-            data = msg.get_message_headers(parts, headers, True)
+            data = content.get_message_headers(parts, headers, True)
         else:
             raise RuntimeError()  # Should not happen.
         return self._get_partial(data, partial)
@@ -146,16 +149,16 @@ class MessageAttributes:
 
     @_not_expunged
     def _get_ENVELOPE(self, attr: FetchAttribute) -> MaybeBytes:
-        return self.message.get_envelope_structure()
+        return self.loaded_msg.get_envelope_structure()
 
     @_not_expunged
     def _get_BODYSTRUCTURE(self, attr: FetchAttribute) -> MaybeBytes:
-        return self.message.get_body_structure().extended
+        return self.loaded_msg.get_body_structure().extended
 
     @_not_expunged
     def _get_BODY(self, attr: FetchAttribute) -> MaybeBytes:
         if attr.section is None:
-            return self.message.get_body_structure()
+            return self.loaded_msg.get_body_structure()
         return LiteralString(self._get_data(attr.section, attr.partial))
 
     @_not_expunged
@@ -176,7 +179,7 @@ class MessageAttributes:
 
     @_not_expunged
     def _get_RFC822_SIZE(self, attr: FetchAttribute) -> MaybeBytes:
-        return Number(self.message.get_size())
+        return Number(self.loaded_msg.get_size())
 
     @_not_expunged
     def _get_BINARY(self, attr: FetchAttribute) -> MaybeBytes:
