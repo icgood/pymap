@@ -1,7 +1,9 @@
 
 from collections import OrderedDict
+from contextlib import asynccontextmanager
 from itertools import chain
-from typing import Optional, ClassVar, Iterable, Mapping, List, Dict
+from typing import Optional, ClassVar, Iterable, Mapping, List, Dict, \
+    AsyncContextManager, AsyncIterator
 
 from . import UntaggedResponse
 from ..modutf7 import modutf7_encode
@@ -94,14 +96,23 @@ class FetchResponse(UntaggedResponse):
     Args:
         seq: The message sequence number.
         data: Fetch attributes and values for the message.
+        while_writing: A context manager to enter while the response is being
+            written.
 
     """
 
-    def __init__(self, seq: int, data: Iterable[FetchValue]) -> None:
+    def __init__(self, seq: int, data: Iterable[FetchValue],
+                 while_writing: AsyncContextManager[None] = None) -> None:
         super().__init__()
         self.seq = seq
         self.data: Dict[FetchAttribute, FetchValue] = OrderedDict(
             (attr.attribute, attr) for attr in data)
+        self._while_writing = while_writing
+
+    @classmethod
+    @asynccontextmanager
+    async def _noop_cm(cls) -> AsyncIterator[None]:
+        yield
 
     @property
     def merge_key(self) -> int:
@@ -127,11 +138,17 @@ class FetchResponse(UntaggedResponse):
             raise ValueError(other)
         new_data = OrderedDict(self.data)
         new_data.update(other.data)
-        return FetchResponse(self.seq, new_data.values())
+        while_writing = self._while_writing or other._while_writing
+        return FetchResponse(self.seq, new_data.values(), while_writing)
 
     @property
     def text(self) -> bytes:
         return b'%i FETCH' % (self.seq, )
+
+    async def async_write(self, writer: WriteStream) -> None:
+        while_writing = self._while_writing or self._noop_cm()
+        async with while_writing:
+            self.write(writer)
 
     def write(self, writer: WriteStream) -> None:
         writer.write(b'%b %b ' % (self.tag, self.text))

@@ -1,12 +1,15 @@
 
 from abc import abstractmethod, ABCMeta
-from typing import Type, Optional, Tuple, Iterable, Mapping, Sequence, List
+from contextlib import contextmanager, asynccontextmanager
+from typing import Type, Optional, Tuple, Iterator, Mapping, Sequence, List, \
+    AsyncIterator
 from typing_extensions import Final
 
-from .bytes import MaybeBytes, Writeable, BytesFormat
+from .bytes import BytesFormat, MaybeBytes, Writeable
 from .interfaces.message import MessageInterface, LoadedMessageInterface
 from .parsing.primitives import Nil, Number, ListP, LiteralString
-from .parsing.specials import DateTime, FetchAttribute, FetchValue
+from .parsing.specials import DateTime, FetchRequirement, FetchAttribute, \
+    FetchValue
 from .selected import SelectedMailbox
 
 __all__ = ['NotFetchable', 'MessageAttributes']
@@ -34,12 +37,13 @@ class NotFetchable(Exception):
 
 class _SimpleFetchValue(FetchValue, metaclass=ABCMeta):
 
-    __slots__ = ['_value']
+    __slots__ = ['_msg', '_selected']
 
     def __init__(self, attribute: FetchAttribute, msg: MessageInterface,
                  selected: SelectedMailbox) -> None:
         super().__init__(attribute)
-        self._value = self._get_value(attribute, msg, selected)
+        self._msg = msg
+        self._selected = selected
 
     @classmethod
     @abstractmethod
@@ -48,8 +52,9 @@ class _SimpleFetchValue(FetchValue, metaclass=ABCMeta):
         ...
 
     def __bytes__(self) -> bytes:
-        attr = self.attribute.for_response
-        return BytesFormat(b'%b %b') % (attr, self._value)
+        return BytesFormat(b'%b %b') % (
+            self.attribute.for_response,
+            self._get_value(self.attribute, self._msg, self._selected))
 
 
 class _UidFetchValue(_SimpleFetchValue):
@@ -101,16 +106,36 @@ class _ThreadIdFetchValue(_SimpleFetchValue):
             return msg.thread_id.parens
 
 
+class _LoadedMessageProvider:
+
+    __slots__ = ['loaded_msg']
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.loaded_msg: Optional[LoadedMessageInterface] = None
+
+    @contextmanager
+    def apply(self, loaded_msg: LoadedMessageInterface) -> Iterator[None]:
+        self.loaded_msg = loaded_msg
+        try:
+            yield
+        finally:
+            self.loaded_msg = None
+
+
 class _LoadedFetchValue(FetchValue, metaclass=ABCMeta):
 
-    __slots__ = ['_value']
+    _ellipsis = '\u2026'.encode('utf-8')
+
+    __slots__ = ['_msg', '_get_loaded']
 
     def __init__(self, attr: FetchAttribute, msg: MessageInterface,
-                 loaded_msg: LoadedMessageInterface) -> None:
+                 get_loaded: _LoadedMessageProvider) -> None:
         if msg.expunged:
             raise NotFetchable(attr)
         super().__init__(attr)
-        self._value = self._get_value(attr, loaded_msg)
+        self._msg = msg
+        self._get_loaded = get_loaded
 
     @abstractmethod
     def _get_value(self, attr: FetchAttribute,
@@ -118,8 +143,12 @@ class _LoadedFetchValue(FetchValue, metaclass=ABCMeta):
         ...
 
     def __bytes__(self) -> bytes:
-        attr = self.attribute.for_response
-        return BytesFormat(b'%b %b') % (attr, self._value)
+        loaded_msg = self._get_loaded.loaded_msg
+        if loaded_msg is None:
+            value: MaybeBytes = self._ellipsis
+        else:
+            value = self._get_value(self.attribute, loaded_msg)
+        return BytesFormat(b'%b %b') % (self.attribute.for_response, value)
 
     @classmethod
     def _get_data(cls, section: FetchAttribute.Section, partial: _Partial,
@@ -262,26 +291,34 @@ class MessageAttributes:
         b'BINARY.PEEK': _BinaryPeekFetchValue,
         b'BINARY.SIZE': _BinarySizeFetchValue}
 
-    __slots__ = ['message', 'loaded_msg', 'selected']
+    __slots__ = ['message', 'selected', 'attributes', 'requirement',
+                 '_get_loader']
 
     def __init__(self, message: MessageInterface,
-                 loaded_msg: LoadedMessageInterface,
-                 selected: SelectedMailbox) -> None:
+                 selected: SelectedMailbox,
+                 attributes: Sequence[FetchAttribute]) -> None:
         super().__init__()
         self.message: Final = message
-        self.loaded_msg: Final = loaded_msg
         self.selected: Final = selected
+        self.attributes: Final = attributes
+        self.requirement: Final = FetchRequirement.reduce(
+            attr.requirement for attr in attributes)
+        self._get_loader = _LoadedMessageProvider()
 
-    def get_all(self, attributes: Iterable[FetchAttribute]) \
-            -> Sequence[FetchValue]:
-        """Return a list of all fetch values for the message.
-
-        Args:
-            attributes: The fetch attributes.
+    @asynccontextmanager
+    async def while_writing(self) -> AsyncIterator[None]:
+        """While a fetch response is being written, it is wrapped in this
+        context manager.
 
         """
+        loaded_msg = await self.message.load_content(self.requirement)
+        with self._get_loader.apply(loaded_msg):
+            yield
+
+    def get_all(self) -> Sequence[FetchValue]:
+        """Return a list of all fetch values for the message."""
         ret: List[FetchValue] = []
-        for attr in attributes:
+        for attr in self.attributes:
             try:
                 ret.append(self._get(attr))
             except NotFetchable:
@@ -294,5 +331,5 @@ class MessageAttributes:
             return simple(attr, self.message, self.selected)
         loaded = self._loaded_attrs.get(attr.value)
         if loaded is not None:
-            return loaded(attr, self.message, self.loaded_msg)
+            return loaded(attr, self.message, self._get_loader)
         raise AttributeError(attr.value)

@@ -114,6 +114,16 @@ class Response(Writeable, metaclass=ABCMeta):
         """
         return False
 
+    async def async_write(self, writer: WriteStream) -> None:
+        """Like :meth:`.write`, but allows for asynchronous processing that
+        might be necessary for some responses.
+
+        Args:
+            writer: The output stream.
+
+        """
+        self.write(writer)
+
     def write(self, writer: WriteStream) -> None:
         writer.write(b'%b %b\r\n' % (self.tag, self.text))
 
@@ -190,6 +200,11 @@ class CommandResponse(Response):
             if resp.is_terminal:
                 return True
         return super().is_terminal
+
+    async def async_write(self, writer: WriteStream) -> None:
+        for untagged in self._untagged:
+            await untagged.async_write(writer)
+        super().write(writer)
 
     def write(self, writer: WriteStream) -> None:
         for untagged in self._untagged:

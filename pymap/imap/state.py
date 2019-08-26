@@ -31,8 +31,7 @@ from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from pymap.parsing.specials import StatusAttribute, FetchRequirement, \
-    FetchAttribute, FetchValue
+from pymap.parsing.specials import StatusAttribute, FetchAttribute, FetchValue
 from pymap.selected import SelectedMailbox
 from pysasl import AuthenticationCredentials
 
@@ -277,15 +276,13 @@ class ConnectionState:
         messages, updates = await self.session.fetch_messages(
             self.selected, cmd.sequence_set, set_seen)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
-        requirement = FetchRequirement.reduce(
-            attr.requirement for attr in cmd.attributes)
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
-            loaded_msg = await msg.load_content(requirement)
-            msg_attrs = MessageAttributes(msg, loaded_msg, self.selected)
-            fetch_data = msg_attrs.get_all(cmd.attributes)
-            resp.add_untagged(FetchResponse(msg_seq, fetch_data))
+            msg_attrs = MessageAttributes(msg, self.selected, cmd.attributes)
+            fetch_data = msg_attrs.get_all()
+            resp.add_untagged(
+                FetchResponse(msg_seq, fetch_data, msg_attrs.while_writing()))
         return resp, updates
 
     async def do_search(self, cmd: SearchCommand) -> _CommandRet:
