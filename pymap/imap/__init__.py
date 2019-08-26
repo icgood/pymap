@@ -23,7 +23,8 @@ from pymap.parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
 from pymap.parsing.command.select import IdleCommand
 from pymap.parsing.exceptions import RequiresContinuation
 from pymap.parsing.response import ResponseContinuation, Response, \
-    ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk
+    ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk, \
+    CommandResponse
 from pymap.sockets import InheritedSockets, SocketInfo
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
@@ -288,7 +289,8 @@ class IMAPConnection:
             else:
                 await shield(self.write_updates(untagged))
 
-    async def idle(self, state: ConnectionState, cmd: IdleCommand) -> Response:
+    async def idle(self, state: ConnectionState, cmd: IdleCommand) \
+            -> CommandResponse:
         response = await self._exec(state.do_command(cmd))
         if not isinstance(response, ResponseOk):
             return response
@@ -353,7 +355,7 @@ class IMAPConnection:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
-                        response, _ = await self._exec(
+                        response = await self._exec(
                             state.do_authenticate(cmd, creds))
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)

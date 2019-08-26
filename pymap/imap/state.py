@@ -1,7 +1,7 @@
 
 from collections import OrderedDict
 from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
-    Iterable
+    Iterable, NoReturn
 
 from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
@@ -24,23 +24,23 @@ from pymap.parsing.command.select import CheckCommand, CloseCommand, \
     SearchCommand
 from pymap.parsing.commands import InvalidCommand
 from pymap.parsing.primitives import ListP, Number
-from pymap.parsing.response import Response, ResponseOk, ResponseNo, \
-    ResponseBad,  ResponseCode, ResponsePreAuth
+from pymap.parsing.response import ResponseOk, ResponseNo, ResponseBad, \
+    ResponseCode, ResponsePreAuth, CommandResponse, UntaggedResponse
 from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
     UidValidity, Unseen, MailboxId
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, \
     SearchResponse, StatusResponse
-from pymap.parsing.specials import StatusAttribute, FetchAttribute, \
-    FetchRequirement
+from pymap.parsing.specials import StatusAttribute, FetchRequirement, \
+    FetchAttribute, FetchValue
 from pymap.selected import SelectedMailbox
 from pysasl import AuthenticationCredentials
 
 __all__ = ['ConnectionState']
 
 _AuthCommands = Union[AuthenticateCommand, LoginCommand]
-_CommandFunc = Callable[[Command],
-                        Awaitable[Tuple[Response, SelectedMailbox]]]
+_CommandRet = Tuple[CommandResponse, Optional[SelectedMailbox]]
+_CommandFunc = Callable[[Command], Awaitable[_CommandRet]]
 
 _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
@@ -94,7 +94,7 @@ class ConnectionState:
         except Exception:
             pass
 
-    async def do_greeting(self) -> Response:
+    async def do_greeting(self) -> CommandResponse:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
             self._session = await self.login(preauth_creds, self.config)
@@ -104,23 +104,24 @@ class ConnectionState:
         return resp_cls(b'*', self.config.greeting, self.capability)
 
     async def do_authenticate(self, cmd: _AuthCommands,
-                              creds: Optional[AuthenticationCredentials]):
+                              creds: Optional[AuthenticationCredentials]) \
+            -> CommandResponse:
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
         self._session = await self.login(creds, self.config)
         self._capability.extend(self.config.login_capability)
         return ResponseOk(cmd.tag, b'Authentication successful.',
-                          self.capability), None
+                          self.capability)
 
-    async def do_login(self, cmd: LoginCommand) -> Response:
+    async def do_login(self, cmd: LoginCommand) -> _CommandRet:
         if b'LOGINDISABLED' in self.capability:
             raise NotSupportedError('LOGIN is disabled.')
         creds = AuthenticationCredentials(
             cmd.userid.decode('utf-8', 'surrogateescape'),
             cmd.password.decode('utf-8', 'surrogateescape'))
-        return await self.do_authenticate(cmd, creds)
+        return await self.do_authenticate(cmd, creds), None
 
-    async def do_starttls(self, cmd: StartTLSCommand):
+    async def do_starttls(self, cmd: StartTLSCommand) -> _CommandRet:
         if self.ssl_context is None:
             raise ValueError('ssl_context is None')
         try:
@@ -130,18 +131,18 @@ class ConnectionState:
         self.auth = self.config.insecure_auth
         return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 
-    async def do_capability(self, cmd: CapabilityCommand):
+    async def do_capability(self, cmd: CapabilityCommand) -> _CommandRet:
         response = ResponseOk(cmd.tag, b'Capabilities listed.')
-        response.add_untagged(Response(b'*', self.capability.string))
+        response.add_untagged(UntaggedResponse(self.capability.string))
         return response, None
 
-    async def do_noop(self, cmd: NoOpCommand):
+    async def do_noop(self, cmd: NoOpCommand) -> _CommandRet:
         updates = None
         if self._selected and self._session:
             updates = await self.session.check_mailbox(self.selected)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
 
-    async def do_select(self, cmd: SelectCommand):
+    async def do_select(self, cmd: SelectCommand) -> _CommandRet:
         self._selected = None
         mailbox, updates = await self.session.select_mailbox(
             cmd.mailbox, cmd.readonly)
@@ -170,7 +171,7 @@ class ConnectionState:
         resp.add_untagged_ok(b'Object ID.', MailboxId(mailbox.mailbox_id))
         return resp, updates
 
-    async def do_create(self, cmd: CreateCommand):
+    async def do_create(self, cmd: CreateCommand) -> _CommandRet:
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot create INBOX.'), None
         mailbox_id, updates = await self.session.create_mailbox(
@@ -178,21 +179,21 @@ class ConnectionState:
         return ResponseOk(cmd.tag, cmd.command + b' completed.',
                           MailboxId(mailbox_id)), updates
 
-    async def do_delete(self, cmd: DeleteCommand):
+    async def do_delete(self, cmd: DeleteCommand) -> _CommandRet:
         if cmd.mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot delete INBOX.'), None
         updates = await self.session.delete_mailbox(
             cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
 
-    async def do_rename(self, cmd: RenameCommand):
+    async def do_rename(self, cmd: RenameCommand) -> _CommandRet:
         if cmd.to_mailbox == 'INBOX':
             return ResponseNo(cmd.tag, b'Cannot rename to INBOX.'), None
         updates = await self.session.rename_mailbox(
             cmd.from_mailbox, cmd.to_mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
 
-    async def do_status(self, cmd: StatusCommand):
+    async def do_status(self, cmd: StatusCommand) -> _CommandRet:
         mailbox, updates = await self.session.get_mailbox(
             cmd.mailbox, selected=self._selected)
         data: Dict[StatusAttribute, MaybeBytes] = OrderedDict()
@@ -216,7 +217,7 @@ class ConnectionState:
         resp.add_untagged(StatusResponse(cmd.mailbox, data))
         return resp, updates
 
-    async def do_append(self, cmd: AppendCommand):
+    async def do_append(self, cmd: AppendCommand) -> _CommandRet:
         if len(cmd.messages) > 1 and b'MULTIAPPEND' not in self.capability:
             raise NotSupportedError('MULTIAPPEND is disabled.')
         for msg in cmd.messages:
@@ -227,17 +228,17 @@ class ConnectionState:
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.', append_uid)
         return resp, updates
 
-    async def do_subscribe(self, cmd: SubscribeCommand):
+    async def do_subscribe(self, cmd: SubscribeCommand) -> _CommandRet:
         updates = await self.session.subscribe(
             cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
 
-    async def do_unsubscribe(self, cmd: UnsubscribeCommand):
+    async def do_unsubscribe(self, cmd: UnsubscribeCommand) -> _CommandRet:
         updates = await self.session.unsubscribe(
             cmd.mailbox, selected=self._selected)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
 
-    async def do_list(self, cmd: ListCommand):
+    async def do_list(self, cmd: ListCommand) -> _CommandRet:
         mailboxes, updates = await self.session.list_mailboxes(
             cmd.ref_name, cmd.filter, subscribed=cmd.only_subscribed,
             selected=self._selected)
@@ -247,29 +248,29 @@ class ConnectionState:
             resp.add_untagged(resp_type(name, sep, attrs))
         return resp, updates
 
-    async def do_check(self, cmd: CheckCommand):
+    async def do_check(self, cmd: CheckCommand) -> _CommandRet:
         updates = await self.session.check_mailbox(
             self.selected, housekeeping=True)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
 
-    async def do_close(self, cmd: CloseCommand):
+    async def do_close(self, cmd: CloseCommand) -> _CommandRet:
         await self.session.expunge_mailbox(self.selected)
         self._selected = None
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), None
 
-    async def do_expunge(self, cmd: ExpungeCommand):
+    async def do_expunge(self, cmd: ExpungeCommand) -> _CommandRet:
         updates = await self.session.expunge_mailbox(
             self.selected, cmd.uid_set)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
         return resp, updates
 
-    async def do_copy(self, cmd: CopyCommand):
+    async def do_copy(self, cmd: CopyCommand) -> _CommandRet:
         copy_uid, updates = await self.session.copy_messages(
             self.selected, cmd.sequence_set, cmd.mailbox)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.', copy_uid)
         return resp, updates
 
-    async def do_fetch(self, cmd: FetchCommand):
+    async def do_fetch(self, cmd: FetchCommand) -> _CommandRet:
         if not cmd.uid:
             self.selected.hide_expunged = True
         set_seen = any(attr.set_seen for attr in cmd.attributes)
@@ -277,17 +278,17 @@ class ConnectionState:
             self.selected, cmd.sequence_set, set_seen)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
         requirement = FetchRequirement.reduce(
-            {attr.requirement for attr in cmd.attributes})
+            attr.requirement for attr in cmd.attributes)
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
-            msg_content = await msg.load_content(requirement)
-            msg_attrs = MessageAttributes(msg, msg_content, self.selected)
+            loaded_msg = await msg.load_content(requirement)
+            msg_attrs = MessageAttributes(msg, loaded_msg, self.selected)
             fetch_data = msg_attrs.get_all(cmd.attributes)
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
-    async def do_search(self, cmd: SearchCommand):
+    async def do_search(self, cmd: SearchCommand) -> _CommandRet:
         if not cmd.uid:
             self.selected.hide_expunged = True
         messages, updates = await self.session.search_mailbox(
@@ -304,7 +305,7 @@ class ConnectionState:
         resp.add_untagged(SearchResponse(msg_ids))
         return resp, updates
 
-    async def do_store(self, cmd: StoreCommand):
+    async def do_store(self, cmd: StoreCommand) -> _CommandRet:
         if not cmd.uid:
             self.selected.hide_expunged = True
         if cmd.silent:
@@ -319,24 +320,25 @@ class ConnectionState:
             elif cmd.silent:
                 continue
             flags = msg.get_flags(session_flags)
-            fetch_data: List[Tuple[FetchAttribute, MaybeBytes]] = [
-                (_flags_attr, ListP(flags, sort=True))]
+            fetch_data: List[FetchValue] = [
+                FetchValue.of(_flags_attr, ListP(flags, sort=True))]
             if cmd.uid:
-                fetch_data.append((_uid_attr, Number(msg.uid)))
+                fetch_data.append(
+                    FetchValue.of(_uid_attr, Number(msg.uid)))
             resp.add_untagged(FetchResponse(msg_seq, fetch_data))
         return resp, updates
 
-    async def do_idle(self, cmd: IdleCommand):
+    async def do_idle(self, cmd: IdleCommand) -> _CommandRet:
         if b'IDLE' not in self.capability:
             raise NotSupportedError('IDLE is disabled.')
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), None
 
     @classmethod
-    async def do_logout(cls, cmd: LogoutCommand):
+    async def do_logout(cls, cmd: LogoutCommand) -> NoReturn:
         raise CloseConnection()
 
     async def receive_updates(self, cmd: IdleCommand, done: Event) \
-            -> Iterable[Response]:
+            -> Iterable[UntaggedResponse]:
         selected = await self.session.check_mailbox(
             self.selected, wait_on=done)
         self._selected, untagged = selected.fork(cmd)
@@ -361,7 +363,7 @@ class ConnectionState:
         cmd_str = str(cmd_type.command, 'ascii').lower()
         return 'do_' + cmd_str
 
-    async def do_command(self, cmd: Command):
+    async def do_command(self, cmd: Command) -> CommandResponse:
         if isinstance(cmd, InvalidCommand):
             return self._get_bad_response(cmd)
         elif self._session and isinstance(cmd, CommandNonAuth):
@@ -379,7 +381,7 @@ class ConnectionState:
         except AttributeError:
             return ResponseNo(cmd.tag, cmd.command + b': Not Implemented')
         response, selected = await func(cmd)
-        if selected:
+        if selected is not None:
             self._selected, untagged = selected.fork(cmd)
             response.add_untagged(*untagged)
         return response

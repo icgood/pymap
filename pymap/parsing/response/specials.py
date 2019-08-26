@@ -1,12 +1,12 @@
 
 from collections import OrderedDict
 from itertools import chain
-from typing import ClassVar, Tuple, Iterable, Sequence, List, Mapping, Optional
+from typing import Optional, ClassVar, Iterable, Mapping, List, Dict
 
-from . import Response
+from . import UntaggedResponse
 from ..modutf7 import modutf7_encode
 from ..primitives import Nil, ListP, QuotedString
-from ..specials import Mailbox, FetchAttribute, StatusAttribute
+from ..specials import Mailbox, FetchAttribute, FetchValue, StatusAttribute
 from ...bytes import MaybeBytes, BytesFormat, WriteStream
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
@@ -14,10 +14,8 @@ __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ESearchResponse', 'StatusResponse', 'ListResponse',
            'LSubResponse']
 
-_FetchData = Sequence[Tuple[FetchAttribute, MaybeBytes]]
 
-
-class FlagsResponse(Response):
+class FlagsResponse(UntaggedResponse):
     """Constructs the special FLAGS response used by the SELECT and EXAMINE
     commands.
 
@@ -27,7 +25,7 @@ class FlagsResponse(Response):
     """
 
     def __init__(self, flags: Iterable[MaybeBytes]) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.flags = flags
 
     @property
@@ -36,7 +34,7 @@ class FlagsResponse(Response):
         return super().text + text
 
 
-class ExistsResponse(Response):
+class ExistsResponse(UntaggedResponse):
     """Constructs the special EXISTS response used by the SELECT and EXAMINE
     commands.
 
@@ -46,7 +44,7 @@ class ExistsResponse(Response):
     """
 
     def __init__(self, num: int) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.num = num
 
     @property
@@ -54,7 +52,7 @@ class ExistsResponse(Response):
         return super().text + b'%i EXISTS' % self.num
 
 
-class RecentResponse(Response):
+class RecentResponse(UntaggedResponse):
     """Constructs the special RECENT response used by the SELECT and EXAMINE
     commands.
 
@@ -64,7 +62,7 @@ class RecentResponse(Response):
     """
 
     def __init__(self, num: int) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.num = num
 
     @property
@@ -72,7 +70,7 @@ class RecentResponse(Response):
         return super().text + b'%i RECENT' % self.num
 
 
-class ExpungeResponse(Response):
+class ExpungeResponse(UntaggedResponse):
     """Constructs the special EXPUNGE response used by the EXPUNGE command.
 
     Args:
@@ -81,7 +79,7 @@ class ExpungeResponse(Response):
     """
 
     def __init__(self, seq: int) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.seq = seq
 
     @property
@@ -89,20 +87,21 @@ class ExpungeResponse(Response):
         return super().text + b'%i EXPUNGE' % self.seq
 
 
-class FetchResponse(Response):
+class FetchResponse(UntaggedResponse):
     """Constructs the special FETCH response used by the STORE and FETCH
     commands.
 
     Args:
         seq: The message sequence number.
-        data: Dictionary mapping fetch attributes to their values.
+        data: Fetch attributes and values for the message.
 
     """
 
-    def __init__(self, seq: int, data: _FetchData) -> None:
-        super().__init__(b'*')
+    def __init__(self, seq: int, data: Iterable[FetchValue]) -> None:
+        super().__init__()
         self.seq = seq
-        self.data = list(data)
+        self.data: Dict[FetchAttribute, FetchValue] = OrderedDict(
+            (attr.attribute, attr) for attr in data)
 
     @property
     def merge_key(self) -> int:
@@ -128,21 +127,20 @@ class FetchResponse(Response):
             raise ValueError(other)
         new_data = OrderedDict(self.data)
         new_data.update(other.data)
-        return FetchResponse(self.seq, list(new_data.items()))
+        return FetchResponse(self.seq, new_data.values())
 
     @property
     def text(self) -> bytes:
-        data_list = ListP(chain.from_iterable(self.data))
-        return BytesFormat(b'%i FETCH %b') % (self.seq, data_list)
+        return b'%i FETCH' % (self.seq, )
 
     def write(self, writer: WriteStream) -> None:
-        writer.write(b'%b %i FETCH ' % (self.tag, self.seq))
-        data_list = ListP(chain.from_iterable(self.data))
+        writer.write(b'%b %b ' % (self.tag, self.text))
+        data_list = ListP(self.data.values())
         data_list.write(writer)
         writer.write(b'\r\n')
 
 
-class SearchResponse(Response):
+class SearchResponse(UntaggedResponse):
     """Constructs the special SEARCH response used by the SEARCH command.
 
     Args:
@@ -151,7 +149,7 @@ class SearchResponse(Response):
     """
 
     def __init__(self, seqs: Iterable[int]) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.seqs = seqs
 
     @property
@@ -161,7 +159,7 @@ class SearchResponse(Response):
         return super().text + text
 
 
-class ESearchResponse(Response):
+class ESearchResponse(UntaggedResponse):
     """Constructs the special ESEARCH response used by extended SEARCH
     commands. This response should be mutually exclusive with SEARCH responses.
 
@@ -177,7 +175,7 @@ class ESearchResponse(Response):
 
     def __init__(self, issuer_tag: Optional[bytes], uid: bool,
                  data: Mapping[bytes, MaybeBytes]) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.issuer_tag = issuer_tag
         self.uid = uid
         self.data = data
@@ -194,7 +192,7 @@ class ESearchResponse(Response):
         return super().text + BytesFormat(b' ').join(prefixes, *parts)
 
 
-class StatusResponse(Response):
+class StatusResponse(UntaggedResponse):
     """Constructs the special STATUS response used by the STATUS command.
 
     Args:
@@ -205,7 +203,7 @@ class StatusResponse(Response):
 
     def __init__(self, name: str,
                  data: Mapping[StatusAttribute, MaybeBytes]) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.name = name
         self.data = data
 
@@ -216,7 +214,7 @@ class StatusResponse(Response):
             [b'STATUS', Mailbox(self.name), data_list])
 
 
-class ListResponse(Response):
+class ListResponse(UntaggedResponse):
     """Constructs the special LIST response used by the LIST command.
 
     Args:
@@ -230,7 +228,7 @@ class ListResponse(Response):
 
     def __init__(self, mailbox: str, sep: Optional[str],
                  attrs: Iterable[bytes]) -> None:
-        super().__init__(b'*')
+        super().__init__()
         self.mailbox = mailbox
         self.sep = sep
         self.attrs = attrs
