@@ -179,8 +179,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         return await mbx.update_selected(selected)
 
     async def fetch_messages(self, selected: SelectedMailbox,
-                             sequence_set: SequenceSet,
-                             set_seen: bool) \
+                             sequence_set: SequenceSet, set_seen: bool) \
             -> Tuple[Iterable[Tuple[int, MessageT]], SelectedMailbox]:
         mbx = await self._get_selected(selected)
         ret = [(seq, msg) async for seq, msg
@@ -196,12 +195,12 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                              keys: FrozenSet[SearchKey]) \
             -> Tuple[Iterable[Tuple[int, MessageT]], SelectedMailbox]:
         mbx = await self._get_selected(selected)
-        req = FetchRequirement.reduce({key.requirement for key in keys})
+        req = FetchRequirement.reduce(key.requirement for key in keys)
         ret: List[Tuple[int, MessageT]] = []
         params = SearchParams(selected,
                               disabled=self.config.disable_search_keys)
         search = SearchCriteriaSet(keys, params)
-        async for seq, msg in mbx.find(search.sequence_set, selected, req):
+        async for seq, msg in mbx.find(search.sequence_set, selected):
             msg_content = await msg.load_content(req)
             if search.matches(seq, msg, msg_content):
                 ret.append((seq, msg))
@@ -227,15 +226,16 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         dest = await self.mailbox_set.get_mailbox(mailbox, try_create=True)
         if dest.readonly:
             raise MailboxReadOnly(mailbox)
-        req = FetchRequirement.CONTENT
         dest_selected = self._pick_selected(selected, dest)
         uids: List[Tuple[int, int]] = []
-        async for _, msg in mbx.find(sequence_set, selected, req):
+        async for _, msg in mbx.find(sequence_set, selected):
             if not msg.expunged:
                 source_uid = msg.uid
-                content = await msg.load_content(FetchRequirement.CONTENT)
-                msg = await dest.add(content.append_msg,
-                                     recent=not dest_selected,
+                loaded = await msg.load_content(FetchRequirement.CONTENT)
+                append_msg = msg.copy(loaded)
+                if append_msg is None:
+                    continue
+                msg = await dest.add(append_msg, recent=not dest_selected,
                                      email_id=msg.email_id,
                                      thread_id=msg.thread_id)
                 if dest_selected:

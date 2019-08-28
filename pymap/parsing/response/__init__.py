@@ -1,7 +1,9 @@
 
 from abc import ABCMeta
-from io import BytesIO
-from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable
+from contextlib import asynccontextmanager
+from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable, \
+    AsyncContextManager, AsyncIterator
+from typing_extensions import Final
 
 from ...bytes import MaybeBytes, BytesFormat, WriteStream, Writeable
 
@@ -128,11 +130,7 @@ class Response(Writeable, metaclass=ABCMeta):
         writer.write(b'%b %b\r\n' % (self.tag, self.text))
 
     def __bytes__(self) -> bytes:
-        if self._raw is None:
-            out = BytesIO()
-            self.write(out)
-            self._raw = out.getvalue()
-        return self._raw
+        return self.tobytes()
 
 
 class CommandResponse(Response):
@@ -220,14 +218,23 @@ class UntaggedResponse(Response):
         text: The response text.
         code: Optional response code.
         condition: A condition string, e.g. ``OK``.
+        writing_hook: An async context manager to enter while the untagged
+            response is being written.
 
     """
 
     def __init__(self, text: MaybeBytes = None, code: ResponseCode = None, *,
-                 condition: bytes = None) -> None:
+                 condition: bytes = None,
+                 writing_hook: AsyncContextManager[None] = None) -> None:
         super().__init__(b'*', text, code)
         if condition is not None:
             self.condition = condition
+        self.writing_hook: Final = writing_hook
+
+    @classmethod
+    @asynccontextmanager
+    async def _noop_cm(cls) -> AsyncIterator[None]:
+        yield
 
     @property
     def merge_key(self) -> Hashable:
@@ -253,6 +260,11 @@ class UntaggedResponse(Response):
 
         """
         raise TypeError(self)
+
+    async def async_write(self, writer: WriteStream) -> None:
+        writing_hook = self.writing_hook or self._noop_cm()
+        async with writing_hook:
+            await super().async_write(writer)
 
 
 class ResponseContinuation(Response):

@@ -51,7 +51,7 @@ class Message(BaseMessage):
 
     async def load_content(self, requirement: FetchRequirement) \
             -> 'LoadedMessage':
-        return LoadedMessage(self, self._content, requirement)
+        return LoadedMessage(self, requirement, self._content)
 
 
 class LoadedMessage(BaseLoadedMessage):
@@ -204,8 +204,7 @@ class MailboxData(MailboxDataInterface[Message]):
             self._mod_sequences.update([new_uid])
             return message
 
-    async def get(self, uid: int, cached_msg: CachedMessage = None,
-                  requirement: FetchRequirement = FetchRequirement.METADATA) \
+    async def get(self, uid: int, cached_msg: CachedMessage = None) \
             -> Optional[Message]:
         if uid < 1 or uid > self._max_uid:
             raise IndexError(uid)

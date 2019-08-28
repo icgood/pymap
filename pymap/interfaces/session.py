@@ -289,8 +289,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def fetch_messages(self, selected: SelectedMailbox,
-                             sequence_set: SequenceSet,
-                             set_seen: bool) \
+                             sequence_set: SequenceSet, set_seen: bool) \
             -> Tuple[Iterable[Tuple[int, MessageInterface]], SelectedMailbox]:
         """Get a list of loaded message objects corresponding to given sequence
         set.

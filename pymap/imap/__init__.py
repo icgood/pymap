@@ -37,7 +37,7 @@ _Ret = TypeVar('_Ret')
 _log = logging.getLogger(__name__)
 
 
-class IMAPService(ServiceInterface):
+class IMAPService(ServiceInterface):  # pragma: no cover
     """A pymap service implementing an IMAP server."""
 
     def __init__(self, servers: Sequence[AbstractServer]) -> None:

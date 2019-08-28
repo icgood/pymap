@@ -32,7 +32,7 @@ __all__ = ['ManageSieveService', 'ManageSieveServer', 'ManageSieveConnection']
 _log = logging.getLogger(__name__)
 
 
-class ManageSieveService(ServiceInterface):
+class ManageSieveService(ServiceInterface):  # pragma: no cover
     """A pymap service that implements a ManageSieve server to control the
     sieve scripts associated with a login.
 

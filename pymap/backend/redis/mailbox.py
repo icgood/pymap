@@ -57,12 +57,12 @@ class Message(BaseMessage):
         self._msg_prefix = msg_prefix
 
     async def load_content(self, requirement: FetchRequirement) \
-            -> 'RedisMessageContent':
+            -> 'LoadedMessage':
         redis = self._redis
         msg_prefix = self._msg_prefix
         if redis is None or msg_prefix is None or \
                 not requirement.overlaps(FetchRequirement.CONTENT):
-            return RedisMessageContent(self, None, requirement)
+            return LoadedMessage(self, requirement, None)
         pipe = redis.pipeline()
         if requirement & FetchRequirement.HEADER:
             pipe.get(msg_prefix + b':header')
@@ -74,10 +74,10 @@ class Message(BaseMessage):
             pipe.echo(b'')
         header, body = await pipe.execute()
         content = MessageContent.parse_split(header, body)
-        return RedisMessageContent(self, content, requirement)
+        return LoadedMessage(self, requirement, content)
 
 
-class RedisMessageContent(BaseLoadedMessage):
+class LoadedMessage(BaseLoadedMessage):
     pass
 
 

@@ -1,10 +1,11 @@
 """Defines useful types and utilities for working with bytestrings."""
 
 from abc import abstractmethod, ABCMeta
+from io import BytesIO
 from itertools import chain
 from typing import cast, Any, TypeVar, ByteString, SupportsBytes, Union, \
     Iterable
-from typing_extensions import Protocol
+from typing_extensions import final, Protocol
 
 __all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
            'BytesFormat']
@@ -71,6 +72,16 @@ class HashStream(WriteStream):
 
 class Writeable(metaclass=ABCMeta):
     """Base class for types that can be written to a stream."""
+
+    @final
+    def tobytes(self) -> bytes:
+        """Convert the writeable object back into a bytestring using the
+        :meth:`.write` method.
+
+        """
+        writer = BytesIO()
+        self.write(writer)
+        return writer.getvalue()
 
     @classmethod
     def empty(cls) -> 'Writeable':

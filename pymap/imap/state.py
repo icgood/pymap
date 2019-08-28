@@ -280,9 +280,9 @@ class ConnectionState:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
             msg_attrs = MessageAttributes(msg, self.selected, cmd.attributes)
-            fetch_data = msg_attrs.get_all()
-            resp.add_untagged(
-                FetchResponse(msg_seq, fetch_data, msg_attrs.while_writing()))
+            fetch_resp = FetchResponse(msg_seq, msg_attrs,
+                                       writing_hook=msg_attrs.load_hook())
+            resp.add_untagged(fetch_resp)
         return resp, updates
 
     async def do_search(self, cmd: SearchCommand) -> _CommandRet:

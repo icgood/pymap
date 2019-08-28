@@ -151,6 +151,18 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
+    def copy(self, loaded: 'LoadedMessageInterface') \
+            -> Optional[AppendMessage]:
+        """Return an :class:`AppendMessage` containing the copied metadata and
+        contents of this message.
+
+        Args:
+            loaded: The loaded message object.
+
+        """
+        ...
+
+    @abstractmethod
     async def load_content(self, requirement: FetchRequirement) \
             -> 'LoadedMessageInterface':
         """Loads the content of the message.
@@ -178,16 +190,8 @@ class LoadedMessageInterface(Protocol):
         """The :class:`FetchRequirement` used to load the message content."""
         ...
 
-    @property
     @abstractmethod
-    def message(self) -> MessageInterface:
-        """The message that the content belongs to."""
-        ...
-
-    @property
-    @abstractmethod
-    def append_msg(self) -> AppendMessage:
-        """A copy of the message for appending to a mailbox."""
+    def __bytes__(self) -> bytes:
         ...
 
     @abstractmethod
@@ -196,10 +200,6 @@ class LoadedMessageInterface(Protocol):
 
         Args:
             name: The name of the header.
-
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
 
         """
         ...
@@ -214,10 +214,6 @@ class LoadedMessageInterface(Protocol):
 
         Args:
             section: Nested list of sub-part indexes.
-
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
 
         """
         ...
@@ -239,10 +235,6 @@ class LoadedMessageInterface(Protocol):
             inverse: If ``subset`` is given, this flag will invert it so that
                 the headers *not* in ``subset`` are returned.
 
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
-
         """
         ...
 
@@ -256,10 +248,6 @@ class LoadedMessageInterface(Protocol):
 
         Args:
             section: Optional nested list of sub-part indexes.
-
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
 
         """
         ...
@@ -278,10 +266,6 @@ class LoadedMessageInterface(Protocol):
             binary: True if the result has decoded any
                 Content-Transfer-Encoding.
 
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
-
         """
         ...
 
@@ -291,10 +275,6 @@ class LoadedMessageInterface(Protocol):
 
         Args:
             section: Optional nested list of sub-part indexes.
-
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
 
         """
         ...
@@ -307,10 +287,6 @@ class LoadedMessageInterface(Protocol):
             `RFC 3501 2.3.5.
             <https://tools.ietf.org/html/rfc3501#section-2.3.5>`_
 
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
-
         """
         ...
 
@@ -322,10 +298,6 @@ class LoadedMessageInterface(Protocol):
             `RFC 3501 2.3.6
             <https://tools.ietf.org/html/rfc3501#section-2.3.6>`_
 
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
-
         """
         ...
 
@@ -336,10 +308,6 @@ class LoadedMessageInterface(Protocol):
 
         Args:
             value: The sub-string to find.
-
-        Raises:
-            ValueError: :attr:`.requirement` is not sufficient to return the
-                necessary data.
 
         """
         ...

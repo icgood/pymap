@@ -1,2 +1,2 @@
 [report]
-omit = */maildir/*, */redis/*, */grpc/*
+omit = */maildir/*, */redis/*, */grpc/*, */main.py
