@@ -60,8 +60,8 @@ class Message(BaseMessage):
             -> 'LoadedMessage':
         redis = self._redis
         msg_prefix = self._msg_prefix
-        if redis is None or msg_prefix is None or \
-                not requirement.overlaps(FetchRequirement.CONTENT):
+        if redis is None or msg_prefix is None \
+                or not requirement.overlaps(FetchRequirement.CONTENT):
             return LoadedMessage(self, requirement, None)
         pipe = redis.pipeline()
         if requirement & FetchRequirement.HEADER:
