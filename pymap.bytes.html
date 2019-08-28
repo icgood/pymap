@@ -104,6 +104,21 @@ buffer.</p>
 <em class="property">class </em><code class="descclassname">pymap.bytes.</code><code class="descname">Writeable</code><a class="headerlink" href="#pymap.bytes.Writeable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Base class for types that can be written to a stream.</p>
+<dl class="method">
+<dt id="pymap.bytes.Writeable.tobytes">
+<code class="descname">tobytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.bytes.Writeable.tobytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the writeable object back into a bytestring using the
+<a class="reference internal" href="#pymap.bytes.Writeable.write" title="pymap.bytes.Writeable.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.bytes.Writeable.empty">
 <em class="property">classmethod </em><code class="descname">empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.bytes.Writeable.empty" title="Permalink to this definition">¶</a></dt>

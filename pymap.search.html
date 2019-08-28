@@ -96,7 +96,7 @@ implemented, any search keys that require it will fail.</p>
 </table>
 <dl class="method">
 <dt id="pymap.search.SearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -105,6 +105,7 @@ implemented, any search keys that require it will fail.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -175,7 +176,7 @@ contains a sequence set.</p>
 
 <dl class="method">
 <dt id="pymap.search.SearchCriteriaSet.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteriaSet.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteriaSet.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message matches if all the defined search key criteria match.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -203,7 +204,7 @@ contains a sequence set.</p>
 <p>Matches only if the given search criteria does not match.</p>
 <dl class="method">
 <dt id="pymap.search.InverseSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.InverseSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.InverseSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -212,6 +213,7 @@ contains a sequence set.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -231,16 +233,20 @@ contains a sequence set.</p>
 <p>Always matches anything.</p>
 <dl class="method">
 <dt id="pymap.search.AllSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.AllSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.AllSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -256,7 +262,7 @@ contains a sequence set.</p>
 <p>Matches if either of the search criteria match.</p>
 <dl class="method">
 <dt id="pymap.search.OrSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.OrSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.OrSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -265,6 +271,7 @@ contains a sequence set.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -284,7 +291,7 @@ contains a sequence set.</p>
 <p>Matches if the message is contained in the sequence set.</p>
 <dl class="method">
 <dt id="pymap.search.SequenceSetSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -293,6 +300,7 @@ contains a sequence set.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -313,7 +321,7 @@ contains a sequence set.</p>
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.email_id" title="pymap.interfaces.message.MessageInterface.email_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">email_id</span></code></a> value.</p>
 <dl class="method">
 <dt id="pymap.search.HasEmailIdSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -322,6 +330,7 @@ contains a sequence set.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -342,7 +351,7 @@ contains a sequence set.</p>
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.thread_id" title="pymap.interfaces.message.MessageInterface.thread_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thread_id</span></code></a> value.</p>
 <dl class="method">
 <dt id="pymap.search.HasThreadIdSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -351,6 +360,7 @@ contains a sequence set.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -371,7 +381,7 @@ contains a sequence set.</p>
 session flag sets.</p>
 <dl class="method">
 <dt id="pymap.search.HasFlagSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -380,6 +390,7 @@ session flag sets.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -399,7 +410,7 @@ session flag sets.</p>
 <p>Matches if the message is considered “new”, i.e. recent and unseen.</p>
 <dl class="method">
 <dt id="pymap.search.NewSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.NewSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.NewSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -408,6 +419,7 @@ session flag sets.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -427,7 +439,7 @@ session flag sets.</p>
 <p>Matches by comparing against the internal date of the message.</p>
 <dl class="method">
 <dt id="pymap.search.DateSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.DateSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.DateSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -436,6 +448,7 @@ session flag sets.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -462,7 +475,7 @@ session flag sets.</p>
 <p>Matches by comparing against the size of the message.</p>
 <dl class="method">
 <dt id="pymap.search.SizeSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -471,6 +484,7 @@ session flag sets.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -491,7 +505,7 @@ session flag sets.</p>
 structure.</p>
 <dl class="method">
 <dt id="pymap.search.EnvelopeSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -500,6 +514,7 @@ structure.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -519,7 +534,7 @@ structure.</p>
 <p>Matches if the message has a header containing a value.</p>
 <dl class="method">
 <dt id="pymap.search.HeaderSearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -528,6 +543,7 @@ structure.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>
@@ -547,7 +563,7 @@ structure.</p>
 <p>Matches if the message body contains a value.</p>
 <dl class="method">
 <dt id="pymap.search.BodySearchCriteria.matches">
-<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="descname">matches</code><span class="sig-paren">(</span><em>msg_seq</em>, <em>msg</em>, <em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -556,6 +572,7 @@ structure.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</li>
 <li><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
+<li><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</li>
 </ul>
 </td>
 </tr>

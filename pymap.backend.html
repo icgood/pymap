@@ -74,12 +74,6 @@
 <div class="section" id="module-pymap.backend.mailbox">
 <span id="pymap-backend-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code><a class="headerlink" href="#module-pymap.backend.mailbox" title="Permalink to this headline">¶</a></h2>
 <dl class="data">
-<dt id="pymap.backend.mailbox.MessageT">
-<code class="descclassname">pymap.backend.mailbox.</code><code class="descname">MessageT</code><em class="property"> = ~MessageT</em><a class="headerlink" href="#pymap.backend.mailbox.MessageT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.backend.mailbox.Message" title="pymap.backend.mailbox.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></a>.</p>
-</dd></dl>
-
-<dl class="data">
 <dt id="pymap.backend.mailbox.MailboxDataT">
 <code class="descclassname">pymap.backend.mailbox.</code><code class="descname">MailboxDataT</code><em class="property"> = ~MailboxDataT</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
@@ -90,31 +84,6 @@
 <code class="descclassname">pymap.backend.mailbox.</code><code class="descname">MailboxDataT_co</code><em class="property"> = +MailboxDataT_co</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariant type variable with an upper bound of
 <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="pymap.backend.mailbox.Message">
-<em class="property">class </em><code class="descclassname">pymap.backend.mailbox.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>uid</em>, <em>internal_date</em>, <em>permanent_flags</em>, <em>*</em>, <em>email_id=None</em>, <em>thread_id=None</em>, <em>expunged=False</em>, <em>content=None</em>, <em>recent=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.Message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.message.html#pymap.message.BaseMessage" title="pymap.message.BaseMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.message.BaseMessage</span></code></a></p>
-<p>Manages a single message. This message does not have its contents
-(headers, body, etc.) loaded into memory, it is only the IMAP metadata
-such as UID and flags.</p>
-<dl class="attribute">
-<dt id="pymap.backend.mailbox.Message.recent">
-<code class="descname">recent</code><a class="headerlink" href="#pymap.backend.mailbox.Message.recent" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if the message is considered new in the mailbox. The next
-session to SELECT the mailbox will negate this value and apply the
-<code class="docutils literal notranslate"><span class="pre">\Recent</span></code> session flag to the message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -288,7 +257,7 @@ operation, and may run things like garbage collection on the backend.</p>
 
 <dl class="method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.find">
-<code class="descname">find</code><span class="sig-paren">(</span><em>seq_set</em>, <em>selected</em>, <em>requirement=&lt;FetchRequirement.METADATA: 1&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.find" title="Permalink to this definition">¶</a></dt>
+<code class="descname">find</code><span class="sig-paren">(</span><em>seq_set</em>, <em>selected</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the active message UID and message pairs in the mailbox that
 are contained in the given sequences set. Message sequence numbers
 are resolved by the selected mailbox session.</p>
@@ -299,7 +268,6 @@ are resolved by the selected mailbox session.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – The sequence set of the desired messages.</li>
 <li><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
-<li><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a>) – The data required from each message.</li>
 </ul>
 </td>
 </tr>
@@ -333,7 +301,7 @@ are resolved by the selected mailbox session.</p>
 
 <dl class="method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>uid</em>, <em>cached_msg=None</em>, <em>requirement=&lt;FetchRequirement.METADATA: 1&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.get" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get</code><span class="sig-paren">(</span><em>uid</em>, <em>cached_msg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the message with the given UID.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -342,7 +310,6 @@ are resolved by the selected mailbox session.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</li>
 <li><strong>cached_msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The last known cached message.</li>
-<li><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a>) – The data required from each message.</li>
 </ul>
 </td>
 </tr>
@@ -466,6 +433,20 @@ needed to discover updates.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.backend.mailbox.MailboxSetInterface.delimiter">
+<code class="descname">delimiter</code><a class="headerlink" href="#pymap.backend.mailbox.MailboxSetInterface.delimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The delimiter used in mailbox names to indicate hierarchy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="pymap.backend.mailbox.MailboxSetInterface.get_mailbox">
 <code class="descname">get_mailbox</code><span class="sig-paren">(</span><em>name</em>, <em>try_create=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxSetInterface.get_mailbox" title="Permalink to this definition">¶</a></dt>
@@ -579,20 +560,6 @@ is created first.</li>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.backend.mailbox.MailboxSetInterface.delimiter">
-<code class="descname">delimiter</code><a class="headerlink" href="#pymap.backend.mailbox.MailboxSetInterface.delimiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>The delimiter used in mailbox names to indicate hierarchy.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -860,7 +827,7 @@ from the mailbox.</p>
 
 <dl class="method">
 <dt id="pymap.backend.session.BaseSession.fetch_messages">
-<code class="descname">fetch_messages</code><span class="sig-paren">(</span><em>selected</em>, <em>sequence_set</em>, <em>attributes</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.fetch_messages" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fetch_messages</code><span class="sig-paren">(</span><em>selected</em>, <em>sequence_set</em>, <em>set_seen</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.fetch_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of loaded message objects corresponding to given sequence
 set.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -870,7 +837,7 @@ set.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</li>
 <li><strong>sequence_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – Sequence set of message sequences or UIDs.</li>
-<li><strong>attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Frozenset</span></code>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>]) – Fetch attributes for the messages.</li>
+<li><strong>set_seen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the messages should get the <code class="docutils literal notranslate"><span class="pre">\Seen</span></code> flag.</li>
 </ul>
 </td>
 </tr>
