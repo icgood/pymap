@@ -2,7 +2,7 @@
 from bisect import bisect_right
 from itertools import chain, groupby, islice
 from typing import Any, Optional, Tuple, Dict, Set, MutableSet, AbstractSet, \
-    FrozenSet, Iterable, List, Sequence, SupportsBytes
+    FrozenSet, Iterable, List, Sequence
 from weakref import WeakSet
 
 from .concurrent import Event
@@ -11,10 +11,11 @@ from .flags import FlagOp, PermanentFlags, SessionFlags
 from .interfaces.message import CachedMessage, FlagsKey
 from .parsing.command import Command
 from .parsing.primitives import ListP, Number
-from .parsing.response import Response, ResponseBye
+from .parsing.response import UntaggedResponse, ResponseBye
 from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
-from .parsing.specials import ObjectId, FetchAttribute, Flag, SequenceSet
+from .parsing.specials import ObjectId, FetchAttribute, FetchValue, \
+    Flag, SequenceSet
 
 __all__ = ['SelectedSet', 'SynchronizedMessages', 'SelectedMailbox']
 
@@ -381,7 +382,7 @@ class SelectedMailbox:
                 self._silenced_sflags.add((msg.uid, updated_sflags))
 
     def fork(self, command: Command) \
-            -> Tuple['SelectedMailbox', Iterable[Response]]:
+            -> Tuple['SelectedMailbox', Iterable[UntaggedResponse]]:
         """Compares the state of the current object to that of the last fork,
         returning the untagged responses that reflect any changes. A new copy
         of the object is also returned, ready for the next command.
@@ -404,7 +405,7 @@ class SelectedMailbox:
         return copy, untagged
 
     def _compare(self, before: _Frozen, after: _Frozen,
-                 with_uid: bool) -> Iterable[Response]:
+                 with_uid: bool) -> Iterable[UntaggedResponse]:
         if after.is_deleted:
             yield ResponseBye(b'Selected mailbox no longer exists.')
             return
@@ -428,8 +429,8 @@ class SelectedMailbox:
         for uid, _ in groupby(sorted(fetch_uids)):
             seq = after.seqs_cache[uid]
             msg_flags = cache[uid].get_flags(session_flags)
-            fetch_data: List[Tuple[FetchAttribute, SupportsBytes]] = [
-                (_flags_attr, ListP(msg_flags, sort=True))]
+            fetch_data: List[FetchValue] = [
+                FetchValue.of(_flags_attr, ListP(msg_flags, sort=True))]
             if with_uid:
-                fetch_data.append((_uid_attr, Number(uid)))
+                fetch_data.append(FetchValue.of(_uid_attr, Number(uid)))
             yield FetchResponse(seq, fetch_data)

@@ -1,12 +1,15 @@
 
-from io import BytesIO
-from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable
+from abc import ABCMeta
+from contextlib import asynccontextmanager
+from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable, \
+    AsyncContextManager, AsyncIterator
+from typing_extensions import Final
 
 from ...bytes import MaybeBytes, BytesFormat, WriteStream, Writeable
 
-__all__ = ['ResponseCode', 'Response', 'ResponseContinuation', 'ResponseBad',
-           'ResponseNo', 'ResponseOk', 'ResponseBye', 'ResponsePreAuth',
-           'ResponseT']
+__all__ = ['ResponseCode', 'Response', 'CommandResponse', 'UntaggedResponse',
+           'ResponseContinuation', 'ResponseBad', 'ResponseNo', 'ResponseOk',
+           'ResponseBye', 'ResponsePreAuth', 'ResponseT']
 
 #: Type variable with an upper bound of :class:`Response`.
 ResponseT = TypeVar('ResponseT', bound='Response')
@@ -47,7 +50,7 @@ class _AnonymousResponseCode(ResponseCode):
         return BytesFormat(b'[%b]') % self.code
 
 
-class Response(Writeable):
+class Response(Writeable, metaclass=ABCMeta):
     """Base class for all responses sent from the server to the client. These
     responses may be sent unsolicited (e.g. idle timeouts) or in response to a
     tagged command from the client.
@@ -73,8 +76,6 @@ class Response(Writeable):
         self.tag = bytes(tag)
         self._code = code
         self._text = text or b''
-        self._untagged: List['Response'] = []
-        self._mergeable: _Mergeable = {}
         self._raw: Optional[bytes] = None
 
     @property
@@ -99,9 +100,60 @@ class Response(Writeable):
         self._code = code
         self._raw = None
 
-    def add_untagged(self, *responses: 'Response') -> None:
+    @property
+    def is_terminal(self) -> bool:
+        """True if the response contained an untagged ``BYE`` response
+        indicating that the session should be terminated.
+
+        """
+        return False
+
+    @property
+    def is_bad(self) -> bool:
+        """True if the response indicates an error in the command received from
+        the client.
+
+        """
+        return False
+
+    async def async_write(self, writer: WriteStream) -> None:
+        """Like :meth:`.write`, but allows for asynchronous processing that
+        might be necessary for some responses.
+
+        Args:
+            writer: The output stream.
+
+        """
+        self.write(writer)
+
+    def write(self, writer: WriteStream) -> None:
+        writer.write(b'%b %b\r\n' % (self.tag, self.text))
+
+    def __bytes__(self) -> bytes:
+        return self.tobytes()
+
+
+class CommandResponse(Response):
+    """A response sent to finish the response to a command. The *tag* must
+    correspond to the tag given in the command. Untagged responses may precede
+    the command response, according to the rules of the command.
+
+    Args:
+        tag: The tag bytestring of the associated command.
+        text: The response text.
+        code: Optional response code.
+
+    """
+
+    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
+                 code: ResponseCode = None) -> None:
+        super().__init__(tag, text, code)
+        self._untagged: List['UntaggedResponse'] = []
+        self._mergeable: _Mergeable = {}
+
+    def add_untagged(self, *responses: 'UntaggedResponse') -> None:
         """Add an untagged response. These responses are shown before the
-        parent response.
+        command response.
 
         Args:
             responses: The untagged responses to add.
@@ -137,27 +189,52 @@ class Response(Writeable):
             code: Optional response code.
 
         """
-        response = ResponseOk(b'*', text, code)
+        response = UntaggedResponse(text, code, condition=b'OK')
         self.add_untagged(response)
 
     @property
     def is_terminal(self) -> bool:
-        """True if the response contained an untagged ``BYE`` response
-        indicating that the session should be terminated.
-
-        """
         for resp in self._untagged:
             if resp.is_terminal:
                 return True
-        return False
+        return super().is_terminal
 
-    @property
-    def is_bad(self) -> bool:
-        """True if the response indicates an error in the command received from
-        the client.
+    async def async_write(self, writer: WriteStream) -> None:
+        for untagged in self._untagged:
+            await untagged.async_write(writer)
+        super().write(writer)
 
-        """
-        return False
+    def write(self, writer: WriteStream) -> None:
+        for untagged in self._untagged:
+            untagged.write(writer)
+        super().write(writer)
+
+
+class UntaggedResponse(Response):
+    """A response issued prior to a :class:`CommandResponse`, which may include
+    details results from the command or updated mailbox state.
+
+    Args:
+        text: The response text.
+        code: Optional response code.
+        condition: A condition string, e.g. ``OK``.
+        writing_hook: An async context manager to enter while the untagged
+            response is being written.
+
+    """
+
+    def __init__(self, text: MaybeBytes = None, code: ResponseCode = None, *,
+                 condition: bytes = None,
+                 writing_hook: AsyncContextManager[None] = None) -> None:
+        super().__init__(b'*', text, code)
+        if condition is not None:
+            self.condition = condition
+        self.writing_hook: Final = writing_hook
+
+    @classmethod
+    @asynccontextmanager
+    async def _noop_cm(cls) -> AsyncIterator[None]:
+        yield
 
     @property
     def merge_key(self) -> Hashable:
@@ -184,24 +261,10 @@ class Response(Writeable):
         """
         raise TypeError(self)
 
-    def write(self, writer: WriteStream) -> None:
-        """Write the object to the stream, with one or more calls to
-        :meth:`~asyncio.WriteStream.write`.
-
-        Args:
-            writer: The output stream.
-
-        """
-        for untagged in self._untagged:
-            untagged.write(writer)
-        writer.write(b'%b %b\r\n' % (self.tag, self.text))
-
-    def __bytes__(self) -> bytes:
-        if self._raw is None:
-            out = BytesIO()
-            self.write(out)
-            self._raw = out.getvalue()
-        return self._raw
+    async def async_write(self, writer: WriteStream) -> None:
+        writing_hook = self.writing_hook or self._noop_cm()
+        async with writing_hook:
+            await super().async_write(writer)
 
 
 class ResponseContinuation(Response):
@@ -219,7 +282,7 @@ class ResponseContinuation(Response):
         super().__init__(b'+', text)
 
 
-class ResponseBad(Response):
+class ResponseBad(CommandResponse):
     """``BAD`` response indicating the server encountered a protocol-related
     error in responding to the command.
 
@@ -241,7 +304,7 @@ class ResponseBad(Response):
         return True
 
 
-class ResponseNo(Response):
+class ResponseNo(CommandResponse):
     """``NO`` response indicating the server successfully parsed the command
     but failed to execute it successfully.
 
@@ -259,7 +322,7 @@ class ResponseNo(Response):
         super().__init__(tag, text, code)
 
 
-class ResponseOk(Response):
+class ResponseOk(CommandResponse):
     """``OK`` response indicating the server successfully parsed and executed
     the command.
 
@@ -272,12 +335,8 @@ class ResponseOk(Response):
 
     condition = b'OK'
 
-    def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None) -> None:
-        super().__init__(tag, text, code)
 
-
-class ResponseBye(Response):
+class ResponseBye(UntaggedResponse):
     """``BYE`` response indicating that the server will be closing the
     connection immediately after sending the response is sent. This may be sent
     in response to a command (e.g. ``LOGOUT``) or unsolicited.
@@ -290,17 +349,13 @@ class ResponseBye(Response):
 
     condition = b'BYE'
 
-    def __init__(self, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None) -> None:
-        super().__init__(b'*', text, code)
-
     @property
     def is_terminal(self) -> bool:
         """This response is always terminal."""
         return True
 
 
-class ResponsePreAuth(Response):
+class ResponsePreAuth(CommandResponse):
     """``PREAUTH`` response during server greeting to indicate the client is
     already logged in.
 

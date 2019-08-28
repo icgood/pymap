@@ -70,9 +70,9 @@ class SearchKey(Parseable[bytes]):
             return FetchRequirement.reduce(key_or_reqs)
         elif key_name in (b'SENTBEFORE', b'SENTON', b'SENTSINCE', b'BCC',
                           b'CC', b'FROM', b'SUBJECT', b'TO', b'HEADER'):
-            return FetchRequirement.HEADERS
+            return FetchRequirement.HEADER
         elif key_name in (b'BODY', b'TEXT', b'LARGER', b'SMALLER'):
-            return FetchRequirement.BODY
+            return FetchRequirement.CONTENT
         else:
             return FetchRequirement.METADATA
 

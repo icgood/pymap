@@ -4,7 +4,6 @@ import re
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence as SequenceABC
 from functools import total_ordering
-from io import BytesIO
 from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, Match, \
     Optional, Iterator, SupportsBytes
 
@@ -394,9 +393,7 @@ class LiteralString(String):
 
     def __bytes__(self) -> bytes:
         if self._raw is None:
-            out = BytesIO()
-            self.write(out)
-            self._raw = out.getvalue()
+            self._raw = self.tobytes()
         return self._raw
 
 

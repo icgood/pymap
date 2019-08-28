@@ -4,7 +4,7 @@ import unittest
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, ExpungeResponse, FetchResponse, SearchResponse, \
     ESearchResponse, ListResponse, LSubResponse
-from pymap.parsing.specials import FetchAttribute
+from pymap.parsing.specials import FetchAttribute, FetchValue
 
 
 class TestFlagsResponse(unittest.TestCase):
@@ -38,7 +38,8 @@ class TestExpungeResponse(unittest.TestCase):
 class TestFetchResponse(unittest.TestCase):
 
     def test_bytes(self):
-        resp = FetchResponse(56, [(FetchAttribute(b'KEY1'), b'VAL1')])
+        resp = FetchResponse(56, [
+            FetchValue.of(FetchAttribute(b'KEY1'), b'VAL1')])
         self.assertEqual(b'* 56 FETCH (KEY1 VAL1)\r\n', bytes(resp))
 
 

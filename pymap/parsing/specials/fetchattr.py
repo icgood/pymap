@@ -1,14 +1,16 @@
 import enum
+from abc import ABCMeta
 from functools import total_ordering, reduce
 from typing import Tuple, Optional, Iterable, Sequence, FrozenSet
+from typing_extensions import Final
 
 from . import AString
 from .. import Params, Parseable
 from ..exceptions import NotParseable
 from ..primitives import Atom, ListP
-from ...bytes import BytesFormat, rev
+from ...bytes import rev, BytesFormat, MaybeBytes, Writeable
 
-__all__ = ['FetchAttribute', 'FetchRequirement']
+__all__ = ['FetchRequirement', 'FetchAttribute', 'FetchValue']
 
 
 class FetchRequirement(enum.Flag):
@@ -17,15 +19,34 @@ class FetchRequirement(enum.Flag):
     Attributes:
         NONE: No data is required.
         METADATA: The IMAP metadata is required.
-        HEADERS: The message headers are required.
+        HEADER: The message header is required.
         BODY: The parsed MIME message body is required.
 
     """
 
     NONE = 0
     METADATA = enum.auto()
-    HEADERS = enum.auto()
+    HEADER = enum.auto()
     BODY = enum.auto()
+    CONTENT = HEADER | BODY
+
+    def overlaps(self, expected: 'FetchRequirement') -> bool:
+        """Checks if this fetch requirement overlaps one or more of the
+        expected fetch requirements.
+
+        Args:
+            expected: The expected fetch requirements.
+
+        """
+        return self & expected != FetchRequirement.NONE
+
+    @classmethod
+    def all(cls) -> 'FetchRequirement':
+        """Return all possible fetch requirements reduced into a single
+        requirement.
+
+        """
+        return cls.reduce(FetchRequirement)
 
     @classmethod
     def reduce(cls, requirements: Iterable['FetchRequirement']) \
@@ -126,9 +147,9 @@ class FetchAttribute(Parseable[bytes]):
         if attr_name in (b'UID', b'FLAGS', b'INTERNALDATE'):
             return FetchRequirement.METADATA
         elif attr_name in (b'ENVELOPE', b'RFC822.HEADER'):
-            return FetchRequirement.HEADERS
+            return FetchRequirement.HEADER
         else:
-            return FetchRequirement.BODY
+            return FetchRequirement.CONTENT
 
     @property
     def raw(self) -> bytes:
@@ -256,3 +277,36 @@ class FetchAttribute(Parseable[bytes]):
 
     def __bytes__(self) -> bytes:
         return self.raw
+
+
+class FetchValue(Writeable, metaclass=ABCMeta):
+    """A value fetched from a message for a single fetch attribute.
+
+    Args:
+        attribute: The fetch attribute.
+
+    """
+
+    __slots__ = ['attribute']
+
+    def __init__(self, attribute: FetchAttribute) -> None:
+        super().__init__()
+        self.attribute: Final = attribute
+
+    @classmethod
+    def of(cls, attribute: FetchAttribute, value: MaybeBytes) \
+            -> 'FetchValue':
+        return _StaticFetchValue(attribute, value)
+
+
+class _StaticFetchValue(FetchValue):
+
+    __slots__ = ['_value']
+
+    def __init__(self, attribute: FetchAttribute, value: MaybeBytes) -> None:
+        super().__init__(attribute)
+        self._value: Final = value
+
+    def __bytes__(self) -> bytes:
+        attr = self.attribute.for_response
+        return BytesFormat(b'%b %b') % (attr, self._value)

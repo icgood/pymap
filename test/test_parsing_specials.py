@@ -6,7 +6,8 @@ from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
     InvalidContent
 from pymap.parsing.specials import AString, Tag, Mailbox, DateTime, Flag, \
-    StatusAttribute, SequenceSet, FetchAttribute, SearchKey, ExtensionOptions
+    StatusAttribute, SequenceSet, FetchAttribute, SearchKey, ObjectId, \
+    ExtensionOptions
 from pymap.parsing.specials.sequenceset import MaxValue
 
 
@@ -89,6 +90,45 @@ class TestMailbox(unittest.TestCase):
     def test_str(self):
         mbx = Mailbox('~peter/mail/&/台北/日本語')
         self.assertEqual('~peter/mail/&/台北/日本語', str(mbx))
+
+
+class TestObjectId(unittest.TestCase):
+
+    def test_parse(self):
+        ret, buf = ObjectId.parse(b'  one_2-three four', Params())
+        self.assertIsInstance(ret, ObjectId)
+        self.assertEqual(b'one_2-three', ret.value)
+        self.assertEqual(b' four', buf)
+
+    def test_parse_failure(self):
+        with self.assertRaises(NotParseable):
+            ObjectId.parse(b'?', Params())
+
+    def test_bytes(self):
+        ret = ObjectId(b'objectid')
+        self.assertEqual(b'objectid', bytes(ret))
+
+    def test_parens(self):
+        ret = ObjectId(b'objectid')
+        self.assertEqual(b'(objectid)', ret.parens)
+
+    def test_maybe(self):
+        self.assertIsNone(ObjectId.maybe(None))
+        self.assertIsNone(ObjectId.maybe(b''))
+        self.assertIsNone(ObjectId.maybe(''))
+        self.assertEqual(ObjectId(b'test'), ObjectId.maybe(b'test'))
+        self.assertEqual(ObjectId(b'test'), ObjectId.maybe('te\u2026st'))
+
+    def test_random(self):
+        mailbox_id = ObjectId.random_mailbox_id()
+        self.assertEqual(b'F', mailbox_id.value[0:1])
+        self.assertTrue(len(mailbox_id.value))
+        email_id = ObjectId.random_email_id()
+        self.assertEqual(b'M', email_id.value[0:1])
+        self.assertTrue(len(email_id.value))
+        thread_id = ObjectId.random_thread_id()
+        self.assertEqual(b'T', thread_id.value[0:1])
+        self.assertTrue(len(thread_id.value))
 
 
 class TestDateTime(unittest.TestCase):

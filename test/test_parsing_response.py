@@ -1,7 +1,7 @@
 
 import unittest
 
-from pymap.parsing.response import Response, ResponseContinuation, \
+from pymap.parsing.response import CommandResponse, ResponseContinuation, \
     ResponseBad, ResponseNo, ResponseOk, ResponseBye, ResponseCode
 
 
@@ -11,7 +11,7 @@ _alert = ResponseCode.of(b'ALERT')
 class TestResponse(unittest.TestCase):
 
     def test_bytes(self):
-        resp = Response(b'tag', b'response test')
+        resp = CommandResponse(b'tag', b'response test')
         self.assertEqual(b'tag response test\r\n', bytes(resp))
         self.assertEqual(b'tag response test\r\n', bytes(resp))
         resp.add_untagged_ok(b'test data 1')

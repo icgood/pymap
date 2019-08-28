@@ -11,8 +11,7 @@ from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import ConfigT_contra
 from ..flags import FlagOp
-from ..parsing.specials import SequenceSet, FetchAttribute, Flag, SearchKey, \
-    ObjectId
+from ..parsing.specials import SequenceSet, Flag, SearchKey, ObjectId
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
 
@@ -290,8 +289,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def fetch_messages(self, selected: SelectedMailbox,
-                             sequence_set: SequenceSet,
-                             attributes: FrozenSet[FetchAttribute]) \
+                             sequence_set: SequenceSet, set_seen: bool) \
             -> Tuple[Iterable[Tuple[int, MessageInterface]], SelectedMailbox]:
         """Get a list of loaded message objects corresponding to given sequence
         set.
@@ -299,7 +297,7 @@ class SessionInterface(Protocol):
         Args:
             selected: The selected mailbox session.
             sequence_set: Sequence set of message sequences or UIDs.
-            attributes: Fetch attributes for the messages.
+            set_seen: True if the messages should get the ``\\Seen`` flag.
 
         Raises:
             :class:`~pymap.exceptions.MailboxNotFound`

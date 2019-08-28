@@ -8,10 +8,11 @@ from typing_extensions import Protocol
 from ..bytes import Writeable
 from ..flags import SessionFlags
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
-from ..parsing.specials import Flag, ExtensionOptions, ObjectId
+from ..parsing.specials import Flag, ExtensionOptions, ObjectId, \
+    FetchRequirement
 
-__all__ = ['AppendMessage', 'CachedMessage', 'MessageInterface', 'MessageT',
-           'FlagsKey']
+__all__ = ['MessageT', 'FlagsKey', 'AppendMessage', 'CachedMessage',
+           'MessageInterface', 'LoadedMessageInterface']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
@@ -88,8 +89,8 @@ class CachedMessage(Protocol):
 
 
 class MessageInterface(Protocol):
-    """Message data including content and metadata such as UID, permanent
-    flags, and when the message was added to the system.
+    """Message data such as UID, permanent flags, and when the message was
+    added to the system.
 
     """
 
@@ -139,22 +140,6 @@ class MessageInterface(Protocol):
         """
         ...
 
-    @property
-    @abstractmethod
-    def append_msg(self) -> AppendMessage:
-        """A copy of the message for appending to a mailbox."""
-        ...
-
-    @abstractmethod
-    def copy(self: MessageT, new_uid: int) -> MessageT:
-        """Return a copy of the message with a new UID.
-
-        Args:
-            new_uid: The copied message UID.
-
-        """
-        ...
-
     @abstractmethod
     def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
         """Get the full set of permanent and session flags for the message.
@@ -163,6 +148,50 @@ class MessageInterface(Protocol):
             session_flags: The current session flags.
 
         """
+        ...
+
+    @abstractmethod
+    def copy(self, loaded: 'LoadedMessageInterface') \
+            -> Optional[AppendMessage]:
+        """Return an :class:`AppendMessage` containing the copied metadata and
+        contents of this message.
+
+        Args:
+            loaded: The loaded message object.
+
+        """
+        ...
+
+    @abstractmethod
+    async def load_content(self, requirement: FetchRequirement) \
+            -> 'LoadedMessageInterface':
+        """Loads the content of the message.
+
+        Args:
+            requirement: The data required from the message content.
+
+        """
+        ...
+
+
+class LoadedMessageInterface(Protocol):
+    """The loaded message content, which may include the header, the body,
+    both, or neither, depending on the requirements.
+
+    It is assumed that this object contains the entire content in-memory. As
+    such, when multiple :class:`MessageInterface` objects are being processed,
+    only one :class:`LoadedMessageInterface` should be in scope at a time.
+
+    """
+
+    @property
+    @abstractmethod
+    def requirement(self) -> FetchRequirement:
+        """The :class:`FetchRequirement` used to load the message content."""
+        ...
+
+    @abstractmethod
+    def __bytes__(self) -> bytes:
         ...
 
     @abstractmethod

@@ -23,7 +23,8 @@ from pymap.parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
 from pymap.parsing.command.select import IdleCommand
 from pymap.parsing.exceptions import RequiresContinuation
 from pymap.parsing.response import ResponseContinuation, Response, \
-    ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk
+    ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk, \
+    CommandResponse
 from pymap.sockets import InheritedSockets, SocketInfo
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
@@ -36,7 +37,7 @@ _Ret = TypeVar('_Ret')
 _log = logging.getLogger(__name__)
 
 
-class IMAPService(ServiceInterface):
+class IMAPService(ServiceInterface):  # pragma: no cover
     """A pymap service implementing an IMAP server."""
 
     def __init__(self, servers: Sequence[AbstractServer]) -> None:
@@ -239,7 +240,7 @@ class IMAPConnection:
         return ok
 
     async def write_response(self, resp: Response) -> None:
-        resp.write(self.writer)
+        await resp.async_write(self.writer)
         try:
             await self.writer.drain()
         except ConnectionError:
@@ -288,7 +289,8 @@ class IMAPConnection:
             else:
                 await shield(self.write_updates(untagged))
 
-    async def idle(self, state: ConnectionState, cmd: IdleCommand) -> Response:
+    async def idle(self, state: ConnectionState, cmd: IdleCommand) \
+            -> CommandResponse:
         response = await self._exec(state.do_command(cmd))
         if not isinstance(response, ResponseOk):
             return response
@@ -353,7 +355,7 @@ class IMAPConnection:
                 try:
                     if isinstance(cmd, AuthenticateCommand):
                         creds = await self.authenticate(state, cmd.mech_name)
-                        response, _ = await self._exec(
+                        response = await self._exec(
                             state.do_authenticate(cmd, creds))
                     elif isinstance(cmd, IdleCommand):
                         response = await self.idle(state, cmd)

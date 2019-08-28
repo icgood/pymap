@@ -1,27 +1,21 @@
 
-from typing import Optional, Tuple, Iterable, Sequence, List
-from typing_extensions import Final
+from abc import abstractmethod, ABCMeta
+from contextlib import contextmanager, asynccontextmanager
+from typing import Type, ClassVar, Optional, Tuple, Iterator, Sequence, \
+    Mapping, List, AsyncIterator
+from typing_extensions import Final, Protocol
 
-from .bytes import MaybeBytes, Writeable
-from .exceptions import NotSupportedError
-from .interfaces.message import MessageInterface
+from .bytes import BytesFormat, MaybeBytes, Writeable
+from .interfaces.message import MessageInterface, LoadedMessageInterface
 from .parsing.primitives import Nil, Number, ListP, LiteralString
-from .parsing.specials import DateTime, FetchAttribute
+from .parsing.specials import DateTime, FetchRequirement, FetchAttribute, \
+    FetchValue
 from .selected import SelectedMailbox
 
-__all__ = ['NotFetchable', 'MessageAttributes']
+__all__ = ['NotFetchable', 'LoadedMessageProvider', 'DynamicFetchValue',
+           'DynamicLoadedFetchValue', 'MessageAttributes']
 
 _Partial = Optional[Tuple[int, Optional[int]]]
-
-
-def _not_expunged(orig):
-    def deco(self: 'MessageAttributes', attr: FetchAttribute,
-             *args, **kwargs) -> MaybeBytes:
-        if self.message.expunged:
-            raise NotFetchable(attr)
-        else:
-            return orig(self, attr, *args, **kwargs)
-    return deco
 
 
 class NotFetchable(Exception):
@@ -42,76 +36,111 @@ class NotFetchable(Exception):
         return self._attr
 
 
-class MessageAttributes:
-    """Defines a re-usable object to query a
-    :class:`~pymap.parsing.specials.fetchattr.FetchAttribute` from a message.
+class LoadedMessageProvider(Protocol):
+    """Generic protocol that provides access to a message's loaded contents
+    when they are available.
+
+    """
+
+    @property
+    @abstractmethod
+    def loaded_msg(self) -> Optional[LoadedMessageInterface]:
+        """The loaded message, if available."""
+
+
+class DynamicFetchValue(FetchValue, metaclass=ABCMeta):
+    """Base class for fetch values that are dynamically read from a message.
 
     Args:
+        attribute: The fetch attribute.
         message: The message object.
         selected: The selected mailbox.
 
     """
 
-    def __init__(self, message: MessageInterface,
-                 selected: SelectedMailbox) -> None:
-        super().__init__()
+    __slots__ = ['message', 'selected']
+
+    def __init__(self, attribute: FetchAttribute, *,
+                 message: MessageInterface, selected: SelectedMailbox) -> None:
+        super().__init__(attribute)
         self.message: Final = message
         self.selected: Final = selected
 
-    def get_all(self, attrs: Iterable[FetchAttribute]) \
-            -> Sequence[Tuple[FetchAttribute, MaybeBytes]]:
-        """Return a list of tuples containing the attribute iself and the bytes
-        representation of that attribute from the message.
+    @abstractmethod
+    def get_value(self) -> MaybeBytes:
+        """Computes the value of the fetch attribute for the message."""
+        ...
+
+    def __bytes__(self) -> bytes:
+        return BytesFormat(b'%b %b') % (
+            self.attribute.for_response, self.get_value())
+
+
+class DynamicLoadedFetchValue(FetchValue, metaclass=ABCMeta):
+    """Base class for fetch values that are dynamically read from a message and
+    require loading its contents.
+
+    Args:
+        attribute: The fetch attribute.
+        message: The message object.
+        selected: The selected mailbox.
+        get_loaded: The provider of the loaded message contents, if available.
+
+    """
+
+    __slots__ = ['message', '_get_loaded']
+
+    def __init__(self, attribute: FetchAttribute, *,
+                 message: MessageInterface,
+                 get_loaded: LoadedMessageProvider) -> None:
+        super().__init__(attribute)
+        self.message: Final = message
+        self._get_loaded = get_loaded
+
+    @abstractmethod
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        """Computes the value of the fetch attribute for the message.
 
         Args:
-            attrs: The fetch attributes.
+            loaded_msg: The loaded message object.
 
         """
-        ret: List[Tuple[FetchAttribute, MaybeBytes]] = []
-        for attr in attrs:
-            try:
-                ret.append((attr.for_response, self.get(attr)))
-            except NotFetchable:
-                pass
-        return ret
+        ...
 
-    def get(self, attr: FetchAttribute) -> MaybeBytes:
-        """Return the bytes representation of the given message attribue.
+    def __bytes__(self) -> bytes:
+        loaded_msg = self._get_loaded.loaded_msg
+        if loaded_msg is None:
+            value: MaybeBytes = MessageAttributes.placeholder
+        else:
+            value = self.get_value(loaded_msg)
+        return BytesFormat(b'%b %b') % (
+            self.attribute.for_response, value)
 
-        Args:
-            attr: The fetch attribute.
-
-        Raises:
-            :class:`NotFetchable`
-
-        """
-        attr_name = attr.value.decode('ascii')
-        method = getattr(self, '_get_' + attr_name.replace('.', '_'))
-        return method(attr)
-
-    def _get_data(self, section: FetchAttribute.Section, partial: _Partial, *,
+    @classmethod
+    def _get_data(cls, section: FetchAttribute.Section, partial: _Partial,
+                  loaded_msg: LoadedMessageInterface, *,
                   binary: bool = False) -> Writeable:
-        msg = self.message
         specifier = section.specifier
         parts = section.parts
         headers = section.headers
         if specifier is None:
-            data = msg.get_body(parts, binary)
+            data = loaded_msg.get_body(parts, binary)
         elif specifier == b'MIME' and parts is not None:
-            data = msg.get_headers(parts)
+            data = loaded_msg.get_headers(parts)
         elif specifier == b'TEXT':
-            data = msg.get_message_text(parts)
+            data = loaded_msg.get_message_text(parts)
         elif specifier == b'HEADER':
-            data = msg.get_message_headers(parts)
+            data = loaded_msg.get_message_headers(parts)
         elif specifier == b'HEADER.FIELDS':
-            data = msg.get_message_headers(parts, headers)
+            data = loaded_msg.get_message_headers(parts, headers)
         elif specifier == b'HEADER.FIELDS.NOT':
-            data = msg.get_message_headers(parts, headers, True)
+            data = loaded_msg.get_message_headers(parts, headers, True)
         else:
             raise RuntimeError()  # Should not happen.
-        return self._get_partial(data, partial)
+        return cls._get_partial(data, partial)
 
-    def _get_partial(self, data: Writeable, partial: _Partial) -> Writeable:
+    @classmethod
+    def _get_partial(cls, data: Writeable, partial: _Partial) -> Writeable:
         if partial is None:
             return data
         full = bytes(data)
@@ -120,78 +149,224 @@ class MessageAttributes:
             end = len(full)
         return Writeable.wrap(full[start:end])
 
-    def _get_UID(self, attr: FetchAttribute) -> MaybeBytes:
+
+class _UidFetchValue(DynamicFetchValue):
+
+    def get_value(self) -> MaybeBytes:
         return Number(self.message.uid)
 
-    def _get_FLAGS(self, attr: FetchAttribute) -> MaybeBytes:
+
+class _FlagsFetchValue(DynamicFetchValue):
+
+    def get_value(self) -> MaybeBytes:
         session_flags = self.selected.session_flags
         flag_set = self.message.get_flags(session_flags)
         return ListP(flag_set, sort=True)
 
-    def _get_INTERNALDATE(self, attr: FetchAttribute) -> MaybeBytes:
+
+class _InternalDateFetchValue(DynamicFetchValue):
+
+    def get_value(self) -> MaybeBytes:
         return DateTime(self.message.internal_date)
 
-    @_not_expunged
-    def _get_EMAILID(self, attr: FetchAttribute) -> MaybeBytes:
-        if self.message.email_id is None:
-            raise NotSupportedError('EMAILID not supported.')
-        return self.message.email_id.parens
 
-    @_not_expunged
-    def _get_THREADID(self, attr: FetchAttribute) -> MaybeBytes:
-        if self.message.thread_id is None:
+class _EmailIdFetchValue(DynamicFetchValue):
+
+    def get_value(self) -> MaybeBytes:
+        msg = self.message
+        if msg.expunged or msg.email_id is None:
+            raise NotFetchable(self.attribute)
+        return msg.email_id.parens
+
+
+class _ThreadIdFetchValue(DynamicFetchValue):
+
+    def get_value(self) -> MaybeBytes:
+        msg = self.message
+        if msg.expunged:
+            raise NotFetchable(self.attribute)
+        elif msg.thread_id is None:
             return Nil()
         else:
-            return self.message.thread_id.parens
+            return msg.thread_id.parens
 
-    @_not_expunged
-    def _get_ENVELOPE(self, attr: FetchAttribute) -> MaybeBytes:
-        return self.message.get_envelope_structure()
 
-    @_not_expunged
-    def _get_BODYSTRUCTURE(self, attr: FetchAttribute) -> MaybeBytes:
-        return self.message.get_body_structure().extended
+class _LoadedMessageProvider(LoadedMessageProvider):
 
-    @_not_expunged
-    def _get_BODY(self, attr: FetchAttribute) -> MaybeBytes:
+    __slots__ = ['loaded_msg']
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.loaded_msg: Optional[LoadedMessageInterface] = None
+
+    @contextmanager
+    def apply(self, loaded_msg: LoadedMessageInterface) -> Iterator[None]:
+        self.loaded_msg = loaded_msg
+        try:
+            yield
+        finally:
+            self.loaded_msg = None
+
+
+class _EnvelopeFetchValue(DynamicLoadedFetchValue):
+
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        return loaded_msg.get_envelope_structure()
+
+
+class _BodyStructureFetchValue(DynamicLoadedFetchValue):
+
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        return loaded_msg.get_body_structure().extended
+
+
+class _BodyFetchValue(DynamicLoadedFetchValue):
+
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        attr = self.attribute
         if attr.section is None:
-            return self.message.get_body_structure()
-        return LiteralString(self._get_data(attr.section, attr.partial))
+            return loaded_msg.get_body_structure()
+        else:
+            data = self._get_data(attr.section, attr.partial, loaded_msg)
+            return LiteralString(data)
 
-    @_not_expunged
-    def _get_BODY_PEEK(self, attr: FetchAttribute) -> MaybeBytes:
-        return self._get_BODY(attr)
 
-    @_not_expunged
-    def _get_RFC822(self, attr: FetchAttribute) -> MaybeBytes:
-        return self._get_BODY(attr)
+class _BodyPeekFetchValue(_BodyFetchValue):
+    pass
 
-    @_not_expunged
-    def _get_RFC822_HEADER(self, attr: FetchAttribute) -> MaybeBytes:
-        return self._get_BODY(attr)
 
-    @_not_expunged
-    def _get_RFC822_TEXT(self, attr: FetchAttribute) -> MaybeBytes:
-        return self._get_BODY(attr)
+class _RFC822FetchValue(_BodyFetchValue):
+    pass
 
-    @_not_expunged
-    def _get_RFC822_SIZE(self, attr: FetchAttribute) -> MaybeBytes:
-        return Number(self.message.get_size())
 
-    @_not_expunged
-    def _get_BINARY(self, attr: FetchAttribute) -> MaybeBytes:
+class _RFC822HeaderFetchValue(_BodyFetchValue):
+    pass
+
+
+class _RFC822TextFetchValue(_BodyFetchValue):
+    pass
+
+
+class _RFC822SizeFetchValue(DynamicLoadedFetchValue):
+
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        return Number(loaded_msg.get_size())
+
+
+class _BinaryFetchValue(DynamicLoadedFetchValue):
+
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        attr = self.attribute
         if attr.section is None:
             raise RuntimeError()  # should not happen.
-        data = self._get_data(attr.section, attr.partial, binary=True)
+        data = self._get_data(attr.section, attr.partial, loaded_msg,
+                              binary=True)
         return LiteralString(data, True)
 
-    @_not_expunged
-    def _get_BINARY_PEEK(self, attr: FetchAttribute) -> MaybeBytes:
-        return self._get_BINARY(attr)
 
-    @_not_expunged
-    def _get_BINARY_SIZE(self, attr: FetchAttribute) -> MaybeBytes:
+class _BinaryPeekFetchValue(_BinaryFetchValue):
+    pass
+
+
+class _BinarySizeFetchValue(DynamicLoadedFetchValue):
+
+    def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
+        attr = self.attribute
         if attr.section is None:
             raise RuntimeError()  # should not happen.
-        data = self._get_data(attr.section, attr.partial, binary=True)
+        data = self._get_data(attr.section, attr.partial, loaded_msg,
+                              binary=True)
         return Number(len(data))
+
+
+class MessageAttributes(Sequence[FetchValue]):
+    """Defines the logic for how fetch attributes are resolved on a message to
+    produce a fetch value.
+
+    Args:
+        message: The message object.
+        selected: The selected mailbox.
+
+    """
+
+    #: Placeholder value for fetch values requiring loaded message contents.
+    placeholder: ClassVar[bytes] = b'...'
+
+    _simple_attrs: Mapping[bytes, Type[DynamicFetchValue]] = {
+        b'UID': _UidFetchValue,
+        b'FLAGS': _FlagsFetchValue,
+        b'INTERNALDATE': _InternalDateFetchValue,
+        b'EMAILID': _EmailIdFetchValue,
+        b'THREADID': _ThreadIdFetchValue}
+
+    _loaded_attrs: Mapping[bytes, Type[DynamicLoadedFetchValue]] = {
+        b'ENVELOPE': _EnvelopeFetchValue,
+        b'BODYSTRUCTURE': _BodyStructureFetchValue,
+        b'BODY': _BodyFetchValue,
+        b'BODY.PEEK': _BodyPeekFetchValue,
+        b'RFC822': _RFC822FetchValue,
+        b'RFC822.HEADER': _RFC822HeaderFetchValue,
+        b'RFC822.TEXT': _RFC822TextFetchValue,
+        b'RFC822.SIZE': _RFC822SizeFetchValue,
+        b'BINARY': _BinaryFetchValue,
+        b'BINARY.PEEK': _BinaryPeekFetchValue,
+        b'BINARY.SIZE': _BinarySizeFetchValue}
+
+    __slots__ = ['message', 'selected', 'attributes', 'requirement',
+                 '_get_loaded', '_values']
+
+    def __init__(self, message: MessageInterface,
+                 selected: SelectedMailbox,
+                 attributes: Sequence[FetchAttribute]) -> None:
+        super().__init__()
+        self.message: Final = message
+        self.selected: Final = selected
+        self.attributes: Final = attributes
+        self.requirement: Final = FetchRequirement.reduce(
+            attr.requirement for attr in attributes)
+        self._get_loaded = _LoadedMessageProvider()
+        self._values: Optional[Sequence[FetchValue]] = None
+
+    @asynccontextmanager
+    async def load_hook(self) -> AsyncIterator[None]:
+        """An async context manager that loads the message content on entry,
+        and releases it on exit. Fetch values that require loaded message
+        content will write :attr:`.placeholder` if written outside of this
+        context manager, for console or log output.
+
+        """
+        loaded_msg = await self.message.load_content(self.requirement)
+        with self._get_loaded.apply(loaded_msg):
+            yield
+
+    def __iter__(self) -> Iterator[FetchValue]:
+        return iter(self._get_values())
+
+    def __getitem__(self, index):
+        values = self._get_values()
+        return values[index]
+
+    def __len__(self) -> int:
+        return len(self._get_values())
+
+    def _get_values(self) -> Sequence[FetchValue]:
+        if self._values is None:
+            ret: List[FetchValue] = []
+            for attr in self.attributes:
+                try:
+                    ret.append(self._get(attr))
+                except NotFetchable:
+                    pass
+            return ret
+        return self._values
+
+    def _get(self, attr: FetchAttribute) -> FetchValue:
+        attr_name = attr.value
+        simple = self._simple_attrs.get(attr_name)
+        if simple is not None:
+            return simple(attr, message=self.message, selected=self.selected)
+        loaded = self._loaded_attrs.get(attr_name)
+        if loaded is not None:
+            return loaded(attr, message=self.message,
+                          get_loaded=self._get_loaded)
+        raise KeyError(attr_name)

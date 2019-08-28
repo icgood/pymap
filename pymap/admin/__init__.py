@@ -16,7 +16,7 @@ from .handlers import AdminHandlers
 __all__ = ['AdminService']
 
 
-class AdminService(ServiceInterface):
+class AdminService(ServiceInterface):  # pragma: no cover
     """A pymap service implemented using a `grpc <https://grpc.io/>`_ server
     to perform admin functions on a running backend.
 

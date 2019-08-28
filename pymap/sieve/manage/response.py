@@ -1,6 +1,5 @@
 
 import enum
-from io import BytesIO
 from typing import Optional, Mapping, Sequence
 
 from pymap.bytes import BytesFormat, MaybeBytes, WriteStream, Writeable
@@ -49,9 +48,7 @@ class Response(Writeable):
 
     def __bytes__(self) -> bytes:
         if self._raw is None:
-            out = BytesIO()
-            self.write(out)
-            self._raw = out.getvalue()
+            self._raw = self.tobytes()
         return self._raw
 
     def __repr__(self) -> str:

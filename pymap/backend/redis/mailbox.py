@@ -13,6 +13,7 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import AppendMessage, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
+from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
 from pymap.parsing.modutf7 import modutf7_encode, modutf7_decode
 from pymap.parsing.specials import ObjectId, FetchRequirement, SequenceSet
@@ -20,7 +21,7 @@ from pymap.parsing.specials.flag import Flag, Deleted, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 from pymap.threads import ThreadKey
 
-from ..mailbox import Message, MailboxDataInterface, MailboxSetInterface
+from ..mailbox import MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
 
@@ -39,6 +40,45 @@ async def _check_errors(multi) -> bool:
     # Prevents warning about exception never being retrieved.
     errors = await asyncio.gather(*multi._results, return_exceptions=True)
     return any(not isinstance(exc, WatchVariableError) for exc in errors)
+
+
+class Message(BaseMessage):
+
+    __slots__ = ['_redis', '_msg_prefix']
+
+    def __init__(self, uid: int, internal_date: datetime,
+                 permanent_flags: Iterable[Flag], *, expunged: bool = False,
+                 email_id: ObjectId = None, thread_id: ObjectId = None,
+                 redis: Redis = None, msg_prefix: bytes = None) -> None:
+        super().__init__(uid, internal_date, permanent_flags,
+                         expunged=expunged, email_id=email_id,
+                         thread_id=thread_id)
+        self._redis = redis
+        self._msg_prefix = msg_prefix
+
+    async def load_content(self, requirement: FetchRequirement) \
+            -> 'LoadedMessage':
+        redis = self._redis
+        msg_prefix = self._msg_prefix
+        if redis is None or msg_prefix is None \
+                or not requirement.overlaps(FetchRequirement.CONTENT):
+            return LoadedMessage(self, requirement, None)
+        pipe = redis.pipeline()
+        if requirement & FetchRequirement.HEADER:
+            pipe.get(msg_prefix + b':header')
+        else:
+            pipe.echo(b'')
+        if requirement & FetchRequirement.BODY:
+            pipe.get(msg_prefix + b':body')
+        else:
+            pipe.echo(b'')
+        header, body = await pipe.execute()
+        content = MessageContent.parse_split(header, body)
+        return LoadedMessage(self, requirement, content)
+
+
+class LoadedMessage(BaseLoadedMessage):
+    pass
 
 
 class MailboxData(MailboxDataInterface[Message]):
@@ -163,8 +203,8 @@ class MailboxData(MailboxDataInterface[Message]):
             else:
                 break
         return Message(new_uid, append_msg.when, append_msg.flag_set,
-                       recent=recent, email_id=email_id, thread_id=thread_id,
-                       content=msg_content)
+                       email_id=email_id, thread_id=thread_id,
+                       redis=redis, msg_prefix=msg_prefix)
 
     async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
@@ -178,19 +218,8 @@ class MailboxData(MailboxDataInterface[Message]):
         multi.get(msg_prefix + b':emailid')
         multi.get(msg_prefix + b':threadid')
         multi.get(msg_prefix + b':time')
-        multi.sismember(prefix + b':recent', uid)
-        if requirement & FetchRequirement.BODY:
-            multi.get(msg_prefix + b':header')
-            multi.get(msg_prefix + b':body')
-        elif requirement & FetchRequirement.HEADERS:
-            multi.get(msg_prefix + b':header')
-            multi.echo(b'')
-        else:
-            multi.echo(b'')
-            multi.echo(b'')
         multi.get(self._abort_key)
-        exists, flags, email_id, thread_id, time, recent, header, body, abort \
-            = await multi.execute()
+        exists, flags, email_id, thread_id, time, abort = await multi.execute()
         MailboxAbort.assertFalse(abort)
         if not exists:
             if cached_msg is None:
@@ -202,14 +231,9 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_email_id = ObjectId.maybe(email_id)
         msg_thread_id = ObjectId.maybe(thread_id)
         msg_time = datetime.fromisoformat(time.decode('ascii'))
-        msg_recent = bool(recent)
-        if header is None:
-            msg_content: Optional[MessageContent] = None
-        else:
-            msg_content = MessageContent.parse_split(header, body)
-        return Message(uid, msg_time, msg_flags, recent=msg_recent,
+        return Message(uid, msg_time, msg_flags,
                        email_id=msg_email_id, thread_id=msg_thread_id,
-                       content=msg_content)
+                       redis=redis, msg_prefix=msg_prefix)
 
     async def delete(self, uids: Iterable[int]) -> None:
         redis = self._redis
