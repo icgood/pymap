@@ -1,0 +1,5 @@
+-I.
+--python_out=.
+--mypy_out=.
+--python_grpc_out=.
+pymap/admin/grpc/admin.proto
