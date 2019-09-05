@@ -101,7 +101,7 @@ was added to the system.</p>
 <dl class="attribute">
 <dt id="pymap.message.BaseMessage.email_id">
 <code class="descname">email_id</code><a class="headerlink" href="#pymap.message.BaseMessage.email_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>The message’s content object ID, which can identify its content.</p>
+<dd><p>The message’s email object ID, which can identify its content.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference external" href="https://tools.ietf.org/html/rfc8474#section-5.1">RFC 8474 5.1.</a></p>
@@ -110,7 +110,7 @@ was added to the system.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -128,7 +128,7 @@ was added to the system.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -179,18 +179,16 @@ message, used for detecting mailbox updates.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="pymap.message.BaseMessage.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>loaded</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an <code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code> containing the copied metadata and
-contents of this message.</p>
+<dl class="attribute">
+<dt id="pymap.message.BaseMessage.prepared">
+<code class="descname">prepared</code><a class="headerlink" href="#pymap.message.BaseMessage.prepared" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedMessage</span></code> that can be used to append a copy of the
+message to a mailbox.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loaded</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The loaded message object.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.AppendMessage" title="pymap.interfaces.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedMessage</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -203,7 +201,7 @@ contents of this message.</p>
 <em class="property">class </em><code class="descclassname">pymap.message.</code><code class="descname">BaseLoadedMessage</code><span class="sig-paren">(</span><em>message</em>, <em>requirement</em>, <em>content</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.message.LoadedMessageInterface</span></code></a></p>
 <p>The loaded message content, implemented using an instance of
-<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.mime.MessageContent</span></code></a>.</p>
+<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -220,7 +218,8 @@ contents of this message.</p>
 <dl class="attribute">
 <dt id="pymap.message.BaseLoadedMessage.requirement">
 <code class="descname">requirement</code><a class="headerlink" href="#pymap.message.BaseLoadedMessage.requirement" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code> used to load the message content.</p>
+<dd><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code> used to load
+the message content.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

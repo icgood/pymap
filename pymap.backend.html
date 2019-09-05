@@ -68,7 +68,11 @@
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.uidlist"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.backend.redis.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.backend.redis.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#module-pymap.backend.redis.keys"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#module-pymap.backend.redis.cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="module-pymap.backend.mailbox">
@@ -84,6 +88,45 @@
 <code class="descclassname">pymap.backend.mailbox.</code><code class="descname">MailboxDataT_co</code><em class="property"> = +MailboxDataT_co</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariant type variable with an upper bound of
 <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.backend.mailbox.SavedMessage">
+<em class="property">class </em><code class="descclassname">pymap.backend.mailbox.</code><code class="descname">SavedMessage</code><a class="headerlink" href="#pymap.backend.mailbox.SavedMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>The result of a <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.save" title="pymap.backend.mailbox.MailboxDataInterface.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code></a> call.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>email_id</strong> – The assigned email object ID.</li>
+<li><strong>thread_id</strong> – The assigned thread object ID.</li>
+<li><strong>ref</strong> – A strong reference to an object, see <em>ref</em> in
+<code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedMessage</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.backend.mailbox.SavedMessage.email_id">
+<code class="descname">email_id</code><a class="headerlink" href="#pymap.backend.mailbox.SavedMessage.email_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.mailbox.SavedMessage.thread_id">
+<code class="descname">thread_id</code><a class="headerlink" href="#pymap.backend.mailbox.SavedMessage.thread_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.mailbox.SavedMessage.ref">
+<code class="descname">ref</code><a class="headerlink" href="#pymap.backend.mailbox.SavedMessage.ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -181,7 +224,7 @@
 
 <dl class="method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>message</em>, <em>*</em>, <em>recent=False</em>, <em>email_id=None</em>, <em>thread_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.add" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add</code><span class="sig-paren">(</span><em>message</em>, <em>*</em>, <em>recent=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a new message to the end of the mailbox, returning a copy of
 message with its assigned UID.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -189,10 +232,8 @@ message with its assigned UID.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.AppendMessage" title="pymap.interfaces.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>) – The new message data.</li>
+<li><strong>message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedMessage</span></code>) – The new message data.</li>
 <li><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</li>
-<li><strong>email_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]) – An explicit email object ID to assign to the message.</li>
-<li><strong>thread_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>]) – An explicit email thread ID to assign to the message.</li>
 </ul>
 </td>
 </tr>
@@ -318,6 +359,22 @@ are resolved by the selected mailbox session.</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[~MessageT]</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.backend.mailbox.MailboxDataInterface.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the message contents to the mailbox.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The message literal.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.mailbox.SavedMessage" title="pymap.backend.mailbox.SavedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">SavedMessage</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -627,7 +684,7 @@ most backends.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
-<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.AppendMessage" title="pymap.interfaces.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]) – The messages to append.</li>
+<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedMessage</span></code>]) – The messages to append.</li>
 <li><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</li>
 </ul>
 </td>
@@ -685,7 +742,7 @@ housekeeping operations if necessary.</li>
 <dl class="method">
 <dt id="pymap.backend.session.BaseSession.cleanup">
 <code class="descname">cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called after ever operation, success or failure, to allow the
+<dd><p>Called after every operation, success or failure, to allow the
 backend to clean up resources.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -899,6 +956,29 @@ an exception if the mailbox does not yet exist.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.backend.session.BaseSession.prepare_message">
+<code class="descname">prepare_message</code><span class="sig-paren">(</span><em>name</em>, <em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.session.BaseSession.prepare_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare a single message for appending to a mailbox. For APPEND
+commands, this is called as soon as a message literal is received
+during parsing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</li>
+<li><strong>message</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code>) – The message to be appended.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">PreparedMessage</span></code></p>
 </td>
 </tr>
 </tbody>

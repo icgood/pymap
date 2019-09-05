@@ -79,6 +79,20 @@ and integration testing.</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.backend.dict.DictBackend.task">
+<code class="descname">task</code><a class="headerlink" href="#pymap.backend.dict.DictBackend.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>The task to run once the backend is initialized.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.backend.dict.DictBackend.add_subparser">
 <em class="property">classmethod </em><code class="descname">add_subparser</code><span class="sig-paren">(</span><em>name</em>, <em>subparsers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.DictBackend.add_subparser" title="Permalink to this definition">¶</a></dt>
@@ -114,7 +128,7 @@ this backend. For example:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.dict.Config" title="pymap.backend.dict.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -140,7 +154,7 @@ this backend. For example:</p>
 
 <dl class="class">
 <dt id="pymap.backend.dict.Config">
-<em class="property">class </em><code class="descclassname">pymap.backend.dict.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>*</em>, <em>demo_data</em>, <em>demo_user</em>, <em>demo_password</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.dict.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>*</em>, <em>demo_data</em>, <em>demo_user</em>, <em>demo_password</em>, <em>demo_data_resource='pymap.backend.dict'</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.config.IMAPConfig</span></code></a></p>
 <p>The config implementation for the dict backend.</p>
 <dl class="attribute">
@@ -167,6 +181,20 @@ capabilities.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.dict.Config.demo_data_resource">
+<code class="descname">demo_data_resource</code><a class="headerlink" href="#pymap.backend.dict.Config.demo_data_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resource path of demo data files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
 </tr>
 </tbody>
 </table>
