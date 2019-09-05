@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, FrozenSet
+from typing import Optional, FrozenSet, Sequence
 from typing_extensions import Protocol
 
 from ..parsing.specials import Flag, ObjectId
@@ -12,6 +12,8 @@ class MailboxInterface(Protocol):
     is currently selected.
 
     """
+
+    __slots__: Sequence[str] = []
 
     @property
     @abstractmethod

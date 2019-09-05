@@ -1,19 +1,20 @@
 
 from abc import abstractmethod
-from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
-    Iterable, AsyncIterable
+from typing import TypeVar, Any, Optional, Tuple, NamedTuple, Sequence, \
+    FrozenSet, Iterable, AsyncIterable
 from typing_extensions import Protocol
 
 from pymap.flags import FlagOp
-from pymap.interfaces.message import AppendMessage, CachedMessage, MessageT
+from pymap.interfaces.message import MessageT, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
+from pymap.parsing.message import PreparedMessage
 from pymap.parsing.specials import ObjectId, SequenceSet
 from pymap.parsing.specials.flag import get_system_flags, Flag, Deleted, Recent
 from pymap.selected import SelectedSet, SelectedMailbox
 
-__all__ = ['MailboxDataInterface', 'MailboxSetInterface', 'MailboxDataT',
-           'MailboxDataT_co']
+__all__ = ['SavedMessage', 'MailboxDataInterface', 'MailboxSetInterface',
+           'MailboxDataT', 'MailboxDataT_co']
 
 #: Type variable with an upper bound of :class:`MailboxDataInterface`.
 MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface')
@@ -22,6 +23,22 @@ MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface')
 #: :class:`MailboxDataInterface`.
 MailboxDataT_co = TypeVar('MailboxDataT_co', bound='MailboxDataInterface',
                           covariant=True)
+
+
+class SavedMessage(NamedTuple):
+    """The result of a :meth:`~MailboxDataInterface.save` call.
+
+    Args:
+        email_id: The assigned email object ID.
+        thread_id: The assigned thread object ID.
+        ref: A strong reference to an object, see *ref* in
+            :class:`~pymap.parsing.message.PreparedMessage`.
+
+    """
+
+    email_id: ObjectId
+    thread_id: ObjectId
+    ref: Any = None
 
 
 class MailboxDataInterface(Protocol[MessageT]):
@@ -79,17 +96,24 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
-    async def add(self, message: AppendMessage, *, recent: bool = False,
-                  email_id: ObjectId = None,
-                  thread_id: ObjectId = None) -> MessageT:
+    async def save(self, message: bytes) -> SavedMessage:
+        """Save the message contents to the mailbox.
+
+        Args:
+            message: The message literal.
+
+        """
+        ...
+
+    @abstractmethod
+    async def add(self, message: PreparedMessage, *,
+                  recent: bool = False) -> MessageT:
         """Adds a new message to the end of the mailbox, returning a copy of
         message with its assigned UID.
 
         Args:
             message: The new message data.
             recent: True if the message should be marked recent.
-            email_id: An explicit email object ID to assign to the message.
-            thread_id: An explicit email thread ID to assign to the message.
 
         """
         ...

@@ -1,6 +1,8 @@
 
+import asyncio
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from asyncio import Task
 from concurrent.futures import ThreadPoolExecutor
 from typing import TypeVar, Any, Type, Optional, Tuple, Mapping
 
@@ -29,7 +31,7 @@ class MaildirBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+    def __init__(self, login: LoginProtocol, config: 'Config') -> None:
         super().__init__()
         self._login = login
         self._config = config
@@ -39,8 +41,15 @@ class MaildirBackend(BackendInterface):
         return self._login
 
     @property
-    def config(self) -> IMAPConfig:
+    def config(self) -> 'Config':
         return self._config
+
+    @property
+    def task(self) -> Task:
+        return asyncio.create_task(self._task())
+
+    async def _task(self) -> None:
+        pass  # noop
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:

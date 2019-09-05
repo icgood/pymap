@@ -11,6 +11,7 @@ Attributes:
         :class:`~pymap.parsing.command.Command`.
     socket_info: :class:`~pymap.sockinfo.SocketInfo` about the currently
         connected client.
+    language_code: The language code string, e.g. ``en``.
 
 """
 

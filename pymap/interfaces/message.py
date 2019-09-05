@@ -1,18 +1,17 @@
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import TypeVar, Optional, Tuple, NamedTuple, Sequence, FrozenSet, \
-    Collection
+from typing import TypeVar, Tuple, Sequence, FrozenSet, Collection
 from typing_extensions import Protocol
 
 from ..bytes import Writeable
 from ..flags import SessionFlags
+from ..parsing.message import PreparedMessage
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
-from ..parsing.specials import Flag, ExtensionOptions, ObjectId, \
-    FetchRequirement
+from ..parsing.specials import Flag, ObjectId, FetchRequirement
 
-__all__ = ['MessageT', 'FlagsKey', 'AppendMessage', 'CachedMessage',
-           'MessageInterface', 'LoadedMessageInterface']
+__all__ = ['MessageT', 'FlagsKey', 'CachedMessage', 'MessageInterface',
+           'LoadedMessageInterface']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
@@ -20,23 +19,6 @@ MessageT = TypeVar('MessageT', bound='MessageInterface')
 #: Type alias for the value used as a key in set comparisons detecting flag
 #: updates.
 FlagsKey = Tuple[int, FrozenSet[Flag]]
-
-
-class AppendMessage(NamedTuple):
-    """A single message from the APPEND command.
-
-    Args:
-        message: The raw message bytes.
-        when: The internal timestamp to assign to the message.
-        flag_set: The flags to assign to the message.
-        options: The extension options in use for the message.
-
-    """
-
-    message: bytes
-    when: datetime
-    flag_set: FrozenSet[Flag]
-    options: ExtensionOptions
 
 
 class CachedMessage(Protocol):
@@ -49,6 +31,8 @@ class CachedMessage(Protocol):
     should be implemented by the same classes in most cases.
 
     """
+
+    __slots__: Sequence[str] = []
 
     @property
     @abstractmethod
@@ -66,6 +50,18 @@ class CachedMessage(Protocol):
     @abstractmethod
     def permanent_flags(self) -> FrozenSet[Flag]:
         """The permanent flags for the message."""
+        ...
+
+    @property
+    @abstractmethod
+    def email_id(self) -> ObjectId:
+        """The message's email object ID."""
+        ...
+
+    @property
+    @abstractmethod
+    def thread_id(self) -> ObjectId:
+        """The message's thread object ID."""
         ...
 
     @property
@@ -94,6 +90,8 @@ class MessageInterface(Protocol):
 
     """
 
+    __slots__: Sequence[str] = []
+
     @property
     @abstractmethod
     def uid(self) -> int:
@@ -108,20 +106,20 @@ class MessageInterface(Protocol):
 
     @property
     @abstractmethod
-    def permanent_flags(self) -> FrozenSet[Flag]:
-        """The permanent flags for the message."""
-        ...
-
-    @property
-    @abstractmethod
     def internal_date(self) -> datetime:
         """The message's internal date."""
         ...
 
     @property
     @abstractmethod
-    def email_id(self) -> Optional[ObjectId]:
-        """The message's content object ID, which can identify its content.
+    def permanent_flags(self) -> FrozenSet[Flag]:
+        """The permanent flags for the message."""
+        ...
+
+    @property
+    @abstractmethod
+    def email_id(self) -> ObjectId:
+        """The message's email object ID, which can identify its content.
 
         See Also:
             `RFC 8474 5.1. <https://tools.ietf.org/html/rfc8474#section-5.1>`_
@@ -131,7 +129,7 @@ class MessageInterface(Protocol):
 
     @property
     @abstractmethod
-    def thread_id(self) -> Optional[ObjectId]:
+    def thread_id(self) -> ObjectId:
         """The message's thread object ID, which groups messages together.
 
         See Also:
@@ -150,14 +148,11 @@ class MessageInterface(Protocol):
         """
         ...
 
+    @property
     @abstractmethod
-    def copy(self, loaded: 'LoadedMessageInterface') \
-            -> Optional[AppendMessage]:
-        """Return an :class:`AppendMessage` containing the copied metadata and
-        contents of this message.
-
-        Args:
-            loaded: The loaded message object.
+    def prepared(self) -> PreparedMessage:
+        """A :class:`PreparedMessage` that can be used to append a copy of the
+        message to a mailbox.
 
         """
         ...
@@ -184,10 +179,15 @@ class LoadedMessageInterface(Protocol):
 
     """
 
+    __slots__: Sequence[str] = []
+
     @property
     @abstractmethod
     def requirement(self) -> FetchRequirement:
-        """The :class:`FetchRequirement` used to load the message content."""
+        """The :class:`~pymap.parsing.specials.FetchRequirement` used to load
+        the message content.
+
+        """
         ...
 
     @abstractmethod

@@ -263,7 +263,12 @@ class HasEmailIdSearchCriteria(SearchCriteria):
 
     def matches(self, msg_seq: int, msg: MessageInterface,
                 loaded_msg: LoadedMessageInterface) -> bool:
-        return self.email_id == msg.email_id
+        try:
+            email_id = msg.email_id
+        except ValueError:
+            return False
+        else:
+            return self.email_id == email_id
 
 
 class HasThreadIdSearchCriteria(SearchCriteria):

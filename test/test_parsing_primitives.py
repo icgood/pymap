@@ -2,9 +2,13 @@
 import unittest
 
 from pymap.parsing import Params
-from pymap.parsing.exceptions import NotParseable, RequiresContinuation
+from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
     LiteralString, ListP
+from pymap.parsing.state import ParsingState, ParsingInterrupt
+from pymap.parsing.state.continuation import ExpectContinuation
+
+v = memoryview
 
 
 class TestNil(unittest.TestCase):
@@ -93,30 +97,30 @@ class TestString(unittest.TestCase):
         self.assertEqual(b'"asdf"', bytes(qstring2))
 
     def test_literal_parse(self):
-        ret, buf = String.parse(
-            b'{5}\r\n', Params(continuations=[b'test\x01abc']))
+        state = ParsingState(continuations=[v(b'test\x01abc')])
+        ret, buf = String.parse(b'{5}\r\n', Params(state))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'test\x01', ret.value)
         self.assertFalse(ret.binary)
         self.assertEqual(b'abc', buf)
 
     def test_literal_parse_empty(self):
-        ret, buf = String.parse(
-            b'{0}\r\n', Params(continuations=[b'abc']))
+        state = ParsingState(continuations=[v(b'abc')])
+        ret, buf = String.parse(b'{0}\r\n', Params(state))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'', ret.value)
         self.assertEqual(b'abc', buf)
 
     def test_literal_plus(self):
-        ret, buf = String.parse(b'{5+}\r\ntest\x01abc', Params())
+        ret, buf = String.parse(v(b'{5+}\r\ntest\x01abc'), Params())
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'test\x01', ret.value)
         self.assertFalse(ret.binary)
         self.assertEqual(b'abc', buf)
 
     def test_literal_binary(self):
-        ret, buf = String.parse(
-            b'~{3}\r\n', Params(continuations=[b'\x00\x01\02abc']))
+        state = ParsingState(continuations=[v(b'\x00\x01\02abc')])
+        ret, buf = String.parse(b'~{3}\r\n', Params(state))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'\x00\x01\x02', ret.value)
         self.assertTrue(ret.binary)
@@ -136,15 +140,17 @@ class TestString(unittest.TestCase):
             String.parse(b'{10}', Params())
         with self.assertRaises(NotParseable):
             String.parse(b'{10}\r\nabc', Params())
-        with self.assertRaises(RequiresContinuation):
-            String.parse(b'{10}\r\n', Params())
         with self.assertRaises(NotParseable):
-            String.parse(b'{10}\r\n', Params(continuations=[b'a'*9]))
+            state = ParsingState(continuations=[v(b'a'*9)])
+            String.parse(b'{10}\r\n', Params(state))
         with self.assertRaises(NotParseable):
             String.parse(b'{10+}\r\n' + (b'a'*9), Params())
-        with self.assertRaises(NotParseable) as raised:
+        with self.assertRaises(ParsingInterrupt) as raised1:
+            String.parse(b'{10}\r\n', Params())
+        self.assertIsInstance(raised1.exception.expected, ExpectContinuation)
+        with self.assertRaises(NotParseable) as raised2:
             String.parse(b'{4097}\r\n', Params())
-        self.assertEqual(b'[TOOBIG]', bytes(raised.exception.code))
+        self.assertEqual(b'[TOOBIG]', bytes(raised2.exception.code))
 
     def test_literal_bytes(self):
         qstring1 = LiteralString(b'one\r\ntwo')

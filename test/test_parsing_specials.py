@@ -8,6 +8,7 @@ from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
 from pymap.parsing.specials import AString, Tag, Mailbox, DateTime, Flag, \
     StatusAttribute, SequenceSet, FetchAttribute, SearchKey, ObjectId, \
     ExtensionOptions
+from pymap.parsing.state import ParsingState
 from pymap.parsing.specials.sequenceset import MaxValue
 
 
@@ -26,8 +27,8 @@ class TestAString(unittest.TestCase):
         self.assertEqual(b'  ', buf)
 
     def test_parse_literal(self):
-        ret, buf = AString.parse(
-            b'  {4}\r\n', Params(continuations=[b'abcd  ']))
+        state = ParsingState(continuations=[memoryview(b'abcd  ')])
+        ret, buf = AString.parse(b'  {4}\r\n', Params(state))
         self.assertIsInstance(ret, AString)
         self.assertEqual(b'abcd', ret.value)
         self.assertEqual(b'  ', buf)
@@ -113,9 +114,9 @@ class TestObjectId(unittest.TestCase):
         self.assertEqual(b'(objectid)', ret.parens)
 
     def test_maybe(self):
-        self.assertIsNone(ObjectId.maybe(None))
-        self.assertIsNone(ObjectId.maybe(b''))
-        self.assertIsNone(ObjectId.maybe(''))
+        self.assertEqual(ObjectId(None), ObjectId.maybe(None))
+        self.assertEqual(ObjectId(None), ObjectId.maybe(b''))
+        self.assertEqual(ObjectId(None), ObjectId.maybe(''))
         self.assertEqual(ObjectId(b'test'), ObjectId.maybe(b'test'))
         self.assertEqual(ObjectId(b'test'), ObjectId.maybe('te\u2026st'))
 

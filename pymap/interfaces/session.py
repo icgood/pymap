@@ -6,11 +6,12 @@ from typing_extensions import Protocol
 from pysasl import AuthenticationCredentials
 
 from .filter import FilterSetInterface
-from .message import AppendMessage, MessageInterface
+from .message import MessageInterface
 from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import ConfigT_contra
 from ..flags import FlagOp
+from ..parsing.message import AppendMessage, PreparedMessage
 from ..parsing.specials import SequenceSet, Flag, SearchKey, ObjectId
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
@@ -43,6 +44,8 @@ class LoginProtocol(Protocol[ConfigT_contra]):
 class SessionInterface(Protocol):
     """Corresponds to a single, authenticated IMAP session."""
 
+    __slots__: Sequence[str] = []
+
     @property
     @abstractmethod
     def owner(self) -> str:
@@ -57,7 +60,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def cleanup(self) -> None:
-        """Called after ever operation, success or failure, to allow the
+        """Called after every operation, success or failure, to allow the
         backend to clean up resources.
 
         Note:
@@ -210,8 +213,22 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
+    async def prepare_message(self, name: str, message: AppendMessage) \
+            -> PreparedMessage:
+        """Prepare a single message for appending to a mailbox. For APPEND
+        commands, this is called as soon as a message literal is received
+        during parsing.
+
+        Args:
+            name: The name of the mailbox.
+            message: The message to be appended.
+
+        """
+        ...
+
+    @abstractmethod
     async def append_messages(self, name: str,
-                              messages: Sequence[AppendMessage],
+                              messages: Sequence[PreparedMessage],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         """Appends a message to the end of the mailbox.

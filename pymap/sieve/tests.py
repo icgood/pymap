@@ -4,8 +4,8 @@ from abc import abstractmethod, ABCMeta
 from email.headerregistry import Address, AddressHeader
 from typing import Sequence, List, Pattern
 
-from pymap.interfaces.message import AppendMessage
 from pymap.mime import MessageContent
+from pymap.parsing.message import AppendMessage
 from sievelib.commands import Command  # type: ignore
 
 from .util import AddressPart, MatchType, SizeComparator, str_list

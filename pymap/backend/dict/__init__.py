@@ -1,6 +1,8 @@
 
+import asyncio
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from asyncio import Task
 from contextlib import closing
 from datetime import datetime, timezone
 from typing import Any, Tuple, Mapping, Dict
@@ -11,8 +13,8 @@ from pysasl import AuthenticationCredentials
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import LoginProtocol
+from pymap.parsing.message import AppendMessage, PreparedMessage
 from pymap.parsing.specials import ExtensionOptions
 from pymap.parsing.specials.flag import Flag, Recent
 
@@ -29,7 +31,7 @@ class DictBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+    def __init__(self, login: LoginProtocol, config: 'Config') -> None:
         super().__init__()
         self._login = login
         self._config = config
@@ -39,8 +41,15 @@ class DictBackend(BackendInterface):
         return self._login
 
     @property
-    def config(self) -> IMAPConfig:
+    def config(self) -> 'Config':
         return self._config
+
+    @property
+    def task(self) -> Task:
+        return asyncio.create_task(self._task())
+
+    async def _task(self) -> None:
+        pass  # noop
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
@@ -64,11 +73,13 @@ class Config(IMAPConfig):
     """The config implementation for the dict backend."""
 
     def __init__(self, args: Namespace, *, demo_data: bool,
-                 demo_user: str, demo_password: str, **extra: Any) -> None:
+                 demo_user: str, demo_password: str,
+                 demo_data_resource: str = __name__, **extra: Any) -> None:
         super().__init__(args, **extra)
         self._demo_data = demo_data
         self._demo_user = demo_user
         self._demo_password = demo_password
+        self._demo_data_resource = demo_data_resource
         self.set_cache: Dict[str, Tuple[MailboxSet, FilterSet]] = {}
 
     @property
@@ -79,6 +90,11 @@ class Config(IMAPConfig):
     def demo_data(self) -> bool:
         """True if demo data should be loaded at startup."""
         return self._demo_data
+
+    @property
+    def demo_data_resource(self) -> str:
+        """Resource path of demo data files."""
+        return self._demo_data_resource
 
     @property
     def demo_user(self) -> str:
@@ -105,8 +121,6 @@ class Config(IMAPConfig):
 
 class Session(BaseSession[Message]):
     """The session implementation for the dict backend."""
-
-    resource = __name__
 
     def __init__(self, owner: str, config: Config, mailbox_set: MailboxSet,
                  filter_set: FilterSet) -> None:
@@ -146,7 +160,8 @@ class Session(BaseSession[Message]):
             mailbox_set = MailboxSet()
             filter_set = FilterSet()
             if config.demo_data:
-                await cls._load_demo(mailbox_set, filter_set)
+                await cls._load_demo(config.demo_data_resource,
+                                     mailbox_set, filter_set)
             config.set_cache[user] = (mailbox_set, filter_set)
         return cls(credentials.identity, config, mailbox_set, filter_set)
 
@@ -159,32 +174,33 @@ class Session(BaseSession[Message]):
         raise InvalidAuth()
 
     @classmethod
-    async def _load_demo(cls, mailbox_set: MailboxSet,
+    async def _load_demo(cls, resource: str, mailbox_set: MailboxSet,
                          filter_set: FilterSet) -> None:
         inbox = await mailbox_set.get_mailbox('INBOX')
-        await cls._load_demo_mailbox('INBOX', inbox)
-        mbx_names = sorted(resource_listdir(cls.resource, 'demo'))
+        await cls._load_demo_mailbox(resource, 'INBOX', inbox)
+        mbx_names = sorted(resource_listdir(resource, 'demo'))
         for name in mbx_names:
             if name == 'sieve':
-                await cls._load_demo_sieve(name, filter_set)
+                await cls._load_demo_sieve(resource, name, filter_set)
             elif name != 'INBOX':
                 await mailbox_set.add_mailbox(name)
                 mbx = await mailbox_set.get_mailbox(name)
-                await cls._load_demo_mailbox(name, mbx)
+                await cls._load_demo_mailbox(resource, name, mbx)
 
     @classmethod
-    async def _load_demo_sieve(cls, name: str, filter_set: FilterSet) -> None:
+    async def _load_demo_sieve(cls, resource: str, name: str,
+                               filter_set: FilterSet) -> None:
         path = os.path.join('demo', name)
-        sieve_stream = resource_stream(cls.resource, path)
-        with closing(sieve_stream):
+        with closing(resource_stream(resource, path)) as sieve_stream:
             sieve = sieve_stream.read()
         await filter_set.put('demo', sieve)
         await filter_set.set_active('demo')
 
     @classmethod
-    async def _load_demo_mailbox(cls, name: str, mbx: MailboxData) -> None:
+    async def _load_demo_mailbox(cls, resource: str, name: str,
+                                 mbx: MailboxData) -> None:
         path = os.path.join('demo', name)
-        msg_names = sorted(resource_listdir(cls.resource, path))
+        msg_names = sorted(resource_listdir(resource, path))
         for msg_name in msg_names:
             if msg_name == '.readonly':
                 mbx._readonly = True
@@ -192,18 +208,20 @@ class Session(BaseSession[Message]):
             elif msg_name.startswith('.'):
                 continue
             msg_path = os.path.join(path, msg_name)
-            message_stream = resource_stream(cls.resource, msg_path)
-            with closing(message_stream):
-                flags_line = message_stream.readline()
-                msg_timestamp = float(message_stream.readline())
-                msg_data = message_stream.read()
-                msg_dt = datetime.fromtimestamp(msg_timestamp, timezone.utc)
-                msg_flags = {Flag(flag) for flag in flags_line.split()}
-                if Recent in msg_flags:
-                    msg_flags.remove(Recent)
-                    msg_recent = True
-                else:
-                    msg_recent = False
+            with closing(resource_stream(resource, msg_path)) as msg_stream:
+                flags_line = msg_stream.readline()
+                msg_timestamp = float(msg_stream.readline())
+                msg_data = msg_stream.read()
+            msg_dt = datetime.fromtimestamp(msg_timestamp, timezone.utc)
+            msg_flags = {Flag(flag) for flag in flags_line.split()}
+            if Recent in msg_flags:
+                msg_flags.remove(Recent)
+                msg_recent = True
+            else:
+                msg_recent = False
             msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags),
                                 ExtensionOptions.empty())
-            await mbx.add(msg, recent=msg_recent)
+            email_id, thread_id, ref = await mbx.save(msg_data)
+            prepared = PreparedMessage(msg_dt, msg.flag_set, email_id,
+                                       thread_id, msg.options, ref)
+            await mbx.add(prepared, recent=msg_recent)

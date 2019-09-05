@@ -2,7 +2,7 @@
 from abc import abstractmethod
 from argparse import Namespace, ArgumentParser
 from asyncio import Task
-from typing import Tuple
+from typing import Tuple, Sequence
 from typing_extensions import Protocol
 
 from .session import LoginProtocol
@@ -16,6 +16,8 @@ class BackendInterface(Protocol):
     register themselves on the ``pymap.backend`` entry point.
 
     """
+
+    __slots__: Sequence[str] = []
 
     @classmethod
     @abstractmethod
@@ -61,12 +63,20 @@ class BackendInterface(Protocol):
         """The IMAP config in use by the backend."""
         ...
 
+    @property
+    @abstractmethod
+    def task(self) -> Task:
+        """The task to run once the backend is initialized."""
+        ...
+
 
 class ServiceInterface(Protocol):
     """Defines the abstract base class that is expected for services that
     register themselves on the ``pymap.service`` entry point.
 
     """
+
+    __slots__: Sequence[str] = []
 
     @property
     @abstractmethod

@@ -1,12 +1,18 @@
 
 import unittest
+from unittest.mock import MagicMock
 from datetime import datetime, timezone
 
 from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.command.auth import CreateCommand, AppendCommand, \
     ListCommand, RenameCommand, StatusCommand
+from pymap.parsing.message import PreparedMessage
 from pymap.parsing.specials import StatusAttribute, Flag
+from pymap.parsing.state import ParsingState, ParsingInterrupt
+from pymap.parsing.state.message import ExpectPreparedMessage
+
+v = memoryview
 
 
 class TestCommandMailboxArg(unittest.TestCase):
@@ -19,39 +25,52 @@ class TestCommandMailboxArg(unittest.TestCase):
 
 class TestAppendCommand(unittest.TestCase):
 
+    _epoch = datetime(1970, 1, 1, 1, 1, tzinfo=timezone.utc)
+    _seen = Flag(br'\Seen')
+
     def test_parse(self):
-        ret, buf = AppendCommand.parse(
-            b' inbox (\\Seen) "01-Jan-1970 01:01:00 +0000" {10}\n',
-            Params(continuations=[b'test test!\n  ']))
-        self.assertEqual('INBOX', ret.mailbox)
-        self.assertEqual(1, len(ret.messages))
-        msg_0 = ret.messages[0]
-        self.assertEqual(b'test test!', msg_0.message)
-        self.assertEqual({Flag(br'\Seen')}, msg_0.flag_set)
-        self.assertEqual(datetime(1970, 1, 1, 1, 1, tzinfo=timezone.utc),
-                         msg_0.when)
-        self.assertEqual(b'  ', buf)
+        state = ParsingState(continuations=[v(b'test test!\n  ')])
+        with self.assertRaises(ParsingInterrupt) as raised:
+            AppendCommand.parse(
+                b' inbox (\\Seen) "01-Jan-1970 01:01:00 +0000" {10}\n',
+                Params(state))
+        expected = raised.exception.expected
+        self.assertIsInstance(expected, ExpectPreparedMessage)
+        self.assertEqual('INBOX', expected.mailbox)
+        self.assertEqual(b'test test!', expected.message.literal)
+        self.assertEqual({self._seen}, expected.message.flag_set)
+        self.assertEqual(self._epoch, expected.message.when)
 
-    def test_parse_simple(self):
-        ret, buf = AppendCommand.parse(
-            b' inbox {10}\n',
-            Params(continuations=[b'test test!\n  ']))
+    def test_parse_prepared(self):
+        prepared1 = MagicMock(PreparedMessage)
+        prepared2 = MagicMock(PreparedMessage)
+        state = ParsingState(continuations=[v(b'test test! {14}\n'),
+                                            v(b'second message\n  ')],
+                             prepared_messages=[])
+        with self.assertRaises(ParsingInterrupt) as raised:
+            AppendCommand.parse(b' inbox {10}\n', Params(state))
+        expected = raised.exception.expected
+        self.assertIsInstance(expected, ExpectPreparedMessage)
+        self.assertEqual('INBOX', expected.mailbox)
+        self.assertEqual(b'test test!', expected.message.literal)
+        self.assertFalse(expected.message.flag_set)
+        state = ParsingState(continuations=[v(b'test test! {14}\n'),
+                                            v(b'second message\n  ')],
+                             prepared_messages=[prepared1])
+        with self.assertRaises(ParsingInterrupt) as raised:
+            AppendCommand.parse(b' inbox {10}\n', Params(state))
+        expected = raised.exception.expected
+        self.assertIsInstance(expected, ExpectPreparedMessage)
+        self.assertEqual('INBOX', expected.mailbox)
+        self.assertEqual(b'second message', expected.message.literal)
+        self.assertFalse(expected.message.flag_set)
+        state = ParsingState(continuations=[v(b'test test! {14}\n'),
+                                            v(b'second message\n  ')],
+                             prepared_messages=[prepared1, prepared2])
+        ret, buf = AppendCommand.parse(b' inbox {10}\n', Params(state))
+        self.assertIsInstance(ret, AppendCommand)
         self.assertEqual('INBOX', ret.mailbox)
-        self.assertEqual(1, len(ret.messages))
-        msg_0 = ret.messages[0]
-        self.assertEqual(b'test test!', msg_0.message)
-        self.assertFalse(msg_0.flag_set)
-        self.assertEqual(b'  ', buf)
-
-    def test_parse_multi(self):
-        ret, buf = AppendCommand.parse(
-            b' inbox {10}\n',
-            Params(continuations=[b'test test! {15}\n',
-                                  b'test test test!\n  ']))
-        self.assertEqual('INBOX', ret.mailbox)
-        self.assertEqual(2, len(ret.messages))
-        self.assertEqual(b'test test!', ret.messages[0].message)
-        self.assertEqual(b'test test test!', ret.messages[1].message)
+        self.assertEqual([prepared1, prepared2], ret.messages)
         self.assertEqual(b'  ', buf)
 
     def test_parse_toobig(self):

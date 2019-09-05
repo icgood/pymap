@@ -11,8 +11,11 @@ __all__ = ['ObjectId']
 class ObjectId(Parseable[bytes]):
     """Represents an object ID, used to identify a mailbox, message, or thread.
 
+    An *object_id* value of ``None`` is a special case indicating that this
+    object ID is not defined.
+
     Args:
-        object_id: The object ID bytestring.
+        object_id: The object ID bytestring, or ``None``.
 
     See Also:
         `RFC 8474 <https://tools.ietf.org/html/rfc8474>`_
@@ -21,21 +24,28 @@ class ObjectId(Parseable[bytes]):
 
     _pattern = rev.compile(br'[a-zA-Z0-9_-]{1,255}')
 
-    def __init__(self, object_id: bytes) -> None:
+    def __init__(self, object_id: Optional[bytes]) -> None:
         super().__init__()
-        if not object_id:
+        if object_id == b'':
             raise ValueError(object_id)
         self.object_id = object_id
 
     @property
     def value(self) -> bytes:
         """The object ID value."""
+        if self.object_id is None:
+            raise ValueError(self.object_id)
         return self.object_id
 
     @property
     def parens(self) -> bytes:
         """The object ID value surrounded by parentheses."""
         return b'(%b)' % (self.value, )
+
+    @property
+    def not_defined(self) -> bool:
+        """True if the object ID is not defined."""
+        return self.object_id is None
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
@@ -66,16 +76,17 @@ class ObjectId(Parseable[bytes]):
         return cls._random(b'T')
 
     @classmethod
-    def maybe(cls, value: Optional[AnyStr]) -> Optional['ObjectId']:
-        """Optionally create and return a new :class:`ObjectId`, if ``value``
-        is not None or empty.
+    def maybe(cls, value: Optional[AnyStr]) -> 'ObjectId':
+        """Return an object ID representing the string or bytestring value. If
+        the input is empty or ``None``, the object ID returned will have
+        :attr:`.not_defined` be true.
 
         Args:
             value: The object ID string or bytestring.
 
         """
         if not value:
-            return None
+            return cls(None)
         elif isinstance(value, str):
             return cls(value.encode('ascii', 'ignore'))
         else:
@@ -92,10 +103,13 @@ class ObjectId(Parseable[bytes]):
         return hash(self.object_id)
 
     def __str__(self) -> str:
-        return self.object_id.decode('ascii')
+        try:
+            return self.parens.decode('ascii')
+        except ValueError:
+            return 'NIL'
 
     def __repr__(self) -> str:
-        return '<ObjectId ({0!s})>'.format(self)
+        return '<ObjectId {0!s}>'.format(self)
 
     def __bytes__(self) -> bytes:
         return self.value

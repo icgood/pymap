@@ -6,13 +6,14 @@ from datetime import datetime
 from itertools import islice
 from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable, \
     List, Set, AbstractSet, FrozenSet
+from weakref import finalize, WeakKeyDictionary, WeakValueDictionary
 
 from pymap.bytes import HashStream
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
-from pymap.interfaces.message import AppendMessage, CachedMessage
+from pymap.interfaces.message import PreparedMessage, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage, BaseLoadedMessage
@@ -22,7 +23,7 @@ from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 from pymap.threads import ThreadKey
 
-from ..mailbox import MailboxDataInterface, MailboxSetInterface
+from ..mailbox import SavedMessage, MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
 
@@ -118,17 +119,68 @@ class _ModSequenceMapping:
         return updates_ret, expunges_ret
 
 
+class _ContentCache:
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._email_ids: Dict[bytes, ObjectId] = {}
+        self._hashes: Dict[ObjectId, bytes] = {}
+        self._content: WeakValueDictionary[ObjectId, MessageContent] = \
+            WeakValueDictionary()
+
+    def add(self, content: MessageContent) -> ObjectId:
+        msg_hash = HashStream(hashlib.sha1()).digest(content)
+        existing = self._email_ids.get(msg_hash)
+        if existing is not None:
+            return existing
+        email_id = ObjectId.random_email_id()
+        self._email_ids[msg_hash] = email_id
+        self._hashes[email_id] = msg_hash
+        self._content[email_id] = content
+        finalize(content, self._remove, msg_hash, email_id)
+        return email_id
+
+    def _remove(self, msg_hash: bytes, email_id: ObjectId) -> None:
+        self._email_ids.pop(msg_hash, None)
+        self._hashes.pop(email_id, None)
+
+    def get(self, email_id: ObjectId) -> MessageContent:
+        return self._content[email_id]
+
+
+class _ThreadCache:
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._thread_ids: WeakKeyDictionary[ThreadKey, ObjectId] = \
+            WeakKeyDictionary()
+        self._ref: WeakKeyDictionary[MessageContent, Sequence[ThreadKey]] = \
+            WeakKeyDictionary()
+
+    def add(self, content: MessageContent) -> ObjectId:
+        self._ref[content] = thread_keys = ThreadKey.get_all(content.header)
+        for thread_key in thread_keys:
+            thread_id = self._thread_ids.get(thread_key)
+            if thread_id is not None:
+                break
+        else:
+            thread_id = ObjectId.random_thread_id()
+        for thread_key in thread_keys:
+            self._thread_ids.setdefault(thread_key, thread_id)
+        return thread_id
+
+
 class MailboxData(MailboxDataInterface[Message]):
     """Implementation of :class:`~pymap.backend.mailbox.MailboxDataInterface`
     for the dict backend.
 
     """
 
-    def __init__(self, email_ids: Dict[bytes, ObjectId],
-                 thread_ids: Dict[ThreadKey, ObjectId]) -> None:
+    def __init__(self, content_cache: _ContentCache,
+                 thread_cache: _ThreadCache) -> None:
         self._mailbox_id = ObjectId.random_mailbox_id()
-        self._email_ids = email_ids
-        self._thread_ids = thread_ids
+        self._content_cache = content_cache
+        self._thread_cache = thread_cache
         self._readonly = False
         self._messages_lock = subsystem.get().new_rwlock()
         self._selected_set = SelectedSet()
@@ -171,34 +223,21 @@ class MailboxData(MailboxDataInterface[Message]):
             selected.add_updates(updated_messages, expunged)
         return selected
 
-    def _find_email_id(self, content: MessageContent) -> ObjectId:
-        msg_hash = HashStream(hashlib.sha1()).digest(content)
-        return self._email_ids.setdefault(msg_hash, ObjectId.random_email_id())
+    async def save(self, message: bytes) -> SavedMessage:
+        content = MessageContent.parse(message)
+        email_id = self._content_cache.add(content)
+        thread_id = self._thread_cache.add(content)
+        return SavedMessage(email_id, thread_id, content)
 
-    def _find_thread_id(self, content: MessageContent) -> ObjectId:
-        thread_keys = ThreadKey.get_all(content.header)
-        for thread_key in thread_keys:
-            thread_id = self._thread_ids.get(thread_key)
-            if thread_id is not None:
-                break
-        else:
-            thread_id = ObjectId.random_thread_id()
-        for thread_key in thread_keys:
-            self._thread_ids.setdefault(thread_key, thread_id)
-        return thread_id
-
-    async def add(self, append_msg: AppendMessage, *, recent: bool = False,
-                  email_id: ObjectId = None,
-                  thread_id: ObjectId = None) -> Message:
-        content = MessageContent.parse(append_msg.message)
-        if email_id is None:
-            email_id = self._find_email_id(content)
-        if thread_id is None:
-            thread_id = self._find_thread_id(content)
+    async def add(self, prepared: PreparedMessage, *,
+                  recent: bool = False) -> Message:
+        when = prepared.when or datetime.now()
+        content = self._content_cache.get(prepared.email_id)
         async with self.messages_lock.write_lock():
             self._max_uid = new_uid = self._max_uid + 1
-            message = Message(new_uid, append_msg.when, append_msg.flag_set,
-                              email_id=email_id, thread_id=thread_id,
+            message = Message(new_uid, when, prepared.flag_set,
+                              email_id=prepared.email_id,
+                              thread_id=prepared.thread_id,
                               recent=recent, content=content)
             self._messages[new_uid] = message
             self._mod_sequences.update([new_uid])
@@ -212,7 +251,9 @@ class MailboxData(MailboxDataInterface[Message]):
             ret = self._messages.get(uid)
             if ret is None and cached_msg is not None:
                 return Message(cached_msg.uid, cached_msg.internal_date,
-                               cached_msg.permanent_flags, expunged=True)
+                               cached_msg.permanent_flags, expunged=True,
+                               email_id=cached_msg.email_id,
+                               thread_id=cached_msg.thread_id)
             else:
                 return ret
 
@@ -277,9 +318,9 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     def __init__(self) -> None:
         super().__init__()
-        self._email_ids: Dict[bytes, ObjectId] = {}
-        self._thread_ids: Dict[ThreadKey, ObjectId] = {}
-        self._inbox = MailboxData(self._email_ids, self._thread_ids)
+        self._content_cache = _ContentCache()
+        self._thread_cache = _ThreadCache()
+        self._inbox = MailboxData(self._content_cache, self._thread_cache)
         self._set: Dict[str, MailboxData] = OrderedDict()
         self._set_lock = subsystem.get().new_rwlock()
         self._subscribed: Dict[str, bool] = {}
@@ -318,7 +359,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
                 raise MailboxConflict(name)
         async with self._set_lock.write_lock():
             self._set[name] = mbx = MailboxData(
-                self._email_ids, self._thread_ids)
+                self._content_cache, self._thread_cache)
             return mbx.mailbox_id
 
     async def delete_mailbox(self, name: str) -> None:
@@ -342,7 +383,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
                 if before_name == 'INBOX':
                     self._set[after_name] = self._inbox
                     self._inbox = MailboxData(
-                        self._email_ids, self._thread_ids)
+                        self._content_cache, self._thread_cache)
                 else:
                     self._set[after_name] = self._set[before_name]
                     del self._set[before_name]

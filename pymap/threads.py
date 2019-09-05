@@ -29,7 +29,7 @@ class ThreadKey(Iterable[bytes]):
     _re_pattern = re.compile(r'\s*re\s*:\s*', re.I)
     _listtag_pattern = re.compile(r'\s*\[.*?\]\s*')
 
-    __slots__ = ['msg_id', 'subject', '_pair']
+    __slots__ = ['msg_id', 'subject', '_pair', '__weakref__']
 
     def __init__(self, msg_id: bytes, subject: bytes) -> None:
         super().__init__()

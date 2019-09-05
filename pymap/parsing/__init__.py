@@ -4,10 +4,11 @@ from abc import abstractmethod, ABCMeta
 from typing import Any, Type, TypeVar, Generic, Tuple, Sequence, Dict, List
 
 from .exceptions import NotParseable, UnexpectedType
+from .state import ParsingState
 from ..bytes import rev, Writeable
 
-__all__ = ['Params', 'Parseable', 'ExpectedParseable', 'Space', 'EndLine',
-           'ParseableT']
+__all__ = ['ParseableT', 'Params', 'Parseable', 'ExpectedParseable', 'Space',
+           'EndLine']
 
 #: Type variable used for specifying the parseable type of a :class:`Parseable`
 #: sub-class.
@@ -19,7 +20,7 @@ class Params:
     methods.
 
     Args:
-        continuations: The continuation buffers remaining for parsing.
+        state: The mutable parsing state.
         expected: The types that are expected in the next parsed object.
         list_expected: The types that are expect in a parsed list.
         command_name: The name of the command currently being parsed, if any.
@@ -33,11 +34,10 @@ class Params:
 
     """
 
-    __slots__ = ['continuations', 'expected', 'list_expected', 'command_name',
-                 'uid', 'charset', 'tag', 'max_append_len',
-                 'allow_continuations']
+    __slots__ = ['state', 'expected', 'list_expected', 'command_name', 'uid',
+                 'charset', 'tag', 'max_append_len', 'allow_continuations']
 
-    def __init__(self, *, continuations: List[memoryview] = None,
+    def __init__(self, state: ParsingState = None, *,
                  expected: Sequence[Type['Parseable']] = None,
                  list_expected: Sequence[Type['Parseable']] = None,
                  command_name: bytes = None,
@@ -47,7 +47,7 @@ class Params:
                  max_append_len: int = None,
                  allow_continuations: bool = True) -> None:
         super().__init__()
-        self.continuations = continuations or []
+        self.state = state or ParsingState()
         self.expected = expected or []
         self.list_expected = list_expected or []
         self.command_name = command_name
@@ -63,7 +63,7 @@ class Params:
         else:
             kwargs[attr] = getattr(self, attr)
 
-    def copy(self, *, continuations: List[memoryview] = None,
+    def copy(self, state: ParsingState = None, *,
              expected: Sequence[Type['Parseable']] = None,
              list_expected: Sequence[Type['Parseable']] = None,
              command_name: bytes = None,
@@ -74,7 +74,7 @@ class Params:
              allow_continuations: bool = None) -> 'Params':
         """Copy the parameters, possibly replacing a subset."""
         kwargs: Dict[str, Any] = {}
-        self._set_if_none(kwargs, 'continuations', continuations)
+        self._set_if_none(kwargs, 'state', state)
         self._set_if_none(kwargs, 'expected', expected)
         self._set_if_none(kwargs, 'list_expected', list_expected)
         self._set_if_none(kwargs, 'command_name', command_name)

@@ -4,8 +4,8 @@ from typing_extensions import Final
 
 from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.message import AppendMessage
 from pymap.interfaces.session import SessionInterface
+from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import Flag, ExtensionOptions
 from pysasl.external import ExternalResult
 
@@ -78,8 +78,9 @@ class AdminHandlers(AdminBase):
                         return
                     else:
                         mailbox = new_mailbox
+            prepared_msg = await session.prepare_message(mailbox, append_msg)
             append_uid, _ = await session.append_messages(
-                mailbox, [append_msg])
+                mailbox, [prepared_msg])
         except ResponseError as exc:
             resp = AppendResponse(result=ERROR_RESPONSE,
                                   error_type=type(exc).__name__,

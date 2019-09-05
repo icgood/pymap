@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import TypeVar, Type, Optional, Tuple, Sequence
 from typing_extensions import Protocol
 
-from .message import AppendMessage
+from ..parsing.message import AppendMessage
 
 __all__ = ['FilterValueT', 'FilterInterface',
            'FilterCompilerInterface', 'FilterSetInterface']
@@ -19,6 +19,8 @@ class FilterInterface(Protocol):
     auto-response or a copy of the message to an SMTP endpoint.
 
     """
+
+    __slots__: Sequence[str] = []
 
     @abstractmethod
     async def apply(self, sender: str, recipient: str, mailbox: str,
@@ -46,6 +48,8 @@ class FilterCompilerInterface(Protocol[FilterValueT]):
     implementation.
 
     """
+
+    __slots__: Sequence[str] = []
 
     @property
     @abstractmethod
@@ -79,6 +83,8 @@ class FilterSetInterface(Protocol[FilterValueT]):
         `RFC 5804 <https://tools.ietf.org/html/rfc5804>`_
 
     """
+
+    __slots__: Sequence[str] = []
 
     @property
     @abstractmethod

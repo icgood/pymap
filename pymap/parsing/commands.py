@@ -58,6 +58,16 @@ class InvalidCommand(Command):
         return self._command or b''
 
     @property
+    def message(self) -> bytes:
+        """The message to include in a BAD response."""
+        if not self.command_name:
+            return b'Command not given.'
+        elif not self.command_type:
+            return b'%b: Command not implemented.' % (self.command_name, )
+        else:
+            return b'%b: Invalid arguments.' % (self.command_name, )
+
+    @property
     def command_name(self) -> Optional[bytes]:
         """The command name, if the name could be parsed."""
         return self._command
