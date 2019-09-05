@@ -16,7 +16,7 @@ from .mocktransport import MockTransport
 class FakeArgs(Namespace):
     debug = True
     insecure_login = True
-    demo_data = True
+    demo_data = 'pymap.backend.dict'
     demo_user = 'testuser'
     demo_password = 'testpass'
 

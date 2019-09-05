@@ -9,9 +9,10 @@ from pymap.config import IMAPConfig
 from pymap.exceptions import MailboxNotFound, MailboxReadOnly
 from pymap.flags import FlagOp, SessionFlags, PermanentFlags
 from pymap.interfaces.filter import FilterSetInterface
-from pymap.interfaces.message import AppendMessage
+from pymap.interfaces.message import MessageT
 from pymap.interfaces.session import SessionInterface
 from pymap.mailbox import MailboxSnapshot
+from pymap.parsing.message import AppendMessage, PreparedMessage
 from pymap.parsing.specials import SequenceSet, SearchKey, ObjectId, \
     FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
@@ -19,7 +20,7 @@ from pymap.parsing.response.code import AppendUid, CopyUid
 from pymap.search import SearchParams, SearchCriteriaSet
 from pymap.selected import SelectedMailbox
 
-from .mailbox import MailboxDataInterface, MailboxSetInterface, MessageT
+from .mailbox import MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['BaseSession']
 
@@ -136,8 +137,16 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         await self.mailbox_set.set_subscribed(name, False)
         return await self._load_updates(selected, None)
 
+    async def prepare_message(self, name: str, message: AppendMessage) \
+            -> PreparedMessage:
+        mbx = await self.mailbox_set.get_mailbox(name, try_create=True)
+        email_id, thread_id, ref = await mbx.save(message.literal)
+        new_flag_set = frozenset(message.flag_set)
+        return PreparedMessage(message.when, new_flag_set, email_id, thread_id,
+                               message.options, ref)
+
     async def append_messages(self, name: str,
-                              messages: Sequence[AppendMessage],
+                              messages: Sequence[PreparedMessage],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         mbx = await self.mailbox_set.get_mailbox(name, try_create=True)
@@ -231,19 +240,19 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         async for _, msg in mbx.find(sequence_set, selected):
             if not msg.expunged:
                 source_uid = msg.uid
-                loaded = await msg.load_content(FetchRequirement.CONTENT)
-                append_msg = msg.copy(loaded)
-                if append_msg is None:
+                prepared_msg = msg.prepared
+                if prepared_msg is None:
                     continue
-                msg = await dest.add(append_msg, recent=not dest_selected,
-                                     email_id=msg.email_id,
-                                     thread_id=msg.thread_id)
+                msg = await dest.add(prepared_msg, recent=not dest_selected)
                 if dest_selected:
                     dest_selected.session_flags.add_recent(msg.uid)
                 uids.append((source_uid, msg.uid))
         dest.selected_set.updated.set()
-        return (CopyUid(dest.uid_validity, uids),
-                await mbx.update_selected(selected))
+        if not uids:
+            copy_uid: Optional[CopyUid] = None
+        else:
+            copy_uid = CopyUid(dest.uid_validity, uids)
+        return (copy_uid, await mbx.update_selected(selected))
 
     async def update_flags(self, selected: SelectedMailbox,
                            sequence_set: SequenceSet,

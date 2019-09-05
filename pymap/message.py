@@ -9,15 +9,15 @@ from typing_extensions import Final
 
 from .bytes import Writeable
 from .flags import SessionFlags
-from .interfaces.message import FlagsKey, AppendMessage, CachedMessage, \
-    MessageInterface, LoadedMessageInterface
+from .interfaces.message import FlagsKey, CachedMessage, MessageInterface, \
+    LoadedMessageInterface
 from .mime import MessageContent
 from .mime.cte import MessageDecoder
+from .parsing.message import PreparedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
-from .parsing.specials import Flag, ObjectId, ExtensionOptions, \
-    FetchRequirement
+from .parsing.specials import Flag, ObjectId, FetchRequirement
 
 __all__ = ['BaseMessage', 'BaseLoadedMessage']
 
@@ -55,17 +55,17 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
         self.uid: Final = uid
         self.internal_date: Final = internal_date
         self.expunged: Final = expunged
-        self._email_id = email_id
-        self._thread_id = thread_id
+        self._email_id = email_id or ObjectId(None)
+        self._thread_id = thread_id or ObjectId(None)
         self._permanent_flags = frozenset(permanent_flags or ())
         self._flags_key = (uid, self._permanent_flags)
 
     @property
-    def email_id(self) -> Optional[ObjectId]:
+    def email_id(self) -> ObjectId:
         return self._email_id
 
     @property
-    def thread_id(self) -> Optional[ObjectId]:
+    def thread_id(self) -> ObjectId:
         return self._thread_id
 
     @property
@@ -88,14 +88,16 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
     def flags_key(self) -> FlagsKey:
         return self._flags_key
 
-    def copy(self, loaded: LoadedMessageInterface) -> Optional[AppendMessage]:
-        try:
-            data = bytes(loaded)
-        except _NoContent:
-            return None
+    @property
+    def prepared(self) -> PreparedMessage:
         when = self.internal_date
         flag_set = self.permanent_flags
-        return AppendMessage(data, when, flag_set, ExtensionOptions.empty())
+        try:
+            email_id = self.email_id
+        except ValueError:
+            email_id = ObjectId.random_email_id()
+        thread_id = self.thread_id
+        return PreparedMessage(when, flag_set, email_id, thread_id, ref=self)
 
     def __repr__(self) -> str:
         type_name = type(self).__name__
@@ -104,7 +106,7 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
 
 class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
     """The loaded message content, implemented using an instance of
-    :class:`pymap.mime.MessageContent`.
+    :class:`~pymap.mime.MessageContent`.
 
     Args:
         message: The message object.

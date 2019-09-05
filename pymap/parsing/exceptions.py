@@ -1,31 +1,11 @@
-"""Package defining all the IMAP parsing and response classes."""
 
 from typing import Optional
+from typing_extensions import Final
 
 from .response import ResponseCode
 from ..bytes import MaybeBytes
 
-__all__ = ['RequiresContinuation', 'NotParseable', 'InvalidContent',
-           'UnexpectedType']
-
-
-class RequiresContinuation(Exception):
-    """Indicates that the buffer has been successfully parsed so far, but
-    requires a continuation of the command from the client.
-
-    Args:
-        message: The message from the server.
-        literal_length: If the continuation is for a string literal, this is
-            the byte length to expect.
-
-    """
-
-    __slots__ = ['message', 'literal_length']
-
-    def __init__(self, message: bytes, literal_length: int = 0) -> None:
-        super().__init__()
-        self.message = message
-        self.literal_length = literal_length
+__all__ = ['NotParseable', 'InvalidContent', 'UnexpectedType']
 
 
 class NotParseable(Exception):
@@ -44,8 +24,8 @@ class NotParseable(Exception):
     def __init__(self, buf: memoryview, code:
                  Optional[MaybeBytes] = None) -> None:
         super().__init__()
-        self.buf = bytes(buf)
-        self.code = ResponseCode.of(code)
+        self.buf: Final = bytes(buf)
+        self.code: Final = ResponseCode.of(code)
         self._raw: Optional[bytes] = None
 
     def __bytes__(self) -> bytes:

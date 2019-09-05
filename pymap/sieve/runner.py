@@ -1,8 +1,8 @@
 
 from typing import Optional, Sequence, List
 
-from pymap.interfaces.message import AppendMessage
 from pymap.mime import MessageContent
+from pymap.parsing.message import AppendMessage
 from sievelib.commands import Command  # type: ignore
 
 from .tests import SieveTest
@@ -24,7 +24,7 @@ class SieveRunner:
                     append_msg: AppendMessage) -> Sequence[Command]:
         actions: List[Command] = []
         try:
-            content = MessageContent.parse(append_msg.message)
+            content = MessageContent.parse(append_msg.literal)
             self._get_actions(actions, sender, recipient, append_msg, content)
         except StopRunning:
             pass

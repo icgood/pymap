@@ -1,7 +1,9 @@
 
+import asyncio
 import json
 import uuid
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from asyncio import Task
 from typing import Any, Optional, Tuple, Mapping
 
 from aioredis import create_redis, Redis  # type: ignore
@@ -12,7 +14,9 @@ from pymap.exceptions import InvalidAuth, MailboxConflict
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
 
+from .cleanup import Cleanup, CleanupTask
 from .filter import FilterSet
+from .keys import RedisKey, NamespaceKeys
 from .mailbox import Message, MailboxSet
 from ..session import BaseSession
 
@@ -29,18 +33,29 @@ class RedisBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+    def __init__(self, login: LoginProtocol, config: 'Config') -> None:
         super().__init__()
         self._login = login
         self._config = config
+        self._task = asyncio.create_task(self._run())
 
     @property
     def login(self) -> LoginProtocol:
         return self._login
 
     @property
-    def config(self) -> IMAPConfig:
+    def config(self) -> 'Config':
         return self._config
+
+    @property
+    def task(self) -> Task:
+        return self._task
+
+    async def _run(self) -> None:
+        config = self._config
+        root = config._root
+        redis = await create_redis(config.address)
+        await CleanupTask(redis, root).run()
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
@@ -119,7 +134,8 @@ class Config(IMAPConfig):
     @property
     def prefix(self) -> str:
         """The prefix for mail data keys. This prefix does not apply to user
-        lookup, e.g. :attr:`.users_hash` or :attr:`.users_key`.
+        lookup, e.g. :attr:`.users_hash`, :attr:`.users_key`, or
+        :attr:`.namespace_hash`.
 
         """
         return self._prefix
@@ -155,8 +171,7 @@ class Config(IMAPConfig):
 
     @property
     def namespace_hash(self) -> str:
-        """The name of a hash used to override user namespace prefixes -- not
-        needed for normal operation.
+        """The name of a hash used to specify user namespace prefixes.
 
         Typically, when a user first logs in it is assigned a random hex string
         used to namespace all the keys related to its mailbox data. That means
@@ -164,7 +179,13 @@ class Config(IMAPConfig):
         or rename it.
 
         """
-        return f'{self.prefix}_namespace'
+        prefix = self.users_hash or ''
+        return f'{prefix}:namespace'
+
+    @property
+    def _root(self) -> RedisKey:
+        prefix_bytes = self.prefix.encode('utf-8')
+        return RedisKey(prefix_bytes, {})
 
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
@@ -201,9 +222,6 @@ class Session(BaseSession[Message]):
     def filter_set(self) -> FilterSet:
         return self._filter_set
 
-    async def cleanup(self) -> None:
-        await self._redis.discard()
-
     @classmethod
     async def login(cls, credentials: AuthenticationCredentials,
                     config: Config) -> 'Session':
@@ -215,7 +233,10 @@ class Session(BaseSession[Message]):
         namespace = await cls._check_user(redis, config, credentials)
         if config.select is not None:
             await redis.select(config.select)
-        mailbox_set = MailboxSet(redis, namespace)
+        root = config._root
+        ns_keys = NamespaceKeys(root, namespace)
+        cleanup = Cleanup(root)
+        mailbox_set = MailboxSet(redis, ns_keys, cleanup)
         try:
             await mailbox_set.add_mailbox('INBOX')
         except MailboxConflict:

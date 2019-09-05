@@ -7,8 +7,9 @@ from functools import total_ordering
 from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, Match, \
     Optional, Iterator, SupportsBytes
 
-from . import Parseable, ExpectedParseable, NotParseable, Params
-from .exceptions import RequiresContinuation
+from . import Parseable, ExpectedParseable, Params
+from .exceptions import NotParseable
+from .state.continuation import ExpectContinuation
 from ..bytes import rev, MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
     Writeable
 
@@ -313,7 +314,8 @@ class LiteralString(String):
     syntax.
 
     Args:
-        string: The string value parts.
+        string: The literal string value.
+        binary: True if the string is considered binary data.
 
     """
 
@@ -370,11 +372,10 @@ class LiteralString(String):
             literal = bytes(buf[0:literal_length])
         elif len(buf) > match.end(0):
             raise NotParseable(buf[match.end(0):])
-        elif params.continuations:
-            buf = params.continuations.pop(0)
-            literal = bytes(buf[0:literal_length])
         elif params.allow_continuations:
-            raise RequiresContinuation(b'Literal string', literal_length)
+            expected = ExpectContinuation(b'Literal string', literal_length)
+            buf = expected.expect(params.state)
+            literal = bytes(buf[0:literal_length])
         else:
             raise NotParseable(buf)
         if len(literal) != literal_length:

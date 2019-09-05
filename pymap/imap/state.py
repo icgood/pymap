@@ -219,9 +219,8 @@ class ConnectionState:
     async def do_append(self, cmd: AppendCommand) -> _CommandRet:
         if len(cmd.messages) > 1 and b'MULTIAPPEND' not in self.capability:
             raise NotSupportedError('MULTIAPPEND is disabled.')
-        for msg in cmd.messages:
-            if msg.message == b'':
-                return ResponseNo(cmd.tag, b'APPEND cancelled.'), None
+        if cmd.cancelled:
+            return ResponseNo(cmd.tag, b'APPEND cancelled.'), None
         append_uid, updates = await self.session.append_messages(
             cmd.mailbox, cmd.messages, selected=self._selected)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.', append_uid)
@@ -342,17 +341,6 @@ class ConnectionState:
         return untagged
 
     @classmethod
-    def _get_bad_response(cls, cmd: InvalidCommand) -> ResponseBad:
-        if not cmd.command_name:
-            return ResponseBad(cmd.tag, b'Command not given.')
-        elif not cmd.command_type:
-            msg = b'%b: Command not implemented.' % cmd.command_name
-            return ResponseBad(cmd.tag, msg)
-        else:
-            msg = b'%b: Invalid arguments.' % cmd.command_name
-            return ResponseBad(cmd.tag, msg)
-
-    @classmethod
     def _get_func_name(cls, cmd: Command) -> str:
         cmd_type = type(cmd)
         while cmd_type.delegate:
@@ -362,7 +350,7 @@ class ConnectionState:
 
     async def do_command(self, cmd: Command) -> CommandResponse:
         if isinstance(cmd, InvalidCommand):
-            return self._get_bad_response(cmd)
+            return ResponseBad(cmd.tag, cmd.message)
         elif self._session and isinstance(cmd, CommandNonAuth):
             msg = cmd.command + b': Already authenticated.'
             return ResponseBad(cmd.tag, msg)

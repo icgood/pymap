@@ -29,6 +29,7 @@ _Services = Mapping[str, Type[ServiceInterface]]
 def main() -> None:
     parser = ArgumentParser(
         description=__doc__,
+        fromfile_prefix_chars='@',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--debug', action='store_true',
                         help='increase printed output for debugging')
@@ -84,7 +85,7 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
 
     _drop_privileges(args)
     notify_ready()
-    await asyncio.gather(*[service.task for service in services])
+    await asyncio.gather(backend.task, *[service.task for service in services])
 
 
 def _load_entry_points(group: str) -> Mapping[str, Type[Any]]:

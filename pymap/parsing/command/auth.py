@@ -1,23 +1,21 @@
 
-from datetime import datetime
-from typing import ClassVar, Tuple, Sequence, Iterable, Optional, List
+from typing import ClassVar, Optional, Tuple, Sequence, Iterable, List, \
+    FrozenSet
 
 from . import CommandAuth
-from .. import NotParseable, UnexpectedType, Space, EndLine, Params
-from ..exceptions import InvalidContent
+from .. import Space, EndLine, Params
+from ..exceptions import NotParseable, UnexpectedType, InvalidContent
+from ..message import AppendMessage, PreparedMessage
 from ..modutf7 import modutf7_decode
 from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
+from ..state.message import ExpectPreparedMessage
 from ...bytes import rev
-from ...interfaces.message import AppendMessage
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',
            'StatusCommand', 'SubscribeCommand', 'UnsubscribeCommand']
-
-_AppendMsgArg = Tuple[bytes, Iterable[Flag], Optional[datetime],
-                      ExtensionOptions]
 
 
 class CommandMailboxArg(CommandAuth):
@@ -51,27 +49,27 @@ class AppendCommand(CommandAuth):
         mailbox: The mailbox name.
         messages: List of tuples containing the raw messages bytes, the
             flags, and the internal timestamp to assign to the message.
+        cancelled: True if the append command was cancelled.
 
     """
 
     command = b'APPEND'
 
     def __init__(self, tag: bytes, mailbox: Mailbox,
-                 messages: Iterable[_AppendMsgArg]) -> None:
+                 messages: Iterable[PreparedMessage],
+                 cancelled: bool = False) -> None:
         super().__init__(tag)
-        now = datetime.now()
         self.mailbox_obj = mailbox
-        self.messages: Sequence[AppendMessage] = \
-            [AppendMessage(message, when or now, frozenset(flags), options)
-             for message, flags, when, options in messages]
+        self.messages: Sequence[PreparedMessage] = list(messages)
+        self.cancelled = cancelled
 
     @property
     def mailbox(self) -> str:
         return str(self.mailbox_obj)
 
     @classmethod
-    def _parse_msg(cls, buf: memoryview, params: Params) \
-            -> Tuple[_AppendMsgArg, memoryview]:
+    def _parse_msg(cls, name: str, buf: memoryview, params: Params) \
+            -> Tuple[Optional[PreparedMessage], memoryview]:
         _, buf = Space.parse(buf, params)
         try:
             params_copy = params.copy(list_expected=[Flag])
@@ -79,9 +77,9 @@ class AppendCommand(CommandAuth):
         except UnexpectedType:
             raise
         except NotParseable:
-            flags: Sequence[Flag] = []
+            flags: FrozenSet[Flag] = frozenset()
         else:
-            flags = flag_list.get_as(Flag)
+            flags = frozenset(flag_list.get_as(Flag))
             _, buf = Space.parse(buf, params)
         try:
             date_time_p, buf = DateTime.parse(buf, params)
@@ -105,28 +103,38 @@ class AppendCommand(CommandAuth):
             message, buf = LiteralString.parse(buf, params)
         except NotParseable as exc:
             if options:
-                return (b'', flags, date_time, options), buf
+                literal = b''
             else:
                 raise exc
         else:
-            return (message.value, flags, date_time, options), buf
+            literal = message.value
+            if literal == b'':
+                return None, buf
+        append_msg = AppendMessage(literal, date_time, flags, options)
+        prepared = ExpectPreparedMessage(name, append_msg).expect(params.state)
+        return prepared, buf
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> Tuple['AppendCommand', memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
-        first_msg, buf = cls._parse_msg(buf, params)
-        messages = [first_msg]
+        messages: List[PreparedMessage] = []
+        cancelled = False
         while True:
             try:
-                next_msg, buf = cls._parse_msg(buf, params)
+                next_msg, buf = cls._parse_msg(mailbox.value, buf, params)
             except NotParseable:
+                if not messages:
+                    raise
                 break
             else:
+                if next_msg is None:
+                    cancelled = True
+                    break
                 messages.append(next_msg)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, mailbox, messages), buf
+        return cls(params.tag, mailbox, messages, cancelled), buf
 
 
 class CreateCommand(CommandMailboxArg):

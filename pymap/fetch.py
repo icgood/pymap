@@ -174,9 +174,12 @@ class _EmailIdFetchValue(DynamicFetchValue):
 
     def get_value(self) -> MaybeBytes:
         msg = self.message
-        if msg.expunged or msg.email_id is None:
+        if msg.expunged:
             raise NotFetchable(self.attribute)
-        return msg.email_id.parens
+        try:
+            return msg.email_id.parens
+        except ValueError as exc:
+            raise NotFetchable(self.attribute) from exc
 
 
 class _ThreadIdFetchValue(DynamicFetchValue):
@@ -185,10 +188,10 @@ class _ThreadIdFetchValue(DynamicFetchValue):
         msg = self.message
         if msg.expunged:
             raise NotFetchable(self.attribute)
-        elif msg.thread_id is None:
-            return Nil()
-        else:
+        try:
             return msg.thread_id.parens
+        except ValueError:
+            return Nil()
 
 
 class _LoadedMessageProvider(LoadedMessageProvider):

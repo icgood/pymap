@@ -12,11 +12,12 @@ from pymap.context import subsystem
 from pymap.exceptions import MailboxNotFound, MailboxConflict, \
     MailboxHasChildren, NotSupportedError
 from pymap.flags import FlagOp
-from pymap.interfaces.message import AppendMessage, CachedMessage
+from pymap.interfaces.message import CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
+from pymap.parsing.message import PreparedMessage
 from pymap.parsing.specials import ObjectId, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
@@ -26,7 +27,7 @@ from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
-from ..mailbox import MailboxDataInterface, MailboxSetInterface
+from ..mailbox import SavedMessage, MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Maildir', 'Message', 'MailboxData', 'MailboxSet']
 
@@ -85,19 +86,17 @@ class Maildir(_Maildir):
 
 class Message(BaseMessage):
 
-    __slots__ = ['recent', '_maildir_msg', '_maildir', '_key']
+    __slots__ = ['recent', '_maildir', '_key']
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *, expunged: bool = False,
                  email_id: ObjectId = None, thread_id: ObjectId = None,
-                 recent: bool = False, maildir_msg: MaildirMessage = None,
-                 maildir: Maildir = None, key: str = None) \
-            -> None:
+                 recent: bool = False, maildir: Maildir = None,
+                 key: str = None) -> None:
         super().__init__(uid, internal_date, permanent_flags,
                          expunged=expunged, email_id=email_id,
                          thread_id=thread_id)
         self.recent: Final = recent
-        self._maildir_msg = maildir_msg
         self._maildir = maildir
         self._key = key
 
@@ -115,13 +114,15 @@ class Message(BaseMessage):
             return LoadedMessage(self, requirement, content)
 
     @classmethod
-    def to_maildir(cls, append_msg: AppendMessage, recent: bool,
+    def to_maildir(cls, prepared_msg: PreparedMessage, recent: bool,
                    maildir_flags: MaildirFlags) -> MaildirMessage:
-        flag_str = maildir_flags.to_maildir(append_msg.flag_set)
-        maildir_msg = MaildirMessage(append_msg.message)
+        flag_str = maildir_flags.to_maildir(prepared_msg.flag_set)
+        when = prepared_msg.when or datetime.now()
+        literal: bytes = prepared_msg.ref
+        maildir_msg = MaildirMessage(literal)
         maildir_msg.set_flags(flag_str)
         maildir_msg.set_subdir('new' if recent else 'cur')
-        maildir_msg.set_date(append_msg.when.timestamp())
+        maildir_msg.set_date(when.timestamp())
         return maildir_msg
 
     @classmethod
@@ -135,8 +136,7 @@ class Message(BaseMessage):
         msg_dt = datetime.fromtimestamp(maildir_msg.get_date())
         return cls(uid, msg_dt, flag_set,
                    email_id=email_id, thread_id=thread_id,
-                   recent=recent, maildir_msg=maildir_msg,
-                   maildir=maildir, key=key)
+                   recent=recent, maildir=maildir, key=key)
 
 
 class LoadedMessage(BaseLoadedMessage):
@@ -203,29 +203,29 @@ class MailboxData(MailboxDataInterface[Message]):
         selected.set_messages(all_messages)
         return selected
 
-    async def add(self, append_msg: AppendMessage, *, recent: bool = False,
-                  email_id: ObjectId = None,
-                  thread_id: ObjectId = None) -> Message:
-        if email_id is None:
-            email_id = ObjectId.random_email_id()
-        if thread_id is None:
-            thread_id = ObjectId.random_thread_id()
+    async def save(self, message: bytes) -> SavedMessage:
+        email_id = ObjectId.random_email_id()
+        thread_id = ObjectId.random_thread_id()
+        return SavedMessage(email_id, thread_id, message)
+
+    async def add(self, message: PreparedMessage, *,
+                  recent: bool = False) -> Message:
         maildir = self._maildir
         async with self.messages_lock.write_lock():
-            maildir_msg = Message.to_maildir(append_msg, recent,
+            maildir_msg = Message.to_maildir(message, recent,
                                              self.maildir_flags)
             key = maildir.add(maildir_msg)
             filename = key + ':' + maildir_msg.get_info()
+        email_id = message.email_id
+        thread_id = message.thread_id
         async with UidList.with_write(self._path) as uidl:
             fields = {'E': str(email_id), 'T': str(thread_id)}
             new_rec = Record(uidl.next_uid, fields, filename)
             uidl.next_uid += 1
             uidl.set(new_rec)
-        email_id = key.encode('ascii')
-        message = Message(new_rec.uid, append_msg.when, append_msg.flag_set,
-                          recent=recent, email_id=email_id,
-                          maildir_msg=maildir_msg, maildir=maildir, key=key)
-        return message
+        return Message.from_maildir(
+            new_rec.uid, maildir_msg, maildir, key, email_id, thread_id,
+            self.maildir_flags)
 
     async def get(self, uid: int, cached_msg: CachedMessage = None) \
             -> Optional[Message]:
@@ -238,7 +238,9 @@ class MailboxData(MailboxDataInterface[Message]):
             except KeyError:
                 if cached_msg is not None:
                     return Message(cached_msg.uid, cached_msg.internal_date,
-                                   cached_msg.permanent_flags, expunged=True)
+                                   cached_msg.permanent_flags, expunged=True,
+                                   email_id=cached_msg.email_id,
+                                   thread_id=cached_msg.thread_id)
                 else:
                     return None
         maildir = self._maildir
@@ -251,7 +253,9 @@ class MailboxData(MailboxDataInterface[Message]):
             except (KeyError, FileNotFoundError):
                 if cached_msg is not None:
                     return Message(cached_msg.uid, cached_msg.internal_date,
-                                   cached_msg.permanent_flags, expunged=True)
+                                   cached_msg.permanent_flags, expunged=True,
+                                   email_id=cached_msg.email_id,
+                                   thread_id=cached_msg.thread_id)
                 else:
                     return None
             return Message.from_maildir(

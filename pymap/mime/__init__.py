@@ -31,7 +31,7 @@ class MessageContent(Writeable):
 
     """
 
-    __slots__ = ['_raw', 'lines', 'header', 'body']
+    __slots__ = ['_raw', 'lines', 'header', 'body', '__weakref__']
 
     def __init__(self, raw: Sequence[memoryview], lines: int,
                  header: 'MessageHeader', body: 'MessageBody') -> None:

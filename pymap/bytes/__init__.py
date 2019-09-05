@@ -4,7 +4,7 @@ from abc import abstractmethod, ABCMeta
 from io import BytesIO
 from itertools import chain
 from typing import cast, Any, TypeVar, ByteString, SupportsBytes, Union, \
-    Iterable
+    Iterable, Sequence
 from typing_extensions import final, Protocol
 
 __all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
@@ -73,6 +73,8 @@ class HashStream(WriteStream):
 class Writeable(metaclass=ABCMeta):
     """Base class for types that can be written to a stream."""
 
+    __slots__: Sequence[str] = []
+
     @final
     def tobytes(self) -> bytes:
         """Convert the writeable object back into a bytestring using the
@@ -127,6 +129,8 @@ class Writeable(metaclass=ABCMeta):
 
 
 class _EmptyWriteable(Writeable):
+
+    __slots__: Sequence[str] = []
 
     def write(self, writer: WriteStream) -> None:
         pass

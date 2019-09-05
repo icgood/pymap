@@ -3,7 +3,7 @@ from typing import Type, Optional, Tuple, List
 
 from pymap.exceptions import AppendFailure
 from pymap.interfaces.filter import FilterInterface, FilterCompilerInterface
-from pymap.interfaces.session import AppendMessage
+from pymap.parsing.message import AppendMessage
 from sievelib.parser import Parser  # type: ignore
 
 from .runner import SieveRunner
