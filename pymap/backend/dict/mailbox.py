@@ -42,6 +42,12 @@ class Message(BaseMessage):
         self._recent = recent
         self._content = content
 
+    @classmethod
+    def copy_expunged(cls, msg: 'Message') -> 'Message':
+        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
+                   expunged=True, email_id=msg.email_id,
+                   thread_id=msg.thread_id, content=msg._content)
+
     @property
     def recent(self) -> bool:
         return self._recent
@@ -250,10 +256,9 @@ class MailboxData(MailboxDataInterface[Message]):
         async with self.messages_lock.read_lock():
             ret = self._messages.get(uid)
             if ret is None and cached_msg is not None:
-                return Message(cached_msg.uid, cached_msg.internal_date,
-                               cached_msg.permanent_flags, expunged=True,
-                               email_id=cached_msg.email_id,
-                               thread_id=cached_msg.thread_id)
+                if not isinstance(cached_msg, Message):
+                    raise TypeError(cached_msg)
+                return Message.copy_expunged(cached_msg)
             else:
                 return ret
 

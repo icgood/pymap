@@ -42,11 +42,6 @@ class ObjectId(Parseable[bytes]):
         """The object ID value surrounded by parentheses."""
         return b'(%b)' % (self.value, )
 
-    @property
-    def not_defined(self) -> bool:
-        """True if the object ID is not defined."""
-        return self.object_id is None
-
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> Tuple['ObjectId', memoryview]:

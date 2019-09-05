@@ -2,7 +2,7 @@
 from abc import abstractmethod, ABCMeta
 from contextlib import contextmanager, asynccontextmanager
 from typing import Type, ClassVar, Optional, Tuple, Iterator, Sequence, \
-    Mapping, List, AsyncIterator
+    Mapping, AsyncIterator
 from typing_extensions import Final, Protocol
 
 from .bytes import BytesFormat, MaybeBytes, Writeable
@@ -12,28 +12,10 @@ from .parsing.specials import DateTime, FetchRequirement, FetchAttribute, \
     FetchValue
 from .selected import SelectedMailbox
 
-__all__ = ['NotFetchable', 'LoadedMessageProvider', 'DynamicFetchValue',
+__all__ = ['LoadedMessageProvider', 'DynamicFetchValue',
            'DynamicLoadedFetchValue', 'MessageAttributes']
 
 _Partial = Optional[Tuple[int, Optional[int]]]
-
-
-class NotFetchable(Exception):
-    """Raised when a message cannot provide a
-    :class:`~pymap.parsing.specials.fetchattr.FetchAttribute` for some reason,
-    e.g. because it has been expunged.
-
-    """
-
-    def __init__(self, attr: FetchAttribute) -> None:
-        attr_name = attr.value.decode('ascii')
-        super().__init__(f'{attr_name} is not fetchable')
-        self._attr = attr
-
-    @property
-    def attr(self) -> FetchAttribute:
-        """The attribute that could not be fetched."""
-        return self._attr
 
 
 class LoadedMessageProvider(Protocol):
@@ -173,23 +155,14 @@ class _InternalDateFetchValue(DynamicFetchValue):
 class _EmailIdFetchValue(DynamicFetchValue):
 
     def get_value(self) -> MaybeBytes:
-        msg = self.message
-        if msg.expunged:
-            raise NotFetchable(self.attribute)
-        try:
-            return msg.email_id.parens
-        except ValueError as exc:
-            raise NotFetchable(self.attribute) from exc
+        return self.message.email_id.parens
 
 
 class _ThreadIdFetchValue(DynamicFetchValue):
 
     def get_value(self) -> MaybeBytes:
-        msg = self.message
-        if msg.expunged:
-            raise NotFetchable(self.attribute)
         try:
-            return msg.thread_id.parens
+            return self.message.thread_id.parens
         except ValueError:
             return Nil()
 
@@ -350,17 +323,11 @@ class MessageAttributes(Sequence[FetchValue]):
         return values[index]
 
     def __len__(self) -> int:
-        return len(self._get_values())
+        return len(self.attributes)
 
     def _get_values(self) -> Sequence[FetchValue]:
         if self._values is None:
-            ret: List[FetchValue] = []
-            for attr in self.attributes:
-                try:
-                    ret.append(self._get(attr))
-                except NotFetchable:
-                    pass
-            return ret
+            self._values = [self._get(attr) for attr in self.attributes]
         return self._values
 
     def _get(self, attr: FetchAttribute) -> FetchValue:

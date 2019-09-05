@@ -114,6 +114,12 @@ class Message(BaseMessage):
             return LoadedMessage(self, requirement, content)
 
     @classmethod
+    def copy_expunged(cls, msg: 'Message') -> 'Message':
+        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
+                   expunged=True, email_id=msg.email_id,
+                   thread_id=msg.thread_id, maildir=msg._maildir, key=msg._key)
+
+    @classmethod
     def to_maildir(cls, prepared_msg: PreparedMessage, recent: bool,
                    maildir_flags: MaildirFlags) -> MaildirMessage:
         flag_str = maildir_flags.to_maildir(prepared_msg.flag_set)
@@ -237,10 +243,9 @@ class MailboxData(MailboxDataInterface[Message]):
                 record = uidl.get(uid)
             except KeyError:
                 if cached_msg is not None:
-                    return Message(cached_msg.uid, cached_msg.internal_date,
-                                   cached_msg.permanent_flags, expunged=True,
-                                   email_id=cached_msg.email_id,
-                                   thread_id=cached_msg.thread_id)
+                    if not isinstance(cached_msg, Message):
+                        raise TypeError(cached_msg)
+                    return Message.copy_expunged(cached_msg)
                 else:
                     return None
         maildir = self._maildir
@@ -252,10 +257,9 @@ class MailboxData(MailboxDataInterface[Message]):
                 maildir_msg = maildir.get_message_metadata(key)
             except (KeyError, FileNotFoundError):
                 if cached_msg is not None:
-                    return Message(cached_msg.uid, cached_msg.internal_date,
-                                   cached_msg.permanent_flags, expunged=True,
-                                   email_id=cached_msg.email_id,
-                                   thread_id=cached_msg.thread_id)
+                    if not isinstance(cached_msg, Message):
+                        raise TypeError(cached_msg)
+                    return Message.copy_expunged(cached_msg)
                 else:
                     return None
             return Message.from_maildir(
