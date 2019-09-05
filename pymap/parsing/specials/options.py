@@ -133,6 +133,9 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
     def get(self, option: bytes) -> Optional[ListP]:
         return self.options.get(option, None)
 
+    def __bool__(self) -> bool:
+        return bool(self.options)
+
     def __len__(self) -> int:
         return len(self.options)
 

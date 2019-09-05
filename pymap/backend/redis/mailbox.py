@@ -70,6 +70,13 @@ class Message(BaseMessage):
         content = MessageContent.parse(content_bytes)
         return LoadedMessage(self, requirement, content)
 
+    @classmethod
+    def copy_expunged(cls, msg: 'Message') -> 'Message':
+        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
+                   expunged=True, email_id=msg.email_id,
+                   thread_id=msg.thread_id, redis=msg._redis,
+                   content_key=msg._content_key)
+
 
 class LoadedMessage(BaseLoadedMessage):
     pass
@@ -218,13 +225,12 @@ class MailboxData(MailboxDataInterface[Message]):
         exists, flags, time, email_id, thread_id, abort = await multi.execute()
         MailboxAbort.assertFalse(abort)
         if not exists:
-            if cached_msg is None:
-                return None
+            if cached_msg is not None:
+                if not isinstance(cached_msg, Message):
+                    raise TypeError(cached_msg)
+                return Message.copy_expunged(cached_msg)
             else:
-                return Message(cached_msg.uid, cached_msg.internal_date,
-                               cached_msg.permanent_flags, expunged=True,
-                               email_id=cached_msg.email_id,
-                               thread_id=cached_msg.thread_id)
+                return None
         msg_flags = {Flag(flag) for flag in flags}
         msg_email_id = ObjectId.maybe(email_id)
         msg_thread_id = ObjectId.maybe(thread_id)
@@ -406,6 +412,7 @@ class MailboxData(MailboxDataInterface[Message]):
             -> Tuple[int, Sequence[Message], Sequence[int]]:
         redis = await _reset(self._redis)
         keys = self._keys
+        ns_keys = self._ns_keys
         while True:
             await redis.watch(keys.max_mod, keys.abort)
             pipe = redis.pipeline()
@@ -419,7 +426,8 @@ class MailboxData(MailboxDataInterface[Message]):
                 msg_keys = MessageKeys(keys.msg_root, uid)
                 multi.echo(uid)
                 multi.smembers(msg_keys.flags)
-                multi.get(msg_keys.time)
+                multi.mget(msg_keys.time, msg_keys.email_id,
+                           msg_keys.thread_id)
             try:
                 results = await multi.execute()
             except MultiExecError:
@@ -432,8 +440,13 @@ class MailboxData(MailboxDataInterface[Message]):
         for i in range(1, len(results), 3):
             msg_uid = int(results[i])
             msg_flags = {Flag(flag) for flag in results[i + 1]}
-            msg_time = datetime.fromisoformat(results[i + 2].decode('ascii'))
-            msg = Message(msg_uid, msg_time, msg_flags)
+            time_b, email_id, thread_id = results[i + 2]
+            msg_time = datetime.fromisoformat(time_b.decode('ascii'))
+            content_key = ns_keys.content_keys.end(email_id=email_id)
+            msg = Message(msg_uid, msg_time, msg_flags,
+                          email_id=ObjectId(email_id),
+                          thread_id=ObjectId(thread_id),
+                          redis=redis, content_key=content_key)
             updated.append(msg)
         return mod_seq, updated, []
 
@@ -441,6 +454,7 @@ class MailboxData(MailboxDataInterface[Message]):
             -> Tuple[int, Sequence[Message], Sequence[int]]:
         redis = await _reset(self._redis)
         keys = self._keys
+        ns_keys = self._ns_keys
         while True:
             await redis.watch(keys.max_mod, keys.abort)
             pipe = redis.pipeline()
@@ -455,7 +469,8 @@ class MailboxData(MailboxDataInterface[Message]):
                 msg_keys = MessageKeys(keys.msg_root, uid)
                 multi.echo(uid)
                 multi.smembers(msg_keys.flags)
-                multi.get(msg_keys.time)
+                multi.mget(msg_keys.time, msg_keys.email_id,
+                           msg_keys.thread_id)
             try:
                 results = await multi.execute()
             except MultiExecError:
@@ -469,8 +484,13 @@ class MailboxData(MailboxDataInterface[Message]):
         for i in range(2, len(results), 3):
             msg_uid = int(results[i])
             msg_flags = {Flag(flag) for flag in results[i + 1]}
-            msg_time = datetime.fromisoformat(results[i + 2].decode('ascii'))
-            msg = Message(msg_uid, msg_time, msg_flags)
+            time_b, email_id, thread_id = results[i + 2]
+            msg_time = datetime.fromisoformat(time_b.decode('ascii'))
+            content_key = ns_keys.content_keys.end(email_id=email_id)
+            msg = Message(msg_uid, msg_time, msg_flags,
+                          email_id=ObjectId(email_id),
+                          thread_id=ObjectId(thread_id),
+                          redis=redis, content_key=content_key)
             updated.append(msg)
         return mod_seq, updated, expunged
 

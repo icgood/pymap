@@ -120,6 +120,9 @@ class Writeable(metaclass=ABCMeta):
         """
         writer.write(bytes(self))
 
+    def __bool__(self) -> bool:
+        return True
+
     def __len__(self) -> int:
         return len(bytes(self))
 
