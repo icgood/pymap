@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 from typing import Iterable, Optional, Sequence, Tuple
 
 from . import ResponseCode

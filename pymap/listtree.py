@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import re
 from collections import OrderedDict
 from typing import Optional, Pattern, Tuple, Dict, Iterable, Sequence, List, \
@@ -52,12 +54,12 @@ class _TreeNode:
 
     __slots__ = ['parent', 'name', 'exists', 'children']
 
-    def __init__(self, name: str, parent: '_TreeNode' = None) -> None:
+    def __init__(self, name: str, parent: _TreeNode = None) -> None:
         super().__init__()
         self.parent = parent
         self.name = name
         self.exists = False
-        self.children: Dict[str, '_TreeNode'] = OrderedDict()
+        self.children: Dict[str, _TreeNode] = OrderedDict()
 
     def add(self, node_name: str, *extra: str) -> None:
         child = self.children.get(node_name)
@@ -90,7 +92,7 @@ class ListTree:
         self._root = _TreeNode('')
         self._marked: Dict[str, bool] = {}
 
-    def update(self, *names: str) -> 'ListTree':
+    def update(self, *names: str) -> ListTree:
         """Add all the mailbox names to the tree, filling in any missing nodes.
 
         Args:

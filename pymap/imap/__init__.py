@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 import binascii
 import logging
@@ -68,7 +70,7 @@ class IMAPService(ServiceInterface):  # pragma: no cover
 
     @classmethod
     async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> 'IMAPService':
+                    config: IMAPConfig) -> IMAPService:
         imap_server = IMAPServer(backend.login, config)
         if config.args.inherited_sockets:
             sockets = InheritedSockets.of(config.args.inherited_sockets).get()

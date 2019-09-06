@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 import json
 import uuid
@@ -33,7 +35,7 @@ class RedisBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: 'Config') -> None:
+    def __init__(self, login: LoginProtocol, config: Config) -> None:
         super().__init__()
         self._login = login
         self._config = config
@@ -44,7 +46,7 @@ class RedisBackend(BackendInterface):
         return self._login
 
     @property
-    def config(self) -> 'Config':
+    def config(self) -> Config:
         return self._config
 
     @property
@@ -76,7 +78,7 @@ class RedisBackend(BackendInterface):
                             help='the user lookup value contains JSON')
 
     @classmethod
-    async def init(cls, args: Namespace) -> Tuple['RedisBackend', 'Config']:
+    async def init(cls, args: Namespace) -> Tuple[RedisBackend, Config]:
         config = Config.from_args(args)
         return cls(Session.login, config), config
 
@@ -224,7 +226,7 @@ class Session(BaseSession[Message]):
 
     @classmethod
     async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> 'Session':
+                    config: Config) -> Session:
         """Checks the given credentials for a valid login and returns a new
         session.
 

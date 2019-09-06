@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import errno
 import os
 import os.path
@@ -101,7 +103,7 @@ class Message(BaseMessage):
         self._key = key
 
     async def load_content(self, requirement: FetchRequirement) \
-            -> 'LoadedMessage':
+            -> LoadedMessage:
         if self._key is None or self._maildir is None \
                 or not requirement.overlaps(FetchRequirement.CONTENT):
             return LoadedMessage(self, requirement, None)
@@ -114,7 +116,7 @@ class Message(BaseMessage):
             return LoadedMessage(self, requirement, content)
 
     @classmethod
-    def copy_expunged(cls, msg: 'Message') -> 'Message':
+    def copy_expunged(cls, msg: Message) -> Message:
         return cls(msg.uid, msg.internal_date, msg.permanent_flags,
                    expunged=True, email_id=msg.email_id,
                    thread_id=msg.thread_id, maildir=msg._maildir, key=msg._key)
@@ -136,7 +138,7 @@ class Message(BaseMessage):
                      maildir: Maildir, key: str,
                      email_id: Optional[ObjectId],
                      thread_id: Optional[ObjectId],
-                     maildir_flags: 'MaildirFlags') -> 'Message':
+                     maildir_flags: MaildirFlags) -> Message:
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         recent = maildir_msg.get_subdir() == 'new'
         msg_dt = datetime.fromtimestamp(maildir_msg.get_date())
@@ -337,7 +339,7 @@ class MailboxData(MailboxDataInterface[Message]):
                         uid, maildir_msg, maildir, rec.key,
                         email_id, thread_id, self.maildir_flags)
 
-    async def reset(self) -> 'MailboxData':
+    async def reset(self) -> MailboxData:
         keys = await self._get_keys()
         async with UidList.with_write(self._path) as uidl:
             for rec in uidl.records:
@@ -394,7 +396,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         self._layout = layout
         self._inbox_maildir = maildir
         self._path = layout.path
-        self._cache: Dict[str, 'MailboxData'] = {}
+        self._cache: Dict[str, MailboxData] = {}
 
     @property
     def delimiter(self) -> str:
@@ -416,7 +418,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
     async def get_mailbox(self, name: str,
-                          try_create: bool = False) -> 'MailboxData':
+                          try_create: bool = False) -> MailboxData:
         if name == 'INBOX':
             maildir = self._inbox_maildir
         else:

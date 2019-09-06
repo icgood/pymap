@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from itertools import chain
 from typing import Iterable, Iterator, Tuple, Union, Sequence, Optional, \
     List, FrozenSet
@@ -48,7 +50,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         self._raw: Optional[bytes] = None
 
     @classmethod
-    def all(cls, uid: bool = False) -> 'SequenceSet':
+    def all(cls, uid: bool = False) -> SequenceSet:
         """A sequence set intended to contain all values."""
         return _AllSequenceSet(uid)
 
@@ -170,7 +172,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         return item1, buf
 
     @classmethod
-    def build(cls, seqs: Iterable[int], uid: bool = False) -> 'SequenceSet':
+    def build(cls, seqs: Iterable[int], uid: bool = False) -> SequenceSet:
         """Build a new sequence set that contains the given values using as
         few groups as possible.
 
@@ -201,7 +203,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['SequenceSet', memoryview]:
+            -> Tuple[SequenceSet, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

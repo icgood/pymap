@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import errno
 import os
 import os.path
@@ -23,7 +25,7 @@ class MaildirLayout(Protocol):
 
     @classmethod
     def get(cls, path: str, layout: str,
-            maildir_type: Type[Maildir] = Maildir) -> 'MaildirLayout':
+            maildir_type: Type[Maildir] = Maildir) -> MaildirLayout:
         """
 
         Args:

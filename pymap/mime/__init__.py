@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from email.headerregistry import ContentTypeHeader
 from email.policy import SMTP
@@ -34,14 +36,14 @@ class MessageContent(Writeable):
     __slots__ = ['_raw', 'lines', 'header', 'body', '__weakref__']
 
     def __init__(self, raw: Sequence[memoryview], lines: int,
-                 header: 'MessageHeader', body: 'MessageBody') -> None:
+                 header: MessageHeader, body: MessageBody) -> None:
         super().__init__()
         self._raw: Final = raw
         self.lines: Final = lines
         self.header: Final = header
         self.body: Final = body
 
-    def walk(self) -> Iterable['MessageContent']:
+    def walk(self) -> Iterable[MessageContent]:
         """Iterate through the message and all its nested sub-parts in the
         order they occur.
 
@@ -61,7 +63,7 @@ class MessageContent(Writeable):
             return ct_hdr.content_type == 'message/rfc822'
 
     @classmethod
-    def parse(cls, data: bytes) -> 'MessageContent':
+    def parse(cls, data: bytes) -> MessageContent:
         """Parse the bytestring into message content.
 
         Args:
@@ -73,7 +75,7 @@ class MessageContent(Writeable):
         return cls._parse(data, view, lines)
 
     @classmethod
-    def parse_split(cls, header: bytes, body: bytes) -> 'MessageContent':
+    def parse_split(cls, header: bytes, body: bytes) -> MessageContent:
         """Parse the header and body bytestrings into message content.
 
         Args:
@@ -91,7 +93,7 @@ class MessageContent(Writeable):
 
     @classmethod
     def _parse(cls, data: bytes, view: memoryview, lines: _Lines) \
-            -> 'MessageContent':
+            -> MessageContent:
         header_lines, body_lines = cls._split_lines(data, lines)
         raw = get_raw(view, lines)
         return cls._parse_split([raw], data, data, view, view,
@@ -102,7 +104,7 @@ class MessageContent(Writeable):
                      header_data: bytes, body_data: bytes,
                      header_view: memoryview, body_view: memoryview,
                      header_lines: _Lines, body_lines: _Lines) \
-            -> 'MessageContent':
+            -> MessageContent:
         header = MessageHeader._parse(header_data, header_view, header_lines)
         content_type = header.parsed.content_type
         body = MessageBody._parse(body_data, body_view, body_lines,
@@ -182,7 +184,7 @@ class MessageHeader(Writeable):
 
     @classmethod
     def _parse(cls, data: bytes, view: memoryview,
-               lines: _Lines) -> 'MessageHeader':
+               lines: _Lines) -> MessageHeader:
         folds = cls._find_folds(data, lines)
         folded, parsed = cls._parse_headers(data, view, folds)
         raw = get_raw(view, lines)
@@ -286,7 +288,7 @@ class MessageBody(Writeable, metaclass=ABCMeta):
 
     @classmethod
     def _parse(cls, data: bytes, view: memoryview, lines: _Lines,
-               content_type: Optional[ContentTypeHeader]) -> 'MessageBody':
+               content_type: Optional[ContentTypeHeader]) -> MessageBody:
         if content_type is None:
             content_type = _default_type
         maintype = content_type.maintype
@@ -352,7 +354,7 @@ class _MultipartBody(MessageBody):
     @classmethod
     def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
                     content_type: ContentTypeHeader, boundary: bytes) \
-            -> '_MultipartBody':
+            -> _MultipartBody:
         parts = cls._find_parts(data, view, lines, boundary)
         nested: List[MessageContent] = []
         for part_lines in parts:
@@ -398,7 +400,7 @@ class _RFC822Body(MessageBody):
 
     @classmethod
     def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
-                    content_type: ContentTypeHeader) -> '_RFC822Body':
+                    content_type: ContentTypeHeader) -> _RFC822Body:
         subpart = MessageContent._parse(data, view, lines)
         return cls(subpart, content_type)
 
@@ -419,6 +421,6 @@ class _SinglepartBody(MessageBody):
 
     @classmethod
     def _parse_body(cls, data: bytes, view: memoryview, lines: _Lines,
-                    content_type: ContentTypeHeader) -> '_SinglepartBody':
+                    content_type: ContentTypeHeader) -> _SinglepartBody:
         raw = get_raw(view, lines)
         return cls([raw], len(lines), content_type)

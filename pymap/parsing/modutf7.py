@@ -6,6 +6,8 @@ See Also:
 
 """
 
+from __future__ import annotations
+
 __all__ = ['modutf7_encode', 'modutf7_decode']
 
 

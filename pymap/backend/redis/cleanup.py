@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 from typing import NoReturn
 from typing_extensions import Final

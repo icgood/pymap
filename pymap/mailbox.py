@@ -1,5 +1,7 @@
 """Base implementation of the :mod:`pymap.interfaces.mailbox` interfaces."""
 
+from __future__ import annotations
+
 import random
 import time
 from typing import Optional, Iterable, FrozenSet

@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from typing import Union, Optional, Mapping, Sequence
 from typing_extensions import Final
@@ -63,7 +65,7 @@ class RedisKey:
         new_args = self._add_kw(args)
         return new_template % new_args
 
-    def fork(self, suffix: bytes = None, **args: _Value) -> 'RedisKey':
+    def fork(self, suffix: bytes = None, **args: _Value) -> RedisKey:
         """Fork a new redis key based on the current template and arguments.
 
         Args:

@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 from typing import Tuple
 
 from .. import Params, Parseable
@@ -36,7 +39,7 @@ class AString(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['AString', memoryview]:
+            -> Tuple[AString, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if match:

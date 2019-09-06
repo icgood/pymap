@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from collections import OrderedDict
 from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
     Iterable, NoReturn

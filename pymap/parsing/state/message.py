@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing import Tuple, Type
 from typing_extensions import Final
 

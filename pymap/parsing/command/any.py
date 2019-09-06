@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from . import CommandAny, CommandNoArgs
 
 __all__ = ['CapabilityCommand', 'LogoutCommand', 'NoOpCommand']

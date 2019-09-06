@@ -1,5 +1,7 @@
 """Utilities for managing IMAP searches."""
 
+from __future__ import annotations
+
 import re
 from abc import abstractmethod, ABCMeta
 from datetime import datetime
@@ -71,7 +73,7 @@ class SearchCriteria(metaclass=ABCMeta):
         ...
 
     @classmethod
-    def of(cls, key: SearchKey, params: SearchParams) -> 'SearchCriteria':
+    def of(cls, key: SearchKey, params: SearchParams) -> SearchCriteria:
         """Factory method for producing a search criteria sub-class from a
         search key.
 

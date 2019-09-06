@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import re
@@ -57,7 +59,7 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
 
     @classmethod
     async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> 'ManageSieveService':
+                    config: IMAPConfig) -> ManageSieveService:
         managesieve_server = ManageSieveServer(backend.login, backend.config)
         host: Optional[str] = config.args.sieve_host
         port: Union[str, int] = config.args.sieve_port

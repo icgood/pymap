@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod
 from datetime import datetime
 from typing import TypeVar, Tuple, Sequence, FrozenSet, Collection
@@ -159,7 +161,7 @@ class MessageInterface(Protocol):
 
     @abstractmethod
     async def load_content(self, requirement: FetchRequirement) \
-            -> 'LoadedMessageInterface':
+            -> LoadedMessageInterface:
         """Loads the content of the message.
 
         Args:

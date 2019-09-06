@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from email.headerregistry import HeaderRegistry, BaseHeader, \
     UnstructuredHeader, DateHeader, AddressHeader, SingleAddressHeader, \
     ContentDispositionHeader, ContentTransferEncodingHeader, ContentTypeHeader

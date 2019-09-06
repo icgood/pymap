@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 import hashlib
 from datetime import datetime
@@ -58,7 +60,7 @@ class Message(BaseMessage):
         self._content_key = content_key
 
     async def load_content(self, requirement: FetchRequirement) \
-            -> 'LoadedMessage':
+            -> LoadedMessage:
         redis = await _reset(self._redis)
         content_key = self._content_key
         if redis is None or content_key is None \
@@ -71,7 +73,7 @@ class Message(BaseMessage):
         return LoadedMessage(self, requirement, content)
 
     @classmethod
-    def copy_expunged(cls, msg: 'Message') -> 'Message':
+    def copy_expunged(cls, msg: Message) -> Message:
         return cls(msg.uid, msg.internal_date, msg.permanent_flags,
                    expunged=True, email_id=msg.email_id,
                    thread_id=msg.thread_id, redis=msg._redis,
@@ -534,7 +536,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
     async def get_mailbox(self, name: str,
-                          try_create: bool = False) -> 'MailboxData':
+                          try_create: bool = False) -> MailboxData:
         redis = await _reset(self._redis)
         name_key = modutf7_encode(name)
         while True:

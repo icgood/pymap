@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import enum
 from typing import Union, Optional, Sequence
 
@@ -11,7 +13,7 @@ class AddressPart(enum.Enum):
     ALL = enum.auto()
 
     @classmethod
-    def of(cls, flag: Optional[str]) -> 'AddressPart':
+    def of(cls, flag: Optional[str]) -> AddressPart:
         if not flag:
             return cls.ALL
         elif flag == ':localpart':
@@ -30,7 +32,7 @@ class MatchType(enum.Enum):
     MATCHES = enum.auto()
 
     @classmethod
-    def of(cls, flag: Optional[str]) -> 'MatchType':
+    def of(cls, flag: Optional[str]) -> MatchType:
         if not flag:
             return cls.IS
         elif flag == ':is':
@@ -48,7 +50,7 @@ class SizeComparator(enum.Enum):
     UNDER = enum.auto()
 
     @classmethod
-    def of(cls, flag: str) -> 'SizeComparator':
+    def of(cls, flag: str) -> SizeComparator:
         if flag == ':over':
             return cls.OVER
         elif flag == ':under':

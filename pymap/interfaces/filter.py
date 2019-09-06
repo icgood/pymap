@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod
 from typing import TypeVar, Type, Optional, Tuple, Sequence
 from typing_extensions import Protocol

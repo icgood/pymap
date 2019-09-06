@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from argparse import Namespace
 from typing import TextIO

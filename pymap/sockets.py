@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import ipaddress
 import socket as _socket
 from abc import abstractmethod, ABCMeta
@@ -31,7 +33,7 @@ class InheritedSockets(metaclass=ABCMeta):
         ...
 
     @classmethod
-    def of(cls, service_manager: str) -> 'InheritedSockets':
+    def of(cls, service_manager: str) -> InheritedSockets:
         """Return the inherited sockets for the given service manager.
 
         Note:
@@ -47,7 +49,7 @@ class InheritedSockets(metaclass=ABCMeta):
             raise KeyError(service_manager)
 
     @classmethod
-    def for_systemd(cls) -> 'InheritedSockets':
+    def for_systemd(cls) -> InheritedSockets:
         """Return the inherited sockets for `systemd`_. The `python-systemd`_
         library must be installed.
 

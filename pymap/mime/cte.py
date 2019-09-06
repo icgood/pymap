@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import base64
 import quopri
 from abc import abstractmethod, ABCMeta
@@ -21,10 +23,10 @@ class MessageDecoder(metaclass=ABCMeta):
 
     """
 
-    registry: Dict[str, 'MessageDecoder'] = {}
+    registry: Dict[str, MessageDecoder] = {}
 
     @classmethod
-    def of(cls, msg_header: MessageHeader) -> 'MessageDecoder':
+    def of(cls, msg_header: MessageHeader) -> MessageDecoder:
         """Return a decoder from the message header object.
 
         See Also:
@@ -39,7 +41,7 @@ class MessageDecoder(metaclass=ABCMeta):
 
     @classmethod
     def of_cte(cls, header: Optional[ContentTransferEncodingHeader]) \
-            -> 'MessageDecoder':
+            -> MessageDecoder:
         """Return a decoder from the CTE header value.
 
         There is built-in support for ``7bit``, ``8bit``, ``quoted-printable``,

@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 import random as _random
 from typing import Optional, Tuple, AnyStr
 
@@ -44,7 +47,7 @@ class ObjectId(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ObjectId', memoryview]:
+            -> Tuple[ObjectId, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:
@@ -52,26 +55,26 @@ class ObjectId(Parseable[bytes]):
         return cls(match.group(0)), buf[match.end(0):]
 
     @classmethod
-    def _random(cls, prefix: bytes) -> 'ObjectId':
+    def _random(cls, prefix: bytes) -> ObjectId:
         return cls(b'%b%032x' % (prefix, _random.getrandbits(128)))
 
     @classmethod
-    def random_mailbox_id(cls) -> 'ObjectId':
+    def random_mailbox_id(cls) -> ObjectId:
         """Return a new randomized mailbox ID."""
         return cls._random(b'F')
 
     @classmethod
-    def random_email_id(cls) -> 'ObjectId':
+    def random_email_id(cls) -> ObjectId:
         """Return a new randomized email ID."""
         return cls._random(b'M')
 
     @classmethod
-    def random_thread_id(cls) -> 'ObjectId':
+    def random_thread_id(cls) -> ObjectId:
         """Return a new randomized thread ID."""
         return cls._random(b'T')
 
     @classmethod
-    def maybe(cls, value: Optional[AnyStr]) -> 'ObjectId':
+    def maybe(cls, value: Optional[AnyStr]) -> ObjectId:
         """Return an object ID representing the string or bytestring value. If
         the input is empty or ``None``, the object ID returned will have
         :attr:`.not_defined` be true.

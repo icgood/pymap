@@ -1,5 +1,7 @@
 """Module containing the general exceptions that may be used by pymap."""
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from typing import Any, Optional
 

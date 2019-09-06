@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 import enum
 from abc import ABCMeta
 from functools import total_ordering, reduce
@@ -30,7 +33,7 @@ class FetchRequirement(enum.Flag):
     BODY = enum.auto()
     CONTENT = HEADER | BODY
 
-    def overlaps(self, expected: 'FetchRequirement') -> bool:
+    def overlaps(self, expected: FetchRequirement) -> bool:
         """Checks if this fetch requirement overlaps one or more of the
         expected fetch requirements.
 
@@ -41,7 +44,7 @@ class FetchRequirement(enum.Flag):
         return self & expected != FetchRequirement.NONE
 
     @classmethod
-    def all(cls) -> 'FetchRequirement':
+    def all(cls) -> FetchRequirement:
         """Return all possible fetch requirements reduced into a single
         requirement.
 
@@ -49,8 +52,8 @@ class FetchRequirement(enum.Flag):
         return cls.reduce(FetchRequirement)
 
     @classmethod
-    def reduce(cls, requirements: Iterable['FetchRequirement']) \
-            -> 'FetchRequirement':
+    def reduce(cls, requirements: Iterable[FetchRequirement]) \
+            -> FetchRequirement:
         """Reduce a set of fetch requirements into a single requirement.
 
         Args:
@@ -113,7 +116,7 @@ class FetchAttribute(Parseable[bytes]):
         self.section = section
         self.partial = partial
         self._raw: Optional[bytes] = None
-        self._for_response: Optional['FetchAttribute'] = None
+        self._for_response: Optional[FetchAttribute] = None
 
     @property
     def value(self) -> bytes:
@@ -121,7 +124,7 @@ class FetchAttribute(Parseable[bytes]):
         return self.attribute
 
     @property
-    def for_response(self) -> 'FetchAttribute':
+    def for_response(self) -> FetchAttribute:
         if self._for_response is None:
             if self.partial is None or len(self.partial) < 2:
                 self._for_response = self
@@ -228,7 +231,7 @@ class FetchAttribute(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['FetchAttribute', memoryview]:
+            -> Tuple[FetchAttribute, memoryview]:
         match = cls._attrname_pattern.match(buf)
         if not match:
             raise NotParseable(buf)
@@ -295,7 +298,7 @@ class FetchValue(Writeable, metaclass=ABCMeta):
 
     @classmethod
     def of(cls, attribute: FetchAttribute, value: MaybeBytes) \
-            -> 'FetchValue':
+            -> FetchValue:
         return _StaticFetchValue(attribute, value)
 
 

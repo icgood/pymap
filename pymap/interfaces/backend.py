@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod
 from argparse import Namespace, ArgumentParser
 from asyncio import Task
@@ -39,7 +41,7 @@ class BackendInterface(Protocol):
     @classmethod
     @abstractmethod
     async def init(cls, args: Namespace) \
-            -> Tuple['BackendInterface', IMAPConfig]:
+            -> Tuple[BackendInterface, IMAPConfig]:
         """Initialize the backend and return an instance.
 
         Args:
@@ -102,7 +104,7 @@ class ServiceInterface(Protocol):
     @classmethod
     @abstractmethod
     async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> 'ServiceInterface':
+                    config: IMAPConfig) -> ServiceInterface:
         """Start the service and return the instance.
 
         Args:

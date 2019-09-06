@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import ABCMeta
 from contextlib import asynccontextmanager
 from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable, \
@@ -27,7 +29,7 @@ class ResponseCode:
         raise NotImplementedError
 
     @classmethod
-    def of(cls, code: Optional[MaybeBytes]) -> Optional['ResponseCode']:
+    def of(cls, code: Optional[MaybeBytes]) -> Optional[ResponseCode]:
         """Build and return an anonymous response code object.
 
         Args:
@@ -148,10 +150,10 @@ class CommandResponse(Response):
     def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
                  code: ResponseCode = None) -> None:
         super().__init__(tag, text, code)
-        self._untagged: List['UntaggedResponse'] = []
+        self._untagged: List[UntaggedResponse] = []
         self._mergeable: _Mergeable = {}
 
-    def add_untagged(self, *responses: 'UntaggedResponse') -> None:
+    def add_untagged(self, *responses: UntaggedResponse) -> None:
         """Add an untagged response. These responses are shown before the
         command response.
 

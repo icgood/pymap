@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod
 from asyncio import shield
 from typing import Generic, Tuple, Optional, FrozenSet, Iterable, \

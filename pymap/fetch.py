@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from contextlib import contextmanager, asynccontextmanager
 from typing import Type, ClassVar, Optional, Tuple, Iterator, Sequence, \

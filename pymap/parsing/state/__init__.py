@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from typing import TypeVar, Generic, Any, Type, Optional, Tuple, Sequence
 from typing_extensions import Final
@@ -60,7 +62,7 @@ class ParsingInterrupt(Exception):
 
     __slots__ = ['expected']
 
-    def __init__(self, expected: 'ParsingExpectation') -> None:
+    def __init__(self, expected: ParsingExpectation) -> None:
         super().__init__()
         self.expected: Final = expected
 

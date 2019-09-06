@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
@@ -31,7 +33,7 @@ class DictBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: 'Config') -> None:
+    def __init__(self, login: LoginProtocol, config: Config) -> None:
         super().__init__()
         self._login = login
         self._config = config
@@ -41,7 +43,7 @@ class DictBackend(BackendInterface):
         return self._login
 
     @property
-    def config(self) -> 'Config':
+    def config(self) -> Config:
         return self._config
 
     @property
@@ -64,7 +66,7 @@ class DictBackend(BackendInterface):
                             metavar='VAL', help='demo user password')
 
     @classmethod
-    async def init(cls, args: Namespace) -> Tuple['DictBackend', 'Config']:
+    async def init(cls, args: Namespace) -> Tuple[DictBackend, Config]:
         config = Config.from_args(args)
         return cls(Session.login, config), config
 
@@ -143,7 +145,7 @@ class Session(BaseSession[Message]):
 
     @classmethod
     async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> 'Session':
+                    config: Config) -> Session:
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.

@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from collections import OrderedDict
 from itertools import chain
 from typing import Optional, ClassVar, Iterable, Mapping, List, Dict, \
@@ -111,8 +113,7 @@ class FetchResponse(UntaggedResponse):
     def merge_key(self) -> int:
         return self.seq
 
-    def merge(self: 'FetchResponse', other: 'FetchResponse') \
-            -> 'FetchResponse':
+    def merge(self, other: FetchResponse) -> FetchResponse:
         """Merge the other FETCH response, adding any fetch attributes that do
         not already exist in this FETCH response. For example::
 

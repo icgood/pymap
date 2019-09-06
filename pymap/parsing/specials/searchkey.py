@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import re
 from datetime import datetime
 from typing import Any, TypeVar, Tuple, Union, Sequence, FrozenSet
@@ -77,7 +79,7 @@ class SearchKey(Parseable[bytes]):
             return FetchRequirement.METADATA
 
     @property
-    def not_inverse(self) -> 'SearchKey':
+    def not_inverse(self) -> SearchKey:
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
 
@@ -91,11 +93,11 @@ class SearchKey(Parseable[bytes]):
         return self._get_filter(SequenceSet)
 
     @property
-    def filter_key_set(self) -> FrozenSet['SearchKey']:
+    def filter_key_set(self) -> FrozenSet[SearchKey]:
         return self._get_filter(frozenset)
 
     @property
-    def filter_key_or(self) -> Tuple['SearchKey', 'SearchKey']:
+    def filter_key_or(self) -> Tuple[SearchKey, SearchKey]:
         return self._get_filter(tuple)
 
     @property
@@ -158,7 +160,7 @@ class SearchKey(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['SearchKey', memoryview]:
+            -> Tuple[SearchKey, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

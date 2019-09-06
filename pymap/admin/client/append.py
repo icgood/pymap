@@ -1,5 +1,7 @@
 """Append a message directly to a user's mailbox."""
 
+from __future__ import annotations
+
 import sys
 import time
 import traceback

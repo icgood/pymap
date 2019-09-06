@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing import Tuple, Optional
 
 from . import AString
@@ -32,7 +34,7 @@ class Mailbox(Parseable[str]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Mailbox', memoryview]:
+            -> Tuple[Mailbox, memoryview]:
         atom, buf = AString.parse(buf, params)
         mailbox = atom.value
         if mailbox.upper() == b'INBOX':

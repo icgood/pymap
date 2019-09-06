@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import os
 import os.path
 from abc import abstractmethod, ABCMeta
@@ -92,11 +94,11 @@ class FileReadable(metaclass=ABCMeta):
             return cls.get_default(base_dir)
 
     @classmethod
-    def with_open(cls: Type[_RT], base_dir: str) -> '_FileReadWith[_RT]':
+    def with_open(cls: Type[_RT], base_dir: str) -> _FileReadWith[_RT]:
         return _FileReadWith(base_dir, cls, True)
 
     @classmethod
-    def with_read(cls: Type[_RT], base_dir: str) -> '_FileReadWith[_RT]':
+    def with_read(cls: Type[_RT], base_dir: str) -> _FileReadWith[_RT]:
         return _FileReadWith(base_dir, cls, False)
 
 
@@ -129,7 +131,7 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
         os.rename(tmp_path, path)
 
     @classmethod
-    def with_write(cls: Type[_WT], base_dir: str) -> '_FileWriteWith[_WT]':
+    def with_write(cls: Type[_WT], base_dir: str) -> _FileWriteWith[_WT]:
         return _FileWriteWith(base_dir, cls)
 
 

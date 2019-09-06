@@ -1,5 +1,7 @@
 """Base implementations of the :mod:`pymap.interfaces.message` interfaces."""
 
+from __future__ import annotations
+
 import re
 from abc import ABCMeta
 from datetime import datetime

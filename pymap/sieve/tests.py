@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import re
 from abc import abstractmethod, ABCMeta
 from email.headerregistry import Address, AddressHeader
@@ -22,7 +24,7 @@ class SieveTest(metaclass=ABCMeta):
     """
 
     @classmethod
-    def of(cls, cmd: Command) -> 'SieveTest':
+    def of(cls, cmd: Command) -> SieveTest:
         """Given a test command, determine the implementation sub-class and
         return an instance.
 

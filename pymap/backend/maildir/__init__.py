@@ -1,10 +1,12 @@
 
+from __future__ import annotations
+
 import asyncio
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from asyncio import Task
 from concurrent.futures import ThreadPoolExecutor
-from typing import TypeVar, Any, Type, Optional, Tuple, Mapping
+from typing import Any, Optional, Tuple, Mapping
 
 from pysasl import AuthenticationCredentials
 
@@ -21,8 +23,6 @@ from ..session import BaseSession
 
 __all__ = ['MaildirBackend', 'Config', 'Session']
 
-_SessionT = TypeVar('_SessionT', bound='Session')
-
 
 class MaildirBackend(BackendInterface):
     """Defines an on-disk backend that uses :class:`~mailbox.Maildir` for
@@ -31,7 +31,7 @@ class MaildirBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: 'Config') -> None:
+    def __init__(self, login: LoginProtocol, config: Config) -> None:
         super().__init__()
         self._login = login
         self._config = config
@@ -41,7 +41,7 @@ class MaildirBackend(BackendInterface):
         return self._login
 
     @property
-    def config(self) -> 'Config':
+    def config(self) -> Config:
         return self._config
 
     @property
@@ -65,7 +65,7 @@ class MaildirBackend(BackendInterface):
                             help='maildir directory layout')
 
     @classmethod
-    async def init(cls, args: Namespace) -> Tuple['MaildirBackend', 'Config']:
+    async def init(cls, args: Namespace) -> Tuple[MaildirBackend, Config]:
         config = Config.from_args(args)
         return cls(Session.login, config), config
 
@@ -199,9 +199,8 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
     @classmethod
-    async def login(cls: Type[_SessionT],
-                    credentials: AuthenticationCredentials,
-                    config: Config) -> _SessionT:
+    async def login(cls, credentials: AuthenticationCredentials,
+                    config: Config) -> Session:
         """Checks the given credentials for a valid login and returns a new
         session.
 

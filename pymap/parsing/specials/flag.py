@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from functools import total_ordering
 from typing import Tuple, FrozenSet, Union
 
@@ -75,7 +77,7 @@ class Flag(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Flag', memoryview]:
+            -> Tuple[Flag, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:
