@@ -2,15 +2,19 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import NoReturn
 from typing_extensions import Final
 
 from aioredis import Redis  # type: ignore
 
-from .keys import RedisKey, CleanupKeys, NamespaceKeys, MailboxKeys, \
-    MessageKeys
+from ._util import reset
+from .keys import RedisKey, CleanupKeys, NamespaceKeys, ContentKeys, \
+    MailboxKeys, MessageKeys
 
 __all__ = ['Cleanup', 'CleanupTask']
+
+_log = logging.getLogger(__name__)
 
 
 class Cleanup:
@@ -69,17 +73,16 @@ class Cleanup:
             % (namespace, mailbox_id, msg_uid)
         pipe.rpush(self.keys.messages, cleanup_val)
 
-    def add_content(self, pipe: Redis, keys: NamespaceKeys,
-                    email_id: bytes) -> None:
+    def add_content(self, pipe: Redis, keys: ContentKeys) -> None:
         """Add the content to be cleaned up.
 
         Args:
             pipe: Piped redis commands.
-            keys: The namespace key group.
-            email_id: The email ID of the content.
+            keys: The content key group.
 
         """
         namespace = keys.root.args[b'namespace']
+        email_id = keys.root.args[b'email_id']
         cleanup_val = b'%b\x00%b' % (namespace, email_id)
         pipe.rpush(self.keys.contents, cleanup_val)
 
@@ -118,7 +121,11 @@ class CleanupTask:
         while True:
             cleanup_key, cleanup_val = await redis.blpop(
                 *cleanup._order, timeout=0)
-            await asyncio.shield(self._run_one(cleanup_key, cleanup_val))
+            try:
+                await asyncio.shield(self._run_one(cleanup_key, cleanup_val))
+            except Exception:
+                _log.warning('Cleanup failed: key=%s val=%s',
+                             cleanup_key, cleanup_val, exc_info=True)
 
     async def _run_one(self, cleanup_key: bytes, cleanup_val: bytes) -> None:
         cleanup = self._cleanup
@@ -139,7 +146,7 @@ class CleanupTask:
             await self._run_root(root)
 
     async def _run_namespace(self, namespace: bytes) -> None:
-        redis = self._redis
+        redis = await reset(self._redis)
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._root, namespace)
         mailbox_ids = await redis.hvals(ns_keys.mailboxes)
@@ -152,7 +159,7 @@ class CleanupTask:
         await multi.execute()
 
     async def _run_mailbox(self, namespace: bytes, mailbox_id: bytes) -> None:
-        redis = self._redis
+        redis = await reset(self._redis)
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._root, namespace)
         mbx_keys = MailboxKeys(ns_keys.mbx_root, mailbox_id)
@@ -167,7 +174,7 @@ class CleanupTask:
 
     async def _run_message(self, namespace: bytes, mailbox_id: bytes,
                            msg_uid: bytes) -> None:
-        redis = self._redis
+        redis = await reset(self._redis)
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._root, namespace)
         mbx_keys = MailboxKeys(ns_keys.mbx_root, mailbox_id)
@@ -176,24 +183,25 @@ class CleanupTask:
         multi = redis.multi_exec()
         multi.unlink(*msg_keys.keys)
         if email_id is not None:
-            cleanup.add_content(multi, ns_keys, email_id)
+            ct_keys = ContentKeys(ns_keys.content_root, email_id)
+            cleanup.add_content(multi, ct_keys)
         cleanup.add_root(multi, msg_keys.root)
         await multi.execute()
 
     async def _run_content(self, namespace: bytes, email_id: bytes) -> None:
-        redis = self._redis
+        redis = await reset(self._redis)
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._root, namespace)
-        content_key = ns_keys.content_keys.end(email_id=email_id)
+        ct_keys = ContentKeys(ns_keys.content_root, email_id)
         pipe = redis.pipeline()
-        pipe.ttl(content_key)
+        pipe.ttl(ct_keys.data)
         pipe.hincrby(ns_keys.content_refs, email_id, -1)
         ttl, refs = await pipe.execute()
         if ttl < 0 and int(refs or 0) <= 0:
-            await redis.expire(content_key, cleanup.content_expire)
+            await redis.expire(ct_keys.data, cleanup.content_expire)
 
     async def _run_root(self, root: bytes) -> None:
-        redis = self._redis
+        redis = await reset(self._redis)
         cur = b'0'
         match = root + b':*'
         while cur:

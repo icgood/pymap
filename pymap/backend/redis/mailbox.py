@@ -1,13 +1,13 @@
 
 from __future__ import annotations
 
-import asyncio
 import hashlib
+import json
 from datetime import datetime
 from typing import Optional, Sequence, List, Dict, Tuple, FrozenSet, \
     Iterable, Awaitable
 
-from aioredis import Redis, MultiExecError, WatchVariableError  # type: ignore
+from aioredis import Redis, MultiExecError  # type: ignore
 
 from pymap.bytes import HashStream
 from pymap.exceptions import MailboxAbort, MailboxNotFound, MailboxConflict
@@ -24,52 +24,42 @@ from pymap.parsing.specials.flag import Flag, Deleted, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 from pymap.threads import ThreadKey
 
+from ._util import reset, check_errors
 from .cleanup import Cleanup
-from .keys import NamespaceKeys, MailboxKeys, MessageKeys
+from .keys import NamespaceKeys, ContentKeys, MailboxKeys, MessageKeys
 from ..mailbox import SavedMessage, MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
 
 
-async def _reset(redis: Redis) -> Redis:
-    try:
-        await redis.discard()
-    except Exception:
-        pass
-    return redis
-
-
-async def _check_errors(multi: Redis) -> bool:
-    # Prevents warning about exception never being retrieved.
-    errors = await asyncio.gather(*multi._results, return_exceptions=True)
-    return any(not isinstance(exc, WatchVariableError) for exc in errors)
-
-
 class Message(BaseMessage):
 
-    __slots__ = ['_redis', '_content_key']
+    __slots__ = ['_redis', '_ns_keys']
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *, expunged: bool = False,
                  email_id: ObjectId = None, thread_id: ObjectId = None,
-                 redis: Redis = None, content_key: bytes = None) -> None:
+                 redis: Redis = None, ns_keys: NamespaceKeys = None) -> None:
         super().__init__(uid, internal_date, permanent_flags,
                          expunged=expunged, email_id=email_id,
                          thread_id=thread_id)
         self._redis = redis
-        self._content_key = content_key
+        self._ns_keys = ns_keys
 
     async def load_content(self, requirement: FetchRequirement) \
             -> LoadedMessage:
-        redis = await _reset(self._redis)
-        content_key = self._content_key
-        if redis is None or content_key is None \
+        redis = await reset(self._redis)
+        ns_keys = self._ns_keys
+        if redis is None or ns_keys is None \
                 or not requirement.overlaps(FetchRequirement.CONTENT):
             return LoadedMessage(self, requirement, None)
-        content_bytes = await redis.get(content_key)
-        if content_bytes is None:
+        ct_keys = ContentKeys(ns_keys.content_root, self.email_id)
+        content_bytes, content_parsed = \
+            await redis.hmget(ct_keys.data, b'literal', b'parsed')
+        if content_bytes is None or content_parsed is None:
             return LoadedMessage(self, requirement, None)
-        content = MessageContent.parse(content_bytes)
+        parsed_json = json.loads(content_parsed)
+        content = MessageContent.from_json(content_bytes, parsed_json)
         return LoadedMessage(self, requirement, content)
 
     @classmethod
@@ -77,7 +67,7 @@ class Message(BaseMessage):
         return cls(msg.uid, msg.internal_date, msg.permanent_flags,
                    expunged=True, email_id=msg.email_id,
                    thread_id=msg.thread_id, redis=msg._redis,
-                   content_key=msg._content_key)
+                   ns_keys=msg._ns_keys)
 
 
 class LoadedMessage(BaseLoadedMessage):
@@ -130,6 +120,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return selected
 
     async def save(self, message: bytes) -> SavedMessage:
+        redis = await reset(self._redis)
         ns_keys = self._ns_keys
         content = MessageContent.parse(message)
         new_email_id = ObjectId.random_email_id()
@@ -137,7 +128,7 @@ class MailboxData(MailboxDataInterface[Message]):
         thread_keys = ThreadKey.get_all(content.header)
         thread_key_keys = [b'\0'.join(thread_key)
                            for thread_key in thread_keys]
-        multi = self._redis.multi_exec()
+        multi = redis.multi_exec()
         multi.hsetnx(ns_keys.email_ids, msg_hash, new_email_id.value)
         multi.hget(ns_keys.email_ids, msg_hash)
         if thread_key_keys:
@@ -151,9 +142,11 @@ class MailboxData(MailboxDataInterface[Message]):
             thread_id = ObjectId.random_thread_id()
         else:
             thread_id = ObjectId(thread_id_b)
-        content_key = ns_keys.content_keys.end(email_id=email_id)
-        multi = self._redis.multi_exec()
-        multi.setex(content_key, self._cleanup.content_expire, message)
+        ct_keys = ContentKeys(ns_keys.content_root, email_id)
+        multi = redis.multi_exec()
+        multi.hset(ct_keys.data, b'literal', message)
+        multi.hset(ct_keys.data, b'parsed', json.dumps(content.json))
+        multi.expire(ct_keys.data, self._cleanup.content_expire)
         for thread_key_key in thread_key_keys:
             multi.hsetnx(ns_keys.thread_ids, thread_key_key, thread_id.value)
         await multi.execute()
@@ -161,7 +154,7 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def add(self, message: PreparedMessage, *,
                   recent: bool = False) -> Message:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         ns_keys = self._ns_keys
         when = message.when or datetime.now()
@@ -171,7 +164,7 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_time = when.isoformat().encode('ascii')
         email_id = message.email_id
         thread_id = message.thread_id
-        content_key = ns_keys.content_keys.end(email_id=email_id)
+        ct_keys = ContentKeys(ns_keys.content_root, email_id)
         while True:
             await redis.watch(keys.max_mod, keys.abort)
             max_uid, max_mod, abort = await redis.mget(
@@ -197,23 +190,23 @@ class MailboxData(MailboxDataInterface[Message]):
             multi.set(msg_keys.time, msg_time)
             multi.set(msg_keys.email_id, email_id.value)
             multi.set(msg_keys.thread_id, thread_id.value)
-            multi.persist(content_key)
+            multi.persist(ct_keys.data)
             multi.hincrby(ns_keys.content_refs, email_id.value, 1)
             try:
                 await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
         return Message(new_uid, when, message.flag_set,
                        email_id=email_id, thread_id=thread_id,
-                       redis=redis, content_key=content_key)
+                       redis=redis, ns_keys=ns_keys)
 
     async def get(self, uid: int, cached_msg: CachedMessage = None,
                   requirement: FetchRequirement = FetchRequirement.METADATA) \
             -> Optional[Message]:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         ns_keys = self._ns_keys
         msg_keys = MessageKeys(keys.msg_root, uid)
@@ -237,13 +230,12 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_email_id = ObjectId.maybe(email_id)
         msg_thread_id = ObjectId.maybe(thread_id)
         msg_time = datetime.fromisoformat(time.decode('ascii'))
-        msg_content_key = ns_keys.content_keys.end(email_id=msg_email_id)
         return Message(uid, msg_time, msg_flags,
                        email_id=msg_email_id, thread_id=msg_thread_id,
-                       redis=redis, content_key=msg_content_key)
+                       redis=redis, ns_keys=ns_keys)
 
     async def delete(self, uids: Iterable[int]) -> None:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         uids = list(uids)
         if not uids:
@@ -268,13 +260,13 @@ class MailboxData(MailboxDataInterface[Message]):
             try:
                 await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         while True:
             await redis.watch(keys.max_mod, keys.abort)
@@ -284,7 +276,7 @@ class MailboxData(MailboxDataInterface[Message]):
             max_mod, abort = await redis.mget(keys.max_mod, keys.abort)
             MailboxAbort.assertFalse(abort)
             new_mod = int(max_mod or 0) + 1
-            multi = self._redis.multi_exec()
+            multi = redis.multi_exec()
             multi.set(keys.max_mod, new_mod)
             for uid in recent:
                 multi.zadd(keys.mod_seq, new_mod, uid)
@@ -292,7 +284,7 @@ class MailboxData(MailboxDataInterface[Message]):
             try:
                 await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
@@ -301,7 +293,7 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def update_flags(self, messages: Sequence[Message],
                            flag_set: FrozenSet[Flag], mode: FlagOp) -> None:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         messages = list(messages)
         if not messages:
@@ -356,7 +348,7 @@ class MailboxData(MailboxDataInterface[Message]):
             try:
                 await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 for msg_uid, msg_flags in new_flags.items():
@@ -369,7 +361,7 @@ class MailboxData(MailboxDataInterface[Message]):
                            selected: SelectedMailbox) -> Sequence[int]:
         if not seq_set.is_all:
             return await super().find_deleted(seq_set, selected)
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         deleted = await redis.smembers(self._keys.deleted)
         return [int(uid) for uid in deleted]
 
@@ -377,7 +369,7 @@ class MailboxData(MailboxDataInterface[Message]):
         pass
 
     async def snapshot(self) -> MailboxSnapshot:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         while True:
             await redis.watch(keys.seq, keys.abort)
@@ -400,7 +392,7 @@ class MailboxData(MailboxDataInterface[Message]):
             try:
                 first_unseen_b, = await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 first_unseen = int(first_unseen_b) + 1
@@ -412,7 +404,7 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def _get_initial(self) \
             -> Tuple[int, Sequence[Message], Sequence[int]]:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         ns_keys = self._ns_keys
         while True:
@@ -433,7 +425,7 @@ class MailboxData(MailboxDataInterface[Message]):
             try:
                 results = await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
@@ -444,17 +436,16 @@ class MailboxData(MailboxDataInterface[Message]):
             msg_flags = {Flag(flag) for flag in results[i + 1]}
             time_b, email_id, thread_id = results[i + 2]
             msg_time = datetime.fromisoformat(time_b.decode('ascii'))
-            content_key = ns_keys.content_keys.end(email_id=email_id)
             msg = Message(msg_uid, msg_time, msg_flags,
                           email_id=ObjectId(email_id),
                           thread_id=ObjectId(thread_id),
-                          redis=redis, content_key=content_key)
+                          redis=redis, ns_keys=ns_keys)
             updated.append(msg)
         return mod_seq, updated, []
 
     async def _get_updated(self, last_mod_seq: int) \
             -> Tuple[int, Sequence[Message], Sequence[int]]:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         keys = self._keys
         ns_keys = self._ns_keys
         while True:
@@ -476,7 +467,7 @@ class MailboxData(MailboxDataInterface[Message]):
             try:
                 results = await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
@@ -488,11 +479,10 @@ class MailboxData(MailboxDataInterface[Message]):
             msg_flags = {Flag(flag) for flag in results[i + 1]}
             time_b, email_id, thread_id = results[i + 2]
             msg_time = datetime.fromisoformat(time_b.decode('ascii'))
-            content_key = ns_keys.content_keys.end(email_id=email_id)
             msg = Message(msg_uid, msg_time, msg_flags,
                           email_id=ObjectId(email_id),
                           thread_id=ObjectId(thread_id),
-                          redis=redis, content_key=content_key)
+                          redis=redis, ns_keys=ns_keys)
             updated.append(msg)
         return mod_seq, updated, expunged
 
@@ -515,18 +505,21 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         return '/'
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
+        redis = await reset(self._redis)
         if subscribed:
-            await self._redis.sadd(self._keys.subscribed, name)
+            await redis.sadd(self._keys.subscribed, name)
         else:
-            await self._redis.srem(self._keys.subscribed, name)
+            await redis.srem(self._keys.subscribed, name)
 
     async def list_subscribed(self) -> ListTree:
+        redis = await reset(self._redis)
         mailboxes = [modutf7_decode(name) for name in
-                     await self._redis.smembers(self._keys.subscribed)]
+                     await redis.smembers(self._keys.subscribed)]
         return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
     async def list_mailboxes(self) -> ListTree:
-        multi = self._redis.multi_exec()
+        redis = await reset(self._redis)
+        multi = redis.multi_exec()
         multi.hgetall(self._keys.mailboxes)
         multi.zrange(self._keys.order)
         mailboxes, mbx_order = await multi.execute()
@@ -537,7 +530,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     async def get_mailbox(self, name: str,
                           try_create: bool = False) -> MailboxData:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         name_key = modutf7_encode(name)
         while True:
             await redis.watch(self._keys.mailboxes)
@@ -549,7 +542,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             try:
                 uidval, *_ = await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 mbx_keys = MailboxKeys(self._keys.mbx_root, mbx_id)
@@ -557,7 +550,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
                                    self._keys, self._cleanup)
 
     async def add_mailbox(self, name: str) -> ObjectId:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         name_key = modutf7_encode(name)
         while True:
             await redis.watch(self._keys.mailboxes)
@@ -575,14 +568,14 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             try:
                 _, _, uidval = await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
         return mbx_id
 
     async def delete_mailbox(self, name: str) -> None:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         name_key = modutf7_encode(name)
         multi = redis.multi_exec()
         multi.hget(self._keys.mailboxes, name_key)
@@ -598,7 +591,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         await pipe.execute()
 
     async def rename_mailbox(self, before: str, after: str) -> None:
-        redis = await _reset(self._redis)
+        redis = await reset(self._redis)
         while True:
             await redis.watch(self._keys.mailboxes)
             all_keys = await redis.hgetall(self._keys.mailboxes)
@@ -625,7 +618,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             try:
                 await multi.execute()
             except MultiExecError:
-                if await _check_errors(multi):
+                if await check_errors(multi):
                     raise
             else:
                 break
