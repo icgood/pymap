@@ -10,12 +10,14 @@ from argparse import ArgumentParser
 from asyncio import shield, Task, StreamReader, StreamWriter, AbstractServer, \
     CancelledError
 from base64 import b64encode, b64decode
+from contextlib import closing, AsyncExitStack
 from ssl import SSLContext
 from typing import TypeVar, Iterable, Sequence, List, Optional, Awaitable
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
-from pymap.context import subsystem, current_command, socket_info
+from pymap.context import subsystem, current_command, socket_info, \
+    connection_exit
 from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.session import LoginProtocol
@@ -116,10 +118,10 @@ class IMAPServer:
                        writer: StreamWriter) -> None:
         conn = IMAPConnection(self.commands, self._config, reader, writer)
         state = ConnectionState(self._login, self._config)
-        try:
+        async with AsyncExitStack() as stack:
+            connection_exit.set(stack)
+            stack.enter_context(closing(conn))
             await conn.run(state)
-        finally:
-            conn.close()
 
 
 class IMAPConnection:

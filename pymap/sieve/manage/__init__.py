@@ -8,19 +8,21 @@ from argparse import ArgumentParser
 from asyncio import Task, StreamReader, StreamWriter, AbstractServer
 from base64 import b64encode, b64decode
 from collections import OrderedDict
+from contextlib import closing, AsyncExitStack
 from typing import Optional, Union, Mapping, Dict, List
 
 from pymap import __version__
 from pymap.bytes import BytesFormat
 from pymap.config import IMAPConfig
-from pymap.context import socket_info, language_code
+from pymap.context import socket_info, language_code, connection_exit
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.session import LoginProtocol, SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
 from pymap.sockets import SocketInfo
-from pysasl import ServerChallenge, AuthenticationError
+from pysasl import ServerChallenge, AuthenticationError, \
+    AuthenticationCredentials
 
 from .command import Command, NoOpCommand, LogoutCommand, CapabilityCommand, \
     AuthenticateCommand, UnauthenticateCommand, StartTLSCommand
@@ -83,6 +85,7 @@ class ManageSieveServer:
     Args:
         login: Login callback that takes authentication credentials and returns
             a :class:`~pymap.interfaces.session.SessionInterface` object.
+        config: Settings to use for the sieve server.
 
     """
 
@@ -93,17 +96,20 @@ class ManageSieveServer:
 
     async def __call__(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
-        conn = ManageSieveConnection(self._config, reader, writer)
-        try:
-            await conn.run(self._login)
-        finally:
-            writer.close()
+        conn = ManageSieveConnection(self._login, self._config, reader, writer)
+        async with AsyncExitStack() as stack:
+            connection_exit.set(stack)
+            stack.enter_context(closing(writer))
+            await conn.run()
 
 
 class ManageSieveConnection:
     """Runs a single ManageSieve connection from start to finish.
 
     Args:
+        login: Login callback that takes authentication credentials and returns
+            a :class:`~pymap.interfaces.session.SessionInterface` object.
+        config: Settings to use for the sieve server.
         reader: The input stream for the socket.
         writer: The output stream for the socket.
 
@@ -113,9 +119,10 @@ class ManageSieveConnection:
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
     _impl = b'pymap managesieve ' + __version__.encode('ascii')
 
-    def __init__(self, config: IMAPConfig, reader: StreamReader,
-                 writer: StreamWriter) -> None:
+    def __init__(self, login: LoginProtocol, config: IMAPConfig,
+                 reader: StreamReader, writer: StreamWriter) -> None:
         super().__init__()
+        self.login = login
         self.config = config
         self.auth = config.initial_auth
         self.params = config.parsing_params.copy(allow_continuations=False)
@@ -194,18 +201,23 @@ class ManageSieveConnection:
         else:
             self._print('%d <--| %s', bytes(resp))
 
-    async def _do_greeting(self, login: LoginProtocol) -> Response:
+    async def _login(self, creds: AuthenticationCredentials) \
+            -> SessionInterface:
+        stack = connection_exit.get()
+        return await stack.enter_async_context(
+            self.login(creds, self.config))
+
+    async def _do_greeting(self) -> Response:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
-            session = await login(preauth_creds, self.config)
+            session = await self._login(preauth_creds)
             try:
                 self._state = self._get_state(session)
             except ValueError as exc:
                 return Response(Condition.NO, text=str(exc))
         return CapabilitiesResponse(self.capabilities)
 
-    async def _do_authenticate(self, login: LoginProtocol,
-                               cmd: AuthenticateCommand) -> Response:
+    async def _do_authenticate(self, cmd: AuthenticateCommand) -> Response:
         mech = self.auth.get_server(cmd.mech_name)
         if not mech:
             return Response(Condition.NO, text='Invalid SASL mechanism.')
@@ -238,7 +250,7 @@ class ManageSieveConnection:
         else:
             code = BytesFormat(b'SASL %b') % String.build(final)
         try:
-            session = await login(creds, self.config)
+            session = await self._login(creds)
         except InvalidAuth as exc:
             return Response(Condition.NO, text=str(exc))
         try:
@@ -275,16 +287,13 @@ class ManageSieveConnection:
         self.auth = self.config.insecure_auth
         return CapabilitiesResponse(self.capabilities)
 
-    async def run(self, login: LoginProtocol):
+    async def run(self) -> None:
         """Start the socket communication with the server greeting, and then
         enter the command/response cycle.
 
-        Args:
-            login: The login/authentication function.
-
         """
         self._print('%d +++| %s', bytes(socket_info.get()))
-        greeting = await self._do_greeting(login)
+        greeting = await self._do_greeting()
         await self._write_response(greeting)
         while True:
             resp: Response
@@ -304,7 +313,7 @@ class ManageSieveConnection:
                         resp = CapabilitiesResponse(self.capabilities)
                     elif self._state is None:
                         if isinstance(cmd, AuthenticateCommand):
-                            resp = await self._do_authenticate(login, cmd)
+                            resp = await self._do_authenticate(cmd)
                         elif isinstance(cmd, StartTLSCommand):
                             resp = await self._do_starttls()
                         else:

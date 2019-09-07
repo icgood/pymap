@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, Tuple, Optional, FrozenSet, Iterable, Sequence
+from typing import Any, Tuple, Optional, FrozenSet, Iterable, Sequence, \
+    AsyncContextManager
 from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
@@ -27,9 +28,10 @@ class LoginProtocol(Protocol[ConfigT_contra]):
 
     """
 
-    async def __call__(self, credentials: AuthenticationCredentials,
-                       config: ConfigT_contra) -> SessionInterface:
-        """Given a set of authentication credentials, initialize and return a
+    def __call__(self, credentials: AuthenticationCredentials,
+                 config: ConfigT_contra) \
+            -> AsyncContextManager[SessionInterface]:
+        """Given a set of authentication credentials, initialize and provide a
         new IMAP session for the user.
 
         Args:

@@ -5,9 +5,9 @@ import asyncio
 import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from asyncio import Task
-from contextlib import closing
+from contextlib import closing, asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Tuple, Mapping, Dict
+from typing import Any, Tuple, Mapping, Dict, AsyncIterator
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
@@ -144,8 +144,9 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
     @classmethod
+    @asynccontextmanager
     async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> Session:
+                    config: Config) -> AsyncIterator[Session]:
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.
@@ -165,7 +166,7 @@ class Session(BaseSession[Message]):
                 await cls._load_demo(config.demo_data_resource,
                                      mailbox_set, filter_set)
             config.set_cache[user] = (mailbox_set, filter_set)
-        return cls(credentials.identity, config, mailbox_set, filter_set)
+        yield cls(credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     def _get_password(cls, config: Config, user: str) -> str:

@@ -6,7 +6,8 @@ import os.path
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from asyncio import Task
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Optional, Tuple, Mapping
+from contextlib import asynccontextmanager
+from typing import Any, Optional, Tuple, Mapping, AsyncIterator
 
 from pysasl import AuthenticationCredentials
 
@@ -199,8 +200,9 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
     @classmethod
+    @asynccontextmanager
     async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> Session:
+                    config: Config) -> AsyncIterator[Session]:
         """Checks the given credentials for a valid login and returns a new
         session.
 
@@ -214,7 +216,7 @@ class Session(BaseSession[Message]):
         maildir, layout = cls._load_maildir(config, user_dir)
         mailbox_set = MailboxSet(maildir, layout)
         filter_set = FilterSet(layout.path)
-        return cls(credentials.identity, config, mailbox_set, filter_set)
+        yield cls(credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     async def find_user(cls, config: Config, user: str) \

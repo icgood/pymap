@@ -6,12 +6,14 @@ import json
 import uuid
 from argparse import Namespace, ArgumentDefaultsHelpFormatter
 from asyncio import Task
-from typing import Any, Optional, Tuple, Mapping
+from contextlib import closing, asynccontextmanager
+from typing import Any, Optional, Tuple, Mapping, AsyncIterator
 
 from aioredis import create_redis, Redis  # type: ignore
 from pysasl import AuthenticationCredentials
 
 from pymap.config import BackendCapability, IMAPConfig
+from pymap.context import connection_exit
 from pymap.exceptions import InvalidAuth, MailboxConflict
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
@@ -57,7 +59,8 @@ class RedisBackend(BackendInterface):
         config = self._config
         root = config._root
         redis = await create_redis(config.address)
-        await CleanupTask(redis, root).run()
+        with closing(redis):
+            await CleanupTask(redis, root).run()
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
@@ -225,13 +228,21 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
     @classmethod
+    async def _connect_redis(cls, address: str) -> Redis:
+        redis = await create_redis(address)
+        stack = connection_exit.get()
+        stack.enter_context(closing(redis))
+        return redis
+
+    @classmethod
+    @asynccontextmanager
     async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> Session:
+                    config: Config) -> AsyncIterator[Session]:
         """Checks the given credentials for a valid login and returns a new
         session.
 
         """
-        redis = await create_redis(config.address)
+        redis = await cls._connect_redis(config.address)
         namespace = await cls._check_user(redis, config, credentials)
         if config.select is not None:
             await redis.select(config.select)
@@ -244,8 +255,7 @@ class Session(BaseSession[Message]):
         except MailboxConflict:
             pass
         filter_set = FilterSet(redis, namespace)
-        return cls(redis, credentials.identity, config,
-                   mailbox_set, filter_set)
+        yield cls(redis, credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     async def _check_user(cls, redis: Redis, config: Config,
