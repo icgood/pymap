@@ -7,8 +7,12 @@ enum Result {
   ERROR_RESPONSE = 1;
 }
 
-message AppendRequest {
+message Login {
   string user = 1;
+}
+
+message AppendRequest {
+  Login login = 1;
   string sender = 2;
   string recipient = 3;
   string mailbox = 4;

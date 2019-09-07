@@ -7,7 +7,7 @@ from argparse import FileType
 from typing import Tuple, TextIO
 
 from .command import ClientCommand
-from ..grpc.admin_pb2 import AppendRequest, AppendResponse, \
+from ..grpc.admin_pb2 import AppendRequest, AppendResponse, Login, \
     SUCCESS, ERROR_RESPONSE
 
 
@@ -57,7 +57,8 @@ class AppendCommand(ClientCommand):
         recipient = args.recipient or args.user
         data = args.data.read()
         when: int = args.timestamp or int(time.time())
-        req = AppendRequest(user=args.user, sender=args.sender,
+        login = Login(user=args.user)
+        req = AppendRequest(login=login, sender=args.sender,
                             recipient=recipient, mailbox=args.mailbox,
                             data=data, flags=args.flags, when=when)
         try:

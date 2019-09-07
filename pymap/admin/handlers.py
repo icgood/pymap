@@ -10,6 +10,7 @@ from pymap.parsing.specials import Flag, ExtensionOptions
 from pysasl.external import ExternalResult
 
 from .grpc.admin_grpc import AdminBase
+from .grpc.admin_pb2 import Login, ERROR_RESPONSE
 
 __all__ = ['AdminHandlers']
 
@@ -28,8 +29,8 @@ class AdminHandlers(AdminBase):
         self.config: Final = backend.config
         self.login: Final = backend.login
 
-    async def _login_as(self, user: str) -> SessionInterface:
-        creds = ExternalResult(user)
+    async def _login_as(self, login: Login) -> SessionInterface:
+        creds = ExternalResult(login.user)
         return await self.login(creds, self.config)
 
     @property
@@ -56,8 +57,7 @@ class AdminHandlers(AdminBase):
                 request and response.
 
         """
-        from .grpc.admin_pb2 import AppendRequest, AppendResponse, \
-            ERROR_RESPONSE
+        from .grpc.admin_pb2 import AppendRequest, AppendResponse
         request: AppendRequest = await stream.recv_message()
         mailbox = request.mailbox or 'INBOX'
         flag_set = frozenset(Flag(flag) for flag in request.flags)
@@ -65,7 +65,7 @@ class AdminHandlers(AdminBase):
         append_msg = AppendMessage(request.data, when, flag_set,
                                    ExtensionOptions.empty())
         try:
-            session = await self._login_as(request.user)
+            session = await self._login_as(request.login)
             if self._with_filter and session.filter_set is not None:
                 filter_value = await session.filter_set.get_active()
                 if filter_value is not None:

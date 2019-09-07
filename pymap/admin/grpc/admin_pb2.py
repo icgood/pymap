@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='admin',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x1cpymap/admin/grpc/admin.proto\x12\x05\x61\x64min\"|\n\rAppendRequest\x12\x0c\n\x04user\x18\x01 \x01(\t\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x11\n\trecipient\x18\x03 \x01(\t\x12\x0f\n\x07mailbox\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x12\r\n\x05\x66lags\x18\x06 \x03(\t\x12\x0c\n\x04when\x18\x07 \x01(\x04\"\x8b\x01\n\x0e\x41ppendResponse\x12\x1d\n\x06result\x18\x01 \x01(\x0e\x32\r.admin.Result\x12\x12\n\nerror_type\x18\x02 \x01(\t\x12\x16\n\x0e\x65rror_response\x18\x03 \x01(\x0c\x12\x0f\n\x07mailbox\x18\x04 \x01(\t\x12\x10\n\x08validity\x18\x05 \x01(\r\x12\x0b\n\x03uid\x18\x06 \x01(\r*)\n\x06Result\x12\x0b\n\x07SUCCESS\x10\x00\x12\x12\n\x0e\x45RROR_RESPONSE\x10\x01\x32@\n\x05\x41\x64min\x12\x37\n\x06\x41ppend\x12\x14.admin.AppendRequest\x1a\x15.admin.AppendResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x1cpymap/admin/grpc/admin.proto\x12\x05\x61\x64min\"\x15\n\x05Login\x12\x0c\n\x04user\x18\x01 \x01(\t\"\x8b\x01\n\rAppendRequest\x12\x1b\n\x05login\x18\x01 \x01(\x0b\x32\x0c.admin.Login\x12\x0e\n\x06sender\x18\x02 \x01(\t\x12\x11\n\trecipient\x18\x03 \x01(\t\x12\x0f\n\x07mailbox\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x12\r\n\x05\x66lags\x18\x06 \x03(\t\x12\x0c\n\x04when\x18\x07 \x01(\x04\"\x8b\x01\n\x0e\x41ppendResponse\x12\x1d\n\x06result\x18\x01 \x01(\x0e\x32\r.admin.Result\x12\x12\n\nerror_type\x18\x02 \x01(\t\x12\x16\n\x0e\x65rror_response\x18\x03 \x01(\x0c\x12\x0f\n\x07mailbox\x18\x04 \x01(\t\x12\x10\n\x08validity\x18\x05 \x01(\r\x12\x0b\n\x03uid\x18\x06 \x01(\r*)\n\x06Result\x12\x0b\n\x07SUCCESS\x10\x00\x12\x12\n\x0e\x45RROR_RESPONSE\x10\x01\x32@\n\x05\x41\x64min\x12\x37\n\x06\x41ppend\x12\x14.admin.AppendRequest\x1a\x15.admin.AppendResponse\"\x00\x62\x06proto3')
 )
 
 _RESULT = _descriptor.EnumDescriptor(
@@ -41,8 +41,8 @@ _RESULT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=307,
-  serialized_end=348,
+  serialized_start=346,
+  serialized_end=387,
 )
 _sym_db.RegisterEnumDescriptor(_RESULT)
 
@@ -50,6 +50,37 @@ Result = enum_type_wrapper.EnumTypeWrapper(_RESULT)
 SUCCESS = 0
 ERROR_RESPONSE = 1
 
+
+
+_LOGIN = _descriptor.Descriptor(
+  name='Login',
+  full_name='admin.Login',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='user', full_name='admin.Login.user', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=39,
+  serialized_end=60,
+)
 
 
 _APPENDREQUEST = _descriptor.Descriptor(
@@ -60,9 +91,9 @@ _APPENDREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='user', full_name='admin.AppendRequest.user', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      name='login', full_name='admin.AppendRequest.login', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
@@ -120,8 +151,8 @@ _APPENDREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=39,
-  serialized_end=163,
+  serialized_start=63,
+  serialized_end=202,
 )
 
 
@@ -186,15 +217,24 @@ _APPENDRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=166,
-  serialized_end=305,
+  serialized_start=205,
+  serialized_end=344,
 )
 
+_APPENDREQUEST.fields_by_name['login'].message_type = _LOGIN
 _APPENDRESPONSE.fields_by_name['result'].enum_type = _RESULT
+DESCRIPTOR.message_types_by_name['Login'] = _LOGIN
 DESCRIPTOR.message_types_by_name['AppendRequest'] = _APPENDREQUEST
 DESCRIPTOR.message_types_by_name['AppendResponse'] = _APPENDRESPONSE
 DESCRIPTOR.enum_types_by_name['Result'] = _RESULT
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+Login = _reflection.GeneratedProtocolMessageType('Login', (_message.Message,), {
+  'DESCRIPTOR' : _LOGIN,
+  '__module__' : 'pymap.admin.grpc.admin_pb2'
+  # @@protoc_insertion_point(class_scope:admin.Login)
+  })
+_sym_db.RegisterMessage(Login)
 
 AppendRequest = _reflection.GeneratedProtocolMessageType('AppendRequest', (_message.Message,), {
   'DESCRIPTOR' : _APPENDREQUEST,
@@ -218,8 +258,8 @@ _ADMIN = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=350,
-  serialized_end=414,
+  serialized_start=389,
+  serialized_end=453,
   methods=[
   _descriptor.MethodDescriptor(
     name='Append',
