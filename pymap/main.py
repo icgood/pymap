@@ -59,7 +59,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.logging_cfg:
-        logging.config.fileConfig(args.logging_config)
+        logging.config.fileConfig(args.logging_cfg)
     else:
         logging.basicConfig(level=logging.WARNING)
     if args.debug:
