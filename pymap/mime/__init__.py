@@ -25,19 +25,23 @@ _Folded = Sequence[Tuple[str, _Lines]]
 class MessageContent(Writeable):
     """Contains the message content, parsed for IMAP processing.
 
+    Args:
+        data: The message literal.
+        header: The parsed message header.
+        body: The parsed message body.
+
     Attributes:
-        header: The message header.
-        body: The message body.
+        lines: The number of lines in the message content.
 
     """
 
-    __slots__ = ['_raw', '_lines', 'header', 'body', '__weakref__']
+    __slots__ = ['_raw', 'lines', 'header', 'body', '__weakref__']
 
-    def __init__(self, data: bytes, lines: _Lines,
-                 header: MessageHeader, body: MessageBody) -> None:
+    def __init__(self, data: bytes, header: MessageHeader,
+                 body: MessageBody) -> None:
         super().__init__()
-        self._raw = get_raw(memoryview(data), lines)
-        self._lines = lines
+        self._raw = get_raw(memoryview(data), header._lines, body._lines)
+        self.lines: Final = header.lines + body.lines - 1
         self.header: Final = header
         self.body: Final = body
 
@@ -50,11 +54,6 @@ class MessageContent(Writeable):
             return chain([self], *(part.walk() for part in self.body.nested))
         else:
             return [self]
-
-    @property
-    def lines(self) -> int:
-        """The number of lines in the message content."""
-        return len(self._lines) - 1
 
     @property
     def is_rfc822(self) -> bool:
@@ -74,9 +73,8 @@ class MessageContent(Writeable):
             :meth:`.from_json`
 
         """
-        return {'lines': self._lines,
-                'header': self.header._json,
-                'body': self.body._json}
+        return {'header': self.header.json,
+                'body': self.body.json}
 
     @classmethod
     def from_json(cls, data: bytes, json: Mapping[str, Any]) -> MessageContent:
@@ -94,10 +92,9 @@ class MessageContent(Writeable):
             json: The :attr:`.json` of a previously parsed message content.
 
         """
-        lines: _Lines = json['lines']
-        header = MessageHeader._from_json(data, json['header'])
-        body = MessageBody._from_json(data, json['body'])
-        return cls(data, lines, header, body)
+        header = MessageHeader.from_json(data, json['header'])
+        body = MessageBody.from_json(data, json['body'])
+        return cls(data, header, body)
 
     @classmethod
     def parse(cls, data: bytes) -> MessageContent:
@@ -118,7 +115,7 @@ class MessageContent(Writeable):
         header = MessageHeader._parse(data, view, header_lines)
         content_type = header.parsed.content_type
         body = MessageBody._parse(data, view, body_lines, content_type)
-        return cls(data, lines, header, body)
+        return cls(data, header, body)
 
     @classmethod
     def _find_lines(cls, data: bytes) -> _Lines:
@@ -188,15 +185,38 @@ class MessageHeader(Writeable):
         return len(self._lines)
 
     @property
-    def _json(self) -> Mapping[str, Any]:
+    def json(self) -> Mapping[str, Any]:
+        """A dictionary that can be serialized (e.g. with :mod:`json`), so that
+        this object may be re-created without parsing.
+
+        See Also:
+            :meth:`.from_json`
+
+        """
         return {'lines': self._lines,
                 'folded': self._folded}
 
     @classmethod
-    def _from_json(cls, data: bytes, json: Mapping[str, Any]) -> MessageHeader:
+    def from_json(cls, data: bytes, json: Mapping[str, Any]) -> MessageHeader:
+        """Recover the parsed message header without re-parsing, using the
+        original raw data and the :attr:`.json`.
+
+        See Also:
+            :meth:`MessageContent.from_json`
+
+        Args:
+            data: The bytestring that was parsed.
+            json: The :attr:`.json` of a previously parsed message content.
+
+        """
         lines: _Lines = json['lines']
         folded: _Folded = json['folded']
         return cls(data, lines, folded)
+
+    @classmethod
+    def empty(cls) -> MessageHeader:
+        """Return an empty header object."""
+        return cls(b'', [], [])
 
     @classmethod
     def _get_folded(cls, view: memoryview, folded: _Folded) \
@@ -317,18 +337,42 @@ class MessageBody(Writeable):
         return self._nested
 
     @property
-    def _json(self) -> Mapping[str, Any]:
+    def json(self) -> Mapping[str, Any]:
+        """A dictionary that can be serialized (e.g. with :mod:`json`), so that
+        this object may be re-created without parsing.
+
+        See Also:
+            :meth:`.from_json`
+
+        """
         return {'lines': self._lines,
                 'content_type': str(self.content_type),
                 'nested': [part.json for part in self._nested]}
 
     @classmethod
-    def _from_json(cls, data: bytes, json: Mapping[str, Any]) -> MessageBody:
+    def from_json(cls, data: bytes, json: Mapping[str, Any]) -> MessageBody:
+        """Recover the parsed message body without re-parsing, using the
+        original raw data and the :attr:`.json`.
+
+        See Also:
+            :meth:`MessageContent.from_json`
+
+        Args:
+            data: The bytestring that was parsed.
+            json: The :attr:`.json` of a previously parsed message content.
+
+        """
         lines: _Lines = json['lines']
         content_type = cls._parse_content_type(json['content_type'])
         nested = [MessageContent.from_json(data, part)
                   for part in json['nested']]
         return cls(data, lines, content_type, nested)
+
+    @classmethod
+    def empty(cls) -> MessageBody:
+        """Return an empty body object."""
+        content_type = cls._parse_content_type(_default_type)
+        return cls(b'', [], content_type, [])
 
     @classmethod
     def _parse(cls, data: bytes, view: memoryview, lines: _Lines,

@@ -105,7 +105,7 @@ class Message(BaseMessage):
     async def load_content(self, requirement: FetchRequirement) \
             -> LoadedMessage:
         if self._key is None or self._maildir is None \
-                or not requirement.overlaps(FetchRequirement.CONTENT):
+                or requirement.has_none(FetchRequirement.CONTENT):
             return LoadedMessage(self, requirement, None)
         try:
             maildir_msg = self._maildir.get_message(self._key)

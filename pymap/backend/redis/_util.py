@@ -4,14 +4,14 @@ from __future__ import annotations
 import asyncio
 from contextlib import suppress
 
-from aioredis import Redis, WatchVariableError  # type: ignore
+from aioredis import Redis, RedisError, WatchVariableError  # type: ignore
 
 __all__ = ['reset', 'check_errors']
 
 
 async def reset(redis: Redis) -> Redis:
-    with suppress(Exception):
-        await redis.discard()
+    with suppress(RedisError):
+        await redis.unwatch()
     return redis
 
 

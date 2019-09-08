@@ -15,7 +15,6 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
 from pymap.parsing.message import PreparedMessage
 from pymap.parsing.modutf7 import modutf7_encode, modutf7_decode
@@ -27,51 +26,10 @@ from pymap.threads import ThreadKey
 from ._util import reset, check_errors
 from .cleanup import Cleanup
 from .keys import NamespaceKeys, ContentKeys, MailboxKeys, MessageKeys
+from .message import Message
 from ..mailbox import SavedMessage, MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
-
-
-class Message(BaseMessage):
-
-    __slots__ = ['_redis', '_ns_keys']
-
-    def __init__(self, uid: int, internal_date: datetime,
-                 permanent_flags: Iterable[Flag], *, expunged: bool = False,
-                 email_id: ObjectId = None, thread_id: ObjectId = None,
-                 redis: Redis = None, ns_keys: NamespaceKeys = None) -> None:
-        super().__init__(uid, internal_date, permanent_flags,
-                         expunged=expunged, email_id=email_id,
-                         thread_id=thread_id)
-        self._redis = redis
-        self._ns_keys = ns_keys
-
-    async def load_content(self, requirement: FetchRequirement) \
-            -> LoadedMessage:
-        redis = await reset(self._redis)
-        ns_keys = self._ns_keys
-        if redis is None or ns_keys is None \
-                or not requirement.overlaps(FetchRequirement.CONTENT):
-            return LoadedMessage(self, requirement, None)
-        ct_keys = ContentKeys(ns_keys.content_root, self.email_id)
-        content_bytes, content_parsed = \
-            await redis.hmget(ct_keys.data, b'literal', b'parsed')
-        if content_bytes is None or content_parsed is None:
-            return LoadedMessage(self, requirement, None)
-        parsed_json = json.loads(content_parsed)
-        content = MessageContent.from_json(content_bytes, parsed_json)
-        return LoadedMessage(self, requirement, content)
-
-    @classmethod
-    def copy_expunged(cls, msg: Message) -> Message:
-        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
-                   expunged=True, email_id=msg.email_id,
-                   thread_id=msg.thread_id, redis=msg._redis,
-                   ns_keys=msg._ns_keys)
-
-
-class LoadedMessage(BaseLoadedMessage):
-    pass
 
 
 class MailboxData(MailboxDataInterface[Message]):
@@ -144,8 +102,12 @@ class MailboxData(MailboxDataInterface[Message]):
             thread_id = ObjectId(thread_id_b)
         ct_keys = ContentKeys(ns_keys.content_root, email_id)
         multi = redis.multi_exec()
-        multi.hset(ct_keys.data, b'literal', message)
-        multi.hset(ct_keys.data, b'parsed', json.dumps(content.json))
+        multi.hset(ct_keys.data, b'full', message)
+        multi.hset(ct_keys.data, b'full-json',
+                   json.dumps(content.json))
+        multi.hset(ct_keys.data, b'header', bytes(content.header))
+        multi.hset(ct_keys.data, b'header-json',
+                   json.dumps(content.header.json))
         multi.expire(ct_keys.data, self._cleanup.content_expire)
         for thread_key_key in thread_key_keys:
             multi.hsetnx(ns_keys.thread_ids, thread_key_key, thread_id.value)

@@ -33,18 +33,28 @@ class FetchRequirement(enum.Flag):
     BODY = enum.auto()
     CONTENT = HEADER | BODY
 
-    def overlaps(self, expected: FetchRequirement) -> bool:
-        """Checks if this fetch requirement overlaps one or more of the
-        expected fetch requirements.
+    def has_all(self, expected: FetchRequirement) -> bool:
+        """Returns true if all of the expected fetch requirements are met by
+        this fetch requirement.
 
         Args:
             expected: The expected fetch requirements.
 
         """
-        return self & expected != FetchRequirement.NONE
+        return self & expected == expected
+
+    def has_none(self, expected: FetchRequirement) -> bool:
+        """Returns true if none of the expected fetch requirements are met by
+        this fetch requirement.
+
+        Args:
+            expected: The expected fetch requirements.
+
+        """
+        return self & expected == FetchRequirement.NONE
 
     @classmethod
-    def all(cls) -> FetchRequirement:
+    def get_all(cls) -> FetchRequirement:
         """Return all possible fetch requirements reduced into a single
         requirement.
 
@@ -81,7 +91,7 @@ class FetchAttribute(Parseable[bytes]):
 
     class Section:
         """Represents a fetch attribute section, which typically comes after
-        the attribute name within square brackets, e.g. ``BODY[0.TEXT]``.
+        the attribute name within square brackets, e.g. ``BODY[1.TEXT]``.
 
         Args:
             parts: The nested MIME part identifiers.
@@ -150,6 +160,15 @@ class FetchAttribute(Parseable[bytes]):
         if attr_name in (b'UID', b'FLAGS', b'INTERNALDATE'):
             return FetchRequirement.METADATA
         elif attr_name in (b'ENVELOPE', b'RFC822.HEADER'):
+            return FetchRequirement.HEADER
+        elif attr_name == b'BODY' and self.section is not None:
+            return self._get_body_requirement(self.section)
+        return FetchRequirement.CONTENT
+
+    @classmethod
+    def _get_body_requirement(cls, section: Section) \
+            -> FetchRequirement:
+        if not section.parts and section.specifier != b'TEXT':
             return FetchRequirement.HEADER
         else:
             return FetchRequirement.CONTENT
