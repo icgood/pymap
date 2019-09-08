@@ -294,14 +294,14 @@ mailbox path. Override this method to implement custom login logic.</p>
 
 <dl class="classmethod">
 <dt id="pymap.backend.maildir.Session.login">
-<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session.login" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>cls</em>, <em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the given credentials for a valid login and returns a new
 session.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">~_SessionT</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asynciterator</span></code>[<a class="reference internal" href="#pymap.backend.maildir.Session" title="pymap.backend.maildir.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]</td>
 </tr>
 </tbody>
 </table>

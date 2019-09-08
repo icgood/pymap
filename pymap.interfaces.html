@@ -878,7 +878,7 @@ session.</p>
 <dl class="method">
 <dt id="pymap.interfaces.session.LoginProtocol.__call__">
 <code class="descname">__call__</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.LoginProtocol.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a set of authentication credentials, initialize and return a
+<dd><p>Given a set of authentication credentials, initialize and provide a
 new IMAP session for the user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -893,7 +893,7 @@ new IMAP session for the user.</p>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidAuth</span></code></a></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Abstractasynccontextmanager</span></code>[<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a>]</p>
 </td>
 </tr>
 </tbody>

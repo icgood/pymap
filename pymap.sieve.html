@@ -243,8 +243,12 @@ objects when <a class="reference external" href="https://docs.python.org/3/libra
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]) – Login callback that takes authentication credentials and returns
-a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]) – Login callback that takes authentication credentials and returns
+a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</li>
+<li><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the sieve server.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -252,7 +256,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 
 <dl class="class">
 <dt id="pymap.sieve.manage.ManageSieveConnection">
-<em class="property">class </em><code class="descclassname">pymap.sieve.manage.</code><code class="descname">ManageSieveConnection</code><span class="sig-paren">(</span><em>config</em>, <em>reader</em>, <em>writer</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.sieve.manage.</code><code class="descname">ManageSieveConnection</code><span class="sig-paren">(</span><em>login</em>, <em>config</em>, <em>reader</em>, <em>writer</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Runs a single ManageSieve connection from start to finish.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -260,6 +264,9 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]) – Login callback that takes authentication credentials and returns
+a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</li>
+<li><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the sieve server.</li>
 <li><strong>reader</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamReader</span></code>) – The input stream for the socket.</li>
 <li><strong>writer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code>) – The output stream for the socket.</li>
 </ul>
@@ -269,14 +276,14 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 </table>
 <dl class="method">
 <dt id="pymap.sieve.manage.ManageSieveConnection.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>login</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the socket communication with the server greeting, and then
 enter the command/response cycle.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>[-ConfigT_contra]) – The login/authentication function.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
