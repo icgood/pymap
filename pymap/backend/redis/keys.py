@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from typing import Union, Optional, Mapping, Sequence
 from typing_extensions import Final
@@ -6,7 +8,7 @@ from typing_extensions import Final
 from pymap.bytes import MaybeBytes
 
 __all__ = ['RedisKey', 'KeysGroup', 'CleanupKeys', 'NamespaceKeys',
-           'MailboxKeys', 'MessageKeys']
+           'ContentKeys', 'MailboxKeys', 'MessageKeys']
 
 _Value = Union[int, MaybeBytes]
 
@@ -63,7 +65,7 @@ class RedisKey:
         new_args = self._add_kw(args)
         return new_template % new_args
 
-    def fork(self, suffix: bytes = None, **args: _Value) -> 'RedisKey':
+    def fork(self, suffix: bytes = None, **args: _Value) -> RedisKey:
         """Fork a new redis key based on the current template and arguments.
 
         Args:
@@ -130,6 +132,7 @@ class NamespaceKeys(KeysGroup):
 
     Args:
         root: The root redis key.
+        namespace: The namespace ID.
 
     """
 
@@ -152,18 +155,31 @@ class NamespaceKeys(KeysGroup):
         self.thread_ids: Final = root.end(b':threadids')
 
     @property
-    def content_keys(self) -> RedisKey:
-        """The redis key template for content keys, expecting the ``email_id``
-        argument.
-
-        """
-        return self.content_root.fork(b':%(email_id)s')
-
-    @property
     def keys(self) -> Sequence[bytes]:
         return [self.mailboxes, self.max_order, self.order, self.uid_validity,
                 self.subscribed, self.content_refs, self.email_ids,
                 self.thread_ids]
+
+
+class ContentKeys(KeysGroup):
+    """The key group for managing the content of messages.
+
+    Args:
+        root: The root redis key.
+        email_id: The email object ID.
+
+    """
+
+    __slots__ = ['data']
+
+    def __init__(self, root: RedisKey, email_id: _Value) -> None:
+        root = root.fork(b':%(email_id)s', email_id=email_id)
+        super().__init__(root)
+        self.data: Final = root.end()
+
+    @property
+    def keys(self) -> Sequence[bytes]:
+        return [self.data]
 
 
 class MailboxKeys(KeysGroup):
@@ -171,6 +187,7 @@ class MailboxKeys(KeysGroup):
 
     Args:
         root: The root redis key.
+        mailbox_id: The mailbox object ID.
 
     """
 
@@ -204,6 +221,7 @@ class MessageKeys(KeysGroup):
 
     Args:
         root: The root redis key.
+        uid: The message UID.
 
     """
 

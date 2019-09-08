@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing_extensions import Final
 
 from pymap.config import IMAPConfig

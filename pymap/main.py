@@ -1,5 +1,7 @@
 """IMAP server with pluggable Python backends."""
 
+from __future__ import annotations
+
 import argparse
 import asyncio
 import logging

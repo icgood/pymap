@@ -1,3 +1,7 @@
+
+from __future__ import annotations
+
+from abc import abstractmethod, ABCMeta
 from typing import Tuple, Optional, Type, ClassVar
 
 from .. import Params, Parseable, EndLine
@@ -6,7 +10,7 @@ __all__ = ['Command', 'CommandNoArgs', 'CommandAny', 'CommandAuth',
            'CommandNonAuth', 'CommandSelect']
 
 
-class Command(Parseable[bytes]):
+class Command(Parseable[bytes], metaclass=ABCMeta):
     """Base class to represent the commands available to clients.
 
     Args:
@@ -18,7 +22,7 @@ class Command(Parseable[bytes]):
     command: ClassVar[bytes] = b''
 
     #: If given, execution of this command is handled by the delegate command.
-    delegate: ClassVar[Optional[Type['Command']]] = None
+    delegate: ClassVar[Optional[Type[Command]]] = None
 
     #: True if the command is part of a compound command.
     compound: ClassVar[bool] = False
@@ -35,9 +39,10 @@ class Command(Parseable[bytes]):
         return self.command
 
     @classmethod
+    @abstractmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Command', memoryview]:
-        raise NotImplementedError
+            -> Tuple[Command, memoryview]:
+        ...
 
     def __bytes__(self) -> bytes:
         return b' '.join((self.tag, self.command))
@@ -46,7 +51,7 @@ class Command(Parseable[bytes]):
         return f'<%s tag=%r>' % (type(self).__name__, self.tag)
 
 
-class CommandNoArgs(Command):
+class CommandNoArgs(Command, metaclass=ABCMeta):
     """Convenience class used to fail parsing when args are given to a command
     that expects nothing.
 
@@ -54,35 +59,27 @@ class CommandNoArgs(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['CommandNoArgs', memoryview]:
+            -> Tuple[CommandNoArgs, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag), buf
 
 
-class CommandAny(Command):
+class CommandAny(Command, metaclass=ABCMeta):
     """Represents a command available at any stage of the IMAP session.
 
     """
-
-    @classmethod
-    def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Command', memoryview]:
-        raise NotImplementedError
+    pass
 
 
-class CommandAuth(Command):
+class CommandAuth(Command, metaclass=ABCMeta):
     """Represents a command available when the IMAP session has been
     authenticated.
 
     """
-
-    @classmethod
-    def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Command', memoryview]:
-        raise NotImplementedError
+    pass
 
 
-class CommandNonAuth(Command):
+class CommandNonAuth(Command, metaclass=ABCMeta):
     """Represents a command available only when the IMAP session has not yet
     authenticated.
 
@@ -90,19 +87,10 @@ class CommandNonAuth(Command):
 
     allow_updates = False
 
-    @classmethod
-    def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Command', memoryview]:
-        raise NotImplementedError
 
-
-class CommandSelect(CommandAuth):
+class CommandSelect(CommandAuth, metaclass=ABCMeta):
     """Represents a command available only when the IMAP session has been
     authenticated and a mailbox has been selected.
 
     """
-
-    @classmethod
-    def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Command', memoryview]:
-        raise NotImplementedError
+    pass

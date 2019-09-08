@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing import Type, Optional, Tuple, List
 
 from pymap.exceptions import AppendFailure
@@ -33,10 +35,10 @@ class SieveCompiler(FilterCompilerInterface[bytes]):
         return bytes
 
     @property
-    def filter_type(self) -> Type['SieveFilter']:
+    def filter_type(self) -> Type[SieveFilter]:
         return SieveFilter
 
-    async def compile(self, value: bytes) -> 'SieveFilter':
+    async def compile(self, value: bytes) -> SieveFilter:
         parser = self.parser
         try:
             success = parser.parse(value)

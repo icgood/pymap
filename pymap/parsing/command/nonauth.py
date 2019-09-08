@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing import Tuple
 
 from . import CommandNonAuth, CommandNoArgs
@@ -27,7 +29,7 @@ class AuthenticateCommand(CommandNonAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['AuthenticateCommand', memoryview]:
+            -> Tuple[AuthenticateCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         atom, after = Atom.parse(buf, params)
         _, after = EndLine.parse(after, params)
@@ -54,7 +56,7 @@ class LoginCommand(CommandNonAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['LoginCommand', memoryview]:
+            -> Tuple[LoginCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         userid, buf = AString.parse(buf, params)
         _, buf = Space.parse(buf, params)

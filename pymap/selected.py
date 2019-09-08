@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from bisect import bisect_right
 from itertools import chain, groupby, islice
 from typing import Any, Optional, Tuple, Dict, Set, MutableSet, AbstractSet, \
@@ -38,11 +40,11 @@ class SelectedSet:
 
     def __init__(self) -> None:
         super().__init__()
-        self._set: MutableSet['SelectedMailbox'] = WeakSet()
+        self._set: MutableSet[SelectedMailbox] = WeakSet()
         self._updated = subsystem.get().new_event()
 
-    def add(self, selected: 'SelectedMailbox', *,
-            replace: 'SelectedMailbox' = None) -> None:
+    def add(self, selected: SelectedMailbox, *,
+            replace: SelectedMailbox = None) -> None:
         """Add a new selected mailbox object to the set, which may then be
         returned by :meth:`.any_selected`.
 
@@ -62,7 +64,7 @@ class SelectedSet:
         return self._updated
 
     @property
-    def any_selected(self) -> Optional['SelectedMailbox']:
+    def any_selected(self) -> Optional[SelectedMailbox]:
         """A single, random object in the set of selected mailbox objects.
         Selected mailbox object's marked :attr:`~SelectedMailbox.readonly`
         will not be chosen.
@@ -76,7 +78,7 @@ class SelectedSet:
 
 class _Frozen:
 
-    def __init__(self, selected: 'SelectedMailbox') -> None:
+    def __init__(self, selected: SelectedMailbox) -> None:
         super().__init__()
         messages = selected.messages
         session_flags = selected.session_flags
@@ -382,7 +384,7 @@ class SelectedMailbox:
                 self._silenced_sflags.add((msg.uid, updated_sflags))
 
     def fork(self, command: Command) \
-            -> Tuple['SelectedMailbox', Iterable[UntaggedResponse]]:
+            -> Tuple[SelectedMailbox, Iterable[UntaggedResponse]]:
         """Compares the state of the current object to that of the last fork,
         returning the untagged responses that reflect any changes. A new copy
         of the object is also returned, ready for the next command.

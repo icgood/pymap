@@ -1,5 +1,7 @@
 """Package defining all the IMAP parsing and response classes."""
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from typing import Any, Type, TypeVar, Generic, Tuple, Sequence, Dict, List
 
@@ -38,8 +40,8 @@ class Params:
                  'charset', 'tag', 'max_append_len', 'allow_continuations']
 
     def __init__(self, state: ParsingState = None, *,
-                 expected: Sequence[Type['Parseable']] = None,
-                 list_expected: Sequence[Type['Parseable']] = None,
+                 expected: Sequence[Type[Parseable]] = None,
+                 list_expected: Sequence[Type[Parseable]] = None,
                  command_name: bytes = None,
                  uid: bool = False,
                  charset: str = None,
@@ -64,14 +66,14 @@ class Params:
             kwargs[attr] = getattr(self, attr)
 
     def copy(self, state: ParsingState = None, *,
-             expected: Sequence[Type['Parseable']] = None,
-             list_expected: Sequence[Type['Parseable']] = None,
+             expected: Sequence[Type[Parseable]] = None,
+             list_expected: Sequence[Type[Parseable]] = None,
              command_name: bytes = None,
              uid: bool = None,
              charset: str = None,
              tag: bytes = None,
              max_append_len: int = None,
-             allow_continuations: bool = None) -> 'Params':
+             allow_continuations: bool = None) -> Params:
         """Copy the parameters, possibly replacing a subset."""
         kwargs: Dict[str, Any] = {}
         self._set_if_none(kwargs, 'state', state)
@@ -122,7 +124,7 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
     @classmethod
     @abstractmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Parseable', memoryview]:
+            -> Tuple[Parseable, memoryview]:
         """Implemented by sub-classes to define how to parse the given buffer.
 
         Args:
@@ -191,7 +193,7 @@ class Space(Parseable[int]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Space', memoryview]:
+            -> Tuple[Space, memoryview]:
         ret = cls._whitespace_length(buf)
         if not ret:
             raise NotParseable(buf)
@@ -232,7 +234,7 @@ class EndLine(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['EndLine', memoryview]:
+            -> Tuple[EndLine, memoryview]:
         match = cls._pattern.match(buf)
         if not match:
             raise NotParseable(buf)

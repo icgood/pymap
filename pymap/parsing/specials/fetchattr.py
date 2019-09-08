@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 import enum
 from abc import ABCMeta
 from functools import total_ordering, reduce
@@ -30,18 +33,28 @@ class FetchRequirement(enum.Flag):
     BODY = enum.auto()
     CONTENT = HEADER | BODY
 
-    def overlaps(self, expected: 'FetchRequirement') -> bool:
-        """Checks if this fetch requirement overlaps one or more of the
-        expected fetch requirements.
+    def has_all(self, expected: FetchRequirement) -> bool:
+        """Returns true if all of the expected fetch requirements are met by
+        this fetch requirement.
 
         Args:
             expected: The expected fetch requirements.
 
         """
-        return self & expected != FetchRequirement.NONE
+        return self & expected == expected
+
+    def has_none(self, expected: FetchRequirement) -> bool:
+        """Returns true if none of the expected fetch requirements are met by
+        this fetch requirement.
+
+        Args:
+            expected: The expected fetch requirements.
+
+        """
+        return self & expected == FetchRequirement.NONE
 
     @classmethod
-    def all(cls) -> 'FetchRequirement':
+    def get_all(cls) -> FetchRequirement:
         """Return all possible fetch requirements reduced into a single
         requirement.
 
@@ -49,8 +62,8 @@ class FetchRequirement(enum.Flag):
         return cls.reduce(FetchRequirement)
 
     @classmethod
-    def reduce(cls, requirements: Iterable['FetchRequirement']) \
-            -> 'FetchRequirement':
+    def reduce(cls, requirements: Iterable[FetchRequirement]) \
+            -> FetchRequirement:
         """Reduce a set of fetch requirements into a single requirement.
 
         Args:
@@ -78,7 +91,7 @@ class FetchAttribute(Parseable[bytes]):
 
     class Section:
         """Represents a fetch attribute section, which typically comes after
-        the attribute name within square brackets, e.g. ``BODY[0.TEXT]``.
+        the attribute name within square brackets, e.g. ``BODY[1.TEXT]``.
 
         Args:
             parts: The nested MIME part identifiers.
@@ -113,7 +126,7 @@ class FetchAttribute(Parseable[bytes]):
         self.section = section
         self.partial = partial
         self._raw: Optional[bytes] = None
-        self._for_response: Optional['FetchAttribute'] = None
+        self._for_response: Optional[FetchAttribute] = None
 
     @property
     def value(self) -> bytes:
@@ -121,7 +134,7 @@ class FetchAttribute(Parseable[bytes]):
         return self.attribute
 
     @property
-    def for_response(self) -> 'FetchAttribute':
+    def for_response(self) -> FetchAttribute:
         if self._for_response is None:
             if self.partial is None or len(self.partial) < 2:
                 self._for_response = self
@@ -147,6 +160,15 @@ class FetchAttribute(Parseable[bytes]):
         if attr_name in (b'UID', b'FLAGS', b'INTERNALDATE'):
             return FetchRequirement.METADATA
         elif attr_name in (b'ENVELOPE', b'RFC822.HEADER'):
+            return FetchRequirement.HEADER
+        elif attr_name == b'BODY' and self.section is not None:
+            return self._get_body_requirement(self.section)
+        return FetchRequirement.CONTENT
+
+    @classmethod
+    def _get_body_requirement(cls, section: Section) \
+            -> FetchRequirement:
+        if not section.parts and section.specifier != b'TEXT':
             return FetchRequirement.HEADER
         else:
             return FetchRequirement.CONTENT
@@ -228,7 +250,7 @@ class FetchAttribute(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['FetchAttribute', memoryview]:
+            -> Tuple[FetchAttribute, memoryview]:
         match = cls._attrname_pattern.match(buf)
         if not match:
             raise NotParseable(buf)
@@ -295,7 +317,7 @@ class FetchValue(Writeable, metaclass=ABCMeta):
 
     @classmethod
     def of(cls, attribute: FetchAttribute, value: MaybeBytes) \
-            -> 'FetchValue':
+            -> FetchValue:
         return _StaticFetchValue(attribute, value)
 
 

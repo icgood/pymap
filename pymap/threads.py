@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 import re
 from typing import Optional, Sequence, List, Match, Pattern, Iterable, Iterator
 from typing_extensions import Final
@@ -73,7 +76,7 @@ class ThreadKey(Iterable[bytes]):
             return cls._subject(value[match.end(0):])
 
     @classmethod
-    def get_all(cls, header: MessageHeader) -> Sequence['ThreadKey']:
+    def get_all(cls, header: MessageHeader) -> Sequence[ThreadKey]:
         """Return all the thread keys from the message headers.
 
         Args:

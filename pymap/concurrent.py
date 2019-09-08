@@ -4,6 +4,8 @@ primitives.
 
 """
 
+from __future__ import annotations
+
 import asyncio
 import os.path
 import time
@@ -35,7 +37,7 @@ class Subsystem(metaclass=ABCMeta):
     """
 
     @classmethod
-    def for_executor(cls, executor: Optional[Executor]) -> 'Subsystem':
+    def for_executor(cls, executor: Optional[Executor]) -> Subsystem:
         """Return a subsystem based on the given executor. If ``executor`` is
         None, use :mod:`asyncio`. If ``executor`` is a
         :class:`concurrent.futures.ThreadPoolExecutor`, use :mod:`threading`.
@@ -52,12 +54,12 @@ class Subsystem(metaclass=ABCMeta):
             raise TypeError(executor)
 
     @classmethod
-    def for_asyncio(cls) -> 'Subsystem':
+    def for_asyncio(cls) -> Subsystem:
         """Return a subsystem for :mod:`asyncio`."""
         return _AsyncioSubsystem()
 
     @classmethod
-    def for_threading(cls, executor: ThreadPoolExecutor) -> 'Subsystem':
+    def for_threading(cls, executor: ThreadPoolExecutor) -> Subsystem:
         """Return a subsystem for :mod:`threading`."""
         return _ThreadingSubsystem(executor)
 
@@ -82,12 +84,12 @@ class Subsystem(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def new_rwlock(self) -> 'ReadWriteLock':
+    def new_rwlock(self) -> ReadWriteLock:
         """Return a new read-write lock."""
         ...
 
     @abstractmethod
-    def new_event(self) -> 'Event':
+    def new_event(self) -> Event:
         """Return a new concurrent event."""
         ...
 
@@ -101,10 +103,10 @@ class _AsyncioSubsystem(Subsystem):
     def execute(self, future: Awaitable[RetT]) -> Awaitable[RetT]:
         return future
 
-    def new_rwlock(self) -> '_AsyncioReadWriteLock':
+    def new_rwlock(self) -> _AsyncioReadWriteLock:
         return _AsyncioReadWriteLock()
 
-    def new_event(self) -> '_AsyncioEvent':
+    def new_event(self) -> _AsyncioEvent:
         return _AsyncioEvent()
 
 
@@ -135,10 +137,10 @@ class _ThreadingSubsystem(Subsystem):  # pragma: no cover
         ret = ctx.run(loop.run_until_complete, future)
         return cast(RetT, ret)
 
-    def new_rwlock(self) -> '_ThreadingReadWriteLock':
+    def new_rwlock(self) -> _ThreadingReadWriteLock:
         return _ThreadingReadWriteLock()
 
-    def new_event(self) -> '_ThreadingEvent':
+    def new_event(self) -> _ThreadingEvent:
         return _ThreadingEvent()
 
 
@@ -146,12 +148,12 @@ class ReadWriteLock(metaclass=ABCMeta):
     """Read-write lock."""
 
     @classmethod
-    def for_asyncio(cls) -> 'ReadWriteLock':
+    def for_asyncio(cls) -> ReadWriteLock:
         """Return a read-write lock for asyncio."""
         return _AsyncioReadWriteLock()
 
     @classmethod
-    def for_threading(cls) -> 'ReadWriteLock':
+    def for_threading(cls) -> ReadWriteLock:
         """Return a read-write lock for threading."""
         return _ThreadingReadWriteLock()
 
@@ -186,12 +188,12 @@ class Event(metaclass=ABCMeta):
     """
 
     @classmethod
-    def for_asyncio(cls) -> 'Event':
+    def for_asyncio(cls) -> Event:
         """Return an event for asyncio."""
         return _AsyncioEvent()
 
     @classmethod
-    def for_threading(cls) -> 'Event':
+    def for_threading(cls) -> Event:
         """Return an event for threading."""
         return _ThreadingEvent()
 
@@ -413,13 +415,13 @@ class _AsyncioEvent(Event):
     def __init__(self) -> None:
         super().__init__()
         self._event = _asyncio_Event()
-        self._listeners: MutableSet['_AsyncioEvent'] = WeakSet()
+        self._listeners: MutableSet[_AsyncioEvent] = WeakSet()
 
     @property
     def subsystem(self) -> str:
         return 'asyncio'
 
-    def or_event(self, *events: '_AsyncioEvent') -> '_AsyncioEvent':
+    def or_event(self, *events: _AsyncioEvent) -> _AsyncioEvent:
         or_event = _AsyncioEvent()
         self._listeners.add(or_event)
         for event in events:
@@ -446,13 +448,13 @@ class _ThreadingEvent(Event):  # pragma: no cover
     def __init__(self) -> None:
         super().__init__()
         self._event = _threading_Event()
-        self._listeners: MutableSet['_ThreadingEvent'] = WeakSet()
+        self._listeners: MutableSet[_ThreadingEvent] = WeakSet()
 
     @property
     def subsystem(self) -> str:
         return 'threading'
 
-    def or_event(self, *events: '_ThreadingEvent') -> '_ThreadingEvent':
+    def or_event(self, *events: _ThreadingEvent) -> _ThreadingEvent:
         or_event = _ThreadingEvent()
         self._listeners.add(or_event)
         for event in events:

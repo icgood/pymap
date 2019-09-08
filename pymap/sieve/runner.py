@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing import Optional, Sequence, List
 
 from pymap.mime import MessageContent

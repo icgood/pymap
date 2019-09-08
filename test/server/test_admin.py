@@ -6,7 +6,7 @@ from typing import Any, Optional
 import pytest  # type: ignore
 
 from pymap.admin.handlers import AdminHandlers
-from pymap.admin.grpc.admin_pb2 import AppendRequest, AppendResponse, \
+from pymap.admin.grpc.admin_pb2 import Login, AppendRequest, AppendResponse, \
     SUCCESS, ERROR_RESPONSE
 from pymap.admin.client.append import AppendCommand
 
@@ -49,7 +49,8 @@ class TestAdminHandlers(TestBase):
     async def test_append(self, backend, imap_server):
         handlers = AdminHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -78,7 +79,8 @@ class TestAdminHandlers(TestBase):
 
     async def test_append_user_not_found(self, backend):
         handlers = AdminHandlers(backend)
-        request = AppendRequest(user='baduser')
+        login = Login(user='baduser')
+        request = AppendRequest(login=login)
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
@@ -87,7 +89,8 @@ class TestAdminHandlers(TestBase):
 
     async def test_append_mailbox_not_found(self, backend):
         handlers = AdminHandlers(backend)
-        request = AppendRequest(user='testuser', mailbox='BAD')
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='BAD')
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
@@ -98,7 +101,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_reject(self, backend):
         handlers = AdminHandlers(backend)
         data = b'Subject: reject this\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -110,7 +114,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_discard(self, backend):
         handlers = AdminHandlers(backend)
         data = b'Subject: discard this\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -123,7 +128,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_address_is(self, backend):
         handlers = AdminHandlers(backend)
         data = b'From: foo@example.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -134,7 +140,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_address_contains(self, backend):
         handlers = AdminHandlers(backend)
         data = b'From: user@foo.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -145,7 +152,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_address_matches(self, backend):
         handlers = AdminHandlers(backend)
         data = b'To: bigfoot@example.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -156,7 +164,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_envelope_is(self, backend):
         handlers = AdminHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 sender='foo@example.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -168,7 +177,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_envelope_contains(self, backend):
         handlers = AdminHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 sender='user@foo.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -180,7 +190,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_envelope_matches(self, backend):
         handlers = AdminHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 sender=None, recipient='bigfoot@example.com',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -192,7 +203,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_exists(self, backend):
         handlers = AdminHandlers(backend)
         data = b'X-Foo: foo\nX-Bar: bar\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -203,7 +215,8 @@ class TestAdminHandlers(TestBase):
     async def test_append_filter_header(self, backend):
         handlers = AdminHandlers(backend)
         data = b'X-Caffeine: C8H10N4O2\n\ntest message!\n'
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -215,7 +228,8 @@ class TestAdminHandlers(TestBase):
         handlers = AdminHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         data = data + b'x' * (1234 - len(data))
-        request = AppendRequest(user='testuser', mailbox='INBOX',
+        login = Login(user='testuser')
+        request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         stream = _Stream(request)
@@ -240,5 +254,5 @@ class TestAdminClient:
         assert b'test data' == request.data
         assert 1234567890.0 == request.when
         assert ['\\Flagged', '\\Seen'] == request.flags
-        assert 'testuser' == request.user
+        assert 'testuser' == request.login.user
         assert 'INBOX' == request.mailbox

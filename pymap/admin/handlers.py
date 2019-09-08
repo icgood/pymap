@@ -1,7 +1,10 @@
 
+from __future__ import annotations
+
 from datetime import datetime, timezone
 from typing_extensions import Final
 
+from pymap.context import connection_exit
 from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import SessionInterface
@@ -9,6 +12,7 @@ from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import Flag, ExtensionOptions
 from pysasl.external import ExternalResult
 
+from ._util import exit_context
 from .grpc.admin_grpc import AdminBase
 from .grpc.admin_pb2 import Login, ERROR_RESPONSE
 
@@ -31,12 +35,14 @@ class AdminHandlers(AdminBase):
 
     async def _login_as(self, login: Login) -> SessionInterface:
         creds = ExternalResult(login.user)
-        return await self.login(creds, self.config)
+        stack = connection_exit.get()
+        return await stack.enter_async_context(self.login(creds, self.config))
 
     @property
     def _with_filter(self) -> bool:
         return not self.config.args.no_filter
 
+    @exit_context
     async def Append(self, stream) -> None:
         """Append a message directly to a user's mailbox.
 

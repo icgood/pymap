@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import re
 from typing import Tuple, Optional, List, Mapping, Iterable
 
@@ -83,7 +85,7 @@ class ExtensionOption(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ExtensionOption', memoryview]:
+            -> Tuple[ExtensionOption, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._opt_pattern.match(buf, start)
         if not match:
@@ -108,7 +110,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
     """
 
     _opt_pattern = re.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
-    _empty: Optional['ExtensionOptions'] = None
+    _empty: Optional[ExtensionOptions] = None
 
     def __init__(self, options: Iterable[ExtensionOption]) -> None:
         super().__init__()
@@ -117,7 +119,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
         self._raw: Optional[bytes] = None
 
     @classmethod
-    def empty(cls) -> 'ExtensionOptions':
+    def empty(cls) -> ExtensionOptions:
         """Return an empty set of command options."""
         if cls._empty is None:
             cls._empty = ExtensionOptions({})
@@ -155,7 +157,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
 
     @classmethod
     def _parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ExtensionOptions', memoryview]:
+            -> Tuple[ExtensionOptions, memoryview]:
         buf = cls._parse_paren(buf, b'(')
         result: List[ExtensionOption] = []
         while True:
@@ -170,7 +172,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ExtensionOptions', memoryview]:
+            -> Tuple[ExtensionOptions, memoryview]:
         try:
             return cls._parse(buf, params)
         except NotParseable:

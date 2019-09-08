@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from collections import OrderedDict
 from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
     Iterable, NoReturn
@@ -6,7 +8,7 @@ from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
 from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
-from pymap.context import socket_info
+from pymap.context import socket_info, connection_exit
 from pymap.exceptions import NotSupportedError, CloseConnection
 from pymap.fetch import MessageAttributes
 from pymap.interfaces.session import SessionInterface, LoginProtocol
@@ -93,10 +95,15 @@ class ConnectionState:
         except Exception:
             pass
 
+    async def _login(self, creds: AuthenticationCredentials) \
+            -> SessionInterface:
+        stack = connection_exit.get()
+        return await stack.enter_async_context(self.login(creds, self.config))
+
     async def do_greeting(self) -> CommandResponse:
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
-            self._session = await self.login(preauth_creds, self.config)
+            self._session = await self._login(preauth_creds)
         elif socket_info.get().from_localhost:
             self.auth = self.config.insecure_auth
         resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
@@ -107,7 +114,7 @@ class ConnectionState:
             -> CommandResponse:
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
-        self._session = await self.login(creds, self.config)
+        self._session = await self._login(creds)
         self._capability.extend(self.config.login_capability)
         return ResponseOk(cmd.tag, b'Authentication successful.',
                           self.capability)

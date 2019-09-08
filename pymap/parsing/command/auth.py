@@ -1,4 +1,7 @@
 
+from __future__ import annotations
+
+from abc import ABCMeta
 from typing import ClassVar, Optional, Tuple, Sequence, Iterable, List, \
     FrozenSet
 
@@ -18,7 +21,7 @@ __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'StatusCommand', 'SubscribeCommand', 'UnsubscribeCommand']
 
 
-class CommandMailboxArg(CommandAuth):
+class CommandMailboxArg(CommandAuth, metaclass=ABCMeta):
 
     def __init__(self, tag: bytes, mailbox: Mailbox) -> None:
         super().__init__(tag)
@@ -30,7 +33,7 @@ class CommandMailboxArg(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['CommandMailboxArg', memoryview]:
+            -> Tuple[CommandMailboxArg, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
@@ -116,7 +119,7 @@ class AppendCommand(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['AppendCommand', memoryview]:
+            -> Tuple[AppendCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         messages: List[PreparedMessage] = []
@@ -149,7 +152,7 @@ class CreateCommand(CommandMailboxArg):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['CreateCommand', memoryview]:
+            -> Tuple[CreateCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -188,7 +191,7 @@ class ListCommand(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ListCommand', memoryview]:
+            -> Tuple[ListCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         ref_name, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -243,7 +246,7 @@ class RenameCommand(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['RenameCommand', memoryview]:
+            -> Tuple[RenameCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         from_mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -273,7 +276,7 @@ class SelectCommand(CommandMailboxArg):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['SelectCommand', memoryview]:
+            -> Tuple[SelectCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -314,7 +317,7 @@ class StatusCommand(CommandMailboxArg):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['StatusCommand', memoryview]:
+            -> Tuple[StatusCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)

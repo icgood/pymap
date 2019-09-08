@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import re
 from typing import Tuple, Sequence, List, Iterable, Optional, ClassVar
 
@@ -63,7 +65,7 @@ class ExpungeCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ExpungeCommand', memoryview]:
+            -> Tuple[ExpungeCommand, memoryview]:
         uid_set: Optional[SequenceSet] = None
         if params.uid:
             _, buf = Space.parse(buf, params)
@@ -101,7 +103,7 @@ class CopyCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['CopyCommand', memoryview]:
+            -> Tuple[CopyCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -164,7 +166,7 @@ class FetchCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['FetchCommand', memoryview]:
+            -> Tuple[FetchCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -252,7 +254,7 @@ class StoreCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['StoreCommand', memoryview]:
+            -> Tuple[StoreCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -321,7 +323,7 @@ class SearchCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['SearchCommand', memoryview]:
+            -> Tuple[SearchCommand, memoryview]:
         options, buf = cls._parse_options(buf, params)
         charset, buf = cls._parse_charset(buf, params)
         search_keys = []
@@ -355,8 +357,8 @@ class UidCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['UidCommand', memoryview]:
-        raise NotImplementedError
+            -> Tuple[UidCommand, memoryview]:
+        raise TypeError(cls)  # never parsed directly
 
 
 class UidCopyCommand(CopyCommand):
@@ -371,7 +373,7 @@ class UidCopyCommand(CopyCommand):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['UidCopyCommand', memoryview]:
+            -> Tuple[UidCopyCommand, memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidCopyCommand):
             raise TypeError(ret)
@@ -390,7 +392,7 @@ class UidExpungeCommand(ExpungeCommand):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['UidExpungeCommand', memoryview]:
+            -> Tuple[UidExpungeCommand, memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidExpungeCommand):
             raise TypeError(ret)
@@ -409,7 +411,7 @@ class UidFetchCommand(FetchCommand):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['UidFetchCommand', memoryview]:
+            -> Tuple[UidFetchCommand, memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidFetchCommand):
             raise TypeError(ret)
@@ -428,7 +430,7 @@ class UidSearchCommand(SearchCommand):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['UidSearchCommand', memoryview]:
+            -> Tuple[UidSearchCommand, memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidSearchCommand):
             raise TypeError(ret)
@@ -447,7 +449,7 @@ class UidStoreCommand(StoreCommand):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['UidStoreCommand', memoryview]:
+            -> Tuple[UidStoreCommand, memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidStoreCommand):
             raise TypeError(ret)
@@ -478,7 +480,7 @@ class IdleCommand(CommandSelect):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['IdleCommand', memoryview]:
+            -> Tuple[IdleCommand, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag), buf
 

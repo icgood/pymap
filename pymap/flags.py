@@ -5,6 +5,8 @@ See Also:
 
 """
 
+from __future__ import annotations
+
 import enum
 from typing import Iterable, Mapping, AbstractSet, FrozenSet, Dict, Set
 

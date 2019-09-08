@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from email.headerregistry import Address, AddressHeader, SingleAddressHeader, \
     UnstructuredHeader, DateHeader, ContentDispositionHeader, \
     ContentTransferEncodingHeader
@@ -127,7 +129,7 @@ class EnvelopeStructure(Writeable):
         self.message_id = message_id
 
     @classmethod
-    def empty(cls) -> 'EnvelopeStructure':
+    def empty(cls) -> EnvelopeStructure:
         """Return an empty envelope structure object.
 
         See Also:
@@ -195,7 +197,7 @@ class BodyStructure(Writeable):
         self.content_location = content_location
 
     @classmethod
-    def empty(cls) -> 'BodyStructure':
+    def empty(cls) -> BodyStructure:
         """Return an empty body structure object.
 
         See Also:

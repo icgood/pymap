@@ -1,5 +1,7 @@
 """Defines useful types and utilities for working with bytestrings."""
 
+from __future__ import annotations
+
 from abc import abstractmethod, ABCMeta
 from io import BytesIO
 from itertools import chain
@@ -58,7 +60,7 @@ class HashStream(WriteStream):
     def write(self, data: bytes) -> None:
         self._algo.update(data)
 
-    def digest(self, data: 'Writeable' = None) -> bytes:
+    def digest(self, data: Writeable = None) -> bytes:
         """Return the digest of the data written to the hash stream.
 
         Args:
@@ -86,12 +88,12 @@ class Writeable(metaclass=ABCMeta):
         return writer.getvalue()
 
     @classmethod
-    def empty(cls) -> 'Writeable':
+    def empty(cls) -> Writeable:
         """Return a :class:`Writeable` for an empty string."""
         return _EmptyWriteable()
 
     @classmethod
-    def wrap(cls, data: MaybeBytes) -> 'Writeable':
+    def wrap(cls, data: MaybeBytes) -> Writeable:
         """Wrap the bytes in a :class:`Writeable`.
 
         Args:
@@ -101,7 +103,7 @@ class Writeable(metaclass=ABCMeta):
         return _WrappedWriteable(data)
 
     @classmethod
-    def concat(cls, data: Iterable[MaybeBytes]) -> 'Writeable':
+    def concat(cls, data: Iterable[MaybeBytes]) -> Writeable:
         """Wrap the iterable in a :class:`Writeable` that will write each item.
 
         Args:

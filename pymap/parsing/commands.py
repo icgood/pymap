@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 from typing import Optional, Type, Tuple, Dict, List, Collection
 
 from . import Space, Params
@@ -84,7 +86,7 @@ class InvalidCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['InvalidCommand', memoryview]:
+            -> Tuple[InvalidCommand, memoryview]:
         raise RuntimeError('Do not call')
 
 

@@ -1,5 +1,7 @@
 """Primitive parseable objects in the IMAP protocol."""
 
+from __future__ import annotations
+
 import re
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence as SequenceABC
@@ -45,7 +47,7 @@ class Nil(Parseable[None]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Nil', memoryview]:
+            -> Tuple[Nil, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -81,7 +83,7 @@ class Number(Parseable[int]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Number', memoryview]:
+            -> Tuple[Number, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -133,7 +135,7 @@ class Atom(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['Atom', memoryview]:
+            -> Tuple[Atom, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -177,7 +179,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['String', memoryview]:
+            -> Tuple[String, memoryview]:
         try:
             return QuotedString.parse(buf, params)
         except NotParseable:
@@ -186,7 +188,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
 
     @classmethod
     def build(cls, value: object, binary: bool = False,
-              fallback: object = None) -> Union[Nil, 'String']:
+              fallback: object = None) -> Union[Nil, String]:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
@@ -272,7 +274,7 @@ class QuotedString(String):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['QuotedString', memoryview]:
+            -> Tuple[QuotedString, memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'"':
             raise NotParseable(buf)
@@ -358,7 +360,7 @@ class LiteralString(String):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['LiteralString', memoryview]:
+            -> Tuple[LiteralString, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._literal_pattern.match(buf, start)
         if not match:
@@ -438,7 +440,7 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['ListP', memoryview]:
+            -> Tuple[ListP, memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)

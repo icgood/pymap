@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import hashlib
 from bisect import bisect_left
 from collections import OrderedDict
@@ -43,7 +45,7 @@ class Message(BaseMessage):
         self._content = content
 
     @classmethod
-    def copy_expunged(cls, msg: 'Message') -> 'Message':
+    def copy_expunged(cls, msg: Message) -> Message:
         return cls(msg.uid, msg.internal_date, msg.permanent_flags,
                    expunged=True, email_id=msg.email_id,
                    thread_id=msg.thread_id, content=msg._content)
@@ -57,7 +59,7 @@ class Message(BaseMessage):
         self._recent = recent
 
     async def load_content(self, requirement: FetchRequirement) \
-            -> 'LoadedMessage':
+            -> LoadedMessage:
         return LoadedMessage(self, requirement, self._content)
 
 

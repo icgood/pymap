@@ -28,7 +28,10 @@ def find_any(data: Union[bytes, memoryview], end_marker: FrozenSet[int],
 def get_raw(view: memoryview, *lines: _Lines) -> memoryview:
     try:
         start = lines[0][0][0]
-        end = lines[-1][-1][2]
-        return view[start:end]
     except IndexError:
-        return memoryview(b'')
+        start = 0
+    try:
+        end = lines[-1][-1][2]
+    except IndexError:
+        end = -1
+    return view[start:end]

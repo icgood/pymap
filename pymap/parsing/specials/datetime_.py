@@ -1,3 +1,6 @@
+
+from __future__ import annotations
+
 from datetime import datetime, tzinfo
 from typing import Tuple, Optional
 
@@ -37,7 +40,7 @@ class DateTime(Parseable[datetime]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple['DateTime', memoryview]:
+            -> Tuple[DateTime, memoryview]:
         string, after = QuotedString.parse(buf, params)
         try:
             when_str = str(string.value, 'ascii')

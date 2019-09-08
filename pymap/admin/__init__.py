@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import asyncio
 import os
 import os.path
@@ -46,7 +48,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
 
     @classmethod
     async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> 'AdminService':
+                    config: IMAPConfig) -> AdminService:
         config = backend.config
         path: Optional[str] = config.args.admin_sock
         handlers = AdminHandlers(backend)
