@@ -54,7 +54,7 @@ class ThreadKey(Iterable[bytes]):
     @classmethod
     def _encode(cls, value: str) -> bytes:
         no_whitespace = cls._whitespace.sub('', value)
-        return no_whitespace.encode('ascii', 'surrogateescape')
+        return no_whitespace.encode('utf-8', 'ignore')
 
     @classmethod
     def _first_match(cls, value: str, *patterns: Pattern[str]) \
@@ -71,7 +71,7 @@ class ThreadKey(Iterable[bytes]):
             value, cls._fwd_pattern, cls._re_pattern, cls._listtag_pattern)
         if match is None:
             value = cls._whitespace.sub(' ', value.strip())
-            return value.encode('ascii', 'surrogateescape')
+            return value.encode('utf-8', 'ignore')
         else:
             return cls._subject(value[match.end(0):])
 
