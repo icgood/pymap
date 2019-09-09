@@ -72,7 +72,7 @@ Here are some other commands to try:
 
 ```
 . uid fetch 1:* all
-. list "" ""
+. list "" *
 . create "A New Folder"
 . store * +FLAGS (\Deleted)
 . expunge
@@ -133,11 +133,11 @@ Keys are composed of a heirarchy of prefixes separated by `:`. For example, the
 key containing the flags of a message might be:
 
 ```
-eacb1cf1558741d0b5419b3f838882f5:daddd3075d7b42e78a7edb1d87ee5800:msg:9173:flags
+eacb1cf1558741d0b5419b3f838882f5:mbx:Fdaddd3075d7b42e78a7edb1d87ee5800:msg:9173:flags
 ```
 
 In this example, the `eacb1cf1558741d0b5419b3f838882f5` and
-`daddd3075d7b42e78a7edb1d87ee5800` prefixes are randomly generated UUIDs acting
+`Fdaddd3075d7b42e78a7edb1d87ee5800` prefixes are randomly generated IDs acting
 as the namespaces for the login user and mailbox, respectively, and the message
 has UID `9173`.
 
@@ -275,7 +275,9 @@ If you intend to create a pull request, you should make sure the full suite of
 tests run by CI/CD is passing:
 
 ```
-$ py.test --mypy --flake8 --cov=pymap
+$ py.test
+$ mypy pymap test
+$ flake8 pymap test
 ```
 
 A py.test run executes both unit and integration tests. The integration tests
