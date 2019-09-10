@@ -75,10 +75,11 @@ class SingleFilterSet(FilterSetInterface[FilterValueT]):
     async def rename(self, before_name: str, after_name: str) -> None:
         raise NotImplementedError()
 
-    async def set_active(self, name: Optional[str]) -> None:
-        if name is None:
-            await self.replace_active(None)
-        elif name != self.name:
+    async def clear_active(self) -> None:
+        raise NotImplementedError()
+
+    async def set_active(self, name: str) -> None:
+        if name != self.name:
             raise KeyError(name)
 
     async def get(self, name: str) -> FilterValueT:

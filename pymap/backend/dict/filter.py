@@ -35,10 +35,11 @@ class FilterSet(EntryPointFilterSet[bytes]):
         if self._active == before_name:
             self._active = after_name
 
-    async def set_active(self, name: Optional[str]) -> None:
-        if name is None:
-            self._active = None
-        elif name not in self._filters:
+    async def clear_active(self) -> None:
+        self._active = None
+
+    async def set_active(self, name: str) -> None:
+        if name not in self._filters:
             raise KeyError(name)
         else:
             self._active = name

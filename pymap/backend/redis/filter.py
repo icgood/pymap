@@ -6,7 +6,7 @@ from typing import Optional, Tuple, Sequence, List
 
 from aioredis import Redis, MultiExecError  # type: ignore
 
-from ._util import reset, check_errors
+from ._util import unwatch_pipe, watch_pipe, check_errors
 from .keys import NamespaceKeys, FilterKeys
 from pymap.filter import EntryPointFilterSet
 
@@ -27,21 +27,23 @@ class FilterSet(EntryPointFilterSet[bytes]):
         return uuid.uuid4().hex.encode('ascii')
 
     async def put(self, name: str, value: bytes) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         keys = self._keys
         name_bytes = name.encode('utf-8')
         key = self._get_random_key()
-        await redis.hset(keys.data, key, value)
-        await redis.hset(keys.names, name_bytes, key)
+        pipe = unwatch_pipe(redis)
+        pipe.hset(keys.data, key, value)
+        pipe.hset(keys.names, name_bytes, key)
+        await pipe.execute()
 
     async def delete(self, name: str) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         keys = self._keys
         name_bytes = name.encode('utf-8')
         while True:
-            await redis.watch(keys.names)
-            name_key, active_key = await redis.hmget(
-                keys.names, name_bytes, self._active_name)
+            pipe = watch_pipe(redis, keys.names)
+            pipe.hmget(keys.names, name_bytes, self._active_name)
+            _, _, (name_key, active_key) = await pipe.execute()
             if name_key is None:
                 raise KeyError(name)
             elif name_key == active_key:
@@ -58,14 +60,14 @@ class FilterSet(EntryPointFilterSet[bytes]):
                 break
 
     async def rename(self, before_name: str, after_name: str) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         keys = self._keys
         before_name_bytes = before_name.encode('utf-8')
         after_name_bytes = after_name.encode('utf-8')
         while True:
-            await redis.watch(keys.names)
-            before_name_key, after_name_key = await redis.hmget(
-                keys.names, before_name_bytes, after_name_bytes)
+            pipe = watch_pipe(redis, keys.names)
+            pipe.hmget(keys.names, before_name_bytes, after_name_bytes)
+            _, _, (before_name_key, after_name_key) = await pipe.execute()
             if before_name_key is None:
                 raise KeyError(before_name)
             elif after_name_key is not None:
@@ -81,34 +83,40 @@ class FilterSet(EntryPointFilterSet[bytes]):
             else:
                 break
 
-    async def set_active(self, name: Optional[str]) -> None:
-        redis = await reset(self._redis)
+    async def clear_active(self) -> None:
+        redis = self._redis
         keys = self._keys
-        if name is None:
-            await redis.hdel(keys.names, self._active_name)
-            return
-        else:
-            name_bytes = name.encode('utf-8')
-            while True:
-                await redis.watch(keys.names)
-                name_key = await redis.hget(keys.names, name_bytes)
-                if name_key is None:
-                    raise KeyError(name)
-                multi = redis.multi_exec()
-                multi.hset(keys.names, self._active_name, name_key)
-                try:
-                    await multi.execute()
-                except MultiExecError:
-                    if await check_errors(multi):
-                        raise
-                else:
-                    break
+        pipe = unwatch_pipe(redis)
+        pipe.hdel(keys.names, self._active_name)
+        await pipe.execute()
 
-    async def get(self, name: str) -> bytes:
-        redis = await reset(self._redis)
+    async def set_active(self, name: str) -> None:
+        redis = self._redis
         keys = self._keys
         name_bytes = name.encode('utf-8')
-        name_key = await redis.hget(keys.names, name_bytes)
+        while True:
+            pipe = watch_pipe(redis, keys.names)
+            pipe.hget(keys.names, name_bytes)
+            _, _, name_key = await pipe.execute()
+            if name_key is None:
+                raise KeyError(name)
+            multi = redis.multi_exec()
+            multi.hset(keys.names, self._active_name, name_key)
+            try:
+                await multi.execute()
+            except MultiExecError:
+                if await check_errors(multi):
+                    raise
+            else:
+                break
+
+    async def get(self, name: str) -> bytes:
+        redis = self._redis
+        keys = self._keys
+        name_bytes = name.encode('utf-8')
+        pipe = unwatch_pipe(redis)
+        pipe.hget(keys.names, name_bytes)
+        _, name_key = await pipe.execute()
         if name_key is None:
             raise KeyError(name)
         value = await redis.hget(keys.data, name_key)
@@ -117,9 +125,11 @@ class FilterSet(EntryPointFilterSet[bytes]):
         return value
 
     async def get_active(self) -> Optional[bytes]:
-        redis = await reset(self._redis)
+        redis = self._redis
         keys = self._keys
-        active_key = await redis.hget(keys.names, self._active_name)
+        pipe = unwatch_pipe(redis)
+        pipe.hget(keys.names, self._active_name)
+        _, active_key = await pipe.execute()
         if active_key is None:
             return None
         value = await redis.hget(keys.data, active_key)
@@ -128,9 +138,11 @@ class FilterSet(EntryPointFilterSet[bytes]):
         return value
 
     async def get_all(self) -> Tuple[Optional[str], Sequence[str]]:
-        redis = await reset(self._redis)
+        redis = self._redis
         keys = self._keys
-        sieve_names = await redis.hgetall(keys.names)
+        pipe = unwatch_pipe(redis)
+        pipe.hgetall(keys.names)
+        _, sieve_names = await pipe.execute()
         active_key: Optional[bytes] = sieve_names.get(self._active_name)
         active_name: Optional[str] = None
         names: List[str] = []

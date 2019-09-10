@@ -136,9 +136,13 @@ class FilterSetInterface(Protocol[FilterValueT]):
         ...
 
     @abstractmethod
-    async def set_active(self, name: Optional[str]) -> None:
-        """Set the named filter to be active, or disable any active filters if
-        ``name`` is None.
+    async def clear_active(self) -> None:
+        """Disable any active filters."""
+        ...
+
+    @abstractmethod
+    async def set_active(self, name: str) -> None:
+        """Set the named filter to be active.
 
         Args:
             name: The filter name.

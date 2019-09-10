@@ -9,7 +9,7 @@ from typing_extensions import Final
 
 from aioredis import Redis, ConnectionClosedError  # type: ignore
 
-from ._util import reset
+from ._util import unwatch_pipe
 from .keys import RedisKey, GlobalKeys, CleanupKeys, NamespaceKeys, \
     ContentKeys, MailboxKeys, MessageKeys
 
@@ -184,10 +184,12 @@ class CleanupThread:
             await self._run_root(wildcard)
 
     async def _run_namespace(self, namespace: bytes) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._global_keys, namespace)
-        mailbox_ids = await redis.hvals(ns_keys.mailboxes)
+        pipe = unwatch_pipe(redis)
+        pipe.hvals(ns_keys.mailboxes)
+        _, mailbox_ids = await pipe.execute()
         multi = redis.multi_exec()
         multi.unlink(*ns_keys.keys)
         for mailbox_id in mailbox_ids:
@@ -197,11 +199,13 @@ class CleanupThread:
         await multi.execute()
 
     async def _run_mailbox(self, namespace: bytes, mailbox_id: bytes) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         mbx_keys = MailboxKeys(ns_keys, mailbox_id)
-        msg_uids = await redis.smembers(mbx_keys.uids)
+        pipe = unwatch_pipe(redis)
+        pipe.smembers(mbx_keys.uids)
+        _, msg_uids = await pipe.execute()
         multi = redis.multi_exec()
         multi.unlink(*mbx_keys.keys)
         for msg_uid in msg_uids:
@@ -212,12 +216,14 @@ class CleanupThread:
 
     async def _run_message(self, namespace: bytes, mailbox_id: bytes,
                            msg_uid: bytes) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         mbx_keys = MailboxKeys(ns_keys, mailbox_id)
         msg_keys = MessageKeys(mbx_keys, msg_uid)
-        email_id = await redis.hget(msg_keys.immutable, b'emailid')
+        pipe = unwatch_pipe(redis)
+        pipe.hget(msg_keys.immutable, b'emailid')
+        _, email_id = await pipe.execute()
         multi = redis.multi_exec()
         multi.unlink(*msg_keys.keys)
         if email_id is not None:
@@ -227,20 +233,21 @@ class CleanupThread:
         await multi.execute()
 
     async def _run_content(self, namespace: bytes, email_id: bytes) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         cleanup = self._cleanup
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         ct_keys = ContentKeys(ns_keys, email_id)
-        pipe = redis.pipeline()
+        pipe = unwatch_pipe(redis)
         pipe.ttl(ct_keys.data)
         pipe.hincrby(ns_keys.content_refs, email_id, -1)
-        ttl, refs = await pipe.execute()
+        _, ttl, refs = await pipe.execute()
         if ttl < 0 and int(refs or 0) <= 0:
             await redis.expire(ct_keys.data, cleanup.content_expire)
 
     async def _run_root(self, wildcard: bytes) -> None:
-        redis = await reset(self._redis)
+        redis = self._redis
         cur = b'0'
+        await redis.unwatch()
         while cur:
             cur, keys = await redis.scan(cur, match=wildcard)
             if keys:
