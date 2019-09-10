@@ -129,11 +129,11 @@ $ pip install aioredis
 $ pymap redis --help
 ```
 
-Keys are composed of a heirarchy of prefixes separated by `:`. For example, the
+Keys are composed of a heirarchy of prefixes separated by `/`. For example, the
 key containing the flags of a message might be:
 
 ```
-eacb1cf1558741d0b5419b3f838882f5:mbx:Fdaddd3075d7b42e78a7edb1d87ee5800:msg:9173:flags
+/eacb1cf1558741d0b5419b3f838882f5/mbx/Fdaddd3075d7b42e78a7edb1d87ee5800/msg/9173/flags
 ```
 
 In this example, the `eacb1cf1558741d0b5419b3f838882f5` and
@@ -145,9 +145,9 @@ The default way to create logins is with a redis hash with a `password` field.
 For example:
 
 ```
-127.0.0.1:6379> HSET john password "s3cretp4ssword"
+127.0.0.1:6379> HSET /john password "s3cretp4ssword"
 (integer) 1
-127.0.0.1:6379> HSET sally password "sallypass"
+127.0.0.1:6379> HSET /sally password "sallypass"
 (integer) 1
 ```
 
@@ -155,7 +155,7 @@ For compatibility with [dovecot's auth dict][12], a JSON object can be used
 instead of a redis hash with the `--users-json` command-line argument.
 
 ```
-127.0.0.1:6379> SET susan "{\"password\": \"!@#$%^:*\"}"
+127.0.0.1:6379> SET /susan "{\"password\": \"!@#$%^:*\"}"
 (integer) 1
 ```
 

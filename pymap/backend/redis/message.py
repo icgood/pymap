@@ -57,7 +57,7 @@ class Message(BaseMessage):
         ns_keys = self._ns_keys
         if redis is None or ns_keys is None:
             return LoadedMessage(self, requirement, None)
-        ct_keys = ContentKeys(ns_keys.content_root, self.email_id)
+        ct_keys = ContentKeys(ns_keys, self.email_id)
         content: Optional[MessageContent] = None
         if requirement & FetchRequirement.BODY:
             content = await self._load_full(redis, ct_keys)
