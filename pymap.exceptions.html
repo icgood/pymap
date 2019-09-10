@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.exceptions &#8212; pymap 0.12.0 documentation</title>
+    <title>pymap.exceptions &#8212; pymap 0.12.1 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.12.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.12.1 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -148,9 +148,9 @@ executed by the mailbox.</p>
 
 <dl class="exception">
 <dt id="pymap.exceptions.InvalidAuth">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">InvalidAuth</code><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">InvalidAuth</code><span class="sig-paren">(</span><em>msg='Invalid authentication credentials.'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> commands received credential that the
+<p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> commands received credentials that the
 IMAP backend has rejected.</p>
 <dl class="method">
 <dt id="pymap.exceptions.InvalidAuth.get_response">
@@ -168,6 +168,14 @@ IMAP backend has rejected.</p>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="exception">
+<dt id="pymap.exceptions.IncompatibleData">
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">IncompatibleData</code><span class="sig-paren">(</span><em>msg='Incompatible mailbox data.'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.IncompatibleData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.InvalidAuth</span></code></a></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> command could not succeed because the
+detected mailbox data was not in a compatible format.</p>
 </dd></dl>
 
 <dl class="exception">
@@ -381,7 +389,7 @@ allowed.</p>
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.12.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.12.1 documentation</a> &#187;</li>
  
       </ul>
     </div>
