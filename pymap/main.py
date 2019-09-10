@@ -8,7 +8,8 @@ import logging
 import logging.config
 import os
 from argparse import ArgumentParser, Namespace, ArgumentTypeError
-from typing import Any, Type, Sequence, Mapping
+from string import Template
+from typing import Any, Type, Sequence, Mapping, List
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
@@ -29,10 +30,7 @@ _Services = Mapping[str, Type[ServiceInterface]]
 
 
 def main() -> None:
-    parser = ArgumentParser(
-        description=__doc__,
-        fromfile_prefix_chars='@',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = _PymapArgumentParser(description=__doc__)
     parser.add_argument('--debug', action='store_true',
                         help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
@@ -137,3 +135,19 @@ def _drop_privileges(args: Namespace) -> None:
         os.setgid(args.set_gid)
     if args.set_uid is not None:
         os.setuid(args.set_uid)
+
+
+class _PymapArgumentParser(ArgumentParser):
+
+    def __init__(self, **extra) -> None:
+        formatter_class = argparse.ArgumentDefaultsHelpFormatter
+        super().__init__(fromfile_prefix_chars='@',
+                         formatter_class=formatter_class,
+                         **extra)
+
+    def convert_arg_line_to_args(self, arg_line: str) -> List[str]:
+        try:
+            return [Template(arg_line).substitute(os.environ)]
+        except KeyError as exc:
+            raise EnvironmentError(
+                f'Missing environment variable: ${exc.args[0]}') from exc

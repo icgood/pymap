@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import os.path
-from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from argparse import Namespace
 from asyncio import Task
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
@@ -54,9 +54,7 @@ class MaildirBackend(BackendInterface):
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
-        parser = subparsers.add_parser(
-            name, help='on-disk backend',
-            formatter_class=ArgumentDefaultsHelpFormatter)
+        parser = subparsers.add_parser(name, help='on-disk backend')
         parser.add_argument('users_file', help='path the the users file')
         parser.add_argument('--base-dir', metavar='DIR',
                             help='base directory for mailbox relative paths')

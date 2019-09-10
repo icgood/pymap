@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from argparse import Namespace
 from asyncio import Task
 from contextlib import closing, asynccontextmanager
 from functools import partial
@@ -65,9 +65,7 @@ class RedisBackend(BackendInterface):
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
-        parser = subparsers.add_parser(
-            name, help='redis backend',
-            formatter_class=ArgumentDefaultsHelpFormatter)
+        parser = subparsers.add_parser(name, help='redis backend')
         parser.add_argument('address', nargs='?', default='redis://localhost',
                             help='the redis server address')
         parser.add_argument('--select', metavar='DB', type=int,
