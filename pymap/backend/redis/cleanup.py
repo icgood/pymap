@@ -3,16 +3,17 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import NoReturn
+from contextlib import closing
+from typing import ClassVar, Callable, Awaitable, NoReturn
 from typing_extensions import Final
 
-from aioredis import Redis  # type: ignore
+from aioredis import Redis, ConnectionClosedError  # type: ignore
 
 from ._util import reset
 from .keys import RedisKey, CleanupKeys, NamespaceKeys, ContentKeys, \
     MailboxKeys, MessageKeys
 
-__all__ = ['Cleanup', 'CleanupTask']
+__all__ = ['Cleanup', 'CleanupTask', 'CleanupThread']
 
 _log = logging.getLogger(__name__)
 
@@ -99,6 +100,36 @@ class Cleanup:
 
 
 class CleanupTask:
+    """Maintains a :class:`CleanupThread` for the duration of the process
+    lifetime, restarting on failure.
+
+    Args:
+        connect_redis: Supplies a connected redis object.
+        root: The root redis key.
+
+    """
+
+    #: The delay between redis reconnect attempts, on connection failure.
+    connection_delay: ClassVar[float] = 5.0
+
+    def __init__(self, connect_redis: Callable[[], Awaitable[Redis]],
+                 root: RedisKey) -> None:
+        super().__init__()
+        self._connect_redis = connect_redis
+        self._root = root
+
+    async def run_forever(self) -> NoReturn:
+        """Run the cleanup loop indefinitely."""
+        while True:
+            try:
+                with closing(await self._connect_redis()) as redis:
+                    await CleanupThread(redis, self._root).run()
+            except (ConnectionClosedError, OSError):
+                _log.warning('Redis connection failure', exc_info=True)
+            await asyncio.sleep(self.connection_delay)
+
+
+class CleanupThread:
     """Defines the logic for monitoring and executing cleanup of various
     entities.
 
@@ -115,7 +146,13 @@ class CleanupTask:
         self._cleanup = Cleanup(root)
 
     async def run(self) -> NoReturn:
-        """Run the cleanup loop indefinitely."""
+        """Run the cleanup loop indefinitely.
+
+        Raises:
+            :class:`~aioredis.ConnectionClosedError`: The connection to redis
+                was interrupted.
+
+        """
         redis = self._redis
         cleanup = self._cleanup
         while True:
@@ -126,6 +163,7 @@ class CleanupTask:
             except Exception:
                 _log.warning('Cleanup failed: key=%s val=%s',
                              cleanup_key, cleanup_val, exc_info=True)
+                raise
 
     async def _run_one(self, cleanup_key: bytes, cleanup_val: bytes) -> None:
         cleanup = self._cleanup

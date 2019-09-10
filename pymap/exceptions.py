@@ -10,9 +10,10 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
 
 __all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
-           'SearchNotAllowed', 'InvalidAuth', 'MailboxError', 'MailboxAbort',
-           'MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
-           'MailboxReadOnly', 'AppendFailure']
+           'SearchNotAllowed', 'InvalidAuth', 'IncompatibleData',
+           'MailboxError', 'MailboxAbort', 'MailboxNotFound',
+           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
+           'AppendFailure']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -72,17 +73,28 @@ class SearchNotAllowed(NotSupportedError):
 
 
 class InvalidAuth(ResponseError):
-    """The ``LOGIN`` or ``AUTHENTICATE`` commands received credential that the
+    """The ``LOGIN`` or ``AUTHENTICATE`` commands received credentials that the
     IMAP backend has rejected.
 
     """
 
-    def __init__(self) -> None:
-        super().__init__('Invalid authentication credentials.')
+    def __init__(self, msg: str = 'Invalid authentication credentials.') \
+            -> None:
+        super().__init__(msg)
 
     def get_response(self, tag: bytes) -> ResponseNo:
         return ResponseNo(tag, str(self).encode('ascii'),
                           ResponseCode.of(b'AUTHENTICATIONFAILED'))
+
+
+class IncompatibleData(InvalidAuth):
+    """The ``LOGIN`` or ``AUTHENTICATE`` command could not succeed because the
+    detected mailbox data was not in a compatible format.
+
+    """
+
+    def __init__(self, msg: str = 'Incompatible mailbox data.') -> None:
+        super().__init__(msg)
 
 
 class MailboxError(ResponseError):

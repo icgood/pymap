@@ -10,6 +10,10 @@ from pymap.bytes import MaybeBytes
 __all__ = ['RedisKey', 'KeysGroup', 'CleanupKeys', 'NamespaceKeys',
            'ContentKeys', 'MailboxKeys', 'MessageKeys']
 
+#: The version number of this key layout, to track backwards incompatible
+#: changes.
+DATA_VERSION: Final = 1
+
 _Value = Union[int, MaybeBytes]
 
 

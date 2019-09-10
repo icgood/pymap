@@ -141,19 +141,23 @@ In this example, the `eacb1cf1558741d0b5419b3f838882f5` and
 as the namespaces for the login user and mailbox, respectively, and the message
 has UID `9173`.
 
-The default way to create logins is to simply set a key of only the username to
-its password. For example:
+The default way to create logins is with a redis hash with a `password` field.
+For example:
 
 ```
-127.0.0.1:6379> SET john "s3cretp4ssword"
+127.0.0.1:6379> HSET john password "s3cretp4ssword"
 (integer) 1
-127.0.0.1:6379> SET sally "sallypass"
+127.0.0.1:6379> HSET sally password "sallypass"
 (integer) 1
 ```
 
-Logins may also be looked up from a hash, with a templated key, or where the
-value is a JSON string with a `"password"` field. See the plugin help and API
-documentation for more details.
+For compatibility with [dovecot's auth dict][12], a JSON object can be used
+instead of a redis hash with the `--users-json` command-line argument.
+
+```
+127.0.0.1:6379> SET susan "{\"password\": \"!@#$%^:*\"}"
+(integer) 1
+```
 
 Try out the redis plugin:
 
@@ -308,3 +312,4 @@ no need to attempt `--strict` mode.
 [9]: https://github.com/aio-libs/aioredis
 [10]: https://grpc.io/
 [11]: https://github.com/vmagamedov/grpclib
+[12]: https://wiki.dovecot.org/AuthDatabase/Dict
