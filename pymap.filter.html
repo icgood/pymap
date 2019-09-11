@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.filter &#8212; pymap 0.12.1 documentation</title>
+    <title>pymap.filter &#8212; pymap 0.12.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.fetch.html" title="pymap.fetch"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.12.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.12.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -107,6 +107,20 @@ implementations, it contains only a single active filter implementation.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.filter.SingleFilterSet.clear_active">
+<code class="descname">clear_active</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.clear_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable any active filters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -243,13 +257,12 @@ exists.</p>
 <dl class="method">
 <dt id="pymap.filter.SingleFilterSet.set_active">
 <code class="descname">set_active</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.SingleFilterSet.set_active" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the named filter to be active, or disable any active filters if
-<code class="docutils literal notranslate"><span class="pre">name</span></code> is None.</p>
+<dd><p>Set the named filter to be active.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The filter name.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filter name.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code></a></td>
 </tr>
@@ -336,7 +349,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.fetch.html" title="pymap.fetch"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.12.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.12.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
