@@ -4,25 +4,25 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from argparse import Namespace
 from asyncio import Task
 from contextlib import closing, asynccontextmanager
 from functools import partial
 from typing import Any, Optional, Tuple, Mapping, AsyncIterator
 
-from aioredis import create_redis, Redis, MultiExecError  # type: ignore
+from aioredis import create_redis, Redis  # type: ignore
 from pysasl import AuthenticationCredentials
 
+from pymap.bytes import BytesFormat
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
 from pymap.exceptions import InvalidAuth, IncompatibleData, MailboxConflict
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
 
-from ._util import check_errors
 from .cleanup import Cleanup, CleanupTask
 from .filter import FilterSet
-from .keys import DATA_VERSION, RedisKey, NamespaceKeys
+from .keys import DATA_VERSION, RedisKey, GlobalKeys, NamespaceKeys
 from .mailbox import Message, MailboxSet
 from ..session import BaseSession
 
@@ -59,19 +59,19 @@ class RedisBackend(BackendInterface):
 
     async def _run(self) -> None:
         config = self._config
-        root = config._root
+        global_keys = config._global_keys
         connect_redis = partial(create_redis, config.address)
-        await CleanupTask(connect_redis, root).run_forever()
+        await CleanupTask(connect_redis, global_keys).run_forever()
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
-        parser = subparsers.add_parser(
-            name, help='redis backend',
-            formatter_class=ArgumentDefaultsHelpFormatter)
+        parser = subparsers.add_parser(name, help='redis backend')
         parser.add_argument('address', nargs='?', default='redis://localhost',
                             help='the redis server address')
         parser.add_argument('--select', metavar='DB', type=int,
                             help='the redis database for mail data')
+        parser.add_argument('--separator', metavar='CHAR', default='/',
+                            help='the redis key segment separator')
         parser.add_argument('--prefix', metavar='VAL', default='',
                             help='the mail data key prefix')
         parser.add_argument('--users-prefix', metavar='VAL', default='',
@@ -92,6 +92,7 @@ class Config(IMAPConfig):
         args: The command-line arguments.
         address: The redis server address.
         select: The redis database for mail data.
+        separator: The redis key segment separator.
         prefix: The prefix for mail data keys.
         users_prefix: The user lookup key template.
         users_json: True if the user lookup value contains JSON.
@@ -99,11 +100,12 @@ class Config(IMAPConfig):
     """
 
     def __init__(self, args: Namespace, *, address: str, select: Optional[int],
-                 prefix: bytes, users_prefix: bytes, users_json: bool,
-                 **extra: Any) -> None:
+                 separator: bytes, prefix: bytes, users_prefix: bytes,
+                 users_json: bool, **extra: Any) -> None:
         super().__init__(args, **extra)
         self._address = address
         self._select = select
+        self._separator = separator
         self._prefix = prefix
         self._users_prefix = users_prefix
         self._users_json = users_json
@@ -133,6 +135,11 @@ class Config(IMAPConfig):
         return self._select
 
     @property
+    def separator(self) -> bytes:
+        """The bytestring used to separate segments of composite redis keys."""
+        return self._separator
+
+    @property
     def prefix(self) -> bytes:
         """The prefix for mail data keys. This prefix does not apply to
         :attr:`.users_key`.
@@ -159,17 +166,23 @@ class Config(IMAPConfig):
         return self._users_json
 
     @property
-    def _root(self) -> RedisKey:
-        return RedisKey(self.prefix, {})
+    def _joiner(self) -> BytesFormat:
+        return BytesFormat(self.separator)
 
     @property
     def _users_root(self) -> RedisKey:
-        return RedisKey(self.users_prefix, {}).fork(b':%(user)s')
+        return RedisKey(self._joiner, [self.users_prefix], {})
+
+    @property
+    def _global_keys(self) -> GlobalKeys:
+        key = RedisKey(self._joiner, [self.prefix], {})
+        return GlobalKeys(key)
 
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         return {'address': args.address,
                 'select': args.select,
+                'separator': args.separator.encode('utf-8'),
                 'prefix': args.prefix.encode('utf-8'),
                 'users_prefix': args.users_prefix.encode('utf-8'),
                 'users_json': args.users_json}
@@ -219,29 +232,26 @@ class Session(BaseSession[Message]):
 
         """
         redis = await cls._connect_redis(config.address)
-        namespace = await cls._check_user(redis, config, credentials)
+        user = await cls._check_user(redis, config, credentials)
         if config.select is not None:
             await redis.select(config.select)
-        root = config._root
-        ns_keys = NamespaceKeys(root, namespace)
-        cleanup = Cleanup(root)
+        global_keys = config._global_keys
+        namespace = await cls._get_namespace(redis, global_keys, user)
+        ns_keys = NamespaceKeys(global_keys, namespace)
+        cleanup = Cleanup(global_keys)
         mailbox_set = MailboxSet(redis, ns_keys, cleanup)
         try:
             await mailbox_set.add_mailbox('INBOX')
         except MailboxConflict:
             pass
-        filter_set = FilterSet(redis, namespace)
+        filter_set = FilterSet(redis, ns_keys)
         yield cls(redis, credentials.identity, config, mailbox_set, filter_set)
 
     @classmethod
     async def _check_user(cls, redis: Redis, config: Config,
-                          credentials: AuthenticationCredentials) -> bytes:
+                          credentials: AuthenticationCredentials) -> str:
         user = credentials.authcid
-        key = config._users_root.end(user=user.encode('utf-8'))
-        if config.users_json:
-            password, namespace = await cls._get_json(redis, key)
-        else:
-            password, namespace = await cls._get_hash(redis, key)
+        password = await cls._get_password(redis, config, user)
         if user != credentials.identity:
             raise InvalidAuth()
         elif ldap_context is None or not credentials.has_secret:
@@ -249,66 +259,39 @@ class Session(BaseSession[Message]):
                 raise InvalidAuth()
         elif not ldap_context.verify(credentials.secret, password):
             raise InvalidAuth()
-        return namespace
+        return user
 
     @classmethod
-    async def _get_json(cls, redis: Redis, user_key: bytes) \
-            -> Tuple[str, bytes]:
-        while True:
-            await redis.watch(user_key)
+    async def _get_password(cls, redis: Redis, config: Config,
+                            user: str) -> str:
+        user_key = config._users_root.end(user.encode('utf-8'))
+        if config.users_json:
             json_data = await redis.get(user_key)
             if json_data is None:
                 raise InvalidAuth()
-            json_obj = json.loads(json_data)
             try:
-                password = json_obj['password']
-            except KeyError as exc:
+                json_obj = json.loads(json_data)
+                return json_obj['password']
+            except Exception as exc:
                 raise InvalidAuth() from exc
-            namespace: str = json_obj.get(cls._namespace_key)
-            version: int = json_obj.get(cls._version_key, 0)
-            if namespace is not None:
-                break
-            else:
-                new_namespace = uuid.uuid4().hex
-                json_obj[cls._namespace_key] = namespace = new_namespace
-                json_obj[cls._version_key] = version = DATA_VERSION
-                json_data = json.dumps(json_obj)
-                multi = redis.multi_exec()
-                multi.set(user_key, json_data)
-                try:
-                    await multi.execute()
-                except MultiExecError:
-                    if await check_errors(multi):
-                        raise
-                else:
-                    break
-        if version < DATA_VERSION:
-            raise IncompatibleData()
-        return password, namespace.encode('utf-8')
-
-    @classmethod
-    async def _get_hash(cls, redis: Redis, user_key: bytes) \
-            -> Tuple[str, bytes]:
-        password_bytes, namespace, data_version = await redis.hmget(
-            user_key, b'password', cls._namespace_key, cls._version_key)
-        if password_bytes is None:
-            raise InvalidAuth()
-        password = password_bytes.decode('utf-8')
-        if namespace is None:
-            namespace, version = await cls._update_hash(redis, user_key)
         else:
-            version = int(data_version)
-        if version < DATA_VERSION:
-            raise IncompatibleData()
-        return password, namespace
+            password, identity = await redis.hmget(
+                user_key, b'password', b'identity')
+            if password is None:
+                raise InvalidAuth()
+            return password.decode('utf-8')
 
     @classmethod
-    async def _update_hash(cls, redis: Redis, user_key: bytes) \
-            -> Tuple[bytes, int]:
+    async def _get_namespace(cls, redis: Redis, global_keys: GlobalKeys,
+                             user: str) -> bytes:
+        user_key = user.encode('utf-8')
         new_namespace = uuid.uuid4().hex.encode('ascii')
+        ns_val = b'%d/%b' % (DATA_VERSION, new_namespace)
         multi = redis.multi_exec()
-        multi.hsetnx(user_key, cls._namespace_key, new_namespace)
-        multi.hsetnx(user_key, cls._version_key, DATA_VERSION)
-        multi.hmget(user_key, cls._namespace_key, cls._version_key)
-        _, _, (namespace, data_version) = await multi.execute()
-        return namespace, int(data_version)
+        multi.hsetnx(global_keys.namespaces, user_key, ns_val)
+        multi.hget(global_keys.namespaces, user_key)
+        _, ns_val = await multi.execute()
+        version, namespace = ns_val.split(b'/', 1)
+        if int(version) != DATA_VERSION:
+            raise IncompatibleData()
+        return namespace

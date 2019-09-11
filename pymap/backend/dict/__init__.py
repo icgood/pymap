@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import os.path
-from argparse import Namespace, ArgumentDefaultsHelpFormatter
+from argparse import Namespace
 from asyncio import Task
 from contextlib import closing, asynccontextmanager
 from datetime import datetime, timezone
@@ -55,9 +55,7 @@ class DictBackend(BackendInterface):
 
     @classmethod
     def add_subparser(cls, name: str, subparsers) -> None:
-        parser = subparsers.add_parser(
-            name, help='in-memory backend',
-            formatter_class=ArgumentDefaultsHelpFormatter)
+        parser = subparsers.add_parser(name, help='in-memory backend')
         parser.add_argument('--demo-data', action='store_true',
                             help='load initial demo data')
         parser.add_argument('--demo-user', default='demouser',

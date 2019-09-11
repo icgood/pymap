@@ -2,17 +2,22 @@
 from __future__ import annotations
 
 import asyncio
-from contextlib import suppress
 
-from aioredis import Redis, RedisError, WatchVariableError  # type: ignore
+from aioredis import Redis, WatchVariableError  # type: ignore
 
-__all__ = ['reset', 'check_errors']
+__all__ = ['unwatch_pipe', 'watch_pipe', 'check_errors']
 
 
-async def reset(redis: Redis) -> Redis:
-    with suppress(RedisError):
-        await redis.unwatch()
-    return redis
+def unwatch_pipe(redis: Redis) -> Redis:
+    pipe = redis.pipeline()
+    pipe.unwatch()
+    return pipe
+
+
+def watch_pipe(redis: Redis, *watch: bytes) -> Redis:
+    pipe = unwatch_pipe(redis)
+    pipe.watch(*watch)
+    return pipe
 
 
 async def check_errors(multi: Redis) -> bool:

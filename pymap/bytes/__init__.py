@@ -7,7 +7,7 @@ from io import BytesIO
 from itertools import chain
 from typing import cast, Any, TypeVar, ByteString, SupportsBytes, Union, \
     Iterable, Sequence
-from typing_extensions import final, Protocol
+from typing_extensions import final, Final, Protocol
 
 __all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
            'BytesFormat']
@@ -199,7 +199,7 @@ class BytesFormat:
 
     def __init__(self, how: bytes) -> None:
         super().__init__()
-        self.how = how
+        self.how: Final = how
 
     def __mod__(self, other: Union[_FormatArg, Iterable[_FormatArg]]) -> bytes:
         """String interpolation, shortcut for :meth:`.format`.
@@ -241,7 +241,14 @@ class BytesFormat:
         fix_arg = self._fix_format_arg
         return self.how % tuple(fix_arg(item) for item in data)
 
-    def join(self, *data: Iterable[MaybeBytes]) -> bytes:
+    @classmethod
+    def _fix_join_arg(cls, data: _FormatArg) -> Any:
+        if isinstance(data, int):
+            return b'%d' % data
+        else:
+            return bytes(data)
+
+    def join(self, *data: Iterable[_FormatArg]) -> bytes:
         """Iterable join on a delimiter.
 
         Args:
@@ -253,4 +260,5 @@ class BytesFormat:
                 BytesFormat(b' ').join([b'one', b'two', b'three'])
 
         """
-        return self.how.join([bytes(item) for item in chain(*data)])
+        fix_arg = self._fix_join_arg
+        return self.how.join(fix_arg(item) for item in chain(*data))

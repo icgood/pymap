@@ -11,7 +11,7 @@ from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent, MessageHeader, MessageBody
 from pymap.parsing.specials import Flag, ObjectId, FetchRequirement
 
-from ._util import reset
+from ._util import unwatch_pipe
 from .keys import NamespaceKeys, ContentKeys
 
 __all__ = ['Message', 'LoadedMessage']
@@ -33,18 +33,18 @@ class Message(BaseMessage):
 
     async def _load_full(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
-        redis = await reset(redis)
-        literal, full_json = await redis.hmget(
-            ct_keys.data, b'full', b'full-json')
+        pipe = unwatch_pipe(redis)
+        pipe.hmget(ct_keys.data, b'full', b'full-json')
+        _, (literal, full_json) = await pipe.execute()
         if literal is None or full_json is None:
             raise ValueError(f'Missing message content: {self.email_id}')
         return MessageContent.from_json(literal, json.loads(full_json))
 
     async def _load_header(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
-        redis = await reset(redis)
-        literal, header_json = await redis.hmget(
-            ct_keys.data, b'header', b'header-json')
+        pipe = unwatch_pipe(redis)
+        pipe.hmget(ct_keys.data, b'header', b'header-json')
+        _, (literal, header_json) = await pipe.execute()
         if literal is None or header_json is None:
             raise ValueError(f'Missing message header: {self.email_id}')
         header = MessageHeader.from_json(literal, json.loads(header_json))
@@ -57,7 +57,7 @@ class Message(BaseMessage):
         ns_keys = self._ns_keys
         if redis is None or ns_keys is None:
             return LoadedMessage(self, requirement, None)
-        ct_keys = ContentKeys(ns_keys.content_root, self.email_id)
+        ct_keys = ContentKeys(ns_keys, self.email_id)
         content: Optional[MessageContent] = None
         if requirement & FetchRequirement.BODY:
             content = await self._load_full(redis, ct_keys)

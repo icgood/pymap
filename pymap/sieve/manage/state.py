@@ -45,10 +45,13 @@ class FilterState:
         return ListScriptsResponse(active, names)
 
     async def _do_set_active(self, cmd: SetActiveCommand) -> Response:
-        try:
-            await self.filter_set.set_active(cmd.script_name)
-        except KeyError:
-            return Response(Condition.NO, code=b'NONEXISTENT')
+        if cmd.script_name is None:
+            await self.filter_set.clear_active()
+        else:
+            try:
+                await self.filter_set.set_active(cmd.script_name)
+            except KeyError:
+                return Response(Condition.NO, code=b'NONEXISTENT')
         return Response(Condition.OK)
 
     async def _do_get_script(self, cmd: GetScriptCommand) -> Response:
