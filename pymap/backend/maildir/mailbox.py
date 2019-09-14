@@ -53,6 +53,16 @@ class Maildir(_Maildir):
             else:
                 yield name.rsplit(self.colon, 1)[0]
 
+    def move_message(self, key: str, dest: Maildir, dest_subdir: str) -> str:
+        """Moves the message to another maildir."""
+        subpath = self._lookup(key)
+        subdir, name = os.path.split(subpath)
+        dest_subpath = os.path.join(dest_subdir, name)
+        path = os.path.join(self._path, subpath)
+        dest_path = os.path.join(dest._path, dest_subpath)
+        os.rename(path, dest_path)
+        return name
+
     def get_message_metadata(self, key: str) -> MaildirMessage:
         """Like :meth:`~mailbox.Maildir.get_message` but the message contents
         are not read from disk.
@@ -234,6 +244,29 @@ class MailboxData(MailboxDataInterface[Message]):
         return Message.from_maildir(
             new_rec.uid, maildir_msg, maildir, key, email_id, thread_id,
             self.maildir_flags)
+
+    async def move(self, uid: int, destination: MailboxData, *,
+                   recent: bool = False) -> Optional[int]:
+        maildir = self._maildir
+        dest_maildir = destination._maildir
+        async with UidList.with_read(self._path) as uidl:
+            try:
+                rec = uidl.get(uid)
+            except KeyError:
+                return None
+        dest_subdir = 'new' if recent else 'cur'
+        async with destination.messages_lock.write_lock(), \
+                self.messages_lock.write_lock():
+            try:
+                new_filename = maildir.move_message(
+                    rec.key, dest_maildir, dest_subdir)
+            except (KeyError, FileNotFoundError):
+                return None
+        async with UidList.with_write(destination._path) as uidl:
+            new_rec = Record(uidl.next_uid, rec.fields, new_filename)
+            uidl.next_uid += 1
+            uidl.set(new_rec)
+        return new_rec.uid
 
     async def get(self, uid: int, cached_msg: CachedMessage = None) \
             -> Optional[Message]:

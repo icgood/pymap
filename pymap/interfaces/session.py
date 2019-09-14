@@ -393,6 +393,29 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
+    async def move_messages(self, selected: SelectedMailbox,
+                            sequence_set: SequenceSet,
+                            mailbox: str) \
+            -> Tuple[Optional[CopyUid], SelectedMailbox]:
+        """Move a set of messages into the given mailbox, removing them from
+        the selected mailbox.
+
+        See Also:
+            `RFC 6851 <https://tools.ietf.org/html/rfc6851>`_
+
+        Args:
+            selected: The selected mailbox session.
+            sequence_set: Sequence set of message sequences or UIDs.
+            mailbox: Name of the mailbox to copy messages into.
+
+        Raises:
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxReadOnly`
+
+        """
+        ...
+
+    @abstractmethod
     async def update_flags(self, selected: SelectedMailbox,
                            sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],

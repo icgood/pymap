@@ -5,9 +5,9 @@ from pymap.flags import FlagOp
 from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.command.select import ExpungeCommand, CopyCommand, \
-    FetchCommand, StoreCommand, SearchCommand, UidExpungeCommand, \
-    UidCopyCommand, UidFetchCommand, UidStoreCommand, UidSearchCommand, \
-    IdleCommand
+    MoveCommand, FetchCommand, StoreCommand, SearchCommand, \
+    UidExpungeCommand, UidCopyCommand, UidMoveCommand, UidFetchCommand, \
+    UidStoreCommand, UidSearchCommand, IdleCommand
 from pymap.parsing.specials import FetchAttribute, SearchKey, Flag
 
 
@@ -38,6 +38,22 @@ class TestCopyCommand(unittest.TestCase):
 
     def test_parse_uid(self):
         ret, buf = UidCopyCommand.parse(b' 1,2,3 mbx\n  ', Params())
+        self.assertTrue(ret.uid)
+        self.assertTrue(ret.sequence_set.uid)
+
+
+class TestMoveCommand(unittest.TestCase):
+
+    def test_parse(self):
+        ret, buf = MoveCommand.parse(b' 1,2,3 mbx\n  ', Params())
+        self.assertFalse(ret.uid)
+        self.assertFalse(ret.sequence_set.uid)
+        self.assertEqual([1, 2, 3], ret.sequence_set.value)
+        self.assertEqual('mbx', ret.mailbox)
+        self.assertEqual(b'  ', buf)
+
+    def test_parse_uid(self):
+        ret, buf = UidMoveCommand.parse(b' 1,2,3 mbx\n  ', Params())
         self.assertTrue(ret.uid)
         self.assertTrue(ret.sequence_set.uid)
 

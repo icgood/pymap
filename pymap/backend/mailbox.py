@@ -121,6 +121,20 @@ class MailboxDataInterface(Protocol[MessageT]):
         ...
 
     @abstractmethod
+    async def move(self: MailboxDataT, uid: int, destination: MailboxDataT, *,
+                   recent: bool = False) -> Optional[int]:
+        """Moves a message, if it exists, from this mailbox to the
+        *destination* mailbox.
+
+        Args:
+            uid: The UID of the message to move.
+            destination: The destination mailbox.
+            recent: True if the message should be marked recent.
+
+        """
+        ...
+
+    @abstractmethod
     async def get(self, uid: int, cached_msg: CachedMessage = None) \
             -> Optional[MessageT]:
         """Return the message with the given UID.

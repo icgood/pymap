@@ -170,6 +170,23 @@ class SynchronizedMessages:
         """
         return self._cache.get(uid)
 
+    def get_uids(self, seq_set: SequenceSet) -> Sequence[Tuple[int, int]]:
+        """Return the message sequence numbers and their UIDs for the given
+        sequence set.
+
+        Args:
+            seq_set: The message sequence set.
+
+        """
+        if seq_set.uid:
+            all_uids = seq_set.flatten(self.max_uid) & self._uids
+            return [(seq, uid) for seq, uid in enumerate(self._sorted, 1)
+                    if uid in all_uids]
+        else:
+            all_seqs = seq_set.flatten(self.exists)
+            return [(seq, uid) for seq, uid in enumerate(self._sorted, 1)
+                    if seq in all_seqs]
+
     def get_all(self, seq_set: SequenceSet) \
             -> Sequence[Tuple[int, CachedMessage]]:
         """Return the cached messages, and their sequence numbers, for the

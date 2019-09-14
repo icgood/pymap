@@ -45,10 +45,14 @@ class Message(BaseMessage):
         self._content = content
 
     @classmethod
-    def copy_expunged(cls, msg: Message) -> Message:
-        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
-                   expunged=True, email_id=msg.email_id,
-                   thread_id=msg.thread_id, content=msg._content)
+    def copy(cls, msg: Message, *, uid: int = None, recent: bool = False,
+             expunged: bool = False) -> Message:
+        if uid is None:
+            uid = msg.uid
+        return cls(uid, msg.internal_date, msg.permanent_flags,
+                   expunged=expunged, email_id=msg.email_id,
+                   thread_id=msg.thread_id, recent=recent,
+                   content=msg._content)
 
     @property
     def recent(self) -> bool:
@@ -251,6 +255,21 @@ class MailboxData(MailboxDataInterface[Message]):
             self._mod_sequences.update([new_uid])
             return message
 
+    async def move(self, uid: int, destination: MailboxData, *,
+                   recent: bool = False) -> Optional[int]:
+        async with self.messages_lock.write_lock():
+            try:
+                message = self._messages.pop(uid)
+            except KeyError:
+                return None
+            self._mod_sequences.expunge([uid])
+        async with destination.messages_lock.write_lock():
+            destination._max_uid = dest_uid = destination._max_uid + 1
+            new_msg = Message.copy(message, uid=dest_uid, recent=recent)
+            destination._messages[dest_uid] = new_msg
+            destination._mod_sequences.update([dest_uid])
+        return dest_uid
+
     async def get(self, uid: int, cached_msg: CachedMessage = None) \
             -> Optional[Message]:
         if uid < 1 or uid > self._max_uid:
@@ -260,7 +279,7 @@ class MailboxData(MailboxDataInterface[Message]):
             if ret is None and cached_msg is not None:
                 if not isinstance(cached_msg, Message):
                     raise TypeError(cached_msg)
-                return Message.copy_expunged(cached_msg)
+                return Message.copy(cached_msg, expunged=True)
             else:
                 return ret
 
@@ -271,7 +290,7 @@ class MailboxData(MailboxDataInterface[Message]):
                     del self._messages[uid]
                 except KeyError:
                     pass
-        self._mod_sequences.expunge(uids)
+            self._mod_sequences.expunge(uids)
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
         uids: List[int] = []

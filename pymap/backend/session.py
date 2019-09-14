@@ -256,6 +256,30 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             copy_uid = CopyUid(dest.uid_validity, uids)
         return (copy_uid, await mbx.update_selected(selected))
 
+    async def move_messages(self, selected: SelectedMailbox,
+                            sequence_set: SequenceSet,
+                            mailbox: str) \
+            -> Tuple[Optional[CopyUid], SelectedMailbox]:
+        mbx = await self._get_selected(selected)
+        dest = await self.mailbox_set.get_mailbox(mailbox, try_create=True)
+        if dest.readonly:
+            raise MailboxReadOnly(mailbox)
+        dest_selected = self._pick_selected(selected, dest)
+        uids: List[Tuple[int, int]] = []
+        for _, source_uid in selected.messages.get_uids(sequence_set):
+            dest_uid = await mbx.move(source_uid, dest,
+                                      recent=not dest_selected)
+            if dest_uid is not None:
+                if dest_selected:
+                    dest_selected.session_flags.add_recent(dest_uid)
+                uids.append((source_uid, dest_uid))
+        dest.selected_set.updated.set()
+        if not uids:
+            copy_uid: Optional[CopyUid] = None
+        else:
+            copy_uid = CopyUid(dest.uid_validity, uids)
+        return (copy_uid, await mbx.update_selected(selected))
+
     async def update_flags(self, selected: SelectedMailbox,
                            sequence_set: SequenceSet,
                            flag_set: FrozenSet[Flag],

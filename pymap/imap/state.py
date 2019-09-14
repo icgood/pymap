@@ -22,8 +22,8 @@ from pymap.parsing.command.auth import AppendCommand, CreateCommand, \
     DeleteCommand, ListCommand, RenameCommand, SelectCommand, StatusCommand, \
     SubscribeCommand, UnsubscribeCommand
 from pymap.parsing.command.select import CheckCommand, CloseCommand, \
-    IdleCommand, ExpungeCommand, CopyCommand, FetchCommand, StoreCommand, \
-    SearchCommand
+    IdleCommand, ExpungeCommand, CopyCommand, MoveCommand, FetchCommand, \
+    StoreCommand, SearchCommand
 from pymap.parsing.commands import InvalidCommand
 from pymap.parsing.primitives import ListP, Number
 from pymap.parsing.response import ResponseOk, ResponseNo, ResponseBad, \
@@ -273,6 +273,13 @@ class ConnectionState:
         copy_uid, updates = await self.session.copy_messages(
             self.selected, cmd.sequence_set, cmd.mailbox)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.', copy_uid)
+        return resp, updates
+
+    async def do_move(self, cmd: MoveCommand) -> _CommandRet:
+        copy_uid, updates = await self.session.move_messages(
+            self.selected, cmd.sequence_set, cmd.mailbox)
+        resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
+        resp.add_untagged_ok(b'Moved.', copy_uid)
         return resp, updates
 
     async def do_fetch(self, cmd: FetchCommand) -> _CommandRet:
