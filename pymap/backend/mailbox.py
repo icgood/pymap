@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeVar, Any, Optional, Tuple, NamedTuple, Sequence, \
-    FrozenSet, Iterable, AsyncIterable
+from dataclasses import dataclass
+from typing import TypeVar, Any, Optional, Tuple, Sequence, FrozenSet, \
+    Iterable, AsyncIterable
 from typing_extensions import Protocol
 
 from pymap.flags import FlagOp
@@ -27,7 +28,8 @@ MailboxDataT_co = TypeVar('MailboxDataT_co', bound='MailboxDataInterface',
                           covariant=True)
 
 
-class SavedMessage(NamedTuple):
+@dataclass(frozen=True)
+class SavedMessage:
     """The result of a :meth:`~MailboxDataInterface.save` call.
 
     Args:

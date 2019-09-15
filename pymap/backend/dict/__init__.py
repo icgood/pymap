@@ -222,7 +222,7 @@ class Session(BaseSession[Message]):
                 msg_recent = False
             msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags),
                                 ExtensionOptions.empty())
-            email_id, thread_id, ref = await mbx.save(msg_data)
-            prepared = PreparedMessage(msg_dt, msg.flag_set, email_id,
-                                       thread_id, msg.options, ref)
+            saved = await mbx.save(msg_data)
+            prepared = PreparedMessage(msg_dt, msg.flag_set, saved.email_id,
+                                       saved.thread_id, msg.options, saved.ref)
             await mbx.add(prepared, recent=msg_recent)

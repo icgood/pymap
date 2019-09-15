@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import random
 from collections import OrderedDict
-from typing import IO, Optional, Iterable, Mapping, Dict, NamedTuple, \
-    ClassVar, TypeVar, Type
+from dataclasses import dataclass
+from typing import IO, Optional, Iterable, Mapping, Dict, ClassVar, \
+    TypeVar, Type
 
 from pymap.mailbox import MailboxSnapshot
 
@@ -15,7 +16,8 @@ __all__ = ['Record', 'UidList']
 _UDT = TypeVar('_UDT', bound='UidList')
 
 
-class Record(NamedTuple):
+@dataclass(frozen=True)
+class Record:
     """Defines a single record read from the UID list file.
 
     Args:

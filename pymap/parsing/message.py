@@ -1,15 +1,17 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Optional, NamedTuple, FrozenSet
+from typing import Any, Optional, FrozenSet
 
 from ..parsing.specials import Flag, ExtensionOptions, ObjectId
 
 __all__ = ['AppendMessage', 'PreparedMessage']
 
 
-class AppendMessage(NamedTuple):
+@dataclass(frozen=True)
+class AppendMessage:
     """A single message from the APPEND command.
 
     Args:
@@ -26,7 +28,8 @@ class AppendMessage(NamedTuple):
     options: Optional[ExtensionOptions] = None
 
 
-class PreparedMessage(NamedTuple):
+@dataclass(frozen=True)
+class PreparedMessage:
     """A message that has been prepared for appending to a mailbox.
 
     Args:

@@ -3,13 +3,14 @@ from __future__ import annotations
 
 import re
 from collections import OrderedDict
-from typing import Optional, Pattern, Tuple, Dict, Iterable, Sequence, List, \
-    NamedTuple
+from dataclasses import dataclass
+from typing import Optional, Pattern, Tuple, Dict, Iterable, Sequence, List
 
 __all__ = ['ListEntry', 'ListTree']
 
 
-class ListEntry(NamedTuple):
+@dataclass(frozen=True)
+class ListEntry:
     """An entry in the list results.
 
     Args:

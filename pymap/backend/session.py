@@ -142,10 +142,10 @@ class BaseSession(SessionInterface, Generic[MessageT]):
     async def prepare_message(self, name: str, message: AppendMessage) \
             -> PreparedMessage:
         mbx = await self.mailbox_set.get_mailbox(name, try_create=True)
-        email_id, thread_id, ref = await mbx.save(message.literal)
+        saved = await mbx.save(message.literal)
         new_flag_set = frozenset(message.flag_set)
-        return PreparedMessage(message.when, new_flag_set, email_id, thread_id,
-                               message.options, ref)
+        return PreparedMessage(message.when, new_flag_set, saved.email_id,
+                               saved.thread_id, message.options, saved.ref)
 
     async def append_messages(self, name: str,
                               messages: Sequence[PreparedMessage],
