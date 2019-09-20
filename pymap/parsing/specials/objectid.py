@@ -27,7 +27,7 @@ class ObjectId(Parseable[bytes]):
 
     _pattern = rev.compile(br'[a-zA-Z0-9_-]{1,255}')
 
-    def __init__(self, object_id: Optional[bytes]) -> None:
+    def __init__(self, object_id: bytes = None) -> None:
         super().__init__()
         if object_id == b'':
             raise ValueError(object_id)
@@ -55,23 +55,29 @@ class ObjectId(Parseable[bytes]):
         return cls(match.group(0)), buf[match.end(0):]
 
     @classmethod
-    def _random(cls, prefix: bytes) -> ObjectId:
+    def random(cls, prefix: bytes) -> ObjectId:
+        """Return a new randomized object ID.
+
+        Args:
+            prefix: The prefix for the object ID.
+
+        """
         return cls(b'%b%032x' % (prefix, _random.getrandbits(128)))
 
     @classmethod
     def random_mailbox_id(cls) -> ObjectId:
         """Return a new randomized mailbox ID."""
-        return cls._random(b'F')
+        return cls.random(b'F')
 
     @classmethod
     def random_email_id(cls) -> ObjectId:
         """Return a new randomized email ID."""
-        return cls._random(b'M')
+        return cls.random(b'M')
 
     @classmethod
     def random_thread_id(cls) -> ObjectId:
         """Return a new randomized thread ID."""
-        return cls._random(b'T')
+        return cls.random(b'T')
 
     @classmethod
     def maybe(cls, value: Optional[AnyStr]) -> ObjectId:

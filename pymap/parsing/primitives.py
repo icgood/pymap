@@ -11,7 +11,7 @@ from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, Match, \
 
 from . import Parseable, ExpectedParseable, Params
 from .exceptions import NotParseable
-from .state.continuation import ExpectContinuation
+from .state import ExpectContinuation
 from ..bytes import rev, MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
     Writeable
 

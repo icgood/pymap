@@ -29,6 +29,9 @@ class FlagOp(enum.Enum):
     #: The flag set should be removed from the existing set.
     DELETE = enum.auto()
 
+    def __bytes__(self) -> bytes:
+        return self.name.encode('ascii')
+
     def apply(self, flag_set: AbstractSet[Flag], operand: AbstractSet[Flag]) \
             -> FrozenSet[Flag]:
         """Apply the flag operation on the two sets, returning the result.

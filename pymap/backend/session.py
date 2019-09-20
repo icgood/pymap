@@ -8,13 +8,13 @@ from typing import Generic, Tuple, Optional, FrozenSet, Iterable, \
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
-from pymap.exceptions import MailboxNotFound, MailboxReadOnly
+from pymap.exceptions import MailboxNotFound, MailboxConflict, MailboxReadOnly
 from pymap.flags import FlagOp, SessionFlags, PermanentFlags
 from pymap.interfaces.filter import FilterSetInterface
 from pymap.interfaces.message import MessageT
 from pymap.interfaces.session import SessionInterface
 from pymap.mailbox import MailboxSnapshot
-from pymap.parsing.message import AppendMessage, PreparedMessage
+from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import SequenceSet, SearchKey, ObjectId, \
     FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
@@ -84,9 +84,16 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             return selected
         return mbx.selected_set.any_selected
 
+    async def _get_mailbox(self, name: str, *, try_create: bool = False) \
+            -> MailboxDataInterface[MessageT]:
+        try:
+            return await self.mailbox_set.get_mailbox(name)
+        except KeyError as exc:
+            raise MailboxNotFound(name, try_create=try_create) from exc
+
     async def _get_selected(self, selected: SelectedMailbox) \
             -> MailboxDataInterface[MessageT]:
-        return await self.mailbox_set.get_mailbox(selected.lookup)
+        return await self._get_mailbox(selected.lookup)
 
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,
@@ -107,26 +114,40 @@ class BaseSession(SessionInterface, Generic[MessageT]):
 
     async def get_mailbox(self, name: str, selected: SelectedMailbox = None) \
             -> Tuple[MailboxSnapshot, Optional[SelectedMailbox]]:
-        mbx = await self.mailbox_set.get_mailbox(name)
+        try:
+            mbx = await self.mailbox_set.get_mailbox(name)
+        except KeyError as exc:
+            raise MailboxNotFound(name) from exc
         snapshot = await mbx.snapshot()
         return snapshot, await self._load_updates(selected, mbx)
 
     async def create_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
             -> Tuple[ObjectId, Optional[SelectedMailbox]]:
-        mailbox_id = await self.mailbox_set.add_mailbox(name)
+        try:
+            mailbox_id = await self.mailbox_set.add_mailbox(name)
+        except ValueError as exc:
+            raise MailboxConflict(name) from exc
         return mailbox_id, await self._load_updates(selected, None)
 
     async def delete_mailbox(self, name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        await self.mailbox_set.delete_mailbox(name)
+        try:
+            await self.mailbox_set.delete_mailbox(name)
+        except KeyError as exc:
+            raise MailboxNotFound(name) from exc
         return await self._load_updates(selected, None)
 
     async def rename_mailbox(self, before_name: str, after_name: str,
                              selected: SelectedMailbox = None) \
             -> Optional[SelectedMailbox]:
-        await self.mailbox_set.rename_mailbox(before_name, after_name)
+        try:
+            await self.mailbox_set.rename_mailbox(before_name, after_name)
+        except KeyError as exc:
+            raise MailboxNotFound(before_name) from exc
+        except ValueError as exc:
+            raise MailboxConflict(after_name) from exc
         return await self._load_updates(selected, None)
 
     async def subscribe(self, name: str, selected: SelectedMailbox = None) \
@@ -139,25 +160,17 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         await self.mailbox_set.set_subscribed(name, False)
         return await self._load_updates(selected, None)
 
-    async def prepare_message(self, name: str, message: AppendMessage) \
-            -> PreparedMessage:
-        mbx = await self.mailbox_set.get_mailbox(name, try_create=True)
-        saved = await mbx.save(message.literal)
-        new_flag_set = frozenset(message.flag_set)
-        return PreparedMessage(message.when, new_flag_set, saved.email_id,
-                               saved.thread_id, message.options, saved.ref)
-
     async def append_messages(self, name: str,
-                              messages: Sequence[PreparedMessage],
+                              messages: Sequence[AppendMessage],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
-        mbx = await self.mailbox_set.get_mailbox(name, try_create=True)
+        mbx = await self._get_mailbox(name, try_create=True)
         if mbx.readonly:
             raise MailboxReadOnly(name)
         dest_selected = self._pick_selected(selected, mbx)
         uids: List[int] = []
         for append_msg in messages:
-            msg = await mbx.add(append_msg, recent=not dest_selected)
+            msg = await mbx.append(append_msg, recent=not dest_selected)
             if dest_selected:
                 dest_selected.session_flags.add_recent(msg.uid)
             uids.append(msg.uid)
@@ -167,7 +180,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
 
     async def select_mailbox(self, name: str, readonly: bool = False) \
             -> Tuple[MailboxSnapshot, SelectedMailbox]:
-        mbx = await self.mailbox_set.get_mailbox(name)
+        mbx = await self._get_mailbox(name)
         selected = SelectedMailbox(mbx.mailbox_id, readonly or mbx.readonly,
                                    PermanentFlags(mbx.permanent_flags),
                                    SessionFlags(mbx.session_flags),
@@ -193,12 +206,16 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                              sequence_set: SequenceSet, set_seen: bool) \
             -> Tuple[Iterable[Tuple[int, MessageT]], SelectedMailbox]:
         mbx = await self._get_selected(selected)
-        ret = [(seq, msg) async for seq, msg
-               in mbx.find(sequence_set, selected)]
-        if not selected.readonly and set_seen:
-            seen_set = frozenset([Seen])
-            await mbx.update_flags([msg for _, msg in ret],
-                                   seen_set, FlagOp.ADD)
+        ret: List[Tuple[int, MessageT]] = []
+        for seq, cached_msg in selected.messages.get_all(sequence_set):
+            if set_seen:
+                msg = await mbx.update(cached_msg.uid, cached_msg,
+                                       frozenset({Seen}), FlagOp.ADD)
+            else:
+                msg = await mbx.get(cached_msg.uid, cached_msg)
+            if msg is not None:
+                ret.append((seq, msg))
+        if set_seen:
             mbx.selected_set.updated.set()
         return ret, await mbx.update_selected(selected)
 
@@ -222,7 +239,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         if selected.readonly:
             raise MailboxReadOnly()
         mbx = await self._get_selected(selected)
-        if not uid_set:
+        if uid_set is None:
             uid_set = SequenceSet.all(uid=True)
         expunge_uids = await mbx.find_deleted(uid_set, selected)
         await mbx.delete(expunge_uids)
@@ -234,21 +251,18 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                             mailbox: str) \
             -> Tuple[Optional[CopyUid], SelectedMailbox]:
         mbx = await self._get_selected(selected)
-        dest = await self.mailbox_set.get_mailbox(mailbox, try_create=True)
+        dest = await self._get_mailbox(mailbox, try_create=True)
         if dest.readonly:
             raise MailboxReadOnly(mailbox)
         dest_selected = self._pick_selected(selected, dest)
         uids: List[Tuple[int, int]] = []
-        async for _, msg in mbx.find(sequence_set, selected):
-            if not msg.expunged:
-                source_uid = msg.uid
-                prepared_msg = msg.prepared
-                if prepared_msg is None:
-                    continue
-                msg = await dest.add(prepared_msg, recent=not dest_selected)
+        for _, source_uid in selected.messages.get_uids(sequence_set):
+            dest_uid = await mbx.copy(source_uid, dest,
+                                      recent=not dest_selected)
+            if dest_uid is not None:
                 if dest_selected:
-                    dest_selected.session_flags.add_recent(msg.uid)
-                uids.append((source_uid, msg.uid))
+                    dest_selected.session_flags.add_recent(dest_uid)
+                uids.append((source_uid, dest_uid))
         dest.selected_set.updated.set()
         if not uids:
             copy_uid: Optional[CopyUid] = None
@@ -261,7 +275,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                             mailbox: str) \
             -> Tuple[Optional[CopyUid], SelectedMailbox]:
         mbx = await self._get_selected(selected)
-        dest = await self.mailbox_set.get_mailbox(mailbox, try_create=True)
+        dest = await self._get_mailbox(mailbox, try_create=True)
         if dest.readonly:
             raise MailboxReadOnly(mailbox)
         dest_selected = self._pick_selected(selected, dest)
@@ -290,11 +304,11 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         mbx = await self._get_selected(selected)
         permanent_flags = selected.permanent_flags & flag_set
         messages: List[Tuple[int, MessageT]] = []
-        async for msg_seq, msg in mbx.find(sequence_set, selected):
+        for seq, cached_msg in selected.messages.get_all(sequence_set):
+            uid = cached_msg.uid
+            msg = await mbx.update(uid, cached_msg, permanent_flags, mode)
             if not msg.expunged:
-                selected.session_flags.update(msg.uid, flag_set, mode)
-            messages.append((msg_seq, msg))
-        await mbx.update_flags([msg for _, msg in messages],
-                               permanent_flags, mode)
+                selected.session_flags.update(uid, flag_set, mode)
+            messages.append((seq, msg))
         mbx.selected_set.updated.set()
         return messages, await mbx.update_selected(selected)

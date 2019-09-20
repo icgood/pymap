@@ -25,13 +25,11 @@ from pymap.parsing.command import Command
 from pymap.parsing.commands import Commands
 from pymap.parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
 from pymap.parsing.command.select import IdleCommand
-from pymap.parsing.message import PreparedMessage
 from pymap.parsing.response import ResponseContinuation, Response, \
     ResponseCode, ResponseBad, ResponseNo, ResponseBye, ResponseOk, \
     CommandResponse
-from pymap.parsing.state import ParsingState, ParsingInterrupt
-from pymap.parsing.state.continuation import ExpectContinuation
-from pymap.parsing.state.message import ExpectPreparedMessage
+from pymap.parsing.state import ParsingState, ParsingInterrupt, \
+    ExpectContinuation
 from pymap.sockets import InheritedSockets, SocketInfo
 from pysasl import ServerChallenge, AuthenticationError, \
     AuthenticationCredentials
@@ -228,33 +226,26 @@ class IMAPConnection:
 
     async def _interrupt(self, state: ConnectionState,
                          interrupt: ParsingInterrupt,
-                         continuations: List[memoryview],
-                         prepared_messages: List[PreparedMessage]) -> None:
+                         continuations: List[memoryview]) -> None:
         expected = interrupt.expected
         if isinstance(expected, ExpectContinuation):
             cont = ResponseContinuation(expected.message)
             await self.write_response(cont)
             ret = await self.read_continuation(expected.literal_length)
             continuations.append(ret)
-        elif isinstance(expected, ExpectPreparedMessage):
-            prepared = await self._exec(state.session.prepare_message(
-                expected.mailbox, expected.message))
-            prepared_messages.append(prepared)
         else:
             raise TypeError(expected) from interrupt
 
     async def read_command(self, state: ConnectionState) -> Command:
         line = await self.readline()
         conts: List[memoryview] = []
-        preps: List[PreparedMessage] = []
         while True:
-            parsing_state = ParsingState(continuations=conts,
-                                         prepared_messages=preps)
+            parsing_state = ParsingState(continuations=conts)
             params = self.params.copy(parsing_state)
             try:
                 cmd, _ = self.commands.parse(line, params)
             except ParsingInterrupt as interrupt:
-                await self._interrupt(state, interrupt, conts, preps)
+                await self._interrupt(state, interrupt, conts)
             else:
                 return cmd
 

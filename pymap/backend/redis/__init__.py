@@ -16,13 +16,14 @@ from pysasl import AuthenticationCredentials
 from pymap.bytes import BytesFormat
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
-from pymap.exceptions import InvalidAuth, IncompatibleData, MailboxConflict
+from pymap.exceptions import InvalidAuth, IncompatibleData
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
 
-from .cleanup import Cleanup, CleanupTask
+from .cleanup import CleanupTask
 from .filter import FilterSet
-from .keys import DATA_VERSION, RedisKey, GlobalKeys, NamespaceKeys
+from .keys import DATA_VERSION, RedisKey, GlobalKeys, CleanupKeys, \
+    NamespaceKeys
 from .mailbox import Message, MailboxSet
 from ..session import BaseSession
 
@@ -238,11 +239,11 @@ class Session(BaseSession[Message]):
         global_keys = config._global_keys
         namespace = await cls._get_namespace(redis, global_keys, user)
         ns_keys = NamespaceKeys(global_keys, namespace)
-        cleanup = Cleanup(global_keys)
-        mailbox_set = MailboxSet(redis, ns_keys, cleanup)
+        cl_keys = CleanupKeys(global_keys)
+        mailbox_set = MailboxSet(redis, ns_keys, cl_keys)
         try:
             await mailbox_set.add_mailbox('INBOX')
-        except MailboxConflict:
+        except ValueError:
             pass
         filter_set = FilterSet(redis, ns_keys)
         yield cls(redis, credentials.identity, config, mailbox_set, filter_set)

@@ -8,15 +8,17 @@ from typing_extensions import Protocol
 
 from ..bytes import Writeable
 from ..flags import SessionFlags
-from ..parsing.message import PreparedMessage
 from ..parsing.response.fetch import EnvelopeStructure, BodyStructure
 from ..parsing.specials import Flag, ObjectId, FetchRequirement
 
-__all__ = ['MessageT', 'FlagsKey', 'CachedMessage', 'MessageInterface',
-           'LoadedMessageInterface']
+__all__ = ['MessageT', 'MessageT_co', 'FlagsKey', 'CachedMessage',
+           'MessageInterface', 'LoadedMessageInterface']
 
 #: Type variable with an upper bound of :class:`MessageInterface`.
 MessageT = TypeVar('MessageT', bound='MessageInterface')
+
+#: Covariant type variable with an upper bound of :class:`MessageInterface`.
+MessageT_co = TypeVar('MessageT_co', bound='MessageInterface', covariant=True)
 
 #: Type alias for the value used as a key in set comparisons detecting flag
 #: updates.
@@ -146,15 +148,6 @@ class MessageInterface(Protocol):
 
         Args:
             session_flags: The current session flags.
-
-        """
-        ...
-
-    @property
-    @abstractmethod
-    def prepared(self) -> PreparedMessage:
-        """A :class:`PreparedMessage` that can be used to append a copy of the
-        message to a mailbox.
 
         """
         ...

@@ -168,7 +168,8 @@ class FetchAttribute(Parseable[bytes]):
     @classmethod
     def _get_body_requirement(cls, section: Section) \
             -> FetchRequirement:
-        if not section.parts and section.specifier != b'TEXT':
+        if not section.parts and section.specifier in (
+                b'HEADER', b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             return FetchRequirement.HEADER
         else:
             return FetchRequirement.CONTENT

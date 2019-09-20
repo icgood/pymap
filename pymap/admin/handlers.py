@@ -84,9 +84,8 @@ class AdminHandlers(AdminBase):
                         return
                     else:
                         mailbox = new_mailbox
-            prepared_msg = await session.prepare_message(mailbox, append_msg)
             append_uid, _ = await session.append_messages(
-                mailbox, [prepared_msg])
+                mailbox, [append_msg])
         except ResponseError as exc:
             resp = AppendResponse(result=ERROR_RESPONSE,
                                   error_type=type(exc).__name__,

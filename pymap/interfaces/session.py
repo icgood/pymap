@@ -14,7 +14,7 @@ from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import ConfigT_contra
 from ..flags import FlagOp
-from ..parsing.message import AppendMessage, PreparedMessage
+from ..parsing.message import AppendMessage
 from ..parsing.specials import SequenceSet, Flag, SearchKey, ObjectId
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
@@ -217,22 +217,8 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
-    async def prepare_message(self, name: str, message: AppendMessage) \
-            -> PreparedMessage:
-        """Prepare a single message for appending to a mailbox. For APPEND
-        commands, this is called as soon as a message literal is received
-        during parsing.
-
-        Args:
-            name: The name of the mailbox.
-            message: The message to be appended.
-
-        """
-        ...
-
-    @abstractmethod
     async def append_messages(self, name: str,
-                              messages: Sequence[PreparedMessage],
+                              messages: Sequence[AppendMessage],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         """Appends a message to the end of the mailbox.

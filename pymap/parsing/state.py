@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import TypeVar, Generic, Any, Type, Optional, Tuple, Sequence
+from typing import TypeVar, Generic, Optional, Sequence
 from typing_extensions import Final
 
 __all__ = ['ParsingExpectedT', 'ParsingState', 'ParsingInterrupt',
@@ -15,7 +15,7 @@ ParsingExpectedT = TypeVar('ParsingExpectedT')
 class ParsingState:
     """Contains mutable parsing state. As parsing advances, it may need
     external data to proceed. Because parsing is linear, these expectations
-    are defined as a mapping of an key string to a sequence of objects.
+    are defined as sequence of objects that are iterated during parsing.
 
     Warning:
         The expectation keys and object types are dynamic, to prevent cyclic
@@ -25,29 +25,15 @@ class ParsingState:
         :class:`pymap.parsing.interrupts.ParsingInterrupt`
 
     Args:
-        expectations: The expect
+        continuations: The IMAP literal string continuations.
 
     """
 
-    __slots__ = ['_expectations', '_iters']
+    __slots__ = ['continuations']
 
-    def __init__(self, **expectations: Sequence[Any]) \
-            -> None:
+    def __init__(self, *, continuations: Sequence[memoryview] = None) -> None:
         super().__init__()
-        self._iters = {key: iter(val) for key, val in expectations.items()}
-
-    def consume(self, key: str, cls: Type[ParsingExpectedT]) \
-            -> Optional[ParsingExpectedT]:
-        """Consume and return a piece of data, if available.
-
-        Args:
-            key: The expectation key.
-
-        """
-        try:
-            return next(self._iters[key])
-        except (KeyError, StopIteration):
-            return None
+        self.continuations: Final = iter(continuations or ())
 
 
 class ParsingInterrupt(Exception):
@@ -75,11 +61,12 @@ class ParsingExpectation(Generic[ParsingExpectedT], metaclass=ABCMeta):
 
     __slots__: Sequence[str] = []
 
-    @property
     @abstractmethod
-    def consume_args(self) -> Tuple[str, Type[ParsingExpectedT]]:
-        """Tuple of the *key* and *cls* arguments to pass to
-        :meth:`~ParsingState.consume`.
+    def consume(self, state: ParsingState) -> Optional[ParsingExpectedT]:
+        """Consume and return a piece of data, if available.
+
+        Args:
+            state: The parsing state.
 
         """
         ...
@@ -95,8 +82,30 @@ class ParsingExpectation(Generic[ParsingExpectedT], metaclass=ABCMeta):
             ParsingInterrupt: The expected data was not available.
 
         """
-        next_val = state.consume(*self.consume_args)
+        next_val = self.consume(state)
         if next_val is None:
             raise ParsingInterrupt(self)
         else:
             return next_val
+
+
+class ExpectContinuation(ParsingExpectation[memoryview]):
+    """Indicates that the buffer has been successfully parsed so far, but
+    requires a continuation of the command from the client.
+
+    Args:
+        message: The message from the server.
+        literal_length: If the continuation is for a string literal, this
+            is the byte length to expect.
+
+    """
+
+    __slots__ = ['message', 'literal_length']
+
+    def __init__(self, message: bytes, literal_length: int = 0) -> None:
+        super().__init__()
+        self.message: Final = message
+        self.literal_length: Final = literal_length
+
+    def consume(self, state: ParsingState) -> Optional[memoryview]:
+        return next(state.continuations, None)

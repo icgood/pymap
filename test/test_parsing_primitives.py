@@ -5,10 +5,8 @@ from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
     LiteralString, ListP
-from pymap.parsing.state import ParsingState, ParsingInterrupt
-from pymap.parsing.state.continuation import ExpectContinuation
-
-v = memoryview
+from pymap.parsing.state import ParsingState, ParsingInterrupt, \
+    ExpectContinuation
 
 
 class TestNil(unittest.TestCase):
@@ -97,7 +95,7 @@ class TestString(unittest.TestCase):
         self.assertEqual(b'"asdf"', bytes(qstring2))
 
     def test_literal_parse(self):
-        state = ParsingState(continuations=[v(b'test\x01abc')])
+        state = ParsingState(continuations=[b'test\x01abc'])
         ret, buf = String.parse(b'{5}\r\n', Params(state))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'test\x01', ret.value)
@@ -105,21 +103,21 @@ class TestString(unittest.TestCase):
         self.assertEqual(b'abc', buf)
 
     def test_literal_parse_empty(self):
-        state = ParsingState(continuations=[v(b'abc')])
+        state = ParsingState(continuations=[b'abc'])
         ret, buf = String.parse(b'{0}\r\n', Params(state))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'', ret.value)
         self.assertEqual(b'abc', buf)
 
     def test_literal_plus(self):
-        ret, buf = String.parse(v(b'{5+}\r\ntest\x01abc'), Params())
+        ret, buf = String.parse(b'{5+}\r\ntest\x01abc', Params())
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'test\x01', ret.value)
         self.assertFalse(ret.binary)
         self.assertEqual(b'abc', buf)
 
     def test_literal_binary(self):
-        state = ParsingState(continuations=[v(b'\x00\x01\02abc')])
+        state = ParsingState(continuations=[b'\x00\x01\02abc'])
         ret, buf = String.parse(b'~{3}\r\n', Params(state))
         self.assertIsInstance(ret, LiteralString)
         self.assertEqual(b'\x00\x01\x02', ret.value)
@@ -141,7 +139,7 @@ class TestString(unittest.TestCase):
         with self.assertRaises(NotParseable):
             String.parse(b'{10}\r\nabc', Params())
         with self.assertRaises(NotParseable):
-            state = ParsingState(continuations=[v(b'a'*9)])
+            state = ParsingState(continuations=[b'a'*9])
             String.parse(b'{10}\r\n', Params(state))
         with self.assertRaises(NotParseable):
             String.parse(b'{10+}\r\n' + (b'a'*9), Params())

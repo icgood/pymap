@@ -75,6 +75,9 @@ class Flag(Parseable[bytes]):
     def __bytes__(self) -> bytes:
         return self.value
 
+    def __str__(self) -> str:
+        return self.value.decode('ascii')
+
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> Tuple[Flag, memoryview]:
