@@ -10,10 +10,10 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
     ResponseBye
 
 __all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
-           'SearchNotAllowed', 'InvalidAuth', 'IncompatibleData',
-           'MailboxError', 'MailboxAbort', 'MailboxNotFound',
-           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
-           'AppendFailure']
+           'TemporaryFailure', 'SearchNotAllowed', 'InvalidAuth',
+           'IncompatibleData', 'MailboxError', 'MailboxAbort',
+           'MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
+           'MailboxReadOnly', 'AppendFailure']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -81,9 +81,10 @@ class InvalidAuth(ResponseError):
     def __init__(self, msg: str = 'Invalid authentication credentials.') \
             -> None:
         super().__init__(msg)
+        self._raw = msg.encode('utf-8')
 
     def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, str(self).encode('ascii'),
+        return ResponseNo(tag, self._raw,
                           ResponseCode.of(b'AUTHENTICATIONFAILED'))
 
 
@@ -95,6 +96,20 @@ class IncompatibleData(InvalidAuth):
 
     def __init__(self, msg: str = 'Incompatible mailbox data.') -> None:
         super().__init__(msg)
+
+
+class TemporaryFailure(ResponseError):
+    """The operation failed, but may succeed if tried again. The ``[INUSE]``
+    response code is added to the response.
+
+    """
+
+    def __init__(self, msg: str) -> None:
+        super().__init__(msg)
+        self._raw = msg.encode('utf-8')
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, self._raw, ResponseCode.of(b'INUSE'))
 
 
 class MailboxError(ResponseError):
@@ -152,7 +167,7 @@ class MailboxNotFound(MailboxError):
 
     """
 
-    def __init__(self, mailbox: str, try_create: bool = False) -> None:
+    def __init__(self, mailbox: str, *, try_create: bool = False) -> None:
         code = ResponseCode.of(b'TRYCREATE' if try_create else b'NONEXISTENT')
         super().__init__(mailbox, b'Mailbox does not exist.', code)
 

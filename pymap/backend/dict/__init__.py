@@ -16,8 +16,7 @@ from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
-from pymap.parsing.message import AppendMessage, PreparedMessage
-from pymap.parsing.specials import ExtensionOptions
+from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
 
 from .filter import FilterSet
@@ -220,9 +219,5 @@ class Session(BaseSession[Message]):
                 msg_recent = True
             else:
                 msg_recent = False
-            msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags),
-                                ExtensionOptions.empty())
-            email_id, thread_id, ref = await mbx.save(msg_data)
-            prepared = PreparedMessage(msg_dt, msg.flag_set, email_id,
-                                       thread_id, msg.options, ref)
-            await mbx.add(prepared, recent=msg_recent)
+            append_msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags))
+            await mbx.append(append_msg, recent=msg_recent)

@@ -11,7 +11,6 @@ from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent, MessageHeader, MessageBody
 from pymap.parsing.specials import Flag, ObjectId, FetchRequirement
 
-from ._util import unwatch_pipe
 from .keys import NamespaceKeys, ContentKeys
 
 __all__ = ['Message', 'LoadedMessage']
@@ -33,18 +32,16 @@ class Message(BaseMessage):
 
     async def _load_full(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
-        pipe = unwatch_pipe(redis)
-        pipe.hmget(ct_keys.data, b'full', b'full-json')
-        _, (literal, full_json) = await pipe.execute()
+        literal, full_json = await redis.hmget(
+            ct_keys.data, b'full', b'full-json')
         if literal is None or full_json is None:
             raise ValueError(f'Missing message content: {self.email_id}')
         return MessageContent.from_json(literal, json.loads(full_json))
 
     async def _load_header(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
-        pipe = unwatch_pipe(redis)
-        pipe.hmget(ct_keys.data, b'header', b'header-json')
-        _, (literal, header_json) = await pipe.execute()
+        literal, header_json = await redis.hmget(
+            ct_keys.data, b'header', b'header-json')
         if literal is None or header_json is None:
             raise ValueError(f'Missing message header: {self.email_id}')
         header = MessageHeader.from_json(literal, json.loads(header_json))

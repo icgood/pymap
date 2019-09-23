@@ -6,26 +6,26 @@ from bisect import bisect_left
 from collections import OrderedDict
 from datetime import datetime
 from itertools import islice
-from typing import Tuple, Sequence, Dict, Optional, Iterable, AsyncIterable, \
-    List, Set, AbstractSet, FrozenSet
+from typing import Tuple, Sequence, Dict, Optional, Iterable, \
+    AsyncIterable, List, Set, AbstractSet, FrozenSet
 from weakref import finalize, WeakKeyDictionary, WeakValueDictionary
 
 from pymap.bytes import HashStream
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
-from pymap.exceptions import MailboxNotFound, MailboxConflict
 from pymap.flags import FlagOp
-from pymap.interfaces.message import PreparedMessage, CachedMessage
+from pymap.interfaces.message import CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
+from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import ObjectId, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 from pymap.threads import ThreadKey
 
-from ..mailbox import SavedMessage, MailboxDataInterface, MailboxSetInterface
+from ..mailbox import MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
 
@@ -45,10 +45,14 @@ class Message(BaseMessage):
         self._content = content
 
     @classmethod
-    def copy_expunged(cls, msg: Message) -> Message:
-        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
-                   expunged=True, email_id=msg.email_id,
-                   thread_id=msg.thread_id, content=msg._content)
+    def copy(cls, msg: Message, *, uid: int = None, recent: bool = False,
+             expunged: bool = False) -> Message:
+        if uid is None:
+            uid = msg.uid
+        return cls(uid, msg.internal_date, msg.permanent_flags,
+                   expunged=expunged, email_id=msg.email_id,
+                   thread_id=msg.thread_id, recent=recent,
+                   content=msg._content)
 
     @property
     def recent(self) -> bool:
@@ -231,38 +235,67 @@ class MailboxData(MailboxDataInterface[Message]):
             selected.add_updates(updated_messages, expunged)
         return selected
 
-    async def save(self, message: bytes) -> SavedMessage:
-        content = MessageContent.parse(message)
+    async def append(self, append_msg: AppendMessage, *,
+                     recent: bool = False) -> Message:
+        when = append_msg.when or datetime.now()
+        content = MessageContent.parse(append_msg.literal)
         email_id = self._content_cache.add(content)
         thread_id = self._thread_cache.add(content)
-        return SavedMessage(email_id, thread_id, content)
-
-    async def add(self, prepared: PreparedMessage, *,
-                  recent: bool = False) -> Message:
-        when = prepared.when or datetime.now()
-        content = self._content_cache.get(prepared.email_id)
         async with self.messages_lock.write_lock():
             self._max_uid = new_uid = self._max_uid + 1
-            message = Message(new_uid, when, prepared.flag_set,
-                              email_id=prepared.email_id,
-                              thread_id=prepared.thread_id,
+            message = Message(new_uid, when, append_msg.flag_set,
+                              email_id=email_id, thread_id=thread_id,
                               recent=recent, content=content)
             self._messages[new_uid] = message
             self._mod_sequences.update([new_uid])
             return message
 
-    async def get(self, uid: int, cached_msg: CachedMessage = None) \
-            -> Optional[Message]:
+    async def copy(self, uid: int, destination: MailboxData, *,
+                   recent: bool = False) -> Optional[int]:
+        async with self.messages_lock.read_lock():
+            try:
+                message = self._messages[uid]
+            except KeyError:
+                return None
+        async with destination.messages_lock.write_lock():
+            destination._max_uid = dest_uid = destination._max_uid + 1
+            new_msg = Message.copy(message, uid=dest_uid, recent=recent)
+            destination._messages[dest_uid] = new_msg
+            destination._mod_sequences.update([dest_uid])
+        return dest_uid
+
+    async def move(self, uid: int, destination: MailboxData, *,
+                   recent: bool = False) -> Optional[int]:
+        async with self.messages_lock.write_lock():
+            try:
+                message = self._messages.pop(uid)
+            except KeyError:
+                return None
+            self._mod_sequences.expunge([uid])
+        async with destination.messages_lock.write_lock():
+            destination._max_uid = dest_uid = destination._max_uid + 1
+            new_msg = Message.copy(message, uid=dest_uid, recent=recent)
+            destination._messages[dest_uid] = new_msg
+            destination._mod_sequences.update([dest_uid])
+        return dest_uid
+
+    async def get(self, uid: int, cached_msg: CachedMessage) -> Message:
         if uid < 1 or uid > self._max_uid:
             raise IndexError(uid)
         async with self.messages_lock.read_lock():
-            ret = self._messages.get(uid)
-            if ret is None and cached_msg is not None:
-                if not isinstance(cached_msg, Message):
-                    raise TypeError(cached_msg)
-                return Message.copy_expunged(cached_msg)
-            else:
-                return ret
+            msg = self._messages.get(uid)
+        if msg is None:
+            if not isinstance(cached_msg, Message):
+                raise TypeError(cached_msg)
+            msg = Message.copy(cached_msg, expunged=True)
+        return msg
+
+    async def update(self, uid: int, cached_msg: CachedMessage,
+                     flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
+        self._mod_sequences.update([uid])
+        msg = await self.get(uid, cached_msg)
+        msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
+        return msg
 
     async def delete(self, uids: Iterable[int]) -> None:
         async with self.messages_lock.write_lock():
@@ -271,7 +304,7 @@ class MailboxData(MailboxDataInterface[Message]):
                     del self._messages[uid]
                 except KeyError:
                     pass
-        self._mod_sequences.expunge(uids)
+            self._mod_sequences.expunge(uids)
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
         uids: List[int] = []
@@ -282,12 +315,6 @@ class MailboxData(MailboxDataInterface[Message]):
                 selected.session_flags.add_recent(msg_uid)
                 uids.append(msg_uid)
         self._mod_sequences.update(uids)
-
-    async def update_flags(self, messages: Sequence[Message],
-                           flag_set: FrozenSet[Flag], mode: FlagOp) -> None:
-        self._mod_sequences.update(msg.uid for msg in messages)
-        for msg in messages:
-            msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
 
     async def cleanup(self) -> None:
         pass
@@ -351,19 +378,16 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             mailboxes = list(self._set.keys())
         return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
-    async def get_mailbox(self, name: str,
-                          try_create: bool = False) -> MailboxData:
+    async def get_mailbox(self, name: str) -> MailboxData:
         if name.upper() == 'INBOX':
             return self._inbox
         async with self._set_lock.read_lock():
-            if name not in self._set:
-                raise MailboxNotFound(name, try_create)
             return self._set[name]
 
     async def add_mailbox(self, name: str) -> ObjectId:
         async with self._set_lock.read_lock():
             if name in self._set:
-                raise MailboxConflict(name)
+                raise ValueError(name)
         async with self._set_lock.write_lock():
             self._set[name] = mbx = MailboxData(
                 self._content_cache, self._thread_cache)
@@ -372,7 +396,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
     async def delete_mailbox(self, name: str) -> None:
         async with self._set_lock.read_lock():
             if name not in self._set:
-                raise MailboxNotFound(name)
+                raise KeyError(name)
         async with self._set_lock.write_lock():
             del self._set[name]
 
@@ -382,9 +406,9 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             before_entry = tree.get(before)
             after_entry = tree.get(after)
             if before_entry is None:
-                raise MailboxNotFound(before)
+                raise KeyError(before)
             elif after_entry is not None:
-                raise MailboxConflict(after)
+                raise ValueError(after)
         async with self._set_lock.write_lock():
             for before_name, after_name in tree.get_renames(before, after):
                 if before_name == 'INBOX':

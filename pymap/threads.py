@@ -10,7 +10,7 @@ from .mime import MessageHeader
 __all__ = ['ThreadKey']
 
 
-class ThreadKey(Iterable[bytes]):
+class ThreadKey(Iterable[str]):
     """Represents a hashable key used to link messages as members of the same
     thread.
 
@@ -34,7 +34,7 @@ class ThreadKey(Iterable[bytes]):
 
     __slots__ = ['msg_id', 'subject', '_pair', '__weakref__']
 
-    def __init__(self, msg_id: bytes, subject: bytes) -> None:
+    def __init__(self, msg_id: str, subject: str) -> None:
         super().__init__()
         self.msg_id: Final = msg_id
         self.subject: Final = subject
@@ -48,13 +48,12 @@ class ThreadKey(Iterable[bytes]):
     def __hash__(self) -> int:
         return hash(self._pair)
 
-    def __iter__(self) -> Iterator[bytes]:
+    def __iter__(self) -> Iterator[str]:
         return iter(self._pair)
 
     @classmethod
-    def _encode(cls, value: str) -> bytes:
-        no_whitespace = cls._whitespace.sub('', value)
-        return no_whitespace.encode('utf-8', 'ignore')
+    def _encode(cls, value: str) -> str:
+        return cls._whitespace.sub('', value)
 
     @classmethod
     def _first_match(cls, value: str, *patterns: Pattern[str]) \
@@ -66,12 +65,11 @@ class ThreadKey(Iterable[bytes]):
         return None
 
     @classmethod
-    def _subject(cls, value: str) -> bytes:
+    def _subject(cls, value: str) -> str:
         match = cls._first_match(
             value, cls._fwd_pattern, cls._re_pattern, cls._listtag_pattern)
         if match is None:
-            value = cls._whitespace.sub(' ', value.strip())
-            return value.encode('utf-8', 'ignore')
+            return cls._whitespace.sub(' ', value.strip())
         else:
             return cls._subject(value[match.end(0):])
 
@@ -88,7 +86,7 @@ class ThreadKey(Iterable[bytes]):
         in_reply_to = header.parsed.in_reply_to
         references = header.parsed.references
         subject = header.parsed.subject
-        subject_key = cls._subject(str(subject)) if subject else b''
+        subject_key = cls._subject(str(subject)) if subject else ''
         if message_id is not None:
             match = cls._pattern.search(str(message_id))
             if match is not None:

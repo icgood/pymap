@@ -6,20 +6,19 @@ import os
 import os.path
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage  # type: ignore
-from typing import Dict, Optional, FrozenSet, Iterable, AsyncIterable
+from typing import Dict, Optional, Tuple, FrozenSet, Iterable, AsyncIterable
 from typing_extensions import Final
 
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem
-from pymap.exceptions import MailboxNotFound, MailboxConflict, \
-    MailboxHasChildren, NotSupportedError
+from pymap.exceptions import MailboxHasChildren, NotSupportedError
 from pymap.flags import FlagOp
 from pymap.interfaces.message import CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
 from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
-from pymap.parsing.message import PreparedMessage
+from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import ObjectId, FetchRequirement
 from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
@@ -29,7 +28,7 @@ from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
-from ..mailbox import SavedMessage, MailboxDataInterface, MailboxSetInterface
+from ..mailbox import MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Maildir', 'Message', 'MailboxData', 'MailboxSet']
 
@@ -52,6 +51,16 @@ class Maildir(_Maildir):
                 pass
             else:
                 yield name.rsplit(self.colon, 1)[0]
+
+    def move_message(self, key: str, dest: Maildir, dest_subdir: str) -> str:
+        """Moves the message to another maildir."""
+        subpath = self._lookup(key)
+        subdir, name = os.path.split(subpath)
+        dest_subpath = os.path.join(dest_subdir, name)
+        path = os.path.join(self._path, subpath)
+        dest_path = os.path.join(dest._path, dest_subpath)
+        os.rename(path, dest_path)
+        return name
 
     def get_message_metadata(self, key: str) -> MaildirMessage:
         """Like :meth:`~mailbox.Maildir.get_message` but the message contents
@@ -122,12 +131,11 @@ class Message(BaseMessage):
                    thread_id=msg.thread_id, maildir=msg._maildir, key=msg._key)
 
     @classmethod
-    def to_maildir(cls, prepared_msg: PreparedMessage, recent: bool,
+    def to_maildir(cls, append_msg: AppendMessage, recent: bool,
                    maildir_flags: MaildirFlags) -> MaildirMessage:
-        flag_str = maildir_flags.to_maildir(prepared_msg.flag_set)
-        when = prepared_msg.when or datetime.now()
-        literal: bytes = prepared_msg.ref
-        maildir_msg = MaildirMessage(literal)
+        flag_str = maildir_flags.to_maildir(append_msg.flag_set)
+        when = append_msg.when or datetime.now()
+        maildir_msg = MaildirMessage(append_msg.literal)
         maildir_msg.set_flags(flag_str)
         maildir_msg.set_subdir('new' if recent else 'cur')
         maildir_msg.set_date(when.timestamp())
@@ -205,27 +213,32 @@ class MailboxData(MailboxDataInterface[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
+    async def _get_maildir_msg(self, uid: int) \
+            -> Tuple[Record, MaildirMessage]:
+        async with UidList.with_read(self._path) as uidl:
+            record = uidl.get(uid)
+        maildir = self._maildir
+        key = record.key
+        async with self.messages_lock.read_lock():
+            maildir_msg = maildir.get_message_metadata(key)
+        return record, maildir_msg
+
     async def update_selected(self, selected: SelectedMailbox) \
             -> SelectedMailbox:
         all_messages = [msg async for msg in self.messages()]
         selected.set_messages(all_messages)
         return selected
 
-    async def save(self, message: bytes) -> SavedMessage:
+    async def append(self, append_msg: AppendMessage, *,
+                     recent: bool = False) -> Message:
+        maildir = self._maildir
         email_id = ObjectId.random_email_id()
         thread_id = ObjectId.random_thread_id()
-        return SavedMessage(email_id, thread_id, message)
-
-    async def add(self, message: PreparedMessage, *,
-                  recent: bool = False) -> Message:
-        maildir = self._maildir
         async with self.messages_lock.write_lock():
-            maildir_msg = Message.to_maildir(message, recent,
+            maildir_msg = Message.to_maildir(append_msg, recent,
                                              self.maildir_flags)
             key = maildir.add(maildir_msg)
             filename = key + ':' + maildir_msg.get_info()
-        email_id = message.email_id
-        thread_id = message.thread_id
         async with UidList.with_write(self._path) as uidl:
             fields = {'E': str(email_id), 'T': str(thread_id)}
             new_rec = Record(uidl.next_uid, fields, filename)
@@ -235,38 +248,88 @@ class MailboxData(MailboxDataInterface[Message]):
             new_rec.uid, maildir_msg, maildir, key, email_id, thread_id,
             self.maildir_flags)
 
-    async def get(self, uid: int, cached_msg: CachedMessage = None) \
-            -> Optional[Message]:
-        async with UidList.with_read(self._path) as uidl:
-            next_uid = uidl.next_uid
-            if uid < 1 or uid >= next_uid:
-                raise IndexError(uid)
-            try:
-                record = uidl.get(uid)
-            except KeyError:
-                if cached_msg is not None:
-                    if not isinstance(cached_msg, Message):
-                        raise TypeError(cached_msg)
-                    return Message.copy_expunged(cached_msg)
-                else:
-                    return None
+    async def copy(self, uid: int, destination: MailboxData, *,
+                   recent: bool = False) -> Optional[int]:
+        dest_maildir = destination._maildir
+        try:
+            record, maildir_msg = await self._get_maildir_msg(uid)
+        except KeyError:
+            return None
+        copy_msg = MaildirMessage(maildir_msg)
+        copy_msg.set_subdir('new' if recent else 'cur')
+        async with destination.messages_lock.write_lock():
+            dest_key = dest_maildir.add(copy_msg)
+            dest_filename = dest_key + ':' + copy_msg.get_info()
+        async with UidList.with_write(destination._path) as uidl:
+            new_rec = Record(uidl.next_uid, record.fields, dest_filename)
+            uidl.next_uid += 1
+            uidl.set(new_rec)
+        return new_rec.uid
+
+    async def move(self, uid: int, destination: MailboxData, *,
+                   recent: bool = False) -> Optional[int]:
         maildir = self._maildir
+        dest_maildir = destination._maildir
+        async with UidList.with_read(self._path) as uidl:
+            try:
+                rec = uidl.get(uid)
+            except KeyError:
+                return None
+        dest_subdir = 'new' if recent else 'cur'
+        async with destination.messages_lock.write_lock(), \
+                self.messages_lock.write_lock():
+            try:
+                new_filename = maildir.move_message(
+                    rec.key, dest_maildir, dest_subdir)
+            except (KeyError, FileNotFoundError):
+                return None
+        async with UidList.with_write(destination._path) as uidl:
+            new_rec = Record(uidl.next_uid, rec.fields, new_filename)
+            uidl.next_uid += 1
+            uidl.set(new_rec)
+        return new_rec.uid
+
+    async def get(self, uid: int, cached_msg: CachedMessage) -> Message:
+        maildir = self._maildir
+        try:
+            record, maildir_msg = await self._get_maildir_msg(uid)
+        except (KeyError, FileNotFoundError):
+            if not isinstance(cached_msg, Message):
+                raise TypeError(cached_msg)
+            return Message.copy_expunged(cached_msg)
         key = record.key
         email_id = self._get_object_id(record, 'E')
         thread_id = self._get_object_id(record, 'T')
-        async with self.messages_lock.read_lock():
-            try:
-                maildir_msg = maildir.get_message_metadata(key)
-            except (KeyError, FileNotFoundError):
-                if cached_msg is not None:
-                    if not isinstance(cached_msg, Message):
-                        raise TypeError(cached_msg)
-                    return Message.copy_expunged(cached_msg)
-                else:
-                    return None
-            return Message.from_maildir(
-                uid, maildir_msg, maildir, key, email_id, thread_id,
-                self.maildir_flags)
+        return Message.from_maildir(
+            uid, maildir_msg, maildir, key, email_id, thread_id,
+            self.maildir_flags)
+
+    async def update(self, uid: int, cached_msg: CachedMessage,
+                     flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
+        maildir = self._maildir
+        try:
+            record, maildir_msg = await self._get_maildir_msg(uid)
+        except (KeyError, FileNotFoundError):
+            if not isinstance(cached_msg, Message):
+                raise TypeError(cached_msg)
+            msg = Message.copy_expunged(cached_msg)
+            msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
+            return msg
+        key = record.key
+        email_id = self._get_object_id(record, 'E')
+        thread_id = self._get_object_id(record, 'T')
+        existing_flags = self.maildir_flags.from_maildir(
+            maildir_msg.get_flags())
+        new_flags = mode.apply(existing_flags, flag_set)
+        new_flags_str = self.maildir_flags.to_maildir(new_flags)
+        maildir_msg.set_flags(new_flags_str)
+        try:
+            maildir.update_metadata(key, maildir_msg)
+        except (KeyError, FileNotFoundError):
+            pass
+        return Message.from_maildir(
+            uid, maildir_msg, maildir, key, email_id, thread_id,
+            self.maildir_flags)
 
     async def delete(self, uids: Iterable[int]) -> None:
         async with UidList.with_read(self._path) as uidl:
@@ -285,28 +348,6 @@ class MailboxData(MailboxDataInterface[Message]):
             for rec in uidl.records:
                 if rec.key in keys:
                     selected.session_flags.add_recent(rec.uid)
-
-    async def update_flags(self, messages: Iterable[Message],
-                           flag_set: FrozenSet[Flag], mode: FlagOp) -> None:
-        msgs_map = {msg.uid: msg for msg in messages}
-        async with UidList.with_read(self._path) as uidl:
-            records = uidl.get_all(msgs_map.keys())
-        async with self.messages_lock.write_lock():
-            for uid, rec in records.items():
-                key = rec.key
-                msg = msgs_map[uid]
-                msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
-                flag_str = self.maildir_flags.to_maildir(msg.permanent_flags)
-                try:
-                    maildir_msg = self._maildir.get_message_metadata(key)
-                except (KeyError, FileNotFoundError):
-                    continue
-                maildir_msg.set_flags(flag_str)
-                maildir_msg.set_subdir('new' if msg.recent else 'cur')
-                try:
-                    self._maildir.update_metadata(key, maildir_msg)
-                except (KeyError, FileNotFoundError):
-                    pass
 
     async def cleanup(self) -> None:
         self._maildir.clean()
@@ -417,15 +458,14 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         mailboxes = self._layout.list_folders(self.delimiter)
         return ListTree(self.delimiter).update('INBOX', *mailboxes)
 
-    async def get_mailbox(self, name: str,
-                          try_create: bool = False) -> MailboxData:
+    async def get_mailbox(self, name: str) -> MailboxData:
         if name == 'INBOX':
             maildir = self._inbox_maildir
         else:
             try:
                 maildir = self._layout.get_folder(name, self.delimiter)
-            except FileNotFoundError:
-                raise MailboxNotFound(name, try_create)
+            except FileNotFoundError as exc:
+                raise KeyError(name) from exc
         if name in self._cache:
             mbx = self._cache[name]
         else:
@@ -439,8 +479,8 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
     async def add_mailbox(self, name: str) -> ObjectId:
         try:
             self._layout.add_folder(name, self.delimiter)
-        except FileExistsError:
-            raise MailboxConflict(name)
+        except FileExistsError as exc:
+            raise KeyError(name) from exc
         path = self._layout.get_path(name, self.delimiter)
         async with UidList.with_open(path) as uidl:
             return ObjectId(uidl.global_uid)
@@ -448,8 +488,8 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
     async def delete_mailbox(self, name: str) -> None:
         try:
             self._layout.remove_folder(name, self.delimiter)
-        except FileNotFoundError:
-            raise MailboxNotFound(name)
+        except FileNotFoundError as exc:
+            raise KeyError(name) from exc
         except OSError as exc:
             if exc.errno == errno.ENOTEMPTY:
                 raise MailboxHasChildren(name) from exc

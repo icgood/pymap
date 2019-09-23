@@ -14,7 +14,7 @@ from .mailbox import MailboxInterface
 from ..concurrent import Event
 from ..config import ConfigT_contra
 from ..flags import FlagOp
-from ..parsing.message import AppendMessage, PreparedMessage
+from ..parsing.message import AppendMessage
 from ..parsing.specials import SequenceSet, Flag, SearchKey, ObjectId
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
@@ -217,22 +217,8 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
-    async def prepare_message(self, name: str, message: AppendMessage) \
-            -> PreparedMessage:
-        """Prepare a single message for appending to a mailbox. For APPEND
-        commands, this is called as soon as a message literal is received
-        during parsing.
-
-        Args:
-            name: The name of the mailbox.
-            message: The message to be appended.
-
-        """
-        ...
-
-    @abstractmethod
     async def append_messages(self, name: str,
-                              messages: Sequence[PreparedMessage],
+                              messages: Sequence[AppendMessage],
                               selected: SelectedMailbox = None) \
             -> Tuple[AppendUid, Optional[SelectedMailbox]]:
         """Appends a message to the end of the mailbox.
@@ -379,6 +365,29 @@ class SessionInterface(Protocol):
         See Also:
             `RFC 3501 6.4.7.
             <https://tools.ietf.org/html/rfc3501#section-6.4.7>`_
+
+        Args:
+            selected: The selected mailbox session.
+            sequence_set: Sequence set of message sequences or UIDs.
+            mailbox: Name of the mailbox to copy messages into.
+
+        Raises:
+            :class:`~pymap.exceptions.MailboxNotFound`
+            :class:`~pymap.exceptions.MailboxReadOnly`
+
+        """
+        ...
+
+    @abstractmethod
+    async def move_messages(self, selected: SelectedMailbox,
+                            sequence_set: SequenceSet,
+                            mailbox: str) \
+            -> Tuple[Optional[CopyUid], SelectedMailbox]:
+        """Move a set of messages into the given mailbox, removing them from
+        the selected mailbox.
+
+        See Also:
+            `RFC 6851 <https://tools.ietf.org/html/rfc6851>`_
 
         Args:
             selected: The selected mailbox session.

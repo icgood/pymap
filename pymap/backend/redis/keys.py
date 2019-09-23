@@ -59,17 +59,14 @@ class RedisKey:
         else:
             return RedisKey(self.joiner, new_segments, self.named)
 
-    def end(self, segment: _Value = None) -> bytes:
+    def end(self, *segments: _Value) -> bytes:
         """Terminate the redis key producing a bytestring.
 
         Args:
-            segment: An optional segment to add to the result.
+            segments: Optional segments to add to the result.
 
         """
-        if segment is None:
-            return self.joiner.join(self.segments)
-        else:
-            return self.joiner.join(self.segments, [segment])
+        return self.joiner.join(self.segments, segments)
 
 
 class KeysGroup(metaclass=ABCMeta):
@@ -124,7 +121,7 @@ class CleanupKeys(KeysGroup):
 
     """
 
-    __slots__ = ['namespaces', 'mailboxes', 'messages', 'contents', 'roots']
+    __slots__ = ['namespaces', 'mailboxes', 'messages', 'contents']
 
     def __init__(self, parent: GlobalKeys) -> None:
         root = parent.cleanup_root.fork(DATA_VERSION, name='version')
@@ -133,12 +130,10 @@ class CleanupKeys(KeysGroup):
         self.mailboxes: Final = root.end(b'mbx')
         self.messages: Final = root.end(b'msg')
         self.contents: Final = root.end(b'content')
-        self.roots: Final = root.end(b'root')
 
     @property
     def keys(self) -> Sequence[bytes]:
-        return [self.namespaces, self.mailboxes, self.messages, self.contents,
-                self.roots]
+        return [self.namespaces, self.mailboxes, self.messages, self.contents]
 
 
 class NamespaceKeys(KeysGroup):
@@ -153,7 +148,7 @@ class NamespaceKeys(KeysGroup):
 
     __slots__ = ['mailbox_root', 'content_root', 'filter_root', 'mailboxes',
                  'max_order', 'order', 'uid_validity', 'subscribed',
-                 'content_refs', 'email_ids', 'thread_ids']
+                 'email_ids', 'thread_ids']
 
     def __init__(self, parent: GlobalKeys, namespace: _Value) -> None:
         root = parent.namespace_root.fork(namespace, name='namespace')
@@ -166,15 +161,13 @@ class NamespaceKeys(KeysGroup):
         self.order: Final = root.end(b'order')
         self.uid_validity: Final = root.end(b'uidv')
         self.subscribed: Final = root.end(b'subscribed')
-        self.content_refs: Final = root.end(b'content-refs')
         self.email_ids: Final = root.end(b'emailids')
         self.thread_ids: Final = root.end(b'threadids')
 
     @property
     def keys(self) -> Sequence[bytes]:
         return [self.mailboxes, self.max_order, self.order, self.uid_validity,
-                self.subscribed, self.content_refs, self.email_ids,
-                self.thread_ids]
+                self.subscribed, self.email_ids, self.thread_ids]
 
 
 class ContentKeys(KeysGroup):

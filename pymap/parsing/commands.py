@@ -11,9 +11,9 @@ from .command.auth import AppendCommand, CreateCommand, DeleteCommand, \
     StatusCommand, SubscribeCommand, UnsubscribeCommand
 from .command.nonauth import AuthenticateCommand, LoginCommand, StartTLSCommand
 from .command.select import CheckCommand, CloseCommand, ExpungeCommand, \
-    CopyCommand, FetchCommand, StoreCommand, SearchCommand, UidCommand, \
-    UidCopyCommand, UidExpungeCommand, UidFetchCommand, UidSearchCommand, \
-    UidStoreCommand, IdleCommand
+    CopyCommand, MoveCommand, FetchCommand, StoreCommand, SearchCommand, \
+    UidCommand, UidCopyCommand, UidMoveCommand, UidExpungeCommand, \
+    UidFetchCommand, UidSearchCommand, UidStoreCommand, IdleCommand
 from .exceptions import NotParseable
 from .primitives import Atom
 from .specials import Tag
@@ -27,9 +27,10 @@ builtin_commands: Collection[Type[Command]] = [
     CreateCommand, DeleteCommand, ExamineCommand, ListCommand, LSubCommand,
     RenameCommand, SelectCommand, StatusCommand, SubscribeCommand,
     UnsubscribeCommand, AuthenticateCommand, LoginCommand, StartTLSCommand,
-    CheckCommand, CloseCommand, ExpungeCommand, CopyCommand, FetchCommand,
-    StoreCommand, SearchCommand, UidCommand, UidCopyCommand, UidExpungeCommand,
-    UidFetchCommand, UidSearchCommand, UidStoreCommand, IdleCommand]
+    CheckCommand, CloseCommand, ExpungeCommand, CopyCommand, MoveCommand,
+    FetchCommand, StoreCommand, SearchCommand, UidCommand, UidCopyCommand,
+    UidMoveCommand, UidExpungeCommand, UidFetchCommand, UidSearchCommand,
+    UidStoreCommand, IdleCommand]
 
 
 class InvalidCommand(Command):

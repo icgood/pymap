@@ -14,9 +14,10 @@ from ...bytes import rev
 from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
-           'FetchCommand', 'StoreCommand', 'SearchCommand', 'UidCommand',
-           'UidCopyCommand', 'UidExpungeCommand', 'UidFetchCommand',
-           'UidSearchCommand', 'UidStoreCommand', 'IdleCommand']
+           'MoveCommand', 'FetchCommand', 'StoreCommand', 'SearchCommand',
+           'UidCommand', 'UidCopyCommand', 'UidMoveCommand',
+           'UidExpungeCommand', 'UidFetchCommand', 'UidSearchCommand',
+           'UidStoreCommand', 'IdleCommand']
 
 
 class CheckCommand(CommandNoArgs, CommandSelect):
@@ -104,6 +105,44 @@ class CopyCommand(CommandSelect):
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> Tuple[CopyCommand, memoryview]:
+        _, buf = Space.parse(buf, params)
+        seq_set, buf = SequenceSet.parse(buf, params)
+        _, buf = Space.parse(buf, params)
+        mailbox, buf = Mailbox.parse(buf, params)
+        _, buf = EndLine.parse(buf, params)
+        return cls(params.tag, seq_set, mailbox), buf
+
+
+class MoveCommand(CommandSelect):
+    """The ``MOVE`` command moves messages from the selected mailbox to the
+    end of the destination mailbox.
+
+    See Also:
+        `RFC 6851 <https://tools.ietf.org/html/rfc6851>`_
+
+    Args:
+        tag: The command tag.
+        seq_set: The sequence set of the messages to move.
+        mailbox: The destination mailbox.
+
+    """
+
+    command = b'MOVE'
+    uid: ClassVar[bool] = False
+
+    def __init__(self, tag: bytes, seq_set: SequenceSet,
+                 mailbox: Mailbox) -> None:
+        super().__init__(tag)
+        self.sequence_set = seq_set
+        self.mailbox_obj = mailbox
+
+    @property
+    def mailbox(self) -> str:
+        return str(self.mailbox_obj)
+
+    @classmethod
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple[MoveCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         seq_set, buf = SequenceSet.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -376,6 +415,25 @@ class UidCopyCommand(CopyCommand):
             -> Tuple[UidCopyCommand, memoryview]:
         ret, buf = super().parse(buf, params.copy(uid=True))
         if not isinstance(ret, UidCopyCommand):
+            raise TypeError(ret)
+        return ret, buf
+
+
+class UidMoveCommand(MoveCommand):
+    """The ``UID MOVE`` variant of the ``MOVE`` command, which uses message
+    UIDs instead of sequence numbers.
+
+    """
+
+    command = b'UID MOVE'
+    delegate = MoveCommand
+    uid = True
+
+    @classmethod
+    def parse(cls, buf: memoryview, params: Params) \
+            -> Tuple[UidMoveCommand, memoryview]:
+        ret, buf = super().parse(buf, params.copy(uid=True))
+        if not isinstance(ret, UidMoveCommand):
             raise TypeError(ret)
         return ret, buf
 

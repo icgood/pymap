@@ -241,7 +241,7 @@ class IMAPConfig(metaclass=ABCMeta):
 
     @property
     def login_capability(self) -> Sequence[bytes]:
-        ret = [b'BINARY', b'UIDPLUS', b'CHILDREN']
+        ret = [b'BINARY', b'UIDPLUS', b'MOVE', b'CHILDREN']
         if self._max_append_len is not None:
             ret.append(b'APPENDLIMIT=%i' % self._max_append_len)
         ret.extend(self.backend_capability)

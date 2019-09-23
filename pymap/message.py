@@ -15,7 +15,6 @@ from .interfaces.message import FlagsKey, CachedMessage, MessageInterface, \
     LoadedMessageInterface
 from .mime import MessageContent
 from .mime.cte import MessageDecoder
-from .parsing.message import PreparedMessage
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
     MessageBodyStructure
@@ -89,17 +88,6 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
     @property
     def flags_key(self) -> FlagsKey:
         return self._flags_key
-
-    @property
-    def prepared(self) -> PreparedMessage:
-        when = self.internal_date
-        flag_set = self.permanent_flags
-        try:
-            email_id = self.email_id
-        except ValueError:
-            email_id = ObjectId.random_email_id()
-        thread_id = self.thread_id
-        return PreparedMessage(when, flag_set, email_id, thread_id, ref=self)
 
     def __repr__(self) -> str:
         type_name = type(self).__name__

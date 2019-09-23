@@ -8,12 +8,11 @@ from typing import ClassVar, Optional, Tuple, Sequence, Iterable, List, \
 from . import CommandAuth
 from .. import Space, EndLine, Params
 from ..exceptions import NotParseable, UnexpectedType, InvalidContent
-from ..message import AppendMessage, PreparedMessage
+from ..message import AppendMessage
 from ..modutf7 import modutf7_decode
 from ..primitives import ListP, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
-from ..state.message import ExpectPreparedMessage
 from ...bytes import rev
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
@@ -59,12 +58,13 @@ class AppendCommand(CommandAuth):
     command = b'APPEND'
 
     def __init__(self, tag: bytes, mailbox: Mailbox,
-                 messages: Iterable[PreparedMessage],
-                 cancelled: bool = False) -> None:
+                 messages: Iterable[AppendMessage],
+                 cancelled: bool = False, error: Exception = None) -> None:
         super().__init__(tag)
         self.mailbox_obj = mailbox
-        self.messages: Sequence[PreparedMessage] = list(messages)
+        self.messages: Sequence[AppendMessage] = list(messages)
         self.cancelled = cancelled
+        self.error = error
 
     @property
     def mailbox(self) -> str:
@@ -72,7 +72,7 @@ class AppendCommand(CommandAuth):
 
     @classmethod
     def _parse_msg(cls, name: str, buf: memoryview, params: Params) \
-            -> Tuple[Optional[PreparedMessage], memoryview]:
+            -> Tuple[Optional[AppendMessage], memoryview]:
         _, buf = Space.parse(buf, params)
         try:
             params_copy = params.copy(list_expected=[Flag])
@@ -114,15 +114,15 @@ class AppendCommand(CommandAuth):
             if literal == b'':
                 return None, buf
         append_msg = AppendMessage(literal, date_time, flags, options)
-        prepared = ExpectPreparedMessage(name, append_msg).expect(params.state)
-        return prepared, buf
+        return append_msg, buf
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> Tuple[AppendCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
-        messages: List[PreparedMessage] = []
+        messages: List[AppendMessage] = []
+        error: Optional[Exception] = None
         cancelled = False
         while True:
             try:
@@ -137,7 +137,7 @@ class AppendCommand(CommandAuth):
                     break
                 messages.append(next_msg)
         _, buf = EndLine.parse(buf, params)
-        return cls(params.tag, mailbox, messages, cancelled), buf
+        return cls(params.tag, mailbox, messages, cancelled, error), buf
 
 
 class CreateCommand(CommandMailboxArg):
