@@ -59,49 +59,25 @@
 <span id="pymap-listtree"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code><a class="headerlink" href="#module-pymap.listtree" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pymap.listtree.ListEntry">
-<em class="property">class </em><code class="descclassname">pymap.listtree.</code><code class="descname">ListEntry</code><a class="headerlink" href="#pymap.listtree.ListEntry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<em class="property">class </em><code class="descclassname">pymap.listtree.</code><code class="descname">ListEntry</code><span class="sig-paren">(</span><em>name</em>, <em>exists</em>, <em>marked</em>, <em>has_children</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An entry in the list results.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> – The name of the mailbox.</li>
-<li><strong>exists</strong> – False if the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\Noselect</span></code>.</li>
-<li><strong>marked</strong> – True, False, or None if the mailbox should be marked with
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The name of the mailbox.</li>
+<li><strong>exists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – False if the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\Noselect</span></code>.</li>
+<li><strong>marked</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>]</em>) – True, False, or None if the mailbox should be marked with
 <code class="docutils literal notranslate"><span class="pre">\Marked</span></code>, <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> , or neither, respectively.</li>
-<li><strong>has_children</strong> – Whether the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\HasChildren</span></code> or
+<li><strong>has_children</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Whether the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\HasChildren</span></code> or
 <code class="docutils literal notranslate"><span class="pre">\HasNoChildren</span></code>.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="pymap.listtree.ListEntry.name">
-<code class="descname">name</code><a class="headerlink" href="#pymap.listtree.ListEntry.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.listtree.ListEntry.exists">
-<code class="descname">exists</code><a class="headerlink" href="#pymap.listtree.ListEntry.exists" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.listtree.ListEntry.marked">
-<code class="descname">marked</code><a class="headerlink" href="#pymap.listtree.ListEntry.marked" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.listtree.ListEntry.has_children">
-<code class="descname">has_children</code><a class="headerlink" href="#pymap.listtree.ListEntry.has_children" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="pymap.listtree.ListEntry.attributes">
 <code class="descname">attributes</code><a class="headerlink" href="#pymap.listtree.ListEntry.attributes" title="Permalink to this definition">¶</a></dt>
@@ -215,7 +191,7 @@ list is returned.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
 </td>
 </tr>
 </tbody>

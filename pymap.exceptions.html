@@ -179,6 +179,30 @@ detected mailbox data was not in a compatible format.</p>
 </dd></dl>
 
 <dl class="exception">
+<dt id="pymap.exceptions.TemporaryFailure">
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">TemporaryFailure</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
+<p>The operation failed, but may succeed if tried again. The <code class="docutils literal notranslate"><span class="pre">[INUSE]</span></code>
+response code is added to the response.</p>
+<dl class="method">
+<dt id="pymap.exceptions.TemporaryFailure.get_response">
+<code class="descname">get_response</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an IMAP response for the error.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
 <dt id="pymap.exceptions.MailboxError">
 <em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">MailboxError</code><span class="sig-paren">(</span><em>mailbox</em>, <em>message</em>, <em>code=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
@@ -242,7 +266,7 @@ operation may or may not succeed again.</p>
 
 <dl class="exception">
 <dt id="pymap.exceptions.MailboxNotFound">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">MailboxNotFound</code><span class="sig-paren">(</span><em>mailbox</em>, <em>try_create=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxNotFound" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">MailboxNotFound</code><span class="sig-paren">(</span><em>mailbox</em>, <em>*</em>, <em>try_create=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxNotFound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.MailboxError" title="pymap.exceptions.MailboxError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.MailboxError</span></code></a></p>
 <p>The requested mailbox was not found.</p>
 <table class="docutils field-list" frame="void" rules="none">

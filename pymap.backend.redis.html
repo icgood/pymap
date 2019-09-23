@@ -143,7 +143,7 @@ this backend. For example:</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="#pymap.backend.redis.RedisBackend" title="pymap.backend.redis.RedisBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">RedisBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.redis.RedisBackend" title="pymap.backend.redis.RedisBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">RedisBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -332,7 +332,7 @@ session.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asynciterator</span></code>[<a class="reference internal" href="#pymap.backend.redis.Session" title="pymap.backend.redis.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="#pymap.backend.redis.Session" title="pymap.backend.redis.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -353,7 +353,7 @@ session.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>joiner</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.BytesFormat" title="pymap.bytes.BytesFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">BytesFormat</span></code></a>) – The object used to join segments.</li>
-<li><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]]) – The current list of key segments.</li>
+<li><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]]) – The current list of key segments.</li>
 <li><strong>named</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – A mapping of named segments.</li>
 </ul>
 </td>
@@ -383,7 +383,7 @@ session.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]) – The new key segment to append.</li>
+<li><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The new key segment to append.</li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – An optional name to assign to the value.</li>
 </ul>
 </td>
@@ -397,13 +397,13 @@ session.</p>
 
 <dl class="method">
 <dt id="pymap.backend.redis.keys.RedisKey.end">
-<code class="descname">end</code><span class="sig-paren">(</span><em>segment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.RedisKey.end" title="Permalink to this definition">¶</a></dt>
+<code class="descname">end</code><span class="sig-paren">(</span><em>*segments</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.RedisKey.end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Terminate the redis key producing a bytestring.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]) – An optional segment to add to the result.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – Optional segments to add to the result.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
 </tr>
@@ -514,7 +514,7 @@ typically correspond to a login user.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>root</strong> – The root redis key.</li>
-<li><strong>namespace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]) – The namespace ID.</li>
+<li><strong>namespace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The namespace ID.</li>
 </ul>
 </td>
 </tr>
@@ -547,7 +547,7 @@ typically correspond to a login user.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>root</strong> – The root redis key.</li>
-<li><strong>email_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]) – The email object ID.</li>
+<li><strong>email_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The email object ID.</li>
 </ul>
 </td>
 </tr>
@@ -609,7 +609,7 @@ typically correspond to a login user.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>root</strong> – The root redis key.</li>
-<li><strong>mailbox_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]) – The mailbox object ID.</li>
+<li><strong>mailbox_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The mailbox object ID.</li>
 </ul>
 </td>
 </tr>
@@ -642,7 +642,7 @@ typically correspond to a login user.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>root</strong> – The root redis key.</li>
-<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Bytestring</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Supportsbytes</span></code>]) – The message UID.</li>
+<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The message UID.</li>
 </ul>
 </td>
 </tr>
@@ -667,126 +667,6 @@ typically correspond to a login user.</p>
 </div>
 <div class="section" id="module-pymap.backend.redis.cleanup">
 <span id="pymap-backend-redis-cleanup"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code><a class="headerlink" href="#module-pymap.backend.redis.cleanup" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="pymap.backend.redis.cleanup.Cleanup">
-<em class="property">class </em><code class="descclassname">pymap.backend.redis.cleanup.</code><code class="descname">Cleanup</code><span class="sig-paren">(</span><em>global_keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.Cleanup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Defines the logic for adding key groups to be cleaned up.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>root</strong> – The root redis key.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="pymap.backend.redis.cleanup.Cleanup.add_namespace">
-<code class="descname">add_namespace</code><span class="sig-paren">(</span><em>pipe</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.Cleanup.add_namespace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the namespace to be cleaned up.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pipe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – Piped redis commands.</li>
-<li><strong>keys</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.NamespaceKeys" title="pymap.backend.redis.keys.NamespaceKeys"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamespaceKeys</span></code></a>) – The namespace key group.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.backend.redis.cleanup.Cleanup.add_mailbox">
-<code class="descname">add_mailbox</code><span class="sig-paren">(</span><em>pipe</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.Cleanup.add_mailbox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the mailbox to be cleaned up.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pipe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – Piped redis commands.</li>
-<li><strong>keys</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.MailboxKeys" title="pymap.backend.redis.keys.MailboxKeys"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxKeys</span></code></a>) – The mailbox key group.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.backend.redis.cleanup.Cleanup.add_message">
-<code class="descname">add_message</code><span class="sig-paren">(</span><em>pipe</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.Cleanup.add_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the message to be cleaned up.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pipe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – Piped redis commands.</li>
-<li><strong>keys</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.MessageKeys" title="pymap.backend.redis.keys.MessageKeys"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageKeys</span></code></a>) – The message key group.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.backend.redis.cleanup.Cleanup.add_content">
-<code class="descname">add_content</code><span class="sig-paren">(</span><em>pipe</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.Cleanup.add_content" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the content to be cleaned up.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pipe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – Piped redis commands.</li>
-<li><strong>keys</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.ContentKeys" title="pymap.backend.redis.keys.ContentKeys"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentKeys</span></code></a>) – The content key group.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.backend.redis.cleanup.Cleanup.add_root">
-<code class="descname">add_root</code><span class="sig-paren">(</span><em>pipe</em>, <em>root</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.Cleanup.add_root" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the content to be cleaned up.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pipe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – Piped redis commands.</li>
-<li><strong>root</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.RedisKey" title="pymap.backend.redis.keys.RedisKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">RedisKey</span></code></a>) – The redis key prefix.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="class">
 <dt id="pymap.backend.redis.cleanup.CleanupTask">
 <em class="property">class </em><code class="descclassname">pymap.backend.redis.cleanup.</code><code class="descname">CleanupTask</code><span class="sig-paren">(</span><em>connect_redis</em>, <em>global_keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask" title="Permalink to this definition">¶</a></dt>
