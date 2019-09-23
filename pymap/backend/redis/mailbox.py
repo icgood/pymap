@@ -116,7 +116,7 @@ class MailboxData(MailboxDataInterface[Message]):
         dest_keys = destination._keys
         pipe = redis.pipeline()
         pipe.incr(dest_keys.max_uid)
-        pipe.hget(msg_keys.immutable, 'emailid')
+        pipe.hget(keys.email_ids, uid)
         dest_uid, email_id = await pipe.execute()
         ct_keys = ContentKeys(self._ns_keys, email_id)
         dest_msg_keys = MessageKeys(dest_keys, dest_uid)
@@ -155,7 +155,7 @@ class MailboxData(MailboxDataInterface[Message]):
         msg_keys = MessageKeys(keys, uid)
         try:
             flags, time, email_id, thread_id = await _scripts.get(
-                self._redis, msg_keys, uid=uid)
+                self._redis, keys, msg_keys, uid=uid)
         except ReplyError as exc:
             if 'message not found' not in str(exc):
                 raise
@@ -245,19 +245,20 @@ class MailboxData(MailboxDataInterface[Message]):
                 msg_keys = MessageKeys(keys, uid)
                 multi.echo(uid)
                 multi.smembers(msg_keys.flags)
-                multi.hmget(msg_keys.immutable,
-                            b'time', b'emailid', b'threadid')
+                multi.hget(keys.dates, uid)
+                multi.hget(keys.email_ids, uid)
+                multi.hget(keys.thread_ids, uid)
         mod_seq_b, *results = txn.results
         mod_seq = int(mod_seq_b or 0)
         updated: List[Message] = []
-        for i in range(0, len(results), 3):
+        for i in range(0, len(results), 5):
             msg_uid = int(results[i])
             msg_flags = {Flag(flag) for flag in results[i + 1]}
-            time_b, email_id, thread_id = results[i + 2]
-            msg_time = datetime.fromisoformat(time_b.decode('ascii'))
+            msg_time = datetime.fromisoformat(results[i + 2].decode('ascii'))
+            msg_email_id = ObjectId(results[i + 3])
+            msg_thread_id = ObjectId(results[i + 4])
             msg = Message(msg_uid, msg_time, msg_flags,
-                          email_id=ObjectId(email_id),
-                          thread_id=ObjectId(thread_id),
+                          email_id=msg_email_id, thread_id=msg_thread_id,
                           redis=redis, ns_keys=ns_keys)
             updated.append(msg)
         return mod_seq, updated, []
@@ -277,20 +278,21 @@ class MailboxData(MailboxDataInterface[Message]):
                 msg_keys = MessageKeys(keys, uid)
                 multi.echo(uid)
                 multi.smembers(msg_keys.flags)
-                multi.hmget(msg_keys.immutable,
-                            b'time', b'emailid', b'threadid')
+                multi.hget(keys.dates, uid)
+                multi.hget(keys.email_ids, uid)
+                multi.hget(keys.thread_ids, uid)
         mod_seq_b, expunged_b, *results = txn.results
         mod_seq = int(mod_seq_b or 0)
         expunged = [int(uid_b) for uid_b in expunged_b]
         updated: List[Message] = []
-        for i in range(0, len(results), 3):
+        for i in range(0, len(results), 5):
             msg_uid = int(results[i])
             msg_flags = {Flag(flag) for flag in results[i + 1]}
-            time_b, email_id, thread_id = results[i + 2]
-            msg_time = datetime.fromisoformat(time_b.decode('ascii'))
+            msg_time = datetime.fromisoformat(results[i + 2].decode('ascii'))
+            msg_email_id = ObjectId(results[i + 3])
+            msg_thread_id = ObjectId(results[i + 4])
             msg = Message(msg_uid, msg_time, msg_flags,
-                          email_id=ObjectId(email_id),
-                          thread_id=ObjectId(thread_id),
+                          email_id=msg_email_id, thread_id=msg_thread_id,
                           redis=redis, ns_keys=ns_keys)
             updated.append(msg)
         return mod_seq, updated, expunged

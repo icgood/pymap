@@ -6,8 +6,10 @@ local recent_key = KEYS[5]
 local deleted_key = KEYS[6]
 local unseen_key = KEYS[7]
 local flags_key = KEYS[8]
-local immutable_key = KEYS[9]
-local content_data_key = KEYS[10]
+local dates_key = KEYS[9]
+local email_ids_key = KEYS[10]
+local thread_ids_key = KEYS[11]
+local content_data_key = KEYS[12]
 
 local uid = tonumber(ARGV[1])
 local msg_recent = tonumber(ARGV[2])
@@ -55,9 +57,9 @@ if #msg_flags > 0 then
     redis.call('SADD', flags_key, unpack(msg_flags))
 end
 
-redis.call('HSET', immutable_key, 'time', msg_date)
-redis.call('HSET', immutable_key, 'emailid', msg_email_id)
-redis.call('HSET', immutable_key, 'threadid', msg_thread_id)
+redis.call('HSET', dates_key, uid, msg_date)
+redis.call('HSET', email_ids_key, uid, msg_email_id)
+redis.call('HSET', thread_ids_key, uid, msg_thread_id)
 
 redis.call('HINCRBY', content_data_key, 'refs', 1)
 redis.call('PERSIST', content_data_key)

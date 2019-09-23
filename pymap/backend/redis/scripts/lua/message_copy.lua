@@ -7,10 +7,14 @@ local dest_recent_key = KEYS[6]
 local dest_deleted_key = KEYS[7]
 local dest_unseen_key = KEYS[8]
 local flags_key = KEYS[9]
-local immutable_key = KEYS[10]
-local dest_flags_key = KEYS[11]
-local dest_immutable_key = KEYS[12]
-local content_data_key = KEYS[13]
+local dates_key = KEYS[10]
+local email_ids_key = KEYS[11]
+local thread_ids_key = KEYS[12]
+local dest_flags_key = KEYS[13]
+local dest_dates_key = KEYS[12]
+local dest_email_ids_key = KEYS[13]
+local dest_thread_ids_key = KEYS[14]
+local content_data_key = KEYS[15]
 
 local source_uid = ARGV[1]
 local dest_uid = ARGV[2]
@@ -22,9 +26,9 @@ if uid_exists == 0 then
 end
 
 local msg_flags = redis.call('SMEMBERS', flags_key)
-local msg_date = redis.call('HGET', immutable_key, 'time')
-local msg_email_id = redis.call('HGET', immutable_key, 'emailid')
-local msg_thread_id = redis.call('HGET', immutable_key, 'threadid')
+local msg_date = redis.call('HGET', dates_key, source_uid)
+local msg_email_id = redis.call('HGET', email_ids_key, source_uid)
+local msg_thread_id = redis.call('HGET', thread_ids_key, source_uid)
 
 local msg_deleted = false
 local msg_unseen = true
@@ -54,9 +58,9 @@ if #msg_flags > 0 then
     redis.call('SADD', dest_flags_key, unpack(msg_flags))
 end
 
-redis.call('HSET', dest_immutable_key, 'time', msg_date)
-redis.call('HSET', dest_immutable_key, 'emailid', msg_email_id)
-redis.call('HSET', dest_immutable_key, 'threadid', msg_thread_id)
+redis.call('HSET', dest_dates_key, msg_date)
+redis.call('HSET', dest_email_ids_key, msg_email_id)
+redis.call('HSET', dest_thread_ids_key, msg_thread_id)
 
 redis.call('HINCRBY', content_data_key, 'refs', 1)
 

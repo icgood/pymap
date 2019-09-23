@@ -14,9 +14,13 @@ local dest_recent_key = KEYS[13]
 local dest_deleted_key = KEYS[14]
 local dest_unseen_key = KEYS[15]
 local flags_key = KEYS[16]
-local immutable_key = KEYS[17]
-local dest_flags_key = KEYS[18]
-local dest_immutable_key = KEYS[19]
+local dates_key = KEYS[17]
+local email_ids_key = KEYS[18]
+local thread_ids_key = KEYS[19]
+local dest_flags_key = KEYS[20]
+local dest_dates_key = KEYS[19]
+local dest_email_ids_key = KEYS[20]
+local dest_thread_ids_key = KEYS[21]
 
 local source_uid = ARGV[1]
 local dest_uid = ARGV[2]
@@ -37,9 +41,9 @@ redis.call('ZREM', unseen_key, source_uid)
 redis.call('ZADD', expunged_key, mod, source_uid)
 
 local msg_flags = redis.call('SMEMBERS', flags_key)
-local msg_date = redis.call('HGET', immutable_key, 'time')
-local msg_email_id = redis.call('HGET', immutable_key, 'emailid')
-local msg_thread_id = redis.call('HGET', immutable_key, 'threadid')
+local msg_date = redis.call('HGET', dates_key, source_uid)
+local msg_email_id = redis.call('HGET', email_ids_key, source_uid)
+local msg_thread_id = redis.call('HGET', thread_ids_key, source_uid)
 
 local msg_deleted = false
 local msg_unseen = true
@@ -69,6 +73,8 @@ if #msg_flags > 0 then
     redis.call('RENAME', flags_key, dest_flags_key)
 end
 
-redis.call('RENAME', immutable_key, dest_immutable_key)
+redis.call('HSET', dest_dates_key, dest_uid, msg_date)
+redis.call('HSET', dest_email_ids_key, dest_uid, msg_email_id)
+redis.call('HSET', dest_thread_ids_key, dest_uid, msg_thread_id)
 
 return redis.status_reply('OK')
