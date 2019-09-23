@@ -72,8 +72,8 @@ class MessageAdd(ScriptBase[None]):
                        header: bytes, header_json: Mapping[str, Any]) -> None:
         keys = [mbx_keys.max_mod, mbx_keys.uids, mbx_keys.mod_seq,
                 mbx_keys.seq, mbx_keys.recent, mbx_keys.deleted,
-                mbx_keys.unseen, msg_keys.flags, msg_keys.immutable,
-                ct_keys.data]
+                mbx_keys.unseen, msg_keys.flags, mbx_keys.dates,
+                mbx_keys.email_ids, mbx_keys.thread_ids, ct_keys.data]
         if send_content:
             content_args = [message, self._json(message_json),
                             header, self._json(header_json)]
@@ -96,8 +96,10 @@ class MessageCopy(ScriptBase[None]):
         keys = [mbx_keys.uids, dest_mbx_keys.max_mod, dest_mbx_keys.uids,
                 dest_mbx_keys.seq, dest_mbx_keys.mod_seq, dest_mbx_keys.recent,
                 dest_mbx_keys.deleted, dest_mbx_keys.unseen, msg_keys.flags,
-                msg_keys.immutable, dest_msg_keys.flags,
-                dest_msg_keys.immutable, ct_keys.data]
+                mbx_keys.dates, mbx_keys.email_ids, mbx_keys.thread_ids,
+                dest_msg_keys.flags, dest_mbx_keys.dates,
+                dest_mbx_keys.email_ids, dest_mbx_keys.thread_ids,
+                ct_keys.data]
         return await self.eval(redis, keys, [
             source_uid, dest_uid, int(recent)])
 
@@ -116,8 +118,10 @@ class MessageMove(ScriptBase[None]):
                 mbx_keys.unseen, mbx_keys.expunged, dest_mbx_keys.max_mod,
                 dest_mbx_keys.uids, dest_mbx_keys.seq, dest_mbx_keys.mod_seq,
                 dest_mbx_keys.recent, dest_mbx_keys.deleted,
-                dest_mbx_keys.unseen, msg_keys.flags, msg_keys.immutable,
-                dest_msg_keys.flags, dest_msg_keys.immutable]
+                dest_mbx_keys.unseen, msg_keys.flags, mbx_keys.dates,
+                mbx_keys.email_ids, mbx_keys.thread_ids, dest_msg_keys.flags,
+                dest_mbx_keys.dates, dest_mbx_keys.email_ids,
+                dest_mbx_keys.thread_ids]
         return await self.eval(redis, keys, [
             source_uid, dest_uid, int(recent)])
 
@@ -132,10 +136,12 @@ class MessageGet(ScriptBase[Tuple[Sequence[str], bytes, bytes, bytes]]):
         flags = json.loads(ret[0])
         return (flags, *ret[1:])
 
-    async def __call__(self, redis: Redis, msg_keys: MessageKeys, *,
+    async def __call__(self, redis: Redis,
+                       mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
                        uid: int) \
             -> Tuple[Sequence[str], bytes, bytes, bytes]:
-        keys = [msg_keys.flags, msg_keys.immutable]
+        keys = [msg_keys.flags, mbx_keys.dates, mbx_keys.email_ids,
+                mbx_keys.thread_ids, mbx_keys.uids]
         return await self.eval(redis, keys, [uid])
 
 
@@ -153,8 +159,9 @@ class MessageUpdate(ScriptBase[Tuple[Sequence[str], bytes, bytes, bytes]]):
                        mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
                        uid: int, flags: Sequence[str], mode: bytes) \
             -> Tuple[Sequence[str], bytes, bytes, bytes]:
-        keys = [msg_keys.flags, msg_keys.immutable,
-                mbx_keys.uids, mbx_keys.deleted, mbx_keys.unseen]
+        keys = [msg_keys.flags, mbx_keys.dates, mbx_keys.email_ids,
+                mbx_keys.thread_ids, mbx_keys.uids, mbx_keys.deleted,
+                mbx_keys.unseen]
         return await self.eval(redis, keys, [
             uid, mode, self._json(flags)])
 
@@ -169,7 +176,9 @@ class MessageDelete(ScriptBase[None]):
                        uids: Sequence[int]) -> None:
         keys = [mbx_keys.max_mod, mbx_keys.uids, mbx_keys.mod_seq,
                 mbx_keys.seq, mbx_keys.recent, mbx_keys.deleted,
-                mbx_keys.unseen, mbx_keys.expunged, cl_keys.messages]
+                mbx_keys.unseen, mbx_keys.expunged, mbx_keys.dates,
+                mbx_keys.email_ids, mbx_keys.thread_ids, cl_keys.messages,
+                cl_keys.contents]
         return await self.eval(redis, keys, [
             self._json(uids),
             mbx_keys.root.named['namespace'],

@@ -54,10 +54,10 @@ class CleanupMessage(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('cleanup_message')
 
-    async def __call__(self, redis: Redis,
-                       cl_keys: CleanupKeys, msg_keys: MessageKeys, *,
+    async def __call__(self, redis: Redis, cl_keys: CleanupKeys,
+                       mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
                        ttl: int) -> None:
-        keys = [cl_keys.contents, msg_keys.immutable, *msg_keys.keys]
+        keys = [cl_keys.contents, mbx_keys.email_ids, *msg_keys.keys]
         return await self.eval(redis, keys, [
             ttl, msg_keys.root.named['namespace']])
 

@@ -222,7 +222,8 @@ class MailboxKeys(KeysGroup):
     """
 
     __slots__ = ['message_root', 'abort', 'max_mod', 'max_uid', 'uids',
-                 'mod_seq', 'seq', 'expunged', 'recent', 'deleted', 'unseen']
+                 'mod_seq', 'seq', 'expunged', 'recent', 'deleted', 'unseen',
+                 'dates', 'email_ids', 'thread_ids']
 
     def __init__(self, parent: NamespaceKeys, mailbox_id: _Value) -> None:
         root = parent.mailbox_root.fork(mailbox_id, name='mailbox_id')
@@ -238,6 +239,9 @@ class MailboxKeys(KeysGroup):
         self.recent: Final = root.end(b'recent')
         self.deleted: Final = root.end(b'deleted')
         self.unseen: Final = root.end(b'unseen')
+        self.dates: Final = root.end(b'dates')
+        self.email_ids: Final = root.end(b'emailids')
+        self.thread_ids: Final = root.end(b'threadids')
 
     @property
     def keys(self) -> Sequence[bytes]:
@@ -255,14 +259,13 @@ class MessageKeys(KeysGroup):
 
     """
 
-    __slots__ = ['flags', 'immutable']
+    __slots__ = ['flags']
 
     def __init__(self, parent: MailboxKeys, uid: _Value) -> None:
         root = parent.message_root.fork(uid, name='uid')
         super().__init__(root)
         self.flags: Final = root.end(b'flags')
-        self.immutable: Final = root.end(b'immutable')
 
     @property
     def keys(self) -> Sequence[bytes]:
-        return [self.flags, self.immutable]
+        return [self.flags]

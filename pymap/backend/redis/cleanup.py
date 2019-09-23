@@ -122,7 +122,7 @@ class CleanupThread:
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         mbx_keys = MailboxKeys(ns_keys, mailbox_id)
         msg_keys = MessageKeys(mbx_keys, msg_uid)
-        await _scripts.message(self._redis, self._keys, msg_keys,
+        await _scripts.message(self._redis, self._keys, mbx_keys, msg_keys,
                                ttl=self.message_ttl)
 
     async def _run_content(self, namespace: bytes, email_id: bytes) -> None:
