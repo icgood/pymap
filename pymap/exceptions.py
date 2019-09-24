@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import Any, Optional
+from typing import Optional
 
 from .parsing.specials import SearchKey
 from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
@@ -11,9 +11,9 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
 
 __all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
            'TemporaryFailure', 'SearchNotAllowed', 'InvalidAuth',
-           'IncompatibleData', 'MailboxError', 'MailboxAbort',
-           'MailboxNotFound', 'MailboxConflict', 'MailboxHasChildren',
-           'MailboxReadOnly', 'AppendFailure']
+           'IncompatibleData', 'MailboxError', 'MailboxNotFound',
+           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
+           'AppendFailure']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -131,31 +131,6 @@ class MailboxError(ResponseError):
 
     def get_response(self, tag: bytes) -> ResponseNo:
         return ResponseNo(tag, self.message, self.code)
-
-
-class MailboxAbort(MailboxError):
-    """An unrecoverable failure has aborted an operation on the mailbox. The
-    operation may or may not succeed again.
-
-    """
-
-    def __init__(self) -> None:
-        super().__init__(None, b'Mailbox operation aborted.',
-                         ResponseCode.of(b'INUSE'))
-
-    @classmethod
-    def assertFalse(cls, cond: Any) -> None:
-        """Asserts that `cond` is False.
-
-        Args:
-            cond: The condition to check.
-
-        Raises:
-            :exc:`MailboxAbort`
-
-        """
-        if cond:
-            raise cls()
 
 
 class MailboxNotFound(MailboxError):

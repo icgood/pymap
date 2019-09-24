@@ -1,19 +1,17 @@
-local max_mod_key = KEYS[1]
-local uids_key = KEYS[2]
-local mod_seq_key = KEYS[3]
-local seq_key = KEYS[4]
-local recent_key = KEYS[5]
-local deleted_key = KEYS[6]
-local unseen_key = KEYS[7]
-local flags_key = KEYS[8]
-local dates_key = KEYS[9]
-local email_ids_key = KEYS[10]
-local thread_ids_key = KEYS[11]
-local content_data_key = KEYS[12]
+local i = nil
+local i, uids_key = next(KEYS, i)
+local i, seq_key = next(KEYS, i)
+local i, content_key = next(KEYS, i)
+local i, changes_key = next(KEYS, i)
+local i, recent_key = next(KEYS, i)
+local i, deleted_key = next(KEYS, i)
+local i, unseen_key = next(KEYS, i)
+local i, content_refs_key = next(KEYS, i)
+local i, content_data_key = next(KEYS, i)
 
 local uid = tonumber(ARGV[1])
 local msg_recent = tonumber(ARGV[2])
-local msg_flags = cjson.decode(ARGV[3])
+local msg_flags_str = ARGV[3]
 local msg_date = ARGV[4]
 local msg_email_id = ARGV[5]
 local msg_thread_id = ARGV[6]
@@ -29,20 +27,32 @@ if #ARGV > 6 then
     redis.call('HSET', content_data_key, 'header-json', header_json)
 end
 
+local msg_flags = cjson.decode(msg_flags_str)
 local msg_deleted = false
-local msg_unseen = true
+local msg_seen = false
 for i, flag in ipairs(msg_flags) do
     if flag == '\\Deleted' then
         msg_deleted = true
     elseif flag == '\\Seen' then
-        msg_unseen = false
+        msg_seen = true
     end
 end
 
-local mod_seq = redis.call('INCR', max_mod_key)
-redis.call('SADD', uids_key, uid)
-redis.call('ZADD', mod_seq_key, mod_seq, uid)
+local message = cjson.encode({
+    flags = msg_flags,
+    date = msg_date,
+    email_id = msg_email_id,
+    thread_id = msg_thread_id,
+})
+
+redis.call('HSET', uids_key, uid, message)
 redis.call('ZADD', seq_key, uid, uid)
+redis.call('HSET', content_key, uid, msg_email_id)
+
+redis.call('XADD', changes_key, 'MAXLEN', '~', 1000, '*',
+    'uid', uid,
+    'type', 'fetch',
+    'message', message)
 
 if msg_recent == 1 then
     redis.call('SADD', recent_key, uid)
@@ -50,18 +60,11 @@ end
 if msg_deleted then
     redis.call('SADD', deleted_key, uid)
 end
-if msg_unseen then
+if not msg_seen then
     redis.call('ZADD', unseen_key, uid, uid)
 end
-if #msg_flags > 0 then
-    redis.call('SADD', flags_key, unpack(msg_flags))
-end
 
-redis.call('HSET', dates_key, uid, msg_date)
-redis.call('HSET', email_ids_key, uid, msg_email_id)
-redis.call('HSET', thread_ids_key, uid, msg_thread_id)
-
-redis.call('HINCRBY', content_data_key, 'refs', 1)
+redis.call('HINCRBY', content_refs_key, msg_email_id, 1)
 redis.call('PERSIST', content_data_key)
 
 return redis.status_reply('OK')

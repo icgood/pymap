@@ -6,8 +6,7 @@ from typing_extensions import Final
 from aioredis import Redis  # type: ignore
 
 from . import ScriptBase
-from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys, \
-    MessageKeys
+from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys
 
 __all__ = ['CleanupScripts']
 
@@ -18,7 +17,6 @@ class CleanupScripts:
         super().__init__()
         self.namespace: Final = CleanupNamespace()
         self.mailbox: Final = CleanupMailbox()
-        self.message: Final = CleanupMessage()
         self.content: Final = CleanupContent()
 
 
@@ -43,23 +41,11 @@ class CleanupMailbox(ScriptBase[None]):
     async def __call__(self, redis: Redis,
                        cl_keys: CleanupKeys, mbx_keys: MailboxKeys, *,
                        ttl: int) -> None:
-        keys = [cl_keys.messages, mbx_keys.uids, *mbx_keys.keys]
+        keys = [cl_keys.contents, mbx_keys.uids, mbx_keys.content,
+                *mbx_keys.keys]
         return await self.eval(redis, keys, [
             ttl, mbx_keys.root.named['namespace'],
             mbx_keys.root.named['mailbox_id']])
-
-
-class CleanupMessage(ScriptBase[None]):
-
-    def __init__(self) -> None:
-        super().__init__('cleanup_message')
-
-    async def __call__(self, redis: Redis, cl_keys: CleanupKeys,
-                       mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
-                       ttl: int) -> None:
-        keys = [cl_keys.contents, mbx_keys.email_ids, *msg_keys.keys]
-        return await self.eval(redis, keys, [
-            ttl, msg_keys.root.named['namespace']])
 
 
 class CleanupContent(ScriptBase[None]):
@@ -67,8 +53,9 @@ class CleanupContent(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('cleanup_content')
 
-    async def __call__(self, redis: Redis, ct_keys: ContentKeys, *,
+    async def __call__(self, redis: Redis,
+                       ns_keys: NamespaceKeys, ct_keys: ContentKeys, *,
                        ttl: int) -> None:
-        keys = [ct_keys.data]
+        keys = [ns_keys.content_refs, ct_keys.data]
         return await self.eval(redis, keys, [
             ttl, ct_keys.root.named['email_id']])
