@@ -239,32 +239,6 @@ response code is added to the response.</p>
 </dd></dl>
 
 <dl class="exception">
-<dt id="pymap.exceptions.MailboxAbort">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">MailboxAbort</code><a class="headerlink" href="#pymap.exceptions.MailboxAbort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.MailboxError" title="pymap.exceptions.MailboxError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.MailboxError</span></code></a></p>
-<p>An unrecoverable failure has aborted an operation on the mailbox. The
-operation may or may not succeed again.</p>
-<dl class="classmethod">
-<dt id="pymap.exceptions.MailboxAbort.assertFalse">
-<em class="property">classmethod </em><code class="descname">assertFalse</code><span class="sig-paren">(</span><em>cond</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxAbort.assertFalse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Asserts that <cite>cond</cite> is False.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cond</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The condition to check.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#pymap.exceptions.MailboxAbort" title="pymap.exceptions.MailboxAbort"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MailboxAbort</span></code></a></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
 <dt id="pymap.exceptions.MailboxNotFound">
 <em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">MailboxNotFound</code><span class="sig-paren">(</span><em>mailbox</em>, <em>*</em>, <em>try_create=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxNotFound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.MailboxError" title="pymap.exceptions.MailboxError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.MailboxError</span></code></a></p>

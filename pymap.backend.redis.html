@@ -631,39 +631,6 @@ typically correspond to a login user.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="pymap.backend.redis.keys.MessageKeys">
-<em class="property">class </em><code class="descclassname">pymap.backend.redis.keys.</code><code class="descname">MessageKeys</code><span class="sig-paren">(</span><em>parent</em>, <em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.MessageKeys" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#pymap.backend.redis.keys.KeysGroup" title="pymap.backend.redis.keys.KeysGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.redis.keys.KeysGroup</span></code></a></p>
-<p>The key group for managing a single message, in a single mailbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> – The root redis key.</li>
-<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The message UID.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="pymap.backend.redis.keys.MessageKeys.keys">
-<code class="descname">keys</code><a class="headerlink" href="#pymap.backend.redis.keys.MessageKeys.keys" title="Permalink to this definition">¶</a></dt>
-<dd><p>All the keys in the group, not including nested key groups.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-pymap.backend.redis.cleanup">
 <span id="pymap-backend-redis-cleanup"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code><a class="headerlink" href="#module-pymap.backend.redis.cleanup" title="Permalink to this headline">¶</a></h2>
