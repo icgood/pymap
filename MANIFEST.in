@@ -1,0 +1,3 @@
+include pymap/py.typed
+recursive-include pymap/backend/dict/demo/ *
+recursive-include pymap/backend/redis/scripts/lua/ *.lua
