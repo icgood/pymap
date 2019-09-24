@@ -246,7 +246,7 @@ class SelectedMailbox:
         self._selected_set = selected_set
         self._kwargs = kwargs
         self._lookup: Any = lookup
-        self._mod_sequence: Optional[int] = kwargs.get('_mod_sequence')
+        self._mod_sequence = kwargs.get('_mod_sequence')
         self._is_deleted = False
         self._hide_expunged = False
         self._silenced_flags: Set[Tuple[int, FrozenSet[Flag]]] = set()
@@ -283,12 +283,12 @@ class SelectedMailbox:
         self._lookup = lookup
 
     @property
-    def mod_sequence(self) -> Optional[int]:
+    def mod_sequence(self) -> Any:
         """The highest modification sequence of the mailbox."""
         return self._mod_sequence
 
     @mod_sequence.setter
-    def mod_sequence(self, mod_sequence: Optional[int]) -> None:
+    def mod_sequence(self, mod_sequence: Any) -> None:
         self._mod_sequence = mod_sequence
 
     @property

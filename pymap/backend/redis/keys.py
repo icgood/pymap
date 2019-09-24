@@ -8,12 +8,11 @@ from typing_extensions import Final
 from pymap.bytes import MaybeBytes, BytesFormat
 
 __all__ = ['RedisKey', 'KeysGroup', 'GlobalKeys', 'CleanupKeys',
-           'NamespaceKeys', 'ContentKeys', 'FilterKeys', 'MailboxKeys',
-           'MessageKeys']
+           'NamespaceKeys', 'ContentKeys', 'FilterKeys', 'MailboxKeys']
 
 #: The version number of this key layout, to track backwards incompatible
 #: changes.
-DATA_VERSION: Final = 2
+DATA_VERSION: Final = 3
 
 _Value = Union[int, MaybeBytes]
 
@@ -121,19 +120,18 @@ class CleanupKeys(KeysGroup):
 
     """
 
-    __slots__ = ['namespaces', 'mailboxes', 'messages', 'contents']
+    __slots__ = ['namespaces', 'mailboxes', 'contents']
 
     def __init__(self, parent: GlobalKeys) -> None:
         root = parent.cleanup_root.fork(DATA_VERSION, name='version')
         super().__init__(root)
         self.namespaces: Final = root.end(b'ns')
         self.mailboxes: Final = root.end(b'mbx')
-        self.messages: Final = root.end(b'msg')
         self.contents: Final = root.end(b'content')
 
     @property
     def keys(self) -> Sequence[bytes]:
-        return [self.namespaces, self.mailboxes, self.messages, self.contents]
+        return [self.namespaces, self.mailboxes, self.contents]
 
 
 class NamespaceKeys(KeysGroup):
@@ -148,7 +146,7 @@ class NamespaceKeys(KeysGroup):
 
     __slots__ = ['mailbox_root', 'content_root', 'filter_root', 'mailboxes',
                  'max_order', 'order', 'uid_validity', 'subscribed',
-                 'email_ids', 'thread_ids']
+                 'content_refs', 'email_ids', 'thread_ids']
 
     def __init__(self, parent: GlobalKeys, namespace: _Value) -> None:
         root = parent.namespace_root.fork(namespace, name='namespace')
@@ -161,13 +159,15 @@ class NamespaceKeys(KeysGroup):
         self.order: Final = root.end(b'order')
         self.uid_validity: Final = root.end(b'uidv')
         self.subscribed: Final = root.end(b'subscribed')
+        self.content_refs: Final = root.end(b'contentrefs')
         self.email_ids: Final = root.end(b'emailids')
         self.thread_ids: Final = root.end(b'threadids')
 
     @property
     def keys(self) -> Sequence[bytes]:
         return [self.mailboxes, self.max_order, self.order, self.uid_validity,
-                self.subscribed, self.email_ids, self.thread_ids]
+                self.subscribed, self.content_refs, self.email_ids,
+                self.thread_ids]
 
 
 class ContentKeys(KeysGroup):
@@ -202,10 +202,10 @@ class FilterKeys(KeysGroup):
     __slots__ = ['data', 'names']
 
     def __init__(self, parent: NamespaceKeys) -> None:
-        root = parent.root
+        root = parent.root.fork(b'sieve')
         super().__init__(root)
-        self.data: Final = root.end(b'sieve-data')
-        self.names: Final = root.end(b'sieve')
+        self.data: Final = root.end(b'data')
+        self.names: Final = root.end(b'names')
 
     @property
     def keys(self) -> Sequence[bytes]:
@@ -221,51 +221,23 @@ class MailboxKeys(KeysGroup):
 
     """
 
-    __slots__ = ['message_root', 'abort', 'max_mod', 'max_uid', 'uids',
-                 'mod_seq', 'seq', 'expunged', 'recent', 'deleted', 'unseen',
-                 'dates', 'email_ids', 'thread_ids']
+    __slots__ = ['message_root', 'max_uid', 'uids', 'seq', 'content',
+                 'changes', 'recent', 'deleted', 'unseen']
 
     def __init__(self, parent: NamespaceKeys, mailbox_id: _Value) -> None:
         root = parent.mailbox_root.fork(mailbox_id, name='mailbox_id')
         super().__init__(root)
         self.message_root: Final = root.fork(b'msg')
-        self.abort: Final = root.end(b'abort')
-        self.max_mod: Final = root.end(b'max-mod')
         self.max_uid: Final = root.end(b'max-uid')
         self.uids: Final = root.end(b'uids')
-        self.mod_seq: Final = root.end(b'mod-seq')
         self.seq: Final = root.end(b'seq')
-        self.expunged: Final = root.end(b'expunged')
+        self.content: Final = root.end(b'content')
+        self.changes: Final = root.end(b'changes')
         self.recent: Final = root.end(b'recent')
         self.deleted: Final = root.end(b'deleted')
         self.unseen: Final = root.end(b'unseen')
-        self.dates: Final = root.end(b'dates')
-        self.email_ids: Final = root.end(b'emailids')
-        self.thread_ids: Final = root.end(b'threadids')
 
     @property
     def keys(self) -> Sequence[bytes]:
-        return [self.abort, self.max_mod, self.max_uid, self.uids,
-                self.mod_seq, self.seq, self.expunged, self.recent,
-                self.deleted, self.unseen]
-
-
-class MessageKeys(KeysGroup):
-    """The key group for managing a single message, in a single mailbox.
-
-    Args:
-        root: The root redis key.
-        uid: The message UID.
-
-    """
-
-    __slots__ = ['flags']
-
-    def __init__(self, parent: MailboxKeys, uid: _Value) -> None:
-        root = parent.message_root.fork(uid, name='uid')
-        super().__init__(root)
-        self.flags: Final = root.end(b'flags')
-
-    @property
-    def keys(self) -> Sequence[bytes]:
-        return [self.flags]
+        return [self.max_uid, self.uids, self.seq, self.content, self.changes,
+                self.recent, self.deleted, self.unseen]

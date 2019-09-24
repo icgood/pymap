@@ -1,15 +1,13 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any, Tuple, Sequence, Mapping, Optional
 from typing_extensions import Final
 
 from aioredis import Redis  # type: ignore
 
 from . import ScriptBase
-from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys, \
-    MessageKeys
+from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys
 
 __all__ = ['MailboxScripts', 'MailboxSetScripts']
 
@@ -22,7 +20,6 @@ class MailboxScripts:
         self.add: Final = MessageAdd()
         self.copy: Final = MessageCopy()
         self.move: Final = MessageMove()
-        self.get: Final = MessageGet()
         self.update: Final = MessageUpdate()
         self.delete: Final = MessageDelete()
         self.snapshot: Final = MailboxSnapshot()
@@ -63,17 +60,16 @@ class MessageAdd(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('message_add')
 
-    async def __call__(self, redis: Redis, ct_keys: ContentKeys,
-                       mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
+    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
+                       ct_keys: ContentKeys, mbx_keys: MailboxKeys, *,
                        uid: int, recent: bool, date: bytes,
                        flags: Sequence[str], email_id: bytes,
                        thread_id: bytes, send_content: bool,
                        message: bytes, message_json: Mapping[str, Any],
                        header: bytes, header_json: Mapping[str, Any]) -> None:
-        keys = [mbx_keys.max_mod, mbx_keys.uids, mbx_keys.mod_seq,
-                mbx_keys.seq, mbx_keys.recent, mbx_keys.deleted,
-                mbx_keys.unseen, msg_keys.flags, mbx_keys.dates,
-                mbx_keys.email_ids, mbx_keys.thread_ids, ct_keys.data]
+        keys = [mbx_keys.uids, mbx_keys.seq, mbx_keys.content,
+                mbx_keys.changes, mbx_keys.recent, mbx_keys.deleted,
+                mbx_keys.unseen, ns_keys.content_refs, ct_keys.data]
         if send_content:
             content_args = [message, self._json(message_json),
                             header, self._json(header_json)]
@@ -89,19 +85,16 @@ class MessageCopy(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('message_copy')
 
-    async def __call__(self, redis: Redis, ct_keys: ContentKeys,
+    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
                        mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys,
-                       msg_keys: MessageKeys, dest_msg_keys: MessageKeys, *,
-                       source_uid: int, dest_uid: int, recent: bool) -> None:
-        keys = [mbx_keys.uids, dest_mbx_keys.max_mod, dest_mbx_keys.uids,
-                dest_mbx_keys.seq, dest_mbx_keys.mod_seq, dest_mbx_keys.recent,
-                dest_mbx_keys.deleted, dest_mbx_keys.unseen, msg_keys.flags,
-                mbx_keys.dates, mbx_keys.email_ids, mbx_keys.thread_ids,
-                dest_msg_keys.flags, dest_mbx_keys.dates,
-                dest_mbx_keys.email_ids, dest_mbx_keys.thread_ids,
-                ct_keys.data]
+                       source_uid: int, recent: bool) -> None:
+        keys = [mbx_keys.uids, dest_mbx_keys.max_uid, dest_mbx_keys.uids,
+                dest_mbx_keys.seq, dest_mbx_keys.content,
+                dest_mbx_keys.changes, dest_mbx_keys.recent,
+                dest_mbx_keys.deleted, dest_mbx_keys.unseen,
+                ns_keys.content_refs]
         return await self.eval(redis, keys, [
-            source_uid, dest_uid, int(recent)])
+            source_uid, int(recent)])
 
 
 class MessageMove(ScriptBase[None]):
@@ -111,56 +104,25 @@ class MessageMove(ScriptBase[None]):
 
     async def __call__(self, redis: Redis,
                        mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys,
-                       msg_keys: MessageKeys, dest_msg_keys: MessageKeys, *,
-                       source_uid: int, dest_uid: int, recent: bool) -> None:
-        keys = [mbx_keys.max_mod, mbx_keys.uids, mbx_keys.seq,
-                mbx_keys.mod_seq, mbx_keys.recent, mbx_keys.deleted,
-                mbx_keys.unseen, mbx_keys.expunged, dest_mbx_keys.max_mod,
-                dest_mbx_keys.uids, dest_mbx_keys.seq, dest_mbx_keys.mod_seq,
-                dest_mbx_keys.recent, dest_mbx_keys.deleted,
-                dest_mbx_keys.unseen, msg_keys.flags, mbx_keys.dates,
-                mbx_keys.email_ids, mbx_keys.thread_ids, dest_msg_keys.flags,
-                dest_mbx_keys.dates, dest_mbx_keys.email_ids,
-                dest_mbx_keys.thread_ids]
+                       source_uid: int, recent: bool) -> None:
+        keys = [mbx_keys.uids, mbx_keys.seq, mbx_keys.content,
+                mbx_keys.changes, mbx_keys.recent, mbx_keys.deleted,
+                mbx_keys.unseen, dest_mbx_keys.max_uid, dest_mbx_keys.uids,
+                dest_mbx_keys.seq, dest_mbx_keys.content,
+                dest_mbx_keys.changes, dest_mbx_keys.recent,
+                dest_mbx_keys.deleted, dest_mbx_keys.unseen]
         return await self.eval(redis, keys, [
-            source_uid, dest_uid, int(recent)])
+            source_uid, int(recent)])
 
 
-class MessageGet(ScriptBase[Tuple[Sequence[str], bytes, bytes, bytes]]):
-
-    def __init__(self) -> None:
-        super().__init__('message_get')
-
-    def _convert(self, ret: Tuple[bytes, bytes, bytes, bytes]) \
-            -> Tuple[Sequence[str], bytes, bytes, bytes]:
-        flags = json.loads(ret[0])
-        return (flags, *ret[1:])
-
-    async def __call__(self, redis: Redis,
-                       mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
-                       uid: int) \
-            -> Tuple[Sequence[str], bytes, bytes, bytes]:
-        keys = [msg_keys.flags, mbx_keys.dates, mbx_keys.email_ids,
-                mbx_keys.thread_ids, mbx_keys.uids]
-        return await self.eval(redis, keys, [uid])
-
-
-class MessageUpdate(ScriptBase[Tuple[Sequence[str], bytes, bytes, bytes]]):
+class MessageUpdate(ScriptBase[bytes]):
 
     def __init__(self) -> None:
         super().__init__('message_update')
 
-    def _convert(self, ret: Tuple[bytes, bytes, bytes, bytes]) \
-            -> Tuple[Sequence[str], bytes, bytes, bytes]:
-        flags = json.loads(ret[0])
-        return (flags, *ret[1:])
-
-    async def __call__(self, redis: Redis,
-                       mbx_keys: MailboxKeys, msg_keys: MessageKeys, *,
-                       uid: int, flags: Sequence[str], mode: bytes) \
-            -> Tuple[Sequence[str], bytes, bytes, bytes]:
-        keys = [msg_keys.flags, mbx_keys.dates, mbx_keys.email_ids,
-                mbx_keys.thread_ids, mbx_keys.uids, mbx_keys.deleted,
+    async def __call__(self, redis: Redis, mbx_keys: MailboxKeys, *,
+                       uid: int, flags: Sequence[str], mode: bytes) -> bytes:
+        keys = [mbx_keys.uids, mbx_keys.changes, mbx_keys.deleted,
                 mbx_keys.unseen]
         return await self.eval(redis, keys, [
             uid, mode, self._json(flags)])
@@ -174,11 +136,9 @@ class MessageDelete(ScriptBase[None]):
     async def __call__(self, redis: Redis,
                        mbx_keys: MailboxKeys, cl_keys: CleanupKeys, *,
                        uids: Sequence[int]) -> None:
-        keys = [mbx_keys.max_mod, mbx_keys.uids, mbx_keys.mod_seq,
-                mbx_keys.seq, mbx_keys.recent, mbx_keys.deleted,
-                mbx_keys.unseen, mbx_keys.expunged, mbx_keys.dates,
-                mbx_keys.email_ids, mbx_keys.thread_ids, cl_keys.messages,
-                cl_keys.contents]
+        keys = [mbx_keys.uids, mbx_keys.seq, mbx_keys.content,
+                mbx_keys.changes, mbx_keys.recent, mbx_keys.deleted,
+                mbx_keys.unseen, cl_keys.contents]
         return await self.eval(redis, keys, [
             self._json(uids),
             mbx_keys.root.named['namespace'],

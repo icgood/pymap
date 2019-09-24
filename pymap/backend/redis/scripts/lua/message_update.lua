@@ -1,32 +1,50 @@
-local flags_key = KEYS[1]
-local dates_key = KEYS[2]
-local email_ids_key = KEYS[3]
-local thread_ids_key = KEYS[4]
-local uids_key = KEYS[5]
-local deleted_key = KEYS[6]
-local unseen_key = KEYS[7]
+local i = nil
+local i, uids_key = next(KEYS, i)
+local i, changes_key = next(KEYS, i)
+local i, deleted_key = next(KEYS, i)
+local i, unseen_key = next(KEYS, i)
 
 local uid = tonumber(ARGV[1])
 local mode = ARGV[2]
 local flag_set = cjson.decode(ARGV[3])
 
-local uid_exists = redis.call('SISMEMBER', uids_key, uid)
-if uid_exists == 0 then
+local message_str = redis.call('HGET', uids_key, uid)
+if not message_str then
     return redis.error_reply('message not found')
 end
+local message = cjson.decode(message_str)
+local msg_flags = message['flags']
 
-local has_deleted = false
-local has_seen = false
-for i, flag in ipairs(flag_set) do
-    if flag == '\\Deleted' then
-        has_deleted = true
-    elseif flag == '\\Seen' then
-        has_seen = true
+local function to_map(list)
+    local map = {}
+    for i, v in ipairs(list) do
+        map[v] = true
     end
+    return map
 end
 
-if mode == 'ADD' and #flag_set > 0 then
-    redis.call('SADD', flags_key, unpack(flag_set))
+local function to_list(map)
+    local list = {}
+    for k, v in pairs(map) do
+        table.insert(list, k)
+    end
+    return list
+end
+
+local msg_flags_map = to_map(msg_flags)
+local has_deleted = msg_flags_map['\\Deleted']
+local has_seen = msg_flags_map['\\Seen']
+local new_flags = nil
+
+if mode == 'ADD' and next(flag_set) then
+    local new_flags_map = {}
+    for i, flag in ipairs(msg_flags) do
+        new_flags_map[flag] = true
+    end
+    for i, flag in ipairs(flag_set) do
+        new_flags_map[flag] = true
+    end
+    new_flags = to_list(new_flags_map)
 
     if has_deleted then
         redis.call('SADD', deleted_key, uid)
@@ -34,8 +52,15 @@ if mode == 'ADD' and #flag_set > 0 then
     if has_seen then
         redis.call('ZREM', unseen_key, uid)
     end
-elseif mode == 'DELETE' and #flag_set > 0 then
-    redis.call('SREM', flags_key, unpack(flag_set))
+elseif mode == 'DELETE' and next(flag_set) then
+    local new_flags_map = {}
+    for i, flag in ipairs(msg_flags) do
+        new_flags_map[flag] = true
+    end
+    for i, flag in ipairs(flag_set) do
+        new_flags_map[flag] = nil
+    end
+    new_flags = to_list(new_flags_map)
 
     if has_deleted then
         redis.call('SREM', deleted_key, uid)
@@ -44,10 +69,7 @@ elseif mode == 'DELETE' and #flag_set > 0 then
         redis.call('ZADD', unseen_key, uid, uid)
     end
 elseif mode == 'REPLACE' then
-    redis.call('DEL', flags_key)
-    if #flag_set > 0 then
-        redis.call('SADD', flags_key, unpack(flag_set))
-    end
+    new_flags = flag_set
 
     if has_deleted then
         redis.call('SADD', deleted_key, uid)
@@ -61,9 +83,15 @@ elseif mode == 'REPLACE' then
     end
 end
 
-local msg_flags = redis.call('SMEMBERS', flags_key)
-local msg_time = redis.call('HGET', dates_key, uid)
-local msg_email_id = redis.call('HGET', email_ids_key, uid)
-local msg_thread_id = redis.call('HGET', thread_ids_key, uid)
+if new_flags then
+    message['flags'] = new_flags
+    message_str = cjson.encode(message)
 
-return {cjson.encode(msg_flags), msg_time, msg_email_id, msg_thread_id}
+    redis.call('HSET', uids_key, uid, message_str)
+    redis.call('XADD', changes_key, 'MAXLEN', '~', 1000, '*',
+        'uid', uid,
+        'type', 'fetch',
+        'message', message_str)
+end
+
+return message_str

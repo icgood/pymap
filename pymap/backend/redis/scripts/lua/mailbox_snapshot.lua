@@ -1,11 +1,12 @@
-local max_uid_key = KEYS[1]
-local uids_key = KEYS[2]
-local seq_key = KEYS[3]
-local recent_key = KEYS[4]
-local unseen_key = KEYS[5]
+local i = nil
+local i, max_uid_key = next(KEYS, i)
+local i, uids_key = next(KEYS, i)
+local i, seq_key = next(KEYS, i)
+local i, recent_key = next(KEYS, i)
+local i, unseen_key = next(KEYS, i)
 
 local next_uid = (redis.call('GET', max_uid_key) or 0) + 1
-local num_exists = redis.call('SCARD', uids_key)
+local num_exists = redis.call('HLEN', uids_key)
 local num_recent = redis.call('SCARD', recent_key)
 local num_unseen = redis.call('ZCARD', unseen_key)
 
