@@ -33,6 +33,21 @@ class InheritedSockets(metaclass=ABCMeta):
         ...
 
     @classmethod
+    def supports(cls, service_manager: str) -> bool:
+        """Return True if the given service manager is supported. This does not
+        guarantee the service manager will provide inherited sockets, only that
+        it is available to :meth:`.of`.
+
+        Args:
+            service_manager: The service manager name.
+
+        """
+        if service_manager == 'systemd':
+            return systemd_import_exc is None
+        else:
+            return False
+
+    @classmethod
     def of(cls, service_manager: str) -> InheritedSockets:
         """Return the inherited sockets for the given service manager.
 

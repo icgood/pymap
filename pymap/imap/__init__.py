@@ -62,9 +62,10 @@ class IMAPService(ServiceInterface):  # pragma: no cover
                            help='the port or service name to listen on')
         group.add_argument('--cert', metavar='FILE', help='cert file for TLS')
         group.add_argument('--key', metavar='FILE', help='key file for TLS')
-        group.add_argument('--systemd-sockets', action='store_const',
-                           dest='inherited_sockets', const='systemd',
-                           help='use systemd inherited sockets')
+        if InheritedSockets.supports('systemd'):
+            group.add_argument('--systemd-sockets', action='store_const',
+                               dest='inherited_sockets', const='systemd',
+                               help='use systemd inherited sockets')
         group.add_argument('--insecure-login', action='store_true',
                            help='allow plaintext login without TLS')
 
