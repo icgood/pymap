@@ -78,6 +78,24 @@ process, usually a service management framework.</p>
 </dd></dl>
 
 <dl class="classmethod">
+<dt id="pymap.sockets.InheritedSockets.supports">
+<em class="property">classmethod </em><code class="descname">supports</code><span class="sig-paren">(</span><em>service_manager</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockets.InheritedSockets.supports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the given service manager is supported. This does not
+guarantee the service manager will provide inherited sockets, only that
+it is available to <a class="reference internal" href="#pymap.sockets.InheritedSockets.of" title="pymap.sockets.InheritedSockets.of"><code class="xref py py-meth docutils literal notranslate"><span class="pre">of()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service_manager</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The service manager name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
 <dt id="pymap.sockets.InheritedSockets.of">
 <em class="property">classmethod </em><code class="descname">of</code><span class="sig-paren">(</span><em>service_manager</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sockets.InheritedSockets.of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the inherited sockets for the given service manager.</p>
