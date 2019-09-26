@@ -12,7 +12,7 @@ __all__ = ['RedisKey', 'KeysGroup', 'GlobalKeys', 'CleanupKeys',
 
 #: The version number of this key layout, to track backwards incompatible
 #: changes.
-DATA_VERSION: Final = 3
+DATA_VERSION: Final = 4
 
 _Value = Union[int, MaybeBytes]
 
@@ -35,11 +35,6 @@ class RedisKey:
         self.joiner: Final = joiner
         self.segments: Final = segments
         self.named: Final = named
-
-    @property
-    def wildcard(self) -> bytes:
-        """A wildcard bytestring that may be used to match redis keys."""
-        return self.end(b'*')
 
     def fork(self, segment: _Value, *, name: str = None) -> RedisKey:
         """Fork a new redis key adding a new segment.
@@ -144,30 +139,29 @@ class NamespaceKeys(KeysGroup):
 
     """
 
-    __slots__ = ['mailbox_root', 'content_root', 'filter_root', 'mailboxes',
-                 'max_order', 'order', 'uid_validity', 'subscribed',
-                 'content_refs', 'email_ids', 'thread_ids']
+    __slots__ = ['mailbox_root', 'content_root', 'mailboxes', 'max_order',
+                 'order', 'uid_validity', 'subscribed', 'content_refs',
+                 'thread_keys', 'max_modseq']
 
     def __init__(self, parent: GlobalKeys, namespace: _Value) -> None:
         root = parent.namespace_root.fork(namespace, name='namespace')
         super().__init__(root)
         self.mailbox_root: Final = root.fork(b'mbx')
         self.content_root: Final = root.fork(b'content')
-        self.filter_root: Final = root.fork(b'filter')
         self.mailboxes: Final = root.end(b'mailboxes')
         self.max_order: Final = root.end(b'max-order')
         self.order: Final = root.end(b'order')
         self.uid_validity: Final = root.end(b'uidv')
         self.subscribed: Final = root.end(b'subscribed')
         self.content_refs: Final = root.end(b'contentrefs')
-        self.email_ids: Final = root.end(b'emailids')
-        self.thread_ids: Final = root.end(b'threadids')
+        self.thread_keys: Final = root.end(b'threadkeys')
+        self.max_modseq: Final = root.end(b'maxmodseq')
 
     @property
     def keys(self) -> Sequence[bytes]:
         return [self.mailboxes, self.max_order, self.order, self.uid_validity,
-                self.subscribed, self.content_refs, self.email_ids,
-                self.thread_ids]
+                self.subscribed, self.content_refs, self.thread_keys,
+                self.max_modseq]
 
 
 class ContentKeys(KeysGroup):
@@ -221,13 +215,12 @@ class MailboxKeys(KeysGroup):
 
     """
 
-    __slots__ = ['message_root', 'max_uid', 'uids', 'seq', 'content',
-                 'changes', 'recent', 'deleted', 'unseen']
+    __slots__ = ['max_uid', 'uids', 'seq', 'content', 'changes', 'recent',
+                 'deleted', 'unseen']
 
     def __init__(self, parent: NamespaceKeys, mailbox_id: _Value) -> None:
         root = parent.mailbox_root.fork(mailbox_id, name='mailbox_id')
         super().__init__(root)
-        self.message_root: Final = root.fork(b'msg')
         self.max_uid: Final = root.end(b'max-uid')
         self.uids: Final = root.end(b'uids')
         self.seq: Final = root.end(b'seq')

@@ -3,16 +3,17 @@ local i, uids_key = next(KEYS, i)
 local i, changes_key = next(KEYS, i)
 local i, deleted_key = next(KEYS, i)
 local i, unseen_key = next(KEYS, i)
+local i, max_modseq_key = next(KEYS, i)
 
 local uid = tonumber(ARGV[1])
 local mode = ARGV[2]
-local flag_set = cjson.decode(ARGV[3])
+local flag_set = cmsgpack.unpack(ARGV[3])
 
 local message_str = redis.call('HGET', uids_key, uid)
 if not message_str then
     return redis.error_reply('message not found')
 end
-local message = cjson.decode(message_str)
+local message = cmsgpack.unpack(message_str)
 local msg_flags = message['flags']
 
 local function to_map(list)
@@ -85,10 +86,12 @@ end
 
 if new_flags then
     message['flags'] = new_flags
-    message_str = cjson.encode(message)
+    message_str = cmsgpack.pack(message)
 
     redis.call('HSET', uids_key, uid, message_str)
-    redis.call('XADD', changes_key, 'MAXLEN', '~', 1000, '*',
+
+    local modseq = redis.call('INCR', max_modseq_key)
+    redis.call('XADD', changes_key, 'MAXLEN', '~', 1000, modseq .. '-1',
         'uid', uid,
         'type', 'fetch',
         'message', message_str)

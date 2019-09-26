@@ -14,6 +14,7 @@ local i, dest_changes_key = next(KEYS, i)
 local i, dest_recent_key = next(KEYS, i)
 local i, dest_deleted_key = next(KEYS, i)
 local i, dest_unseen_key = next(KEYS, i)
+local i, max_modseq_key = next(KEYS, i)
 
 local source_uid = ARGV[1]
 local msg_recent = tonumber(ARGV[2])
@@ -41,7 +42,8 @@ redis.call('HSET', dest_uids_key, dest_uid, message_str)
 redis.call('ZADD', dest_seq_key, dest_uid, dest_uid)
 redis.call('HSET', dest_content_key, dest_uid, msg_email_id)
 
-redis.call('XADD', dest_changes_key, 'MAXLEN', '~', 1000, '*',
+local modseq = redis.call('INCR', max_modseq_key)
+redis.call('XADD', dest_changes_key, 'MAXLEN', '~', 1000, modseq .. '-1',
     'uid', dest_uid,
     'type', 'fetch',
     'message', message_str)

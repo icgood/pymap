@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from datetime import datetime
 from typing import Optional, Sequence, Mapping, Tuple, List, FrozenSet, \
     Iterable
 
+import msgpack  # type: ignore
 from aioredis import Redis, ReplyError, MultiExecError  # type: ignore
 
 from pymap.bytes import HashStream
@@ -25,13 +25,14 @@ from pymap.threads import ThreadKey
 
 from .keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys
 from .message import Message
-from .scripts.mailbox import MailboxScripts, MailboxSetScripts
+from .scripts.mailbox import MailboxScripts
+from .scripts.namespace import NamespaceScripts
 from ..mailbox import MailboxDataInterface, MailboxSetInterface
 
 __all__ = ['Message', 'MailboxData', 'MailboxSet']
 
 _scripts = MailboxScripts()
-_set_scripts = MailboxSetScripts()
+_ns_scripts = NamespaceScripts()
 
 _ChangesRaw = Sequence[Tuple[bytes, Mapping[bytes, bytes]]]
 
@@ -70,12 +71,12 @@ class MailboxData(MailboxDataInterface[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    def _get_msg(self, uid: int, msg_json: bytes) -> Message:
-        msg = json.loads(msg_json)
-        msg_flags = {Flag(flag) for flag in msg['flags']}
-        msg_email_id = ObjectId.maybe(msg['email_id'])
-        msg_thread_id = ObjectId.maybe(msg['thread_id'])
-        msg_time = datetime.fromisoformat(msg['date'])
+    def _get_msg(self, uid: int, msg_raw: bytes) -> Message:
+        msg = msgpack.unpackb(msg_raw)
+        msg_flags = {Flag(flag) for flag in msg[b'flags']}
+        msg_email_id = ObjectId.maybe(msg[b'email_id'])
+        msg_thread_id = ObjectId.maybe(msg[b'thread_id'])
+        msg_time = datetime.fromisoformat(msg[b'date'].decode('ascii'))
         return Message(uid, msg_time, msg_flags,
                        email_id=msg_email_id, thread_id=msg_thread_id,
                        redis=self._redis, ns_keys=self._ns_keys)
@@ -94,22 +95,19 @@ class MailboxData(MailboxDataInterface[Message]):
         redis = self._redis
         keys = self._keys
         ns_keys = self._ns_keys
-        content = MessageContent.parse(append_msg.literal)
-        new_uid, email_id, thread_id, send_content = await _scripts.prepare(
-            redis, ns_keys, keys,
-            new_email_id=ObjectId.random_email_id().value,
-            new_thread_id=ObjectId.random_thread_id().value,
-            content_hash=HashStream(hashlib.sha1()).digest(content),
-            thread_keys=['\0'.join(thread_key) for thread_key in
-                         ThreadKey.get_all(content.header)])
         when = append_msg.when or datetime.now()
-        ct_keys = ContentKeys(ns_keys, email_id)
-        await _scripts.add(
+        content = MessageContent.parse(append_msg.literal)
+        content_hash = HashStream(hashlib.sha1()).digest(content)
+        new_email_id = ObjectId.new_email_id(content_hash)
+        ct_keys = ContentKeys(ns_keys, new_email_id)
+        new_uid, email_id, thread_id = await _scripts.add(
             redis, ns_keys, ct_keys, keys,
-            uid=new_uid, recent=recent,
-            flags=[str(flag) for flag in append_msg.flag_set],
+            recent=recent, flags=[str(flag) for flag in append_msg.flag_set],
             date=when.isoformat().encode('ascii'),
-            email_id=email_id, thread_id=thread_id, send_content=send_content,
+            email_id=new_email_id.value,
+            thread_id=ObjectId.random_thread_id().value,
+            thread_keys=['\0'.join(thread_key) for thread_key in
+                         ThreadKey.get_all(content.header)],
             message=append_msg.literal, message_json=content.json,
             header=bytes(content.header), header_json=content.header.json)
         return Message(new_uid, when, append_msg.flag_set,
@@ -136,9 +134,10 @@ class MailboxData(MailboxDataInterface[Message]):
                    recent: bool = False) -> Optional[int]:
         redis = self._redis
         keys = self._keys
+        ns_keys = self._ns_keys
         dest_keys = destination._keys
         try:
-            dest_uid = await _scripts.move(redis, keys, dest_keys,
+            dest_uid = await _scripts.move(redis, ns_keys, keys, dest_keys,
                                            source_uid=uid, recent=recent)
         except ReplyError as exc:
             if 'message not found' in str(exc):
@@ -149,19 +148,20 @@ class MailboxData(MailboxDataInterface[Message]):
     async def get(self, uid: int, cached_msg: CachedMessage) -> Message:
         redis = self._redis
         keys = self._keys
-        message_json = await redis.hget(keys.uids, uid)
-        if message_json is None:
+        message_raw = await redis.hget(keys.uids, uid)
+        if message_raw is None:
             if not isinstance(cached_msg, Message):
                 raise TypeError(cached_msg)
             return Message.copy_expunged(cached_msg)
-        return self._get_msg(uid, message_json)
+        return self._get_msg(uid, message_raw)
 
     async def update(self, uid: int, cached_msg: CachedMessage,
                      flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
         keys = self._keys
+        ns_keys = self._ns_keys
         try:
-            message_json = await _scripts.update(
-                self._redis, keys, uid=uid, mode=bytes(mode),
+            message_raw = await _scripts.update(
+                self._redis, ns_keys, keys, uid=uid, mode=bytes(mode),
                 flags=[str(flag) for flag in flag_set])
         except ReplyError as exc:
             if 'message not found' not in str(exc):
@@ -169,13 +169,15 @@ class MailboxData(MailboxDataInterface[Message]):
             if not isinstance(cached_msg, Message):
                 raise TypeError(cached_msg)
             return Message.copy_expunged(cached_msg)
-        return self._get_msg(uid, message_json)
+        return self._get_msg(uid, message_raw)
 
     async def delete(self, uids: Iterable[int]) -> None:
+        keys = self._keys
+        ns_keys = self._ns_keys
         uids = list(uids)
         if not uids:
             return
-        await _scripts.delete(self._redis, self._keys, self._cl_keys,
+        await _scripts.delete(self._redis, ns_keys, keys, self._cl_keys,
                               uids=uids)
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
@@ -220,9 +222,9 @@ class MailboxData(MailboxDataInterface[Message]):
         multi = self._redis.multi_exec()
         multi.hgetall(keys.uids)
         multi.xrevrange(keys.changes, count=1)
-        msg_jsons, last_changes = await multi.execute()
-        messages = [self._get_msg(int(uid), msg_json)
-                    for uid, msg_json in msg_jsons.items()]
+        msg_raw_map, last_changes = await multi.execute()
+        messages = [self._get_msg(int(uid), msg_raw)
+                    for uid, msg_raw in msg_raw_map.items()]
         selected.mod_sequence = self._get_mod_seq(last_changes)
         selected.set_messages(messages)
 
@@ -243,11 +245,11 @@ class MailboxData(MailboxDataInterface[Message]):
                             last_mod_seq: bytes) -> None:
         keys = self._keys
         multi = self._redis.multi_exec()
-        multi.xinfo(keys.changes)
+        multi.xlen(keys.changes)
         multi.xrange(keys.changes, start=last_mod_seq)
         multi.xrevrange(keys.changes, count=1)
-        changes_info, changes, last_changes = await multi.execute()
-        if len(changes) == changes_info[b'length']:
+        changes_len, changes, last_changes = await multi.execute()
+        if len(changes) == changes_len:
             return await self._load_initial(selected)
         messages, expunged = self._get_changes(changes)
         selected.mod_sequence = self._get_mod_seq(last_changes)
@@ -289,7 +291,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             modutf7_decode(name) for name in mailboxes))
 
     async def list_mailboxes(self) -> ListTree:
-        mailboxes = await _set_scripts.list(self._redis, self._keys)
+        mailboxes = await _ns_scripts.list(self._redis, self._keys)
         return ListTree(self.delimiter).update('INBOX', *(
             modutf7_decode(name) for name in mailboxes))
 
@@ -297,7 +299,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         redis = self._redis
         name_key = modutf7_encode(name)
         try:
-            mbx_id, uid_val = await _set_scripts.get(
+            mbx_id, uid_val = await _ns_scripts.get(
                 redis, self._keys, name=name_key)
         except ReplyError as exc:
             if 'mailbox not found' in str(exc):
@@ -311,9 +313,9 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         name_key = modutf7_encode(name)
         mbx_id = ObjectId.random_mailbox_id()
         try:
-            await _set_scripts.add(self._redis, self._keys,
-                                   name=name_key,
-                                   mailbox_id=mbx_id.value)
+            await _ns_scripts.add(self._redis, self._keys,
+                                  name=name_key,
+                                  mailbox_id=mbx_id.value)
         except ReplyError as exc:
             if 'mailbox already exists' in str(exc):
                 raise ValueError(name_key) from exc
@@ -323,8 +325,8 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
     async def delete_mailbox(self, name: str) -> None:
         name_key = modutf7_encode(name)
         try:
-            await _set_scripts.delete(self._redis, self._keys, self._cl_keys,
-                                      name=name_key)
+            await _ns_scripts.delete(self._redis, self._keys, self._cl_keys,
+                                     name=name_key)
         except ReplyError as exc:
             if 'mailbox not found' in str(exc):
                 raise KeyError(name_key) from exc

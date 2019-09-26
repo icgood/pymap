@@ -263,7 +263,6 @@ class SelectCommand(CommandMailboxArg):
     """
 
     command = b'SELECT'
-    allow_updates = False
 
     #: The mailbox will not be opened read-only unless the backend indicates
     #: that it must be.

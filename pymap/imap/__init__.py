@@ -269,13 +269,13 @@ class IMAPConnection:
         protocol = transport.get_protocol()  # type: ignore
         new_transport = await loop.start_tls(  # type: ignore
             transport, protocol, ssl_context, server_side=True)
-        protocol._stream_reader = StreamReader(loop=loop)
-        protocol._client_connected_cb = self._reset_streams
+        protocol._stream_reader = StreamReader(loop=loop)  # type: ignore
+        protocol._client_connected_cb = self._reset_streams  # type: ignore
         protocol.connection_made(new_transport)
         self._print('%d <->| %s', b'<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
-        exc_type, exc, exc_tb = sys.exc_info()
+        _, exc, _ = sys.exc_info()
         if isinstance(exc, CancelledError):
             resp = ResponseBye(b'Server has closed the connection.',
                                ResponseCode.of(b'UNAVAILABLE'))

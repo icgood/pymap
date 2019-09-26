@@ -276,20 +276,6 @@ class MessageHeader(Writeable):
             folded.append((cls._to_str(name), group))
         return folded
 
-    @classmethod
-    def _join_group(cls, data: bytes, group: _Lines, colon: int) -> bytes:
-        first_start, first_end, _ = group[0]
-        value_offset = colon - first_start + 1
-        length = sum(end - start for start, end, _ in group)
-        ret = bytearray(length - value_offset)
-        current = first_end - value_offset
-        ret[0:current] = data[colon + 1:first_end]
-        for start, end, _ in islice(group, 1, None):
-            current_end = current + (end - start)
-            ret[current:current_end] = data[start:end]
-            current = current_end
-        return bytes(ret)
-
     def write(self, writer: WriteStream) -> None:
         writer.write(bytes(self))
 

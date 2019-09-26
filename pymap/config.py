@@ -20,14 +20,10 @@ from .context import subsystem
 from .parsing import Params
 from .parsing.commands import Commands
 
-__all__ = ['ConfigT', 'ConfigT_co', 'ConfigT_contra',
-           'BackendCapability', 'IMAPConfig']
+__all__ = ['ConfigT', 'ConfigT_contra', 'BackendCapability', 'IMAPConfig']
 
 #: Type variable with an upper bound of :class:`IMAPConfig`.
 ConfigT = TypeVar('ConfigT', bound='IMAPConfig')
-
-#: Covariant type variable with an upper bound of :class:`IMAPConfig`.
-ConfigT_co = TypeVar('ConfigT_co', bound='IMAPConfig', covariant=True)
 
 #: Contravariant type variable with an upper bound of :class:`IMAPConfig`.
 ConfigT_contra = TypeVar('ConfigT_contra', bound='IMAPConfig',
@@ -146,8 +142,6 @@ class IMAPConfig(metaclass=ABCMeta):
         self._reject_insecure_auth = reject_insecure_auth
         self._preauth_credentials = preauth_credentials
         self._max_append_len = max_append_len
-        self._disable_idle = disable_idle
-        self._extra = extra
 
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:

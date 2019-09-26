@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 
+import binascii
 import random as _random
 from typing import Optional, Tuple, AnyStr
 
@@ -53,6 +54,47 @@ class ObjectId(Parseable[bytes]):
         if not match:
             raise NotParseable(buf)
         return cls(match.group(0)), buf[match.end(0):]
+
+    @classmethod
+    def new(cls, prefix: bytes, digest: bytes) -> ObjectId:
+        """Return a new object ID from a hash digest.
+
+        Args:
+            prefix: The prefix for the object ID.
+            digest: The hash digest.
+
+        """
+        return cls(prefix + binascii.hexlify(digest))
+
+    @classmethod
+    def new_mailbox_id(cls, digest: bytes) -> ObjectId:
+        """Return a new mailbox ID from a hash digest.
+
+        Args:
+            digest: The hash digest.
+
+        """
+        return cls.new(b'F', digest)
+
+    @classmethod
+    def new_email_id(cls, digest: bytes) -> ObjectId:
+        """Return a new email ID from a hash digest.
+
+        Args:
+            digest: The hash digest.
+
+        """
+        return cls.new(b'M', digest)
+
+    @classmethod
+    def new_thread_id(cls, digest: bytes) -> ObjectId:
+        """Return a new thread ID from a hash digest.
+
+        Args:
+            digest: The hash digest.
+
+        """
+        return cls.new(b'T', digest)
 
     @classmethod
     def random(cls, prefix: bytes) -> ObjectId:

@@ -84,8 +84,7 @@ class CommandNonAuth(Command, metaclass=ABCMeta):
     authenticated.
 
     """
-
-    allow_updates = False
+    pass
 
 
 class CommandSelect(CommandAuth, metaclass=ABCMeta):
