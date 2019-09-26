@@ -84,7 +84,6 @@ class _Frozen:
         session_flags = selected.session_flags
         self.is_deleted = selected._is_deleted
         self.uids = messages._uids.copy()
-        self.sorted = messages._sorted.copy()
         self.seqs_cache = messages._seqs_cache.copy()
         self.flags = messages._flags_key_set.copy()
         self.recent = session_flags.recent_uids & self.uids

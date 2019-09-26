@@ -68,7 +68,6 @@ class UidNext(ResponseCode):
 
     def __init__(self, next_: int) -> None:
         super().__init__()
-        self.next = next_
         self._raw = b'[UIDNEXT %i]' % next_
 
     def __bytes__(self) -> bytes:
@@ -103,7 +102,6 @@ class Unseen(ResponseCode):
 
     def __init__(self, next_: int) -> None:
         super().__init__()
-        self.next = next_
         self._raw = b'[UNSEEN %i]' % next_
 
     def __bytes__(self):

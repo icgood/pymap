@@ -8,6 +8,7 @@ local i, dest_changes_key = next(KEYS, i)
 local i, dest_recent_key = next(KEYS, i)
 local i, dest_deleted_key = next(KEYS, i)
 local i, dest_unseen_key = next(KEYS, i)
+local i, max_modseq_key = next(KEYS, i)
 local i, content_refs_key = next(KEYS, i)
 
 local source_uid = ARGV[1]
@@ -17,7 +18,7 @@ local message_str = redis.call('HGET', uids_key, source_uid)
 if not message_str then
     return redis.error_reply('message not found')
 end
-local message = cjson.decode(message_str)
+local message = cmsgpack.unpack(message_str)
 
 local msg_flags = message['flags']
 local msg_email_id = message['email_id']
@@ -37,7 +38,8 @@ redis.call('HSET', dest_uids_key, dest_uid, message)
 redis.call('ZADD', dest_seq_key, dest_uid, dest_uid)
 redis.call('HSET', dest_content_key, dest_uid, msg_email_id)
 
-redis.call('XADD', dest_changes_key, 'MAXLEN', '~', 1000, '*',
+local modseq = redis.call('INCR', max_modseq_key)
+redis.call('XADD', dest_changes_key, 'MAXLEN', '~', 1000, modseq .. '-1',
     'uid', dest_uid,
     'type', 'fetch',
     'message', message_str)

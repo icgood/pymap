@@ -1,10 +1,10 @@
 
 from __future__ import annotations
 
-import json
 from datetime import datetime
 from typing import Optional, Iterable
 
+import msgpack  # type: ignore
 from aioredis import Redis  # type: ignore
 
 from pymap.message import BaseMessage, BaseLoadedMessage
@@ -32,19 +32,21 @@ class Message(BaseMessage):
 
     async def _load_full(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
-        literal, full_json = await redis.hmget(
+        literal, full_json_raw = await redis.hmget(
             ct_keys.data, b'full', b'full-json')
-        if literal is None or full_json is None:
+        if literal is None or full_json_raw is None:
             raise ValueError(f'Missing message content: {self.email_id}')
-        return MessageContent.from_json(literal, json.loads(full_json))
+        full_json = msgpack.unpackb(full_json_raw, raw=False)
+        return MessageContent.from_json(literal, full_json)
 
     async def _load_header(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
-        literal, header_json = await redis.hmget(
+        literal, header_json_raw = await redis.hmget(
             ct_keys.data, b'header', b'header-json')
-        if literal is None or header_json is None:
+        if literal is None or header_json_raw is None:
             raise ValueError(f'Missing message header: {self.email_id}')
-        header = MessageHeader.from_json(literal, json.loads(header_json))
+        header_json = msgpack.unpackb(header_json_raw, raw=False)
+        header = MessageHeader.from_json(literal, header_json)
         body = MessageBody.empty()
         return MessageContent(literal, header, body)
 

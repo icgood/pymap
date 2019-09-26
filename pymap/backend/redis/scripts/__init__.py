@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import os.path
 from contextlib import closing
 from typing import Generic, TypeVar, Any, Union, Optional, Tuple, Sequence
 
+import msgpack  # type: ignore
 from aioredis import Redis, ReplyError  # type: ignore
 from pkg_resources import resource_stream
 
@@ -40,8 +40,8 @@ class ScriptBase(Generic[_RetT]):
     def _convert(self, ret: Any) -> _RetT:
         return ret
 
-    def _json(self, val: Any) -> bytes:
-        return json.dumps(val).encode('utf-8')
+    def _pack(self, val: Any) -> bytes:
+        return msgpack.packb(val)
 
     def _maybe_int(self, val: bytes) -> Optional[int]:
         if val == b'':

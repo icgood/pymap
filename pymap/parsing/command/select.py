@@ -174,7 +174,6 @@ class FetchCommand(CommandSelect):
                  options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
-        self.no_expunge_response = not seq_set.uid
         self.attributes = attr_list
         self.options = options or ExtensionOptions.empty()
 

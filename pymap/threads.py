@@ -32,12 +32,10 @@ class ThreadKey(Iterable[str]):
     _re_pattern = re.compile(r'\s*re\s*:\s*', re.I)
     _listtag_pattern = re.compile(r'\s*\[.*?\]\s*')
 
-    __slots__ = ['msg_id', 'subject', '_pair', '__weakref__']
+    __slots__ = ['_pair', '__weakref__']
 
     def __init__(self, msg_id: str, subject: str) -> None:
         super().__init__()
-        self.msg_id: Final = msg_id
-        self.subject: Final = subject
         self._pair: Final = (msg_id, subject)
 
     def __eq__(self, other) -> bool:

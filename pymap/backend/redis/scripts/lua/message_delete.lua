@@ -6,9 +6,10 @@ local i, changes_key = next(KEYS, i)
 local i, recent_key = next(KEYS, i)
 local i, deleted_key = next(KEYS, i)
 local i, unseen_key = next(KEYS, i)
+local i, max_modseq_key = next(KEYS, i)
 local i, cleanup_contents_key = next(KEYS, i)
 
-local uids = cjson.decode(ARGV[1])
+local uids = cmsgpack.unpack(ARGV[1])
 local namespace = ARGV[2]
 local mailbox_id = ARGV[3]
 
@@ -22,7 +23,8 @@ redis.call('SREM', deleted_key, unpack(uids))
 redis.call('ZREM', unseen_key, unpack(uids))
 
 for i, uid in ipairs(uids) do
-    redis.call('XADD', changes_key, 'MAXLEN', '~', 1000, '*',
+    local modseq = redis.call('INCR', max_modseq_key)
+    redis.call('XADD', changes_key, 'MAXLEN', '~', 1000, modseq .. '-1',
         'uid', uid,
         'type', 'expunge')
 end

@@ -1,7 +1,6 @@
 
 from __future__ import annotations
 
-from typing import Sequence
 from typing_extensions import Final
 
 from aioredis import Redis  # type: ignore
@@ -38,9 +37,6 @@ class FilterSetActive(ScriptBase[None]):
 
     def __init__(self) -> None:
         super().__init__('filter_set_active')
-
-    def get_keys(self, keys: FilterKeys) -> Sequence[bytes]:
-        return [keys.names]
 
     async def __call__(self, redis: Redis, fl_keys: FilterKeys, *,
                        name: bytes, active_name: bytes) -> None:

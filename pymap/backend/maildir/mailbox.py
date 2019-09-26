@@ -161,11 +161,6 @@ class LoadedMessage(BaseLoadedMessage):
 
 class MailboxData(MailboxDataInterface[Message]):
 
-    db_retry_count = 100
-    db_retry_delay = 0.1
-    filename_db = '.uid'
-    filename_tmp_db = 'tmp.uid'
-
     def __init__(self, mailbox_id: ObjectId, maildir: Maildir,
                  path: str) -> None:
         super().__init__()
@@ -483,7 +478,8 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             raise KeyError(name) from exc
         path = self._layout.get_path(name, self.delimiter)
         async with UidList.with_open(path) as uidl:
-            return ObjectId(uidl.global_uid)
+            global_uid = uidl.global_uid
+        return ObjectId(global_uid)
 
     async def delete_mailbox(self, name: str) -> None:
         try:

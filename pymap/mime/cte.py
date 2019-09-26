@@ -68,11 +68,11 @@ class MessageDecoder(metaclass=ABCMeta):
             raise NotImplementedError(hdr_str)
 
     @abstractmethod
-    def decode(self, msg_body: MessageBody) -> Writeable:
+    def decode(self, body: MessageBody) -> Writeable:
         """Decode and return the decoded body of the message.
 
         Args:
-            msg_body: The message body.
+            body: The message body.
 
         """
         ...

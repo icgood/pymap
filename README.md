@@ -125,7 +125,7 @@ metadata. It requires [aioredis][9] and will not appear in the plugins list
 without it.
 
 ```
-$ pip install aioredis
+$ pip install aioredis msgpack
 $ pymap redis --help
 ```
 
@@ -133,7 +133,7 @@ Keys are composed of a heirarchy of prefixes separated by `/`. For example, the
 key containing the flags of a message might be:
 
 ```
-/eacb1cf1558741d0b5419b3f838882f5/mbx/Fdaddd3075d7b42e78a7edb1d87ee5800/msg/9173/flags
+/ns/eacb1cf1558741d0b5419b3f838882f5/mbx/Fdaddd3075d7b42e78a7edb1d87ee5800/msg/9173/flags
 ```
 
 In this example, the `eacb1cf1558741d0b5419b3f838882f5` and

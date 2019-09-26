@@ -62,7 +62,6 @@ class BadCommandResponse(Response):
 
     def __init__(self, exc: NotParseable) -> None:
         super().__init__(Condition.NO, text='Bad command: %s' % exc)
-        self.exc = exc
 
 
 class NoOpResponse(Response):
