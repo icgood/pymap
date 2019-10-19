@@ -12,7 +12,7 @@ from asyncio import shield, Task, StreamReader, StreamWriter, AbstractServer, \
 from base64 import b64encode, b64decode
 from contextlib import closing, AsyncExitStack
 from ssl import SSLContext
-from typing import TypeVar, Iterable, Sequence, List, Optional, Awaitable
+from typing import TypeVar, Optional, Iterable, Sequence, List, Awaitable
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
@@ -31,7 +31,7 @@ from pymap.parsing.response import ResponseContinuation, Response, \
 from pymap.parsing.state import ParsingState, ParsingInterrupt, \
     ExpectContinuation
 from pymap.sockets import InheritedSockets, SocketInfo
-from pysasl import ServerChallenge, AuthenticationError, \
+from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError, \
     AuthenticationCredentials
 
 from .state import ConnectionState
@@ -66,8 +66,10 @@ class IMAPService(ServiceInterface):  # pragma: no cover
             group.add_argument('--systemd-sockets', action='store_const',
                                dest='inherited_sockets', const='systemd',
                                help='use systemd inherited sockets')
-        group.add_argument('--insecure-login', action='store_true',
-                           help='allow plaintext login without TLS')
+        else:
+            parser.set_defaults(inherited_sockets=None)
+        group.add_argument('--no-tls', dest='tls', action='store_false',
+                           help='disable TLS')
 
     @classmethod
     async def start(cls, backend: BackendInterface,
@@ -202,22 +204,23 @@ class IMAPConnection:
         mech = state.auth.get_server(mech_name)
         if not mech:
             return None
-        responses: List[ServerChallenge] = []
+        responses: List[ChallengeResponse] = []
         while True:
             try:
                 creds, final = mech.server_attempt(responses)
             except ServerChallenge as chal:
-                chal_bytes = b64encode(chal.get_challenge())
+                chal_bytes = b64encode(chal.data)
                 cont = ResponseContinuation(chal_bytes)
                 await self.write_response(cont)
                 resp_bytes = bytes(await self.read_continuation(0))
-                try:
-                    chal.set_response(b64decode(resp_bytes))
-                except binascii.Error as exc:
-                    raise AuthenticationError(exc)
                 if resp_bytes.rstrip(b'\r\n') == b'*':
                     raise AuthenticationError('Authentication canceled.')
-                responses.append(chal)
+                try:
+                    resp_dec = b64decode(resp_bytes)
+                except binascii.Error as exc:
+                    raise AuthenticationError() from exc
+                else:
+                    responses.append(ChallengeResponse(chal.data, resp_dec))
             else:
                 if final is not None:
                     cont = ResponseContinuation(b64encode(final))

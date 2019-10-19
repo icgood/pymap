@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import binascii
 import logging
 import re
 from argparse import ArgumentParser
@@ -21,7 +22,7 @@ from pymap.interfaces.session import LoginProtocol, SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
 from pymap.sockets import SocketInfo
-from pysasl import ServerChallenge, AuthenticationError, \
+from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError, \
     AuthenticationCredentials
 
 from .command import Command, NoOpCommand, LogoutCommand, CapabilityCommand, \
@@ -221,26 +222,29 @@ class ManageSieveConnection:
         mech = self.auth.get_server(cmd.mech_name)
         if not mech:
             return Response(Condition.NO, text='Invalid SASL mechanism.')
-        responses: List[ServerChallenge] = []
+        responses: List[ChallengeResponse] = []
         if cmd.initial_data is not None:
-            chal = ServerChallenge(b'')
-            chal.set_response(b64decode(cmd.initial_data))
-            responses.append(chal)
+            resp_dec = b64decode(cmd.initial_data)
+            responses.append(ChallengeResponse(b'', resp_dec))
         while True:
             try:
                 creds, final = mech.server_attempt(responses)
             except ServerChallenge as chal:
-                chal_bytes = b64encode(chal.get_challenge())
+                chal_bytes = b64encode(chal.data)
                 chal_str = String.build(chal_bytes)
                 chal_str.write(self.writer)
                 self.writer.write(b'\r\n')
                 await self.writer.drain()
                 resp_bytes = await self._read_data()
                 resp_str, _ = String.parse(resp_bytes, self.params)
-                chal.set_response(b64decode(resp_str.value))
                 if resp_str.value == b'*':
                     raise AuthenticationError('Authentication cancelled.')
-                responses.append(chal)
+                try:
+                    resp_dec = b64decode(resp_str.value)
+                except binascii.Error as exc:
+                    raise AuthenticationError() from exc
+                else:
+                    responses.append(ChallengeResponse(chal.data, resp_dec))
             except AuthenticationError as exc:
                 return Response(Condition.NO, text=str(exc))
             else:
@@ -284,7 +288,7 @@ class ManageSieveConnection:
         protocol.connection_made(new_transport)
         self._print('%d <->| %s', b'<TLS handshake>')
         self._offer_starttls = False
-        self.auth = self.config.insecure_auth
+        self.auth = self.config.tls_auth
         return CapabilitiesResponse(self.capabilities)
 
     async def run(self) -> None:

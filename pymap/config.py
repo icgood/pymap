@@ -94,7 +94,7 @@ class IMAPConfig(metaclass=ABCMeta):
             Alternatively, you can pass extra arguments ``cert_file`` and
             ``key_file`` and an SSL context will be created.
         starttls_enabled: True if opportunistic TLS should be supported.
-        reject_insecure_auth: True if authentication mechanisms that transmit
+        secure_auth: True if authentication mechanisms that transmit
             credentials in cleartext should be rejected on non-encrypted
             transports.
         preauth_credentials: If given, clients will pre-authenticate on
@@ -119,8 +119,8 @@ class IMAPConfig(metaclass=ABCMeta):
                  debug: bool = False,
                  subsystem: Subsystem = None,
                  ssl_context: SSLContext = None,
-                 starttls_enabled: bool = True,
-                 reject_insecure_auth: bool = True,
+                 tls_enabled: bool = True,
+                 secure_auth: bool = True,
                  preauth_credentials: AuthenticationCredentials = None,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
@@ -138,8 +138,7 @@ class IMAPConfig(metaclass=ABCMeta):
         self.disable_search_keys: Final = disable_search_keys or []
         self.max_idle_wait: Final = max_idle_wait
         self._ssl_context = ssl_context or self._load_certs(extra)
-        self._starttls_enabled = starttls_enabled
-        self._reject_insecure_auth = reject_insecure_auth
+        self._tls_enabled = tls_enabled
         self._preauth_credentials = preauth_credentials
         self._max_append_len = max_append_len
 
@@ -166,9 +165,8 @@ class IMAPConfig(metaclass=ABCMeta):
         """
         parsed_args = cls.parse_args(args)
         return cls(args, host=args.host, port=args.port, debug=args.debug,
-                   reject_insecure_auth=not args.insecure_login,
                    cert_file=args.cert, key_file=args.key,
-                   **parsed_args)
+                   tls_enabled=args.tls, **parsed_args)
 
     def apply_context(self) -> None:
         """Apply the configured settings to any :mod:`~pymap.context`
@@ -211,14 +209,14 @@ class IMAPConfig(metaclass=ABCMeta):
 
     @property
     def initial_auth(self) -> SASLAuth:
-        if self._reject_insecure_auth:
+        if self._tls_enabled:
             return SASLAuth([])
         else:
-            return self.insecure_auth
+            return self.tls_auth
 
     @property
-    def insecure_auth(self) -> SASLAuth:
-        return SASLAuth.plaintext()
+    def tls_auth(self) -> SASLAuth:
+        return SASLAuth.defaults()
 
     @property
     def preauth_credentials(self) -> Optional[AuthenticationCredentials]:
@@ -244,7 +242,7 @@ class IMAPConfig(metaclass=ABCMeta):
     @property
     def initial_capability(self) -> Sequence[bytes]:
         ret = [b'LITERAL+']
-        if self._starttls_enabled:
+        if self._tls_enabled:
             ret.append(b'STARTTLS')
         return ret
 

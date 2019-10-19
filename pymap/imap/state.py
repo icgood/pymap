@@ -105,7 +105,7 @@ class ConnectionState:
         if preauth_creds:
             self._session = await self._login(preauth_creds)
         elif socket_info.get().from_localhost:
-            self.auth = self.config.insecure_auth
+            self.auth = self.config.tls_auth
         resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
         return resp_cls(b'*', self.config.greeting, self.capability)
 
@@ -134,7 +134,7 @@ class ConnectionState:
             self._capability.remove(b'STARTTLS')
         except ValueError:
             raise NotSupportedError('STARTTLS not available.')
-        self.auth = self.config.insecure_auth
+        self.auth = self.config.tls_auth
         return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 
     async def do_capability(self, cmd: CapabilityCommand) -> _CommandRet:
