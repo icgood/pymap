@@ -13,7 +13,6 @@ class TestManageSieve(TestBase):
             b'"IMPLEMENTATION" "pymap managesieve', (br'.*?', ), b'"\r\n'
             b'"SASL" "PLAIN LOGIN"\r\n'
             b'"SIEVE" "fileinto reject envelope body"\r\n'
-            b'"STARTTLS"\r\n'
             b'"UNAUTHENTICATE"\r\n'
             b'"VERSION" "1.0"\r\n'
             b'OK\r\n')
