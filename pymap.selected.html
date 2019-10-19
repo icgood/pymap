@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.selected &#8212; pymap 0.13.2 documentation</title>
+    <title>pymap.selected &#8212; pymap 0.13.3 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="pymap.search.html" title="pymap.search"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.13.3 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -60,7 +60,7 @@
 <dl class="class">
 <dt id="pymap.selected.SelectedSet">
 <em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedSet</code><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Maintains a weak set of <a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a> objects that exist for
 a mailbox, across all sessions. This is useful for assigning the
 <code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag, as well as notifying other sessions about updates.</p>
@@ -69,7 +69,7 @@ a mailbox, across all sessions. This is useful for assigning the
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>updated</strong> – The event to notify when updates occur. Defaults to a new
-event using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.7)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> concurrency primitives.</td>
+event using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> concurrency primitives.</td>
 </tr>
 </tbody>
 </table>
@@ -84,7 +84,7 @@ returned by <code class="xref py py-meth docutils literal notranslate"><span cla
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>selected</strong> (<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The new selected mailbox object.</li>
-<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – An existing selected mailbox object that should be removed
+<li><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – An existing selected mailbox object that should be removed
 from the weak set.</li>
 </ul>
 </td>
@@ -120,7 +120,7 @@ will not be chosen.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -131,7 +131,7 @@ will not be chosen.</p>
 <dl class="class">
 <dt id="pymap.selected.SynchronizedMessages">
 <em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SynchronizedMessages</code><a class="headerlink" href="#pymap.selected.SynchronizedMessages" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Manages the message data that has been synchronized with the client.</p>
 <dl class="attribute">
 <dt id="pymap.selected.SynchronizedMessages.exists">
@@ -141,7 +141,7 @@ will not be chosen.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -155,7 +155,7 @@ will not be chosen.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -169,9 +169,9 @@ will not be chosen.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -188,7 +188,7 @@ sequence set.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – The message sequence set.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>
@@ -205,7 +205,7 @@ given sequence set.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – The message sequence set.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>
@@ -216,7 +216,7 @@ given sequence set.</p>
 <dl class="class">
 <dt id="pymap.selected.SelectedMailbox">
 <em class="property">class </em><code class="descclassname">pymap.selected.</code><code class="descname">SelectedMailbox</code><span class="sig-paren">(</span><em>mailbox_id</em>, <em>readonly</em>, <em>permanent_flags</em>, <em>session_flags</em>, <em>selected_set=None</em>, <em>lookup=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Manages the updates to the current selected mailbox from other
 concurrent sessions.</p>
 <p>The current state of the selected mailbox will be written to this object by
@@ -229,10 +229,10 @@ untagged responses that should be added to the response.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>mailbox_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code>) – The globally unique identifier of the selected mailbox.</li>
-<li><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Indicates the mailbox is selected as read-only.</li>
+<li><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Indicates the mailbox is selected as read-only.</li>
 <li><strong>permanent_flags</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.PermanentFlags" title="pymap.flags.PermanentFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermanentFlags</span></code></a>) – The defined permanent flags for the mailbox.</li>
 <li><strong>session_flags</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionFlags</span></code></a>) – Session-only flags for the mailbox.</li>
-<li><strong>selected_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedSet" title="pymap.selected.SelectedSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedSet</span></code></a>]) – The <code class="docutils literal notranslate"><span class="pre">self</span></code> object and subsequent forked copies will be
+<li><strong>selected_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedSet" title="pymap.selected.SelectedSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedSet</span></code></a>]) – The <code class="docutils literal notranslate"><span class="pre">self</span></code> object and subsequent forked copies will be
 kept in in this set.</li>
 </ul>
 </td>
@@ -267,7 +267,7 @@ name of the mailbox.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -281,7 +281,7 @@ name of the mailbox.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -297,7 +297,7 @@ message sequence numbers will not be adjusted, until the next
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -323,8 +323,8 @@ of messages that have been updated, it should instead use
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The cached message objects to add.</li>
-<li><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The set of message UIDs that have been expunged.</li>
+<li><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The cached message objects to add.</li>
+<li><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The set of message UIDs that have been expunged.</li>
 </ul>
 </td>
 </tr>
@@ -348,7 +348,7 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The entire set of cached message objects.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>]) – The entire set of cached message objects.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
@@ -364,7 +364,7 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -440,7 +440,7 @@ at the same time, the FETCH response will be sent.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – The sequence set of messages.</li>
-<li><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AbstractSet" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The set of flags for the update operation.</li>
+<li><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AbstractSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The set of flags for the update operation.</li>
 <li><strong>flag_op</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagOp</span></code></a>) – The mode to change the flags.</li>
 </ul>
 </td>
@@ -464,7 +464,7 @@ of the object is also returned, ready for the next command.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>) – The command that was finished.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.7)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.UntaggedResponse" title="pymap.parsing.response.UntaggedResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">UntaggedResponse</span></code></a>]]</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.UntaggedResponse" title="pymap.parsing.response.UntaggedResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">UntaggedResponse</span></code></a>]]</td>
 </tr>
 </tbody>
 </table>
@@ -547,7 +547,7 @@ of the object is also returned, ready for the next command.</p>
         <li class="right" >
           <a href="pymap.search.html" title="pymap.search"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.13.3 documentation</a> &#187;</li>
  
       </ul>
     </div>
