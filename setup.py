@@ -19,8 +19,56 @@
 # THE SOFTWARE.
 #
 
-from setuptools import setup  # type: ignore
-from setuptools.config import read_configuration  # type: ignore
+from setuptools import setup, find_packages  # type: ignore
 
-conf_dict = read_configuration('setup.cfg')
-setup(**conf_dict['metadata'], **conf_dict['options'])
+with open('README.md') as f:
+    readme = f.read()
+
+with open('LICENSE.md') as f:
+    license = f.read()
+
+setup(name='pymap',
+      version='0.13.3',
+      author='Ian Good',
+      author_email='icgood@gmail.com',
+      description='Lightweight, asynchronous IMAP serving in Python.',
+      long_description=readme + license,
+      long_description_content_type='text/markdown',
+      license='MIT',
+      url='https://github.com/icgood/pymap/',
+      classifiers=[
+          'Development Status :: 3 - Alpha',
+          'Topic :: Communications :: Email :: Post-Office',
+          'Topic :: Communications :: Email :: Post-Office :: IMAP',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Information Technology',
+          'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 3.8'],
+      python_requires='~=3.8',
+      include_package_data=True,
+      packages=find_packages(),
+      install_requires=[
+          'pysasl >= 0.5.0',
+          'typing-extensions'],
+      extras_require={
+          'redis': ['aioredis >= 1.3.0', 'msgpack'],
+          'grpc': ['grpclib', 'protobuf'],
+          'sieve': ['sievelib'],
+          'optional': ['hiredis', 'passlib', 'systemd-python']},
+      entry_points={
+          'console_scripts': [
+              'pymap = pymap.main:main',
+              'pymap-admin = pymap.admin.client.main:main [grpc]'],
+          'pymap.backend': [
+              'dict = pymap.backend.dict:DictBackend',
+              'maildir = pymap.backend.maildir:MaildirBackend',
+              'redis = pymap.backend.redis:RedisBackend [redis]'],
+          'pymap.service': [
+              'imap = pymap.imap:IMAPService',
+              'admin = pymap.admin:AdminService [grpc]',
+              'managesieve = pymap.sieve.manage:ManageSieveService [sieve]'],
+          'pymap.filter': [
+              'sieve = pymap.sieve:SieveCompiler [sieve]'],
+          'pymap.admin.client': [
+              'append = pymap.admin.client.append:AppendCommand']})
