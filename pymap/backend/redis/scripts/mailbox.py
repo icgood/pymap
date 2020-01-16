@@ -53,14 +53,17 @@ class MessageAdd(ScriptBase[Tuple[int, bytes, bytes]]):
             header, self._pack(header_json)])
 
 
-class MessageCopy(ScriptBase[None]):
+class MessageCopy(ScriptBase[int]):
 
     def __init__(self) -> None:
         super().__init__('message_copy')
 
+    def _convert(self, ret: Tuple[bytes]) -> int:
+        return int(ret[0])
+
     async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
-                       mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys,
-                       source_uid: int, recent: bool) -> None:
+                       mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys, *,
+                       source_uid: int, recent: bool) -> int:
         keys = [mbx_keys.uids, dest_mbx_keys.max_uid, dest_mbx_keys.uids,
                 dest_mbx_keys.seq, dest_mbx_keys.content,
                 dest_mbx_keys.changes, dest_mbx_keys.recent,
@@ -70,14 +73,17 @@ class MessageCopy(ScriptBase[None]):
             source_uid, int(recent)])
 
 
-class MessageMove(ScriptBase[None]):
+class MessageMove(ScriptBase[int]):
 
     def __init__(self) -> None:
         super().__init__('message_move')
 
+    def _convert(self, ret: Tuple[bytes]) -> int:
+        return int(ret[0])
+
     async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
-                       mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys,
-                       source_uid: int, recent: bool) -> None:
+                       mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys, *,
+                       source_uid: int, recent: bool) -> int:
         keys = [mbx_keys.uids, mbx_keys.seq, mbx_keys.content,
                 mbx_keys.changes, mbx_keys.recent, mbx_keys.deleted,
                 mbx_keys.unseen, dest_mbx_keys.max_uid, dest_mbx_keys.uids,
