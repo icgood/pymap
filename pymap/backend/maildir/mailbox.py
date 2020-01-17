@@ -6,9 +6,9 @@ import os
 import os.path
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage
-from typing import Dict, Optional, Union, Literal, Tuple, FrozenSet, \
-    Iterable, AsyncIterable
-from typing_extensions import Final
+from typing import Dict, Optional, Union, Tuple, FrozenSet, Iterable, \
+    AsyncIterable
+from typing_extensions import Final, Literal
 
 from pymap.concurrent import ReadWriteLock
 from pymap.context import subsystem

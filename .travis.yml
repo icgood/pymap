@@ -1,6 +1,6 @@
 language: python
 python:
-  - "3.8"
+  - "3.7"
 dist: bionic     # https://docs.travis-ci.com/user/languages/python/#python-37-and-higher
 install:
   - travis_retry pip install -r doc/requirements.txt
