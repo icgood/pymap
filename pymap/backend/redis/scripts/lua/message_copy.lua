@@ -34,7 +34,7 @@ for i, flag in ipairs(msg_flags) do
 end
 
 local dest_uid = redis.call('INCR', dest_max_uid_key)
-redis.call('HSET', dest_uids_key, dest_uid, message)
+redis.call('HSET', dest_uids_key, dest_uid, message_str)
 redis.call('ZADD', dest_seq_key, dest_uid, dest_uid)
 redis.call('HSET', dest_content_key, dest_uid, msg_email_id)
 
@@ -56,4 +56,4 @@ end
 
 redis.call('HINCRBY', content_refs_key, msg_email_id, 1)
 
-return redis.status_reply('OK')
+return {dest_uid}

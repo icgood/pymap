@@ -2,9 +2,12 @@
 # source: pymap/admin/grpc/admin.proto
 # plugin: grpclib.plugin.main
 import abc
+import typing
 
 import grpclib.const
 import grpclib.client
+if typing.TYPE_CHECKING:
+    import grpclib.server
 
 import pymap.admin.grpc.admin_pb2
 
@@ -12,10 +15,10 @@ import pymap.admin.grpc.admin_pb2
 class AdminBase(abc.ABC):
 
     @abc.abstractmethod
-    async def Append(self, stream):
+    async def Append(self, stream: 'grpclib.server.Stream[pymap.admin.grpc.admin_pb2.AppendRequest, pymap.admin.grpc.admin_pb2.AppendResponse]') -> None:
         pass
 
-    def __mapping__(self):
+    def __mapping__(self) -> typing.Dict[str, grpclib.const.Handler]:
         return {
             '/admin.Admin/Append': grpclib.const.Handler(
                 self.Append,

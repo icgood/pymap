@@ -5,8 +5,9 @@ import errno
 import os
 import os.path
 from datetime import datetime
-from mailbox import Maildir as _Maildir, MaildirMessage  # type: ignore
-from typing import Dict, Optional, Tuple, FrozenSet, Iterable, AsyncIterable
+from mailbox import Maildir as _Maildir, MaildirMessage
+from typing import Dict, Optional, Union, Literal, Tuple, FrozenSet, \
+    Iterable, AsyncIterable
 from typing_extensions import Final
 
 from pymap.concurrent import ReadWriteLock
@@ -35,13 +36,41 @@ __all__ = ['Maildir', 'Message', 'MailboxData', 'MailboxSet']
 
 class Maildir(_Maildir):
 
+    @property
+    def _path_new(self) -> str:
+        return self._paths['new']  # type: ignore
+
+    @property
+    def _path_cur(self) -> str:
+        return self._paths['cur']  # type: ignore
+
+    def _join(self, subpath: str) -> str:
+        base_path: str = self._path  # type: ignore
+        return os.path.join(base_path, subpath)
+
+    def _split(self, subpath: str) \
+            -> Tuple[Union[Literal['new'], Literal['cur']], str]:
+        subdir, name = os.path.split(subpath)
+        if subdir == 'new':
+            return 'new', name
+        elif subdir == 'cur':
+            return 'cur', name
+        else:
+            raise ValueError(subdir)
+
+    def _lookup(self, key: str) -> str:
+        return super()._lookup(key)  # type: ignore
+
+    def _update(self, key: str, subpath: str) -> None:
+        self._toc[key] = subpath  # type: ignore
+
     def claim_new(self) -> Iterable[str]:
         """Checks for messages in the ``new`` subdirectory, moving them to
         ``cur`` and returning their keys.
 
         """
-        new_subdir = self._paths['new']
-        cur_subdir = self._paths['cur']
+        new_subdir = self._path_new
+        cur_subdir = self._path_cur
         for name in os.listdir(new_subdir):
             new_path = os.path.join(new_subdir, name)
             cur_path = os.path.join(cur_subdir, name)
@@ -55,10 +84,10 @@ class Maildir(_Maildir):
     def move_message(self, key: str, dest: Maildir, dest_subdir: str) -> str:
         """Moves the message to another maildir."""
         subpath = self._lookup(key)
-        subdir, name = os.path.split(subpath)
+        subdir, name = self._split(subpath)
         dest_subpath = os.path.join(dest_subdir, name)
-        path = os.path.join(self._path, subpath)
-        dest_path = os.path.join(dest._path, dest_subpath)
+        path = self._join(subpath)
+        dest_path = dest._join(dest_subpath)
         os.rename(path, dest_path)
         return name
 
@@ -69,11 +98,11 @@ class Maildir(_Maildir):
         """
         msg = MaildirMessage()
         subpath = self._lookup(key)
-        subdir, name = os.path.split(subpath)
+        subdir, name = self._split(subpath)
         msg.set_subdir(subdir)
         if self.colon in name:
             msg.set_info(name.rsplit(self.colon, 1)[-1])
-        msg.set_date(os.path.getmtime(os.path.join(self._path, subpath)))
+        msg.set_date(os.path.getmtime(self._join(subpath)))
         return msg
 
     def update_metadata(self, key: str, msg: MaildirMessage) -> None:
@@ -82,17 +111,17 @@ class Maildir(_Maildir):
 
         """
         subpath = self._lookup(key)
-        subdir, name = os.path.split(subpath)
+        subdir, name = self._split(subpath)
         new_subdir = msg.get_subdir()
         new_name = key + self.colon + msg.get_info()
         if subdir != new_subdir:
             raise ValueError('Message subdir may not be updated')
         elif name != new_name:
             new_subpath = os.path.join(msg.get_subdir(), new_name)
-            old_path = os.path.join(self._path, subpath)
-            new_path = os.path.join(self._path, new_subpath)
+            old_path = self._join(subpath)
+            new_path = self._join(new_subpath)
             os.rename(old_path, new_path)
-            self._toc[key] = new_subpath
+            self._update(key, new_subpath)
 
 
 class Message(BaseMessage):

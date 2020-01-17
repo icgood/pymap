@@ -58,4 +58,4 @@ if msg_unseen == 1 then
     redis.call('ZADD', dest_unseen_key, dest_uid, dest_uid)
 end
 
-return redis.status_reply('OK')
+return {dest_uid}

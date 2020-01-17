@@ -92,8 +92,8 @@ class IMAPService(ServiceInterface):  # pragma: no cover
 
     @classmethod
     async def _run(cls, server: AbstractServer) -> None:
-        async with server:  # type: ignore
-            await server.serve_forever()  # type: ignore
+        async with server:
+            await server.serve_forever()
 
 
 class IMAPServer:
@@ -270,8 +270,8 @@ class IMAPConnection:
     async def start_tls(self, ssl_context: SSLContext) -> None:
         loop = asyncio.get_event_loop()
         transport = self.writer.transport
-        protocol = transport.get_protocol()  # type: ignore
-        new_transport = await loop.start_tls(  # type: ignore
+        protocol = transport.get_protocol()
+        new_transport = await loop.start_tls(
             transport, protocol, ssl_context, server_side=True)
         protocol._stream_reader = StreamReader(loop=loop)  # type: ignore
         protocol._client_connected_cb = self._reset_streams  # type: ignore

@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing_extensions import Final
 
+from grpclib.server import Stream
 from pymap.context import connection_exit
 from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import BackendInterface
@@ -14,7 +15,8 @@ from pysasl.external import ExternalResult
 
 from ._util import exit_context
 from .grpc.admin_grpc import AdminBase
-from .grpc.admin_pb2 import Login, ERROR_RESPONSE
+from .grpc.admin_pb2 import Login, ERROR_RESPONSE, \
+    AppendRequest, AppendResponse
 
 __all__ = ['AdminHandlers']
 
@@ -43,7 +45,8 @@ class AdminHandlers(AdminBase):
         return not self.config.args.no_filter
 
     @exit_context
-    async def Append(self, stream) -> None:
+    async def Append(self, stream: Stream[AppendRequest, AppendResponse]) \
+            -> None:
         """Append a message directly to a user's mailbox.
 
         If the backend session defines a
@@ -63,8 +66,8 @@ class AdminHandlers(AdminBase):
                 request and response.
 
         """
-        from .grpc.admin_pb2 import AppendRequest, AppendResponse
-        request: AppendRequest = await stream.recv_message()
+        request = await stream.recv_message()
+        assert request is not None
         mailbox = request.mailbox or 'INBOX'
         flag_set = frozenset(Flag(flag) for flag in request.flags)
         when = datetime.fromtimestamp(request.when, timezone.utc)

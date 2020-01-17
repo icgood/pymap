@@ -1,15 +1,16 @@
 language: python
 python:
-  - "3.7"
+  - "3.8"
 dist: bionic     # https://docs.travis-ci.com/user/languages/python/#python-37-and-higher
 install:
   - travis_retry pip install -r doc/requirements.txt
   - travis_retry pip install -r test/requirements.txt
   - travis_retry pip install coveralls
   - travis_retry pip install -e .
+  - travis_retry git clone https://github.com/python/typeshed.git /tmp/typeshed
 script:
   - py.test --cov=pymap
-  - mypy pymap test
+  - mypy --custom-typeshed-dir /tmp/typeshed pymap test
   - flake8 pymap test
 after_success:
   - coveralls
