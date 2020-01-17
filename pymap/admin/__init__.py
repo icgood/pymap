@@ -9,7 +9,7 @@ from argparse import ArgumentParser, Namespace
 from asyncio import Task, AbstractServer, CancelledError
 from typing import Optional
 
-from grpclib.server import Server  # type: ignore
+from grpclib.server import Server
 from pymap.config import IMAPConfig
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 

@@ -7,7 +7,7 @@ import sys
 from argparse import ArgumentParser, Namespace, FileType
 from typing import Type, Mapping
 
-from grpclib.client import Channel  # type: ignore
+from grpclib.client import Channel
 from pkg_resources import iter_entry_points, DistributionNotFound
 from pymap import __version__
 

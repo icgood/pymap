@@ -7,9 +7,10 @@ install:
   - travis_retry pip install -r test/requirements.txt
   - travis_retry pip install coveralls
   - travis_retry pip install -e .
+  - travis_retry git clone https://github.com/python/typeshed.git /tmp/typeshed
 script:
   - py.test --cov=pymap
-  - mypy pymap test
+  - mypy --custom-typeshed-dir /tmp/typeshed pymap test
   - flake8 pymap test
 after_success:
   - coveralls

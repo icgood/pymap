@@ -75,8 +75,8 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         return self._task
 
     async def _run(self) -> None:
-        async with self._server:  # type: ignore
-            await self._server.serve_forever()  # type: ignore
+        async with self._server:
+            await self._server.serve_forever()
 
 
 class ManageSieveServer:
@@ -280,8 +280,8 @@ class ManageSieveConnection:
         await self._write_response(resp)
         loop = asyncio.get_event_loop()
         transport = self.writer.transport
-        protocol = transport.get_protocol()  # type: ignore
-        new_transport = await loop.start_tls(  # type: ignore
+        protocol = transport.get_protocol()
+        new_transport = await loop.start_tls(
             transport, protocol, ssl_context, server_side=True)
         protocol._stream_reader = StreamReader(loop=loop)  # type: ignore
         protocol._client_connected_cb = self._reset_streams  # type: ignore
