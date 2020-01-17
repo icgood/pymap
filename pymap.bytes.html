@@ -8,18 +8,33 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.bytes &#8212; pymap 0.13.3 documentation</title>
+    <title>pymap.bytes &#8212; pymap 0.13.4 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
-    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
-    <script type="text/javascript" src="_static/cloud.base.js"></script>
-    <script type="text/javascript" src="_static/cloud.js"></script>
+
+    
+    
+     
+        <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script type="text/javascript" src="_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script type="text/javascript" src="_static/cloud.js"></script>
+    
+
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="pymap.concurrent" href="pymap.concurrent.html" />
@@ -43,7 +58,7 @@
         <li class="right" >
           <a href="index.html" title="pymap Documentation"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.13.4 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -73,7 +88,7 @@
 <dl class="class">
 <dt id="pymap.bytes.WriteStream">
 <em class="property">class </em><code class="descclassname">pymap.bytes.</code><code class="descname">WriteStream</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.bytes.WriteStream" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Typing protocol indicating the object implements the <a class="reference internal" href="#pymap.bytes.WriteStream.write" title="pymap.bytes.WriteStream.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a>
 method.</p>
 <div class="admonition seealso">
@@ -141,7 +156,7 @@ buffer.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]) – The object to wrap.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The object to wrap.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a></td>
 </tr>
@@ -157,7 +172,7 @@ buffer.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>]]) – The iterable to wrap.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]) – The iterable to wrap.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a></td>
 </tr>
@@ -207,7 +222,7 @@ operations, this class intends to provide cleaner typing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]) – The data interpolated into the format string.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]) – The data interpolated into the format string.</td>
 </tr>
 </tbody>
 </table>
@@ -234,7 +249,7 @@ operations, this class intends to provide cleaner typing.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes'&gt;</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]) – Iterable of items to join.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]) – Iterable of items to join.</td>
 </tr>
 </tbody>
 </table>
@@ -329,7 +344,7 @@ operations, this class intends to provide cleaner typing.</p>
         <li class="right" >
           <a href="index.html" title="pymap Documentation"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.13.4 documentation</a> &#187;</li>
  
       </ul>
     </div>
