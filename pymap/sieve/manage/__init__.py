@@ -283,9 +283,10 @@ class ManageSieveConnection:
         protocol = transport.get_protocol()
         new_transport = await loop.start_tls(
             transport, protocol, ssl_context, server_side=True)
-        protocol._stream_reader = StreamReader(loop=loop)  # type: ignore
-        protocol._client_connected_cb = self._reset_streams  # type: ignore
-        protocol.connection_made(new_transport)
+        new_protocol = new_transport.get_protocol()
+        new_writer = StreamWriter(new_transport, new_protocol,
+                                  self.reader, loop)
+        self._reset_streams(self.reader, new_writer)
         self._print('%d <->| %s', b'<TLS handshake>')
         self._offer_starttls = False
         self.auth = self.config.tls_auth
