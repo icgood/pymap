@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.interfaces &#8212; pymap 0.13.5 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.13.6 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.13.6 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -77,7 +77,7 @@
 <dl class="class">
 <dt id="pymap.interfaces.backend.BackendInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.backend.</code><code class="descname">BackendInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Defines the abstract base class that is expected for backends that
 register themselves on the <code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code> entry point.</p>
 <dl class="classmethod">
@@ -171,7 +171,7 @@ this backend. For example:</p>
 <dl class="class">
 <dt id="pymap.interfaces.backend.ServiceInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.backend.</code><code class="descname">ServiceInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.ServiceInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Defines the abstract base class that is expected for services that
 register themselves on the <code class="docutils literal notranslate"><span class="pre">pymap.service</span></code> entry point.</p>
 <dl class="attribute">
@@ -257,7 +257,7 @@ updates.</p>
 <dl class="class">
 <dt id="pymap.interfaces.message.CachedMessage">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.message.</code><code class="descname">CachedMessage</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.CachedMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Cached message metadata used to track state changes. Used to produce
 untagged FETCH responses when a message’s flags have changed, or when a
 FETCH command requests metadata of an expunged message before its untagged
@@ -370,7 +370,7 @@ message, used for detecting mailbox updates.</p>
 <dl class="class">
 <dt id="pymap.interfaces.message.MessageInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.message.</code><code class="descname">MessageInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.MessageInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Message data such as UID, permanent flags, and when the message was
 added to the system.</p>
 <dl class="attribute">
@@ -502,7 +502,7 @@ added to the system.</p>
 <dl class="class">
 <dt id="pymap.interfaces.message.LoadedMessageInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.message.</code><code class="descname">LoadedMessageInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.LoadedMessageInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>The loaded message content, which may include the header, the body,
 both, or neither, depending on the requirements.</p>
 <p>It is assumed that this object contains the entire content in-memory. As
@@ -706,7 +706,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
 <dl class="class">
 <dt id="pymap.interfaces.mailbox.MailboxInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.mailbox.</code><code class="descname">MailboxInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.mailbox.MailboxInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Describes a mailbox as it exists in an IMAP backend, whether or not it
 is currently selected.</p>
 <dl class="attribute">
@@ -878,7 +878,7 @@ mailbox of the same name must have a different ID.</p>
 <dl class="class">
 <dt id="pymap.interfaces.session.LoginProtocol">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.session.</code><code class="descname">LoginProtocol</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.LoginProtocol" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Defines the callback protocol that backends use to initialize a new
 session.</p>
 <dl class="method">
@@ -911,7 +911,7 @@ new IMAP session for the user.</p>
 <dl class="class">
 <dt id="pymap.interfaces.session.SessionInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.session.</code><code class="descname">SessionInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Corresponds to a single, authenticated IMAP session.</p>
 <dl class="attribute">
 <dt id="pymap.interfaces.session.SessionInterface.owner">
@@ -1463,7 +1463,7 @@ not the given folder name currently exists.</p>
 <dl class="class">
 <dt id="pymap.interfaces.filter.FilterInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.filter.</code><code class="descname">FilterInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Protocol defining the interface for message filters. Filters may choose
 the mailbox or discard the message or modify its contents or metadata. The
 filter may also trigger external functionality, such as sending a vacation
@@ -1501,7 +1501,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 <dl class="class">
 <dt id="pymap.interfaces.filter.FilterCompilerInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.filter.</code><code class="descname">FilterCompilerInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterCompilerInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Protocol for classes which can compile a filter value into an
 implementation.</p>
 <dl class="attribute">
@@ -1553,7 +1553,7 @@ implementation.</p>
 <dl class="class">
 <dt id="pymap.interfaces.filter.FilterSetInterface">
 <em class="property">class </em><code class="descclassname">pymap.interfaces.filter.</code><code class="descname">FilterSetInterface</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing_extensions.Protocol</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
 <p>Protocol defining the interface for accessing and managing the set of
 message filters currently active and available. This interface
 intentionally resembles that of a ManageSieve server.</p>
@@ -1810,7 +1810,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.13.6 documentation</a> &#187;</li>
  
       </ul>
     </div>
