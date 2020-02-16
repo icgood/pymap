@@ -5,6 +5,7 @@ pytest-asyncio
 pytest-cov
 aioredis
 hiredis
+msgpack
 grpclib
 protobuf
 sievelib
