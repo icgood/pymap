@@ -2,12 +2,9 @@
 from __future__ import annotations
 
 import asyncio
-import os
-import os.path
-import tempfile
-from argparse import ArgumentParser, Namespace
-from asyncio import Task, AbstractServer, CancelledError
-from typing import Optional
+from argparse import ArgumentParser
+from asyncio import Task, CancelledError
+from typing import Sequence
 
 from grpclib.server import Server
 from pymap.config import IMAPConfig
@@ -24,25 +21,18 @@ class AdminService(ServiceInterface):  # pragma: no cover
 
     """
 
-    def __init__(self, path: str, server: AbstractServer) -> None:
+    def __init__(self, servers: Sequence[Server]) -> None:
         super().__init__()
-        self._path = path
-        self._server = server
+        self._servers = servers
         self._task = asyncio.create_task(self._run())
-
-    @classmethod
-    def get_socket_path(cls) -> str:
-        """Return the default location of the UNIX socket file listening for
-        admin requests.
-
-        """
-        return os.path.join(tempfile.gettempdir(), 'pymap-admin.sock')
 
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('admin service')
-        group.add_argument('--admin-socket', metavar='PATH', dest='admin_sock',
-                           help='path to socket file')
+        group.add_argument('--admin-host', metavar='HOST', dest='admin_host',
+                           action='append', help='host to listen on')
+        group.add_argument('--admin-port', metavar='PORT', dest='admin_port',
+                           type=int, default=9090, help='port to listen on')
         group.add_argument('--no-filter', action='store_true',
                            help='do not filter appended messages')
 
@@ -50,43 +40,36 @@ class AdminService(ServiceInterface):  # pragma: no cover
     async def start(cls, backend: BackendInterface,
                     config: IMAPConfig) -> AdminService:
         config = backend.config
-        path: Optional[str] = config.args.admin_sock
+        hosts: Sequence[str] = config.args.admin_host
+        port: int = config.args.admin_port
+        if not hosts:
+            hosts = ['127.0.0.1']
+        servers = [await cls._start(backend, host, port) for host in hosts]
+        return cls(servers)
+
+    @classmethod
+    def _new_server(cls, backend: BackendInterface) -> Server:
+        loop = asyncio.get_event_loop()
         handlers = AdminHandlers(backend)
-        server = Server([handlers], loop=asyncio.get_event_loop())
-        path = await cls._start(path, server)
-        cls._chown(path, config.args)
-        return cls(path, server)
+        return Server([handlers], loop=loop)
 
     @classmethod
-    async def _start(cls, path: Optional[str], server: Server) -> str:
-        if not path:
-            path = cls.get_socket_path()
-        await server.start(path=path)
-        return path
-
-    @classmethod
-    def _chown(cls, path: str, args: Namespace) -> None:
-        uid = args.set_uid or -1
-        gid = args.set_gid or -1
-        if uid >= 0 or gid >= 0:
-            os.chown(path, uid, gid)
+    async def _start(cls, backend: BackendInterface,
+                     host: str, port: int) -> Server:
+        server = cls._new_server(backend)
+        await server.start(host=host, port=port, reuse_address=True)
+        return server
 
     @property
     def task(self) -> Task:
         return self._task
 
-    def _unlink_path(self) -> None:
-        try:
-            os.unlink(self._path)
-        except OSError:
-            pass
-
     async def _run(self) -> None:
-        server = self._server
+        servers = self._servers
         try:
-            await server.wait_closed()
+            for server in servers:
+                await server.wait_closed()
         except CancelledError:
-            server.close()
-            await server.wait_closed()
-        finally:
-            self._unlink_path()
+            for server in servers:
+                server.close()
+                await server.wait_closed()

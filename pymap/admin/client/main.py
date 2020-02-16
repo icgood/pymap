@@ -12,7 +12,6 @@ from pkg_resources import iter_entry_points, DistributionNotFound
 from pymap import __version__
 
 from .command import ClientCommand
-from .. import AdminService
 from ..grpc.admin_grpc import AdminStub
 
 
@@ -23,7 +22,10 @@ def main() -> int:
     parser.add_argument('--outfile', metavar='PATH',
                         type=FileType('w'), default=sys.stdout,
                         help='the output file (default: stdout)')
-    parser.add_argument('--socket', metavar='PATH', help='path to socket file')
+    parser.add_argument('--host', metavar='HOST', default='localhost',
+                        help='host to connect to')
+    parser.add_argument('--port', metavar='PORT', type=int, default=9090,
+                        help='port to connect to')
 
     subparsers = parser.add_subparsers(dest='command',
                                        help='which admin command to run')
@@ -42,8 +44,7 @@ def main() -> int:
 async def run(parser: ArgumentParser, args: Namespace,
               command_cls: Type[ClientCommand]) -> int:
     loop = asyncio.get_event_loop()
-    path = args.socket or AdminService.get_socket_path()
-    channel = Channel(path=path, loop=loop)
+    channel = Channel(host=args.host, port=args.port, loop=loop)
     stub = AdminStub(channel)
     command = command_cls(stub, args)
     try:
