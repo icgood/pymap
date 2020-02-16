@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.admin &#8212; pymap 0.13.6 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.14.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.6 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.14.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -74,25 +74,10 @@
 <span id="pymap-admin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code><a class="headerlink" href="#module-pymap.admin" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pymap.admin.AdminService">
-<em class="property">class </em><code class="descclassname">pymap.admin.</code><code class="descname">AdminService</code><span class="sig-paren">(</span><em>path</em>, <em>server</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.admin.</code><code class="descname">AdminService</code><span class="sig-paren">(</span><em>servers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.ServiceInterface</span></code></a></p>
 <p>A pymap service implemented using a <a class="reference external" href="https://grpc.io/">grpc</a> server
 to perform admin functions on a running backend.</p>
-<dl class="classmethod">
-<dt id="pymap.admin.AdminService.get_socket_path">
-<em class="property">classmethod </em><code class="descname">get_socket_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.get_socket_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the default location of the UNIX socket file listening for
-admin requests.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="classmethod">
 <dt id="pymap.admin.AdminService.add_arguments">
 <em class="property">classmethod </em><code class="descname">add_arguments</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.add_arguments" title="Permalink to this definition">¶</a></dt>
@@ -311,7 +296,7 @@ handler should receive a request, take action, and send the response.</p>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.6 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.14.0 documentation</a> &#187;</li>
  
       </ul>
     </div>

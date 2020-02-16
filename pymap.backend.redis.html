@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend.redis &#8212; pymap 0.13.6 documentation</title>
+    <title>pymap.backend.redis &#8212; pymap 0.14.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.6 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.14.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
@@ -71,8 +71,290 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="pymap-backend-redis">
-<h1><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code><a class="headerlink" href="#pymap-backend-redis" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-pymap.backend.redis">
+<span id="pymap-backend-redis"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code><a class="headerlink" href="#module-pymap.backend.redis" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pymap.backend.redis.RedisBackend">
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">RedisBackend</code><span class="sig-paren">(</span><em>login</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.BackendInterface</span></code></a></p>
+<p>Defines a backend that uses redis data structures for mailbox storage.</p>
+<dl class="attribute">
+<dt id="pymap.backend.redis.RedisBackend.login">
+<code class="descname">login</code><a class="headerlink" href="#pymap.backend.redis.RedisBackend.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login callback that takes authentication credentials and returns a
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.RedisBackend.task">
+<code class="descname">task</code><a class="headerlink" href="#pymap.backend.redis.RedisBackend.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>The task to run once the backend is initialized.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.backend.redis.RedisBackend.add_subparser">
+<em class="property">classmethod </em><code class="descname">add_subparser</code><span class="sig-paren">(</span><em>name</em>, <em>subparsers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend.add_subparser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a command-line argument sub-parser that will be used to choose
+this backend. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;foo backend&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</li>
+<li><strong>subparsers</strong> – The special action object as returned by
+<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.RedisBackend.config">
+<code class="descname">config</code><a class="headerlink" href="#pymap.backend.redis.RedisBackend.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IMAP config in use by the backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.backend.redis.RedisBackend.init">
+<em class="property">classmethod </em><code class="descname">init</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the backend and return an instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.redis.RedisBackend" title="pymap.backend.redis.RedisBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">RedisBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.backend.redis.Config">
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>*</em>, <em>address</em>, <em>select</em>, <em>separator</em>, <em>prefix</em>, <em>users_prefix</em>, <em>users_json</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.config.IMAPConfig</span></code></a></p>
+<p>The config implementation for the redis backend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
+<li><strong>address</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The redis server address.</li>
+<li><strong>select</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The redis database for mail data.</li>
+<li><strong>separator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The redis key segment separator.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The prefix for mail data keys.</li>
+<li><strong>users_prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The user lookup key template.</li>
+<li><strong>users_json</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the user lookup value contains JSON.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.backend_capability">
+<code class="descname">backend_capability</code><a class="headerlink" href="#pymap.backend.redis.Config.backend_capability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows backends to declare support for IMAP extensions and other
+capabilities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.config.html#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.address">
+<code class="descname">address</code><a class="headerlink" href="#pymap.backend.redis.Config.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>The redis server address. Defaults to a connection to localhost.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://aioredis.readthedocs.io/en/latest/api_reference.html#aioredis.create_connection" title="(in aioredis v1.3)"><code class="xref py py-func docutils literal notranslate"><span class="pre">aioredis.create_connection()</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.select">
+<code class="descname">select</code><a class="headerlink" href="#pymap.backend.redis.Config.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>The redis database for mail data. If given, the <a class="reference external" href="https://redis.io/commands/select">SELECT</a> command is
+called after successful user lookup.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.separator">
+<code class="descname">separator</code><a class="headerlink" href="#pymap.backend.redis.Config.separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>The bytestring used to separate segments of composite redis keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.prefix">
+<code class="descname">prefix</code><a class="headerlink" href="#pymap.backend.redis.Config.prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The prefix for mail data keys. This prefix does not apply to
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">users_key</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.users_prefix">
+<code class="descname">users_prefix</code><a class="headerlink" href="#pymap.backend.redis.Config.users_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The prefix for user lookup keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.redis.Config.users_json">
+<code class="descname">users_json</code><a class="headerlink" href="#pymap.backend.redis.Config.users_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the value from the user lookup key contains a JSON object
+with a <code class="docutils literal notranslate"><span class="pre">&quot;password&quot;</span></code> attribute, instead of a redis hash with a
+<code class="docutils literal notranslate"><span class="pre">password</span></code> key.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://redis.io/topics/data-types-intro#redis-hashes">redis hashes</a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.backend.redis.Config.parse_args">
+<em class="property">classmethod </em><code class="descname">parse_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Config.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given command-line arguments, return a dictionary of keywords that
+should be passed in to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code> (or sub-class)
+constructor. Sub-classes should override this method as needed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.backend.redis.Session">
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>redis</em>, <em>owner</em>, <em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
+<p>The session implementation for the redis backend.</p>
+<dl class="attribute">
+<dt id="pymap.backend.redis.Session.filter_set">
+<code class="descname">filter_set</code><a class="headerlink" href="#pymap.backend.redis.Session.filter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the active and inactive filters for the login user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSet</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pymap.backend.redis.Session.login">
+<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>cls</em>, <em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the given credentials for a valid login and returns a new
+session.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="#pymap.backend.redis.Session" title="pymap.backend.redis.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <div class="section" id="module-pymap.backend.redis.keys">
 <span id="pymap-backend-redis-keys"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code><a class="headerlink" href="#module-pymap.backend.redis.keys" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -351,8 +633,85 @@ typically correspond to a login user.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="pymap-backend-redis-cleanup">
-<h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code><a class="headerlink" href="#pymap-backend-redis-cleanup" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pymap.backend.redis.cleanup">
+<span id="pymap-backend-redis-cleanup"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code><a class="headerlink" href="#module-pymap.backend.redis.cleanup" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pymap.backend.redis.cleanup.CleanupTask">
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.cleanup.</code><code class="descname">CleanupTask</code><span class="sig-paren">(</span><em>connect_redis</em>, <em>global_keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Maintains a <a class="reference internal" href="#pymap.backend.redis.cleanup.CleanupThread" title="pymap.backend.redis.cleanup.CleanupThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">CleanupThread</span></code></a> for the duration of the process
+lifetime, restarting on failure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connect_redis</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>]]) – Supplies a connected redis object.</li>
+<li><strong>root</strong> – The root redis key.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="pymap.backend.redis.cleanup.CleanupTask.connection_delay">
+<code class="descname">connection_delay</code><em class="property"> = 5.0</em><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask.connection_delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>The delay between redis reconnect attempts, on connection failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pymap.backend.redis.cleanup.CleanupTask.run_forever">
+<code class="descname">run_forever</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask.run_forever" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the cleanup loop indefinitely.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pymap.backend.redis.cleanup.CleanupThread">
+<em class="property">class </em><code class="descclassname">pymap.backend.redis.cleanup.</code><code class="descname">CleanupThread</code><span class="sig-paren">(</span><em>redis</em>, <em>global_keys</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Defines the logic for monitoring and executing cleanup of various
+entities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>redis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – The redis connection object.</li>
+<li><strong>global_keys</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.GlobalKeys" title="pymap.backend.redis.keys.GlobalKeys"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalKeys</span></code></a>) – The global keys group.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pymap.backend.redis.cleanup.CleanupThread.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupThread.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the cleanup loop indefinitely.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://aioredis.readthedocs.io/en/latest/api_reference.html#aioredis.ConnectionClosedError" title="(in aioredis v1.3)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionClosedError</span></code></a> – The connection to redis
+was interrupted.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -366,7 +725,7 @@ typically correspond to a login user.</p>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a><ul>
 <li><a class="reference internal" href="#module-pymap.backend.redis.keys"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code></a></li>
-<li><a class="reference internal" href="#pymap-backend-redis-cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.backend.redis.cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -439,7 +798,7 @@ typically correspond to a login user.</p>
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.13.6 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.14.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
