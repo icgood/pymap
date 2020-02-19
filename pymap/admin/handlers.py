@@ -11,12 +11,13 @@ from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import SessionInterface
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import Flag, ExtensionOptions
+from pymapadmin.grpc.admin_grpc import AdminBase
+from pymapadmin.grpc.admin_pb2 import Login, ERROR_RESPONSE, \
+    PingRequest, PingResponse, AppendRequest, AppendResponse
 from pysasl.external import ExternalResult
 
 from ._util import exit_context
-from .grpc.admin_grpc import AdminBase
-from .grpc.admin_pb2 import Login, ERROR_RESPONSE, \
-    AppendRequest, AppendResponse
+from .. import __version__ as server_version
 
 __all__ = ['AdminHandlers']
 
@@ -40,9 +41,22 @@ class AdminHandlers(AdminBase):
         stack = connection_exit.get()
         return await stack.enter_async_context(self.login(creds, self.config))
 
-    @property
-    def _with_filter(self) -> bool:
-        return not self.config.args.no_filter
+    async def Ping(self, stream: Stream[PingRequest, PingResponse]) -> None:
+        """Respond to a ping request. For example::
+
+            $ pymap-admin ping
+
+        See ``pymap-admin ping --help`` for more options.
+
+        Args:
+            stream (:class:`~grpclib.server.Stream`): The stream for the
+                request and response.
+
+        """
+        request = await stream.recv_message()
+        assert request is not None
+        resp = PingResponse(server_version=server_version)
+        await stream.send_message(resp)
 
     @exit_context
     async def Append(self, stream: Stream[AppendRequest, AppendResponse]) \
@@ -75,7 +89,7 @@ class AdminHandlers(AdminBase):
                                    ExtensionOptions.empty())
         try:
             session = await self._login_as(request.login)
-            if self._with_filter and session.filter_set is not None:
+            if session.filter_set is not None:
                 filter_value = await session.filter_set.get_active()
                 if filter_value is not None:
                     compiler = session.filter_set.compiler

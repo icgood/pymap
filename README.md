@@ -151,7 +151,7 @@ For example:
 (integer) 1
 ```
 
-For compatibility with [dovecot's auth dict][12], a JSON object can be used
+For compatibility with [dovecot's auth dict][11], a JSON object can be used
 instead of a redis hash with the `--users-json` command-line argument.
 
 ```
@@ -170,41 +170,19 @@ action.
 
 ## Admin Tool
 
-The `pymap-admin` tool can be used to perform various admin functions against a
-running pymap server. This is a separate [grpc][10] service using [grpclib][11]
-listening on a UNIX socket, typically `/tmp/pymap/admin-<pid>.sock`.
-
-The admin tool and service have extra dependencies you must install first:
+The `pymap-admin` tool is installed as an optional dependency:
 
 ```
-pip install grpclib protobuf
+$ pip install pymap[admin]
 ```
 
-#### `append` Command
-
-To append a message directly to a mailbox, without using IMAP, use the
-`append` admin command. First, check out the help:
-
-```
-$ pymap-admin append --help
-```
-
-As a basic example, you can append a message to a `dict` plugin backend like
-this:
+Once installed, subsequent restarts of the pymap server will listen on port
+9090 by default for incoming requests from the admin tool. See the
+[pymap-admin][10] page for more information, and check out the help:
 
 ```
-$ cat <<EOF | pymap-admin append demouser
-> From: user@example.com
->
-> test message!
-> EOF
-validity: 1784302999
-uid: 101
+$ pymap-admin --help
 ```
-
-The output is the UID validity value of the mailbox the message was appended
-to, and the UID of the appended message. In this example, `demouser` is the
-login user and the default mailbox is `INBOX`.
 
 ## Supported Extensions
 
@@ -310,6 +288,5 @@ no need to attempt `--strict` mode.
 [7]: http://mypy-lang.org/
 [8]: https://redis.io/
 [9]: https://github.com/aio-libs/aioredis
-[10]: https://grpc.io/
-[11]: https://github.com/vmagamedov/grpclib
-[12]: https://wiki.dovecot.org/AuthDatabase/Dict
+[10]: https://github.com/icgood/pymap-admin
+[11]: https://wiki.dovecot.org/AuthDatabase/Dict
