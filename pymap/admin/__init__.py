@@ -4,15 +4,16 @@ from __future__ import annotations
 import asyncio
 from argparse import ArgumentParser
 from asyncio import Task, CancelledError
-from typing import Sequence
+from typing import Any, Callable, Sequence
 
 from grpclib.server import Server
+from pkg_resources import iter_entry_points, DistributionNotFound
 from pymap.config import IMAPConfig
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 
-from .handlers import AdminHandlers
-
 __all__ = ['AdminService']
+
+_HandlerType = Callable[[BackendInterface], Any]
 
 
 class AdminService(ServiceInterface):  # pragma: no cover
@@ -33,8 +34,6 @@ class AdminService(ServiceInterface):  # pragma: no cover
                            action='append', help='host to listen on')
         group.add_argument('--admin-port', metavar='PORT', dest='admin_port',
                            type=int, default=9090, help='port to listen on')
-        group.add_argument('--no-filter', action='store_true',
-                           help='do not filter appended messages')
 
     @classmethod
     async def start(cls, backend: BackendInterface,
@@ -42,21 +41,37 @@ class AdminService(ServiceInterface):  # pragma: no cover
         config = backend.config
         hosts: Sequence[str] = config.args.admin_host
         port: int = config.args.admin_port
+        handler_types = cls._get_handler_types()
         if not hosts:
             hosts = ['127.0.0.1']
-        servers = [await cls._start(backend, host, port) for host in hosts]
+        servers = [await cls._start(handler_types, backend, host, port)
+                   for host in hosts]
         return cls(servers)
 
     @classmethod
-    def _new_server(cls, backend: BackendInterface) -> Server:
-        loop = asyncio.get_event_loop()
-        handlers = AdminHandlers(backend)
-        return Server([handlers], loop=loop)
+    def _get_handler_types(cls) -> Sequence[_HandlerType]:
+        handler_types = []
+        for entry_point in iter_entry_points('pymap.admin.handlers'):
+            try:
+                handler_cls = entry_point.load()
+            except DistributionNotFound:
+                pass  # optional dependencies not installed
+            else:
+                handler_types.append(handler_cls)
+        return handler_types
 
     @classmethod
-    async def _start(cls, backend: BackendInterface,
+    def _new_server(cls, handler_types: Sequence[_HandlerType],
+                    backend: BackendInterface) -> Server:
+        loop = asyncio.get_event_loop()
+        handlers = [handler(backend) for handler in handler_types]
+        return Server(handlers, loop=loop)
+
+    @classmethod
+    async def _start(cls, handler_types: Sequence[_HandlerType],
+                     backend: BackendInterface,
                      host: str, port: int) -> Server:
-        server = cls._new_server(backend)
+        server = cls._new_server(handler_types, backend)
         await server.start(host=host, port=port, reuse_address=True)
         return server
 

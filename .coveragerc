@@ -1,5 +1,5 @@
 [report]
-omit = */maildir/*, */redis/*, */grpc/*, */main.py
+omit = */maildir/*, */redis/*, */main.py
 exclude_lines =
     pragma: no cover
     ^\s*...\s*$

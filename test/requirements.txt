@@ -9,3 +9,4 @@ msgpack
 grpclib
 protobuf
 sievelib
+pymap-admin

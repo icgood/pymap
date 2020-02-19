@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.14.1',
+      version='0.15.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -53,22 +53,21 @@ setup(name='pymap',
           'typing-extensions'],
       extras_require={
           'redis': ['aioredis >= 1.3.0', 'msgpack'],
-          'grpc': ['grpclib', 'protobuf'],
+          'admin': ['pymap-admin == 0.1.1'],
           'sieve': ['sievelib'],
           'optional': ['hiredis', 'passlib', 'systemd-python']},
       entry_points={
           'console_scripts': [
-              'pymap = pymap.main:main',
-              'pymap-admin = pymap.admin.client.main:main [grpc]'],
+              'pymap = pymap.main:main'],
           'pymap.backend': [
               'dict = pymap.backend.dict:DictBackend',
               'maildir = pymap.backend.maildir:MaildirBackend',
               'redis = pymap.backend.redis:RedisBackend [redis]'],
           'pymap.service': [
               'imap = pymap.imap:IMAPService',
-              'admin = pymap.admin:AdminService [grpc]',
+              'admin = pymap.admin:AdminService [admin]',
               'managesieve = pymap.sieve.manage:ManageSieveService [sieve]'],
           'pymap.filter': [
               'sieve = pymap.sieve:SieveCompiler [sieve]'],
-          'pymap.admin.client': [
-              'append = pymap.admin.client.append:AppendCommand']})
+          'pymap.admin.handlers': [
+              'admin = pymap.admin.handlers:AdminHandlers']})
