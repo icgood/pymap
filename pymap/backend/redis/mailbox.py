@@ -72,7 +72,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._selected_set
 
     def _get_msg(self, uid: int, msg_raw: bytes) -> Message:
-        msg = msgpack.unpackb(msg_raw)
+        msg = msgpack.unpackb(msg_raw, raw=True)
         msg_flags = {Flag(flag) for flag in msg[b'flags']}
         msg_email_id = ObjectId.maybe(msg[b'email_id'])
         msg_thread_id = ObjectId.maybe(msg[b'thread_id'])
