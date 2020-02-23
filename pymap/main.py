@@ -8,6 +8,7 @@ import logging
 import logging.config
 import os
 from argparse import ArgumentParser, Namespace, ArgumentTypeError
+from contextlib import nullcontext
 from string import Template
 from typing import Any, Type, Sequence, Mapping, List
 
@@ -24,6 +25,12 @@ except ImportError:
 else:
     def notify_ready() -> None:
         systemd.daemon.notify('READY=1')
+
+try:
+    from pid import PidFile  # type: ignore
+except ImportError:
+    def PidFile(*args, **kwargs):
+        return nullcontext()
 
 _Backends = Mapping[str, Type[BackendInterface]]
 _Services = Mapping[str, Type[ServiceInterface]]
@@ -70,10 +77,12 @@ def main() -> None:
     service_types = [service for name, service in services.items()
                      if name not in args.skip_services]
 
-    try:
-        return asyncio.run(run(args, backend_type, service_types), debug=False)
-    except KeyboardInterrupt:
-        pass
+    with PidFile(force_tmpdir=True):
+        try:
+            return asyncio.run(run(args, backend_type, service_types),
+                               debug=False)
+        except KeyboardInterrupt:
+            pass
 
 
 async def run(args: Namespace, backend_type: Type[BackendInterface],
