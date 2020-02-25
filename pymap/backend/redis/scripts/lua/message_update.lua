@@ -32,9 +32,9 @@ local function to_list(map)
     return list
 end
 
-local msg_flags_map = to_map(msg_flags)
-local has_deleted = msg_flags_map['\\Deleted']
-local has_seen = msg_flags_map['\\Seen']
+local flag_set_map = to_map(flag_set)
+local has_deleted = flag_set_map['\\Deleted']
+local has_seen = flag_set_map['\\Seen']
 local new_flags = nil
 
 if mode == 'ADD' and next(flag_set) then
