@@ -63,9 +63,8 @@ class AdminService(ServiceInterface):  # pragma: no cover
     @classmethod
     def _new_server(cls, handler_types: Sequence[_HandlerType],
                     backend: BackendInterface) -> Server:
-        loop = asyncio.get_event_loop()
         handlers = [handler(backend) for handler in handler_types]
-        return Server(handlers, loop=loop)
+        return Server(handlers)
 
     @classmethod
     async def _start(cls, handler_types: Sequence[_HandlerType],

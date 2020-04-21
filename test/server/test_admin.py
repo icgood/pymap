@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 import pytest  # type: ignore
 from pymapadmin.grpc.admin_pb2 import Login, AppendRequest, AppendResponse, \
-    SUCCESS, ERROR_RESPONSE
+    SUCCESS, FAILURE
 
 from pymap.admin.handlers import AdminHandlers
 
@@ -37,7 +37,7 @@ class TestAdminHandlers(TestBase):
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
-        assert SUCCESS == response.result
+        assert SUCCESS == response.result.code
         assert 105 == response.uid
 
         transport = self.new_transport(imap_server)
@@ -65,8 +65,8 @@ class TestAdminHandlers(TestBase):
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
-        assert ERROR_RESPONSE == response.result
-        assert 'InvalidAuth' == response.error_type
+        assert FAILURE == response.result.code
+        assert 'InvalidAuth' == response.result.key
 
     async def test_append_mailbox_not_found(self, backend):
         handlers = AdminHandlers(backend)
@@ -75,9 +75,9 @@ class TestAdminHandlers(TestBase):
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
-        assert ERROR_RESPONSE == response.result
+        assert FAILURE == response.result.code
         assert 'BAD' == response.mailbox
-        assert 'MailboxNotFound' == response.error_type
+        assert 'MailboxNotFound' == response.result.key
 
     async def test_append_filter_reject(self, backend):
         handlers = AdminHandlers(backend)
@@ -89,8 +89,8 @@ class TestAdminHandlers(TestBase):
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
-        assert ERROR_RESPONSE == response.result
-        assert 'AppendFailure' == response.error_type
+        assert FAILURE == response.result.code
+        assert 'AppendFailure' == response.result.key
 
     async def test_append_filter_discard(self, backend):
         handlers = AdminHandlers(backend)
@@ -102,7 +102,7 @@ class TestAdminHandlers(TestBase):
         stream = _Stream(request)
         await handlers.Append(stream)
         response: AppendResponse = stream.response
-        assert SUCCESS == response.result
+        assert SUCCESS == response.result.code
         assert not response.mailbox
         assert not response.uid
 

@@ -32,6 +32,11 @@ except ImportError:
     def PidFile(*args, **kwargs):
         return nullcontext()
 
+try:
+    import passlib  # type: ignore
+except ImportError:
+    passlib = None
+
 _Backends = Mapping[str, Type[BackendInterface]]
 _Services = Mapping[str, Type[ServiceInterface]]
 
@@ -50,6 +55,9 @@ def main() -> None:
                         help='config file for logging')
     parser.add_argument('--no-service', dest='skip_services', action='append',
                         metavar='NAME', help='do not run the given service')
+    if passlib is not None:
+        parser.add_argument('--passlib-cfg', metavar='PATH',
+                            help='config file for passlib hashing')
     subparsers = parser.add_subparsers(dest='backend',
                                        help='which pymap backend to use')
 
@@ -60,7 +68,7 @@ def main() -> None:
         backend_cls.add_subparser(backend_name, subparsers)
     for service_cls in services.values():
         service_cls.add_arguments(parser)
-    parser.set_defaults(skip_services=[])
+    parser.set_defaults(skip_services=[], passlib_cfg=None)
     args = parser.parse_args()
 
     if args.logging_cfg:

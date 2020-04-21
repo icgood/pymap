@@ -98,7 +98,7 @@ class ConnectionState:
     async def _login(self, creds: AuthenticationCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
-        return await stack.enter_async_context(self.login(creds, self.config))
+        return await stack.enter_async_context(self.login(creds))
 
     async def do_greeting(self) -> CommandResponse:
         preauth_creds = self.config.preauth_credentials
