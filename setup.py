@@ -49,11 +49,11 @@ setup(name='pymap',
       include_package_data=True,
       packages=find_packages(),
       install_requires=[
-          'pysasl >= 0.5.0',
+          'pysasl >= 0.6.1',
           'typing-extensions'],
       extras_require={
           'redis': ['aioredis >= 1.3.0', 'msgpack >= 1.0'],
-          'admin': ['pymap-admin == 0.1.1'],
+          'admin': ['pymap-admin == 0.2.0'],
           'sieve': ['sievelib'],
           'optional': ['hiredis', 'passlib', 'systemd-python', 'pid']},
       entry_points={

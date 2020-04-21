@@ -14,6 +14,7 @@ from typing import Any, TypeVar, Type, Union, Optional, Iterable, Iterator, \
 from typing_extensions import Final
 
 from pysasl import SASLAuth, AuthenticationCredentials
+from pysasl.hashing import HashInterface, get_hash
 
 from .concurrent import Subsystem
 from .context import subsystem
@@ -94,9 +95,7 @@ class IMAPConfig(metaclass=ABCMeta):
             Alternatively, you can pass extra arguments ``cert_file`` and
             ``key_file`` and an SSL context will be created.
         starttls_enabled: True if opportunistic TLS should be supported.
-        secure_auth: True if authentication mechanisms that transmit
-            credentials in cleartext should be rejected on non-encrypted
-            transports.
+        hash_context: The hash to use for passwords.
         preauth_credentials: If given, clients will pre-authenticate on
             connection using these credentials.
         max_append_len: The maximum allowed length of the message body to an
@@ -122,6 +121,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  tls_enabled: bool = True,
                  secure_auth: bool = True,
                  preauth_credentials: AuthenticationCredentials = None,
+                 hash_context: HashInterface = None,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
                  disable_search_keys: Iterable[bytes] = None,
@@ -137,6 +137,8 @@ class IMAPConfig(metaclass=ABCMeta):
         self.bad_command_limit: Final = bad_command_limit
         self.disable_search_keys: Final = disable_search_keys or []
         self.max_idle_wait: Final = max_idle_wait
+        self.hash_context: Final = hash_context or \
+            get_hash(passlib_config=args.passlib_cfg)
         self._ssl_context = ssl_context or self._load_certs(extra)
         self._tls_enabled = tls_enabled
         self._preauth_credentials = preauth_credentials

@@ -205,8 +205,7 @@ class ManageSieveConnection:
     async def _login(self, creds: AuthenticationCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
-        return await stack.enter_async_context(
-            self.login(creds, self.config))
+        return await stack.enter_async_context(self.login(creds))
 
     async def _do_greeting(self) -> Response:
         preauth_creds = self.config.preauth_credentials

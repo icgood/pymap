@@ -32,14 +32,18 @@ class MaildirBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: Config) -> None:
+    def __init__(self, login: Login, config: Config) -> None:
         super().__init__()
         self._login = login
         self._config = config
 
     @property
-    def login(self) -> LoginProtocol:
+    def login(self) -> Login:
         return self._login
+
+    @property
+    def users(self) -> None:
+        return None
 
     @property
     def config(self) -> Config:
@@ -66,7 +70,8 @@ class MaildirBackend(BackendInterface):
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[MaildirBackend, Config]:
         config = Config.from_args(args)
-        return cls(Session.login, config), config
+        login = Login(config)
+        return cls(login, config), config
 
 
 class Config(IMAPConfig):
@@ -197,28 +202,34 @@ class Session(BaseSession[Message]):
     def filter_set(self) -> FilterSet:
         return self._filter_set
 
-    @classmethod
+
+class Login(LoginProtocol):
+    """The login implementation for the maildir backend."""
+
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        self.config = config
+
     @asynccontextmanager
-    async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> AsyncIterator[Session]:
+    async def __call__(self, credentials: AuthenticationCredentials) \
+            -> AsyncIterator[Session]:
         """Checks the given credentials for a valid login and returns a new
         session.
 
         """
         user = credentials.authcid
-        password, user_dir = await cls.find_user(config, user)
+        config = self.config
+        password, user_dir = await self.find_user(user)
         if user != credentials.identity:
             raise InvalidAuth()
         elif not credentials.check_secret(password):
             raise InvalidAuth()
-        maildir, layout = cls._load_maildir(config, user_dir)
+        maildir, layout = self._load_maildir(user_dir)
         mailbox_set = MailboxSet(maildir, layout)
         filter_set = FilterSet(layout.path)
-        yield cls(credentials.identity, config, mailbox_set, filter_set)
+        yield Session(credentials.identity, config, mailbox_set, filter_set)
 
-    @classmethod
-    async def find_user(cls, config: Config, user: str) \
-            -> Tuple[str, str]:
+    async def find_user(self, user: str) -> Tuple[str, str]:
         """If the given user ID exists, return its expected password and
         mailbox path. Override this method to implement custom login logic.
 
@@ -230,17 +241,16 @@ class Session(BaseSession[Message]):
             InvalidAuth: The user ID was not valid.
 
         """
-        with open(config.users_file, 'r') as users_file:
+        with open(self.config.users_file, 'r') as users_file:
             for line in users_file:
                 this_user, user_dir, password = line.split(':', 2)
                 if user == this_user:
                     return password.rstrip('\r\n'), user_dir or user
         raise InvalidAuth()
 
-    @classmethod
-    def _load_maildir(cls, config: Config, user_dir: str) \
+    def _load_maildir(self, user_dir: str) \
             -> Tuple[Maildir, MaildirLayout]:
-        full_path = os.path.join(config.base_dir, user_dir)
-        layout = MaildirLayout.get(full_path, config.layout, Maildir)
+        full_path = os.path.join(self.config.base_dir, user_dir)
+        layout = MaildirLayout.get(full_path, self.config.layout, Maildir)
         create = not os.path.exists(full_path)
         return Maildir(full_path, create=create), layout

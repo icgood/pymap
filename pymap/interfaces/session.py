@@ -12,7 +12,6 @@ from .filter import FilterSetInterface
 from .message import MessageInterface
 from .mailbox import MailboxInterface
 from ..concurrent import Event
-from ..config import ConfigT_contra
 from ..flags import FlagOp
 from ..parsing.message import AppendMessage
 from ..parsing.specials import SequenceSet, Flag, SearchKey, ObjectId
@@ -22,21 +21,20 @@ from ..selected import SelectedMailbox
 __all__ = ['LoginProtocol', 'SessionInterface']
 
 
-class LoginProtocol(Protocol[ConfigT_contra]):
+class LoginProtocol(Protocol):
     """Defines the callback protocol that backends use to initialize a new
     session.
 
     """
 
-    def __call__(self, credentials: AuthenticationCredentials,
-                 config: ConfigT_contra) \
+    @abstractmethod
+    def __call__(self, credentials: AuthenticationCredentials) \
             -> AsyncContextManager[SessionInterface]:
         """Given a set of authentication credentials, initialize and provide a
         new IMAP session for the user.
 
         Args:
             credentials: Authentication credentials supplied by the user.
-            config: The config in use by the server.
 
         Raises:
             :class:`~pymap.exceptions.InvalidAuth`

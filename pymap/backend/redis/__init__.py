@@ -8,7 +8,7 @@ from argparse import Namespace
 from asyncio import Task
 from contextlib import closing, asynccontextmanager
 from functools import partial
-from typing import Any, Optional, Tuple, Mapping, AsyncIterator
+from typing import Any, Optional, Tuple, Mapping, AsyncIterator, AsyncIterable
 
 from aioredis import create_redis, Redis  # type: ignore
 from pysasl import AuthenticationCredentials
@@ -19,6 +19,8 @@ from pymap.context import connection_exit
 from pymap.exceptions import InvalidAuth, IncompatibleData
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import LoginProtocol
+from pymap.interfaces.users import UsersInterface
+from pymap.user import UserMetadata
 
 from .cleanup import CleanupTask
 from .filter import FilterSet
@@ -26,11 +28,6 @@ from .keys import DATA_VERSION, RedisKey, GlobalKeys, CleanupKeys, \
     NamespaceKeys
 from .mailbox import Message, MailboxSet
 from ..session import BaseSession
-
-try:
-    from passlib.apps import ldap_context  # type: ignore
-except ImportError:
-    ldap_context = None
 
 __all__ = ['RedisBackend', 'Config', 'Session']
 
@@ -40,15 +37,19 @@ class RedisBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: Config) -> None:
+    def __init__(self, users: Users, config: Config) -> None:
         super().__init__()
-        self._login = login
+        self._users = users
         self._config = config
         self._task = asyncio.create_task(self._run())
 
     @property
-    def login(self) -> LoginProtocol:
-        return self._login
+    def login(self) -> Users:
+        return self._users
+
+    @property
+    def users(self) -> Users:
+        return self._users
 
     @property
     def config(self) -> Config:
@@ -73,9 +74,9 @@ class RedisBackend(BackendInterface):
                             help='the redis database for mail data')
         parser.add_argument('--separator', metavar='CHAR', default='/',
                             help='the redis key segment separator')
-        parser.add_argument('--prefix', metavar='VAL', default='',
+        parser.add_argument('--prefix', metavar='VAL', default='/mail',
                             help='the mail data key prefix')
-        parser.add_argument('--users-prefix', metavar='VAL', default='',
+        parser.add_argument('--users-prefix', metavar='VAL', default='/users',
                             help='the user lookup key prefix')
         parser.add_argument('--users-json', action='store_true',
                             help='the user lookup value contains JSON')
@@ -83,7 +84,8 @@ class RedisBackend(BackendInterface):
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[RedisBackend, Config]:
         config = Config.from_args(args)
-        return cls(Session.login, config), config
+        users = Users(config)
+        return cls(users, config), config
 
 
 class Config(IMAPConfig):
@@ -95,7 +97,7 @@ class Config(IMAPConfig):
         select: The redis database for mail data.
         separator: The redis key segment separator.
         prefix: The prefix for mail data keys.
-        users_prefix: The user lookup key template.
+        users_prefix: The user lookup key prefix.
         users_json: True if the user lookup value contains JSON.
 
     """
@@ -217,6 +219,14 @@ class Session(BaseSession[Message]):
     def filter_set(self) -> FilterSet:
         return self._filter_set
 
+
+class Users(LoginProtocol, UsersInterface):
+    """The users implementation for the redis backend."""
+
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        self.config = config
+
     @classmethod
     async def _connect_redis(cls, address: str) -> Redis:
         redis = await create_redis(address)
@@ -224,20 +234,60 @@ class Session(BaseSession[Message]):
         stack.enter_context(closing(redis))
         return redis
 
-    @classmethod
+    async def list_users(self, *, match: str = None) -> AsyncIterable[str]:
+        config = self.config
+        redis = await self._connect_redis(config.address)
+        users_root = config._users_root.end(b'')
+        if match is None:
+            match_key = users_root + b'*'
+        else:
+            match_key = users_root + match.encode('utf-8')
+        cur = b'0'
+        while cur:
+            cur, keys = await redis.scan(cur, match=match_key)
+            for key in keys:
+                if key.startswith(users_root):
+                    yield key[len(users_root):]
+
+    async def get_user(self, user: str) -> Optional[UserMetadata]:
+        config = self.config
+        redis = await self._connect_redis(config.address)
+        return await self._get_user(redis, user)
+
+    async def set_user(self, user: str, data: UserMetadata) -> None:
+        config = self.config
+        redis = await self._connect_redis(config.address)
+        user_key = config._users_root.end(user.encode('utf-8'))
+        data_dict = data.to_dict()
+        if self.config.users_json:
+            json_data = json.dumps(data_dict)
+            await redis.set(user_key, json_data)
+        else:
+            multi = redis.multi_exec()
+            multi.delete(user_key)
+            multi.hmset_dict(user_key, data_dict)
+            await multi.execute()
+
+    async def delete_user(self, user: str) -> None:
+        config = self.config
+        redis = await self._connect_redis(config.address)
+        user_key = config._users_root.end(user.encode('utf-8'))
+        await redis.delete(user_key)
+
     @asynccontextmanager
-    async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> AsyncIterator[Session]:
+    async def __call__(self, credentials: AuthenticationCredentials) \
+            -> AsyncIterator[Session]:
         """Checks the given credentials for a valid login and returns a new
         session.
 
         """
-        redis = await cls._connect_redis(config.address)
-        user = await cls._check_user(redis, config, credentials)
+        config = self.config
+        redis = await self._connect_redis(config.address)
+        user = await self._check_user(redis, credentials)
         if config.select is not None:
             await redis.select(config.select)
         global_keys = config._global_keys
-        namespace = await cls._get_namespace(redis, global_keys, user)
+        namespace = await self._get_namespace(redis, global_keys, user)
         ns_keys = NamespaceKeys(global_keys, namespace)
         cl_keys = CleanupKeys(global_keys)
         mailbox_set = MailboxSet(redis, ns_keys, cl_keys)
@@ -246,44 +296,33 @@ class Session(BaseSession[Message]):
         except ValueError:
             pass
         filter_set = FilterSet(redis, ns_keys)
-        yield cls(redis, credentials.identity, config, mailbox_set, filter_set)
+        yield Session(redis, credentials.identity, config,
+                      mailbox_set, filter_set)
 
-    @classmethod
-    async def _check_user(cls, redis: Redis, config: Config,
+    async def _check_user(self, redis: Redis,
                           credentials: AuthenticationCredentials) -> str:
         user = credentials.authcid
-        password = await cls._get_password(redis, config, user)
-        if user != credentials.identity:
+        data = await self._get_user(redis, user)
+        if data is None or user != credentials.identity:
             raise InvalidAuth()
-        elif ldap_context is None or not credentials.has_secret:
-            if not credentials.check_secret(password):
-                raise InvalidAuth()
-        elif not ldap_context.verify(credentials.secret, password):
-            raise InvalidAuth()
+        data.check_password(credentials)
         return user
 
-    @classmethod
-    async def _get_password(cls, redis: Redis, config: Config,
-                            user: str) -> str:
-        user_key = config._users_root.end(user.encode('utf-8'))
-        if config.users_json:
+    async def _get_user(self, redis: Redis, user: str) \
+            -> Optional[UserMetadata]:
+        user_key = self.config._users_root.end(user.encode('utf-8'))
+        if self.config.users_json:
             json_data = await redis.get(user_key)
             if json_data is None:
-                raise InvalidAuth()
-            try:
-                json_obj = json.loads(json_data)
-                return json_obj['password']
-            except Exception as exc:
-                raise InvalidAuth() from exc
+                return None
+            data_dict = json.loads(json_data)
         else:
-            password, identity = await redis.hmget(
-                user_key, b'password', b'identity')
-            if password is None:
-                raise InvalidAuth()
-            return password.decode('utf-8')
+            data_dict = await redis.hgetall(user_key, encoding='utf-8')
+            if data_dict is None:
+                return None
+        return UserMetadata.from_dict(self.config, data_dict)
 
-    @classmethod
-    async def _get_namespace(cls, redis: Redis, global_keys: GlobalKeys,
+    async def _get_namespace(self, redis: Redis, global_keys: GlobalKeys,
                              user: str) -> bytes:
         user_key = user.encode('utf-8')
         new_namespace = uuid.uuid4().hex.encode('ascii')

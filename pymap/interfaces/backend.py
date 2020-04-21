@@ -4,10 +4,11 @@ from __future__ import annotations
 from abc import abstractmethod
 from argparse import Namespace, ArgumentParser
 from asyncio import Task
-from typing import Tuple, Sequence
+from typing import Optional, Tuple, Sequence
 from typing_extensions import Protocol
 
 from .session import LoginProtocol
+from .users import UsersInterface
 from ..config import IMAPConfig
 
 __all__ = ['BackendInterface', 'ServiceInterface']
@@ -57,6 +58,12 @@ class BackendInterface(Protocol):
         :class:`~pymap.interfaces.session.SessionInterface` object.
 
         """
+        ...
+
+    @property
+    @abstractmethod
+    def users(self) -> Optional[UsersInterface]:
+        """Handles user management."""
         ...
 
     @property

@@ -32,14 +32,18 @@ class DictBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: LoginProtocol, config: Config) -> None:
+    def __init__(self, login: Login, config: Config) -> None:
         super().__init__()
         self._login = login
         self._config = config
 
     @property
-    def login(self) -> LoginProtocol:
+    def login(self) -> Login:
         return self._login
+
+    @property
+    def users(self) -> None:
+        return None
 
     @property
     def config(self) -> Config:
@@ -65,7 +69,8 @@ class DictBackend(BackendInterface):
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[DictBackend, Config]:
         config = Config.from_args(args)
-        return cls(Session.login, config), config
+        login = Login(config)
+        return cls(login, config), config
 
 
 class Config(IMAPConfig):
@@ -140,17 +145,25 @@ class Session(BaseSession[Message]):
     def filter_set(self) -> FilterSet:
         return self._filter_set
 
-    @classmethod
+
+class Login(LoginProtocol):
+    """The login implementation for the dict backend."""
+
+    def __init__(self, config: Config) -> None:
+        super().__init__()
+        self.config = config
+
     @asynccontextmanager
-    async def login(cls, credentials: AuthenticationCredentials,
-                    config: Config) -> AsyncIterator[Session]:
+    async def __call__(self, credentials: AuthenticationCredentials) \
+            -> AsyncIterator[Session]:
         """Checks the given credentials for a valid login and returns a new
         session. The mailbox data is shared between concurrent and future
         sessions, but only for the lifetime of the process.
 
         """
         user = credentials.authcid
-        password = cls._get_password(config, user)
+        config = self.config
+        password = self._get_password(user)
         if user != credentials.identity:
             raise InvalidAuth()
         elif not credentials.check_secret(password):
@@ -160,35 +173,32 @@ class Session(BaseSession[Message]):
             mailbox_set = MailboxSet()
             filter_set = FilterSet()
             if config.demo_data:
-                await cls._load_demo(config.demo_data_resource,
-                                     mailbox_set, filter_set)
+                await self._load_demo(config.demo_data_resource,
+                                      mailbox_set, filter_set)
             config.set_cache[user] = (mailbox_set, filter_set)
-        yield cls(credentials.identity, config, mailbox_set, filter_set)
+        yield Session(credentials.identity, config, mailbox_set, filter_set)
 
-    @classmethod
-    def _get_password(cls, config: Config, user: str) -> str:
-        expected_user: str = config.demo_user
-        expected_password: str = config.demo_password
+    def _get_password(self, user: str) -> str:
+        expected_user: str = self.config.demo_user
+        expected_password: str = self.config.demo_password
         if user == expected_user:
             return expected_password
         raise InvalidAuth()
 
-    @classmethod
-    async def _load_demo(cls, resource: str, mailbox_set: MailboxSet,
+    async def _load_demo(self, resource: str, mailbox_set: MailboxSet,
                          filter_set: FilterSet) -> None:
         inbox = await mailbox_set.get_mailbox('INBOX')
-        await cls._load_demo_mailbox(resource, 'INBOX', inbox)
+        await self._load_demo_mailbox(resource, 'INBOX', inbox)
         mbx_names = sorted(resource_listdir(resource, 'demo'))
         for name in mbx_names:
             if name == 'sieve':
-                await cls._load_demo_sieve(resource, name, filter_set)
+                await self._load_demo_sieve(resource, name, filter_set)
             elif name != 'INBOX':
                 await mailbox_set.add_mailbox(name)
                 mbx = await mailbox_set.get_mailbox(name)
-                await cls._load_demo_mailbox(resource, name, mbx)
+                await self._load_demo_mailbox(resource, name, mbx)
 
-    @classmethod
-    async def _load_demo_sieve(cls, resource: str, name: str,
+    async def _load_demo_sieve(self, resource: str, name: str,
                                filter_set: FilterSet) -> None:
         path = os.path.join('demo', name)
         with closing(resource_stream(resource, path)) as sieve_stream:
@@ -196,8 +206,7 @@ class Session(BaseSession[Message]):
         await filter_set.put('demo', sieve)
         await filter_set.set_active('demo')
 
-    @classmethod
-    async def _load_demo_mailbox(cls, resource: str, name: str,
+    async def _load_demo_mailbox(self, resource: str, name: str,
                                  mbx: MailboxData) -> None:
         path = os.path.join('demo', name)
         msg_names = sorted(resource_listdir(resource, path))
