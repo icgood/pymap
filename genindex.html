@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Index &#8212; pymap 0.15.3 documentation</title>
+    <title>Index &#8212; pymap 0.16.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -159,6 +159,8 @@
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Answered">Answered (in module pymap.parsing.specials.flag)</a>
 </li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedSet.any_selected">any_selected (pymap.selected.SelectedSet attribute)</a>
+</li>
+      <li><a href="pymap.admin.html#pymap.admin.handlers.AdminHandlers.Append">Append() (pymap.admin.handlers.AdminHandlers method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.append">append() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 </li>
@@ -480,8 +482,6 @@
       </ul></li>
       <li><a href="pymap.flags.html#pymap.flags.FlagOp.DELETE">DELETE (pymap.flags.FlagOp attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.delete">delete() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 
       <ul>
@@ -490,6 +490,8 @@
         <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface.delete">(pymap.interfaces.filter.FilterSetInterface method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.delete_mailbox">delete_mailbox() (pymap.backend.mailbox.MailboxSetInterface method)</a>
 
       <ul>
@@ -501,6 +503,8 @@
       <li><a href="pymap.parsing.html#pymap.parsing.command.auth.DeleteCommand">DeleteCommand (class in pymap.parsing.command.auth)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Deleted">Deleted (in module pymap.parsing.specials.flag)</a>
+</li>
+      <li><a href="pymap.admin.html#pymap.admin.handlers.AdminHandlers.DeleteUser">DeleteUser() (pymap.admin.handlers.AdminHandlers method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.delimiter">delimiter (pymap.backend.mailbox.MailboxSetInterface attribute)</a>
 </li>
@@ -680,8 +684,6 @@
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.find_deleted">find_deleted() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 </li>
-      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.Session.find_user">find_user() (pymap.backend.maildir.Session class method)</a>
-</li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.first_unseen">first_unseen (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
@@ -834,14 +836,14 @@
       </ul></li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get_folder">get_folder() (pymap.backend.maildir.layout.MaildirLayout method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_header">get_header() (pymap.interfaces.message.LoadedMessageInterface method)</a>
 
       <ul>
         <li><a href="pymap.message.html#pymap.message.BaseLoadedMessage.get_header">(pymap.message.BaseLoadedMessage method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_headers">get_headers() (pymap.interfaces.message.LoadedMessageInterface method)</a>
 
       <ul>
@@ -904,6 +906,8 @@
         <li><a href="pymap.fetch.html#pymap.fetch.DynamicLoadedFetchValue.get_value">(pymap.fetch.DynamicLoadedFetchValue method)</a>
 </li>
       </ul></li>
+      <li><a href="pymap.admin.html#pymap.admin.handlers.AdminHandlers.GetUser">GetUser() (pymap.admin.handlers.AdminHandlers method)</a>
+</li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.keys.GlobalKeys">GlobalKeys (class in pymap.backend.redis.keys)</a>
 </li>
   </ul></td>
@@ -1110,10 +1114,12 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.specials.ListResponse">ListResponse (class in pymap.parsing.response.specials)</a>
 </li>
-      <li><a href="pymap.listtree.html#pymap.listtree.ListTree">ListTree (class in pymap.listtree)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.listtree.html#pymap.listtree.ListTree">ListTree (class in pymap.listtree)</a>
+</li>
+      <li><a href="pymap.admin.html#pymap.admin.handlers.AdminHandlers.ListUsers">ListUsers() (pymap.admin.handlers.AdminHandlers method)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.primitives.LiteralString">LiteralString (class in pymap.parsing.primitives)</a>
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">load_content() (pymap.interfaces.message.MessageInterface method)</a>
@@ -1136,14 +1142,6 @@
         <li><a href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.login">(pymap.backend.redis.RedisBackend attribute)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface.login">(pymap.interfaces.backend.BackendInterface attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="pymap.backend.dict.html#pymap.backend.dict.Session.login">login() (pymap.backend.dict.Session class method)</a>
-
-      <ul>
-        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.Session.login">(pymap.backend.maildir.Session class method)</a>
-</li>
-        <li><a href="pymap.backend.redis.html#pymap.backend.redis.Session.login">(pymap.backend.redis.Session class method)</a>
 </li>
       </ul></li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.nonauth.LoginCommand">LoginCommand (class in pymap.parsing.command.nonauth)</a>
@@ -1920,13 +1918,15 @@
       </ul></li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.set_deleted">set_deleted() (pymap.selected.SelectedMailbox method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.listtree.html#pymap.listtree.ListTree.set_marked">set_marked() (pymap.listtree.ListTree method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.set_messages">set_messages() (pymap.selected.SelectedMailbox method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.set_subscribed">set_subscribed() (pymap.backend.mailbox.MailboxSetInterface method)</a>
+</li>
+      <li><a href="pymap.admin.html#pymap.admin.handlers.AdminHandlers.SetUser">SetUser() (pymap.admin.handlers.AdminHandlers method)</a>
 </li>
       <li><a href="pymap.sieve.html#pymap.sieve.SieveCompiler">SieveCompiler (class in pymap.sieve)</a>
 </li>
@@ -2128,12 +2128,12 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.code.UidValidity">UidValidity (class in pymap.parsing.response.code)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.exceptions.UnexpectedType">UnexpectedType</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.code.Unseen">Unseen (class in pymap.parsing.response.code)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.unseen">unseen (pymap.interfaces.mailbox.MailboxInterface attribute)</a>
 
       <ul>
@@ -2168,6 +2168,16 @@
 </li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedSet.updated">updated (pymap.selected.SelectedSet attribute)</a>
 </li>
+      <li><a href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.users">users (pymap.backend.dict.DictBackend attribute)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.users">(pymap.backend.maildir.MaildirBackend attribute)</a>
+</li>
+        <li><a href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.users">(pymap.backend.redis.RedisBackend attribute)</a>
+</li>
+        <li><a href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface.users">(pymap.interfaces.backend.BackendInterface attribute)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.Config.users_file">users_file (pymap.backend.maildir.Config attribute)</a>
 </li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.Config.users_json">users_json (pymap.backend.redis.Config attribute)</a>
@@ -2346,7 +2356,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
  
       </ul>
     </div>

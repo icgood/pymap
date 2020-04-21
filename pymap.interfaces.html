@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.interfaces &#8212; pymap 0.15.3 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.16.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -117,6 +117,20 @@ this backend. For example:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.interfaces.backend.BackendInterface.users">
+<code class="descname">users</code><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles user management.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">UsersInterface</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -883,24 +897,18 @@ mailbox of the same name must have a different ID.</p>
 session.</p>
 <dl class="method">
 <dt id="pymap.interfaces.session.LoginProtocol.__call__">
-<code class="descname">__call__</code><span class="sig-paren">(</span><em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.LoginProtocol.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>credentials</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.LoginProtocol.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a set of authentication credentials, initialize and provide a
 new IMAP session for the user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>credentials</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/index.html#pysasl.AuthenticationCredentials" title="(in pysasl v0.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a>) – Authentication credentials supplied by the user.</li>
-<li><strong>config</strong> (<em>-ConfigT_contra</em>) – The config in use by the server.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>credentials</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/index.html#pysasl.AuthenticationCredentials" title="(in pysasl v0.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a>) – Authentication credentials supplied by the user.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidAuth</span></code></a></p>
-</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidAuth</span></code></a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractAsyncContextManager</span></code>[<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a>]</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractAsyncContextManager</span></code>[<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a>]</td>
 </tr>
 </tbody>
 </table>
@@ -1810,7 +1818,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
  
       </ul>
     </div>

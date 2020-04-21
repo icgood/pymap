@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend.maildir &#8212; pymap 0.15.3 documentation</title>
+    <title>pymap.backend.maildir &#8212; pymap 0.16.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
@@ -80,15 +80,14 @@
 <p>Defines an on-disk backend that uses <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
 mailbox storage and <a class="reference external" href="https://wiki2.dovecot.org/MailboxFormat/Maildir">MailboxFormat/Maildir</a> for metadata storage.</p>
 <dl class="attribute">
-<dt id="pymap.backend.maildir.MaildirBackend.login">
-<code class="descname">login</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Login callback that takes authentication credentials and returns a
-<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<dt id="pymap.backend.maildir.MaildirBackend.users">
+<code class="descname">users</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles user management.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -149,6 +148,21 @@ this backend. For example:</p>
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="pymap.backend.maildir.MaildirBackend.login">
+<code class="descname">login</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login callback that takes authentication credentials and returns a
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Login</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="pymap.backend.maildir.MaildirBackend.init">
 <em class="property">classmethod </em><code class="descname">init</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.init" title="Permalink to this definition">¶</a></dt>
@@ -204,7 +218,7 @@ capabilities.</p>
 <dl class="attribute">
 <dt id="pymap.backend.maildir.Config.users_file">
 <code class="descname">users_file</code><a class="headerlink" href="#pymap.backend.maildir.Config.users_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by the default <a class="reference internal" href="#pymap.backend.maildir.Session.find_user" title="pymap.backend.maildir.Session.find_user"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_user()</span></code></a> implementation
+<dd><p>Used by the default <code class="xref py py-meth docutils literal notranslate"><span class="pre">find_user()</span></code> implementation
 to retrieve the users file path from the command-line arguments. The
 users file is given as the first positional argument on the
 command-line.</p>
@@ -282,46 +296,6 @@ constructor. Sub-classes should override this method as needed.</p>
 <em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>owner</em>, <em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
 <p>The session implementation for the maildir backend.</p>
-<dl class="classmethod">
-<dt id="pymap.backend.maildir.Session.find_user">
-<em class="property">classmethod </em><code class="descname">find_user</code><span class="sig-paren">(</span><em>config</em>, <em>user</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session.find_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>If the given user ID exists, return its expected password and
-mailbox path. Override this method to implement custom login logic.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>config</strong> (<a class="reference internal" href="#pymap.backend.maildir.Config" title="pymap.backend.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>) – The maildir config object.</li>
-<li><strong>user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The expected user ID.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><code class="xref py py-exc docutils literal notranslate"><span class="pre">InvalidAuth</span></code> – The user ID was not valid.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="pymap.backend.maildir.Session.login">
-<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>cls</em>, <em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the given credentials for a valid login and returns a new
-session.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="#pymap.backend.maildir.Session" title="pymap.backend.maildir.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="pymap.backend.maildir.Session.filter_set">
 <code class="descname">filter_set</code><a class="headerlink" href="#pymap.backend.maildir.Session.filter_set" title="Permalink to this definition">¶</a></dt>
@@ -775,7 +749,7 @@ e.g.:</p>
 <span id="pymap-backend-maildir-uidlist"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code><a class="headerlink" href="#module-pymap.backend.maildir.uidlist" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pymap.backend.maildir.uidlist.Record">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.uidlist.</code><code class="descname">Record</code><span class="sig-paren">(</span><em>uid</em>, <em>fields</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.backend.maildir.uidlist.</code><code class="descname">Record</code><span class="sig-paren">(</span><em>uid: int, fields: Mapping[str, str], filename: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Defines a single record read from the UID list file.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -783,9 +757,9 @@ e.g.:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The message UID of the record.</li>
-<li><strong>fields</strong> (<em>Mapping</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>]</em>) – The metadata fields of the record.</li>
-<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The filename of the record.</li>
+<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID of the record.</li>
+<li><strong>fields</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The metadata fields of the record.</li>
+<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filename of the record.</li>
 </ul>
 </td>
 </tr>
@@ -1006,7 +980,7 @@ e.g.:</p>
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>

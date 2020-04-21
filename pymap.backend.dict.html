@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend.dict &#8212; pymap 0.15.3 documentation</title>
+    <title>pymap.backend.dict &#8212; pymap 0.16.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
@@ -58,7 +58,7 @@
         <li class="right" >
           <a href="pymap.backend.html" title="pymap.backend"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
@@ -80,15 +80,14 @@
 <p>Defines a backend that uses an in-memory dictionary for example usage
 and integration testing.</p>
 <dl class="attribute">
-<dt id="pymap.backend.dict.DictBackend.login">
-<code class="descname">login</code><a class="headerlink" href="#pymap.backend.dict.DictBackend.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Login callback that takes authentication credentials and returns a
-<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<dt id="pymap.backend.dict.DictBackend.users">
+<code class="descname">users</code><a class="headerlink" href="#pymap.backend.dict.DictBackend.users" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles user management.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -144,6 +143,21 @@ this backend. For example:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.dict.Config" title="pymap.backend.dict.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pymap.backend.dict.DictBackend.login">
+<code class="descname">login</code><a class="headerlink" href="#pymap.backend.dict.DictBackend.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login callback that takes authentication credentials and returns a
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Login</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -284,22 +298,6 @@ constructor. Sub-classes should override this method as needed.</p>
 </table>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="pymap.backend.dict.Session.login">
-<em class="property">classmethod </em><code class="descname">login</code><span class="sig-paren">(</span><em>cls</em>, <em>credentials</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.Session.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the given credentials for a valid login and returns a new
-session. The mailbox data is shared between concurrent and future
-sessions, but only for the lifetime of the process.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference internal" href="#pymap.backend.dict.Session" title="pymap.backend.dict.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -377,7 +375,7 @@ sessions, but only for the lifetime of the process.</p>
         <li class="right" >
           <a href="pymap.backend.html" title="pymap.backend"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.15.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.16.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
