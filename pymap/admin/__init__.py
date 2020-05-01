@@ -5,25 +5,32 @@ import asyncio
 from argparse import ArgumentParser
 from asyncio import CancelledError
 from ssl import SSLContext
-from typing import Type, Optional, Tuple, Sequence, Awaitable
+from typing import Optional, Tuple, Sequence, Awaitable
 from urllib.parse import urlparse
 
 from grpclib.server import Server
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
-from pymap.plugin import Plugin
 from pymapadmin.local import get_admin_socket
 
-from .handlers import BaseHandler
+from .handlers import handlers
 
-__all__ = ['handlers', 'AdminService']
-
-#: Registers new admin handler plugins.
-handlers: Plugin[Type[BaseHandler]] = Plugin('pymap.admin.handlers')
+__all__ = ['AdminService']
 
 
 class AdminService(ServiceInterface):  # pragma: no cover
     """A pymap service implemented using a `grpc <https://grpc.io/>`_ server
     to perform admin functions on a running backend.
+
+    This service can be exposed in *private* or *public* mode. Private mode
+    does not use SSL/TLS encryption and authentication is not required, so it
+    should be appropriately firewalled. Public mode requires both SSL/TLS
+    encryption and the client provide credentials for the user being
+    operated on, e.g. a user can change their own password but cannot change
+    another user's password.
+
+    The `pymap-admin <https://github.com/icgood/pymap-admin>`_ CLI may be used
+    to interact with the admin service and serves as a reference client
+    implementation.
 
     """
 
@@ -32,10 +39,10 @@ class AdminService(ServiceInterface):  # pragma: no cover
         group = parser.add_argument_group('admin service')
         group.add_argument('--admin-private', metavar='HOST',
                            action='append', default=[],
-                           help='host:port to listen on')
+                           help='private host:port to listen on')
         group.add_argument('--admin-public', metavar='HOST',
                            action='append', default=[],
-                           help='public-facing host:port to listen on')
+                           help='public host:port to listen on')
 
     async def start(self) -> Awaitable:
         backend = self.backend
@@ -69,13 +76,13 @@ class AdminService(ServiceInterface):  # pragma: no cover
         return server
 
     @classmethod
-    def _parse(cls, host: str) -> Tuple[str, int]:
+    def _parse(cls, host: str) -> Tuple[str, Optional[int]]:
         parsed = urlparse(host)
         if parsed.hostname:
-            return parsed.hostname, parsed.port or 9090
+            return parsed.hostname, parsed.port
         parsed = urlparse(f'//{host}')
         if parsed.hostname:
-            return parsed.hostname, parsed.port or 9090
+            return parsed.hostname, parsed.port
         raise ValueError(host)
 
     @classmethod

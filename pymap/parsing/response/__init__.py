@@ -119,8 +119,8 @@ class Response(Writeable, metaclass=ABCMeta):
         return False
 
     async def async_write(self, writer: WriteStream) -> None:
-        """Like :meth:`.write`, but allows for asynchronous processing that
-        might be necessary for some responses.
+        """Like :meth:`~pymap.bytes.Writeable.write`, but allows for
+        asynchronous processing that might be necessary for some responses.
 
         Args:
             writer: The output stream.

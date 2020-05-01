@@ -9,6 +9,9 @@
    pymap.backend.maildir
    pymap.backend.redis
 
+.. automodule:: pymap.backend
+   :members:
+
 ``pymap.backend.mailbox``
 ----------------------------
 
