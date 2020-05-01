@@ -72,9 +72,15 @@
             
   <div class="section" id="module-pymap.filter">
 <span id="pymap-filter"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code><a class="headerlink" href="#module-pymap.filter" title="Permalink to this headline">¶</a></h1>
+<dl class="data">
+<dt id="pymap.filter.filters">
+<code class="descclassname">pymap.filter.</code><code class="descname">filters</code><em class="property"> = &lt;pymap.plugin.Plugin object&gt;</em><a class="headerlink" href="#pymap.filter.filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers filter compiler plugins.</p>
+</dd></dl>
+
 <dl class="class">
-<dt id="pymap.filter.EntryPointFilterSet">
-<em class="property">class </em><code class="descclassname">pymap.filter.</code><code class="descname">EntryPointFilterSet</code><span class="sig-paren">(</span><em>entry_point</em>, <em>value_type</em>, <em>*</em>, <em>group='pymap.filter'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.EntryPointFilterSet" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.filter.PluginFilterSet">
+<em class="property">class </em><code class="descclassname">pymap.filter.</code><code class="descname">PluginFilterSet</code><span class="sig-paren">(</span><em>plugin_name</em>, <em>value_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.filter.PluginFilterSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.filter.FilterSetInterface</span></code></a></p>
 <p>Base class for filter set implementations that use a filter compiler
 declared in the <code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code> entry point. The declared entry points
@@ -84,16 +90,16 @@ must sub-class <code class="xref py py-class docutils literal notranslate"><span
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>entry_point</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The entry point name.</li>
-<li><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The entry point group.</li>
+<li><strong>plugin_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filter plugin name.</li>
+<li><strong>group</strong> – The entry point group.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="pymap.filter.EntryPointFilterSet.compiler">
-<code class="descname">compiler</code><a class="headerlink" href="#pymap.filter.EntryPointFilterSet.compiler" title="Permalink to this definition">¶</a></dt>
+<dt id="pymap.filter.PluginFilterSet.compiler">
+<code class="descname">compiler</code><a class="headerlink" href="#pymap.filter.PluginFilterSet.compiler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compiles filter values into an implementation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

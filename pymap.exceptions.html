@@ -163,7 +163,7 @@ executed by the mailbox.</p>
 
 <dl class="exception">
 <dt id="pymap.exceptions.InvalidAuth">
-<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">InvalidAuth</code><span class="sig-paren">(</span><em>msg='Invalid authentication credentials.'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">InvalidAuth</code><span class="sig-paren">(</span><em>msg='Invalid authentication credentials.'</em>, <em>*</em>, <em>authorization=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> commands received credentials that the
 IMAP backend has rejected.</p>
@@ -325,6 +325,29 @@ allowed.</p>
 <em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">AppendFailure</code><span class="sig-paren">(</span><em>mailbox</em>, <em>message</em>, <em>code=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.AppendFailure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.MailboxError" title="pymap.exceptions.MailboxError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.MailboxError</span></code></a></p>
 <p>The mailbox append operation failed.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="pymap.exceptions.UserNotFound">
+<em class="property">exception </em><code class="descclassname">pymap.exceptions.</code><code class="descname">UserNotFound</code><a class="headerlink" href="#pymap.exceptions.UserNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.exceptions.ResponseError</span></code></a></p>
+<p>The requested user was not found.</p>
+<dl class="method">
+<dt id="pymap.exceptions.UserNotFound.get_response">
+<code class="descname">get_response</code><span class="sig-paren">(</span><em>tag</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.UserNotFound.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an IMAP response for the error.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>

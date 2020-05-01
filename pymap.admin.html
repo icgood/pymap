@@ -72,9 +72,15 @@
             
   <div class="section" id="module-pymap.admin">
 <span id="pymap-admin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code><a class="headerlink" href="#module-pymap.admin" title="Permalink to this headline">¶</a></h1>
+<dl class="data">
+<dt id="pymap.admin.handlers">
+<code class="descclassname">pymap.admin.</code><code class="descname">handlers</code><em class="property"> = &lt;pymap.plugin.Plugin object&gt;</em><a class="headerlink" href="#pymap.admin.handlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers new admin handler plugins.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="pymap.admin.AdminService">
-<em class="property">class </em><code class="descclassname">pymap.admin.</code><code class="descname">AdminService</code><span class="sig-paren">(</span><em>servers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pymap.admin.</code><code class="descname">AdminService</code><span class="sig-paren">(</span><em>backend</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.ServiceInterface</span></code></a></p>
 <p>A pymap service implemented using a <a class="reference external" href="https://grpc.io/">grpc</a> server
 to perform admin functions on a running backend.</p>
@@ -99,36 +105,54 @@ For example:</p>
 </table>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="pymap.admin.AdminService.start">
-<em class="property">classmethod </em><code class="descname">start</code><span class="sig-paren">(</span><em>backend</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the service and return the instance.</p>
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the service.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendInterface</span></code></a>) – The backend object.</li>
-<li><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – The config in use by the backend.</li>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="pymap-admin-handlers">
+<h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#pymap-admin-handlers" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-pymap.admin.handlers"></span><dl class="class">
+<dt id="pymap.admin.handlers.BaseHandler">
+<em class="property">class </em><code class="descclassname">pymap.admin.handlers.</code><code class="descname">BaseHandler</code><span class="sig-paren">(</span><em>backend</em>, <em>public</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base class for implementing admin request handlers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendInterface</span></code></a>) – The backend in use by the system.</li>
+<li><strong>public</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the requests are received from a public-facing client.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#pymap.admin.AdminService" title="pymap.admin.AdminService"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdminService</span></code></a></p>
-</td>
-</tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.admin.AdminService.task">
-<code class="descname">task</code><a class="headerlink" href="#pymap.admin.AdminService.task" title="Permalink to this definition">¶</a></dt>
-<dd><p>The service’s task that can waited or cancelled.</p>
+<dl class="method">
+<dt id="pymap.admin.handlers.BaseHandler.catch_errors">
+<code class="descname">catch_errors</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.catch_errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to catch
+<a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseError</span></code></a> exceptions and include them in
+the response.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The admin command name.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncGenerator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncGenerator</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -136,129 +160,33 @@ For example:</p>
 
 </dd></dl>
 
-<div class="section" id="module-pymap.admin.handlers">
-<span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="pymap.admin.handlers.AdminHandlers">
-<em class="property">class </em><code class="descclassname">pymap.admin.handlers.</code><code class="descname">AdminHandlers</code><span class="sig-paren">(</span><em>backend</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymapadmin.grpc.admin_grpc.AdminBase</span></code></p>
-<p>The GRPC handlers, executed when an admin request is received. Each
-handler should receive a request, take action, and send the response.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Server" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">grpclib.server.Server</span></code></a></p>
-</div>
-<dl class="method">
-<dt id="pymap.admin.handlers.AdminHandlers.Append">
-<code class="descname">Append</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers.Append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append a message directly to a user’s mailbox.</p>
-<p>If the backend session defines a
-<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.filter_set" title="pymap.interfaces.session.SessionInterface.filter_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">filter_set</span></code></a>, the
-active filter implementation will be applied to the appended message,
-such that the message may be discarded, modified, or placed into a
-specific mailbox.</p>
-<p>For example, using the CLI client:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cat message.txt | pymap-admin append user@example.com
-</pre></div>
-</div>
-<p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">append</span> <span class="pre">--help</span></code> for more options.</p>
+<dt id="pymap.admin.handlers.LoginHandler">
+<em class="property">class </em><code class="descclassname">pymap.admin.handlers.</code><code class="descname">LoginHandler</code><span class="sig-paren">(</span><em>backend</em>, <em>public</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.LoginHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pymap.admin.handlers.BaseHandler" title="pymap.admin.handlers.BaseHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.admin.handlers.BaseHandler</span></code></a></p>
+<p>Base class for implementing admin request handlers that login as a user
+to handle requests.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
-request and response.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendInterface</span></code></a>) – The backend in use by the system.</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 <dl class="method">
-<dt id="pymap.admin.handlers.AdminHandlers.DeleteUser">
-<code class="descname">DeleteUser</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers.DeleteUser" title="Permalink to this definition">¶</a></dt>
-<dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">delete-user</span> <span class="pre">--help</span></code> for more options.</p>
+<dt id="pymap.admin.handlers.LoginHandler.login_as">
+<code class="descname">login_as</code><span class="sig-paren">(</span><em>login</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.LoginHandler.login_as" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to login as a user and provide a session object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
-request and response.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>login</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Login</span></code>) – Holds the auuthentication credentials from the request.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidAuth</span></code></a></td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.admin.handlers.AdminHandlers.GetUser">
-<code class="descname">GetUser</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers.GetUser" title="Permalink to this definition">¶</a></dt>
-<dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">get-user</span> <span class="pre">--help</span></code> for more options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
-request and response.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.admin.handlers.AdminHandlers.ListUsers">
-<code class="descname">ListUsers</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers.ListUsers" title="Permalink to this definition">¶</a></dt>
-<dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">get-user</span> <span class="pre">--help</span></code> for more options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
-request and response.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.admin.handlers.AdminHandlers.Ping">
-<code class="descname">Ping</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers.Ping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Respond to a ping request. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pymap-admin ping
-</pre></div>
-</div>
-<p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">ping</span> <span class="pre">--help</span></code> for more options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
-request and response.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pymap.admin.handlers.AdminHandlers.SetUser">
-<code class="descname">SetUser</code><span class="sig-paren">(</span><em>stream</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.AdminHandlers.SetUser" title="Permalink to this definition">¶</a></dt>
-<dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">set-user</span> <span class="pre">--help</span></code> for more options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
-request and response.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncGenerator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncGenerator</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -278,7 +206,7 @@ request and response.</td>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.admin.handlers"><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code></a></li>
+<li><a class="reference internal" href="#pymap-admin-handlers"><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code></a></li>
 </ul>
 </li>
 </ul>
