@@ -1,38 +1,36 @@
 
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.imap &#8212; pymap 0.17.1 documentation</title>
+    <meta charset="utf-8" />
+    <title>pymap.imap &#8212; pymap 0.17.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
 
     
     
      
-        <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+        <script src="_static/jquery.cookie.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.base.js"></script>
+        <script src="_static/cloud.base.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.js"></script>
+        <script src="_static/cloud.js"></script>
     
 
     <link rel="index" title="Index" href="genindex.html" />
@@ -58,7 +56,7 @@
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -72,105 +70,95 @@
             
   <div class="section" id="module-pymap.imap">
 <span id="pymap-imap"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code><a class="headerlink" href="#module-pymap.imap" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.imap.IMAPService">
-<em class="property">class </em><code class="descclassname">pymap.imap.</code><code class="descname">IMAPService</code><span class="sig-paren">(</span><em>backend</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.ServiceInterface</span></code></a></p>
-<p>A pymap service implementing an IMAP server.</p>
-<dl class="classmethod">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPService</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pymap service implementing an IMAP server.</p>
+<dl class="py method">
 <dt id="pymap.imap.IMAPService.add_arguments">
-<em class="property">classmethod </em><code class="descname">add_arguments</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.add_arguments" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">add_arguments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parser</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.add_arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the arguments or argument group used to configure the service.
 For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;foo service arguments&#39;</span><span class="p">)</span>
 <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.imap.IMAPService.start">
-<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.start" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.imap.IMAPServer">
-<em class="property">class </em><code class="descclassname">pymap.imap.</code><code class="descname">IMAPServer</code><span class="sig-paren">(</span><em>login</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPServer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Callable object that creates and runs <a class="reference internal" href="#pymap.imap.IMAPConnection" title="pymap.imap.IMAPConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConnection</span></code></a> objects
+<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPServer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callable object that creates and runs <a class="reference internal" href="#pymap.imap.IMAPConnection" title="pymap.imap.IMAPConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConnection</span></code></a> objects
 when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>) – Login callback that takes authentication credentials and returns
-a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</li>
-<li><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the IMAP server.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>) – Login callback that takes authentication credentials and returns
+a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the IMAP server.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.imap.IMAPConnection">
-<em class="property">class </em><code class="descclassname">pymap.imap.</code><code class="descname">IMAPConnection</code><span class="sig-paren">(</span><em>commands</em>, <em>config</em>, <em>reader</em>, <em>writer</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Runs a single IMAP connection from start to finish.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>commands</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.commands.Commands" title="pymap.parsing.commands.Commands"><code class="xref py py-class docutils literal notranslate"><span class="pre">Commands</span></code></a>) – Defines the IMAP commands available to the connection.</li>
-<li><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the IMAP connection.</li>
-<li><strong>reader</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamReader</span></code>) – The input stream for the socket.</li>
-<li><strong>writer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code>) – The output stream for the socket.</li>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPConnection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commands</span></em>, <em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">reader</span></em>, <em class="sig-param"><span class="n">writer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a single IMAP connection from start to finish.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>commands</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.commands.Commands" title="pymap.parsing.commands.Commands"><code class="xref py py-class docutils literal notranslate"><span class="pre">Commands</span></code></a>) – Defines the IMAP commands available to the connection.</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the IMAP connection.</p></li>
+<li><p><strong>reader</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamReader</span></code>) – The input stream for the socket.</p></li>
+<li><p><strong>writer</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code>) – The output stream for the socket.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pymap.imap.IMAPConnection.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection.run" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the socket communication with the IMAP greeting, and then
 enter the command/response cycle.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionState</span></code>) – Defines the interaction with the backend plugin.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#pymap.imap.state.ConnectionState" title="pymap.imap.state.ConnectionState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionState</span></code></a>) – Defines the interaction with the backend plugin.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
+</dd></dl>
+
+<span class="target" id="module-pymap.imap.state"></span><dl class="py class">
+<dt id="pymap.imap.state.ConnectionState">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.state.</code><code class="sig-name descname">ConnectionState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.state.ConnectionState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the state flow of the IMAP connection. Determines if a command
+can be processed at that point in the connection, and interacts with the
+backend plugin.</p>
 </dd></dl>
 
 </div>
@@ -199,17 +187,15 @@ enter the command/response cycle.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
     
@@ -248,15 +234,15 @@ enter the command/response cycle.</p>
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2020, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

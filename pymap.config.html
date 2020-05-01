@@ -1,38 +1,36 @@
 
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.config &#8212; pymap 0.17.1 documentation</title>
+    <meta charset="utf-8" />
+    <title>pymap.config &#8212; pymap 0.17.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
 
     
     
      
-        <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+        <script src="_static/jquery.cookie.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.base.js"></script>
+        <script src="_static/cloud.base.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.js"></script>
+        <script src="_static/cloud.js"></script>
     
 
     <link rel="index" title="Index" href="genindex.html" />
@@ -58,7 +56,7 @@
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -72,144 +70,124 @@
             
   <div class="section" id="module-pymap.config">
 <span id="pymap-config"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code><a class="headerlink" href="#module-pymap.config" title="Permalink to this headline">¶</a></h1>
-<dl class="data">
+<dl class="py data">
 <dt id="pymap.config.ConfigT">
-<code class="descclassname">pymap.config.</code><code class="descname">ConfigT</code><em class="property"> = ~ConfigT</em><a class="headerlink" href="#pymap.config.ConfigT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.config.</code><code class="sig-name descname">ConfigT</code><em class="property"> = ~ConfigT</em><a class="headerlink" href="#pymap.config.ConfigT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
 </dd></dl>
 
-<dl class="data">
+<dl class="py data">
 <dt id="pymap.config.ConfigT_contra">
-<code class="descclassname">pymap.config.</code><code class="descname">ConfigT_contra</code><em class="property"> = -ConfigT_contra</em><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.config.</code><code class="sig-name descname">ConfigT_contra</code><em class="property"> = -ConfigT_contra</em><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contravariant type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.config.BackendCapability">
-<em class="property">class </em><code class="descclassname">pymap.config.</code><code class="descname">BackendCapability</code><span class="sig-paren">(</span><em>*</em>, <em>idle</em>, <em>object_id</em>, <em>multi_append</em>, <em>custom=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.BackendCapability" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterable</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
-<p>Declares the IMAP capabilities that the backend supports.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> extension is supported.</li>
-<li><strong>object_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">OBJECTID</span></code> extension is supported.</li>
-<li><strong>multi_append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">MULTIAPPEND</span></code> extension is supported.</li>
-<li><strong>custom</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Optional list of custom capability strings to declare.</li>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.config.</code><code class="sig-name descname">BackendCapability</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">idle</span></em>, <em class="sig-param"><span class="n">object_id</span></em>, <em class="sig-param"><span class="n">multi_append</span></em>, <em class="sig-param"><span class="n">custom</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.BackendCapability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declares the IMAP capabilities that the backend supports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> extension is supported.</p></li>
+<li><p><strong>object_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">OBJECTID</span></code> extension is supported.</p></li>
+<li><p><strong>multi_append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – The <code class="docutils literal notranslate"><span class="pre">MULTIAPPEND</span></code> extension is supported.</p></li>
+<li><p><strong>custom</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Optional list of custom capability strings to declare.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.config.IMAPConfig">
-<em class="property">class </em><code class="descclassname">pymap.config.</code><code class="descname">IMAPConfig</code><span class="sig-paren">(</span><em>args</em>, <em>*</em>, <em>host</em>, <em>port</em>, <em>debug=False</em>, <em>subsystem=None</em>, <em>ssl_context=None</em>, <em>tls_enabled=True</em>, <em>secure_auth=True</em>, <em>preauth_credentials=None</em>, <em>hash_context=None</em>, <em>max_append_len=1000000000</em>, <em>bad_command_limit=5</em>, <em>disable_search_keys=None</em>, <em>disable_idle=False</em>, <em>max_idle_wait=None</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Configurable settings that control how the IMAP server operates and what
+<em class="property">class </em><code class="sig-prename descclassname">pymap.config.</code><code class="sig-name descname">IMAPConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">host</span></em>, <em class="sig-param"><span class="n">port</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">subsystem</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ssl_context</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tls_enabled</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">secure_auth</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">preauth_credentials</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hash_context</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_append_len</span><span class="o">=</span><span class="default_value">1000000000</span></em>, <em class="sig-param"><span class="n">bad_command_limit</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">disable_search_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">disable_idle</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">max_idle_wait</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">extra</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configurable settings that control how the IMAP server operates and what
 extensions it supports.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
-<li><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The IMAP server host.</li>
-<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The IMAP server port or service name.</li>
-<li><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true, prints all socket activity to stdout.</li>
-<li><strong>subsystem</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a>]) – The concurrency subsystem in use by the backend.</li>
-<li><strong>ssl_context</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code></a>]) – SSL context that will be used for opportunistic TLS.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p></li>
+<li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The IMAP server host.</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The IMAP server port or service name.</p></li>
+<li><p><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If true, prints all socket activity to stdout.</p></li>
+<li><p><strong>subsystem</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a>]) – The concurrency subsystem in use by the backend.</p></li>
+<li><p><strong>ssl_context</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code></a>]) – SSL context that will be used for opportunistic TLS.
 Alternatively, you can pass extra arguments <code class="docutils literal notranslate"><span class="pre">cert_file</span></code> and
-<code class="docutils literal notranslate"><span class="pre">key_file</span></code> and an SSL context will be created.</li>
-<li><strong>starttls_enabled</strong> – True if opportunistic TLS should be supported.</li>
-<li><strong>hash_context</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">HashInterface</span></code>]) – The hash to use for passwords.</li>
-<li><strong>preauth_credentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://icgood.github.io/pysasl/index.html#pysasl.AuthenticationCredentials" title="(in pysasl v0.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a>]) – If given, clients will pre-authenticate on
-connection using these credentials.</li>
-<li><strong>max_append_len</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The maximum allowed length of the message body to an
-<code class="docutils literal notranslate"><span class="pre">APPEND</span></code> command.</li>
-<li><strong>bad_command_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The number of consecutive commands received from
-the client with parsing errors before the client is disconnected.</li>
-<li><strong>disable_idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Disable the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> capability.</li>
-<li><strong>max_idle_wait</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – If given, the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> command will transparently cancel
-and re-issue its request for updates every <em>N</em> seconds.</li>
-<li><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Additional keywords used for special circumstances.</li>
+<code class="docutils literal notranslate"><span class="pre">key_file</span></code> and an SSL context will be created.</p></li>
+<li><p><strong>starttls_enabled</strong> – True if opportunistic TLS should be supported.</p></li>
+<li><p><strong>hash_context</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">HashInterface</span></code>]) – The hash to use for passwords.</p></li>
+<li><p><strong>preauth_credentials</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://icgood.github.io/pysasl/index.html#pysasl.AuthenticationCredentials" title="(in pysasl v0.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a>]) – If given, clients will pre-authenticate on
+connection using these credentials.</p></li>
+<li><p><strong>max_append_len</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The maximum allowed length of the message body to an
+<code class="docutils literal notranslate"><span class="pre">APPEND</span></code> command.</p></li>
+<li><p><strong>bad_command_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The number of consecutive commands received from
+the client with parsing errors before the client is disconnected.</p></li>
+<li><p><strong>disable_idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Disable the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> capability.</p></li>
+<li><p><strong>max_idle_wait</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – If given, the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> command will transparently cancel
+and re-issue its request for updates every <em>N</em> seconds.</p></li>
+<li><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Additional keywords used for special circumstances.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
+</dd>
+</dl>
+<dl class="py attribute">
 <dt id="pymap.config.IMAPConfig.args">
-<code class="descname">args</code><a class="headerlink" href="#pymap.config.IMAPConfig.args" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">args</code><a class="headerlink" href="#pymap.config.IMAPConfig.args" title="Permalink to this definition">¶</a></dt>
 <dd><p>The command-line arguments.</p>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="py method">
 <dt id="pymap.config.IMAPConfig.parse_args">
-<em class="property">classmethod </em><code class="descname">parse_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.parse_args" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">parse_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.parse_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given command-line arguments, return a dictionary of keywords that
 should be passed in to the <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a> (or sub-class)
 constructor. Sub-classes should override this method as needed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="py method">
 <dt id="pymap.config.IMAPConfig.from_args">
-<em class="property">classmethod </em><code class="descname">from_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.from_args" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.from_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build and return a new <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a> using command-line
 arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">~ConfigT</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>~ConfigT</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.config.IMAPConfig.apply_context">
-<code class="descname">apply_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.apply_context" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.apply_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the configured settings to any <a class="reference internal" href="pymap.context.html#module-pymap.context" title="pymap.context"><code class="xref py py-mod docutils literal notranslate"><span class="pre">context</span></code></a>
 variables.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.config.IMAPConfig.backend_capability">
-<code class="descname">backend_capability</code><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract property </em><code class="sig-name descname">backend_capability</code><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows backends to declare support for IMAP extensions and other
 capabilities.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -240,17 +218,15 @@ capabilities.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
     
@@ -289,15 +265,15 @@ capabilities.</p>
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2020, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -1,38 +1,36 @@
 
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.backend.maildir &#8212; pymap 0.17.1 documentation</title>
+    <meta charset="utf-8" />
+    <title>pymap.backend.maildir &#8212; pymap 0.17.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
 
     
     
      
-        <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+        <script src="_static/jquery.cookie.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.base.js"></script>
+        <script src="_static/cloud.base.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.js"></script>
+        <script src="_static/cloud.js"></script>
     
 
     <link rel="index" title="Index" href="genindex.html" />
@@ -58,7 +56,7 @@
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
@@ -73,142 +71,119 @@
             
   <div class="section" id="module-pymap.backend.maildir">
 <span id="pymap-backend-maildir"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code><a class="headerlink" href="#module-pymap.backend.maildir" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.MaildirBackend">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">MaildirBackend</code><span class="sig-paren">(</span><em>login</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.interfaces.backend.BackendInterface</span></code></a></p>
-<p>Defines an on-disk backend that uses <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.</code><code class="sig-name descname">MaildirBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines an on-disk backend that uses <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
 mailbox storage and <a class="reference external" href="https://wiki2.dovecot.org/MailboxFormat/Maildir">MailboxFormat/Maildir</a> for metadata storage.</p>
-<dl class="classmethod">
+<dl class="py method">
+<dt id="pymap.backend.maildir.MaildirBackend.login">
+<em class="property">property </em><code class="sig-name descname">login</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login callback that takes authentication credentials and returns a
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Login</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.backend.maildir.MaildirBackend.config">
+<em class="property">property </em><code class="sig-name descname">config</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The IMAP config in use by the backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.backend.maildir.Config" title="pymap.backend.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pymap.backend.maildir.MaildirBackend.add_subparser">
-<em class="property">classmethod </em><code class="descname">add_subparser</code><span class="sig-paren">(</span><em>name</em>, <em>subparsers</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.add_subparser" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">add_subparser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">subparsers</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.add_subparser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a command-line argument sub-parser that will be used to choose
 this backend. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;foo backend&#39;</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</li>
-<li><strong>subparsers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The special action object as returned by
-<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</p></li>
+<li><p><strong>subparsers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The special action object as returned by
+<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The new sub-parser object.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The new sub-parser object.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="pymap.backend.maildir.MaildirBackend.config">
-<code class="descname">config</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.config" title="Permalink to this definition">¶</a></dt>
-<dd><p>The IMAP config in use by the backend.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.maildir.Config" title="pymap.backend.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="pymap.backend.maildir.MaildirBackend.login">
-<code class="descname">login</code><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Login callback that takes authentication credentials and returns a
-<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Login</span></code></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
+<dl class="py method">
 <dt id="pymap.backend.maildir.MaildirBackend.init">
-<em class="property">classmethod </em><code class="descname">init</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.init" title="Permalink to this definition">¶</a></dt>
+<em class="property">async classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the backend and return an instance.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.maildir.MaildirBackend" title="pymap.backend.maildir.MaildirBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.maildir.Config" title="pymap.backend.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.maildir.MaildirBackend" title="pymap.backend.maildir.MaildirBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.maildir.Config" title="pymap.backend.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.MaildirBackend.start">
-<code class="descname">start</code><span class="sig-paren">(</span><em>services</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.start" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">services</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the backend, as well as any services.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>services</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceInterface</span></code></a>]) – Available services that may also be started.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>services</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceInterface</span></code></a>]) – Available services that may also be started.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.Config">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>args</em>, <em>*</em>, <em>users_file</em>, <em>base_dir</em>, <em>layout</em>, <em>**extra</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.config.IMAPConfig</span></code></a></p>
-<p>The config implementation for the maildir backend.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</li>
-<li><strong>users_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The path to the users file.</li>
-<li><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The base directory for all relative mailbox paths.</li>
-<li><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The Maildir directory layout.</li>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">users_file</span></em>, <em class="sig-param"><span class="n">base_dir</span></em>, <em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">extra</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>The config implementation for the maildir backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p></li>
+<li><p><strong>users_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The path to the users file.</p></li>
+<li><p><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The base directory for all relative mailbox paths.</p></li>
+<li><p><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The Maildir directory layout.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pymap.backend.maildir.Config.backend_capability">
-<code class="descname">backend_capability</code><a class="headerlink" href="#pymap.backend.maildir.Config.backend_capability" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">backend_capability</code><a class="headerlink" href="#pymap.backend.maildir.Config.backend_capability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows backends to declare support for IMAP extensions and other
 capabilities.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="pymap.config.html#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.config.html#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><code class="xref py py-class docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.Config.users_file">
-<code class="descname">users_file</code><a class="headerlink" href="#pymap.backend.maildir.Config.users_file" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">users_file</code><a class="headerlink" href="#pymap.backend.maildir.Config.users_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used by the default <code class="xref py py-meth docutils literal notranslate"><span class="pre">find_user()</span></code> implementation
 to retrieve the users file path from the command-line arguments. The
 users file is given as the first positional argument on the
@@ -219,97 +194,81 @@ path, and the password.</p>
 <p>The password may contain colon characters. The mailbox path may be
 empty, relative, or absolute. If it is empty, the user ID is used as a
 relative path.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.Config.base_dir">
-<code class="descname">base_dir</code><a class="headerlink" href="#pymap.backend.maildir.Config.base_dir" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">base_dir</code><a class="headerlink" href="#pymap.backend.maildir.Config.base_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>The base directory for all relative mailbox paths. The default is
 the directory containing the users file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.Config.layout">
-<code class="descname">layout</code><a class="headerlink" href="#pymap.backend.maildir.Config.layout" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">layout</code><a class="headerlink" href="#pymap.backend.maildir.Config.layout" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Maildir directory layout name.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout" title="pymap.backend.maildir.layout.MaildirLayout"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirLayout</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout" title="pymap.backend.maildir.layout.MaildirLayout"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirLayout</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="py method">
 <dt id="pymap.backend.maildir.Config.parse_args">
-<em class="property">classmethod </em><code class="descname">parse_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Config.parse_args" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">parse_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Config.parse_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given command-line arguments, return a dictionary of keywords that
 should be passed in to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code> (or sub-class)
 constructor. Sub-classes should override this method as needed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.Session">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.</code><code class="descname">Session</code><span class="sig-paren">(</span><em>owner</em>, <em>config</em>, <em>mailbox_set</em>, <em>filter_set</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.backend.html#pymap.backend.session.BaseSession" title="pymap.backend.session.BaseSession"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.session.BaseSession</span></code></a></p>
-<p>The session implementation for the maildir backend.</p>
-<dl class="attribute">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.</code><code class="sig-name descname">Session</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owner</span></em>, <em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">mailbox_set</span></em>, <em class="sig-param"><span class="n">filter_set</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.Session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The session implementation for the maildir backend.</p>
+<dl class="py method">
 <dt id="pymap.backend.maildir.Session.filter_set">
-<code class="descname">filter_set</code><a class="headerlink" href="#pymap.backend.maildir.Session.filter_set" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">filter_set</code><a class="headerlink" href="#pymap.backend.maildir.Session.filter_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the active and inactive filters for the login user.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSet</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSet</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <div class="section" id="module-pymap.backend.maildir.flags">
 <span id="pymap-backend-maildir-flags"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.flags</span></code><a class="headerlink" href="#module-pymap.backend.maildir.flags" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.flags.MaildirFlags">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.flags.</code><code class="descname">MaildirFlags</code><span class="sig-paren">(</span><em>keywords</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.io.FileReadable</span></code></p>
-<p>Maintains a set of IMAP keywords (non-standard flags) that are available
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.flags.</code><code class="sig-name descname">MaildirFlags</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">keywords</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maintains a set of IMAP keywords (non-standard flags) that are available
 for use on messages. This uses a custom file format to define keywords,
 which might look like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>0 $Junk
@@ -318,91 +277,75 @@ which might look like this:</p>
 </div>
 <p>The lower-case letter codes that correspond to each keyword start with
 <code class="docutils literal notranslate"><span class="pre">'a'</span></code> for 0, <code class="docutils literal notranslate"><span class="pre">'b'</span></code> for 1, etc. and up to 26 are supported.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keywords</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The list of keywords available for use on messages.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>keywords</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The list of keywords available for use on messages.</p>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://wiki.dovecot.org/MailboxFormat/Maildir#line-40">IMAP Keywords</a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://wiki.dovecot.org/MailboxFormat/Maildir#line-40">IMAP Keywords</a></p>
 </div>
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.flags.MaildirFlags.permanent_flags">
-<code class="descname">permanent_flags</code><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">permanent_flags</code><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.permanent_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the set of all permanent flags, system and keyword.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.flags.MaildirFlags.system_flags">
-<code class="descname">system_flags</code><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.system_flags" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">system_flags</code><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.system_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the set of defined IMAP system flags.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.flags.MaildirFlags.keywords">
-<code class="descname">keywords</code><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.keywords" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">keywords</code><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.keywords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the set of available IMAP keywords.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.flags.MaildirFlags.to_maildir">
-<code class="descname">to_maildir</code><span class="sig-paren">(</span><em>flags</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.to_maildir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">to_maildir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flags</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.to_maildir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the string of letter codes that are used to map to defined
 IMAP flags and keywords.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]]) – The flags and keywords to map.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]]) – The flags and keywords to map.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.flags.MaildirFlags.from_maildir">
-<code class="descname">from_maildir</code><span class="sig-paren">(</span><em>codes</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.from_maildir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">from_maildir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">codes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.flags.MaildirFlags.from_maildir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the set of IMAP flags that correspond to the letter codes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>codes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The letter codes to map.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>codes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The letter codes to map.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -410,327 +353,269 @@ IMAP flags and keywords.</p>
 </div>
 <div class="section" id="module-pymap.backend.maildir.layout">
 <span id="pymap-backend-maildir-layout"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code><a class="headerlink" href="#module-pymap.backend.maildir.layout" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.layout.MaildirLayout">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">MaildirLayout</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
-<p>Manages the folder layout of a <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> inbox.</p>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">MaildirLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the folder layout of a <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> inbox.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://wiki.dovecot.org/MailboxFormat/Maildir#line-130">Directory Structure</a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://wiki.dovecot.org/MailboxFormat/Maildir#line-130">Directory Structure</a></p>
 </div>
-<dl class="classmethod">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.get">
-<em class="property">classmethod </em><code class="descname">get</code><span class="sig-paren">(</span><em>path</em>, <em>layout</em>, <em>maildir_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</li>
-<li><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The layout name, e.g. <code class="docutils literal notranslate"><span class="pre">'++'</span></code> or <code class="docutils literal notranslate"><span class="pre">'fs'</span></code>.</li>
-<li><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[~_MaildirT]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> sub-class.</li>
+<em class="property">classmethod </em><code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">layout</span></em>, <em class="sig-param"><span class="n">maildir_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</p></li>
+<li><p><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The layout name, e.g. <code class="docutils literal notranslate"><span class="pre">'++'</span></code> or <code class="docutils literal notranslate"><span class="pre">'fs'</span></code>.</p></li>
+<li><p><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[~_MaildirT]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> sub-class.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – The layout name was not recognized.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout" title="pymap.backend.maildir.layout.MaildirLayout"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirLayout</span></code></a>[~_MaildirT]</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><strong>ValueError</strong></a> – The layout name was not recognized.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout" title="pymap.backend.maildir.layout.MaildirLayout"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirLayout</span></code></a>[~_MaildirT]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.path">
-<code class="descname">path</code><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.path" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract property </em><code class="sig-name descname">path</code><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.path" title="Permalink to this definition">¶</a></dt>
 <dd><p>The root path of the inbox.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.get_path">
-<code class="descname">get_path</code><span class="sig-paren">(</span><em>name</em>, <em>delimiter</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get_path" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">delimiter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the path of the sub-folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested parts of the folder name, not including inbox.</li>
-<li><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested parts of the folder name, not including inbox.</p></li>
+<li><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.list_folders">
-<code class="descname">list_folders</code><span class="sig-paren">(</span><em>delimiter</em>, <em>top='INBOX'</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.list_folders" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">list_folders</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delimiter</span></em>, <em class="sig-param"><span class="n">top</span><span class="o">=</span><span class="default_value">'INBOX'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.list_folders" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all folders, starting with <code class="docutils literal notranslate"><span class="pre">top</span></code> and traversing
 through the sub-folder heirarchy.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</li>
-<li><strong>top</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The top of the folder heirarchy to list.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</p></li>
+<li><p><strong>top</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The top of the folder heirarchy to list.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> – The folder did not exist.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><strong>FileNotFoundError</strong></a> – The folder did not exist.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.get_folder">
-<code class="descname">get_folder</code><span class="sig-paren">(</span><em>name</em>, <em>delimiter</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get_folder" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">delimiter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.get_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the existing sub-folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited sub-folder name, not including inbox.</li>
-<li><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited sub-folder name, not including inbox.</p></li>
+<li><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> – The folder did not exist.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">~_MaildirT</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><strong>FileNotFoundError</strong></a> – The folder did not exist.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>~_MaildirT</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.add_folder">
-<code class="descname">add_folder</code><span class="sig-paren">(</span><em>name</em>, <em>delimiter</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.add_folder" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">add_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">delimiter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.add_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new sub-folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited sub-folder name, not including inbox.</li>
-<li><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited sub-folder name, not including inbox.</p></li>
+<li><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileExistsError</span></code></a> – The folder already exists.</li>
-<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> – A parent folder did not exist.</li>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.8)"><strong>FileExistsError</strong></a> – The folder already exists.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><strong>FileNotFoundError</strong></a> – A parent folder did not exist.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.remove_folder">
-<code class="descname">remove_folder</code><span class="sig-paren">(</span><em>name</em>, <em>delimiter</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.remove_folder" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">remove_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">delimiter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.remove_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the existing sub-folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited sub-folder name, not including inbox.</li>
-<li><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited sub-folder name, not including inbox.</p></li>
+<li><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> – The folder did not exist.</li>
-<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#OSError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">OSError</span></code></a> – With <code class="xref py py-attr docutils literal notranslate"><span class="pre">ENOTEMPTY</span></code>, the folder has sub-folders.</li>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><strong>FileNotFoundError</strong></a> – The folder did not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#OSError" title="(in Python v3.8)"><strong>OSError</strong></a> – With <code class="xref py py-attr docutils literal notranslate"><span class="pre">ENOTEMPTY</span></code>, the folder has sub-folders.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.layout.MaildirLayout.rename_folder">
-<code class="descname">rename_folder</code><span class="sig-paren">(</span><em>source_name</em>, <em>dest_name</em>, <em>delimiter</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.rename_folder" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">rename_folder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_name</span></em>, <em class="sig-param"><span class="n">dest_name</span></em>, <em class="sig-param"><span class="n">delimiter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout.rename_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rename the existing sub-folder to the destination.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>source_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited source sub-folder name.</li>
-<li><strong>dest_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited destination sub-folder name.</li>
-<li><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited source sub-folder name.</p></li>
+<li><p><strong>dest_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The delimited destination sub-folder name.</p></li>
+<li><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The nested sub-folder delimiter string.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> – The source folder did not exist.</li>
-<li><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileExistsError</span></code></a> – The destination folder already exists.</li>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.8)"><strong>FileNotFoundError</strong></a> – The source folder did not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.8)"><strong>FileExistsError</strong></a> – The destination folder already exists.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.layout.DefaultLayout">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">DefaultLayout</code><span class="sig-paren">(</span><em>path</em>, <em>maildir_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.DefaultLayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout._BaseLayout</span></code></p>
-<p>The default Maildir++ layout, which uses sub-folder names starting
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">DefaultLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">maildir_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.DefaultLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default Maildir++ layout, which uses sub-folder names starting
 with and using <code class="docutils literal notranslate"><span class="pre">.</span></code> as a delimiter for nesting , e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">Trash</span><span class="o">/</span>
 <span class="o">.</span><span class="n">Important</span><span class="o">.</span><span class="n">To</span><span class="o">-</span><span class="n">Do</span><span class="o">/</span>
 <span class="o">.</span><span class="n">Important</span><span class="o">.</span><span class="n">Misc</span><span class="o">/</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</li>
-<li><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[~_MaildirT]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</p></li>
+<li><p><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[~_MaildirT]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.layout.FilesystemLayout">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.layout.</code><code class="descname">FilesystemLayout</code><span class="sig-paren">(</span><em>path</em>, <em>maildir_type</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.FilesystemLayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout._BaseLayout</span></code></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">fs</span></code> layout, which uses nested sub-directories on the filesystem,
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">FilesystemLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">maildir_type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.FilesystemLayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">fs</span></code> layout, which uses nested sub-directories on the filesystem,
 e.g.:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Trash</span><span class="o">/</span>
 <span class="n">Important</span><span class="o">/</span><span class="n">To</span><span class="o">-</span><span class="n">Do</span><span class="o">/</span>
 <span class="n">Important</span><span class="o">/</span><span class="n">Misc</span><span class="o">/</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</li>
-<li><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[~_MaildirT]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The root path of the inbox.</p></li>
+<li><p><strong>maildir_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[~_MaildirT]) – The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> class override.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-pymap.backend.maildir.subscriptions">
 <span id="pymap-backend-maildir-subscriptions"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.subscriptions</span></code><a class="headerlink" href="#module-pymap.backend.maildir.subscriptions" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.subscriptions.Subscriptions">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.subscriptions.</code><code class="descname">Subscriptions</code><span class="sig-paren">(</span><em>base_dir</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.io.FileWriteable</span></code></p>
-<p>Maintains the set of folders currently subscribed to.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The directory of the file.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.subscriptions.</code><code class="sig-name descname">Subscriptions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_dir</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maintains the set of folders currently subscribed to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The directory of the file.</p>
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pymap.backend.maildir.subscriptions.Subscriptions.subscribed">
-<code class="descname">subscribed</code><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.subscribed" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">subscribed</code><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.subscribed" title="Permalink to this definition">¶</a></dt>
 <dd><p>The folders currently subscribed to.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.subscriptions.Subscriptions.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>folder</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new folder to the subscriptions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.subscriptions.Subscriptions.remove">
-<code class="descname">remove</code><span class="sig-paren">(</span><em>folder</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.remove" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a folder from the subscriptions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.subscriptions.Subscriptions.set">
-<code class="descname">set</code><span class="sig-paren">(</span><em>folder</em>, <em>subscribed</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.set" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder</span></em>, <em class="sig-param"><span class="n">subscribed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.subscriptions.Subscriptions.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the subscribed status of a folder.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -738,147 +623,123 @@ e.g.:</p>
 </div>
 <div class="section" id="module-pymap.backend.maildir.uidlist">
 <span id="pymap-backend-maildir-uidlist"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code><a class="headerlink" href="#module-pymap.backend.maildir.uidlist" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.uidlist.Record">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.uidlist.</code><code class="descname">Record</code><span class="sig-paren">(</span><em>uid: int, fields: Mapping[str, str], filename: str</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Defines a single record read from the UID list file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID of the record.</li>
-<li><strong>fields</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The metadata fields of the record.</li>
-<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filename of the record.</li>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.uidlist.</code><code class="sig-name descname">Record</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uid</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></span></em>, <em class="sig-param"><span class="n">fields</span><span class="p">:</span> <span class="n">Mapping<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">, </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a single record read from the UID list file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID of the record.</p></li>
+<li><p><strong>fields</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The metadata fields of the record.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The filename of the record.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pymap.backend.maildir.uidlist.Record.key">
-<code class="descname">key</code><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record.key" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">key</code><a class="headerlink" href="#pymap.backend.maildir.uidlist.Record.key" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> key value.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.backend.maildir.uidlist.UidList">
-<em class="property">class </em><code class="descclassname">pymap.backend.maildir.uidlist.</code><code class="descname">UidList</code><span class="sig-paren">(</span><em>base_dir</em>, <em>uid_validity</em>, <em>next_uid</em>, <em>global_uid=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.backend.maildir.io.FileWriteable</span></code></p>
-<p>Maintains the file with UID mapping to maildir files.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The directory of the file.</li>
-<li><strong>uid_validity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID validity value.</li>
-<li><strong>next_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The next assignable message UID value.</li>
-<li><strong>global_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The 128-bit global mailbox UID.</li>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.uidlist.</code><code class="sig-name descname">UidList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_dir</span></em>, <em class="sig-param"><span class="n">uid_validity</span></em>, <em class="sig-param"><span class="n">next_uid</span></em>, <em class="sig-param"><span class="n">global_uid</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maintains the file with UID mapping to maildir files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The directory of the file.</p></li>
+<li><p><strong>uid_validity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID validity value.</p></li>
+<li><p><strong>next_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The next assignable message UID value.</p></li>
+<li><p><strong>global_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The 128-bit global mailbox UID.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
+</dd>
+</dl>
+<dl class="py attribute">
 <dt id="pymap.backend.maildir.uidlist.UidList.FILE_NAME">
-<code class="descname">FILE_NAME</code><em class="property"> = 'dovecot-uidlist'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">FILE_NAME</code><em class="property">: ClassVar[str]</em><em class="property"> = 'dovecot-uidlist'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.FILE_NAME" title="Permalink to this definition">¶</a></dt>
 <dd><p>The UID list file name, stored in the mailbox directory.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pymap.backend.maildir.uidlist.UidList.LOCK_FILE">
-<code class="descname">LOCK_FILE</code><em class="property"> = 'dovecot-uidlist.lock'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.LOCK_FILE" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">LOCK_FILE</code><em class="property">: ClassVar[str]</em><em class="property"> = 'dovecot-uidlist.lock'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.LOCK_FILE" title="Permalink to this definition">¶</a></dt>
 <dd><p>The UID list lock file, stored adjacent to the UID list file.</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.backend.maildir.uidlist.UidList.records">
-<code class="descname">records</code><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.records" title="Permalink to this definition">¶</a></dt>
+<em class="property">property </em><code class="sig-name descname">records</code><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.records" title="Permalink to this definition">¶</a></dt>
 <dd><p>The records contained in the UID list file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.uidlist.UidList.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a single record by its UID.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> – The UID does not exist.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><strong>KeyError</strong></a> – The UID does not exist.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.uidlist.UidList.get_all">
-<code class="descname">get_all</code><span class="sig-paren">(</span><em>uids</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.get_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.get_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get records by a set of UIDs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The message UIDs.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The message UIDs.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="#pymap.backend.maildir.uidlist.Record" title="pymap.backend.maildir.uidlist.Record"><code class="xref py py-class docutils literal notranslate"><span class="pre">Record</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.uidlist.UidList.set">
-<code class="descname">set</code><span class="sig-paren">(</span><em>rec</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.set" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add or update the record in the UID list file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.backend.maildir.uidlist.UidList.remove">
-<code class="descname">remove</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.remove" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the record from the UID list file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> – The UID does not exist.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><strong>KeyError</strong></a> – The UID does not exist.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -922,17 +783,15 @@ e.g.:</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
     
@@ -971,7 +830,7 @@ e.g.:</p>
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
       </ul>
@@ -979,8 +838,8 @@ e.g.:</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2020, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

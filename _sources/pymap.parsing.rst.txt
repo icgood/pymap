@@ -11,6 +11,12 @@
 .. automodule:: pymap.parsing.exceptions
    :members:
 
+``pymap.parsing.state``
+----------------------------
+
+.. automodule:: pymap.parsing.state
+   :members:
+
 ``pymap.parsing.commands``
 ----------------------------
 
@@ -59,6 +65,12 @@
 .. automodule:: pymap.parsing.specials.mailbox
    :members:
 
+.. automodule:: pymap.parsing.specials.objectid
+   :members:
+
+.. automodule:: pymap.parsing.specials.options
+   :members:
+
 .. automodule:: pymap.parsing.specials.searchkey
    :members:
 
@@ -66,9 +78,6 @@
    :members:
 
 .. automodule:: pymap.parsing.specials.statusattr
-   :members:
-
-.. automodule:: pymap.parsing.specials.options
    :members:
 
 .. automodule:: pymap.parsing.specials.tag
@@ -87,4 +96,16 @@
    :members:
 
 .. automodule:: pymap.parsing.response.specials
+   :members:
+
+``pymap.parsing.modutf7``
+----------------------------
+
+.. automodule:: pymap.parsing.modutf7
+   :members:
+
+``pymap.parsing.message``
+----------------------------
+
+.. automodule:: pymap.parsing.message
    :members:

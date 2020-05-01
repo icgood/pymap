@@ -1,38 +1,36 @@
 
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>pymap.fetch &#8212; pymap 0.17.1 documentation</title>
+    <meta charset="utf-8" />
+    <title>pymap.fetch &#8212; pymap 0.17.2 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
 
     
     
      
-        <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+        <script src="_static/jquery.cookie.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.base.js"></script>
+        <script src="_static/cloud.base.js"></script>
     
 
     
      
-        <script type="text/javascript" src="_static/cloud.js"></script>
+        <script src="_static/cloud.js"></script>
     
 
     <link rel="index" title="Index" href="genindex.html" />
@@ -58,7 +56,7 @@
         <li class="right" >
           <a href="pymap.exceptions.html" title="pymap.exceptions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
@@ -72,139 +70,112 @@
             
   <div class="section" id="module-pymap.fetch">
 <span id="pymap-fetch"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code><a class="headerlink" href="#module-pymap.fetch" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.fetch.LoadedMessageProvider">
-<em class="property">class </em><code class="descclassname">pymap.fetch.</code><code class="descname">LoadedMessageProvider</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.LoadedMessageProvider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a></p>
-<p>Generic protocol that provides access to a message’s loaded contents
+<em class="property">class </em><code class="sig-prename descclassname">pymap.fetch.</code><code class="sig-name descname">LoadedMessageProvider</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.LoadedMessageProvider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic protocol that provides access to a message’s loaded contents
 when they are available.</p>
-<dl class="attribute">
+<dl class="py method">
 <dt id="pymap.fetch.LoadedMessageProvider.loaded_msg">
-<code class="descname">loaded_msg</code><a class="headerlink" href="#pymap.fetch.LoadedMessageProvider.loaded_msg" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract property </em><code class="sig-name descname">loaded_msg</code><a class="headerlink" href="#pymap.fetch.LoadedMessageProvider.loaded_msg" title="Permalink to this definition">¶</a></dt>
 <dd><p>The loaded message, if available.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.fetch.DynamicFetchValue">
-<em class="property">class </em><code class="descclassname">pymap.fetch.</code><code class="descname">DynamicFetchValue</code><span class="sig-paren">(</span><em>attribute</em>, <em>*</em>, <em>message</em>, <em>selected</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicFetchValue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchValue" title="pymap.parsing.specials.fetchattr.FetchValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.specials.fetchattr.FetchValue</span></code></a></p>
-<p>Base class for fetch values that are dynamically read from a message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>attribute</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>) – The fetch attribute.</li>
-<li><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
-<li><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox.</li>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.fetch.</code><code class="sig-name descname">DynamicFetchValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attribute</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">selected</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicFetchValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for fetch values that are dynamically read from a message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>) – The fetch attribute.</p></li>
+<li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pymap.fetch.DynamicFetchValue.get_value">
-<code class="descname">get_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicFetchValue.get_value" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicFetchValue.get_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the value of the fetch attribute for the message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.fetch.DynamicLoadedFetchValue">
-<em class="property">class </em><code class="descclassname">pymap.fetch.</code><code class="descname">DynamicLoadedFetchValue</code><span class="sig-paren">(</span><em>attribute</em>, <em>*</em>, <em>message</em>, <em>get_loaded</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicLoadedFetchValue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchValue" title="pymap.parsing.specials.fetchattr.FetchValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.specials.fetchattr.FetchValue</span></code></a></p>
-<p>Base class for fetch values that are dynamically read from a message and
+<em class="property">class </em><code class="sig-prename descclassname">pymap.fetch.</code><code class="sig-name descname">DynamicLoadedFetchValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attribute</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">get_loaded</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicLoadedFetchValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for fetch values that are dynamically read from a message and
 require loading its contents.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>attribute</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>) – The fetch attribute.</li>
-<li><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
-<li><strong>selected</strong> – The selected mailbox.</li>
-<li><strong>get_loaded</strong> (<a class="reference internal" href="#pymap.fetch.LoadedMessageProvider" title="pymap.fetch.LoadedMessageProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageProvider</span></code></a>) – The provider of the loaded message contents, if available.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a>) – The fetch attribute.</p></li>
+<li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
+<li><p><strong>selected</strong> – The selected mailbox.</p></li>
+<li><p><strong>get_loaded</strong> (<a class="reference internal" href="#pymap.fetch.LoadedMessageProvider" title="pymap.fetch.LoadedMessageProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageProvider</span></code></a>) – The provider of the loaded message contents, if available.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+</dd>
+</dl>
+<dl class="py method">
 <dt id="pymap.fetch.DynamicLoadedFetchValue.get_value">
-<code class="descname">get_value</code><span class="sig-paren">(</span><em>loaded_msg</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicLoadedFetchValue.get_value" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.DynamicLoadedFetchValue.get_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the value of the fetch attribute for the message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The loaded message object.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The loaded message object.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="pymap.fetch.MessageAttributes">
-<em class="property">class </em><code class="descclassname">pymap.fetch.</code><code class="descname">MessageAttributes</code><span class="sig-paren">(</span><em>message</em>, <em>selected</em>, <em>attributes</em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.MessageAttributes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Sequence</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></a></p>
-<p>Defines the logic for how fetch attributes are resolved on a message to
+<em class="property">class </em><code class="sig-prename descclassname">pymap.fetch.</code><code class="sig-name descname">MessageAttributes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">selected</span></em>, <em class="sig-param"><span class="n">attributes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.MessageAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the logic for how fetch attributes are resolved on a message to
 produce a fetch value.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</li>
-<li><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
+</dd>
+</dl>
+<dl class="py attribute">
 <dt id="pymap.fetch.MessageAttributes.placeholder">
-<code class="descname">placeholder</code><em class="property"> = b'...'</em><a class="headerlink" href="#pymap.fetch.MessageAttributes.placeholder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">placeholder</code><em class="property">: ClassVar[bytes]</em><em class="property"> = b'...'</em><a class="headerlink" href="#pymap.fetch.MessageAttributes.placeholder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Placeholder value for fetch values requiring loaded message contents.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pymap.fetch.MessageAttributes.load_hook">
-<code class="descname">load_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.MessageAttributes.load_hook" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.fetch.MessageAttributes.load_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>An async context manager that loads the message content on entry,
 and releases it on exit. Fetch values that require loaded message
 content will write <a class="reference internal" href="#pymap.fetch.MessageAttributes.placeholder" title="pymap.fetch.MessageAttributes.placeholder"><code class="xref py py-attr docutils literal notranslate"><span class="pre">placeholder</span></code></a> if written outside of this
 context manager, for console or log output.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<code class="docutils literal notranslate"><span class="pre">None</span></code>]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -235,17 +206,15 @@ context manager, for console or log output.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
     
@@ -284,15 +253,15 @@ context manager, for console or log output.</p>
         <li class="right" >
           <a href="pymap.exceptions.html" title="pymap.exceptions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.17.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
  
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2019, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+        &#169; Copyright 2020, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

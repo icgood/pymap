@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>pymap.threads &#8212; pymap 0.17.2 documentation</title>
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+
+    
+    
+     
+        <script src="_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pymap.plugin" href="pymap.plugin.html" />
+    <link rel="prev" title="pymap.mime" href="pymap.mime.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.plugin.html" title="pymap.plugin"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.mime.html" title="pymap.mime"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pymap.threads">
+<span id="pymap-threads"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code><a class="headerlink" href="#module-pymap.threads" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="pymap.threads.ThreadKey">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.threads.</code><code class="sig-name descname">ThreadKey</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_id</span></em>, <em class="sig-param"><span class="n">subject</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.threads.ThreadKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a hashable key used to link messages as members of the same
+thread.</p>
+<p>The thread key is composed of a single message ID from the <code class="docutils literal notranslate"><span class="pre">Message-Id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">In-Reply-To</span></code>, or <code class="docutils literal notranslate"><span class="pre">References</span></code> headers, along with a normalized version
+of the <code class="docutils literal notranslate"><span class="pre">Subject</span></code> header. If two messages share a single thread key, they
+should be assigned the same
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.thread_id" title="pymap.interfaces.message.MessageInterface.thread_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thread_id</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The message ID bytestring.</p></li>
+<li><p><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The normalized subject bytestring.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pymap.threads.ThreadKey.get_all">
+<em class="property">classmethod </em><code class="sig-name descname">get_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.threads.ThreadKey.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the thread keys from the message headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>header</strong> (<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageHeader" title="pymap.mime.MessageHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageHeader</span></code></a>) – The message header.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="#pymap.threads.ThreadKey" title="pymap.threads.ThreadKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadKey</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="pymap.mime.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="pymap.plugin.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.plugin</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pymap.threads.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.plugin.html" title="pymap.plugin"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.mime.html" title="pymap.mime"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.17.2 documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Ian Good.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -1511,6 +1511,26 @@ table.docutils.html-plain-table tr.row-odd > * { background: none; }
 
 
 table.docutils.align-right { margin-left: auto; }
+    table.docutils tbody
+    {
+        
+        vertical-align: top;
+    }
+
+    
+    
+    table.docutils th p:first-child,
+    table.docutils td p:first-child
+    {
+        margin-top: 0;
+    }
+
+    table.docutils th p:last-child,
+    table.docutils td p:last-child
+    {
+        margin-bottom: 0;
+    }
+
 
 table.docutils th {
     border: 0 solid transparent;
@@ -1546,33 +1566,14 @@ table.docutils th + .double-left-divider { border-left-width: 0; }
 
 
 
+    
+    dl.field-list > dd > p:first-child,
+    dl.field-list > dd > p:first-child:empty + ul.simple li > p:first-child,
+    dl.field-list > dd > ul:first-child.simple li > p:first-child
+    { margin-top: 0; }
 
-table.field-list { margin: 1.5em 0; }
-
-
-table.field-list th { background: none;  padding: 0 0.4em 0 0; }
-
-
-table.field-list td { padding: 0 0 1.5em 0; }
-table.field-list tr:last-child td { padding-bottom: 0; }
-
-
-td.field-body > ul:first-child.simple > li {  margin: 0 0 1.5em 0; }
-td.field-body > ul:first-child.simple > li:last-child {  margin-bottom: 0; }
-
-
-td.field-body > em,
-td.field-body > ul.first.simple > li > em { padding: 2px 4px; }
-
-
-td.field-body > p,
-td.field-body > ul > li > p { margin: 0 0 1.5em; }
-
-td.field-body > p:last-child,
-td.field-body > ul > li > .admonition { margin-bottom: 0; }
-
-
-td.field-body > p:empty { display: none; }
+    
+    dl.field-list > dd > p:first-child:empty { display: none; }
 
 
 
