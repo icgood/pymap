@@ -5,7 +5,7 @@ import pytest  # type: ignore
 from pymapadmin.grpc.admin_pb2 import Login, AppendRequest, AppendResponse, \
     SUCCESS, FAILURE
 
-from pymap.admin.handlers import AdminHandlers
+from pymap.admin.handlers.mailbox import MailboxHandlers
 
 from .base import TestBase
 
@@ -25,12 +25,12 @@ class _Stream:
         self.response = response
 
 
-class TestAdminHandlers(TestBase):
+class TestMailboxHandlers(TestBase):
 
     async def test_append(self, backend, imap_server):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -59,8 +59,8 @@ class TestAdminHandlers(TestBase):
         await self.run(transport)
 
     async def test_append_user_not_found(self, backend):
-        handlers = AdminHandlers(backend)
-        login = Login(user='baduser')
+        handlers = MailboxHandlers(backend, True)
+        login = Login(authcid='testuser', secret='badpass')
         request = AppendRequest(login=login)
         stream = _Stream(request)
         await handlers.Append(stream)
@@ -69,8 +69,8 @@ class TestAdminHandlers(TestBase):
         assert 'InvalidAuth' == response.result.key
 
     async def test_append_mailbox_not_found(self, backend):
-        handlers = AdminHandlers(backend)
-        login = Login(user='testuser')
+        handlers = MailboxHandlers(backend, True)
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='BAD')
         stream = _Stream(request)
         await handlers.Append(stream)
@@ -80,9 +80,9 @@ class TestAdminHandlers(TestBase):
         assert 'MailboxNotFound' == response.result.key
 
     async def test_append_filter_reject(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'Subject: reject this\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -93,9 +93,9 @@ class TestAdminHandlers(TestBase):
         assert 'AppendFailure' == response.result.key
 
     async def test_append_filter_discard(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'Subject: discard this\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -107,9 +107,9 @@ class TestAdminHandlers(TestBase):
         assert not response.uid
 
     async def test_append_filter_address_is(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: foo@example.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -119,9 +119,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 1' == response.mailbox
 
     async def test_append_filter_address_contains(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: user@foo.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -131,9 +131,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 2' == response.mailbox
 
     async def test_append_filter_address_matches(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'To: bigfoot@example.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -143,9 +143,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 3' == response.mailbox
 
     async def test_append_filter_envelope_is(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 sender='foo@example.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
@@ -156,9 +156,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 4' == response.mailbox
 
     async def test_append_filter_envelope_contains(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 sender='user@foo.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
@@ -169,9 +169,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 5' == response.mailbox
 
     async def test_append_filter_envelope_matches(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 sender=None, recipient='bigfoot@example.com',
                                 flags=['\\Flagged', '\\Seen'],
@@ -182,9 +182,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 6' == response.mailbox
 
     async def test_append_filter_exists(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'X-Foo: foo\nX-Bar: bar\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -194,9 +194,9 @@ class TestAdminHandlers(TestBase):
         assert 'Test 7' == response.mailbox
 
     async def test_append_filter_header(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'X-Caffeine: C8H10N4O2\n\ntest message!\n'
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
@@ -206,10 +206,10 @@ class TestAdminHandlers(TestBase):
         assert 'Test 8' == response.mailbox
 
     async def test_append_filter_size(self, backend):
-        handlers = AdminHandlers(backend)
+        handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
         data = data + b'x' * (1234 - len(data))
-        login = Login(user='testuser')
+        login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)

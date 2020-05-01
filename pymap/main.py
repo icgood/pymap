@@ -10,12 +10,12 @@ import os
 from argparse import ArgumentParser, Namespace, ArgumentTypeError
 from contextlib import nullcontext
 from string import Template
-from typing import Any, Type, Sequence, Mapping, List
-
-from pkg_resources import iter_entry_points, DistributionNotFound
+from typing import Type, Sequence, List
 
 from . import __version__
+from .backend import backends
 from .interfaces.backend import BackendInterface, ServiceInterface
+from .service import services
 
 try:
     import systemd.daemon  # type: ignore
@@ -37,9 +37,6 @@ try:
 except ImportError:
     passlib = None
 
-_Backends = Mapping[str, Type[BackendInterface]]
-_Services = Mapping[str, Type[ServiceInterface]]
-
 
 def main() -> None:
     parser = _PymapArgumentParser(description=__doc__)
@@ -58,16 +55,14 @@ def main() -> None:
     if passlib is not None:
         parser.add_argument('--passlib-cfg', metavar='PATH',
                             help='config file for passlib hashing')
-    subparsers = parser.add_subparsers(dest='backend',
-                                       help='which pymap backend to use')
+    subparsers = parser.add_subparsers(dest='backend', required=True,
+                                       metavar='BACKEND')
 
-    backends: _Backends = _load_entry_points('pymap.backend')
-    services: _Services = _load_entry_points('pymap.service')
-
-    for backend_name, backend_cls in backends.items():
-        backend_cls.add_subparser(backend_name, subparsers)
-    for service_cls in services.values():
-        service_cls.add_arguments(parser)
+    for backend_name, backend_type in backends:
+        subparser = backend_type.add_subparser(backend_name, subparsers)
+        subparser.set_defaults(run=backend_type.start)
+    for _, service_type in services:
+        service_type.add_arguments(parser)
     parser.set_defaults(skip_services=[], passlib_cfg=None)
     args = parser.parse_args()
 
@@ -78,11 +73,8 @@ def main() -> None:
     if args.debug:
         logging.getLogger(__package__).setLevel(logging.DEBUG)
 
-    if not args.backend:
-        parser.error('Expected backend name')
-    backend_type = backends[args.backend]
-
-    service_types = [service for name, service in services.items()
+    backend_type = backends.registered[args.backend]
+    service_types = [service for name, service in services
                      if name not in args.skip_services]
 
     with PidFile(force_tmpdir=True):
@@ -97,24 +89,13 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
               service_types: Sequence[Type[ServiceInterface]]) -> None:
     backend, config = await backend_type.init(args)
     config.apply_context()
-    services = [await service.start(backend, config)
-                for service in service_types]
+
+    services = [svc_type(backend, config) for svc_type in service_types]
+    task = await args.run(backend, services)
 
     _drop_privileges(args)
     notify_ready()
-    await asyncio.gather(backend.task, *[service.task for service in services])
-
-
-def _load_entry_points(group: str) -> Mapping[str, Type[Any]]:
-    ret = {}
-    for entry_point in iter_entry_points(group):
-        try:
-            cls = entry_point.load()
-        except DistributionNotFound:
-            pass  # optional dependencies not installed
-        else:
-            ret[entry_point.name] = cls
-    return ret
+    await task
 
 
 def _get_pwd(setuid: str) -> int:

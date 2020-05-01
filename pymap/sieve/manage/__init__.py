@@ -6,18 +6,18 @@ import binascii
 import logging
 import re
 from argparse import ArgumentParser
-from asyncio import Task, StreamReader, StreamWriter, AbstractServer
+from asyncio import StreamReader, StreamWriter, AbstractServer
 from base64 import b64encode, b64decode
 from collections import OrderedDict
 from contextlib import closing, AsyncExitStack
-from typing import Optional, Union, Mapping, Dict, List
+from typing import Optional, Union, Mapping, Dict, List, Awaitable
 
 from pymap import __version__
 from pymap.bytes import BytesFormat
 from pymap.config import IMAPConfig
 from pymap.context import socket_info, language_code, connection_exit
 from pymap.exceptions import InvalidAuth
-from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.interfaces.backend import ServiceInterface
 from pymap.interfaces.session import LoginProtocol, SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
@@ -47,11 +47,6 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
 
     """
 
-    def __init__(self, server: AbstractServer) -> None:
-        super().__init__()
-        self._server = server
-        self._task = asyncio.create_task(self._run())
-
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('managesieve service')
@@ -60,23 +55,20 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         group.add_argument('--sieve-port',  metavar='NUM', default='sieve',
                            help='the port or service name to listen on')
 
-    @classmethod
-    async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> ManageSieveService:
-        managesieve_server = ManageSieveServer(backend.login, backend.config)
+    async def start(self) -> Awaitable:
+        backend = self.backend
+        config = self.config
+        managesieve_server = ManageSieveServer(backend.login, config)
         host: Optional[str] = config.args.sieve_host
         port: Union[str, int] = config.args.sieve_port
         server = await asyncio.start_server(
             managesieve_server, host=host, port=port)
-        return cls(server)
+        return asyncio.create_task(self._run(server))
 
-    @property
-    def task(self) -> Task:
-        return self._task
-
-    async def _run(self) -> None:
-        async with self._server:
-            await self._server.serve_forever()
+    @classmethod
+    async def _run(cls, server: AbstractServer) -> None:
+        async with server:
+            await server.serve_forever()
 
 
 class ManageSieveServer:
@@ -271,9 +263,7 @@ class ManageSieveConnection:
 
     async def _do_starttls(self) -> Response:
         ssl_context = self.config.ssl_context
-        if ssl_context is None:
-            raise ValueError('ssl_context is None')
-        elif not self._offer_starttls:
+        if not self._offer_starttls:
             return Response(Condition.NO, text='Bad command.')
         resp = Response(Condition.OK)
         await self._write_response(resp)

@@ -53,7 +53,7 @@ setup(name='pymap',
           'typing-extensions'],
       extras_require={
           'redis': ['aioredis >= 1.3.0', 'msgpack >= 1.0'],
-          'admin': ['pymap-admin == 0.2.0'],
+          'admin': ['pymap-admin == 0.4.0'],
           'sieve': ['sievelib'],
           'optional': ['hiredis', 'passlib', 'systemd-python', 'pid']},
       entry_points={
@@ -70,4 +70,6 @@ setup(name='pymap',
           'pymap.filter': [
               'sieve = pymap.sieve:SieveCompiler [sieve]'],
           'pymap.admin.handlers': [
-              'admin = pymap.admin.handlers:AdminHandlers']})
+              'server = pymap.admin.handlers.system:SystemHandlers',
+              'mailbox = pymap.admin.handlers.mailbox:MailboxHandlers',
+              'user = pymap.admin.handlers.user:UserHandlers']})

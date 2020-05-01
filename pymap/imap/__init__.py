@@ -7,19 +7,18 @@ import logging
 import re
 import sys
 from argparse import ArgumentParser
-from asyncio import shield, Task, StreamReader, StreamWriter, AbstractServer, \
+from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
     CancelledError
 from base64 import b64encode, b64decode
 from contextlib import closing, AsyncExitStack
-from ssl import SSLContext
-from typing import TypeVar, Optional, Iterable, Sequence, List, Awaitable
+from typing import TypeVar, Optional, Iterable, List, Awaitable
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.context import subsystem, current_command, socket_info, \
     connection_exit
 from pymap.exceptions import ResponseError
-from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.interfaces.backend import ServiceInterface
 from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.command import Command
 from pymap.parsing.commands import Commands
@@ -45,14 +44,6 @@ _log = logging.getLogger(__name__)
 class IMAPService(ServiceInterface):  # pragma: no cover
     """A pymap service implementing an IMAP server."""
 
-    def __init__(self, servers: Sequence[AbstractServer]) -> None:
-        super().__init__()
-        self._task = asyncio.create_task(self._run_all(servers))
-
-    @property
-    def task(self) -> Task:
-        return self._task
-
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('imap service')
@@ -71,24 +62,23 @@ class IMAPService(ServiceInterface):  # pragma: no cover
         group.add_argument('--no-tls', dest='tls', action='store_false',
                            help='disable TLS')
 
-    @classmethod
-    async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> IMAPService:
+    async def start(self) -> Awaitable:
+        backend = self.backend
+        config = self.config
+        servers: List[AbstractServer] = []
         imap_server = IMAPServer(backend.login, config)
         if config.args.inherited_sockets:
             sockets = InheritedSockets.of(config.args.inherited_sockets).get()
             if not sockets:
                 raise ValueError('No inherited sockets found')
-            return cls([await asyncio.start_server(imap_server, sock=sock)
-                        for sock in sockets])
+            for sock in sockets:
+                server = await asyncio.start_server(imap_server, sock=sock)
+                servers.append(server)
         else:
             server = await asyncio.start_server(
                 imap_server, host=config.host, port=config.port)
-            return cls([server])
-
-    @classmethod
-    async def _run_all(cls, servers: Sequence[AbstractServer]) -> None:
-        await asyncio.gather(*[cls._run(server) for server in servers])
+            servers.append(server)
+        return asyncio.gather(*[self._run(server) for server in servers])
 
     @classmethod
     async def _run(cls, server: AbstractServer) -> None:
@@ -267,10 +257,11 @@ class IMAPConnection:
         else:
             self._print('%d <--| %s', bytes(resp))
 
-    async def start_tls(self, ssl_context: SSLContext) -> None:
+    async def start_tls(self) -> None:
         loop = asyncio.get_event_loop()
         transport = self.writer.transport
         protocol = transport.get_protocol()
+        ssl_context = self.config.ssl_context
         new_transport = await loop.start_tls(
             transport, protocol, ssl_context, server_side=True)
         new_protocol = new_transport.get_protocol()
@@ -412,9 +403,9 @@ class IMAPConnection:
                         bad_commands = 0
                     if response.is_terminal:
                         break
-                    if isinstance(cmd, StartTLSCommand) and state.ssl_context \
+                    if isinstance(cmd, StartTLSCommand) \
                             and isinstance(response, ResponseOk):
-                        await self.start_tls(state.ssl_context)
+                        await self.start_tls()
                 finally:
                     await state.do_cleanup()
                     current_command.reset(prev_cmd)

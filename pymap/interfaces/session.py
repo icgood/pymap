@@ -11,6 +11,7 @@ from pysasl import AuthenticationCredentials
 from .filter import FilterSetInterface
 from .message import MessageInterface
 from .mailbox import MailboxInterface
+from .users import UsersInterface
 from ..concurrent import Event
 from ..flags import FlagOp
 from ..parsing.message import AppendMessage
@@ -56,8 +57,19 @@ class SessionInterface(Protocol):
 
     @property
     @abstractmethod
+    def users(self) -> Optional[UsersInterface]:
+        """Handles user management."""
+        ...
+
+    @property
+    @abstractmethod
     def filter_set(self) -> Optional[FilterSetInterface[Any]]:
         """Manages the active and inactive filters for the login user."""
+        ...
+
+    @abstractmethod
+    def close(self) -> None:
+        """Called at the end of a session, to clean up any resources."""
         ...
 
     @abstractmethod

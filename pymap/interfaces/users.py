@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Optional, AsyncIterable
+from typing import Collection, AsyncIterable
 from typing_extensions import Protocol
 
 from ..user import UserMetadata
@@ -14,9 +14,10 @@ class UsersInterface(Protocol):
     """Defines admin functions that backends can implement to manage users."""
 
     @abstractmethod
-    def list_users(self, *, match: str = None) -> AsyncIterable[str]:
-        """Iterate all matching users. The format *match* argument depends on
-        the backend implementation.
+    def list_users(self, *, match: str = None) \
+            -> AsyncIterable[Collection[str]]:
+        """Iterate all matching users in batches. The format *match* argument
+        depends on the backend implementation.
 
         Args:
             match: A filter string for matched users.
@@ -25,11 +26,14 @@ class UsersInterface(Protocol):
         ...
 
     @abstractmethod
-    async def get_user(self, user: str) -> Optional[UserMetadata]:
+    async def get_user(self, user: str) -> UserMetadata:
         """Return the password and other metadata for a username.
 
         Args:
             user: The user login string.
+
+        Raises:
+            :class:`~pymap.exceptions.UserNotFound`
 
         """
         ...
@@ -42,9 +46,6 @@ class UsersInterface(Protocol):
         Args:
             user: The user login string.
             data: The user metadata, including password.
-
-        Raises:
-            :class:`~pymap.exceptions.UserConflict`
 
         """
         ...

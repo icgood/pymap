@@ -4,20 +4,21 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from argparse import Namespace
-from asyncio import Task
+from argparse import ArgumentParser, Namespace
 from contextlib import closing, asynccontextmanager
 from functools import partial
-from typing import Any, Optional, Tuple, Mapping, AsyncIterator, AsyncIterable
+from typing import Any, Optional, Tuple, Mapping, Sequence, Awaitable, \
+    AsyncIterator, AsyncIterable
 
 from aioredis import create_redis, Redis  # type: ignore
 from pysasl import AuthenticationCredentials
+from pysasl.external import ExternalResult
 
 from pymap.bytes import BytesFormat
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
-from pymap.exceptions import InvalidAuth, IncompatibleData
-from pymap.interfaces.backend import BackendInterface
+from pymap.exceptions import InvalidAuth, IncompatibleData, UserNotFound
+from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.session import LoginProtocol
 from pymap.interfaces.users import UsersInterface
 from pymap.user import UserMetadata
@@ -41,7 +42,6 @@ class RedisBackend(BackendInterface):
         super().__init__()
         self._users = users
         self._config = config
-        self._task = asyncio.create_task(self._run())
 
     @property
     def login(self) -> Users:
@@ -55,20 +55,11 @@ class RedisBackend(BackendInterface):
     def config(self) -> Config:
         return self._config
 
-    @property
-    def task(self) -> Task:
-        return self._task
-
-    async def _run(self) -> None:
-        config = self._config
-        global_keys = config._global_keys
-        connect_redis = partial(create_redis, config.address)
-        await CleanupTask(connect_redis, global_keys).run_forever()
-
     @classmethod
-    def add_subparser(cls, name: str, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
         parser = subparsers.add_parser(name, help='redis backend')
-        parser.add_argument('address', nargs='?', default='redis://localhost',
+        parser.add_argument('--address', metavar='URL',
+                            default='redis://localhost',
                             help='the redis server address')
         parser.add_argument('--select', metavar='DB', type=int,
                             help='the redis database for mail data')
@@ -80,12 +71,23 @@ class RedisBackend(BackendInterface):
                             help='the user lookup key prefix')
         parser.add_argument('--users-json', action='store_true',
                             help='the user lookup value contains JSON')
+        return parser
 
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[RedisBackend, Config]:
         config = Config.from_args(args)
         users = Users(config)
         return cls(users, config), config
+
+    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
+        config = self._config
+        global_keys = config._global_keys
+        connect_redis = partial(create_redis, config.address)
+        cleanup_task = CleanupTask(connect_redis, global_keys)
+        tasks = [await cleanup_task.start()]
+        for service in services:
+            tasks.append(await service.start())
+        return asyncio.gather(*tasks)
 
 
 class Config(IMAPConfig):
@@ -196,20 +198,22 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    _namespace_key = 'pymap:namespace'
-    _version_key = 'pymap:dataversion'
-
-    def __init__(self, redis: Redis, owner: str, config: Config,
+    def __init__(self, redis: Redis, owner: str, config: Config, users: Users,
                  mailbox_set: MailboxSet, filter_set: FilterSet) -> None:
         super().__init__(owner)
         self._redis = redis
         self._config = config
+        self._users = users
         self._mailbox_set = mailbox_set
         self._filter_set = filter_set
 
     @property
     def config(self) -> IMAPConfig:
         return self._config
+
+    @property
+    def users(self) -> Users:
+        return self._users
 
     @property
     def mailbox_set(self) -> MailboxSet:
@@ -234,7 +238,8 @@ class Users(LoginProtocol, UsersInterface):
         stack.enter_context(closing(redis))
         return redis
 
-    async def list_users(self, *, match: str = None) -> AsyncIterable[str]:
+    async def list_users(self, *, match: str = None) \
+            -> AsyncIterable[Sequence[str]]:
         config = self.config
         redis = await self._connect_redis(config.address)
         users_root = config._users_root.end(b'')
@@ -245,14 +250,16 @@ class Users(LoginProtocol, UsersInterface):
         cur = b'0'
         while cur:
             cur, keys = await redis.scan(cur, match=match_key)
-            for key in keys:
-                if key.startswith(users_root):
-                    yield key[len(users_root):]
+            yield [key[len(users_root):] for key in keys
+                   if key.startswith(users_root)]
 
-    async def get_user(self, user: str) -> Optional[UserMetadata]:
+    async def get_user(self, user: str) -> UserMetadata:
         config = self.config
         redis = await self._connect_redis(config.address)
-        return await self._get_user(redis, user)
+        data = await self._get_user(redis, user)
+        if data is None:
+            raise UserNotFound()
+        return data
 
     async def set_user(self, user: str, data: UserMetadata) -> None:
         config = self.config
@@ -272,7 +279,8 @@ class Users(LoginProtocol, UsersInterface):
         config = self.config
         redis = await self._connect_redis(config.address)
         user_key = config._users_root.end(user.encode('utf-8'))
-        await redis.delete(user_key)
+        if not await redis.delete(user_key):
+            raise UserNotFound()
 
     @asynccontextmanager
     async def __call__(self, credentials: AuthenticationCredentials) \
@@ -291,26 +299,30 @@ class Users(LoginProtocol, UsersInterface):
         ns_keys = NamespaceKeys(global_keys, namespace)
         cl_keys = CleanupKeys(global_keys)
         mailbox_set = MailboxSet(redis, ns_keys, cl_keys)
+        filter_set = FilterSet(redis, ns_keys)
         try:
             await mailbox_set.add_mailbox('INBOX')
         except ValueError:
             pass
-        filter_set = FilterSet(redis, ns_keys)
-        yield Session(redis, credentials.identity, config,
+        yield Session(redis, credentials.identity, config, self,
                       mailbox_set, filter_set)
 
     async def _check_user(self, redis: Redis,
                           credentials: AuthenticationCredentials) -> str:
-        user = credentials.authcid
-        data = await self._get_user(redis, user)
-        if data is None or user != credentials.identity:
-            raise InvalidAuth()
-        data.check_password(credentials)
-        return user
+        if not isinstance(credentials, ExternalResult):
+            user = credentials.authcid
+            data = await self._get_user(redis, user)
+            if data is None:
+                raise InvalidAuth()
+            data.check_password(credentials)
+            if user != credentials.identity:
+                raise InvalidAuth(authorization=True)
+        return credentials.identity
 
     async def _get_user(self, redis: Redis, user: str) \
             -> Optional[UserMetadata]:
-        user_key = self.config._users_root.end(user.encode('utf-8'))
+        user_bytes = user.encode('utf-8')
+        user_key = self.config._users_root.end(user_bytes)
         if self.config.users_json:
             json_data = await redis.get(user_key)
             if json_data is None:

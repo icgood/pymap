@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from typing import Optional, Tuple, Sequence, Dict
 
-from pymap.filter import EntryPointFilterSet
+from pymap.filter import PluginFilterSet
 
 __all__ = ['FilterSet']
 
 
-class FilterSet(EntryPointFilterSet[bytes]):
+class FilterSet(PluginFilterSet[bytes]):
 
     def __init__(self) -> None:
         super().__init__('sieve', bytes)

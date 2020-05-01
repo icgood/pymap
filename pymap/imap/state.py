@@ -57,7 +57,6 @@ class ConnectionState:
     def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
         super().__init__()
         self.config = config
-        self.ssl_context = config.ssl_context
         self.auth = config.initial_auth
         self.login = login
         self._session: Optional[SessionInterface] = None
@@ -128,8 +127,6 @@ class ConnectionState:
         return await self.do_authenticate(cmd, creds), None
 
     async def do_starttls(self, cmd: StartTLSCommand) -> _CommandRet:
-        if self.ssl_context is None:
-            raise ValueError('ssl_context is None')
         try:
             self._capability.remove(b'STARTTLS')
         except ValueError:
