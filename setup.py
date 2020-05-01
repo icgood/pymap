@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.17.1',
+      version='0.17.2',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -53,7 +53,7 @@ setup(name='pymap',
           'typing-extensions'],
       extras_require={
           'redis': ['aioredis >= 1.3.0', 'msgpack >= 1.0'],
-          'admin': ['pymap-admin == 0.4.1'],
+          'admin': ['pymap-admin == 0.4.2'],
           'sieve': ['sievelib'],
           'optional': ['hiredis', 'passlib', 'systemd-python', 'pid']},
       entry_points={

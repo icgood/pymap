@@ -3,18 +3,22 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from contextlib import closing, asynccontextmanager, AsyncExitStack
-from typing import Any, Dict, AsyncGenerator
+from typing import Any, Type, Dict, AsyncGenerator
 from typing_extensions import Final
 
 from pymap.context import connection_exit
 from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.session import SessionInterface
+from pymap.plugin import Plugin
 from pymapadmin.grpc.admin_pb2 import Login, Result, SUCCESS, FAILURE
 from pysasl import AuthenticationCredentials
 from pysasl.external import ExternalResult
 
-__all__ = ['AdminService', 'BaseHandler', 'LoginHandler']
+__all__ = ['handlers', 'BaseHandler', 'LoginHandler']
+
+#: Registers new admin handler plugins.
+handlers: Plugin[Type[BaseHandler]] = Plugin('pymap.admin.handlers')
 
 
 class BaseHandler(metaclass=ABCMeta):

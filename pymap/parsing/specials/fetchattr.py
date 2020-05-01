@@ -119,7 +119,7 @@ class FetchAttribute(Parseable[bytes]):
     _sec_part_pattern = rev.compile(br'([1-9]\d* *(?:\. *[1-9]\d*)*) *(\.)? *')
 
     def __init__(self, attribute: bytes,
-                 section: Section = None,
+                 section: FetchAttribute.Section = None,
                  partial: Tuple[int, Optional[int]] = None) -> None:
         super().__init__()
         self.attribute = attribute.upper()
@@ -166,7 +166,7 @@ class FetchAttribute(Parseable[bytes]):
         return FetchRequirement.CONTENT
 
     @classmethod
-    def _get_body_requirement(cls, section: Section) \
+    def _get_body_requirement(cls, section: FetchAttribute.Section) \
             -> FetchRequirement:
         if not section.parts and section.specifier in (
                 b'HEADER', b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):

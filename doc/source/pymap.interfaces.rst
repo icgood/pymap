@@ -30,6 +30,13 @@
    :members:
    :special-members: __call__
 
+``pymap.interfaces.users``
+--------------------------
+
+.. automodule:: pymap.interfaces.users
+   :members:
+   :special-members: __call__
+
 ``pymap.interfaces.filter``
 ---------------------------
 
