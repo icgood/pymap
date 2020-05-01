@@ -5,7 +5,7 @@ import asyncio
 from argparse import ArgumentParser
 from asyncio import CancelledError
 from ssl import SSLContext
-from typing import Type, Tuple, Sequence, Awaitable
+from typing import Type, Optional, Tuple, Sequence, Awaitable
 from urllib.parse import urlparse
 
 from grpclib.server import Server
@@ -43,7 +43,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
         public_hosts: Sequence[str] = self.config.args.admin_public
         ssl = self.config.ssl_context
         servers = [await self._start_local(backend)]
-        servers += [await self._start(backend, False, host, ssl)
+        servers += [await self._start(backend, False, host, None)
                     for host in private_hosts]
         servers += [await self._start(backend, True, host, ssl)
                     for host in public_hosts]
@@ -62,7 +62,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
 
     @classmethod
     async def _start(cls, backend: BackendInterface, public: bool,
-                     host: str, ssl: SSLContext) -> Server:
+                     host: str, ssl: Optional[SSLContext]) -> Server:
         server = cls._new_server(backend, public)
         host, port = cls._parse(host)
         await server.start(host=host, port=port, ssl=ssl, reuse_address=True)
