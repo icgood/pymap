@@ -3,17 +3,22 @@ from __future__ import annotations
 
 import asyncio
 from argparse import ArgumentParser
-from asyncio import Task, CancelledError
-from typing import Any, Callable, Sequence
+from asyncio import CancelledError
+from ssl import SSLContext
+from typing import Type, Tuple, Sequence, Awaitable
+from urllib.parse import urlparse
 
 from grpclib.server import Server
-from pkg_resources import iter_entry_points, DistributionNotFound
-from pymap.config import IMAPConfig
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.plugin import Plugin
+from pymapadmin.local import get_admin_socket
 
-__all__ = ['AdminService']
+from .handlers import BaseHandler
 
-_HandlerType = Callable[[BackendInterface], Any]
+__all__ = ['handlers', 'AdminService']
+
+#: Registers new admin handler plugins.
+handlers: Plugin[Type[BaseHandler]] = Plugin('pymap.admin.handlers')
 
 
 class AdminService(ServiceInterface):  # pragma: no cover
@@ -22,64 +27,59 @@ class AdminService(ServiceInterface):  # pragma: no cover
 
     """
 
-    def __init__(self, servers: Sequence[Server]) -> None:
-        super().__init__()
-        self._servers = servers
-        self._task = asyncio.create_task(self._run())
-
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('admin service')
-        group.add_argument('--admin-host', metavar='HOST', dest='admin_host',
-                           action='append', help='host to listen on')
-        group.add_argument('--admin-port', metavar='PORT', dest='admin_port',
-                           type=int, default=9090, help='port to listen on')
+        group.add_argument('--admin-private', metavar='HOST',
+                           action='append', default=[],
+                           help='host:port to listen on')
+        group.add_argument('--admin-public', metavar='HOST',
+                           action='append', default=[],
+                           help='public-facing host:port to listen on')
+
+    async def start(self) -> Awaitable:
+        backend = self.backend
+        private_hosts: Sequence[str] = self.config.args.admin_private
+        public_hosts: Sequence[str] = self.config.args.admin_public
+        ssl = self.config.ssl_context
+        servers = [await self._start_local(backend)]
+        servers += [await self._start(backend, False, host, ssl)
+                    for host in private_hosts]
+        servers += [await self._start(backend, True, host, ssl)
+                    for host in public_hosts]
+        return asyncio.create_task(self._run(servers))
 
     @classmethod
-    async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> AdminService:
-        config = backend.config
-        hosts: Sequence[str] = config.args.admin_host
-        port: int = config.args.admin_port
-        handler_types = cls._get_handler_types()
-        if not hosts:
-            hosts = ['127.0.0.1']
-        servers = [await cls._start(handler_types, backend, host, port)
-                   for host in hosts]
-        return cls(servers)
+    def _new_server(cls, backend: BackendInterface, public: bool) -> Server:
+        return Server([handler(backend, public) for _, handler in handlers])
 
     @classmethod
-    def _get_handler_types(cls) -> Sequence[_HandlerType]:
-        handler_types = []
-        for entry_point in iter_entry_points('pymap.admin.handlers'):
-            try:
-                handler_cls = entry_point.load()
-            except DistributionNotFound:
-                pass  # optional dependencies not installed
-            else:
-                handler_types.append(handler_cls)
-        return handler_types
-
-    @classmethod
-    def _new_server(cls, handler_types: Sequence[_HandlerType],
-                    backend: BackendInterface) -> Server:
-        handlers = [handler(backend) for handler in handler_types]
-        return Server(handlers)
-
-    @classmethod
-    async def _start(cls, handler_types: Sequence[_HandlerType],
-                     backend: BackendInterface,
-                     host: str, port: int) -> Server:
-        server = cls._new_server(handler_types, backend)
-        await server.start(host=host, port=port, reuse_address=True)
+    async def _start_local(cls, backend: BackendInterface) -> Server:
+        server = cls._new_server(backend, False)
+        path = get_admin_socket(mkdir=True)
+        await server.start(path=path)
         return server
 
-    @property
-    def task(self) -> Task:
-        return self._task
+    @classmethod
+    async def _start(cls, backend: BackendInterface, public: bool,
+                     host: str, ssl: SSLContext) -> Server:
+        server = cls._new_server(backend, public)
+        host, port = cls._parse(host)
+        await server.start(host=host, port=port, ssl=ssl, reuse_address=True)
+        return server
 
-    async def _run(self) -> None:
-        servers = self._servers
+    @classmethod
+    def _parse(cls, host: str) -> Tuple[str, int]:
+        parsed = urlparse(host)
+        if parsed.hostname:
+            return parsed.hostname, parsed.port or 9090
+        parsed = urlparse(f'//{host}')
+        if parsed.hostname:
+            return parsed.hostname, parsed.port or 9090
+        raise ValueError(host)
+
+    @classmethod
+    async def _run(cls, servers: Sequence[Server]) -> None:
         try:
             for server in servers:
                 await server.wait_closed()

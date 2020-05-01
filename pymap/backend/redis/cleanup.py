@@ -37,6 +37,9 @@ class CleanupTask:
         self._connect_redis = connect_redis
         self._global_keys = global_keys
 
+    async def start(self) -> Awaitable:
+        return self.run_forever()
+
     async def run_forever(self) -> NoReturn:
         """Run the cleanup loop indefinitely."""
         while True:

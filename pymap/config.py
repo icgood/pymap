@@ -1,8 +1,6 @@
 
 from __future__ import annotations
 
-import os
-import os.path
 import socket
 import ssl
 from abc import abstractmethod, ABCMeta
@@ -188,21 +186,16 @@ class IMAPConfig(metaclass=ABCMeta):
         ...
 
     @classmethod
-    def _load_certs(cls, extra: Mapping[str, Any]) -> Optional[SSLContext]:
+    def _load_certs(cls, extra: Mapping[str, Any]) -> SSLContext:
         cert_file: Optional[str] = extra.get('cert_file')
-        if cert_file is None:
-            return None
         key_file: Optional[str] = extra.get('key_file')
-        if key_file is None:
-            key_file = cert_file
-        cert_path = os.path.realpath(cert_file)
-        key_path = os.path.realpath(key_file)
         ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ssl_context.load_cert_chain(cert_path, key_path)
+        if cert_file is not None:
+            ssl_context.load_cert_chain(cert_file, key_file)
         return ssl_context
 
     @property
-    def ssl_context(self) -> Optional[SSLContext]:
+    def ssl_context(self) -> SSLContext:
         return self._ssl_context
 
     @property

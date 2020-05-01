@@ -1,14 +1,12 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 from argparse import Namespace, ArgumentParser
-from asyncio import Task
-from typing import Optional, Tuple, Sequence
+from typing import Any, Tuple, Sequence, Awaitable
 from typing_extensions import Protocol
 
 from .session import LoginProtocol
-from .users import UsersInterface
 from ..config import IMAPConfig
 
 __all__ = ['BackendInterface', 'ServiceInterface']
@@ -24,7 +22,7 @@ class BackendInterface(Protocol):
 
     @classmethod
     @abstractmethod
-    def add_subparser(cls, name: str, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
         """Add a command-line argument sub-parser that will be used to choose
         this backend. For example::
 
@@ -35,6 +33,9 @@ class BackendInterface(Protocol):
             name: The name to use for the subparser.
             subparsers: The special action object as returned by
                 :meth:`~argparse.ArgumentParser.add_subparsers`.
+
+        Returns:
+            The new sub-parser object.
 
         """
         ...
@@ -51,6 +52,16 @@ class BackendInterface(Protocol):
         """
         ...
 
+    @abstractmethod
+    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
+        """Start the backend, as well as any services.
+
+        Args:
+            services: Available services that may also be started.
+
+        """
+        ...
+
     @property
     @abstractmethod
     def login(self) -> LoginProtocol:
@@ -62,36 +73,23 @@ class BackendInterface(Protocol):
 
     @property
     @abstractmethod
-    def users(self) -> Optional[UsersInterface]:
-        """Handles user management."""
-        ...
-
-    @property
-    @abstractmethod
     def config(self) -> IMAPConfig:
         """The IMAP config in use by the backend."""
         ...
 
-    @property
-    @abstractmethod
-    def task(self) -> Task:
-        """The task to run once the backend is initialized."""
-        ...
 
-
-class ServiceInterface(Protocol):
+class ServiceInterface(metaclass=ABCMeta):
     """Defines the abstract base class that is expected for services that
     register themselves on the ``pymap.service`` entry point.
 
     """
 
-    __slots__: Sequence[str] = []
+    __slots__ = ['backend', 'config']
 
-    @property
-    @abstractmethod
-    def task(self) -> Task:
-        """The service's task that can waited or cancelled."""
-        ...
+    def __init__(self, backend: BackendInterface, config: IMAPConfig) -> None:
+        super().__init__()
+        self.backend = backend
+        self.config = config
 
     @classmethod
     @abstractmethod
@@ -108,15 +106,7 @@ class ServiceInterface(Protocol):
         """
         ...
 
-    @classmethod
     @abstractmethod
-    async def start(cls, backend: BackendInterface,
-                    config: IMAPConfig) -> ServiceInterface:
-        """Start the service and return the instance.
-
-        Args:
-            backend: The backend object.
-            config: The config in use by the backend.
-
-        """
+    async def start(self) -> Awaitable:
+        """Start the service."""
         ...

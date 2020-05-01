@@ -86,8 +86,8 @@ class KeysGroup(metaclass=ABCMeta):
 
 
 class GlobalKeys(KeysGroup):
-    """The key group that is considered global for the current
-    :attr:`DATA_VERSION` value.
+    """The key group that is considered global. New :attr:`DATA_VERSION` values
+    must be compatible with these keys.
 
     Args:
         root: The root redis key.

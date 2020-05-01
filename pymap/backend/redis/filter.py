@@ -7,7 +7,7 @@ from aioredis import Redis, ReplyError  # type: ignore
 
 from .keys import NamespaceKeys, FilterKeys
 from .scripts.filter import FilterScripts
-from pymap.filter import EntryPointFilterSet
+from pymap.filter import PluginFilterSet
 from pymap.parsing.specials import ObjectId
 
 __all__ = ['FilterSet']
@@ -15,7 +15,7 @@ __all__ = ['FilterSet']
 _scripts = FilterScripts()
 
 
-class FilterSet(EntryPointFilterSet[bytes]):
+class FilterSet(PluginFilterSet[bytes]):
 
     _active_name = b''
 

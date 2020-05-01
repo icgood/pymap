@@ -4,48 +4,42 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Type, Optional, Tuple, Sequence
 
-from pkg_resources import iter_entry_points, DistributionNotFound
-
 from .interfaces.filter import FilterValueT, FilterCompilerInterface, \
     FilterSetInterface
+from .plugin import Plugin
 
-__all__ = ['EntryPointFilterSet', 'SingleFilterSet']
+__all__ = ['filters', 'PluginFilterSet', 'SingleFilterSet']
+
+#: Registers filter compiler plugins.
+filters: Plugin[Type[FilterCompilerInterface]] = Plugin('pymap.filter')
 
 
-class EntryPointFilterSet(FilterSetInterface[FilterValueT]):
+class PluginFilterSet(FilterSetInterface[FilterValueT]):
     """Base class for filter set implementations that use a filter compiler
     declared in the ``pymap.filter`` entry point. The declared entry points
     must sub-class :class:`FilterCompiler`.
 
     Args:
-        entry_point: The entry point name.
+        plugin_name: The filter plugin name.
         group: The entry point group.
 
     """
 
-    def __init__(self, entry_point: str, value_type: Type[FilterValueT], *,
-                 group: str = 'pymap.filter') -> None:
+    def __init__(self, plugin_name: str,
+                 value_type: Type[FilterValueT]) -> None:
         super().__init__()
-        self._group = group
-        self._entry_point = entry_point
+        self._plugin_name = plugin_name
         self._value_type = value_type
         self._compiler: Optional[FilterCompilerInterface[FilterValueT]] = None
 
     @property
     def compiler(self) -> FilterCompilerInterface[FilterValueT]:
         if self._compiler is None:
-            filter_cls: Optional[Type[FilterCompilerInterface]] = None
-            name = self._entry_point
-            for entry_point in iter_entry_points(self._group, name):
-                try:
-                    filter_cls = entry_point.load()
-                except DistributionNotFound:
-                    pass  # optional dependencies not installed
-            if filter_cls is None:
-                raise LookupError(f'{self._group}:{name}')
+            name = self._plugin_name
+            filter_cls = filters.registered[name]
             compiler = filter_cls()
             if not issubclass(compiler.value_type, self._value_type):
-                raise TypeError(f'{self._group}:{name} does not support '
+                raise TypeError(f'{filter_cls} does not support '
                                 f'{self._value_type}')
             self._compiler = compiler
         return self._compiler

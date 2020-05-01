@@ -3,18 +3,18 @@ from __future__ import annotations
 
 import asyncio
 import os.path
-from argparse import Namespace
-from asyncio import Task
+from argparse import ArgumentParser, Namespace
 from contextlib import closing, asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Tuple, Mapping, Dict, AsyncIterator
+from typing import Any, Tuple, Sequence, Mapping, Dict, Awaitable, \
+    AsyncIterator
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl import AuthenticationCredentials
 
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import InvalidAuth
-from pymap.interfaces.backend import BackendInterface
+from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.session import LoginProtocol
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
@@ -49,15 +49,8 @@ class DictBackend(BackendInterface):
     def config(self) -> Config:
         return self._config
 
-    @property
-    def task(self) -> Task:
-        return asyncio.create_task(self._task())
-
-    async def _task(self) -> None:
-        pass  # noop
-
     @classmethod
-    def add_subparser(cls, name: str, subparsers) -> None:
+    def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
         parser = subparsers.add_parser(name, help='in-memory backend')
         parser.add_argument('--demo-data', action='store_true',
                             help='load initial demo data')
@@ -65,12 +58,17 @@ class DictBackend(BackendInterface):
                             metavar='VAL', help='demo user ID')
         parser.add_argument('--demo-password', default='demopass',
                             metavar='VAL', help='demo user password')
+        return parser
 
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[DictBackend, Config]:
         config = Config.from_args(args)
         login = Login(config)
         return cls(login, config), config
+
+    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
+        tasks = [await service.start() for service in services]
+        return asyncio.gather(*tasks)
 
 
 class Config(IMAPConfig):

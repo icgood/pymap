@@ -13,7 +13,7 @@ __all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
            'TemporaryFailure', 'SearchNotAllowed', 'InvalidAuth',
            'IncompatibleData', 'MailboxError', 'MailboxNotFound',
            'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
-           'AppendFailure']
+           'AppendFailure', 'UserNotFound']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -78,14 +78,17 @@ class InvalidAuth(ResponseError):
 
     """
 
-    def __init__(self, msg: str = 'Invalid authentication credentials.') \
-            -> None:
+    def __init__(self, msg: str = 'Invalid authentication credentials.', *,
+                 authorization: bool = False) -> None:
         super().__init__(msg)
         self._raw = msg.encode('utf-8')
+        if authorization:
+            self._code = ResponseCode.of(b'AUTHORIZATIONFAILED')
+        else:
+            self._code = ResponseCode.of(b'AUTHENTICATIONFAILED')
 
     def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, self._raw,
-                          ResponseCode.of(b'AUTHENTICATIONFAILED'))
+        return ResponseNo(tag, self._raw, self._code)
 
 
 class IncompatibleData(InvalidAuth):
@@ -190,3 +193,11 @@ class MailboxReadOnly(MailboxError):
 
 class AppendFailure(MailboxError):
     """The mailbox append operation failed."""
+
+
+class UserNotFound(ResponseError):
+    """The requested user was not found."""
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, b'User not found.',
+                          ResponseCode.of(b'NONEXISTENT'))

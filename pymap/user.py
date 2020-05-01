@@ -40,6 +40,7 @@ class UserMetadata:
             :meth:`.to_dict`
 
         Args:
+            config: The configuration object.
             data: The password data dictionary.
 
         """
