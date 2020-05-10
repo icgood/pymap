@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 
+import os
 import socket
 import ssl
 from abc import abstractmethod, ABCMeta
@@ -223,8 +224,11 @@ class IMAPConfig(metaclass=ABCMeta):
 
     @property
     def greeting(self) -> bytes:
-        fqdn = socket.getfqdn().encode('ascii')
-        return b'Server ready ' + fqdn
+        try:
+            fqdn = os.environ['FQDN']
+        except KeyError:
+            fqdn = socket.getfqdn()
+        return b'Server ready ' + fqdn.encode('ascii')
 
     @property
     def login_capability(self) -> Sequence[bytes]:

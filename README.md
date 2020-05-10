@@ -51,7 +51,7 @@ $ pymap --port 1143 --debug dict --demo-data
 In another terminal, connect to port 1143 and run some commands:
 
 ```
-* OK [CAPABILITY IMAP4rev1 STARTTLS AUTH=PLAIN AUTH=LOGIN AUTH=CRAM-MD5 BINARY UIDPLUS MULTIAPPEND IDLE APPENDLIMIT=1000000000] Server ready 163.1.168.192.in-addr.arpa
+* OK [CAPABILITY IMAP4rev1 STARTTLS AUTH=PLAIN AUTH=LOGIN AUTH=CRAM-MD5 BINARY UIDPLUS MULTIAPPEND IDLE APPENDLIMIT=1000000000] Server ready my.hostname.local
 . login demouser demopass
 . OK Authentication successful.
 . select INBOX
