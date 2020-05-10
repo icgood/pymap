@@ -49,7 +49,7 @@ class IMAPService(ServiceInterface):  # pragma: no cover
         group = parser.add_argument_group('imap service')
         group.add_argument('--host', metavar='IFACE', action='append',
                            help='the network interface to listen on')
-        group.add_argument('--port', metavar='NUM', default='imap',
+        group.add_argument('--port', metavar='NUM', default='143',
                            help='the port or service name to listen on')
         group.add_argument('--cert', metavar='FILE', help='cert file for TLS')
         group.add_argument('--key', metavar='FILE', help='key file for TLS')
