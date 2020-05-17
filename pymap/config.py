@@ -12,6 +12,8 @@ from typing import Any, TypeVar, Type, Union, Optional, Iterable, Iterator, \
     Sequence, Mapping, Dict
 from typing_extensions import Final
 
+from proxyprotocol import ProxyProtocol
+from proxyprotocol.version import ProxyProtocolVersion
 from pysasl import SASLAuth, AuthenticationCredentials
 from pysasl.hashing import HashInterface, get_hash
 
@@ -97,6 +99,7 @@ class IMAPConfig(metaclass=ABCMeta):
         hash_context: The hash to use for passwords.
         preauth_credentials: If given, clients will pre-authenticate on
             connection using these credentials.
+        proxy_protocol: The PROXY protocol implementation to use.
         max_append_len: The maximum allowed length of the message body to an
             ``APPEND`` command.
         bad_command_limit: The number of consecutive commands received from
@@ -120,6 +123,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  tls_enabled: bool = True,
                  secure_auth: bool = True,
                  preauth_credentials: AuthenticationCredentials = None,
+                 proxy_protocol: ProxyProtocol = None,
                  hash_context: HashInterface = None,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
@@ -141,6 +145,8 @@ class IMAPConfig(metaclass=ABCMeta):
         self._ssl_context = ssl_context or self._load_certs(extra)
         self._tls_enabled = tls_enabled
         self._preauth_credentials = preauth_credentials
+        self._proxy_protocol = proxy_protocol or \
+            ProxyProtocolVersion.get(args.proxy_protocol)
         self._max_append_len = max_append_len
 
     @classmethod
@@ -217,6 +223,10 @@ class IMAPConfig(metaclass=ABCMeta):
     @property
     def preauth_credentials(self) -> Optional[AuthenticationCredentials]:
         return self._preauth_credentials
+
+    @property
+    def proxy_protocol(self) -> ProxyProtocol:
+        return self._proxy_protocol
 
     @property
     def parsing_params(self) -> Params:

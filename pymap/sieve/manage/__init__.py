@@ -12,6 +12,8 @@ from collections import OrderedDict
 from contextlib import closing, AsyncExitStack
 from typing import Optional, Union, Mapping, Dict, List, Awaitable
 
+from proxyprotocol import ProxyProtocolResult
+from proxyprotocol.sock import SocketInfo
 from pymap import __version__
 from pymap.bytes import BytesFormat
 from pymap.config import IMAPConfig
@@ -21,7 +23,6 @@ from pymap.interfaces.backend import ServiceInterface
 from pymap.interfaces.session import LoginProtocol, SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
-from pymap.sockets import SocketInfo
 from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError, \
     AuthenticationCredentials
 
@@ -108,7 +109,7 @@ class ManageSieveConnection:
 
     """
 
-    _lines = re.compile(br'\r?\n')
+    _lines = re.compile(r'\r?\n')
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
     _impl = b'pymap managesieve ' + __version__.encode('ascii')
 
@@ -119,6 +120,7 @@ class ManageSieveConnection:
         self.config = config
         self.auth = config.initial_auth
         self.params = config.parsing_params.copy(allow_continuations=False)
+        self.pp_result: Optional[ProxyProtocolResult] = None
         self._offer_starttls = b'STARTTLS' in config.initial_capability
         self._state: Optional[FilterState] = None
         self._reset_streams(reader, writer)
@@ -127,7 +129,11 @@ class ManageSieveConnection:
                        writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo(writer))
+        socket_info.set(SocketInfo(writer, self.pp_result))
+
+    async def _read_proxy_protocol(self) -> None:
+        self.pp_result = await self.config.proxy_protocol.read(self.reader)
+        self._reset_streams(self.reader, self.writer)
 
     def _get_state(self, session: SessionInterface) -> FilterState:
         owner = session.owner.encode('utf-8')
@@ -156,15 +162,16 @@ class ManageSieveConnection:
         return ret
 
     @classmethod
-    def _print(cls, log_format: str, output: bytes) -> None:
+    def _print(cls, log_format: str, output: Union[str, bytes]) -> None:
         if _log.isEnabledFor(logging.DEBUG):
             fd = socket_info.get().socket.fileno()
+            if not isinstance(output, str):
+                output = str(output, 'utf-8', 'replace')
             lines = cls._lines.split(output)
             if not lines[-1]:
                 lines = lines[:-1]
             for line in lines:
-                line_str = str(line, 'utf-8', 'replace')
-                _log.debug(log_format, fd, line_str)
+                _log.debug(log_format, fd, line)
 
     async def _read_data(self) -> memoryview:
         data = bytearray()
@@ -286,7 +293,8 @@ class ManageSieveConnection:
         enter the command/response cycle.
 
         """
-        self._print('%d +++| %s', bytes(socket_info.get()))
+        await self._read_proxy_protocol()
+        self._print('%d +++| %s', str(socket_info.get()))
         greeting = await self._do_greeting()
         await self._write_response(greeting)
         while True:
