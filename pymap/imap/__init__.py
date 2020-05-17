@@ -11,8 +11,11 @@ from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
     CancelledError
 from base64 import b64encode, b64decode
 from contextlib import closing, AsyncExitStack
-from typing import TypeVar, Optional, Iterable, List, Awaitable
+from typing import TypeVar, Union, Optional, Iterable, List, Awaitable
 
+from proxyprotocol import ProxyProtocolResult
+from proxyprotocol.sock import SocketInfo
+from proxyprotocol.version import ProxyProtocolVersion
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.context import subsystem, current_command, socket_info, \
@@ -29,7 +32,7 @@ from pymap.parsing.response import ResponseContinuation, Response, \
     CommandResponse
 from pymap.parsing.state import ParsingState, ParsingInterrupt, \
     ExpectContinuation
-from pymap.sockets import InheritedSockets, SocketInfo
+from pymap.sockets import InheritedSockets
 from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError, \
     AuthenticationCredentials
 
@@ -61,6 +64,9 @@ class IMAPService(ServiceInterface):  # pragma: no cover
             parser.set_defaults(inherited_sockets=None)
         group.add_argument('--no-tls', dest='tls', action='store_false',
                            help='disable TLS')
+        pp_choices = [v.name.lower() for v in ProxyProtocolVersion]
+        group.add_argument('--proxy-protocol', choices=pp_choices,
+                           help='the PROXY protocol version string')
 
     async def start(self) -> Awaitable:
         backend = self.backend
@@ -126,11 +132,11 @@ class IMAPConnection:
 
     """
 
-    _lines = re.compile(br'\r?\n')
+    _lines = re.compile(r'\r?\n')
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
 
     __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
-                 'reader', 'writer']
+                 'reader', 'writer', 'pp_result']
 
     def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
@@ -140,27 +146,33 @@ class IMAPConnection:
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
+        self.pp_result: Optional[ProxyProtocolResult] = None
         self._reset_streams(reader, writer)
 
     def _reset_streams(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo(writer))
+        socket_info.set(SocketInfo(writer, self.pp_result))
+
+    async def _read_proxy_protocol(self) -> None:
+        self.pp_result = await self.config.proxy_protocol.read(self.reader)
+        self._reset_streams(self.reader, self.writer)
 
     def close(self) -> None:
         self.writer.close()
 
     @classmethod
-    def _print(cls, log_format: str, output: bytes) -> None:
+    def _print(cls, log_format: str, output: Union[str, bytes]) -> None:
         if _log.isEnabledFor(logging.DEBUG):
             fd = socket_info.get().socket.fileno()
+            if not isinstance(output, str):
+                output = str(output, 'utf-8', 'replace')
             lines = cls._lines.split(output)
             if not lines[-1]:
                 lines = lines[:-1]
             for line in lines:
-                line_str = str(line, 'utf-8', 'replace')
-                _log.debug(log_format, fd, line_str)
+                _log.debug(log_format, fd, line)
 
     def _exec(self, future: Awaitable[_Ret]) -> Awaitable[_Ret]:
         return subsystem.get().execute(future)
@@ -339,7 +351,8 @@ class IMAPConnection:
             state: Defines the interaction with the backend plugin.
 
         """
-        self._print('%d +++| %s', bytes(socket_info.get()))
+        await self._read_proxy_protocol()
+        self._print('%d +++| %s', str(socket_info.get()))
         bad_commands = 0
         try:
             greeting = await self._exec(state.do_greeting())

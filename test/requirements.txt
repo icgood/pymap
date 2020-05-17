@@ -9,4 +9,5 @@ msgpack
 grpclib
 protobuf
 sievelib
+proxy-protocol
 pymap-admin

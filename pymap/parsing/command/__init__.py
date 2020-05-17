@@ -48,7 +48,7 @@ class Command(Parseable[bytes], metaclass=ABCMeta):
         return b' '.join((self.tag, self.command))
 
     def __repr__(self) -> str:
-        return f'<%s tag=%r>' % (type(self).__name__, self.tag)
+        return '<%s tag=%r>' % (type(self).__name__, self.tag)
 
 
 class CommandNoArgs(Command, metaclass=ABCMeta):

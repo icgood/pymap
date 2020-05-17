@@ -32,7 +32,7 @@ class Command(Parseable[bytes]):
         return self.command
 
     def __repr__(self) -> str:
-        return f'<%s>' % (type(self).__name__)
+        return '<%s>' % (type(self).__name__)
 
     @classmethod
     def _all_commands(cls) -> Sequence[Type[Command]]:

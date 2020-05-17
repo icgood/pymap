@@ -185,7 +185,7 @@ class MockTransport:
         assert match, self._match_write_msg(expected, data, full_regex, where)
         self.matches.update(match.groupdict())
 
-    def get_extra_info(self, name: str):
+    def get_extra_info(self, name: str, default=None):
         if name == 'socket':
             return self.socket
         elif name == 'peername':
