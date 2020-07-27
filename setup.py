@@ -56,7 +56,8 @@ setup(name='pymap',
           'redis': ['aioredis >= 1.3.0', 'msgpack >= 1.0'],
           'admin': ['pymap-admin == 0.4.2'],
           'sieve': ['sievelib'],
-          'optional': ['hiredis', 'passlib', 'systemd-python', 'pid']},
+          'systemd': ['systemd-python'],
+          'optional': ['hiredis', 'passlib', 'pid']},
       entry_points={
           'console_scripts': [
               'pymap = pymap.main:main'],
