@@ -20,6 +20,7 @@ class _Socket:
 
     def __init__(self, fd: int) -> None:
         self.fd = fd
+        self.family = None
 
     def fileno(self):
         return self.fd

@@ -55,8 +55,11 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
         for value in values:
             lines = [line.decode('ascii', 'surrogateescape')
                      for line in value]
-            hdr_name, hdr_val = SMTP.header_source_parse(lines)
-            yield cls._registry(hdr_name, hdr_val)
+            # TODO: Once typeshed merges this fix:
+            #   https://github.com/python/typeshed/pull/4365
+            # assign to hdr_name, hdr_value = ... instead.
+            hdr_tuple = SMTP.header_source_parse(lines)
+            yield cls._registry(hdr_tuple[0], hdr_tuple[1])
 
     def __repr__(self) -> str:
         return repr(dict(self))
