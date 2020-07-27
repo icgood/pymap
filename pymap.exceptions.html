@@ -6,6 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pymap.exceptions &#8212; pymap 0.18.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -57,7 +58,8 @@
           <a href="pymap.context.html" title="pymap.context"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
     </div>
     </div>
@@ -135,6 +137,27 @@ not supported by the server or backend.</p>
 </dd></dl>
 
 <dl class="py exception">
+<dt id="pymap.exceptions.TemporaryFailure">
+<em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">TemporaryFailure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure" title="Permalink to this definition">¶</a></dt>
+<dd><p>The operation failed, but may succeed if tried again. The <code class="docutils literal notranslate"><span class="pre">[INUSE]</span></code>
+response code is added to the response.</p>
+<dl class="py method">
+<dt id="pymap.exceptions.TemporaryFailure.get_response">
+<code class="sig-name descname">get_response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an IMAP response for the error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
 <dt id="pymap.exceptions.SearchNotAllowed">
 <em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">SearchNotAllowed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.SearchNotAllowed" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">SEARCH</span></code> command contained a search key that could not be
@@ -172,27 +195,6 @@ IMAP backend has rejected.</p>
 <em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">IncompatibleData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="o">=</span><span class="default_value">'Incompatible mailbox data.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.IncompatibleData" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> command could not succeed because the
 detected mailbox data was not in a compatible format.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="pymap.exceptions.TemporaryFailure">
-<em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">TemporaryFailure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure" title="Permalink to this definition">¶</a></dt>
-<dd><p>The operation failed, but may succeed if tried again. The <code class="docutils literal notranslate"><span class="pre">[INUSE]</span></code>
-response code is added to the response.</p>
-<dl class="py method">
-<dt id="pymap.exceptions.TemporaryFailure.get_response">
-<code class="sig-name descname">get_response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure.get_response" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an IMAP response for the error.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py exception">
@@ -303,6 +305,7 @@ allowed.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -374,14 +377,15 @@ allowed.</p>
           <a href="pymap.context.html" title="pymap.context"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -6,6 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pymap.parsing &#8212; pymap 0.18.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -57,7 +58,8 @@
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></li> 
       </ul>
     </div>
     </div>
@@ -73,9 +75,10 @@
 <p>Package defining all the IMAP parsing and response classes.</p>
 <dl class="py data">
 <dt id="pymap.parsing.ParseableT">
-<code class="sig-prename descclassname">pymap.parsing.</code><code class="sig-name descname">ParseableT</code><em class="property"> = ~ParseableT</em><a class="headerlink" href="#pymap.parsing.ParseableT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.parsing.</code><code class="sig-name descname">ParseableT</code><a class="headerlink" href="#pymap.parsing.ParseableT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable used for specifying the parseable type of a <a class="reference internal" href="#pymap.parsing.Parseable" title="pymap.parsing.Parseable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code></a>
 sub-class.</p>
+<p>alias of TypeVar(‘ParseableT’)</p>
 </dd></dl>
 
 <dl class="py class">
@@ -115,7 +118,7 @@ data.</p></li>
 
 <dl class="py class">
 <dt id="pymap.parsing.Parseable">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.</code><code class="sig-name descname">Parseable</code><a class="headerlink" href="#pymap.parsing.Parseable" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.</code><code class="sig-name descname">Parseable</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.Parseable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a parseable data object from an IMAP stream. The sub-classes
 implement the different data formats.</p>
 <p>This base class will be inherited by all necessary entries in the IMAP
@@ -314,8 +317,9 @@ failed to meet that expectation.</p>
 <span id="pymap-parsing-state"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.state</span></code><a class="headerlink" href="#module-pymap.parsing.state" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.parsing.state.ParsingExpectedT">
-<code class="sig-prename descclassname">pymap.parsing.state.</code><code class="sig-name descname">ParsingExpectedT</code><em class="property"> = ~ParsingExpectedT</em><a class="headerlink" href="#pymap.parsing.state.ParsingExpectedT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.parsing.state.</code><code class="sig-name descname">ParsingExpectedT</code><a class="headerlink" href="#pymap.parsing.state.ParsingExpectedT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable for expected data during parsing.</p>
+<p>alias of TypeVar(‘ParsingExpectedT’)</p>
 </dd></dl>
 
 <dl class="py class">
@@ -355,7 +359,7 @@ expectation was not met. The caller should update provide an updated
 
 <dl class="py class">
 <dt id="pymap.parsing.state.ParsingExpectation">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.state.</code><code class="sig-name descname">ParsingExpectation</code><a class="headerlink" href="#pymap.parsing.state.ParsingExpectation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.state.</code><code class="sig-name descname">ParsingExpectation</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.state.ParsingExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for parsing expectations that may require additional data
 before parsing can advance.</p>
 <dl class="py method">
@@ -397,7 +401,7 @@ additional data is expected from the parsing state.</p>
 <span id="pymap-parsing-commands"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code><a class="headerlink" href="#module-pymap.parsing.commands" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.parsing.commands.builtin_commands">
-<code class="sig-prename descclassname">pymap.parsing.commands.</code><code class="sig-name descname">builtin_commands</code><em class="property">: Collection[Type[Command]]</em><em class="property"> = [&lt;class 'pymap.parsing.command.any.CapabilityCommand'&gt;, &lt;class 'pymap.parsing.command.any.LogoutCommand'&gt;, &lt;class 'pymap.parsing.command.any.NoOpCommand'&gt;, &lt;class 'pymap.parsing.command.auth.AppendCommand'&gt;, &lt;class 'pymap.parsing.command.auth.CreateCommand'&gt;, &lt;class 'pymap.parsing.command.auth.DeleteCommand'&gt;, &lt;class 'pymap.parsing.command.auth.ExamineCommand'&gt;, &lt;class 'pymap.parsing.command.auth.ListCommand'&gt;, &lt;class 'pymap.parsing.command.auth.LSubCommand'&gt;, &lt;class 'pymap.parsing.command.auth.RenameCommand'&gt;, &lt;class 'pymap.parsing.command.auth.SelectCommand'&gt;, &lt;class 'pymap.parsing.command.auth.StatusCommand'&gt;, &lt;class 'pymap.parsing.command.auth.SubscribeCommand'&gt;, &lt;class 'pymap.parsing.command.auth.UnsubscribeCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.AuthenticateCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.LoginCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.StartTLSCommand'&gt;, &lt;class 'pymap.parsing.command.select.CheckCommand'&gt;, &lt;class 'pymap.parsing.command.select.CloseCommand'&gt;, &lt;class 'pymap.parsing.command.select.ExpungeCommand'&gt;, &lt;class 'pymap.parsing.command.select.CopyCommand'&gt;, &lt;class 'pymap.parsing.command.select.MoveCommand'&gt;, &lt;class 'pymap.parsing.command.select.FetchCommand'&gt;, &lt;class 'pymap.parsing.command.select.StoreCommand'&gt;, &lt;class 'pymap.parsing.command.select.SearchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidCopyCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidMoveCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidExpungeCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidFetchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidSearchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidStoreCommand'&gt;, &lt;class 'pymap.parsing.command.select.IdleCommand'&gt;]</em><a class="headerlink" href="#pymap.parsing.commands.builtin_commands" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.parsing.commands.</code><code class="sig-name descname">builtin_commands</code><em class="property">: Collection<span class="p">[</span>Type<span class="p">[</span>Command<span class="p">]</span><span class="p">]</span></em><em class="property"> = [&lt;class 'pymap.parsing.command.any.CapabilityCommand'&gt;, &lt;class 'pymap.parsing.command.any.LogoutCommand'&gt;, &lt;class 'pymap.parsing.command.any.NoOpCommand'&gt;, &lt;class 'pymap.parsing.command.auth.AppendCommand'&gt;, &lt;class 'pymap.parsing.command.auth.CreateCommand'&gt;, &lt;class 'pymap.parsing.command.auth.DeleteCommand'&gt;, &lt;class 'pymap.parsing.command.auth.ExamineCommand'&gt;, &lt;class 'pymap.parsing.command.auth.ListCommand'&gt;, &lt;class 'pymap.parsing.command.auth.LSubCommand'&gt;, &lt;class 'pymap.parsing.command.auth.RenameCommand'&gt;, &lt;class 'pymap.parsing.command.auth.SelectCommand'&gt;, &lt;class 'pymap.parsing.command.auth.StatusCommand'&gt;, &lt;class 'pymap.parsing.command.auth.SubscribeCommand'&gt;, &lt;class 'pymap.parsing.command.auth.UnsubscribeCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.AuthenticateCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.LoginCommand'&gt;, &lt;class 'pymap.parsing.command.nonauth.StartTLSCommand'&gt;, &lt;class 'pymap.parsing.command.select.CheckCommand'&gt;, &lt;class 'pymap.parsing.command.select.CloseCommand'&gt;, &lt;class 'pymap.parsing.command.select.ExpungeCommand'&gt;, &lt;class 'pymap.parsing.command.select.CopyCommand'&gt;, &lt;class 'pymap.parsing.command.select.MoveCommand'&gt;, &lt;class 'pymap.parsing.command.select.FetchCommand'&gt;, &lt;class 'pymap.parsing.command.select.StoreCommand'&gt;, &lt;class 'pymap.parsing.command.select.SearchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidCopyCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidMoveCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidExpungeCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidFetchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidSearchCommand'&gt;, &lt;class 'pymap.parsing.command.select.UidStoreCommand'&gt;, &lt;class 'pymap.parsing.command.select.IdleCommand'&gt;]</em><a class="headerlink" href="#pymap.parsing.commands.builtin_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of built-in commands. These commands are automatically registered by a
 new <a class="reference internal" href="#pymap.parsing.commands.Commands" title="pymap.parsing.commands.Commands"><code class="xref py py-class docutils literal notranslate"><span class="pre">Commands</span></code></a> object.</p>
 </dd></dl>
@@ -561,25 +565,25 @@ If the command has a complete structure but cannot be parsed, an
 </dl>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.Command.command">
-<code class="sig-name descname">command</code><em class="property">: ClassVar[bytes]</em><em class="property"> = b''</em><a class="headerlink" href="#pymap.parsing.command.Command.command" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">command</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)">bytes</a><span class="p">]</span></em><em class="property"> = b''</em><a class="headerlink" href="#pymap.parsing.command.Command.command" title="Permalink to this definition">¶</a></dt>
 <dd><p>The command key, e.g. <code class="docutils literal notranslate"><span class="pre">b'NOOP'</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pymap.parsing.command.Command.delegate">
-<code class="sig-name descname">delegate</code><em class="property">: ClassVar[Optional[Type[Command]]]</em><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.command.Command.delegate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delegate</code><em class="property">: ClassVar<span class="p">[</span>Optional<span class="p">[</span>Type<span class="p">[</span>Command<span class="p">]</span><span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.command.Command.delegate" title="Permalink to this definition">¶</a></dt>
 <dd><p>If given, execution of this command is handled by the delegate command.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pymap.parsing.command.Command.compound">
-<code class="sig-name descname">compound</code><em class="property">: ClassVar[bool]</em><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.Command.compound" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">compound</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a><span class="p">]</span></em><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.Command.compound" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the command is part of a compound command.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pymap.parsing.command.Command.tag">
-<code class="sig-name descname">tag</code><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.command.Command.tag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">tag</code><a class="headerlink" href="#pymap.parsing.command.Command.tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The tag parsed from the beginning of the command line.</p>
 </dd></dl>
 
@@ -825,6 +829,25 @@ flags, and the internal timestamp to assign to the message.</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt id="pymap.parsing.command.auth.ExamineCommand">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.command.auth.</code><code class="sig-name descname">ExamineCommand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em>, <em class="sig-param"><span class="n">mailbox</span></em>, <em class="sig-param"><span class="n">options</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">EXAMINE</span></code> command selects a mailbox as read-only for querying and
+state changes.</p>
+<dl class="py attribute">
+<dt id="pymap.parsing.command.auth.ExamineCommand.delegate">
+<code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.delegate" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pymap.parsing.command.auth.ExamineCommand.readonly">
+<code class="sig-name descname">readonly</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a><span class="p">]</span></em><em class="property"> = True</em><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.readonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox will be opened read-only.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="pymap.parsing.command.auth.ListCommand">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.command.auth.</code><code class="sig-name descname">ListCommand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em>, <em class="sig-param"><span class="n">ref_name</span></em>, <em class="sig-param"><span class="n">filter_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.auth.ListCommand" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">LIST</span></code> command lists existing mailboxes.</p>
@@ -833,13 +856,13 @@ flags, and the internal timestamp to assign to the message.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag.</p></li>
 <li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The mailbox reference name.</p></li>
-<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The mailbox filter string.</p></li>
+<li><p><strong>filter</strong> – The mailbox filter string.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.auth.ListCommand.only_subscribed">
-<code class="sig-name descname">only_subscribed</code><em class="property">: ClassVar[bool]</em><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.auth.ListCommand.only_subscribed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">only_subscribed</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a><span class="p">]</span></em><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.auth.ListCommand.only_subscribed" title="Permalink to this definition">¶</a></dt>
 <dd><p>All mailboxes may be listed, not only subscribed mailboxes.</p>
 </dd></dl>
 
@@ -874,7 +897,7 @@ flags, and the internal timestamp to assign to the message.</p></li>
 
 <dl class="py attribute">
 <dt id="pymap.parsing.command.auth.LSubCommand.only_subscribed">
-<code class="sig-name descname">only_subscribed</code><em class="property">: ClassVar[bool]</em><em class="property"> = True</em><a class="headerlink" href="#pymap.parsing.command.auth.LSubCommand.only_subscribed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">only_subscribed</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a><span class="p">]</span></em><em class="property"> = True</em><a class="headerlink" href="#pymap.parsing.command.auth.LSubCommand.only_subscribed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Only subscribed mailboxes may be listed.</p>
 </dd></dl>
 
@@ -919,7 +942,7 @@ flags, and the internal timestamp to assign to the message.</p></li>
 state changes.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.auth.SelectCommand.readonly">
-<code class="sig-name descname">readonly</code><em class="property">: ClassVar[bool]</em><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.auth.SelectCommand.readonly" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">readonly</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)">bool</a><span class="p">]</span></em><em class="property"> = False</em><a class="headerlink" href="#pymap.parsing.command.auth.SelectCommand.readonly" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mailbox will not be opened read-only unless the backend indicates
 that it must be.</p>
 </dd></dl>
@@ -939,25 +962,6 @@ that it must be.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
 </dd>
 </dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pymap.parsing.command.auth.ExamineCommand">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.command.auth.</code><code class="sig-name descname">ExamineCommand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em>, <em class="sig-param"><span class="n">mailbox</span></em>, <em class="sig-param"><span class="n">options</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <code class="docutils literal notranslate"><span class="pre">EXAMINE</span></code> command selects a mailbox as read-only for querying and
-state changes.</p>
-<dl class="py attribute">
-<dt id="pymap.parsing.command.auth.ExamineCommand.delegate">
-<code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="pymap.parsing.command.auth.ExamineCommand.readonly">
-<code class="sig-name descname">readonly</code><em class="property">: ClassVar[bool]</em><em class="property"> = True</em><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.readonly" title="Permalink to this definition">¶</a></dt>
-<dd><p>The mailbox will be opened read-only.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1634,8 +1638,76 @@ command.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt id="pymap.parsing.primitives.ListP">
+<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.primitives.</code><code class="sig-name descname">ListP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span></em>, <em class="sig-param"><span class="n">sort</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code> objects from an IMAP stream.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>items</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]) – The list of parsed objects.</p></li>
+<li><p><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, the list of items is sorted.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pymap.parsing.primitives.ListP.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#pymap.parsing.primitives.ListP.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of parsed objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.parsing.primitives.ListP.get_as">
+<code class="sig-name descname">get_as</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cls</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP.get_as" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of parsed objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[~MaybeBytesT]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.parsing.primitives.ListP.parse">
+<em class="property">classmethod </em><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">buf</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implemented by sub-classes to define how to parse the given buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</p></li>
+<li><p><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.parsing.primitives.ListP" title="pymap.parsing.primitives.ListP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListP</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.parsing.primitives.ListP.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">writer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the object to the stream, with one or more calls to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>writer</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.WriteStream" title="pymap.bytes.WriteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">WriteStream</span></code></a>) – The output stream.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="pymap.parsing.primitives.String">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.primitives.</code><code class="sig-name descname">String</code><a class="headerlink" href="#pymap.parsing.primitives.String" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.primitives.</code><code class="sig-name descname">String</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.String" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a string object from an IMAP string. This object may not be
 instantiated directly, use one of its derivatives instead.</p>
 <dl class="py method">
@@ -1841,74 +1913,6 @@ syntax.</p>
 
 </dd></dl>
 
-<dl class="py class">
-<dt id="pymap.parsing.primitives.ListP">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.primitives.</code><code class="sig-name descname">ListP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span></em>, <em class="sig-param"><span class="n">sort</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">Parseable</span></code> objects from an IMAP stream.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>items</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]) – The list of parsed objects.</p></li>
-<li><p><strong>sort</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, the list of items is sorted.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="pymap.parsing.primitives.ListP.value">
-<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#pymap.parsing.primitives.ListP.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>The list of parsed objects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ByteString" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ByteString</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pymap.parsing.primitives.ListP.get_as">
-<code class="sig-name descname">get_as</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cls</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP.get_as" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the list of parsed objects.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[~MaybeBytesT]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pymap.parsing.primitives.ListP.parse">
-<em class="property">classmethod </em><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">buf</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implemented by sub-classes to define how to parse the given buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>buf</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>) – The bytes containing the data to be parsed.</p></li>
-<li><p><strong>params</strong> (<a class="reference internal" href="#pymap.parsing.Params" title="pymap.parsing.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a>) – The parameters used by some parseable types.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.parsing.primitives.ListP" title="pymap.parsing.primitives.ListP"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListP</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pymap.parsing.primitives.ListP.write">
-<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">writer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.primitives.ListP.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write the object to the stream, with one or more calls to
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>writer</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.WriteStream" title="pymap.bytes.WriteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">WriteStream</span></code></a>) – The output stream.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-pymap.parsing.specials.astring">
 <span id="pymap-parsing-specials"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.specials</span></code><a class="headerlink" href="#module-pymap.parsing.specials.astring" title="Permalink to this headline">¶</a></h2>
@@ -2017,7 +2021,7 @@ character in the unquoted form.</p>
 
 <span class="target" id="module-pymap.parsing.specials.fetchattr"></span><dl class="py class">
 <dt id="pymap.parsing.specials.fetchattr.FetchRequirement">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.specials.fetchattr.</code><code class="sig-name descname">FetchRequirement</code><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.specials.fetchattr.</code><code class="sig-name descname">FetchRequirement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indicates the data required to fulfill a message fetch.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.specials.fetchattr.FetchRequirement.NONE">
@@ -2069,6 +2073,32 @@ this fetch requirement.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement.get_all">
+<em class="property">classmethod </em><code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all possible fetch requirements reduced into a single
+requirement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.parsing.specials.fetchattr.FetchRequirement.reduce">
+<em class="property">classmethod </em><code class="sig-name descname">reduce</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">requirements</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.specials.fetchattr.FetchRequirement.reduce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reduce a set of fetch requirements into a single requirement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>requirements</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a>]) – The set of fetch requirements.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2600,9 +2630,9 @@ will not fail, it will just return an empty object.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The search key.</p></li>
-<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ForwardRef" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForwardRef</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ForwardRef" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForwardRef</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ForwardRef" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForwardRef</span></code></a>], <a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>, <a class="reference internal" href="#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>, <a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]) – The filter object, used by most search keys.</p></li>
+<li><p><strong>filter</strong> – The filter object, used by most search keys.</p></li>
 <li><p><strong>inverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If the search key was inverted with <code class="docutils literal notranslate"><span class="pre">NOT</span></code>.</p></li>
-<li><p><strong>filter_</strong> – The filter object, used by most search keys.</p></li>
+<li><p><strong>filter</strong> – The filter object, used by most search keys.</p></li>
 <li><p><strong>inverse</strong> – If the search key was inverted with <code class="docutils literal notranslate"><span class="pre">NOT</span></code>.</p></li>
 </ul>
 </dd>
@@ -2884,12 +2914,6 @@ few groups as possible.</p>
 </div>
 <div class="section" id="module-pymap.parsing.response">
 <span id="pymap-parsing-response"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.parsing.response</span></code><a class="headerlink" href="#module-pymap.parsing.response" title="Permalink to this headline">¶</a></h2>
-<dl class="py data">
-<dt id="pymap.parsing.response.ResponseT">
-<code class="sig-prename descclassname">pymap.parsing.response.</code><code class="sig-name descname">ResponseT</code><em class="property"> = ~ResponseT</em><a class="headerlink" href="#pymap.parsing.response.ResponseT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>.</p>
-</dd></dl>
-
 <dl class="py class">
 <dt id="pymap.parsing.response.ResponseCode">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.response.</code><code class="sig-name descname">ResponseCode</code><a class="headerlink" href="#pymap.parsing.response.ResponseCode" title="Permalink to this definition">¶</a></dt>
@@ -2936,7 +2960,7 @@ indicate an untagged response.</p></li>
 
 <dl class="py attribute">
 <dt id="pymap.parsing.response.Response.condition">
-<code class="sig-name descname">condition</code><em class="property">: Optional[bytes]</em><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.response.Response.condition" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">condition</code><em class="property">: Optional<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)">bytes</a><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.response.Response.condition" title="Permalink to this definition">¶</a></dt>
 <dd><p>The condition bytestring, e.g. <code class="docutils literal notranslate"><span class="pre">OK</span></code>.</p>
 </dd></dl>
 
@@ -3299,6 +3323,13 @@ already logged in.</p>
 </dl>
 </dd></dl>
 
+<dl class="py data">
+<dt id="pymap.parsing.response.ResponseT">
+<code class="sig-prename descclassname">pymap.parsing.response.</code><code class="sig-name descname">ResponseT</code><a class="headerlink" href="#pymap.parsing.response.ResponseT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>.</p>
+<p>alias of TypeVar(‘ResponseT’)</p>
+</dd></dl>
+
 <span class="target" id="module-pymap.parsing.response.code"></span><dl class="py class">
 <dt id="pymap.parsing.response.code.Capability">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.parsing.response.code.</code><code class="sig-name descname">Capability</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">server_capabilities</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.parsing.response.code.Capability" title="Permalink to this definition">¶</a></dt>
@@ -3338,7 +3369,7 @@ already logged in.</p>
 <dd><p>Indicates the next unique identifier value of the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>next_</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The next available message UID.</p>
+<dd class="field-odd"><p><strong>next</strong> – The next available message UID.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3361,7 +3392,7 @@ already logged in.</p>
 <code class="docutils literal notranslate"><span class="pre">\Seen</span></code> flag.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>next_</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The sequence ID of the message.</p>
+<dd class="field-odd"><p><strong>next</strong> – The sequence ID of the message.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3431,7 +3462,7 @@ request.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.DateHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateHeader</span></code></a>]) – Original date of the message.</p></li>
 <li><p><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]) – <code class="docutils literal notranslate"><span class="pre">Subject:</span></code> header.</p></li>
-<li><p><strong>from_</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">From:</span></code> headers.</p></li>
+<li><p><strong>from</strong> – <code class="docutils literal notranslate"><span class="pre">From:</span></code> headers.</p></li>
 <li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.SingleAddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleAddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">Sender:</span></code> headers.</p></li>
 <li><p><strong>reply_to</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">Reply-To:</span></code> headers.</p></li>
 <li><p><strong>to</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]) – <code class="docutils literal notranslate"><span class="pre">To:</span></code> headers.</p></li>
@@ -4011,6 +4042,7 @@ mailbox names in IMAP.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -4099,14 +4131,15 @@ mailbox names in IMAP.</p>
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></li> 
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

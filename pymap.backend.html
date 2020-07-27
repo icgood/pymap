@@ -6,6 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pymap.backend &#8212; pymap 0.18.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -57,7 +58,8 @@
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
     </div>
     </div>
@@ -90,7 +92,7 @@
 </div>
 <span class="target" id="module-pymap.backend"></span><dl class="py data">
 <dt id="pymap.backend.backends">
-<code class="sig-prename descclassname">pymap.backend.</code><code class="sig-name descname">backends</code><em class="property">: Plugin[Type[BackendInterface]]</em><em class="property"> = Plugin('pymap.backend')</em><a class="headerlink" href="#pymap.backend.backends" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.backend.</code><code class="sig-name descname">backends</code><em class="property">: Plugin<span class="p">[</span>Type<span class="p">[</span>BackendInterface<span class="p">]</span><span class="p">]</span></em><em class="property"> = Plugin('pymap.backend')</em><a class="headerlink" href="#pymap.backend.backends" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers new backend plugins.</p>
 </dd></dl>
 
@@ -98,20 +100,22 @@
 <span id="pymap-backend-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code><a class="headerlink" href="#module-pymap.backend.mailbox" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.backend.mailbox.MailboxDataT">
-<code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxDataT</code><em class="property"> = ~MailboxDataT</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxDataT</code><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
+<p>alias of TypeVar(‘MailboxDataT’)</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="pymap.backend.mailbox.MailboxDataT_co">
-<code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxDataT_co</code><em class="property"> = +MailboxDataT_co</em><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxDataT_co</code><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariant type variable with an upper bound of
 <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
+<p>alias of TypeVar(‘MailboxDataT_co’, covariant=True)</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pymap.backend.mailbox.MailboxDataInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxDataInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxDataInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the messages and metadata associated with a single mailbox.</p>
 <dl class="py method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.mailbox_id">
@@ -386,7 +390,7 @@ are resolved by the selected mailbox session.</p>
 
 <dl class="py class">
 <dt id="pymap.backend.mailbox.MailboxSetInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxSetInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxSetInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.mailbox.</code><code class="sig-name descname">MailboxSetInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxSetInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the set of mailboxes available to the authenticated user.</p>
 <dl class="py method">
 <dt id="pymap.backend.mailbox.MailboxSetInterface.delimiter">
@@ -626,7 +630,7 @@ backend to clean up resources.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox reference name.</p></li>
-<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox name with possible wildcards.</p></li>
+<li><p><strong>filter</strong> – Mailbox name with possible wildcards.</p></li>
 <li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, only list the subscribed mailboxes.</p></li>
 <li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
@@ -1044,6 +1048,7 @@ the selected mailbox.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -1125,14 +1130,15 @@ the selected mailbox.</p>
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

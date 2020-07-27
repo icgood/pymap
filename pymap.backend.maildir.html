@@ -6,6 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pymap.backend.maildir &#8212; pymap 0.18.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -58,7 +59,8 @@
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
 
-          <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
       </ul>
     </div>
     </div>
@@ -355,7 +357,7 @@ IMAP flags and keywords.</p>
 <span id="pymap-backend-maildir-layout"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code><a class="headerlink" href="#module-pymap.backend.maildir.layout" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.backend.maildir.layout.MaildirLayout">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">MaildirLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">MaildirLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the folder layout of a <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> inbox.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -665,13 +667,13 @@ e.g.:</p>
 </dl>
 <dl class="py attribute">
 <dt id="pymap.backend.maildir.uidlist.UidList.FILE_NAME">
-<code class="sig-name descname">FILE_NAME</code><em class="property">: ClassVar[str]</em><em class="property"> = 'dovecot-uidlist'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">FILE_NAME</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></em><em class="property"> = 'dovecot-uidlist'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.FILE_NAME" title="Permalink to this definition">¶</a></dt>
 <dd><p>The UID list file name, stored in the mailbox directory.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="pymap.backend.maildir.uidlist.UidList.LOCK_FILE">
-<code class="sig-name descname">LOCK_FILE</code><em class="property">: ClassVar[str]</em><em class="property"> = 'dovecot-uidlist.lock'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.LOCK_FILE" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">LOCK_FILE</code><em class="property">: ClassVar<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a><span class="p">]</span></em><em class="property"> = 'dovecot-uidlist.lock'</em><a class="headerlink" href="#pymap.backend.maildir.uidlist.UidList.LOCK_FILE" title="Permalink to this definition">¶</a></dt>
 <dd><p>The UID list lock file, stored adjacent to the UID list file.</p>
 </dd></dl>
 
@@ -748,6 +750,7 @@ e.g.:</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -832,14 +835,15 @@ e.g.:</p>
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
 
-          <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

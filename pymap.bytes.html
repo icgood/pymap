@@ -6,6 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pymap.bytes &#8212; pymap 0.18.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -57,7 +58,8 @@
           <a href="index.html" title="pymap Documentation"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li> 
       </ul>
     </div>
     </div>
@@ -73,19 +75,21 @@
 <p>Defines useful types and utilities for working with bytestrings.</p>
 <dl class="py data">
 <dt id="pymap.bytes.MaybeBytes">
-<code class="sig-prename descclassname">pymap.bytes.</code><code class="sig-name descname">MaybeBytes</code><em class="property"> = typing.Union[typing.ByteString, memoryview, typing.SupportsBytes]</em><a class="headerlink" href="#pymap.bytes.MaybeBytes" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.bytes.</code><code class="sig-name descname">MaybeBytes</code><a class="headerlink" href="#pymap.bytes.MaybeBytes" title="Permalink to this definition">¶</a></dt>
 <dd><p>A bytes object, memoryview,  or an object with a <code class="docutils literal notranslate"><span class="pre">__bytes__</span></code> method.</p>
+<p>alias of Union[ByteString, memoryview, SupportsBytes]</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="pymap.bytes.MaybeBytesT">
-<code class="sig-prename descclassname">pymap.bytes.</code><code class="sig-name descname">MaybeBytesT</code><em class="property"> = ~MaybeBytesT</em><a class="headerlink" href="#pymap.bytes.MaybeBytesT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.bytes.</code><code class="sig-name descname">MaybeBytesT</code><a class="headerlink" href="#pymap.bytes.MaybeBytesT" title="Permalink to this definition">¶</a></dt>
 <dd><p>A type variable bound to <a class="reference internal" href="#pymap.bytes.MaybeBytes" title="pymap.bytes.MaybeBytes"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaybeBytes</span></code></a>.</p>
+<p>alias of TypeVar(‘MaybeBytesT’)</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pymap.bytes.WriteStream">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.bytes.</code><code class="sig-name descname">WriteStream</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.bytes.WriteStream" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.bytes.</code><code class="sig-name descname">WriteStream</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.bytes.WriteStream" title="Permalink to this definition">¶</a></dt>
 <dd><p>Typing protocol indicating the object implements the <a class="reference internal" href="#pymap.bytes.WriteStream.write" title="pymap.bytes.WriteStream.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a>
 method.</p>
 <div class="admonition seealso">
@@ -252,6 +256,7 @@ returned <a class="reference external" href="https://docs.python.org/3/library/t
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -323,14 +328,15 @@ returned <a class="reference external" href="https://docs.python.org/3/library/t
           <a href="index.html" title="pymap Documentation"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li> 
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

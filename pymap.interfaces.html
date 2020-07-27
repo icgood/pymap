@@ -6,6 +6,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pymap.interfaces &#8212; pymap 0.18.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -57,7 +58,8 @@
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
     </div>
     </div>
@@ -74,7 +76,7 @@
 <span id="pymap-interfaces-backend"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.backend</span></code><a class="headerlink" href="#module-pymap.interfaces.backend" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.backend.BackendInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.backend.</code><code class="sig-name descname">BackendInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.backend.</code><code class="sig-name descname">BackendInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the abstract base class that is expected for backends that
 register themselves on the <code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code> entry point.</p>
 <dl class="py method">
@@ -198,26 +200,29 @@ For example:</p>
 <span id="pymap-interfaces-message"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code><a class="headerlink" href="#module-pymap.interfaces.message" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.interfaces.message.MessageT">
-<code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">MessageT</code><em class="property"> = ~MessageT</em><a class="headerlink" href="#pymap.interfaces.message.MessageT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">MessageT</code><a class="headerlink" href="#pymap.interfaces.message.MessageT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>.</p>
+<p>alias of TypeVar(‘MessageT’)</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="pymap.interfaces.message.MessageT_co">
-<code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">MessageT_co</code><em class="property"> = +MessageT_co</em><a class="headerlink" href="#pymap.interfaces.message.MessageT_co" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">MessageT_co</code><a class="headerlink" href="#pymap.interfaces.message.MessageT_co" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariant type variable with an upper bound of <a class="reference internal" href="#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>.</p>
+<p>alias of TypeVar(‘MessageT_co’, covariant=True)</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="pymap.interfaces.message.FlagsKey">
-<code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">FlagsKey</code><em class="property"> = typing.Tuple[int, typing.FrozenSet[pymap.parsing.specials.flag.Flag]]</em><a class="headerlink" href="#pymap.interfaces.message.FlagsKey" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">FlagsKey</code><a class="headerlink" href="#pymap.interfaces.message.FlagsKey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type alias for the value used as a key in set comparisons detecting flag
 updates.</p>
+<p>alias of Tuple[int, FrozenSet[pymap.parsing.specials.flag.Flag]]</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pymap.interfaces.message.CachedMessage">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">CachedMessage</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.CachedMessage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">CachedMessage</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.CachedMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cached message metadata used to track state changes. Used to produce
 untagged FETCH responses when a message’s flags have changed, or when a
 FETCH command requests metadata of an expunged message before its untagged
@@ -309,7 +314,7 @@ message, used for detecting mailbox updates.</p>
 
 <dl class="py class">
 <dt id="pymap.interfaces.message.MessageInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">MessageInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.MessageInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">MessageInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.MessageInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Message data such as UID, permanent flags, and when the message was
 added to the system.</p>
 <dl class="py method">
@@ -418,7 +423,7 @@ added to the system.</p>
 
 <dl class="py class">
 <dt id="pymap.interfaces.message.LoadedMessageInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">LoadedMessageInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.LoadedMessageInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.message.</code><code class="sig-name descname">LoadedMessageInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.message.LoadedMessageInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>The loaded message content, which may include the header, the body,
 both, or neither, depending on the requirements.</p>
 <p>It is assumed that this object contains the entire content in-memory. As
@@ -594,7 +599,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
 <span id="pymap-interfaces-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.mailbox</span></code><a class="headerlink" href="#module-pymap.interfaces.mailbox" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.mailbox.MailboxInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.mailbox.</code><code class="sig-name descname">MailboxInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.mailbox.MailboxInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.mailbox.</code><code class="sig-name descname">MailboxInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.mailbox.MailboxInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Describes a mailbox as it exists in an IMAP backend, whether or not it
 is currently selected.</p>
 <dl class="py method">
@@ -732,7 +737,7 @@ mailbox of the same name must have a different ID.</p>
 <span id="pymap-interfaces-session"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.session</span></code><a class="headerlink" href="#module-pymap.interfaces.session" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.session.LoginProtocol">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.session.</code><code class="sig-name descname">LoginProtocol</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.LoginProtocol" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.session.</code><code class="sig-name descname">LoginProtocol</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.LoginProtocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the callback protocol that backends use to initialize a new
 session.</p>
 <dl class="py method">
@@ -757,7 +762,7 @@ new IMAP session for the user.</p>
 
 <dl class="py class">
 <dt id="pymap.interfaces.session.SessionInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.session.</code><code class="sig-name descname">SessionInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.session.</code><code class="sig-name descname">SessionInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.session.SessionInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Corresponds to a single, authenticated IMAP session.</p>
 <dl class="py method">
 <dt id="pymap.interfaces.session.SessionInterface.owner">
@@ -832,7 +837,7 @@ backend to clean up resources.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox reference name.</p></li>
-<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox name with possible wildcards.</p></li>
+<li><p><strong>filter</strong> – Mailbox name with possible wildcards.</p></li>
 <li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, only list the subscribed mailboxes.</p></li>
 <li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
@@ -1251,7 +1256,7 @@ the selected mailbox.</p>
 <span id="pymap-interfaces-users"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.users</span></code><a class="headerlink" href="#module-pymap.interfaces.users" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.users.UsersInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.users.</code><code class="sig-name descname">UsersInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.users.UsersInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.users.</code><code class="sig-name descname">UsersInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.users.UsersInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines admin functions that backends can implement to manage users.</p>
 <dl class="py method">
 <dt id="pymap.interfaces.users.UsersInterface.list_users">
@@ -1327,13 +1332,14 @@ it does not exist.</p>
 <span id="pymap-interfaces-filter"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.filter</span></code><a class="headerlink" href="#module-pymap.interfaces.filter" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.interfaces.filter.FilterValueT">
-<code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterValueT</code><em class="property"> = ~FilterValueT</em><a class="headerlink" href="#pymap.interfaces.filter.FilterValueT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterValueT</code><a class="headerlink" href="#pymap.interfaces.filter.FilterValueT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable for the filter value representation.</p>
+<p>alias of TypeVar(‘FilterValueT’)</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pymap.interfaces.filter.FilterInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol defining the interface for message filters. Filters may choose
 the mailbox or discard the message or modify its contents or metadata. The
 filter may also trigger external functionality, such as sending a vacation
@@ -1366,7 +1372,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 
 <dl class="py class">
 <dt id="pymap.interfaces.filter.FilterCompilerInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterCompilerInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterCompilerInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterCompilerInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterCompilerInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol for classes which can compile a filter value into an
 implementation.</p>
 <dl class="py method">
@@ -1409,7 +1415,7 @@ implementation.</p>
 
 <dl class="py class">
 <dt id="pymap.interfaces.filter.FilterSetInterface">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterSetInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.interfaces.filter.</code><code class="sig-name descname">FilterSetInterface</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.filter.FilterSetInterface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protocol defining the interface for accessing and managing the set of
 message filters currently active and available. This interface
 intentionally resembles that of a ManageSieve server.</p>
@@ -1558,6 +1564,7 @@ exists.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
         </div>
       </div>
@@ -1643,14 +1650,15 @@ exists.</p>
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
- 
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
     </div>
     </div>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
