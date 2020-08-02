@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pymap.backend &#8212; pymap 0.18.0 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.19.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.19.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -189,12 +189,16 @@
 
 <dl class="py method">
 <dt id="pymap.backend.mailbox.MailboxDataInterface.update_selected">
-<em class="property">abstract async </em><code class="sig-name descname">update_selected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selected</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.update_selected" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract async </em><code class="sig-name descname">update_selected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selected</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">wait_on</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataInterface.update_selected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Populates and returns the selected mailbox object with the state
 needed to discover updates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – the selected mailbox object.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – the selected mailbox object.</p></li>
+<li><p><strong>wait_on</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – If given, block until this event signals or mailbox
+activity occurs.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a></p>
@@ -1129,7 +1133,7 @@ the selected mailbox.</p>
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.19.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>

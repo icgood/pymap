@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pymap.concurrent &#8212; pymap 0.18.0 documentation</title>
+    <title>pymap.concurrent &#8212; pymap 0.19.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.19.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -256,11 +256,14 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.wait">
-<em class="property">abstract async </em><code class="sig-name descname">wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract async </em><code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait until another thread signals the event.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – Maximum time to wait, in seconds.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,7 +343,7 @@ block. Write-locks will create the file on acquire and remove it on
 release.</p>
 <p>The delay arguments are a sequence of floats used as the duration of
 successive <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.sleep" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sleep()</span></code></a> calls. If this sequence is exhausted
-before a lock is established, <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TimeoutError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
+before a lock is established, <a class="reference external" href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -475,7 +478,7 @@ released.</p>
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.18.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.19.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
