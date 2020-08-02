@@ -10,7 +10,7 @@ from typing import Dict, Optional, Union, Tuple, FrozenSet, Iterable, \
     AsyncIterable
 from typing_extensions import Final, Literal
 
-from pymap.concurrent import ReadWriteLock
+from pymap.concurrent import Event, ReadWriteLock
 from pymap.context import subsystem
 from pymap.exceptions import MailboxHasChildren, NotSupportedError
 from pymap.flags import FlagOp
@@ -247,8 +247,10 @@ class MailboxData(MailboxDataInterface[Message]):
             maildir_msg = maildir.get_message_metadata(key)
         return record, maildir_msg
 
-    async def update_selected(self, selected: SelectedMailbox) \
-            -> SelectedMailbox:
+    async def update_selected(self, selected: SelectedMailbox, *,
+                              wait_on: Event = None) -> SelectedMailbox:
+        if wait_on is not None:
+            await wait_on.wait(timeout=1.0)
         all_messages = [msg async for msg in self.messages()]
         selected.set_messages(all_messages)
         return selected

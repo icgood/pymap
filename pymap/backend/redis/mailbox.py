@@ -10,6 +10,7 @@ import msgpack  # type: ignore
 from aioredis import Redis, ReplyError, MultiExecError  # type: ignore
 
 from pymap.bytes import HashStream
+from pymap.concurrent import Event
 from pymap.exceptions import MailboxNotFound, MailboxConflict, TemporaryFailure
 from pymap.flags import FlagOp
 from pymap.interfaces.message import CachedMessage
@@ -81,9 +82,11 @@ class MailboxData(MailboxDataInterface[Message]):
                        email_id=msg_email_id, thread_id=msg_thread_id,
                        redis=self._redis, ns_keys=self._ns_keys)
 
-    async def update_selected(self, selected: SelectedMailbox) \
-            -> SelectedMailbox:
+    async def update_selected(self, selected: SelectedMailbox, *,
+                              wait_on: Event = None) -> SelectedMailbox:
         last_mod_seq = selected.mod_sequence
+        if wait_on is not None:
+            await self._wait_updates(selected, last_mod_seq)
         if last_mod_seq is None:
             await self._load_initial(selected)
         else:
@@ -254,6 +257,13 @@ class MailboxData(MailboxDataInterface[Message]):
         messages, expunged = self._get_changes(changes)
         selected.mod_sequence = self._get_mod_seq(last_changes)
         selected.add_updates(messages, expunged)
+
+    async def _wait_updates(self, selected: SelectedMailbox,
+                            last_mod_seq: bytes) -> None:
+        keys = self._keys
+        redis = self._redis
+        await redis.xread([keys.changes], latest_ids=[last_mod_seq],
+                          timeout=1000, count=1)
 
 
 class MailboxSet(MailboxSetInterface[MailboxData]):

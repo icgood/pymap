@@ -11,7 +11,7 @@ from typing import Tuple, Sequence, Dict, Optional, Iterable, \
 from weakref import finalize, WeakKeyDictionary, WeakValueDictionary
 
 from pymap.bytes import HashStream
-from pymap.concurrent import ReadWriteLock
+from pymap.concurrent import Event, ReadWriteLock
 from pymap.context import subsystem
 from pymap.flags import FlagOp
 from pymap.interfaces.message import CachedMessage
@@ -194,6 +194,7 @@ class MailboxData(MailboxDataInterface[Message]):
         self._content_cache = content_cache
         self._thread_cache = thread_cache
         self._readonly = False
+        self._updated = subsystem.get().new_event()
         self._messages_lock = subsystem.get().new_rwlock()
         self._selected_set = SelectedSet()
         self._uid_validity = MailboxSnapshot.new_uid_validity()
@@ -221,8 +222,11 @@ class MailboxData(MailboxDataInterface[Message]):
     def selected_set(self) -> SelectedSet:
         return self._selected_set
 
-    async def update_selected(self, selected: SelectedMailbox) \
-            -> SelectedMailbox:
+    async def update_selected(self, selected: SelectedMailbox, *,
+                              wait_on: Event = None) -> SelectedMailbox:
+        if wait_on is not None:
+            either_event = wait_on.or_event(self._updated)
+            await either_event.wait()
         mod_sequence = selected.mod_sequence
         selected.mod_sequence = self._mod_sequences.highest
         if mod_sequence is None:
@@ -248,6 +252,7 @@ class MailboxData(MailboxDataInterface[Message]):
                               recent=recent, content=content)
             self._messages[new_uid] = message
             self._mod_sequences.update([new_uid])
+            self._updated.set()
             return message
 
     async def copy(self, uid: int, destination: MailboxData, *,
@@ -262,6 +267,7 @@ class MailboxData(MailboxDataInterface[Message]):
             new_msg = Message.copy(message, uid=dest_uid, recent=recent)
             destination._messages[dest_uid] = new_msg
             destination._mod_sequences.update([dest_uid])
+            destination._updated.set()
         return dest_uid
 
     async def move(self, uid: int, destination: MailboxData, *,
@@ -272,11 +278,13 @@ class MailboxData(MailboxDataInterface[Message]):
             except KeyError:
                 return None
             self._mod_sequences.expunge([uid])
+            self._updated.set()
         async with destination.messages_lock.write_lock():
             destination._max_uid = dest_uid = destination._max_uid + 1
             new_msg = Message.copy(message, uid=dest_uid, recent=recent)
             destination._messages[dest_uid] = new_msg
             destination._mod_sequences.update([dest_uid])
+            destination._updated.set()
         return dest_uid
 
     async def get(self, uid: int, cached_msg: CachedMessage) -> Message:
@@ -292,9 +300,10 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def update(self, uid: int, cached_msg: CachedMessage,
                      flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
-        self._mod_sequences.update([uid])
         msg = await self.get(uid, cached_msg)
         msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
+        self._mod_sequences.update([uid])
+        self._updated.set()
         return msg
 
     async def delete(self, uids: Iterable[int]) -> None:
@@ -305,6 +314,7 @@ class MailboxData(MailboxDataInterface[Message]):
                 except KeyError:
                     pass
             self._mod_sequences.expunge(uids)
+            self._updated.set()
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
         uids: List[int] = []
@@ -315,6 +325,7 @@ class MailboxData(MailboxDataInterface[Message]):
                 selected.session_flags.add_recent(msg_uid)
                 uids.append(msg_uid)
         self._mod_sequences.update(uids)
+        self._updated.set()
 
     async def cleanup(self) -> None:
         pass
