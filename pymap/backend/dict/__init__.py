@@ -116,7 +116,8 @@ class Config(IMAPConfig):
 
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
-        return {'demo_data': args.demo_data,
+        return {**super().parse_args(args),
+                'demo_data': args.demo_data,
                 'demo_user': args.demo_user,
                 'demo_password': args.demo_password}
 

@@ -185,7 +185,8 @@ class Config(IMAPConfig):
 
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
-        return {'address': args.address,
+        return {**super().parse_args(args),
+                'address': args.address,
                 'select': args.select,
                 'separator': args.separator.encode('utf-8'),
                 'prefix': args.prefix.encode('utf-8'),

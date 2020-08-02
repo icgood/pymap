@@ -10,8 +10,9 @@ import asyncio
 import os.path
 import time
 from abc import abstractmethod, ABCMeta
-from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock
-from concurrent.futures import Executor, ThreadPoolExecutor, TimeoutError
+from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock, \
+    TimeoutError
+from concurrent.futures import Executor, ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from contextvars import copy_context, Context
 from threading import local, Event as _threading_Event, Lock as _threading_Lock
@@ -230,8 +231,13 @@ class Event(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def wait(self) -> None:
-        """Wait until another thread signals the event."""
+    async def wait(self, *, timeout: float = None) -> None:
+        """Wait until another thread signals the event.
+
+        Args:
+            timeout: Maximum time to wait, in seconds.
+
+        """
         ...
 
 
@@ -320,7 +326,7 @@ class FileLock(ReadWriteLock):  # pragma: no cover
 
     The delay arguments are a sequence of floats used as the duration of
     successive :func:`~asyncio.sleep` calls. If this sequence is exhausted
-    before a lock is established, :class:`TimeoutError` is thrown.
+    before a lock is established, :class:`~asyncio.TimeoutError` is thrown.
 
     Args:
         path: The path of the lock file.
@@ -439,8 +445,12 @@ class _AsyncioEvent(Event):
     def clear(self) -> None:
         self._event.clear()
 
-    async def wait(self) -> None:
-        await self._event.wait()
+    async def wait(self, *, timeout: float = None) -> None:
+        task = asyncio.create_task(self._event.wait())
+        try:
+            await asyncio.wait_for(task, timeout)
+        except TimeoutError:
+            pass
 
 
 class _ThreadingEvent(Event):  # pragma: no cover
@@ -472,5 +482,5 @@ class _ThreadingEvent(Event):  # pragma: no cover
     def clear(self) -> None:
         self._event.clear()
 
-    async def wait(self) -> None:
-        self._event.wait()
+    async def wait(self, *, timeout: float = None) -> None:
+        self._event.wait(timeout=timeout)

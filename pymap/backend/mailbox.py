@@ -6,6 +6,7 @@ from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
     Iterable, AsyncIterable
 from typing_extensions import Protocol
 
+from pymap.concurrent import Event
 from pymap.flags import FlagOp
 from pymap.interfaces.message import MessageT_co, CachedMessage
 from pymap.listtree import ListTree
@@ -70,13 +71,15 @@ class MailboxDataInterface(Protocol[MessageT_co]):
         ...
 
     @abstractmethod
-    async def update_selected(self, selected: SelectedMailbox) \
-            -> SelectedMailbox:
+    async def update_selected(self, selected: SelectedMailbox, *,
+                              wait_on: Event = None) -> SelectedMailbox:
         """Populates and returns the selected mailbox object with the state
         needed to discover updates.
 
         Args:
             selected: the selected mailbox object.
+            wait_on: If given, block until this event signals or mailbox
+                activity occurs.
 
         """
         ...

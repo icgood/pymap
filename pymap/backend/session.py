@@ -182,7 +182,6 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             if dest_selected:
                 dest_selected.session_flags.add_recent(msg.uid)
             uids.append(msg.uid)
-        mbx.selected_set.updated.set()
         return (AppendUid(mbx.uid_validity, uids),
                 await self._load_updates(selected, mbx))
 
@@ -205,10 +204,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         mbx = await self._get_selected(selected)
         if housekeeping:
             await shield(mbx.cleanup())
-        if wait_on is not None:
-            either_event = wait_on.or_event(mbx.selected_set.updated)
-            await either_event.wait()
-        return await mbx.update_selected(selected)
+        return await mbx.update_selected(selected, wait_on=wait_on)
 
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequence_set: SequenceSet, set_seen: bool) \
@@ -223,8 +219,6 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                 msg = await mbx.get(cached_msg.uid, cached_msg)
             if msg is not None:
                 ret.append((seq, msg))
-        if set_seen:
-            mbx.selected_set.updated.set()
         return ret, await mbx.update_selected(selected)
 
     async def search_mailbox(self, selected: SelectedMailbox,
@@ -251,7 +245,6 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             uid_set = SequenceSet.all(uid=True)
         expunge_uids = await mbx.find_deleted(uid_set, selected)
         await mbx.delete(expunge_uids)
-        mbx.selected_set.updated.set()
         return await mbx.update_selected(selected)
 
     async def copy_messages(self, selected: SelectedMailbox,
@@ -271,7 +264,6 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                 if dest_selected:
                     dest_selected.session_flags.add_recent(dest_uid)
                 uids.append((source_uid, dest_uid))
-        dest.selected_set.updated.set()
         if not uids:
             copy_uid: Optional[CopyUid] = None
         else:
@@ -295,7 +287,6 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                 if dest_selected:
                     dest_selected.session_flags.add_recent(dest_uid)
                 uids.append((source_uid, dest_uid))
-        dest.selected_set.updated.set()
         if not uids:
             copy_uid: Optional[CopyUid] = None
         else:
@@ -318,5 +309,4 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             if not msg.expunged:
                 selected.session_flags.update(uid, flag_set, mode)
             messages.append((seq, msg))
-        mbx.selected_set.updated.set()
         return messages, await mbx.update_selected(selected)

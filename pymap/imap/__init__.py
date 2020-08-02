@@ -8,7 +8,7 @@ import re
 import sys
 from argparse import ArgumentParser
 from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
-    CancelledError
+    CancelledError, TimeoutError
 from base64 import b64encode, b64decode
 from contextlib import closing, AsyncExitStack
 from typing import TypeVar, Union, Optional, Iterable, List, Awaitable
@@ -301,16 +301,9 @@ class IMAPConnection:
 
     async def handle_updates(self, state: ConnectionState, done: Event,
                              cmd: IdleCommand) -> None:
-        timeout = self.config.max_idle_wait
         while not done.is_set():
-            receive_task = asyncio.create_task(
-                self._exec(state.receive_updates(cmd, done)))
-            try:
-                untagged = await asyncio.wait_for(receive_task, timeout)
-            except TimeoutError:
-                pass
-            else:
-                await shield(self.write_updates(untagged))
+            untagged = await self._exec(state.receive_updates(cmd, done))
+            await shield(self.write_updates(untagged))
 
     async def idle(self, state: ConnectionState, cmd: IdleCommand) \
             -> CommandResponse:

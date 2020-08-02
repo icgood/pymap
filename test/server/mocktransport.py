@@ -3,6 +3,7 @@ import asyncio
 import enum
 import inspect
 import re
+import traceback
 from collections import deque
 from itertools import zip_longest
 
@@ -132,13 +133,17 @@ class MockTransport:
 
     def _pop_expected(self, got):
         try:
-            type_, where, data, wait, set = self.queue.popleft()
-        except IndexError:
-            assert False, '\nExpected: <end>' + \
-                          '\nGot:      ' + got.value
-        assert type_ == got, '\nExpected: ' + type_.value + \
-                             '\nGot:      ' + got.value + \
-                             '\nWhere:    ' + where
+            try:
+                type_, where, data, wait, set = self.queue.popleft()
+            except IndexError:
+                assert False, '\nExpected: <end>' + \
+                              '\nGot:      ' + got.value
+            assert type_ == got, '\nExpected: ' + type_.value + \
+                                 '\nGot:      ' + got.value + \
+                                 '\nWhere:    ' + where
+        except AssertionError:
+            traceback.print_exc()
+            raise
         return where, data, wait, set
 
     def _match_write_expected(self, expected, re_parts):

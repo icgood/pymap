@@ -7,8 +7,6 @@ from typing import Any, Optional, Tuple, Dict, Set, MutableSet, AbstractSet, \
     FrozenSet, Iterable, List, Sequence
 from weakref import WeakSet
 
-from .concurrent import Event
-from .context import subsystem
 from .flags import FlagOp, PermanentFlags, SessionFlags
 from .interfaces.message import CachedMessage, FlagsKey
 from .parsing.command import Command
@@ -30,18 +28,13 @@ class SelectedSet:
     a mailbox, across all sessions. This is useful for assigning the
     ``\\Recent`` flag, as well as notifying other sessions about updates.
 
-    Args:
-        updated: The event to notify when updates occur. Defaults to a new
-            event using :mod:`asyncio` concurrency primitives.
-
     """
 
-    __slots__ = ['_set', '_updated']
+    __slots__ = ['_set']
 
     def __init__(self) -> None:
         super().__init__()
         self._set: MutableSet[SelectedMailbox] = WeakSet()
-        self._updated = subsystem.get().new_event()
 
     def add(self, selected: SelectedMailbox, *,
             replace: SelectedMailbox = None) -> None:
@@ -57,11 +50,6 @@ class SelectedSet:
         if replace is not None:
             self._set.discard(replace)
         self._set.add(selected)
-
-    @property
-    def updated(self) -> Event:
-        """The event to notify when updates occur."""
-        return self._updated
 
     @property
     def any_selected(self) -> Optional[SelectedMailbox]:
@@ -255,7 +243,7 @@ class SelectedMailbox:
             self._messages: SynchronizedMessages = kwargs['_messages']
         except KeyError:
             self._messages = SynchronizedMessages()
-        if selected_set:
+        if selected_set is not None:
             selected_set.add(self)
 
     @property

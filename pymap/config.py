@@ -105,8 +105,6 @@ class IMAPConfig(metaclass=ABCMeta):
         bad_command_limit: The number of consecutive commands received from
             the client with parsing errors before the client is disconnected.
         disable_idle: Disable the ``IDLE`` capability.
-        max_idle_wait: If given, the ``IDLE`` command will transparently cancel
-            and re-issue its request for updates every *N* seconds.
         extra: Additional keywords used for special circumstances.
 
     Attributes:
@@ -129,7 +127,6 @@ class IMAPConfig(metaclass=ABCMeta):
                  bad_command_limit: Optional[int] = 5,
                  disable_search_keys: Iterable[bytes] = None,
                  disable_idle: bool = False,
-                 max_idle_wait: float = None,
                  **extra: Any) -> None:
         super().__init__()
         self.args = args
@@ -139,7 +136,6 @@ class IMAPConfig(metaclass=ABCMeta):
         self.subsystem: Final = subsystem
         self.bad_command_limit: Final = bad_command_limit
         self.disable_search_keys: Final = disable_search_keys or []
-        self.max_idle_wait: Final = max_idle_wait
         self.hash_context: Final = hash_context or \
             get_hash(passlib_config=args.passlib_cfg)
         self._ssl_context = ssl_context or self._load_certs(extra)

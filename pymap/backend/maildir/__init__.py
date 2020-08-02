@@ -144,7 +144,8 @@ class Config(IMAPConfig):
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         executor = ThreadPoolExecutor(args.concurrency)
         subsystem = Subsystem.for_executor(executor)
-        return {'users_file': args.users_file,
+        return {**super().parse_args(args),
+                'users_file': args.users_file,
                 'base_dir': args.base_dir,
                 'layout': args.layout,
                 'subsystem': subsystem}
