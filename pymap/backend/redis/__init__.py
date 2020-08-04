@@ -315,7 +315,7 @@ class Users(LoginProtocol, UsersInterface):
             data = await self._get_user(redis, user)
             if data is None:
                 raise InvalidAuth()
-            data.check_password(credentials)
+            await data.check_password(credentials)
             if user != credentials.identity:
                 raise InvalidAuth(authorization=True)
         return credentials.identity

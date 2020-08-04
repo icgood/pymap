@@ -7,6 +7,7 @@ import ssl
 from abc import abstractmethod, ABCMeta
 from argparse import Namespace
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from ssl import SSLContext
 from typing import Any, TypeVar, Type, Union, Optional, Iterable, Iterator, \
     Sequence, Mapping, Dict
@@ -97,6 +98,8 @@ class IMAPConfig(metaclass=ABCMeta):
             ``key_file`` and an SSL context will be created.
         starttls_enabled: True if opportunistic TLS should be supported.
         hash_context: The hash to use for passwords.
+        cpu_subsystem: The subsystem to use for CPU-heavy operations,
+            defaulting to a small thread pool.
         preauth_credentials: If given, clients will pre-authenticate on
             connection using these credentials.
         proxy_protocol: The PROXY protocol implementation to use.
@@ -123,6 +126,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  preauth_credentials: AuthenticationCredentials = None,
                  proxy_protocol: ProxyProtocol = None,
                  hash_context: HashInterface = None,
+                 cpu_subsystem: Subsystem = None,
                  max_append_len: Optional[int] = 1000000000,
                  bad_command_limit: Optional[int] = 5,
                  disable_search_keys: Iterable[bytes] = None,
@@ -138,6 +142,8 @@ class IMAPConfig(metaclass=ABCMeta):
         self.disable_search_keys: Final = disable_search_keys or []
         self.hash_context: Final = hash_context or \
             get_hash(passlib_config=args.passlib_cfg)
+        self.cpu_subsystem: Final = cpu_subsystem or \
+            self._get_cpu_subsystem()
         self._ssl_context = ssl_context or self._load_certs(extra)
         self._tls_enabled = tls_enabled
         self._preauth_credentials = preauth_credentials
@@ -187,6 +193,13 @@ class IMAPConfig(metaclass=ABCMeta):
 
         """
         ...
+
+    @classmethod
+    def _get_cpu_subsystem(cls) -> Subsystem:
+        cpu_count = os.cpu_count() or 1
+        cpus_minus_one = max(1, cpu_count - 1)
+        executor = ThreadPoolExecutor(max_workers=cpus_minus_one)
+        return Subsystem.for_threading(executor)
 
     @classmethod
     def _load_certs(cls, extra: Mapping[str, Any]) -> SSLContext:

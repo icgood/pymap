@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.19.0',
+      version='0.20.0',
       author='Ian Good',
       author_email='icgood@gmail.com',
       description='Lightweight, asynchronous IMAP serving in Python.',

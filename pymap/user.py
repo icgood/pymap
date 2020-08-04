@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any, Optional, Mapping, Dict
 from typing_extensions import Final
 
-from pysasl import AuthenticationCredentials
+from pysasl import AuthenticationCredentials, HashInterface
 
 from .config import IMAPConfig
 from .exceptions import InvalidAuth
@@ -61,7 +61,7 @@ class UserMetadata:
             data['password'] = self.password
         return data
 
-    def check_password(self, creds: AuthenticationCredentials) -> None:
+    async def check_password(self, creds: AuthenticationCredentials) -> None:
         """Check the given credentials against the known password comparison
         data. If the known data used a hash, then the equivalent hash of the
         provided secret is compared.
@@ -73,8 +73,15 @@ class UserMetadata:
             :class:`~pymap.exceptions.InvalidAuth`
 
         """
-        config = self.config
         if self.password is None:
             raise InvalidAuth()
-        elif not creds.check_secret(self.password, hash=config.hash_context):
+        hash_context = self.config.hash_context
+        cpu_subsystem = self.config.cpu_subsystem
+        fut = self._check_secret(creds, self.password, hash_context)
+        if not await cpu_subsystem.execute(fut):
             raise InvalidAuth()
+
+    async def _check_secret(self, creds: AuthenticationCredentials,
+                            password: str,
+                            hash_context: HashInterface) -> bool:
+        return creds.check_secret(password, hash=hash_context)
