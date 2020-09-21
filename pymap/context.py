@@ -9,7 +9,7 @@ Attributes:
         primitives.
     current_command: The currently executing
         :class:`~pymap.parsing.command.Command`.
-    socket_info: :class:`~pymap.sockinfo.SocketInfo` about the currently
+    socket_info: :class:`~proxyprotocol.sock.SocketInfo` about the currently
         connected client.
     language_code: The language code string, e.g. ``en``.
     connection_exit: The active :class:`~contextlib.AsyncExitStack` that will
