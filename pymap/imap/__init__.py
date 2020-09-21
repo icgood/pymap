@@ -12,6 +12,7 @@ from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
 from base64 import b64encode, b64decode
 from contextlib import closing, AsyncExitStack
 from typing import TypeVar, Union, Optional, Iterable, List, Awaitable
+from uuid import uuid4
 
 from proxyprotocol import ProxyProtocolResult
 from proxyprotocol.sock import SocketInfo
@@ -153,7 +154,8 @@ class IMAPConnection:
                        writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo(writer, self.pp_result))
+        socket_info.set(SocketInfo(writer, self.pp_result,
+                                   unique_id=uuid4().bytes))
 
     async def _read_proxy_protocol(self) -> None:
         self.pp_result = await self.config.proxy_protocol.read(self.reader)
@@ -165,14 +167,14 @@ class IMAPConnection:
     @classmethod
     def _print(cls, log_format: str, output: Union[str, bytes]) -> None:
         if _log.isEnabledFor(logging.DEBUG):
-            fd = socket_info.get().socket.fileno()
+            uid = socket_info.get().unique_id.hex()
             if not isinstance(output, str):
                 output = str(output, 'utf-8', 'replace')
             lines = cls._lines.split(output)
             if not lines[-1]:
                 lines = lines[:-1]
             for line in lines:
-                _log.debug(log_format, fd, line)
+                _log.debug(log_format, uid, line)
 
     def _exec(self, future: Awaitable[_Ret]) -> Awaitable[_Ret]:
         return subsystem.get().execute(future)
@@ -191,12 +193,12 @@ class IMAPConnection:
                 buf += await self.reader.readexactly(literal_length)
                 buf += await self.reader.readline()
             else:
-                self._print('%d -->| %s', buf)
+                self._print('%s -->| %s', buf)
                 return memoryview(buf)
 
     async def read_continuation(self, literal_length: int) -> memoryview:
         extra_literal = await self.reader.readexactly(literal_length)
-        self._print('%d -->| %s', extra_literal)
+        self._print('%s -->| %s', extra_literal)
         extra_line = await self.readline()
         extra = extra_literal + bytes(extra_line)
         return memoryview(extra)
@@ -267,7 +269,7 @@ class IMAPConnection:
         except ConnectionError:
             pass
         else:
-            self._print('%d <--| %s', bytes(resp))
+            self._print('%s <--| %s', bytes(resp))
 
     async def start_tls(self) -> None:
         loop = asyncio.get_event_loop()
@@ -280,7 +282,7 @@ class IMAPConnection:
         new_writer = StreamWriter(new_transport, new_protocol,
                                   self.reader, loop)
         self._reset_streams(self.reader, new_writer)
-        self._print('%d <->| %s', b'<TLS handshake>')
+        self._print('%s <->| %s', b'<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
         _, exc, _ = sys.exc_info()
@@ -345,7 +347,7 @@ class IMAPConnection:
 
         """
         await self._read_proxy_protocol()
-        self._print('%d +++| %s', str(socket_info.get()))
+        self._print('%s +++| %s', str(socket_info.get()))
         bad_commands = 0
         try:
             greeting = await self._exec(state.do_greeting())
@@ -415,4 +417,4 @@ class IMAPConnection:
                 finally:
                     await state.do_cleanup()
                     current_command.reset(prev_cmd)
-        self._print('%d ---| %s', b'<disconnected>')
+        self._print('%s ---| %s', b'<disconnected>')

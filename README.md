@@ -13,7 +13,7 @@ This project attempts to simplify the complexity of the [IMAP protocol][1] into
 a set of clean Python APIs that can be implemented by pluggable backends.
 Everything runs in an [asyncio][2] event loop.
 
-#### [API Documentation](http://icgood.github.io/pymap/)
+#### [API Documentation](https://icgood.github.io/pymap/)
 
 ### Table of Contents
 

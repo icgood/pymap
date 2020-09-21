@@ -17,11 +17,16 @@ after_success:
 branches:
   only:
     - master
+    - /^\d+\.\d+.*$/  # version tags
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GH_TOKEN
-  keep_history: true
-  on:
-    branch: master
-  local_dir: doc/build/html
+  - provider: pages:git
+    local_dir: doc/build/html
+    on:
+      tags: true
+    edge: true
+  - provider: pypi
+    distributions: sdist bdist_wheel
+    skip_existing: true
+    on:
+      tags: true
+    edge: true

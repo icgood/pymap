@@ -3,6 +3,7 @@ import asyncio
 import enum
 import inspect
 import re
+import socket
 import traceback
 from collections import deque
 from itertools import zip_longest
@@ -21,7 +22,7 @@ class _Socket:
 
     def __init__(self, fd: int) -> None:
         self.fd = fd
-        self.family = None
+        self.family = socket.AF_INET
 
     def fileno(self):
         return self.fd
@@ -195,7 +196,9 @@ class MockTransport:
         if name == 'socket':
             return self.socket
         elif name == 'peername':
-            return 'test'
+            return ('1.2.3.4', 1234)
+        elif name == 'sockname':
+            return ('5.6.7.8', 5678)
 
     async def readline(self) -> bytes:
         where, data, wait, set = self._pop_expected(_Type.READLINE)
