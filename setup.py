@@ -1,4 +1,4 @@
-# Copyright (c) 2019 Ian C. Good
+# Copyright (c) 2020 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ with open('LICENSE.md') as f:
 setup(name='pymap',
       version='0.20.1',
       author='Ian Good',
-      author_email='icgood@gmail.com',
+      author_email='ian@icgood.net',
       description='Lightweight, asynchronous IMAP serving in Python.',
       long_description=readme + license,
       long_description_content_type='text/markdown',
