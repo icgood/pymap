@@ -1,9 +1,8 @@
 
-from typing import Any, Optional
-
 import pytest  # type: ignore
-from pymapadmin.grpc.admin_pb2 import Login, AppendRequest, AppendResponse, \
-    SUCCESS, FAILURE
+from grpclib.testing import ChannelFor
+from pymapadmin.grpc.admin_grpc import MailboxStub
+from pymapadmin.grpc.admin_pb2 import Login, AppendRequest, SUCCESS, FAILURE
 
 from pymap.admin.handlers.mailbox import MailboxHandlers
 
@@ -12,31 +11,18 @@ from .base import TestBase
 pytestmark = pytest.mark.asyncio
 
 
-class _Stream:
-
-    def __init__(self, request) -> None:
-        self.request = request
-        self.response: Optional[Any] = None
-
-    async def recv_message(self) -> object:
-        return self.request
-
-    async def send_message(self, response) -> None:
-        self.response = response
-
-
 class TestMailboxHandlers(TestBase):
 
-    async def test_append(self, backend, imap_server):
+    async def test_append(self, backend, imap_server) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert SUCCESS == response.result.code
         assert 105 == response.uid
 
@@ -58,91 +44,91 @@ class TestMailboxHandlers(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append_user_not_found(self, backend):
+    async def test_append_user_not_found(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         login = Login(authcid='testuser', secret='badpass')
         request = AppendRequest(login=login)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert FAILURE == response.result.code
         assert 'InvalidAuth' == response.result.key
 
-    async def test_append_mailbox_not_found(self, backend):
+    async def test_append_mailbox_not_found(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='BAD')
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert FAILURE == response.result.code
         assert 'BAD' == response.mailbox
         assert 'MailboxNotFound' == response.result.key
 
-    async def test_append_filter_reject(self, backend):
+    async def test_append_filter_reject(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'Subject: reject this\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert FAILURE == response.result.code
         assert 'AppendFailure' == response.result.key
 
-    async def test_append_filter_discard(self, backend):
+    async def test_append_filter_discard(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'Subject: discard this\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert SUCCESS == response.result.code
         assert not response.mailbox
         assert not response.uid
 
-    async def test_append_filter_address_is(self, backend):
+    async def test_append_filter_address_is(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: foo@example.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 1' == response.mailbox
 
-    async def test_append_filter_address_contains(self, backend):
+    async def test_append_filter_address_contains(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: user@foo.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 2' == response.mailbox
 
-    async def test_append_filter_address_matches(self, backend):
+    async def test_append_filter_address_matches(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'To: bigfoot@example.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 3' == response.mailbox
 
-    async def test_append_filter_envelope_is(self, backend):
+    async def test_append_filter_envelope_is(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
@@ -150,12 +136,12 @@ class TestMailboxHandlers(TestBase):
                                 sender='foo@example.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 4' == response.mailbox
 
-    async def test_append_filter_envelope_contains(self, backend):
+    async def test_append_filter_envelope_contains(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
@@ -163,12 +149,12 @@ class TestMailboxHandlers(TestBase):
                                 sender='user@foo.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 5' == response.mailbox
 
-    async def test_append_filter_envelope_matches(self, backend):
+    async def test_append_filter_envelope_matches(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
@@ -176,36 +162,36 @@ class TestMailboxHandlers(TestBase):
                                 sender=None, recipient='bigfoot@example.com',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 6' == response.mailbox
 
-    async def test_append_filter_exists(self, backend):
+    async def test_append_filter_exists(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'X-Foo: foo\nX-Bar: bar\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 7' == response.mailbox
 
-    async def test_append_filter_header(self, backend):
+    async def test_append_filter_header(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'X-Caffeine: C8H10N4O2\n\ntest message!\n'
         login = Login(authcid='testuser', secret='testpass')
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 8' == response.mailbox
 
-    async def test_append_filter_size(self, backend):
+    async def test_append_filter_size(self, backend) -> None:
         handlers = MailboxHandlers(backend, True)
         data = b'From: user@example.com\n\ntest message!\n'
         data = data + b'x' * (1234 - len(data))
@@ -213,7 +199,7 @@ class TestMailboxHandlers(TestBase):
         request = AppendRequest(login=login, mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
-        stream = _Stream(request)
-        await handlers.Append(stream)
-        response: AppendResponse = stream.response
+        async with ChannelFor([handlers]) as channel:
+            stub = MailboxStub(channel)
+            response = await stub.Append(request)
         assert 'Test 9' == response.mailbox
