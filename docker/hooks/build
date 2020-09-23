@@ -1,5 +1,5 @@
 #!/bin/bash
 set -ex
 
-export install_arg="$GITHUB_REPO/archive/$SOURCE_BRANCH.tar.gz"
-docker build --build-arg install_arg -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+export install_source=" @ $GITHUB_REPO/archive/$SOURCE_BRANCH.tar.gz"
+docker build --build-arg install_source -f $DOCKERFILE_PATH -t $IMAGE_NAME .
