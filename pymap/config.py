@@ -203,8 +203,14 @@ class IMAPConfig(metaclass=ABCMeta):
 
     @classmethod
     def _load_certs(cls, extra: Mapping[str, Any]) -> SSLContext:
-        cert_file: Optional[str] = extra.get('cert_file')
-        key_file: Optional[str] = extra.get('key_file')
+        try:
+            cert_file: Optional[str] = os.environ['CERT_FILE']
+        except KeyError:
+            cert_file = extra.get('cert_file')
+        try:
+            key_file: Optional[str] = os.environ['KEY_FILE']
+        except KeyError:
+            key_file = extra.get('key_file')
         ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         if cert_file is not None:
             ssl_context.load_cert_chain(cert_file, key_file)

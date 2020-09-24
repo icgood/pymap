@@ -9,3 +9,4 @@ RUN apk --update add --virtual build-dependencies python3-dev build-base \
   && apk del build-dependencies
 
 ENTRYPOINT ["pymap"]
+CMD ["--help"]
