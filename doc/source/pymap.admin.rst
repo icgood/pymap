@@ -5,6 +5,12 @@
 .. automodule:: pymap.admin
    :members:
 
+.. automodule:: pymap.admin.errors
+   :members:
+
+.. automodule:: pymap.admin.token
+   :members:
+
 ``pymap.admin.handlers``
 ----------------------------
 

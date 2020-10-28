@@ -1,15 +1,23 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Optional
+
 from grpclib.server import Stream
-from pymap import __version__ as server_version
+from pymap import __version__ as pymap_version
+from pymapadmin import __version__ as pymap_admin_version
 from pymapadmin.grpc.admin_grpc import SystemBase
-from pymapadmin.grpc.admin_pb2 import PingRequest, PingResponse
+from pymapadmin.grpc.admin_pb2 import LoginRequest, LoginResponse, \
+    PingRequest, PingResponse
+from pysasl.creds import AuthenticationCredentials
 
 from . import BaseHandler
+from ..token import get_login_token
 
 __all__ = ['SystemHandlers']
 
+_LoginStream = Stream[LoginRequest, LoginResponse]
 _PingStream = Stream[PingRequest, PingResponse]
 
 
@@ -21,6 +29,38 @@ class SystemHandlers(SystemBase, BaseHandler):
         :class:`grpclib.server.Server`
 
     """
+
+    async def Login(self, stream: _LoginStream) -> None:
+        """Response to a login request. For example::
+
+            $ pymap-admin login
+
+        See ``pymap-admin login --help`` for more options.
+
+        Args:
+            stream (:class:`~grpclib.server.Stream`): The stream for the
+                request and response.
+
+        """
+        request = await stream.recv_message()
+        assert request is not None
+        authzid = request.authzid or None
+        bearer_token: Optional[str] = None
+        async with self.catch_errors('Login') as result:
+            credentials = AuthenticationCredentials(
+                request.authcid, request.secret, request.authzid)
+            expiration: Optional[datetime] = None
+            if request.token_expiration:
+                expiration = datetime.fromtimestamp(request.token_expiration)
+            identity = await self.login.authenticate(credentials)
+            token_data = await identity.new_token(expiration=expiration)
+            if token_data is not None:
+                macaroon = get_login_token(
+                    token_data.identifier, token_data.key,
+                    authzid=authzid, expiration=expiration)
+                bearer_token = macaroon.serialize()
+        resp = LoginResponse(result=result, bearer_token=bearer_token)
+        await stream.send_message(resp)
 
     async def Ping(self, stream: _PingStream) -> None:
         """Respond to a ping request. For example::
@@ -36,6 +76,6 @@ class SystemHandlers(SystemBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        resp = PingResponse(server_version=server_version,
-                            public_client=self.public)
+        resp = PingResponse(pymap_version=pymap_version,
+                            pymap_admin_version=pymap_admin_version)
         await stream.send_message(resp)

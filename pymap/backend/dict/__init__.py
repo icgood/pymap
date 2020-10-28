@@ -3,27 +3,34 @@ from __future__ import annotations
 
 import asyncio
 import os.path
+import uuid
 from argparse import ArgumentParser, Namespace
 from contextlib import closing, asynccontextmanager
 from datetime import datetime, timezone
-from typing import Any, Tuple, Sequence, Mapping, Dict, Awaitable, \
+from secrets import token_bytes
+from typing import Any, Optional, Tuple, Sequence, Mapping, Dict, Awaitable, \
     AsyncIterator
+from typing_extensions import Final
 
 from pkg_resources import resource_listdir, resource_stream
-from pysasl import AuthenticationCredentials
+from pysasl.creds import AuthenticationCredentials
+from pysasl.hashing import Cleartext
 
 from pymap.config import BackendCapability, IMAPConfig
-from pymap.exceptions import InvalidAuth
+from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
+    UserNotFound
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
-from pymap.interfaces.session import LoginProtocol
+from pymap.interfaces.login import LoginTokenData, LoginInterface, \
+    IdentityInterface
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
+from pymap.user import UserMetadata
 
 from .filter import FilterSet
 from .mailbox import Message, MailboxData, MailboxSet
 from ..session import BaseSession
 
-__all__ = ['DictBackend', 'Config', 'Session']
+__all__ = ['DictBackend', 'Config']
 
 
 class DictBackend(BackendInterface):
@@ -40,10 +47,6 @@ class DictBackend(BackendInterface):
     @property
     def login(self) -> Login:
         return self._login
-
-    @property
-    def users(self) -> None:
-        return None
 
     @property
     def config(self) -> Config:
@@ -77,7 +80,7 @@ class Config(IMAPConfig):
     def __init__(self, args: Namespace, *, demo_data: bool,
                  demo_user: str, demo_password: str,
                  demo_data_resource: str = __name__, **extra: Any) -> None:
-        super().__init__(args, **extra)
+        super().__init__(args, hash_context=Cleartext(), **extra)
         self._demo_data = demo_data
         self._demo_user = demo_user
         self._demo_password = demo_password
@@ -145,44 +148,73 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
 
-class Login(LoginProtocol):
+class Login(LoginInterface):
     """The login implementation for the dict backend."""
 
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
+        self.users = {config.demo_user: UserMetadata(
+            config, password=config.demo_password)}
+        self.tokens: Dict[str, Tuple[str, bytes]] = {}
+
+    async def authenticate(self, credentials: AuthenticationCredentials) \
+            -> Identity:
+        authcid = credentials.authcid
+        token_key: Optional[bytes] = None
+        role: Optional[str] = None
+        if credentials.authcid_type == 'login-token':
+            if authcid in self.tokens:
+                authcid, token_key = self.tokens[authcid]
+        elif credentials.authcid_type == 'admin-token':
+            authcid = credentials.identity
+            role = 'admin'
+        try:
+            metadata = await Identity(authcid, self, None).get()
+        except UserNotFound:
+            metadata = UserMetadata(self.config)
+        await metadata.check_password(credentials, token_key=token_key)
+        role = role or metadata.role
+        if role != 'admin' and authcid != credentials.identity:
+            raise AuthorizationFailure()
+        return Identity(credentials.identity, self, role)
+
+
+class Identity(IdentityInterface):
+    """The identity implementation for the dict backend."""
+
+    def __init__(self, name: str, login: Login, role: Optional[str]) -> None:
+        super().__init__()
+        self.login: Final = login
+        self.config: Final = login.config
+        self._name = name
+        self._role = role
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    async def new_token(self, *, expiration: datetime = None) \
+            -> LoginTokenData:
+        token_id = uuid.uuid4().hex
+        token_key = token_bytes()
+        self.login.tokens[token_id] = (self.name, token_key)
+        return LoginTokenData(self.name, token_id, token_key)
 
     @asynccontextmanager
-    async def __call__(self, credentials: AuthenticationCredentials) \
-            -> AsyncIterator[Session]:
-        """Checks the given credentials for a valid login and returns a new
-        session. The mailbox data is shared between concurrent and future
-        sessions, but only for the lifetime of the process.
-
-        """
-        user = credentials.authcid
+    async def new_session(self) -> AsyncIterator[Session]:
+        identity = self.name
         config = self.config
-        password = self._get_password(user)
-        if user != credentials.identity:
-            raise InvalidAuth()
-        elif not credentials.check_secret(password):
-            raise InvalidAuth()
-        mailbox_set, filter_set = config.set_cache.get(user, (None, None))
+        _ = await self.get()
+        mailbox_set, filter_set = config.set_cache.get(identity, (None, None))
         if not mailbox_set or not filter_set:
             mailbox_set = MailboxSet()
             filter_set = FilterSet()
-            if config.demo_data:
+            if config.demo_data and identity == config.demo_user:
                 await self._load_demo(config.demo_data_resource,
                                       mailbox_set, filter_set)
-            config.set_cache[user] = (mailbox_set, filter_set)
-        yield Session(credentials.identity, config, mailbox_set, filter_set)
-
-    def _get_password(self, user: str) -> str:
-        expected_user: str = self.config.demo_user
-        expected_password: str = self.config.demo_password
-        if user == expected_user:
-            return expected_password
-        raise InvalidAuth()
+            config.set_cache[identity] = (mailbox_set, filter_set)
+        yield Session(identity, config, mailbox_set, filter_set)
 
     async def _load_demo(self, resource: str, mailbox_set: MailboxSet,
                          filter_set: FilterSet) -> None:
@@ -229,3 +261,24 @@ class Login(LoginProtocol):
                 msg_recent = False
             append_msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags))
             await mbx.append(append_msg, recent=msg_recent)
+
+    async def get(self) -> UserMetadata:
+        data = self.login.users.get(self.name)
+        if data is None:
+            raise UserNotFound(self.name)
+        return data
+
+    async def set(self, data: UserMetadata) -> None:
+        if self._role != 'admin' and data.role:
+            raise NotAllowedError('Cannot assign role.')
+        self.login.users[self.name] = data
+
+    async def delete(self) -> None:
+        try:
+            del self.login.users[self.name]
+        except KeyError as exc:
+            raise UserNotFound(self.name) from exc
+        self.config.set_cache.pop(self.name, None)
+        for token_id, (name, _) in list(self.login.tokens.items()):
+            if name == self.name:
+                del self.login.tokens[token_id]

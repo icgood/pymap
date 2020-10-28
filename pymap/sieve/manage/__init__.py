@@ -20,7 +20,8 @@ from pymap.config import IMAPConfig
 from pymap.context import socket_info, language_code, connection_exit
 from pymap.exceptions import InvalidAuth
 from pymap.interfaces.backend import ServiceInterface
-from pymap.interfaces.session import LoginProtocol, SessionInterface
+from pymap.interfaces.login import LoginInterface
+from pymap.interfaces.session import SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
 from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError, \
@@ -83,7 +84,7 @@ class ManageSieveServer:
 
     """
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+    def __init__(self, login: LoginInterface, config: IMAPConfig) -> None:
         super().__init__()
         self._login = login
         self._config = config
@@ -113,7 +114,7 @@ class ManageSieveConnection:
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
     _impl = b'pymap managesieve ' + __version__.encode('ascii')
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig,
+    def __init__(self, login: LoginInterface, config: IMAPConfig,
                  reader: StreamReader, writer: StreamWriter) -> None:
         super().__init__()
         self.login = login
@@ -204,7 +205,8 @@ class ManageSieveConnection:
     async def _login(self, creds: AuthenticationCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
-        return await stack.enter_async_context(self.login(creds))
+        identity = await self.login.authenticate(creds)
+        return await stack.enter_async_context(identity.new_session())
 
     async def _do_greeting(self) -> Response:
         preauth_creds = self.config.preauth_credentials

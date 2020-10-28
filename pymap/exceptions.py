@@ -11,9 +11,10 @@ from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
 
 __all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
            'TemporaryFailure', 'SearchNotAllowed', 'InvalidAuth',
-           'IncompatibleData', 'MailboxError', 'MailboxNotFound',
-           'MailboxConflict', 'MailboxHasChildren', 'MailboxReadOnly',
-           'AppendFailure', 'UserNotFound']
+           'AuthorizationFailure', 'NotAllowedError', 'IncompatibleData',
+           'MailboxError', 'MailboxNotFound', 'MailboxConflict',
+           'MailboxHasChildren', 'MailboxReadOnly', 'AppendFailure',
+           'UserNotFound']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -78,17 +79,39 @@ class InvalidAuth(ResponseError):
 
     """
 
-    def __init__(self, msg: str = 'Invalid authentication credentials.', *,
-                 authorization: bool = False) -> None:
+    def __init__(self, msg: str = 'Invalid authentication credentials.') \
+            -> None:
         super().__init__(msg)
         self._raw = msg.encode('utf-8')
-        if authorization:
-            self._code = ResponseCode.of(b'AUTHORIZATIONFAILED')
-        else:
-            self._code = ResponseCode.of(b'AUTHENTICATIONFAILED')
 
     def get_response(self, tag: bytes) -> ResponseNo:
-        return ResponseNo(tag, self._raw, self._code)
+        return ResponseNo(tag, self._raw,
+                          ResponseCode.of(b'AUTHENTICATIONFAILED'))
+
+
+class AuthorizationFailure(InvalidAuth):
+    """The credentials in ``LOGIN`` or ``AUTHENTICATE`` were authenticated but
+    failed to authorize as the requested identity.
+
+    """
+
+    def __init__(self, msg: str = 'Authorization failed.') -> None:
+        super().__init__(msg)
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, self._raw,
+                          ResponseCode.of(b'AUTHORIZATIONFAILED'))
+
+
+class NotAllowedError(ResponseError):
+    """The operation is not allowed due to access controls."""
+
+    def __init__(self, msg: str = 'Operation not allowed.') -> None:
+        super().__init__(msg)
+        self._raw = msg.encode('utf-8')
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, self._raw, ResponseCode.of(b'NOPERM'))
 
 
 class IncompatibleData(InvalidAuth):

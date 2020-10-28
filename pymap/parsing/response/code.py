@@ -51,8 +51,9 @@ class PermanentFlags(ResponseCode):
 
     def __init__(self, flags: Iterable[MaybeBytes]) -> None:
         super().__init__()
-        self.flags: Sequence[MaybeBytes] = sorted(flags)
-        self._raw = BytesFormat(b'[PERMANENTFLAGS %b]') % ListP(self.flags)
+        self.flags: Sequence[MaybeBytes] = list(flags)
+        self._raw = BytesFormat(b'[PERMANENTFLAGS %b]') \
+            % ListP(self.flags, sort=True)
 
     def __bytes__(self) -> bytes:
         return self._raw
