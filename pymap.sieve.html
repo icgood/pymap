@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.sieve &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.sieve &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></li> 
       </ul>
@@ -80,7 +80,7 @@
 <dd><p>Compiles sieve scripts into <a class="reference internal" href="#pymap.sieve.SieveFilter" title="pymap.sieve.SieveFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">SieveFilter</span></code></a> objects.</p>
 <dl class="py attribute">
 <dt id="pymap.sieve.SieveCompiler.extensions">
-<code class="sig-name descname">extensions</code><em class="property">: List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)">bytes</a><span class="p">]</span></em><em class="property"> = [b'fileinto', b'reject', b'envelope', b'body']</em><a class="headerlink" href="#pymap.sieve.SieveCompiler.extensions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extensions</code><em class="property">: List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)">bytes</a><span class="p">]</span></em><em class="property"> = [b'fileinto', b'reject', b'envelope', b'body']</em><a class="headerlink" href="#pymap.sieve.SieveCompiler.extensions" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of Sieve extensions supported by the compiler.</p>
 </dd></dl>
 
@@ -90,7 +90,7 @@
 <dd><p>The filter value type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -101,7 +101,7 @@
 <dd><p>The filter implementation type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.sieve.SieveFilter" title="pymap.sieve.SieveFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">SieveFilter</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code></a>[<a class="reference internal" href="#pymap.sieve.SieveFilter" title="pymap.sieve.SieveFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">SieveFilter</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -112,7 +112,7 @@
 <dd><p>Compile the filter value and return the resulting implementation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The filter value:</p>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The filter value:</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.sieve.SieveFilter" title="pymap.sieve.SieveFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">SieveFilter</span></code></a></p>
@@ -142,9 +142,9 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope sender of the message.</p></li>
-<li><p><strong>recipient</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope recipient of the message.</p></li>
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The intended mailbox to append the message.</p></li>
+<li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope sender of the message.</p></li>
+<li><p><strong>recipient</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope recipient of the message.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The intended mailbox to append the message.</p></li>
 <li><p><strong>append_msg</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>) – The message to be appended.</p></li>
 </ul>
 </dd>
@@ -152,7 +152,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AppendFailure" title="pymap.exceptions.AppendFailure"><strong>AppendFailure</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -192,14 +192,14 @@ True if the test matched the data. Must be overridden by sub-classes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope sender of the message.</p></li>
-<li><p><strong>recipient</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope recipient of the message.</p></li>
+<li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope sender of the message.</p></li>
+<li><p><strong>recipient</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The envelope recipient of the message.</p></li>
 <li><p><strong>append_msg</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>) – The message to be appended.</p></li>
 <li><p><strong>content</strong> (<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>) – The parsed message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -230,10 +230,10 @@ For example:</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</p>
+<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -244,7 +244,7 @@ For example:</p>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -255,11 +255,11 @@ For example:</p>
 <dt id="pymap.sieve.manage.ManageSieveServer">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.sieve.manage.</code><code class="sig-name descname">ManageSieveServer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callable object that creates and runs <a class="reference internal" href="#pymap.sieve.manage.ManageSieveConnection" title="pymap.sieve.manage.ManageSieveConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ManageSieveConnection</span></code></a>
-objects when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
+objects when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>) – Login callback that takes authentication credentials and returns
+<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginInterface</span></code></a>) – Login callback that takes authentication credentials and returns
 a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the sieve server.</p></li>
 </ul>
@@ -274,7 +274,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>) – Login callback that takes authentication credentials and returns
+<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginInterface</span></code></a>) – Login callback that takes authentication credentials and returns
 a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the sieve server.</p></li>
 <li><p><strong>reader</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">StreamReader</span></code>) – The input stream for the socket.</p></li>
@@ -289,7 +289,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 enter the command/response cycle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -373,7 +373,7 @@ enter the command/response cycle.</p>
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></li> 
       </ul>

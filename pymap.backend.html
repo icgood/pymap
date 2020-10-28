@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -138,7 +138,7 @@
 <dd><p>Whether the mailbox is read-only or read-write.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -149,7 +149,7 @@
 <dd><p>The mailbox UID validity value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -160,7 +160,7 @@
 <dd><p>The permanent flags allowed in the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -171,7 +171,7 @@
 <dd><p>The session flags allowed in the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -196,7 +196,7 @@ needed to discover updates.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – the selected mailbox object.</p></li>
-<li><p><strong>wait_on</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – If given, block until this event signals or mailbox
+<li><p><strong>wait_on</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – If given, block until this event signals or mailbox
 activity occurs.</p></li>
 </ul>
 </dd>
@@ -215,7 +215,7 @@ message with its assigned UID.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>append_msg</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>) – The new message data.</p></li>
-<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -232,13 +232,13 @@ message with its assigned UID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message to copy.</p></li>
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message to copy.</p></li>
 <li><p><strong>destination</strong> (<em>~MailboxDataT</em>) – The destination mailbox.</p></li>
-<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -251,13 +251,13 @@ message with its assigned UID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message to move.</p></li>
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID of the message to move.</p></li>
 <li><p><strong>destination</strong> (<em>~MailboxDataT</em>) – The destination mailbox.</p></li>
-<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the message should be marked recent.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -269,7 +269,7 @@ message with its assigned UID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</p></li>
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</p></li>
 <li><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>) – The last known cached message.</p></li>
 </ul>
 </dd>
@@ -286,9 +286,9 @@ message with its assigned UID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</p></li>
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message UID.</p></li>
 <li><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">CachedMessage</span></code></a>) – The last known cached message.</p></li>
-<li><p><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The set of flags for the update operation.</p></li>
+<li><p><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The set of flags for the update operation.</p></li>
 <li><p><strong>flag_op</strong> – The mode to change the flags.</p></li>
 </ul>
 </dd>
@@ -304,10 +304,10 @@ message with its assigned UID.</p>
 <dd><p>Delete messages with the given UIDs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The message UIDs.</p>
+<dd class="field-odd"><p><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The message UIDs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -322,7 +322,7 @@ message with its assigned UID.</p>
 <dd class="field-odd"><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -338,7 +338,7 @@ operation, and may run things like garbage collection on the backend.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -368,7 +368,7 @@ are resolved by the selected mailbox session.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, +MessageT_co]]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, +MessageT_co]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -385,7 +385,7 @@ are resolved by the selected mailbox session.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -402,7 +402,7 @@ are resolved by the selected mailbox session.</p>
 <dd><p>The delimiter used in mailbox names to indicate hierarchy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -419,12 +419,12 @@ are resolved by the selected mailbox session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the mailbox should be subscribed.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the mailbox should be subscribed.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -465,10 +465,10 @@ are resolved by the selected mailbox session.</p>
 <dd><p>Return an existing mailbox by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.9)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>+MailboxDataT_co</p>
@@ -486,10 +486,10 @@ are resolved by the selected mailbox session.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><strong>ValueError</strong></a> – The mailbox already exists.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – The mailbox already exists.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></a></p>
@@ -507,13 +507,13 @@ are resolved by the selected mailbox session.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.9)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -529,18 +529,18 @@ are resolved by the selected mailbox session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>before</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the existing mailbox.</p></li>
-<li><p><strong>after</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the destination mailbox.</p></li>
+<li><p><strong>before</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the existing mailbox.</p></li>
+<li><p><strong>after</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the destination mailbox.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.8)"><strong>KeyError</strong></a> – The <em>before</em> mailbox does not exist.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><strong>ValueError</strong></a> – The <em>after</em> mailbox already exists.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.9)"><strong>KeyError</strong></a> – The <em>before</em> mailbox does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – The <em>after</em> mailbox already exists.</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -558,7 +558,7 @@ are resolved by the selected mailbox session.</p>
 most backends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>owner</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The logged-in user name.</p>
+<dd class="field-odd"><p><strong>owner</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The logged-in user name.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -567,18 +567,7 @@ most backends.</p>
 <dd><p>The SASL authorization identity of the logged-in user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="pymap.backend.session.BaseSession.users">
-<em class="property">property </em><code class="sig-name descname">users</code><a class="headerlink" href="#pymap.backend.session.BaseSession.users" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handles user management.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.users.UsersInterface" title="pymap.interfaces.users.UsersInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">UsersInterface</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -589,7 +578,7 @@ most backends.</p>
 <dd><p>Manages the active and inactive filters for the login user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -600,7 +589,7 @@ most backends.</p>
 <dd><p>Called at the end of a session, to clean up any resources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -616,7 +605,7 @@ backend to clean up resources.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -633,14 +622,14 @@ backend to clean up resources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox reference name.</p></li>
+<li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox reference name.</p></li>
 <li><p><strong>filter</strong> – Mailbox name with possible wildcards.</p></li>
-<li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, only list the subscribed mailboxes.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, only list the subscribed mailboxes.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -654,15 +643,15 @@ an exception if the mailbox does not yet exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -678,15 +667,15 @@ an exception if the mailbox does not yet exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxConflict" title="pymap.exceptions.MailboxConflict"><strong>MailboxConflict</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -702,8 +691,8 @@ an exception if the mailbox does not yet exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -713,7 +702,7 @@ an exception if the mailbox does not yet exist.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -729,9 +718,9 @@ an exception if the mailbox does not yet exist.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>before_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox before the rename.</p></li>
-<li><p><strong>after_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox after the rename.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>before_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox before the rename.</p></li>
+<li><p><strong>after_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox after the rename.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -741,7 +730,7 @@ an exception if the mailbox does not yet exist.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -758,15 +747,15 @@ folder name currently exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -783,15 +772,15 @@ not the given folder name currently exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -807,9 +796,9 @@ not the given folder name currently exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]) – The messages to append.</p></li>
-<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendMessage</span></code></a>]) – The messages to append.</p></li>
+<li><p><strong>selected</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -819,7 +808,7 @@ not the given folder name currently exists.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.code.AppendUid" title="pymap.parsing.response.code.AppendUid"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendUid</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.code.AppendUid" title="pymap.parsing.response.code.AppendUid"><code class="xref py py-class docutils literal notranslate"><span class="pre">AppendUid</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -838,15 +827,15 @@ mailbox updates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the mailbox is read-only.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
+<li><p><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the mailbox is read-only.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a>, <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -870,8 +859,8 @@ mailbox backend, which may be a slower operation.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
-<li><p><strong>wait_on</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – If given, block until this event signals.</p></li>
-<li><p><strong>housekeeping</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, the backend may perform additional
+<li><p><strong>wait_on</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>]) – If given, block until this event signals.</p></li>
+<li><p><strong>housekeeping</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, the backend may perform additional
 housekeeping operations if necessary.</p></li>
 </ul>
 </dd>
@@ -894,14 +883,14 @@ set.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
 <li><p><strong>sequence_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – Sequence set of message sequences or UIDs.</p></li>
-<li><p><strong>set_seen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the messages should get the <code class="docutils literal notranslate"><span class="pre">\Seen</span></code> flag.</p></li>
+<li><p><strong>set_seen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the messages should get the <code class="docutils literal notranslate"><span class="pre">\Seen</span></code> flag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -919,14 +908,14 @@ given search criteria.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
-<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>]) – Search keys specifying the message criteria.</p></li>
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>]) – Search keys specifying the message criteria.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -945,7 +934,7 @@ from the mailbox.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
-<li><p><strong>uid_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>]) – Only the messages in the given UID set should be expunged.</p></li>
+<li><p><strong>uid_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>]) – Only the messages in the given UID set should be expunged.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -973,7 +962,7 @@ from the mailbox.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
 <li><p><strong>sequence_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – Sequence set of message sequences or UIDs.</p></li>
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the mailbox to copy messages into.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the mailbox to copy messages into.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -983,7 +972,7 @@ from the mailbox.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.code.CopyUid" title="pymap.parsing.response.code.CopyUid"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyUid</span></code></a>], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.code.CopyUid" title="pymap.parsing.response.code.CopyUid"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyUid</span></code></a>], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1002,7 +991,7 @@ the selected mailbox.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
 <li><p><strong>sequence_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – Sequence set of message sequences or UIDs.</p></li>
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the mailbox to copy messages into.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the mailbox to copy messages into.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1012,7 +1001,7 @@ the selected mailbox.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.code.CopyUid" title="pymap.parsing.response.code.CopyUid"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyUid</span></code></a>], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.code.CopyUid" title="pymap.parsing.response.code.CopyUid"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyUid</span></code></a>], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1030,7 +1019,7 @@ the selected mailbox.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The selected mailbox session.</p></li>
 <li><p><strong>sequence_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceSet</span></code></a>) – Sequence set of message sequences or UIDs.</p></li>
-<li><p><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – Set of flags to update.</p></li>
+<li><p><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – Set of flags to update.</p></li>
 <li><p><strong>mode</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlagOp</span></code></a>) – Update mode for the flag set.</p></li>
 </ul>
 </dd>
@@ -1041,7 +1030,7 @@ the selected mailbox.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1133,7 +1122,7 @@ the selected mailbox.</p>
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>

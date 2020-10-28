@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.dict &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.backend.dict &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.backend.html" title="pymap.backend"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.dict</span></code></a></li> 
@@ -81,8 +81,7 @@ and integration testing.</p>
 <dl class="py method">
 <dt id="pymap.backend.dict.DictBackend.login">
 <em class="property">property </em><code class="sig-name descname">login</code><a class="headerlink" href="#pymap.backend.dict.DictBackend.login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Login callback that takes authentication credentials and returns a
-<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p>
+<dd><p>Login interface that handles authentication credentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Login</span></code></p>
@@ -113,13 +112,13 @@ this backend. For example:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</p></li>
-<li><p><strong>subparsers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The special action object as returned by
-<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.8)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</p></li>
+<li><p><strong>subparsers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The special action object as returned by
+<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.9)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The new sub-parser object.</p>
@@ -133,10 +132,10 @@ this backend. For example:</p>
 <dd><p>Initialize the backend and return an instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.dict.DictBackend" title="pymap.backend.dict.DictBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">DictBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.dict.Config" title="pymap.backend.dict.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.dict.DictBackend" title="pymap.backend.dict.DictBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">DictBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.dict.Config" title="pymap.backend.dict.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -147,10 +146,10 @@ this backend. For example:</p>
 <dd><p>Start the backend, as well as any services.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>services</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceInterface</span></code></a>]) – Available services that may also be started.</p>
+<dd class="field-odd"><p><strong>services</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceInterface</span></code></a>]) – Available services that may also be started.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,7 +178,7 @@ capabilities.</p>
 <dd><p>True if demo data should be loaded at startup.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -190,7 +189,7 @@ capabilities.</p>
 <dd><p>Resource path of demo data files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -202,7 +201,7 @@ capabilities.</p>
 <code class="docutils literal notranslate"><span class="pre">demouser</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -214,7 +213,7 @@ capabilities.</p>
 to <code class="docutils literal notranslate"><span class="pre">demopass</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -227,27 +226,10 @@ should be passed in to the <code class="xref py py-class docutils literal notran
 constructor. Sub-classes should override this method as needed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</p>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="pymap.backend.dict.Session">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.dict.</code><code class="sig-name descname">Session</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">owner</span></em>, <em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">mailbox_set</span></em>, <em class="sig-param"><span class="n">filter_set</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.dict.Session" title="Permalink to this definition">¶</a></dt>
-<dd><p>The session implementation for the dict backend.</p>
-<dl class="py method">
-<dt id="pymap.backend.dict.Session.filter_set">
-<em class="property">property </em><code class="sig-name descname">filter_set</code><a class="headerlink" href="#pymap.backend.dict.Session.filter_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Manages the active and inactive filters for the login user.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSet</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -328,7 +310,7 @@ constructor. Sub-classes should override this method as needed.</p>
         <li class="right" >
           <a href="pymap.backend.html" title="pymap.backend"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.dict</span></code></a></li> 

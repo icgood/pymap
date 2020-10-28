@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.mime &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.mime &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></li> 
       </ul>
@@ -79,7 +79,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The message literal.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The message literal.</p></li>
 <li><p><strong>header</strong> (<a class="reference internal" href="#pymap.mime.MessageHeader" title="pymap.mime.MessageHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageHeader</span></code></a>) – The parsed message header.</p></li>
 <li><p><strong>body</strong> (<a class="reference internal" href="#pymap.mime.MessageBody" title="pymap.mime.MessageBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBody</span></code></a>) – The parsed message body.</p></li>
 </ul>
@@ -98,7 +98,7 @@
 order they occur.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -109,7 +109,7 @@ order they occur.</p>
 <dd><p>True if the content-type of the message is <code class="docutils literal notranslate"><span class="pre">message/rfc822</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -117,7 +117,7 @@ order they occur.</p>
 <dl class="py method">
 <dt id="pymap.mime.MessageContent.json">
 <em class="property">property </em><code class="sig-name descname">json</code><a class="headerlink" href="#pymap.mime.MessageContent.json" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
+<dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
 this object may be re-created without parsing.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -125,7 +125,7 @@ this object may be re-created without parsing.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -144,8 +144,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring that was parsed.</p></li>
-<li><p><strong>json</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The <a class="reference internal" href="#pymap.mime.MessageContent.json" title="pymap.mime.MessageContent.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a> of a previously parsed message content.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring that was parsed.</p></li>
+<li><p><strong>json</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The <a class="reference internal" href="#pymap.mime.MessageContent.json" title="pymap.mime.MessageContent.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a> of a previously parsed message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -160,7 +160,7 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dd><p>Parse the bytestring into message content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring to parse.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring to parse.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a></p>
@@ -178,7 +178,7 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dd class="field-odd"><p><strong>writer</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.WriteStream" title="pymap.bytes.WriteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">WriteStream</span></code></a>) – The output stream.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -212,7 +212,7 @@ headers on-demand.</p>
 <dd><p>The number of lines in the message header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -220,7 +220,7 @@ headers on-demand.</p>
 <dl class="py method">
 <dt id="pymap.mime.MessageHeader.json">
 <em class="property">property </em><code class="sig-name descname">json</code><a class="headerlink" href="#pymap.mime.MessageHeader.json" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
+<dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
 this object may be re-created without parsing.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -228,7 +228,7 @@ this object may be re-created without parsing.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -245,8 +245,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring that was parsed.</p></li>
-<li><p><strong>json</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The <a class="reference internal" href="#pymap.mime.MessageHeader.json" title="pymap.mime.MessageHeader.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a> of a previously parsed message content.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring that was parsed.</p></li>
+<li><p><strong>json</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The <a class="reference internal" href="#pymap.mime.MessageHeader.json" title="pymap.mime.MessageHeader.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a> of a previously parsed message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -276,7 +276,7 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dd class="field-odd"><p><strong>writer</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.WriteStream" title="pymap.bytes.WriteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">WriteStream</span></code></a>) – The output stream.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -301,7 +301,7 @@ objects.</p>
 <dd><p>The number of lines in the message body.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -312,7 +312,7 @@ objects.</p>
 <dd><p>True if the message body is composed of nested sub-parts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -323,7 +323,7 @@ objects.</p>
 <dd><p>If <a class="reference internal" href="#pymap.mime.MessageBody.has_nested" title="pymap.mime.MessageBody.has_nested"><code class="xref py py-attr docutils literal notranslate"><span class="pre">has_nested</span></code></a> is True, contains the list of sub-parts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -331,7 +331,7 @@ objects.</p>
 <dl class="py method">
 <dt id="pymap.mime.MessageBody.json">
 <em class="property">property </em><code class="sig-name descname">json</code><a class="headerlink" href="#pymap.mime.MessageBody.json" title="Permalink to this definition">¶</a></dt>
-<dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
+<dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
 this object may be re-created without parsing.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -339,7 +339,7 @@ this object may be re-created without parsing.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -356,8 +356,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring that was parsed.</p></li>
-<li><p><strong>json</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The <a class="reference internal" href="#pymap.mime.MessageBody.json" title="pymap.mime.MessageBody.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a> of a previously parsed message content.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The bytestring that was parsed.</p></li>
+<li><p><strong>json</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The <a class="reference internal" href="#pymap.mime.MessageBody.json" title="pymap.mime.MessageBody.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a> of a previously parsed message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -387,7 +387,7 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 <dd class="field-odd"><p><strong>writer</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.WriteStream" title="pymap.bytes.WriteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">WriteStream</span></code></a>) – The output stream.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -440,7 +440,7 @@ and <code class="docutils literal notranslate"><span class="pre">base64</span></
 with the <a class="reference internal" href="#pymap.mime.cte.MessageDecoder.registry" title="pymap.mime.cte.MessageDecoder.registry"><code class="xref py py-attr docutils literal notranslate"><span class="pre">registry</span></code></a> dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ContentTransferEncodingHeader</span></code>]) – The CTE header value.</p>
+<dd class="field-odd"><p><strong>header</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ContentTransferEncodingHeader</span></code>]) – The CTE header value.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.mime.cte.MessageDecoder" title="pymap.mime.cte.MessageDecoder"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageDecoder</span></code></a></p>
@@ -471,7 +471,7 @@ with the <a class="reference internal" href="#pymap.mime.cte.MessageDecoder.regi
 <dt id="pymap.mime.parsed.ParsedHeaders">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.mime.parsed.</code><code class="sig-name descname">ParsedHeaders</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">headers</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mapping of message headers, parsed on-demand using a
-<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.HeaderRegistry" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeaderRegistry</span></code></a>. Also provides typed
+<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.HeaderRegistry" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeaderRegistry</span></code></a>. Also provides typed
 properties for standard headers used in IMAP processing.</p>
 <dl class="py method">
 <dt id="pymap.mime.parsed.ParsedHeaders.content_type">
@@ -479,7 +479,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.ContentTypeHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentTypeHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.ContentTypeHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentTypeHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -490,7 +490,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Date</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.DateHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.DateHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -501,7 +501,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Subject</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -512,7 +512,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">From</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -523,7 +523,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Sender</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.SingleAddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleAddressHeader</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.SingleAddressHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleAddressHeader</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -534,7 +534,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Reply-To</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -545,7 +545,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">To</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -556,7 +556,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Cc</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -567,7 +567,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Bcc</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.AddressHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddressHeader</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -578,7 +578,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">In-Reply-To</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -589,7 +589,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">References</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -600,7 +600,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Message-Id</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -611,7 +611,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Disposition</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.ContentDispositionHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentDispositionHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.ContentDispositionHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContentDispositionHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -622,7 +622,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Language</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -633,7 +633,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Location</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -644,7 +644,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Id</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -655,7 +655,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Description</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.UnstructuredHeader" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnstructuredHeader</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -666,7 +666,7 @@ properties for standard headers used in IMAP processing.</p>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Transfer-Encoding</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ContentTransferEncodingHeader</span></code>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ContentTransferEncodingHeader</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -758,7 +758,7 @@ properties for standard headers used in IMAP processing.</p>
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></li> 
       </ul>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li> 
       </ul>
@@ -87,10 +87,10 @@ For example:</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</p>
+<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -101,7 +101,7 @@ For example:</p>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -112,11 +112,11 @@ For example:</p>
 <dt id="pymap.imap.IMAPServer">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPServer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callable object that creates and runs <a class="reference internal" href="#pymap.imap.IMAPConnection" title="pymap.imap.IMAPConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConnection</span></code></a> objects
-when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
+when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.LoginProtocol" title="pymap.interfaces.session.LoginProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginProtocol</span></code></a>) – Login callback that takes authentication credentials and returns
+<li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoginInterface</span></code></a>) – Login callback that takes authentication credentials and returns
 a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – Settings to use for the IMAP server.</p></li>
 </ul>
@@ -148,7 +148,7 @@ enter the command/response cycle.</p>
 <dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#pymap.imap.state.ConnectionState" title="pymap.imap.state.ConnectionState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionState</span></code></a>) – Defines the interaction with the backend plugin.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -237,7 +237,7 @@ backend plugin.</p>
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li> 
       </ul>

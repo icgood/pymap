@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.concurrent &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.concurrent &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -73,22 +73,22 @@
   <div class="section" id="module-pymap.concurrent">
 <span id="pymap-concurrent"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code><a class="headerlink" href="#module-pymap.concurrent" title="Permalink to this headline">¶</a></h1>
 <p>Implements some concurrency utilities used by pymap. Each has
-an implementation using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a> concurrency
+an implementation using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a> concurrency
 primitives.</p>
 <dl class="py class">
 <dt id="pymap.concurrent.Subsystem">
 <em class="property">class </em><code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">Subsystem</code><a class="headerlink" href="#pymap.concurrent.Subsystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Utility for creating concurrency primitives for a subsystem, either
-<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.for_executor">
 <em class="property">classmethod </em><code class="sig-name descname">for_executor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">executor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_executor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem based on the given executor. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is
-None, use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is a
-<a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a>, use <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
+None, use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is a
+<a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a>, use <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>executor</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code>]) – The executor in use, if any.</p>
+<dd class="field-odd"><p><strong>executor</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Executor</span></code>]) – The executor in use, if any.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a></p>
@@ -99,7 +99,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.for_asyncio">
 <em class="property">classmethod </em><code class="sig-name descname">for_asyncio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_asyncio" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>.</p>
+<dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a></p>
@@ -110,7 +110,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.for_threading">
 <em class="property">classmethod </em><code class="sig-name descname">for_threading</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">executor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_threading" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
+<dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a></p>
@@ -124,7 +124,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <dd><p>The subsystem name, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -133,16 +133,16 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <dt id="pymap.concurrent.Subsystem.execute">
 <em class="property">abstract </em><code class="sig-name descname">execute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">future</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the future and returns its result in the subsystem. For
-<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>, this simply means <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">await</span> <span class="pre">future</span></code>. For
-<a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>, it uses
+<a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>, this simply means <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">await</span> <span class="pre">future</span></code>. For
+<a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>, it uses
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">run_in_executor()</span></code> to run the future in
 another thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]) – An awaitable result to execute by the subsystem.</p>
+<dd class="field-odd"><p><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]) – An awaitable result to execute by the subsystem.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[~RetT]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -204,7 +204,7 @@ another thread.</p>
 <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -227,7 +227,7 @@ or any of the provided events are signalled.</p>
 <dd><p>Return True if the event is set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -238,7 +238,7 @@ or any of the provided events are signalled.</p>
 <dd><p>Signal the waiting threads to release.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -249,7 +249,7 @@ or any of the provided events are signalled.</p>
 <dd><p>Clear the signal, allowing threads to wait again.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -260,10 +260,10 @@ or any of the provided events are signalled.</p>
 <dd><p>Wait until another thread signals the event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – Maximum time to wait, in seconds.</p>
+<dd class="field-odd"><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – Maximum time to wait, in seconds.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -303,7 +303,7 @@ or any of the provided events are signalled.</p>
 <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -314,7 +314,7 @@ or any of the provided events are signalled.</p>
 <dd><p>Acquires a read-lock, blocking until any write-locks are released.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractAsyncContextManager</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractAsyncContextManager</span></code>[<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,7 +326,7 @@ or any of the provided events are signalled.</p>
 released.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractAsyncContextManager</span></code>[<code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractAsyncContextManager</span></code>[<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -342,15 +342,15 @@ block until the file is gone. If the file is absent, read-locks will not
 block. Write-locks will create the file on acquire and remove it on
 release.</p>
 <p>The delay arguments are a sequence of floats used as the duration of
-successive <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.sleep" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sleep()</span></code></a> calls. If this sequence is exhausted
-before a lock is established, <a class="reference external" href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
+successive <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.sleep" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sleep()</span></code></a> calls. If this sequence is exhausted
+before a lock is established, <a class="reference external" href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The path of the lock file.</p></li>
-<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Lock files older than this age will be deleted.</p></li>
-<li><p><strong>read_retry_delay</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The delay sequence between read-lock attempts.</p></li>
-<li><p><strong>write_retry_delay</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The delay sequence between write-lock attempts.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The path of the lock file.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Lock files older than this age will be deleted.</p></li>
+<li><p><strong>read_retry_delay</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The delay sequence between read-lock attempts.</p></li>
+<li><p><strong>write_retry_delay</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – The delay sequence between write-lock attempts.</p></li>
 </ul>
 </dd>
 </dl>
@@ -360,7 +360,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 <dd><p>The subsystem the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'file'</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -371,7 +371,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 <dd><p>Acquires a read-lock, blocking until any write-locks are released.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -383,7 +383,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 released.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.AsyncIterator" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -478,7 +478,7 @@ released.</p>
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>

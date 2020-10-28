@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.user &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.user &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.service.html" title="pymap.service"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code></a></li> 
       </ul>
@@ -74,71 +74,61 @@
 <span id="pymap-user"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code><a class="headerlink" href="#module-pymap.user" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="pymap.user.UserMetadata">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.user.</code><code class="sig-name descname">UserMetadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains user metadata including the password or hash.</p>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.user.</code><code class="sig-name descname">UserMetadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains user metadata such as the password or hash.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – The configuration object.</p></li>
-<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The password string or hash digest.</p></li>
-<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – Additional metadata parameters associated with the user.</p></li>
+<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The password string or hash digest.</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Metadata parameters associated with the user.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="pymap.user.UserMetadata.from_dict">
-<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata.from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a new <a class="reference internal" href="#pymap.user.UserMetadata" title="pymap.user.UserMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserMetadata</span></code></a> from a dictionary containing
-the password information. Fields must either be <code class="xref py py-func docutils literal notranslate"><span class="pre">str()</span></code> or
-<code class="xref py py-func docutils literal notranslate"><span class="pre">int()</span></code>, bytestrings should be hex-encoded.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#pymap.user.UserMetadata.to_dict" title="pymap.user.UserMetadata.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a></p>
-</div>
+<dt id="pymap.user.UserMetadata.role">
+<em class="property">property </em><code class="sig-name descname">role</code><a class="headerlink" href="#pymap.user.UserMetadata.role" title="Permalink to this definition">¶</a></dt>
+<dd><p>The value of the <code class="docutils literal notranslate"><span class="pre">role</span></code> key from <em>params</em>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>) – The configuration object.</p></li>
-<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – The password data dictionary.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#pymap.user.UserMetadata" title="pymap.user.UserMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserMetadata</span></code></a></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pymap.user.UserMetadata.to_dict">
-<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata.to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the password comparison data in a JSON-serializable
-dictionary for persistence and transfer.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#pymap.user.UserMetadata.from_dict" title="pymap.user.UserMetadata.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a></p>
-</div>
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">extra</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines the <em>password</em>, <em>params</em>, and <em>extra</em> into a dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Additional parameters as keyword arguments, which will be
+merged into the result.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pymap.user.UserMetadata.check_password">
-<em class="property">async </em><code class="sig-name descname">check_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">creds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata.check_password" title="Permalink to this definition">¶</a></dt>
+<em class="property">async </em><code class="sig-name descname">check_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">creds</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">token_key</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.user.UserMetadata.check_password" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the given credentials against the known password comparison
 data. If the known data used a hash, then the equivalent hash of the
 provided secret is compared.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>creds</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/index.html#pysasl.AuthenticationCredentials" title="(in pysasl v0.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a>) – The provided authentication credentials.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>creds</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.html#pysasl.creds.AuthenticationCredentials" title="(in pysasl v0.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a>) – The provided authentication credentials.</p></li>
+<li><p><strong>token_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The token key bytestring.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -219,7 +209,7 @@ provided secret is compared.</p>
         <li class="right" >
           <a href="pymap.service.html" title="pymap.service"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code></a></li> 
       </ul>

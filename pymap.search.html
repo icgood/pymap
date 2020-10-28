@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.search &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.search &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.message.html" title="pymap.message"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li> 
       </ul>
@@ -85,7 +85,7 @@ implemented, any search keys that require it will fail.</p>
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a>) – The active mailbox session.</p></li>
 <li><p><strong>max_seq</strong> – The highest message sequence ID in the mailbox.</p></li>
 <li><p><strong>max_uid</strong> – The highest message UID in the mailbox.</p></li>
-<li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Search keys that should be disabled.</p></li>
+<li><p><strong>disabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]]) – Search keys that should be disabled.</p></li>
 </ul>
 </dd>
 </dl>
@@ -107,13 +107,13 @@ implemented, any search keys that require it will fail.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -146,7 +146,7 @@ match. If the set is empty, nothing will match.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>]) – The set of search keys that must match.</p></li>
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrozenSet</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>]) – The set of search keys that must match.</p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchParams</span></code></a>) – The parameters that may be used by some searches.</p></li>
 </ul>
 </dd>
@@ -171,12 +171,12 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -194,13 +194,13 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -218,13 +218,13 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -242,13 +242,13 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -266,13 +266,13 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -291,13 +291,13 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -316,13 +316,13 @@ contains a sequence set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -341,13 +341,13 @@ session flag sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -365,13 +365,13 @@ session flag sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -389,13 +389,13 @@ session flag sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -419,13 +419,13 @@ session flag sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -444,13 +444,13 @@ structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -468,13 +468,13 @@ structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -492,13 +492,13 @@ structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
+<li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageInterface</span></code></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a>) – The message content.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -579,7 +579,7 @@ structure.</p>
         <li class="right" >
           <a href="pymap.message.html" title="pymap.message"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li> 
       </ul>

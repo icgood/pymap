@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.exceptions &#8212; pymap 0.20.3 documentation</title>
+    <title>pymap.exceptions &#8212; pymap 0.21.0 documentation</title>
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
@@ -84,7 +84,7 @@ response to an IMAP command.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
@@ -105,7 +105,7 @@ the provided response.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseOk" title="pymap.parsing.response.ResponseOk"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseOk</span></code></a></p>
@@ -126,7 +126,7 @@ not supported by the server or backend.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
@@ -147,7 +147,7 @@ response code is added to the response.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
@@ -171,7 +171,7 @@ executed by the mailbox.</p>
 
 <dl class="py exception">
 <dt id="pymap.exceptions.InvalidAuth">
-<em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">InvalidAuth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="o">=</span><span class="default_value">'Invalid authentication credentials.'</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">authorization</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">InvalidAuth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="o">=</span><span class="default_value">'Invalid authentication credentials.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> commands received credentials that the
 IMAP backend has rejected.</p>
 <dl class="py method">
@@ -180,7 +180,48 @@ IMAP backend has rejected.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="pymap.exceptions.AuthorizationFailure">
+<em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">AuthorizationFailure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="o">=</span><span class="default_value">'Authorization failed.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.AuthorizationFailure" title="Permalink to this definition">¶</a></dt>
+<dd><p>The credentials in <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> were authenticated but
+failed to authorize as the requested identity.</p>
+<dl class="py method">
+<dt id="pymap.exceptions.AuthorizationFailure.get_response">
+<code class="sig-name descname">get_response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.AuthorizationFailure.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an IMAP response for the error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="pymap.exceptions.NotAllowedError">
+<em class="property">exception </em><code class="sig-prename descclassname">pymap.exceptions.</code><code class="sig-name descname">NotAllowedError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span><span class="o">=</span><span class="default_value">'Operation not allowed.'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotAllowedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>The operation is not allowed due to access controls.</p>
+<dl class="py method">
+<dt id="pymap.exceptions.NotAllowedError.get_response">
+<code class="sig-name descname">get_response</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotAllowedError.get_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an IMAP response for the error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
@@ -204,9 +245,9 @@ detected mailbox data was not in a compatible format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The name of the mailbox.</p></li>
-<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The response message for the error.</p></li>
-<li><p><strong>code</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]) – Optional response code for the error.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The name of the mailbox.</p></li>
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The response message for the error.</p></li>
+<li><p><strong>code</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>]) – Optional response code for the error.</p></li>
 </ul>
 </dd>
 </dl>
@@ -216,7 +257,7 @@ detected mailbox data was not in a compatible format.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
@@ -233,8 +274,8 @@ detected mailbox data was not in a compatible format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox</p></li>
-<li><p><strong>try_create</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if creating the mailbox first may help.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox</p></li>
+<li><p><strong>try_create</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if creating the mailbox first may help.</p></li>
 </ul>
 </dd>
 </dl>
@@ -247,7 +288,7 @@ detected mailbox data was not in a compatible format.</p>
 with another mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -259,7 +300,7 @@ with another mailbox.</p>
 hierarchical mailboxes below it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -271,7 +312,7 @@ hierarchical mailboxes below it.</p>
 allowed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.8)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – The name of the mailbox.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -292,7 +333,7 @@ allowed.</p>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
@@ -376,7 +417,7 @@ allowed.</p>
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.20.3 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.21.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
