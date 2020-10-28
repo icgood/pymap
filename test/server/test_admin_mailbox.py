@@ -2,7 +2,7 @@
 import pytest  # type: ignore
 from grpclib.testing import ChannelFor
 from pymapadmin.grpc.admin_grpc import MailboxStub
-from pymapadmin.grpc.admin_pb2 import Login, AppendRequest, SUCCESS, FAILURE
+from pymapadmin.grpc.admin_pb2 import AppendRequest, SUCCESS, FAILURE
 
 from pymap.admin.handlers.mailbox import MailboxHandlers
 
@@ -13,16 +13,20 @@ pytestmark = pytest.mark.asyncio
 
 class TestMailboxHandlers(TestBase):
 
+    admin_token = 'MDAwZWxvY2F0aW9uIAowMDEwaWRlbnRpZmllciAKMDAxNWNpZCB0eXBl' \
+        'ID0gYWRtaW4KMDAyZnNpZ25hdHVyZSBTApt6-KNq85_1TeSmQyqTZjWPfHCYPY8EIG' \
+        'q6NMqv4go'
+    metadata = {'auth-token': admin_token}
+
     async def test_append(self, backend, imap_server) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert SUCCESS == response.result.code
         assert 105 == response.uid
 
@@ -45,161 +49,148 @@ class TestMailboxHandlers(TestBase):
         await self.run(transport)
 
     async def test_append_user_not_found(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
-        login = Login(authcid='testuser', secret='badpass')
-        request = AppendRequest(login=login)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
+        request = AppendRequest(user='baduser')
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert FAILURE == response.result.code
-        assert 'InvalidAuth' == response.result.key
+        assert 'UserNotFound' == response.result.key
 
     async def test_append_mailbox_not_found(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='BAD')
+        handlers = MailboxHandlers(backend, b'testadmintoken')
+        request = AppendRequest(user='testuser', mailbox='BAD')
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert FAILURE == response.result.code
         assert 'BAD' == response.mailbox
         assert 'MailboxNotFound' == response.result.key
 
     async def test_append_filter_reject(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'Subject: reject this\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert FAILURE == response.result.code
         assert 'AppendFailure' == response.result.key
 
     async def test_append_filter_discard(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'Subject: discard this\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert SUCCESS == response.result.code
         assert not response.mailbox
         assert not response.uid
 
     async def test_append_filter_address_is(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: foo@example.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 1' == response.mailbox
 
     async def test_append_filter_address_contains(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: user@foo.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 2' == response.mailbox
 
     async def test_append_filter_address_matches(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'To: bigfoot@example.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 3' == response.mailbox
 
     async def test_append_filter_envelope_is(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 sender='foo@example.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 4' == response.mailbox
 
     async def test_append_filter_envelope_contains(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 sender='user@foo.com', recipient=None,
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 5' == response.mailbox
 
     async def test_append_filter_envelope_matches(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: user@example.com\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 sender=None, recipient='bigfoot@example.com',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 6' == response.mailbox
 
     async def test_append_filter_exists(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'X-Foo: foo\nX-Bar: bar\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 7' == response.mailbox
 
     async def test_append_filter_header(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'X-Caffeine: C8H10N4O2\n\ntest message!\n'
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 8' == response.mailbox
 
     async def test_append_filter_size(self, backend) -> None:
-        handlers = MailboxHandlers(backend, True)
+        handlers = MailboxHandlers(backend, b'testadmintoken')
         data = b'From: user@example.com\n\ntest message!\n'
         data = data + b'x' * (1234 - len(data))
-        login = Login(authcid='testuser', secret='testpass')
-        request = AppendRequest(login=login, mailbox='INBOX',
+        request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
-            response = await stub.Append(request)
+            response = await stub.Append(request, metadata=self.metadata)
         assert 'Test 9' == response.mailbox

@@ -10,14 +10,14 @@ from pymap.parsing.specials import Flag, ExtensionOptions
 from pymapadmin.grpc.admin_grpc import MailboxBase
 from pymapadmin.grpc.admin_pb2 import AppendRequest, AppendResponse
 
-from . import LoginHandler
+from . import BaseHandler
 
 __all__ = ['MailboxHandlers']
 
 _AppendStream = Stream[AppendRequest, AppendResponse]
 
 
-class MailboxHandlers(MailboxBase, LoginHandler):
+class MailboxHandlers(MailboxBase, BaseHandler):
     """The GRPC handlers, executed when an admin request is received. Each
     handler should receive a request, take action, and send the response.
 
@@ -56,7 +56,8 @@ class MailboxHandlers(MailboxBase, LoginHandler):
         validity: Optional[int] = None
         uid: Optional[int] = None
         async with self.catch_errors('Append') as result, \
-                self.login_as(request.login) as session:
+                self.login_as(stream.metadata, request.user) as identity, \
+                self.with_session(identity) as session:
             if session.filter_set is not None:
                 filter_value = await session.filter_set.get_active()
                 if filter_value is not None:

@@ -13,7 +13,6 @@ from pymap.flags import FlagOp, SessionFlags, PermanentFlags
 from pymap.interfaces.filter import FilterSetInterface
 from pymap.interfaces.message import MessageT
 from pymap.interfaces.session import SessionInterface
-from pymap.interfaces.users import UsersInterface
 from pymap.mailbox import MailboxSnapshot
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import SequenceSet, SearchKey, ObjectId, \
@@ -45,10 +44,6 @@ class BaseSession(SessionInterface, Generic[MessageT]):
     @property
     def owner(self) -> str:
         return self._owner
-
-    @property
-    def users(self) -> Optional[UsersInterface]:
-        return None  # no user management by default
 
     @property
     @abstractmethod

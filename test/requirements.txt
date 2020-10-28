@@ -10,5 +10,7 @@ msgpack
 grpclib
 protobuf
 sievelib
-proxy-protocol
+passlib
+pymacaroons
+googleapis-common-protos
 pymap-admin

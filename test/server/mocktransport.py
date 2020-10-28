@@ -64,14 +64,14 @@ class MockTransport:
         where = self._caller(inspect.currentframe())
         self.queue.append((_Type.READ_EOF, where, None, wait, set))
 
-    def push_login(self, wait=None, set=None):
+    def push_login(self, password=b'testpass', wait=None, set=None):
         self.push_write(
             b'* OK [CAPABILITY IMAP4rev1',
             (br'(?:\s+[a-zA-Z0-9=+-]+)*', ),
             b'] Server ready ',
             (br'\S+', ), b'\r\n', wait=wait)
         self.push_readline(
-            b'login1 LOGIN testuser testpass\r\n')
+            b'login1 LOGIN testuser ' + password + b'\r\n')
         self.push_write(
             b'login1 OK [CAPABILITY IMAP4rev1',
             (br'(?:\s+[a-zA-Z0-9=+-]+)*', ),

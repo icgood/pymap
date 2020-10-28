@@ -127,7 +127,7 @@ metadata. It requires [aioredis][9] and will not appear in the plugins list
 without it.
 
 ```
-$ pip install aioredis msgpack
+$ pip install 'pymap[redis]'
 $ pymap redis --help
 ```
 
@@ -164,7 +164,7 @@ instead of a redis hash with the `--users-json` command-line argument.
 Try out the redis plugin:
 
 ```
-$ pymap --port 1143 --debug redis redis://localhost
+$ pymap --port 1143 --debug redis
 ```
 
 Once started, check out the dict plugin example above to connect and see it in
@@ -175,12 +175,12 @@ action.
 The `pymap-admin` tool is installed as an optional dependency:
 
 ```
-$ pip install pymap[admin]
+$ pip install 'pymap[admin]'
 ```
 
-Once installed, subsequent restarts of the pymap server will listen on port
-9090 by default for incoming requests from the admin tool. See the
-[pymap-admin][10] page for more information, and check out the help:
+Once installed, subsequent restarts of the pymap server will listen on a UNIX
+socket for incoming requests from the admin tool. See the [pymap-admin][10]
+page for more information, and check out the help:
 
 ```
 $ pymap-admin --help

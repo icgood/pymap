@@ -2,16 +2,12 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, Tuple, Optional, FrozenSet, Iterable, Sequence, \
-    AsyncContextManager
+from typing import Any, Tuple, Optional, FrozenSet, Iterable, Sequence
 from typing_extensions import Protocol
-
-from pysasl import AuthenticationCredentials
 
 from .filter import FilterSetInterface
 from .message import MessageInterface
 from .mailbox import MailboxInterface
-from .users import UsersInterface
 from ..concurrent import Event
 from ..flags import FlagOp
 from ..parsing.message import AppendMessage
@@ -19,29 +15,7 @@ from ..parsing.specials import SequenceSet, Flag, SearchKey, ObjectId
 from ..parsing.response.code import AppendUid, CopyUid
 from ..selected import SelectedMailbox
 
-__all__ = ['LoginProtocol', 'SessionInterface']
-
-
-class LoginProtocol(Protocol):
-    """Defines the callback protocol that backends use to initialize a new
-    session.
-
-    """
-
-    @abstractmethod
-    def __call__(self, credentials: AuthenticationCredentials) \
-            -> AsyncContextManager[SessionInterface]:
-        """Given a set of authentication credentials, initialize and provide a
-        new IMAP session for the user.
-
-        Args:
-            credentials: Authentication credentials supplied by the user.
-
-        Raises:
-            :class:`~pymap.exceptions.InvalidAuth`
-
-        """
-        ...
+__all__ = ['SessionInterface']
 
 
 class SessionInterface(Protocol):
@@ -53,12 +27,6 @@ class SessionInterface(Protocol):
     @abstractmethod
     def owner(self) -> str:
         """The SASL authorization identity of the logged-in user."""
-        ...
-
-    @property
-    @abstractmethod
-    def users(self) -> Optional[UsersInterface]:
-        """Handles user management."""
         ...
 
     @property

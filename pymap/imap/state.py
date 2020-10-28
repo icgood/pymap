@@ -11,7 +11,8 @@ from pymap.config import IMAPConfig
 from pymap.context import socket_info, connection_exit
 from pymap.exceptions import NotSupportedError, CloseConnection
 from pymap.fetch import MessageAttributes
-from pymap.interfaces.session import SessionInterface, LoginProtocol
+from pymap.interfaces.login import LoginInterface
+from pymap.interfaces.session import SessionInterface
 from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
 from pymap.parsing.command.any import CapabilityCommand, LogoutCommand, \
@@ -54,7 +55,7 @@ class ConnectionState:
 
     """
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+    def __init__(self, login: LoginInterface, config: IMAPConfig) -> None:
         super().__init__()
         self.config = config
         self.auth = config.initial_auth
@@ -97,7 +98,8 @@ class ConnectionState:
     async def _login(self, creds: AuthenticationCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
-        return await stack.enter_async_context(self.login(creds))
+        identity = await self.login.authenticate(creds)
+        return await stack.enter_async_context(identity.new_session())
 
     async def do_greeting(self) -> CommandResponse:
         preauth_creds = self.config.preauth_credentials

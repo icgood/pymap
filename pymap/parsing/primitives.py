@@ -417,7 +417,7 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
                  sort: bool = False) -> None:
         super().__init__()
         if sort:
-            items_list = sorted(items)
+            items_list = sorted(items)  # type: ignore
         else:
             items_list = list(items)
         self.items: Sequence[MaybeBytes] = items_list

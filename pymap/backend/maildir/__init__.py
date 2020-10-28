@@ -6,23 +6,26 @@ import os.path
 from argparse import ArgumentParser, Namespace
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Any, Optional, Tuple, Sequence, Mapping, Awaitable, \
     AsyncIterator
+from typing_extensions import Final
 
-from pysasl import AuthenticationCredentials
+from pysasl.creds import AuthenticationCredentials
 
 from pymap.concurrent import Subsystem
 from pymap.config import BackendCapability, IMAPConfig
-from pymap.exceptions import InvalidAuth
+from pymap.exceptions import AuthorizationFailure, NotSupportedError
 from pymap.filter import PluginFilterSet, SingleFilterSet
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
-from pymap.interfaces.session import LoginProtocol
+from pymap.interfaces.login import LoginInterface, IdentityInterface
+from pymap.user import UserMetadata
 
 from .layout import MaildirLayout
 from .mailbox import Message, Maildir, MailboxSet
 from ..session import BaseSession
 
-__all__ = ['MaildirBackend', 'Config', 'Session']
+__all__ = ['MaildirBackend', 'Config']
 
 
 class MaildirBackend(BackendInterface):
@@ -202,54 +205,70 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
 
-class Login(LoginProtocol):
+class Login(LoginInterface):
     """The login implementation for the maildir backend."""
 
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
 
-    @asynccontextmanager
-    async def __call__(self, credentials: AuthenticationCredentials) \
-            -> AsyncIterator[Session]:
-        """Checks the given credentials for a valid login and returns a new
-        session.
-
-        """
-        user = credentials.authcid
-        config = self.config
-        password, user_dir = await self.find_user(user)
-        if user != credentials.identity:
-            raise InvalidAuth()
-        elif not credentials.check_secret(password):
-            raise InvalidAuth()
-        maildir, layout = self._load_maildir(user_dir)
-        mailbox_set = MailboxSet(maildir, layout)
-        filter_set = FilterSet(layout.path)
-        yield Session(credentials.identity, config, mailbox_set, filter_set)
-
-    async def find_user(self, user: str) -> Tuple[str, str]:
-        """If the given user ID exists, return its expected password and
-        mailbox path. Override this method to implement custom login logic.
-
-        Args:
-            config: The maildir config object.
-            user: The expected user ID.
-
-        Raises:
-            InvalidAuth: The user ID was not valid.
-
-        """
+    async def authenticate(self, credentials: AuthenticationCredentials) \
+            -> Identity:
+        authcid = credentials.authcid
+        identity = credentials.identity
+        password: Optional[str] = None
+        mailbox_path: Optional[str] = None
         with open(self.config.users_file, 'r') as users_file:
             for line in users_file:
-                this_user, user_dir, password = line.split(':', 2)
-                if user == this_user:
-                    return password.rstrip('\r\n'), user_dir or user
-        raise InvalidAuth()
+                this_user, this_user_dir, this_password = line.split(':', 2)
+                if authcid == this_user:
+                    password = this_password.rstrip('\r\n')
+                if identity == this_user:
+                    mailbox_path = this_user_dir or this_user
+        data = UserMetadata(self.config, password=password)
+        await data.check_password(credentials)
+        if mailbox_path is None or authcid != identity:
+            raise AuthorizationFailure()
+        return Identity(self.config, identity, data, mailbox_path)
 
-    def _load_maildir(self, user_dir: str) \
-            -> Tuple[Maildir, MaildirLayout]:
-        full_path = os.path.join(self.config.base_dir, user_dir)
+
+class Identity(IdentityInterface):
+    """The identity implementation for the maildir backend."""
+
+    def __init__(self, config: Config, name: str, metadata: UserMetadata,
+                 mailbox_path: str) -> None:
+        super().__init__()
+        self.config: Final = config
+        self.metadata: Final = metadata
+        self.mailbox_path: Final = mailbox_path
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    async def new_token(self, *, expiration: datetime = None) -> None:
+        return None
+
+    @asynccontextmanager
+    async def new_session(self) -> AsyncIterator[Session]:
+        config = self.config
+        maildir, layout = self._load_maildir()
+        mailbox_set = MailboxSet(maildir, layout)
+        filter_set = FilterSet(layout.path)
+        yield Session(self.name, config, mailbox_set, filter_set)
+
+    def _load_maildir(self) -> Tuple[Maildir, MaildirLayout]:
+        full_path = os.path.join(self.config.base_dir, self.mailbox_path)
         layout = MaildirLayout.get(full_path, self.config.layout, Maildir)
         create = not os.path.exists(full_path)
         return Maildir(full_path, create=create), layout
+
+    async def get(self) -> UserMetadata:
+        return self.metadata
+
+    async def set(self, metadata: UserMetadata) -> None:
+        raise NotSupportedError()
+
+    async def delete(self) -> None:
+        raise NotSupportedError()

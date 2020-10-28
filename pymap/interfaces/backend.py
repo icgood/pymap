@@ -6,7 +6,7 @@ from argparse import Namespace, ArgumentParser
 from typing import Any, Tuple, Sequence, Awaitable
 from typing_extensions import Protocol
 
-from .session import LoginProtocol
+from .login import LoginInterface
 from ..config import IMAPConfig
 
 __all__ = ['BackendInterface', 'ServiceInterface']
@@ -64,11 +64,8 @@ class BackendInterface(Protocol):
 
     @property
     @abstractmethod
-    def login(self) -> LoginProtocol:
-        """Login callback that takes authentication credentials and returns a
-        :class:`~pymap.interfaces.session.SessionInterface` object.
-
-        """
+    def login(self) -> LoginInterface:
+        """Login interface that handles authentication credentials."""
         ...
 
     @property

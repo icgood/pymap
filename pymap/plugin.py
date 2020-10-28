@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import TypeVar, Generic, Callable, Iterable, Iterator, \
     Tuple, Mapping, Dict
+from typing_extensions import Final
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
@@ -26,13 +27,14 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
         to avoid cyclic imports.
 
     Args:
-        group: A entry point group to load.
+        group: The entry point group to load.
 
     """
 
-    def __init__(self, group: str = None) -> None:
+    def __init__(self, group: str) -> None:
         super().__init__()
-        self._group = group
+        self.group: Final = group
+        self._loaded = False
         self._registered: Dict[str, PluginT] = {}
 
     def __iter__(self) -> Iterator[Tuple[str, PluginT]]:
@@ -44,16 +46,24 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
         self._load()
         return self._registered
 
+    @property
+    def first(self) -> PluginT:
+        """The first registered plugin."""
+        first = next(iter(self.registered.values()), None)
+        assert first is not None, \
+            f'plugin group {self.group} has no entries'
+        return first
+
     def _load(self) -> None:
-        if self._group is not None:
-            for entry_point in iter_entry_points(self._group):
+        if not self._loaded:
+            for entry_point in iter_entry_points(self.group):
                 try:
                     plugin: PluginT = entry_point.load()
                 except DistributionNotFound:
                     pass  # optional dependencies not installed
                 else:
                     self.add(entry_point.name, plugin)
-            self._group = None
+            self._loaded = True
 
     def add(self, name: str, plugin: PluginT) -> None:
         """Add a new plugin by name.
@@ -64,7 +74,7 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
 
         """
         assert name not in self._registered, \
-            f'plugin {name!r} has already been registered'
+            f'plugin {self.group}:{name} has already been registered'
         self._registered[name] = plugin
 
     def register(self, name: str) -> Callable[[PluginT], PluginT]:
@@ -80,4 +90,4 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
         return deco
 
     def __repr__(self) -> str:
-        return f'Plugin({self._group!r})'
+        return f'Plugin({self.group!r})'

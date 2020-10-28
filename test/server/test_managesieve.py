@@ -230,7 +230,8 @@ class TestManageSieve(TestBase):
             b'checkscript {10+}\r\n'
             b'1234567890\r\n')
         transport.push_write(
-            b'NO "Unhandled parsing error"\r\n')
+            b'NO {67}\r\nline 1: parsing error: unexpected token '
+            b"'1234567890' found near '1'\r\n")
         transport.push_readline(
             b'checkscript {19+}\r\n'
             b'else { discard; }\r\n\r\n')

@@ -6,21 +6,24 @@ import json
 import uuid
 from argparse import ArgumentParser, Namespace
 from contextlib import closing, asynccontextmanager
+from datetime import datetime
 from functools import partial
+from secrets import token_bytes
 from typing import Any, Optional, Tuple, Mapping, Sequence, Awaitable, \
-    AsyncIterator, AsyncIterable
+    AsyncIterator
+from typing_extensions import Final
 
 from aioredis import create_redis, Redis  # type: ignore
-from pysasl import AuthenticationCredentials
-from pysasl.external import ExternalResult
+from pysasl.creds import AuthenticationCredentials
 
 from pymap.bytes import BytesFormat
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
-from pymap.exceptions import InvalidAuth, IncompatibleData, UserNotFound
+from pymap.exceptions import AuthorizationFailure, IncompatibleData, \
+    NotAllowedError, UserNotFound
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
-from pymap.interfaces.session import LoginProtocol
-from pymap.interfaces.users import UsersInterface
+from pymap.interfaces.login import LoginTokenData, LoginInterface, \
+    IdentityInterface
 from pymap.user import UserMetadata
 
 from .cleanup import CleanupTask
@@ -38,18 +41,14 @@ class RedisBackend(BackendInterface):
 
     """
 
-    def __init__(self, users: Users, config: Config) -> None:
+    def __init__(self, login: Login, config: Config) -> None:
         super().__init__()
-        self._users = users
+        self._login = login
         self._config = config
 
     @property
-    def login(self) -> Users:
-        return self._users
-
-    @property
-    def users(self) -> Users:
-        return self._users
+    def login(self) -> Login:
+        return self._login
 
     @property
     def config(self) -> Config:
@@ -76,8 +75,8 @@ class RedisBackend(BackendInterface):
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[RedisBackend, Config]:
         config = Config.from_args(args)
-        users = Users(config)
-        return cls(users, config), config
+        login = Login(config)
+        return cls(login, config), config
 
     async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
         config = self._config
@@ -199,22 +198,17 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    def __init__(self, redis: Redis, owner: str, config: Config, users: Users,
+    def __init__(self, redis: Redis, owner: str, config: Config,
                  mailbox_set: MailboxSet, filter_set: FilterSet) -> None:
         super().__init__(owner)
         self._redis = redis
         self._config = config
-        self._users = users
         self._mailbox_set = mailbox_set
         self._filter_set = filter_set
 
     @property
     def config(self) -> IMAPConfig:
         return self._config
-
-    @property
-    def users(self) -> Users:
-        return self._users
 
     @property
     def mailbox_set(self) -> MailboxSet:
@@ -225,8 +219,8 @@ class Session(BaseSession[Message]):
         return self._filter_set
 
 
-class Users(LoginProtocol, UsersInterface):
-    """The users implementation for the redis backend."""
+class Login(LoginInterface):
+    """The login implementation for the redis backend."""
 
     def __init__(self, config: Config) -> None:
         super().__init__()
@@ -239,64 +233,70 @@ class Users(LoginProtocol, UsersInterface):
         stack.enter_context(closing(redis))
         return redis
 
-    async def list_users(self, *, match: str = None) \
-            -> AsyncIterable[Sequence[str]]:
+    async def authenticate(self, credentials: AuthenticationCredentials) \
+            -> Identity:
         config = self.config
         redis = await self._connect_redis(config.address)
-        users_root = config._users_root.end(b'')
-        if match is None:
-            match_key = users_root + b'*'
-        else:
-            match_key = users_root + match.encode('utf-8')
-        cur = b'0'
-        while cur:
-            cur, keys = await redis.scan(cur, match=match_key)
-            yield [key[len(users_root):] for key in keys
-                   if key.startswith(users_root)]
+        authcid = credentials.authcid
+        token_key: Optional[bytes] = None
+        role: Optional[str] = None
+        if credentials.authcid_type == 'admin-token':
+            authcid = credentials.identity
+            role = 'admin'
+        try:
+            metadata = await Identity(config, redis, authcid, None).get()
+        except UserNotFound:
+            metadata = UserMetadata(config)
+        if 'key' in metadata.params:
+            token_key = bytes.fromhex(metadata.params['key'])
+        role = role or metadata.role
+        await metadata.check_password(credentials, token_key=token_key)
+        if role != 'admin' and authcid != credentials.identity:
+            raise AuthorizationFailure()
+        return Identity(config, redis, credentials.identity, role)
 
-    async def get_user(self, user: str) -> UserMetadata:
-        config = self.config
-        redis = await self._connect_redis(config.address)
-        data = await self._get_user(redis, user)
-        if data is None:
-            raise UserNotFound()
-        return data
 
-    async def set_user(self, user: str, data: UserMetadata) -> None:
-        config = self.config
-        redis = await self._connect_redis(config.address)
-        user_key = config._users_root.end(user.encode('utf-8'))
-        data_dict = data.to_dict()
-        if self.config.users_json:
-            json_data = json.dumps(data_dict)
-            await redis.set(user_key, json_data)
-        else:
-            multi = redis.multi_exec()
-            multi.delete(user_key)
-            multi.hmset_dict(user_key, data_dict)
-            await multi.execute()
+class Identity(IdentityInterface):
+    """The identity implementation for the redis backend."""
 
-    async def delete_user(self, user: str) -> None:
-        config = self.config
-        redis = await self._connect_redis(config.address)
-        user_key = config._users_root.end(user.encode('utf-8'))
-        if not await redis.delete(user_key):
-            raise UserNotFound()
+    def __init__(self, config: Config, redis: Redis, name: str,
+                 role: Optional[str]) -> None:
+        super().__init__()
+        self.config: Final = config
+        self._redis: Optional[Redis] = redis
+        self._name = name
+        self._role = role
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def redis(self) -> Redis:
+        redis = self._redis
+        if redis is None:
+            # Other methods may not be called after new_session(), since it
+            # may have called SELECT on the connection.
+            raise RuntimeError()
+        return redis
+
+    async def new_token(self, *, expiration: datetime = None) \
+            -> Optional[LoginTokenData]:
+        metadata = await self.get()
+        if 'key' not in metadata.params:
+            return None
+        key = bytes.fromhex(metadata.params['key'])
+        return LoginTokenData(self.name, self.name, key)
 
     @asynccontextmanager
-    async def __call__(self, credentials: AuthenticationCredentials) \
-            -> AsyncIterator[Session]:
-        """Checks the given credentials for a valid login and returns a new
-        session.
-
-        """
+    async def new_session(self) -> AsyncIterator[Session]:
         config = self.config
-        redis = await self._connect_redis(config.address)
-        user = await self._check_user(redis, credentials)
+        redis = self.redis
+        self._redis = None
         if config.select is not None:
             await redis.select(config.select)
         global_keys = config._global_keys
-        namespace = await self._get_namespace(redis, global_keys, user)
+        namespace = await self._get_namespace(redis, global_keys, self.name)
         ns_keys = NamespaceKeys(global_keys, namespace)
         cl_keys = CleanupKeys(global_keys)
         mailbox_set = MailboxSet(redis, ns_keys, cl_keys)
@@ -305,35 +305,7 @@ class Users(LoginProtocol, UsersInterface):
             await mailbox_set.add_mailbox('INBOX')
         except ValueError:
             pass
-        yield Session(redis, credentials.identity, config, self,
-                      mailbox_set, filter_set)
-
-    async def _check_user(self, redis: Redis,
-                          credentials: AuthenticationCredentials) -> str:
-        if not isinstance(credentials, ExternalResult):
-            user = credentials.authcid
-            data = await self._get_user(redis, user)
-            if data is None:
-                raise InvalidAuth()
-            await data.check_password(credentials)
-            if user != credentials.identity:
-                raise InvalidAuth(authorization=True)
-        return credentials.identity
-
-    async def _get_user(self, redis: Redis, user: str) \
-            -> Optional[UserMetadata]:
-        user_bytes = user.encode('utf-8')
-        user_key = self.config._users_root.end(user_bytes)
-        if self.config.users_json:
-            json_data = await redis.get(user_key)
-            if json_data is None:
-                return None
-            data_dict = json.loads(json_data)
-        else:
-            data_dict = await redis.hgetall(user_key, encoding='utf-8')
-            if data_dict is None:
-                return None
-        return UserMetadata.from_dict(self.config, data_dict)
+        yield Session(redis, self.name, config, mailbox_set, filter_set)
 
     async def _get_namespace(self, redis: Redis, global_keys: GlobalKeys,
                              user: str) -> bytes:
@@ -348,3 +320,40 @@ class Users(LoginProtocol, UsersInterface):
         if int(version) != DATA_VERSION:
             raise IncompatibleData()
         return namespace
+
+    async def get(self) -> UserMetadata:
+        redis = self.redis
+        user_bytes = self.name.encode('utf-8')
+        user_key = self.config._users_root.end(user_bytes)
+        if self.config.users_json:
+            json_data = await redis.get(user_key)
+            if json_data is None:
+                raise UserNotFound(self.name)
+            data_dict = json.loads(json_data)
+        else:
+            data_dict = await redis.hgetall(user_key, encoding='utf-8')
+            if data_dict is None:
+                raise UserNotFound(self.name)
+        return UserMetadata(self.config, **data_dict)
+
+    async def set(self, metadata: UserMetadata) -> None:
+        config = self.config
+        redis = self.redis
+        if self._role != 'admin' and metadata.role:
+            raise NotAllowedError('Cannot assign role.')
+        user_key = config._users_root.end(self.name.encode('utf-8'))
+        user_dict = metadata.to_dict(key=token_bytes().hex())
+        if self.config.users_json:
+            json_data = json.dumps(user_dict)
+            await redis.set(user_key, json_data)
+        else:
+            multi = redis.multi_exec()
+            multi.delete(user_key)
+            multi.hmset_dict(user_key, user_dict)
+            await multi.execute()
+
+    async def delete(self) -> None:
+        config = self.config
+        user_key = config._users_root.end(self.name.encode('utf-8'))
+        if not await self.redis.delete(user_key):
+            raise UserNotFound(self.name)

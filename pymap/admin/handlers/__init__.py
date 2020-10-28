@@ -3,17 +3,20 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from contextlib import closing, asynccontextmanager, AsyncExitStack
-from typing import Any, Type, Dict, AsyncGenerator
+from typing import Any, Type, Optional, Mapping, Dict, AsyncGenerator
 from typing_extensions import Final
 
 from pymap.context import connection_exit
-from pymap.exceptions import ResponseError
+from pymap.exceptions import InvalidAuth, ResponseError
 from pymap.interfaces.backend import BackendInterface
+from pymap.interfaces.login import IdentityInterface
 from pymap.interfaces.session import SessionInterface
 from pymap.plugin import Plugin
-from pymapadmin.grpc.admin_pb2 import Login, Result, SUCCESS, FAILURE
+from pymapadmin.grpc.admin_pb2 import Result, SUCCESS, FAILURE
 from pysasl import AuthenticationCredentials
-from pysasl.external import ExternalResult
+
+from ..errors import get_unimplemented_error
+from ..token import TokenCredentials
 
 __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
 
@@ -26,15 +29,17 @@ class BaseHandler(metaclass=ABCMeta):
 
     Args:
         backend: The backend in use by the system.
-        public: True if the requests are received from a public-facing client.
+        admin_token: The admin token string that can authenticate any admin
+            operation.
 
     """
 
-    def __init__(self, backend: BackendInterface, public: bool) -> None:
+    def __init__(self, backend: BackendInterface,
+                 admin_token: Optional[bytes]) -> None:
         super().__init__()
         self.config: Final = backend.config
         self.login: Final = backend.login
-        self.public: Final = public
+        self.admin_token: Final = admin_token
 
     @abstractmethod
     def __mapping__(self) -> Dict[str, Any]:
@@ -53,42 +58,50 @@ class BaseHandler(metaclass=ABCMeta):
         """
         response = b'. OK %b completed.' % command.encode('utf-8')
         result = Result(code=SUCCESS, response=response)
-        try:
-            yield result
-        except ResponseError as exc:
-            result.code = FAILURE
-            result.response = bytes(exc.get_response(b'.'))
-            result.key = type(exc).__name__
-
-
-class LoginHandler(BaseHandler, metaclass=ABCMeta):
-    """Base class for implementing admin request handlers that login as a user
-    to handle requests.
-
-    Args:
-        backend: The backend in use by the system.
-
-    """
+        async with AsyncExitStack() as stack:
+            connection_exit.set(stack)
+            try:
+                yield result
+            except NotImplementedError as exc:
+                raise get_unimplemented_error() from exc
+            except ResponseError as exc:
+                result.code = FAILURE
+                result.response = bytes(exc.get_response(b'.'))
+                result.key = type(exc).__name__
 
     @asynccontextmanager
-    async def login_as(self, login: Login) \
-            -> AsyncGenerator[SessionInterface, None]:
-        """Context manager to login as a user and provide a session object.
+    async def login_as(self, metadata: Mapping[str, str], user: str) \
+            -> AsyncGenerator[IdentityInterface, None]:
+        """Context manager to login an identity object.
 
         Args:
-            login: Holds the auuthentication credentials from the request.
+            stream: The grpc request/response stream.
+            user: The user to authorize as.
 
         Raises:
             :class:`~pymap.exceptions.InvalidAuth`
 
         """
-        if self.public:
-            creds = AuthenticationCredentials(
-                login.authcid, login.secret, login.authzid or None)
-        else:
-            creds = ExternalResult(login.authzid or None)
-        async with AsyncExitStack() as stack:
-            connection_exit.set(stack)
-            session = await stack.enter_async_context(self.login(creds))
-            stack.enter_context(closing(session))
-            yield session
+        try:
+            creds: AuthenticationCredentials = TokenCredentials(
+                metadata['auth-token'], self.admin_token, user)
+        except (KeyError, ValueError) as exc:
+            raise InvalidAuth() from exc
+        yield await self.login.authenticate(creds)
+
+    @asynccontextmanager
+    async def with_session(self, identity: IdentityInterface) \
+            -> AsyncGenerator[SessionInterface, None]:
+        """Context manager to create a mail session for the identity.
+
+        Args:
+            identity: The authenticated user identity.
+
+        Raises:
+            :class:`~pymap.exceptions.InvalidAuth`
+
+        """
+        stack = connection_exit.get()
+        session = await stack.enter_async_context(identity.new_session())
+        stack.enter_context(closing(session))
+        yield session

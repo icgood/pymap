@@ -23,7 +23,7 @@ from pymap.context import subsystem, current_command, socket_info, \
     connection_exit
 from pymap.exceptions import ResponseError
 from pymap.interfaces.backend import ServiceInterface
-from pymap.interfaces.session import LoginProtocol
+from pymap.interfaces.login import LoginInterface
 from pymap.parsing.command import Command
 from pymap.parsing.commands import Commands
 from pymap.parsing.command.nonauth import AuthenticateCommand, StartTLSCommand
@@ -106,7 +106,7 @@ class IMAPServer:
 
     __slots__ = ['commands', '_login', '_config']
 
-    def __init__(self, login: LoginProtocol, config: IMAPConfig) -> None:
+    def __init__(self, login: LoginInterface, config: IMAPConfig) -> None:
         super().__init__()
         self.commands = config.commands
         self._login = login
