@@ -9,11 +9,11 @@ from contextlib import closing, asynccontextmanager
 from datetime import datetime
 from functools import partial
 from secrets import token_bytes
-from typing import Any, Optional, Tuple, Mapping, Sequence, Awaitable, \
-    AsyncIterator
+from typing import Any, Optional, Tuple, Mapping, Sequence, Callable, \
+    Awaitable, AsyncIterator
 from typing_extensions import Final
 
-from aioredis import create_redis, Redis  # type: ignore
+from aioredis import create_redis, Redis, ConnectionClosedError
 from pysasl.creds import AuthenticationCredentials
 
 from pymap.bytes import BytesFormat
@@ -21,6 +21,7 @@ from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
 from pymap.exceptions import AuthorizationFailure, IncompatibleData, \
     NotAllowedError, UserNotFound
+from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.login import LoginTokenData, LoginInterface, \
     IdentityInterface
@@ -41,10 +42,12 @@ class RedisBackend(BackendInterface):
 
     """
 
-    def __init__(self, login: Login, config: Config) -> None:
+    def __init__(self, login: Login, config: Config,
+                 status: HealthStatus) -> None:
         super().__init__()
         self._login = login
         self._config = config
+        self._status = status
 
     @property
     def login(self) -> Login:
@@ -53,6 +56,10 @@ class RedisBackend(BackendInterface):
     @property
     def config(self) -> Config:
         return self._config
+
+    @property
+    def status(self) -> HealthStatus:
+        return self._status
 
     @classmethod
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
@@ -75,13 +82,29 @@ class RedisBackend(BackendInterface):
     @classmethod
     async def init(cls, args: Namespace) -> Tuple[RedisBackend, Config]:
         config = Config.from_args(args)
-        login = Login(config)
-        return cls(login, config), config
+        status = HealthStatus()
+        connect_redis = partial(cls._connect_redis, config, status)
+        login = Login(config, connect_redis)
+        return cls(login, config, status), config
+
+    @classmethod
+    async def _connect_redis(cls, config: Config,
+                             status: HealthStatus) -> Redis:
+        try:
+            redis = await create_redis(config.address)
+        except (ConnectionClosedError, OSError):
+            status.set_unhealthy()
+            raise
+        else:
+            status.set_healthy()
+            stack = connection_exit.get()
+            stack.enter_context(closing(redis))
+            return redis
 
     async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
         config = self._config
         global_keys = config._global_keys
-        connect_redis = partial(create_redis, config.address)
+        connect_redis = partial(self._connect_redis, config, self._status)
         cleanup_task = CleanupTask(connect_redis, global_keys)
         tasks = [await cleanup_task.start()]
         for service in services:
@@ -222,21 +245,16 @@ class Session(BaseSession[Message]):
 class Login(LoginInterface):
     """The login implementation for the redis backend."""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config,
+                 connect_redis: Callable[[], Awaitable[Redis]]) -> None:
         super().__init__()
-        self.config = config
-
-    @classmethod
-    async def _connect_redis(cls, address: str) -> Redis:
-        redis = await create_redis(address)
-        stack = connection_exit.get()
-        stack.enter_context(closing(redis))
-        return redis
+        self._config = config
+        self._connect_redis = connect_redis
 
     async def authenticate(self, credentials: AuthenticationCredentials) \
             -> Identity:
-        config = self.config
-        redis = await self._connect_redis(config.address)
+        config = self._config
+        redis = await self._connect_redis()
         authcid = credentials.authcid
         token_key: Optional[bytes] = None
         role: Optional[str] = None

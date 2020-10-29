@@ -9,5 +9,7 @@ RUN apk --update add --virtual build-dependencies \
   && pip install "${install_arg}${install_source}" \
   && apk del build-dependencies
 
+EXPOSE 143 4190 50051
+
 ENTRYPOINT ["pymap"]
 CMD ["--help"]

@@ -60,7 +60,7 @@ def main() -> None:
 
     for backend_name, backend_type in backends:
         subparser = backend_type.add_subparser(backend_name, subparsers)
-        subparser.set_defaults(run=backend_type.start)
+        subparser.set_defaults(backend_type=backend_type)
     for _, service_type in services:
         service_type.add_arguments(parser)
     parser.set_defaults(skip_services=[], passlib_cfg=None)
@@ -73,13 +73,11 @@ def main() -> None:
     if args.debug:
         logging.getLogger(__package__).setLevel(logging.DEBUG)
 
-    backend_type = backends.registered[args.backend]
     service_types = [service for name, service in services
                      if name not in args.skip_services]
-
     with PidFile(force_tmpdir=True):
         try:
-            return asyncio.run(run(args, backend_type, service_types),
+            return asyncio.run(run(args, args.backend_type, service_types),
                                debug=False)
         except KeyboardInterrupt:
             pass
@@ -91,7 +89,7 @@ async def run(args: Namespace, backend_type: Type[BackendInterface],
     config.apply_context()
 
     services = [svc_type(backend, config) for svc_type in service_types]
-    task = await args.run(backend, services)
+    task = await backend.start(services)
 
     _drop_privileges(args)
     notify_ready()

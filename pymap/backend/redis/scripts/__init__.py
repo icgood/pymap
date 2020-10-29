@@ -6,8 +6,8 @@ import os.path
 from contextlib import closing
 from typing import Generic, TypeVar, Any, Union, Optional, Tuple, Sequence
 
-import msgpack  # type: ignore
-from aioredis import Redis, ReplyError  # type: ignore
+import msgpack
+from aioredis import Redis, ReplyError
 from pkg_resources import resource_stream
 
 __all__ = ['ScriptBase']

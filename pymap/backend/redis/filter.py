@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Optional, Tuple, Sequence, List
 
-from aioredis import Redis, ReplyError  # type: ignore
+from aioredis import Redis, ReplyError
 
 from .keys import NamespaceKeys, FilterKeys
 from .scripts.filter import FilterScripts

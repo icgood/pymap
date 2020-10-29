@@ -1,9 +1,9 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod, ABCMeta
+from abc import ABCMeta
 from contextlib import closing, asynccontextmanager, AsyncExitStack
-from typing import Any, Type, Optional, Mapping, Dict, AsyncGenerator
+from typing import Type, Optional, Mapping, AsyncGenerator
 from typing_extensions import Final
 
 from pymap.context import connection_exit
@@ -17,6 +17,7 @@ from pysasl import AuthenticationCredentials
 
 from ..errors import get_unimplemented_error
 from ..token import TokenCredentials
+from ..typing import Handler
 
 __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
 
@@ -24,7 +25,7 @@ __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
 handlers: Plugin[Type[BaseHandler]] = Plugin('pymap.admin.handlers')
 
 
-class BaseHandler(metaclass=ABCMeta):
+class BaseHandler(Handler, metaclass=ABCMeta):
     """Base class for implementing admin request handlers.
 
     Args:
@@ -40,11 +41,6 @@ class BaseHandler(metaclass=ABCMeta):
         self.config: Final = backend.config
         self.login: Final = backend.login
         self.admin_token: Final = admin_token
-
-    @abstractmethod
-    def __mapping__(self) -> Dict[str, Any]:
-        # Remove if IServable becomes public API in grpclib
-        ...
 
     @asynccontextmanager
     async def catch_errors(self, command: str) -> AsyncGenerator[Result, None]:

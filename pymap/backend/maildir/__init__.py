@@ -17,6 +17,7 @@ from pymap.concurrent import Subsystem
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import AuthorizationFailure, NotSupportedError
 from pymap.filter import PluginFilterSet, SingleFilterSet
+from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.user import UserMetadata
@@ -39,6 +40,7 @@ class MaildirBackend(BackendInterface):
         super().__init__()
         self._login = login
         self._config = config
+        self._status = HealthStatus(True)
 
     @property
     def login(self) -> Login:
@@ -51,6 +53,10 @@ class MaildirBackend(BackendInterface):
     @property
     def config(self) -> Config:
         return self._config
+
+    @property
+    def status(self) -> HealthStatus:
+        return self._status
 
     @classmethod
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:

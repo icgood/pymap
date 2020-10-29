@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any, Tuple, Sequence, Mapping, Optional
 from typing_extensions import Final
 
-from aioredis import Redis  # type: ignore
+from aioredis import Redis
 
 from . import ScriptBase
 from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys
