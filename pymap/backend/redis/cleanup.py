@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from contextlib import closing
+from contextlib import AsyncExitStack
 from typing import ClassVar, Callable, Awaitable, NoReturn
 
-from aioredis import Redis, ConnectionClosedError  # type: ignore
+from aioredis import Redis, ConnectionClosedError
+from pymap.context import connection_exit
 
 from .keys import GlobalKeys, CleanupKeys, NamespaceKeys, ContentKeys, \
     MailboxKeys
@@ -44,10 +45,12 @@ class CleanupTask:
         """Run the cleanup loop indefinitely."""
         while True:
             try:
-                with closing(await self._connect_redis()) as redis:
+                async with AsyncExitStack() as stack:
+                    connection_exit.set(stack)
+                    redis = await self._connect_redis()
                     await CleanupThread(redis, self._global_keys).run()
             except (ConnectionClosedError, OSError):
-                _log.warning('Redis connection failure', exc_info=True)
+                pass
             await asyncio.sleep(self.connection_delay)
 
 

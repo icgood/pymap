@@ -30,7 +30,7 @@ Everything runs in an [asyncio][2] event loop.
 
 ## Install and Usage
 
-```bash
+```console
 $ pip install pymap
 $ pymap --help
 $ pymap dict --help
@@ -46,7 +46,7 @@ the server is restarted.
 
 You can try out the dict plugin with demo data:
 
-```bash
+```console
 $ pymap --port 1143 --debug dict --demo-data
 ```
 
@@ -112,7 +112,7 @@ will use the user ID as a relative path.
 
 Try out the maildir plugin:
 
-```
+```console
 $ pymap --port 1143 --debug maildir /path/to/users.txt
 ```
 
@@ -126,7 +126,7 @@ The redis plugin uses the [Redis][8] data structure store for mail and
 metadata. It requires [aioredis][9] and will not appear in the plugins list
 without it.
 
-```
+```console
 $ pip install 'pymap[redis]'
 $ pymap redis --help
 ```
@@ -163,7 +163,7 @@ instead of a redis hash with the `--users-json` command-line argument.
 
 Try out the redis plugin:
 
-```
+```console
 $ pymap --port 1143 --debug redis
 ```
 
@@ -174,7 +174,7 @@ action.
 
 The `pymap-admin` tool is installed as an optional dependency:
 
-```
+```console
 $ pip install 'pymap[admin]'
 ```
 
@@ -182,7 +182,7 @@ Once installed, subsequent restarts of the pymap server will listen on a UNIX
 socket for incoming requests from the admin tool. See the [pymap-admin][10]
 page for more information, and check out the help:
 
-```
+```console
 $ pymap-admin --help
 ```
 
@@ -244,21 +244,21 @@ You will need to do some additional setup to develop and test plugins. First
 off, I suggest activating a [venv][5]. Then, install the test requirements and
 a local link to the pymap package:
 
-```
+```console
 $ pip install -r test/requirements.txt
 $ pip install -e .
 ```
 
 Run the tests with py.test:
 
-```
+```console
 $ py.test
 ```
 
 If you intend to create a pull request, you should make sure the full suite of
 tests run by CI/CD is passing:
 
-```
+```console
 $ py.test
 $ mypy pymap test
 $ flake8 pymap test
@@ -273,8 +273,8 @@ responses, and are kept in the `test/server/` subdirectory.
 This project makes heavy use of Python's [type hinting][6] system, with the
 intention of a clean run of [mypy][7]:
 
-```
-mypy pymap
+```console
+mypy pymap test
 ```
 
 No code contribution will be accepted unless it makes every effort to use type

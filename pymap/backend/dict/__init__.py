@@ -19,6 +19,7 @@ from pysasl.hashing import Cleartext
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
     UserNotFound
+from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.login import LoginTokenData, LoginInterface, \
     IdentityInterface
@@ -43,6 +44,7 @@ class DictBackend(BackendInterface):
         super().__init__()
         self._login = login
         self._config = config
+        self._status = HealthStatus(True)
 
     @property
     def login(self) -> Login:
@@ -51,6 +53,10 @@ class DictBackend(BackendInterface):
     @property
     def config(self) -> Config:
         return self._config
+
+    @property
+    def status(self) -> HealthStatus:
+        return self._status
 
     @classmethod
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:

@@ -6,8 +6,8 @@ from datetime import datetime
 from typing import Optional, Sequence, Mapping, Tuple, List, FrozenSet, \
     Iterable
 
-import msgpack  # type: ignore
-from aioredis import Redis, ReplyError, MultiExecError  # type: ignore
+import msgpack
+from aioredis import Redis, ReplyError, MultiExecError
 
 from pymap.bytes import HashStream
 from pymap.concurrent import Event

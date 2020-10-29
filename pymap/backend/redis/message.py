@@ -4,8 +4,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional, Iterable
 
-import msgpack  # type: ignore
-from aioredis import Redis  # type: ignore
+import msgpack
+from aioredis import Redis
 
 from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent, MessageHeader, MessageBody

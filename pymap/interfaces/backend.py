@@ -8,6 +8,7 @@ from typing_extensions import Protocol
 
 from .login import LoginInterface
 from ..config import IMAPConfig
+from ..health import HealthStatusView
 
 __all__ = ['BackendInterface', 'ServiceInterface']
 
@@ -72,6 +73,12 @@ class BackendInterface(Protocol):
     @abstractmethod
     def config(self) -> IMAPConfig:
         """The IMAP config in use by the backend."""
+        ...
+
+    @property
+    @abstractmethod
+    def status(self) -> HealthStatusView:
+        """The health status view for the backend."""
         ...
 
 
