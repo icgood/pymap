@@ -7,9 +7,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.maildir &#8212; pymap 0.21.1 documentation</title>
-    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <title>pymap.backend.maildir &#8212; pymap 0.22.0 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.21.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.22.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
@@ -139,11 +139,14 @@ this backend. For example:</p>
 
 <dl class="py method">
 <dt id="pymap.backend.maildir.MaildirBackend.init">
-<em class="property">async classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.init" title="Permalink to this definition">¶</a></dt>
+<em class="property">async classmethod </em><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">overrides</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the backend and return an instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p></li>
+<li><p><strong>overrides</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Override keyword arguments to the config constructor.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.maildir.MaildirBackend" title="pymap.backend.maildir.MaildirBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaildirBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.maildir.Config" title="pymap.backend.maildir.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</p>
@@ -350,7 +353,7 @@ IMAP flags and keywords.</p>
 <span id="pymap-backend-maildir-layout"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code><a class="headerlink" href="#module-pymap.backend.maildir.layout" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.backend.maildir.layout.MaildirLayout">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">MaildirLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pymap.backend.maildir.layout.</code><code class="sig-name descname">MaildirLayout</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.maildir.layout.MaildirLayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the folder layout of a <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> inbox.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -826,7 +829,7 @@ e.g.:</p>
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.21.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.22.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
@@ -836,7 +839,7 @@ e.g.:</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.2.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
