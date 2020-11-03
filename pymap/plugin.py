@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from typing import TypeVar, Generic, Callable, Iterable, Iterator, \
+from typing import TypeVar, Generic, Optional, Callable, Iterable, Iterator, \
     Tuple, Mapping, Dict
 from typing_extensions import Final
 
@@ -34,8 +34,8 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
     def __init__(self, group: str) -> None:
         super().__init__()
         self.group: Final = group
-        self._loaded = False
-        self._registered: Dict[str, PluginT] = {}
+        self._loaded: Optional[Dict[str, PluginT]] = None
+        self._added: Dict[str, PluginT] = {}
 
     def __iter__(self) -> Iterator[Tuple[str, PluginT]]:
         return iter(self.registered.items())
@@ -43,27 +43,35 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
     @property
     def registered(self) -> Mapping[str, PluginT]:
         """A mapping of the registered plugins, keyed by name."""
-        self._load()
-        return self._registered
+        loaded = self._load()
+        return {**loaded, **self._added}
 
     @property
     def first(self) -> PluginT:
-        """The first registered plugin."""
+        """The first registered plugin.
+
+        Raises:
+            IndexError
+
+        """
         first = next(iter(self.registered.values()), None)
-        assert first is not None, \
-            f'plugin group {self.group} has no entries'
+        if first is None:
+            raise IndexError(f'No plugins registered: {self.group}')
         return first
 
-    def _load(self) -> None:
-        if not self._loaded:
+    def _load(self) -> Mapping[str, PluginT]:
+        loaded = self._loaded
+        if loaded is None:
+            loaded = {}
             for entry_point in iter_entry_points(self.group):
                 try:
                     plugin: PluginT = entry_point.load()
                 except DistributionNotFound:
                     pass  # optional dependencies not installed
                 else:
-                    self.add(entry_point.name, plugin)
-            self._loaded = True
+                    loaded[entry_point.name] = plugin
+            self._loaded = loaded
+        return loaded
 
     def add(self, name: str, plugin: PluginT) -> None:
         """Add a new plugin by name.
@@ -73,9 +81,7 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
             plugin: The plugin object.
 
         """
-        assert name not in self._registered, \
-            f'plugin {self.group}:{name} has already been registered'
-        self._registered[name] = plugin
+        self._added[name] = plugin
 
     def register(self, name: str) -> Callable[[PluginT], PluginT]:
         """Decorates a plugin implementation.

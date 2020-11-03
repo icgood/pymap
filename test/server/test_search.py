@@ -7,6 +7,10 @@ pytestmark = pytest.mark.asyncio
 
 class TestSearch(TestBase):
 
+    @pytest.fixture
+    def overrides(self):
+        return {'disable_search_keys': [b'DRAFT']}
+
     async def test_search_disabled(self, imap_server):
         transport = self.new_transport(imap_server)
         transport.push_login()

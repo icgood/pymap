@@ -19,8 +19,12 @@ class TestMailboxHandlers(TestBase):
         'q6NMqv4go'
     metadata = {'auth-token': admin_token}
 
+    @pytest.fixture
+    def overrides(self):
+        return {'admin_key': b'testadmintoken'}
+
     async def test_get_user(self, backend) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         request = GetUserRequest(user='testuser')
         async with ChannelFor([handlers]) as channel:
             stub = UserStub(channel)
@@ -30,7 +34,7 @@ class TestMailboxHandlers(TestBase):
         assert 'testpass' == response.data.password
 
     async def test_get_user_not_found(self, backend) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         request = GetUserRequest(user='baduser')
         async with ChannelFor([handlers]) as channel:
             stub = UserStub(channel)
@@ -39,7 +43,7 @@ class TestMailboxHandlers(TestBase):
         assert 'UserNotFound' == response.result.key
 
     async def test_set_user(self, backend, imap_server) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         data = UserData(password='newpass', params={'key': 'val'})
         request = SetUserRequest(user='testuser', data=data)
         async with ChannelFor([handlers]) as channel:
@@ -55,7 +59,7 @@ class TestMailboxHandlers(TestBase):
         await self.run(transport)
 
     async def test_delete_user(self, backend) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         request = DeleteUserRequest(user='testuser')
         async with ChannelFor([handlers]) as channel:
             stub = UserStub(channel)
@@ -64,7 +68,7 @@ class TestMailboxHandlers(TestBase):
         assert 'testuser' == response.username
 
     async def test_delete_user_not_found(self, backend) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         request = DeleteUserRequest(user='baduser')
         async with ChannelFor([handlers]) as channel:
             stub = UserStub(channel)

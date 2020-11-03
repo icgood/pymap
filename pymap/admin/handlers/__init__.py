@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import ABCMeta
 from contextlib import closing, asynccontextmanager, AsyncExitStack
-from typing import Type, Optional, Mapping, AsyncGenerator
+from typing import Type, Mapping, AsyncGenerator
 from typing_extensions import Final
 
 from pymap.context import connection_exit
@@ -13,10 +13,8 @@ from pymap.interfaces.login import IdentityInterface
 from pymap.interfaces.session import SessionInterface
 from pymap.plugin import Plugin
 from pymapadmin.grpc.admin_pb2 import Result, SUCCESS, FAILURE
-from pysasl import AuthenticationCredentials
 
 from ..errors import get_unimplemented_error
-from ..token import TokenCredentials
 from ..typing import Handler
 
 __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
@@ -30,17 +28,13 @@ class BaseHandler(Handler, metaclass=ABCMeta):
 
     Args:
         backend: The backend in use by the system.
-        admin_token: The admin token string that can authenticate any admin
-            operation.
 
     """
 
-    def __init__(self, backend: BackendInterface,
-                 admin_token: Optional[bytes]) -> None:
+    def __init__(self, backend: BackendInterface) -> None:
         super().__init__()
         self.config: Final = backend.config
         self.login: Final = backend.login
-        self.admin_token: Final = admin_token
 
     @asynccontextmanager
     async def catch_errors(self, command: str) -> AsyncGenerator[Result, None]:
@@ -68,7 +62,7 @@ class BaseHandler(Handler, metaclass=ABCMeta):
     @asynccontextmanager
     async def login_as(self, metadata: Mapping[str, str], user: str) \
             -> AsyncGenerator[IdentityInterface, None]:
-        """Context manager to login an identity object.
+        """Context manager to login and get an identity object.
 
         Args:
             stream: The grpc request/response stream.
@@ -78,9 +72,10 @@ class BaseHandler(Handler, metaclass=ABCMeta):
             :class:`~pymap.exceptions.InvalidAuth`
 
         """
+
         try:
-            creds: AuthenticationCredentials = TokenCredentials(
-                metadata['auth-token'], self.admin_token, user)
+            creds = self.login.tokens.parse(user, metadata['auth-token'],
+                                            admin_key=self.config.admin_key)
         except (KeyError, ValueError) as exc:
             raise InvalidAuth() from exc
         yield await self.login.authenticate(creds)

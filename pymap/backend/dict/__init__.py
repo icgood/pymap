@@ -21,10 +21,10 @@ from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
     UserNotFound
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
-from pymap.interfaces.login import LoginTokenData, LoginInterface, \
-    IdentityInterface
+from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
+from pymap.token import AllTokens
 from pymap.user import UserMetadata
 
 from .filter import FilterSet
@@ -70,8 +70,9 @@ class DictBackend(BackendInterface):
         return parser
 
     @classmethod
-    async def init(cls, args: Namespace) -> Tuple[DictBackend, Config]:
-        config = Config.from_args(args)
+    async def init(cls, args: Namespace, **overrides: Any) \
+            -> Tuple[DictBackend, Config]:
+        config = Config.from_args(args, **overrides)
         login = Login(config)
         return cls(login, config), config
 
@@ -85,8 +86,11 @@ class Config(IMAPConfig):
 
     def __init__(self, args: Namespace, *, demo_data: bool,
                  demo_user: str, demo_password: str,
-                 demo_data_resource: str = __name__, **extra: Any) -> None:
-        super().__init__(args, hash_context=Cleartext(), **extra)
+                 demo_data_resource: str = __name__,
+                 admin_key: bytes = None, **extra: Any) -> None:
+        admin_key = admin_key or token_bytes()
+        super().__init__(args, hash_context=Cleartext(), admin_key=admin_key,
+                         **extra)
         self._demo_data = demo_data
         self._demo_user = demo_user
         self._demo_password = demo_password
@@ -160,9 +164,14 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
-        self.users = {config.demo_user: UserMetadata(
+        self.users_dict = {config.demo_user: UserMetadata(
             config, password=config.demo_password)}
-        self.tokens: Dict[str, Tuple[str, bytes]] = {}
+        self.tokens_dict: Dict[str, Tuple[str, bytes]] = {}
+        self._tokens = AllTokens()
+
+    @property
+    def tokens(self) -> AllTokens:
+        return self._tokens
 
     async def authenticate(self, credentials: AuthenticationCredentials) \
             -> Identity:
@@ -170,8 +179,8 @@ class Login(LoginInterface):
         token_key: Optional[bytes] = None
         role: Optional[str] = None
         if credentials.authcid_type == 'login-token':
-            if authcid in self.tokens:
-                authcid, token_key = self.tokens[authcid]
+            if authcid in self.tokens_dict:
+                authcid, token_key = self.tokens_dict[authcid]
         elif credentials.authcid_type == 'admin-token':
             authcid = credentials.identity
             role = 'admin'
@@ -200,12 +209,12 @@ class Identity(IdentityInterface):
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime = None) \
-            -> LoginTokenData:
+    async def new_token(self, *, expiration: datetime = None) -> Optional[str]:
         token_id = uuid.uuid4().hex
         token_key = token_bytes()
-        self.login.tokens[token_id] = (self.name, token_key)
-        return LoginTokenData(self.name, token_id, token_key)
+        self.login.tokens_dict[token_id] = (self.name, token_key)
+        return self.login.tokens.get_login_token(
+            token_id, token_key, expiration=expiration)
 
     @asynccontextmanager
     async def new_session(self) -> AsyncIterator[Session]:
@@ -269,7 +278,7 @@ class Identity(IdentityInterface):
             await mbx.append(append_msg, recent=msg_recent)
 
     async def get(self) -> UserMetadata:
-        data = self.login.users.get(self.name)
+        data = self.login.users_dict.get(self.name)
         if data is None:
             raise UserNotFound(self.name)
         return data
@@ -277,14 +286,14 @@ class Identity(IdentityInterface):
     async def set(self, data: UserMetadata) -> None:
         if self._role != 'admin' and data.role:
             raise NotAllowedError('Cannot assign role.')
-        self.login.users[self.name] = data
+        self.login.users_dict[self.name] = data
 
     async def delete(self) -> None:
         try:
-            del self.login.users[self.name]
+            del self.login.users_dict[self.name]
         except KeyError as exc:
             raise UserNotFound(self.name) from exc
         self.config.set_cache.pop(self.name, None)
-        for token_id, (name, _) in list(self.login.tokens.items()):
+        for token_id, (name, _) in list(self.login.tokens_dict.items()):
             if name == self.name:
-                del self.login.tokens[token_id]
+                del self.login.tokens_dict[token_id]

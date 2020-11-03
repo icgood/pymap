@@ -6,7 +6,6 @@ import sys
 from argparse import ArgumentParser, SUPPRESS
 from asyncio import CancelledError
 from datetime import datetime, timedelta, timezone
-from secrets import token_bytes
 from ssl import SSLContext
 from typing import Optional, Sequence, List, Awaitable
 
@@ -20,7 +19,6 @@ from pymapadmin.local import get_admin_socket, get_token_file
 
 from .errors import get_incompatible_version_error
 from .handlers import handlers
-from .token import get_admin_token
 from .typing import Handler
 
 __all__ = ['AdminService']
@@ -43,8 +41,6 @@ class AdminService(ServiceInterface):  # pragma: no cover
 
     """
 
-    _admin_token: Optional[bytes] = None
-
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('admin service')
@@ -53,21 +49,19 @@ class AdminService(ServiceInterface):  # pragma: no cover
                            help='the network interface to listen on')
         group.add_argument('--admin-port', metavar='NUM', type=int,
                            default=50051, help='the port to listen on')
-        group.add_argument('--no-admin-token', action='store_true',
-                           help='disable the admin token')
         group.add_argument('--admin-token-file', metavar='FILE', help=SUPPRESS)
         group.add_argument('--admin-token-duration', metavar='SEC', type=int,
                            help=SUPPRESS)
 
     def _init_admin_token(self) -> None:
-        if not self.config.args.no_admin_token:
-            expiration: Optional[datetime] = None
-            if self.config.args.admin_token_duration:
-                duration_sec: int = self.config.args.admin_token_duration
-                duration = timedelta(seconds=duration_sec)
-                expiration = datetime.now(tz=timezone.utc) + duration
-            self._admin_token = token_bytes()
-            token = get_admin_token(self._admin_token, expiration).serialize()
+        expiration: Optional[datetime] = None
+        if self.config.args.admin_token_duration:
+            duration_sec: int = self.config.args.admin_token_duration
+            duration = timedelta(seconds=duration_sec)
+            expiration = datetime.now(tz=timezone.utc) + duration
+        token = self.backend.login.tokens.get_admin_token(
+            self.config.admin_key, expiration=expiration)
+        if token is not None:
             self._write_admin_token(token)
             print(f'PYMAP_ADMIN_TOKEN={token}', file=sys.stderr)
 
@@ -100,8 +94,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
         host: Optional[str] = self.config.args.admin_host
         port: Optional[int] = self.config.args.admin_port
         server_handlers: List[Handler] = [self._get_health()]
-        server_handlers.extend(handler(backend, self._admin_token)
-                               for _, handler in handlers)
+        server_handlers.extend(handler(backend) for _, handler in handlers)
         ssl = self.config.ssl_context
         servers = [await self._start_local(server_handlers, path),
                    await self._start(server_handlers, host, port, ssl)]

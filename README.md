@@ -172,17 +172,21 @@ action.
 
 ## Admin Tool
 
-The `pymap-admin` tool is installed as an optional dependency:
+With optional dependencies, the pymap server will also open a [gRPC][12]
+service providing administrative operations for the running server.
 
 ```console
-$ pip install 'pymap[admin]'
+$ pip install 'pymap[admin,macaroon]'
 ```
 
-Once installed, subsequent restarts of the pymap server will listen on a UNIX
-socket for incoming requests from the admin tool. See the [pymap-admin][10]
-page for more information, and check out the help:
+The admin service can create, update, and delete users, deliver new messages,
+check credentials, and provide health checks.
+
+The [pymap-admin][10] CLI tool simplifies interacting with the admin service.
+It can also be installed standalone to interact with remote pymap servers:
 
 ```console
+$ pip install pymap-admin
 $ pymap-admin --help
 ```
 
@@ -292,3 +296,4 @@ no need to attempt `--strict` mode.
 [9]: https://github.com/aio-libs/aioredis
 [10]: https://github.com/icgood/pymap-admin
 [11]: https://wiki.dovecot.org/AuthDatabase/Dict
+[12]: https://grpc.io/

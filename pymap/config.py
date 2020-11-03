@@ -97,6 +97,7 @@ class IMAPConfig(metaclass=ABCMeta):
             Alternatively, you can pass extra arguments ``cert_file`` and
             ``key_file`` and an SSL context will be created.
         starttls_enabled: True if opportunistic TLS should be supported.
+        admin_key: The private admin key for unrestricted access by token.
         hash_context: The hash to use for passwords.
         cpu_subsystem: The subsystem to use for CPU-heavy operations,
             defaulting to a small thread pool.
@@ -125,6 +126,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  secure_auth: bool = True,
                  preauth_credentials: AuthenticationCredentials = None,
                  proxy_protocol: ProxyProtocol = None,
+                 admin_key: bytes = None,
                  hash_context: HashInterface = None,
                  cpu_subsystem: Subsystem = None,
                  max_append_len: Optional[int] = 1000000000,
@@ -140,6 +142,7 @@ class IMAPConfig(metaclass=ABCMeta):
         self.subsystem: Final = subsystem
         self.bad_command_limit: Final = bad_command_limit
         self.disable_search_keys: Final = disable_search_keys or []
+        self.admin_key: Final = admin_key
         self.hash_context: Final = hash_context or \
             get_hash(passlib_config=args.passlib_cfg)
         self.cpu_subsystem: Final = cpu_subsystem or \
@@ -164,18 +167,20 @@ class IMAPConfig(metaclass=ABCMeta):
         return {}
 
     @classmethod
-    def from_args(cls: Type[ConfigT], args: Namespace) -> ConfigT:
+    def from_args(cls: Type[ConfigT], args: Namespace,
+                  **overrides: Any) -> ConfigT:
         """Build and return a new :class:`IMAPConfig` using command-line
         arguments.
 
         Args:
             args: The arguments parsed from the command-line.
+            overrides: Override keyword arguments to the config constructor.
 
         """
         parsed_args = cls.parse_args(args)
         return cls(args, host=args.host, port=args.port, debug=args.debug,
                    cert_file=args.cert, key_file=args.key,
-                   tls_enabled=args.tls, **parsed_args)
+                   tls_enabled=args.tls, **parsed_args, **overrides)
 
     def apply_context(self) -> None:
         """Apply the configured settings to any :mod:`~pymap.context`

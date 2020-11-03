@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.21.1',
+      version='0.22.0',
       author='Ian Good',
       author_email='ian@icgood.net',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -49,13 +49,13 @@ setup(name='pymap',
       include_package_data=True,
       packages=find_packages(),
       install_requires=[
-          'pysasl >= 0.7.1',
+          'pysasl >= 0.8.0',
           'proxy-protocol >= 0.5.5',
           'typing-extensions'],
       extras_require={
           'redis': ['aioredis >= 1.3.1', 'msgpack >= 1.0'],
-          'admin': ['pymap-admin == 0.5.1', 'pymacaroons',
-                    'googleapis-common-protos'],
+          'admin': ['pymap-admin == 0.5.2', 'googleapis-common-protos'],
+          'macaroon': ['pymacaroons'],
           'sieve': ['sievelib'],
           'systemd': ['systemd-python'],
           'optional': ['hiredis', 'passlib', 'pid']},
@@ -72,6 +72,8 @@ setup(name='pymap',
               'managesieve = pymap.sieve.manage:ManageSieveService [sieve]'],
           'pymap.filter': [
               'sieve = pymap.sieve:SieveCompiler [sieve]'],
+          'pymap.token': [
+              'macaroon = pymap.token.macaroon:MacaroonTokens [macaroon]'],
           'pymap.admin.handlers': [
               'server = pymap.admin.handlers.system:SystemHandlers',
               'mailbox = pymap.admin.handlers.mailbox:MailboxHandlers',

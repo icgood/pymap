@@ -20,6 +20,7 @@ from pymap.filter import PluginFilterSet, SingleFilterSet
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
+from pymap.token import AllTokens
 from pymap.user import UserMetadata
 
 from .layout import MaildirLayout
@@ -71,7 +72,8 @@ class MaildirBackend(BackendInterface):
         return parser
 
     @classmethod
-    async def init(cls, args: Namespace) -> Tuple[MaildirBackend, Config]:
+    async def init(cls, args: Namespace, **overrides: Any) \
+            -> Tuple[MaildirBackend, Config]:
         config = Config.from_args(args)
         login = Login(config)
         return cls(login, config), config
@@ -217,6 +219,11 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
+        self._tokens = AllTokens()
+
+    @property
+    def tokens(self) -> AllTokens:
+        return self._tokens
 
     async def authenticate(self, credentials: AuthenticationCredentials) \
             -> Identity:

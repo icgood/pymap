@@ -21,6 +21,10 @@ class TestAdminAuth(TestBase):
         'ID0gYWRtaW4KMDAyZnNpZ25hdHVyZSBTApt6-KNq85_1TeSmQyqTZjWPfHCYPY8EIG' \
         'q6NMqv4go'
 
+    @pytest.fixture
+    def overrides(self):
+        return {'admin_key': b'testadmintoken'}
+
     async def test_token(self, backend) -> None:
         token = await self._login(backend, 'testuser', 'testpass')
         await self._get_user(backend, token, 'testuser')
@@ -58,7 +62,7 @@ class TestAdminAuth(TestBase):
         await self._delete_user(backend, token, 'newuser')
 
     async def _login(self, backend, authcid: str, secret: str) -> str:
-        handlers = SystemHandlers(backend, b'testadmintoken')
+        handlers = SystemHandlers(backend)
         request = LoginRequest(authcid=authcid, secret=secret)
         async with ChannelFor([handlers]) as channel:
             stub = SystemStub(channel)
@@ -68,7 +72,7 @@ class TestAdminAuth(TestBase):
 
     async def _get_user(self, backend, token: str, user: str, *,
                         failure_key: str = None) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         request = GetUserRequest(user=user)
         metadata = {'auth-token': token}
         async with ChannelFor([handlers]) as channel:
@@ -84,7 +88,7 @@ class TestAdminAuth(TestBase):
     async def _set_user(self, backend, token: str, user: str, password: str, *,
                         params: Mapping[str, str] = {},
                         failure_key: str = None) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         data = UserData(password=password, params=params)
         request = SetUserRequest(user=user, data=data)
         metadata = {'auth-token': token}
@@ -100,7 +104,7 @@ class TestAdminAuth(TestBase):
 
     async def _delete_user(self, backend, token: str, user: str, *,
                            failure_key: str = None) -> None:
-        handlers = UserHandlers(backend, b'testadmintoken')
+        handlers = UserHandlers(backend)
         request = DeleteUserRequest(user=user)
         metadata = {'auth-token': token}
         async with ChannelFor([handlers]) as channel:
