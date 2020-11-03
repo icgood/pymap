@@ -43,12 +43,13 @@ class BackendInterface(Protocol):
 
     @classmethod
     @abstractmethod
-    async def init(cls, args: Namespace) \
+    async def init(cls, args: Namespace, **overrides: Any) \
             -> Tuple[BackendInterface, IMAPConfig]:
         """Initialize the backend and return an instance.
 
         Args:
             args: The command-line arguments.
+            overrides: Override keyword arguments to the config constructor.
 
         """
         ...

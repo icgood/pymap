@@ -18,8 +18,12 @@ class TestMailboxHandlers(TestBase):
         'q6NMqv4go'
     metadata = {'auth-token': admin_token}
 
+    @pytest.fixture
+    def overrides(self):
+        return {'admin_key': b'testadmintoken'}
+
     async def test_append(self, backend, imap_server) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -49,7 +53,7 @@ class TestMailboxHandlers(TestBase):
         await self.run(transport)
 
     async def test_append_user_not_found(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         request = AppendRequest(user='baduser')
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
@@ -58,7 +62,7 @@ class TestMailboxHandlers(TestBase):
         assert 'UserNotFound' == response.result.key
 
     async def test_append_mailbox_not_found(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         request = AppendRequest(user='testuser', mailbox='BAD')
         async with ChannelFor([handlers]) as channel:
             stub = MailboxStub(channel)
@@ -68,7 +72,7 @@ class TestMailboxHandlers(TestBase):
         assert 'MailboxNotFound' == response.result.key
 
     async def test_append_filter_reject(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'Subject: reject this\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -80,7 +84,7 @@ class TestMailboxHandlers(TestBase):
         assert 'AppendFailure' == response.result.key
 
     async def test_append_filter_discard(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'Subject: discard this\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -93,7 +97,7 @@ class TestMailboxHandlers(TestBase):
         assert not response.uid
 
     async def test_append_filter_address_is(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: foo@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -104,7 +108,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 1' == response.mailbox
 
     async def test_append_filter_address_contains(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: user@foo.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -115,7 +119,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 2' == response.mailbox
 
     async def test_append_filter_address_matches(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'To: bigfoot@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -126,7 +130,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 3' == response.mailbox
 
     async def test_append_filter_envelope_is(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 sender='foo@example.com', recipient=None,
@@ -138,7 +142,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 4' == response.mailbox
 
     async def test_append_filter_envelope_contains(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 sender='user@foo.com', recipient=None,
@@ -150,7 +154,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 5' == response.mailbox
 
     async def test_append_filter_envelope_matches(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 sender=None, recipient='bigfoot@example.com',
@@ -162,7 +166,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 6' == response.mailbox
 
     async def test_append_filter_exists(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'X-Foo: foo\nX-Bar: bar\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -173,7 +177,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 7' == response.mailbox
 
     async def test_append_filter_header(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'X-Caffeine: C8H10N4O2\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
                                 flags=['\\Flagged', '\\Seen'],
@@ -184,7 +188,7 @@ class TestMailboxHandlers(TestBase):
         assert 'Test 8' == response.mailbox
 
     async def test_append_filter_size(self, backend) -> None:
-        handlers = MailboxHandlers(backend, b'testadmintoken')
+        handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         data = data + b'x' * (1234 - len(data))
         request = AppendRequest(user='testuser', mailbox='INBOX',

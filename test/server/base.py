@@ -14,6 +14,11 @@ from .mocktransport import MockTransport
 
 
 class FakeArgs(Namespace):
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__()
+        self.__dict__.update(kwargs)
+
     debug = True
     demo_data = 'pymap.backend.dict'
     demo_user = 'testuser'
@@ -45,9 +50,12 @@ class TestBase:
         return FakeArgs()
 
     @pytest.fixture
-    async def backend(self, args):
-        backend, config = await DictBackend.init(args)
-        config.disable_search_keys = [b'DRAFT']
+    def overrides(self):
+        return {}
+
+    @pytest.fixture
+    async def backend(self, args, overrides):
+        backend, config = await DictBackend.init(args, **overrides)
         return backend
 
     def _incr_fd(self):

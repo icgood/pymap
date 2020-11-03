@@ -23,8 +23,9 @@ from pymap.exceptions import AuthorizationFailure, IncompatibleData, \
     NotAllowedError, UserNotFound
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface, ServiceInterface
-from pymap.interfaces.login import LoginTokenData, LoginInterface, \
-    IdentityInterface
+from pymap.interfaces.login import LoginInterface, IdentityInterface
+from pymap.interfaces.token import TokensInterface
+from pymap.token import AllTokens
 from pymap.user import UserMetadata
 
 from .cleanup import CleanupTask
@@ -80,7 +81,8 @@ class RedisBackend(BackendInterface):
         return parser
 
     @classmethod
-    async def init(cls, args: Namespace) -> Tuple[RedisBackend, Config]:
+    async def init(cls, args: Namespace, **overrides: Any) \
+            -> Tuple[RedisBackend, Config]:
         config = Config.from_args(args)
         status = HealthStatus()
         connect_redis = partial(cls._connect_redis, config, status)
@@ -129,7 +131,7 @@ class Config(IMAPConfig):
     def __init__(self, args: Namespace, *, address: str, select: Optional[int],
                  separator: bytes, prefix: bytes, users_prefix: bytes,
                  users_json: bool, **extra: Any) -> None:
-        super().__init__(args, **extra)
+        super().__init__(args, admin_key=token_bytes(), **extra)
         self._address = address
         self._select = select
         self._separator = separator
@@ -250,6 +252,11 @@ class Login(LoginInterface):
         super().__init__()
         self._config = config
         self._connect_redis = connect_redis
+        self._tokens = AllTokens()
+
+    @property
+    def tokens(self) -> TokensInterface:
+        return self._tokens
 
     async def authenticate(self, credentials: AuthenticationCredentials) \
             -> Identity:
@@ -262,7 +269,8 @@ class Login(LoginInterface):
             authcid = credentials.identity
             role = 'admin'
         try:
-            metadata = await Identity(config, redis, authcid, None).get()
+            authcid_identity = Identity(config, self.tokens, redis, authcid)
+            metadata = await authcid_identity.get()
         except UserNotFound:
             metadata = UserMetadata(config)
         if 'key' in metadata.params:
@@ -271,16 +279,17 @@ class Login(LoginInterface):
         await metadata.check_password(credentials, token_key=token_key)
         if role != 'admin' and authcid != credentials.identity:
             raise AuthorizationFailure()
-        return Identity(config, redis, credentials.identity, role)
+        return Identity(config, self.tokens, redis, credentials.identity, role)
 
 
 class Identity(IdentityInterface):
     """The identity implementation for the redis backend."""
 
-    def __init__(self, config: Config, redis: Redis, name: str,
-                 role: Optional[str]) -> None:
+    def __init__(self, config: Config, tokens: TokensInterface,
+                 redis: Redis, name: str, role: str = None) -> None:
         super().__init__()
         self.config: Final = config
+        self.tokens: Final = tokens
         self._redis: Optional[Redis] = redis
         self._name = name
         self._role = role
@@ -298,13 +307,12 @@ class Identity(IdentityInterface):
             raise RuntimeError()
         return redis
 
-    async def new_token(self, *, expiration: datetime = None) \
-            -> Optional[LoginTokenData]:
+    async def new_token(self, *, expiration: datetime = None) -> Optional[str]:
         metadata = await self.get()
         if 'key' not in metadata.params:
             return None
         key = bytes.fromhex(metadata.params['key'])
-        return LoginTokenData(self.name, self.name, key)
+        return self.tokens.get_login_token(self.name, key)
 
     @asynccontextmanager
     async def new_session(self) -> AsyncIterator[Session]:

@@ -3,34 +3,26 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import Optional, NamedTuple, AsyncContextManager
+from typing import Optional, AsyncContextManager
 from typing_extensions import Protocol
 
 from pysasl import AuthenticationCredentials
 
 from .session import SessionInterface
+from .token import TokensInterface
 from ..user import UserMetadata
 
-__all__ = ['LoginTokenData', 'LoginInterface', 'IdentityInterface']
-
-
-class LoginTokenData(NamedTuple):
-    """Data required to build or verify a login token.
-
-    Args:
-        identity: The token identity, or the username to authorize as.
-        identifier: The token identifier, used to determine *key*.
-        key: The token key, used to securely hash and verify the token.
-
-    """
-
-    identity: str
-    identifier: str
-    key: bytes
+__all__ = ['LoginInterface', 'IdentityInterface']
 
 
 class LoginInterface(Protocol):
     """Defines the authentication operations for backends."""
+
+    @property
+    @abstractmethod
+    def tokens(self) -> TokensInterface:
+        """Handles creation and authentication of bearer tokens."""
+        ...
 
     @abstractmethod
     async def authenticate(self, credentials: AuthenticationCredentials) \
@@ -71,10 +63,9 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    async def new_token(self, *, expiration: datetime = None) \
-            -> Optional[LoginTokenData]:
-        """Authenticate and authorize the credentials, returning an identifier
-        and private key that can be used to create and verify tokens.
+    async def new_token(self, *, expiration: datetime = None) -> Optional[str]:
+        """Authenticate and authorize the credentials, returning a bearer token
+        that may be used in future authentication attempts.
 
         Since tokens should use their own private key, backends may return
         ``None`` if it does not support tokens or the user does not have a

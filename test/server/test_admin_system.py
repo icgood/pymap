@@ -17,7 +17,7 @@ pytestmark = pytest.mark.asyncio
 class TestSystemHandlers(TestBase):
 
     async def test_login(self, backend) -> None:
-        handlers = SystemHandlers(backend, b'')
+        handlers = SystemHandlers(backend)
         request = LoginRequest(authcid='testuser', secret='testpass')
         async with ChannelFor([handlers]) as channel:
             stub = SystemStub(channel)
@@ -26,7 +26,7 @@ class TestSystemHandlers(TestBase):
         assert response.bearer_token
 
     async def test_login_failure(self, backend) -> None:
-        handlers = SystemHandlers(backend, b'')
+        handlers = SystemHandlers(backend)
         request = LoginRequest(authcid='baduser', secret='badpass')
         async with ChannelFor([handlers]) as channel:
             stub = SystemStub(channel)
@@ -35,7 +35,7 @@ class TestSystemHandlers(TestBase):
         assert 'InvalidAuth' == response.result.key
 
     async def test_ping(self, backend) -> None:
-        handlers = SystemHandlers(backend, b'')
+        handlers = SystemHandlers(backend)
         request = PingRequest()
         async with ChannelFor([handlers]) as channel:
             stub = SystemStub(channel)
