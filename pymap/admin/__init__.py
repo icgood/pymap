@@ -15,7 +15,7 @@ from grpclib.health.service import Health, OVERALL
 from grpclib.server import Server
 from pymap.interfaces.backend import ServiceInterface
 from pymapadmin import is_compatible, __version__ as server_version
-from pymapadmin.local import get_admin_socket, get_token_file
+from pymapadmin.local import socket_file, token_file
 
 from .errors import get_incompatible_version_error
 from .handlers import handlers
@@ -44,12 +44,14 @@ class AdminService(ServiceInterface):  # pragma: no cover
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         group = parser.add_argument_group('admin service')
-        group.add_argument('--admin-path', metavar='FILE', help=SUPPRESS)
+        group.add_argument('--admin-path', action=socket_file.add_action,
+                           help=SUPPRESS)
         group.add_argument('--admin-host', action='append', metavar='IFACE',
                            help='the network interface to listen on')
         group.add_argument('--admin-port', metavar='NUM', type=int,
                            default=50051, help='the port to listen on')
-        group.add_argument('--admin-token-file', metavar='FILE', help=SUPPRESS)
+        group.add_argument('--admin-token-file', action=token_file.add_action,
+                           help=SUPPRESS)
         group.add_argument('--admin-token-duration', metavar='SEC', type=int,
                            help=SUPPRESS)
 
@@ -66,10 +68,9 @@ class AdminService(ServiceInterface):  # pragma: no cover
             print(f'PYMAP_ADMIN_TOKEN={token}', file=sys.stderr)
 
     def _write_admin_token(self, admin_token: str) -> None:
-        args = self.config.args
         try:
-            token_file = get_token_file(args.admin_token_file, mkdir=True)
-            token_file.write_text(admin_token)
+            path = token_file.get_temp(mkdir=True)
+            path.write_text(admin_token)
         except OSError:
             pass
 
@@ -108,7 +109,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
     async def _start_local(self, server_handlers: Sequence[Handler],
                            path: Optional[str]) -> Server:
         server = self._new_server(server_handlers)
-        path = str(get_admin_socket(path, mkdir=True))
+        path = str(socket_file.get_temp(mkdir=True))
         await server.start(path=path)
         return server
 
