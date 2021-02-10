@@ -15,6 +15,7 @@ from typing import TypeVar, Union, Optional, Iterable, List, Awaitable
 from uuid import uuid4
 
 from proxyprotocol import ProxyProtocolResult
+from proxyprotocol.reader import ProxyProtocolReader
 from proxyprotocol.sock import SocketInfo
 from proxyprotocol.version import ProxyProtocolVersion
 from pymap.concurrent import Event
@@ -137,7 +138,7 @@ class IMAPConnection:
     _literal_plus = re.compile(br'{(\d+)\+}\r?\n$')
 
     __slots__ = ['commands', 'config', 'params', 'bad_command_limit',
-                 'reader', 'writer', 'pp_result']
+                 'reader', 'writer', 'pp_reader', 'pp_result']
 
     def __init__(self, commands: Commands, config: IMAPConfig,
                  reader: StreamReader,
@@ -147,6 +148,7 @@ class IMAPConnection:
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
+        self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
         self.pp_result: Optional[ProxyProtocolResult] = None
         self._reset_streams(reader, writer)
 
@@ -158,7 +160,7 @@ class IMAPConnection:
                                    unique_id=uuid4().bytes))
 
     async def _read_proxy_protocol(self) -> None:
-        self.pp_result = await self.config.proxy_protocol.read(self.reader)
+        self.pp_result = await self.pp_reader.read(self.reader)
         self._reset_streams(self.reader, self.writer)
 
     def close(self) -> None:

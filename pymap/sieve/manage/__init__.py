@@ -13,6 +13,7 @@ from contextlib import closing, AsyncExitStack
 from typing import Optional, Union, Mapping, Dict, List, Awaitable
 
 from proxyprotocol import ProxyProtocolResult
+from proxyprotocol.reader import ProxyProtocolReader
 from proxyprotocol.sock import SocketInfo
 from pymap import __version__
 from pymap.bytes import BytesFormat
@@ -121,6 +122,7 @@ class ManageSieveConnection:
         self.config = config
         self.auth = config.initial_auth
         self.params = config.parsing_params.copy(allow_continuations=False)
+        self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
         self.pp_result: Optional[ProxyProtocolResult] = None
         self._offer_starttls = b'STARTTLS' in config.initial_capability
         self._state: Optional[FilterState] = None
@@ -133,7 +135,7 @@ class ManageSieveConnection:
         socket_info.set(SocketInfo(writer, self.pp_result))
 
     async def _read_proxy_protocol(self) -> None:
-        self.pp_result = await self.config.proxy_protocol.read(self.reader)
+        self.pp_result = await self.pp_reader.read(self.reader)
         self._reset_streams(self.reader, self.writer)
 
     def _get_state(self, session: SessionInterface) -> FilterState:
