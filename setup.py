@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.22.2',
+      version='0.22.3',
       author='Ian Good',
       author_email='ian@icgood.net',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -50,7 +50,7 @@ setup(name='pymap',
       packages=find_packages(),
       install_requires=[
           'pysasl ~= 0.8.0',
-          'proxy-protocol ~= 0.5.5',
+          'proxy-protocol ~= 0.6.0',
           'typing-extensions'],
       extras_require={
           'redis': ['aioredis ~= 1.3.1', 'msgpack ~= 1.0'],
