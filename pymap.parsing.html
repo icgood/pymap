@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing &#8212; pymap 0.22.2 documentation</title>
+    <title>pymap.parsing &#8212; pymap 0.22.3 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,7 +16,6 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
 
     
     
@@ -57,7 +56,7 @@
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.22.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.22.3 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></li> 
       </ul>
@@ -571,7 +570,7 @@ If the command has a complete structure but cannot be parsed, an
 
 <dl class="py attribute">
 <dt id="pymap.parsing.command.Command.delegate">
-<code class="sig-name descname">delegate</code><em class="property">: ClassVar<span class="p">[</span>Optional<span class="p">[</span>Type<span class="p">[</span><a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command">pymap.parsing.command.Command</a><span class="p">]</span><span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.command.Command.delegate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delegate</code><em class="property">: ClassVar<span class="p">[</span>Optional<span class="p">[</span>Type<span class="p">[</span><a class="reference internal" href="#pymap.parsing.command.Command" title="pymap.parsing.command.Command">Command</a><span class="p">]</span><span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pymap.parsing.command.Command.delegate" title="Permalink to this definition">¶</a></dt>
 <dd><p>If given, execution of this command is handled by the delegate command.</p>
 </dd></dl>
 
@@ -836,7 +835,7 @@ state changes.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.auth.ExamineCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.auth.ExamineCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand" title="pymap.parsing.command.auth.SelectCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.auth.SelectCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -892,7 +891,7 @@ state changes.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.auth.LSubCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.auth.LSubCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.ListCommand" title="pymap.parsing.command.auth.ListCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.auth.ListCommand" title="pymap.parsing.command.auth.ListCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.auth.ListCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1295,7 +1294,7 @@ UIDs instead of sequence numbers.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.select.UidCopyCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.select.UidCopyCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.CopyCommand" title="pymap.parsing.command.select.CopyCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">CopyCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.CopyCommand" title="pymap.parsing.command.select.CopyCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.select.CopyCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -1325,7 +1324,7 @@ UIDs instead of sequence numbers.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.select.UidMoveCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.select.UidMoveCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.MoveCommand" title="pymap.parsing.command.select.MoveCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">MoveCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.MoveCommand" title="pymap.parsing.command.select.MoveCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.select.MoveCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -1355,7 +1354,7 @@ message UIDs instead of sequence numbers.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.select.UidExpungeCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.select.UidExpungeCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand" title="pymap.parsing.command.select.ExpungeCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpungeCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand" title="pymap.parsing.command.select.ExpungeCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.select.ExpungeCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -1385,7 +1384,7 @@ UIDs instead of sequence numbers.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.select.UidFetchCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.select.UidFetchCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.FetchCommand" title="pymap.parsing.command.select.FetchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">FetchCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.FetchCommand" title="pymap.parsing.command.select.FetchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.select.FetchCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -1415,7 +1414,7 @@ UIDs instead of sequence numbers.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.select.UidSearchCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.select.UidSearchCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.SearchCommand" title="pymap.parsing.command.select.SearchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.SearchCommand" title="pymap.parsing.command.select.SearchCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.select.SearchCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -1445,7 +1444,7 @@ UIDs instead of sequence numbers.</p>
 <dl class="py attribute">
 <dt id="pymap.parsing.command.select.UidStoreCommand.delegate">
 <code class="sig-name descname">delegate</code><a class="headerlink" href="#pymap.parsing.command.select.UidStoreCommand.delegate" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.StoreCommand" title="pymap.parsing.command.select.StoreCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">StoreCommand</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="#pymap.parsing.command.select.StoreCommand" title="pymap.parsing.command.select.StoreCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">pymap.parsing.command.select.StoreCommand</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -4130,7 +4129,7 @@ mailbox names in IMAP.</p>
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.22.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.22.3 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></li> 
       </ul>
@@ -4139,7 +4138,7 @@ mailbox names in IMAP.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
