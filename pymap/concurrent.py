@@ -12,12 +12,12 @@ import time
 from abc import abstractmethod, ABCMeta
 from asyncio import Event as _asyncio_Event, Lock as _asyncio_Lock, \
     TimeoutError
+from collections.abc import Awaitable, MutableSet, Sequence, AsyncIterator
 from concurrent.futures import Executor, ThreadPoolExecutor
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from contextvars import copy_context, Context
 from threading import local, Event as _threading_Event, Lock as _threading_Lock
-from typing import cast, TypeVar, Optional, Sequence, MutableSet, Awaitable, \
-    AsyncContextManager, AsyncIterator
+from typing import cast, TypeVar, Optional
 from weakref import WeakSet
 
 __all__ = ['Subsystem', 'Event', 'ReadWriteLock', 'FileLock', 'EventT', 'RetT']
@@ -168,14 +168,14 @@ class ReadWriteLock(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def read_lock(self) -> AsyncContextManager[None]:
+    def read_lock(self) -> AbstractAsyncContextManager[None]:
         """Acquires a read-lock, blocking until any write-locks are released.
 
         """
         ...
 
     @abstractmethod
-    def write_lock(self) -> AsyncContextManager[None]:
+    def write_lock(self) -> AbstractAsyncContextManager[None]:
         """Acquires a write-lock, blocking until all read- or write-locks are
         released.
 

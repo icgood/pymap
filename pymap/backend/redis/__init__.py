@@ -5,13 +5,13 @@ import asyncio
 import json
 import uuid
 from argparse import ArgumentParser, Namespace
+from collections.abc import Awaitable, Callable, Mapping, Sequence, \
+    AsyncIterator
 from contextlib import closing, asynccontextmanager
 from datetime import datetime
 from functools import partial
 from secrets import token_bytes
-from typing import Any, Optional, Tuple, Mapping, Sequence, Callable, \
-    Awaitable, AsyncIterator
-from typing_extensions import Final
+from typing import Any, Optional, Final
 
 from aioredis import create_redis, Redis, ConnectionClosedError
 from pysasl.creds import AuthenticationCredentials
@@ -82,7 +82,7 @@ class RedisBackend(BackendInterface):
 
     @classmethod
     async def init(cls, args: Namespace, **overrides: Any) \
-            -> Tuple[RedisBackend, Config]:
+            -> tuple[RedisBackend, Config]:
         config = Config.from_args(args)
         status = HealthStatus()
         connect_redis = partial(cls._connect_redis, config, status)

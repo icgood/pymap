@@ -10,8 +10,9 @@ from argparse import ArgumentParser
 from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
     CancelledError, TimeoutError
 from base64 import b64encode, b64decode
+from collections.abc import Awaitable, Iterable
 from contextlib import closing, AsyncExitStack
-from typing import TypeVar, Union, Optional, Iterable, List, Awaitable
+from typing import TypeVar, Union, Optional
 from uuid import uuid4
 
 from proxyprotocol import ProxyProtocolResult
@@ -73,7 +74,7 @@ class IMAPService(ServiceInterface):  # pragma: no cover
     async def start(self) -> Awaitable:
         backend = self.backend
         config = self.config
-        servers: List[AbstractServer] = []
+        servers: list[AbstractServer] = []
         imap_server = IMAPServer(backend.login, config)
         if config.args.inherited_sockets:
             sockets = InheritedSockets.of(config.args.inherited_sockets).get()
@@ -210,7 +211,7 @@ class IMAPConnection:
         mech = state.auth.get_server(mech_name)
         if not mech:
             return None
-        responses: List[ChallengeResponse] = []
+        responses: list[ChallengeResponse] = []
         while True:
             try:
                 creds, final = mech.server_attempt(responses)
@@ -236,7 +237,7 @@ class IMAPConnection:
 
     async def _interrupt(self, state: ConnectionState,
                          interrupt: ParsingInterrupt,
-                         continuations: List[memoryview]) -> None:
+                         continuations: list[memoryview]) -> None:
         expected = interrupt.expected
         if isinstance(expected, ExpectContinuation):
             cont = ResponseContinuation(expected.message)
@@ -248,7 +249,7 @@ class IMAPConnection:
 
     async def read_command(self, state: ConnectionState) -> Command:
         line = await self.readline()
-        conts: List[memoryview] = []
+        conts: list[memoryview] = []
         while True:
             parsing_state = ParsingState(continuations=conts)
             params = self.params.copy(parsing_state)

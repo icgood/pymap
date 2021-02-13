@@ -1,8 +1,8 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Sequence, Mapping
-from typing_extensions import Final
+from collections.abc import Mapping, Sequence
+from typing import Final
 
 from aioredis import Redis
 
@@ -27,7 +27,7 @@ class MailboxList(ScriptBase[Sequence[bytes]]):
     def __init__(self) -> None:
         super().__init__('mailbox_list')
 
-    def _convert(self, ret: Tuple[Mapping[bytes, bytes], Sequence[bytes]]) \
+    def _convert(self, ret: tuple[Mapping[bytes, bytes], Sequence[bytes]]) \
             -> Sequence[bytes]:
         mailboxes, mbx_order = ret
         mailboxes_iter = iter(mailboxes)
@@ -41,16 +41,16 @@ class MailboxList(ScriptBase[Sequence[bytes]]):
         return await self.eval(redis, keys, [])
 
 
-class MailboxGet(ScriptBase[Tuple[bytes, int]]):
+class MailboxGet(ScriptBase[tuple[bytes, int]]):
 
     def __init__(self) -> None:
         super().__init__('mailbox_get')
 
-    def _convert(self, ret: Tuple[bytes, bytes]) -> Tuple[bytes, int]:
+    def _convert(self, ret: tuple[bytes, bytes]) -> tuple[bytes, int]:
         return (ret[0], int(ret[1]))
 
     async def __call__(self, redis: Redis, ns_keys: NamespaceKeys, *,
-                       name: bytes) -> Tuple[bytes, int]:
+                       name: bytes) -> tuple[bytes, int]:
         keys = [ns_keys.mailboxes, ns_keys.uid_validity]
         return await self.eval(redis, keys, [name])
 

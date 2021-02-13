@@ -3,14 +3,14 @@ from __future__ import annotations
 
 import enum
 from abc import ABCMeta
+from collections.abc import Iterable, Sequence
 from functools import total_ordering, reduce
-from typing import Tuple, Optional, Iterable, Sequence, FrozenSet
-from typing_extensions import Final
+from typing import Optional, Final
 
 from . import AString
 from .. import Params, Parseable
 from ..exceptions import NotParseable
-from ..primitives import Atom, ListP
+from ..primitives import Atom, List
 from ...bytes import rev, BytesFormat, MaybeBytes, Writeable
 
 __all__ = ['FetchRequirement', 'FetchAttribute', 'FetchValue']
@@ -102,7 +102,7 @@ class FetchAttribute(Parseable[bytes]):
 
         def __init__(self, parts: Sequence[int],
                      specifier: bytes = None,
-                     headers: FrozenSet[bytes] = None) -> None:
+                     headers: frozenset[bytes] = None) -> None:
             self.parts = parts
             self.specifier = specifier
             self.headers = frozenset(hdr.upper() for hdr in headers) \
@@ -120,7 +120,7 @@ class FetchAttribute(Parseable[bytes]):
 
     def __init__(self, attribute: bytes,
                  section: FetchAttribute.Section = None,
-                 partial: Tuple[int, Optional[int]] = None) -> None:
+                 partial: tuple[int, Optional[int]] = None) -> None:
         super().__init__()
         self.attribute = attribute.upper()
         self.section = section
@@ -195,7 +195,7 @@ class FetchAttribute(Parseable[bytes]):
                 if self.section.headers:
                     headers = self.section.headers
                     parts.append(b' ')
-                    parts.append(bytes(ListP(headers, sort=True)))
+                    parts.append(bytes(List(headers, sort=True)))
             parts.append(b']')
         if self.partial:
             partial = BytesFormat(b'.').join(
@@ -241,7 +241,7 @@ class FetchAttribute(Parseable[bytes]):
             return cls.Section(section_parts, specifier), after
         elif specifier in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
             params = params.copy(list_expected=[AString])
-            header_list_p, buf = ListP.parse(after, params)
+            header_list_p, buf = List.parse(after, params)
             header_list = frozenset([bytes(hdr)
                                      for hdr in header_list_p.value])
             if not header_list:
@@ -251,7 +251,7 @@ class FetchAttribute(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[FetchAttribute, memoryview]:
+            -> tuple[FetchAttribute, memoryview]:
         match = cls._attrname_pattern.match(buf)
         if not match:
             raise NotParseable(buf)

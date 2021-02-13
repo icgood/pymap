@@ -1,8 +1,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
-
 from .. import Params, Parseable
 from ..exceptions import NotParseable
 from ...bytes import rev
@@ -32,7 +30,7 @@ class Tag(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Tag, memoryview]:
+            -> tuple[Tag, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:

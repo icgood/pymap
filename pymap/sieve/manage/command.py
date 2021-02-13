@@ -1,8 +1,8 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Type, Optional, Tuple, Mapping, Sequence
-from typing_extensions import Final
+from collections.abc import Mapping, Sequence
+from typing import ClassVar, Final, Optional
 
 from pymap.parsing import Parseable, Params, EndLine
 from pymap.parsing.exceptions import NotParseable
@@ -21,7 +21,7 @@ class Command(Parseable[bytes]):
     #: The command key, e.g. ``b'NOOP'``.
     command: ClassVar[bytes] = b''
 
-    _commands: Optional[Mapping[bytes, Type[Command]]] = None
+    _commands: Optional[Mapping[bytes, type[Command]]] = None
 
     @property
     def value(self) -> bytes:
@@ -35,7 +35,7 @@ class Command(Parseable[bytes]):
         return '<%s>' % (type(self).__name__)
 
     @classmethod
-    def _all_commands(cls) -> Sequence[Type[Command]]:
+    def _all_commands(cls) -> Sequence[type[Command]]:
         return [
             NoOpCommand, CapabilityCommand, StartTLSCommand,
             AuthenticateCommand, UnauthenticateCommand, LogoutCommand,
@@ -44,7 +44,7 @@ class Command(Parseable[bytes]):
             RenameScriptCommand, CheckScriptCommand]
 
     @classmethod
-    def _get_commands(cls) -> Mapping[bytes, Type[Command]]:
+    def _get_commands(cls) -> Mapping[bytes, type[Command]]:
         if cls._commands is None:
             mapping = {}
             for cmd in cls._all_commands():
@@ -55,7 +55,7 @@ class Command(Parseable[bytes]):
     @classmethod
     def _parse_script_name(self, buf: memoryview, params: Params,
                            allow_empty: bool = False) \
-            -> Tuple[str, memoryview]:
+            -> tuple[str, memoryview]:
         name_obj, after = String.parse(buf, params)
         if not allow_empty and not name_obj.value:
             raise NotParseable(buf)
@@ -66,7 +66,7 @@ class Command(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Command, memoryview]:
+            -> tuple[Command, memoryview]:
         commands = cls._get_commands()
         cmd_name, after = Atom.parse(buf, params)
         try:
@@ -89,7 +89,7 @@ class NoOpCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[NoOpCommand, memoryview]:
+            -> tuple[NoOpCommand, memoryview]:
         whitespace = cls._whitespace_length(buf)
         tag: Optional[bytes] = None
         if whitespace > 0:
@@ -110,7 +110,7 @@ class CapabilityCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[CapabilityCommand, memoryview]:
+            -> tuple[CapabilityCommand, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(), buf
 
@@ -121,7 +121,7 @@ class StartTLSCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[StartTLSCommand, memoryview]:
+            -> tuple[StartTLSCommand, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(), buf
 
@@ -137,7 +137,7 @@ class AuthenticateCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[AuthenticateCommand, memoryview]:
+            -> tuple[AuthenticateCommand, memoryview]:
         mech_name, buf = QuotedString.parse(buf, params)
         try:
             data_obj, buf = String.parse(buf, params)
@@ -154,7 +154,7 @@ class UnauthenticateCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[UnauthenticateCommand, memoryview]:
+            -> tuple[UnauthenticateCommand, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(), buf
 
@@ -165,7 +165,7 @@ class LogoutCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[LogoutCommand, memoryview]:
+            -> tuple[LogoutCommand, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(), buf
 
@@ -181,7 +181,7 @@ class HaveSpaceCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[HaveSpaceCommand, memoryview]:
+            -> tuple[HaveSpaceCommand, memoryview]:
         script_name, after = cls._parse_script_name(buf, params)
         if not script_name:
             raise NotParseable(buf)
@@ -201,7 +201,7 @@ class PutScriptCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[PutScriptCommand, memoryview]:
+            -> tuple[PutScriptCommand, memoryview]:
         script_name, buf = cls._parse_script_name(buf, params)
         script_data, buf = String.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
@@ -214,7 +214,7 @@ class ListScriptsCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ListScriptsCommand, memoryview]:
+            -> tuple[ListScriptsCommand, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(), buf
 
@@ -229,7 +229,7 @@ class SetActiveCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[SetActiveCommand, memoryview]:
+            -> tuple[SetActiveCommand, memoryview]:
         script_name, buf = cls._parse_script_name(buf, params, True)
         _, buf = EndLine.parse(buf, params)
         return cls(script_name or None), buf
@@ -245,7 +245,7 @@ class GetScriptCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[GetScriptCommand, memoryview]:
+            -> tuple[GetScriptCommand, memoryview]:
         script_name, buf = cls._parse_script_name(buf, params)
         _, buf = EndLine.parse(buf, params)
         return cls(script_name), buf
@@ -261,7 +261,7 @@ class DeleteScriptCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[DeleteScriptCommand, memoryview]:
+            -> tuple[DeleteScriptCommand, memoryview]:
         script_name, buf = cls._parse_script_name(buf, params)
         _, buf = EndLine.parse(buf, params)
         return cls(script_name), buf
@@ -278,7 +278,7 @@ class RenameScriptCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[RenameScriptCommand, memoryview]:
+            -> tuple[RenameScriptCommand, memoryview]:
         old_script_name, buf = cls._parse_script_name(buf, params)
         new_script_name, buf = cls._parse_script_name(buf, params)
         _, buf = EndLine.parse(buf, params)
@@ -295,7 +295,7 @@ class CheckScriptCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[CheckScriptCommand, memoryview]:
+            -> tuple[CheckScriptCommand, memoryview]:
         script_data, buf = String.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
         return cls(script_data.value), buf

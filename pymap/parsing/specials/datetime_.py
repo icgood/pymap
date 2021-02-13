@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime, tzinfo
-from typing import Tuple, Optional
+from typing import Optional
 
 from .. import Params, Parseable
 from ..exceptions import InvalidContent
@@ -40,7 +40,7 @@ class DateTime(Parseable[datetime]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[DateTime, memoryview]:
+            -> tuple[DateTime, memoryview]:
         string, after = QuotedString.parse(buf, params)
         try:
             when_str = str(string.value, 'ascii')

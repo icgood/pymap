@@ -5,7 +5,7 @@ import base64
 import quopri
 from abc import abstractmethod, ABCMeta
 from email.headerregistry import ContentTransferEncodingHeader
-from typing import Optional, Dict
+from typing import Optional
 
 from . import MessageHeader, MessageBody
 from ..bytes import Writeable
@@ -23,7 +23,7 @@ class MessageDecoder(metaclass=ABCMeta):
 
     """
 
-    registry: Dict[str, MessageDecoder] = {}
+    registry: dict[str, MessageDecoder] = {}
 
     @classmethod
     def of(cls, msg_header: MessageHeader) -> MessageDecoder:

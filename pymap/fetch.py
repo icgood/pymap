@@ -2,14 +2,13 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
+from collections.abc import Iterator, Mapping, Sequence, AsyncIterator
 from contextlib import contextmanager, asynccontextmanager
-from typing import Type, ClassVar, Optional, Tuple, Iterator, Sequence, \
-    Mapping, AsyncIterator
-from typing_extensions import Final, Protocol
+from typing import ClassVar, Optional, Final, Protocol
 
 from .bytes import BytesFormat, MaybeBytes, Writeable
 from .interfaces.message import MessageInterface, LoadedMessageInterface
-from .parsing.primitives import Nil, Number, ListP, LiteralString
+from .parsing.primitives import Nil, Number, List, LiteralString
 from .parsing.specials import DateTime, FetchRequirement, FetchAttribute, \
     FetchValue
 from .selected import SelectedMailbox
@@ -17,7 +16,7 @@ from .selected import SelectedMailbox
 __all__ = ['LoadedMessageProvider', 'DynamicFetchValue',
            'DynamicLoadedFetchValue', 'MessageAttributes']
 
-_Partial = Optional[Tuple[int, Optional[int]]]
+_Partial = Optional[tuple[int, Optional[int]]]
 
 
 class LoadedMessageProvider(Protocol):
@@ -145,7 +144,7 @@ class _FlagsFetchValue(DynamicFetchValue):
     def get_value(self) -> MaybeBytes:
         session_flags = self.selected.session_flags
         flag_set = self.message.get_flags(session_flags)
-        return ListP(flag_set, sort=True)
+        return List(flag_set, sort=True)
 
 
 class _InternalDateFetchValue(DynamicFetchValue):
@@ -270,14 +269,14 @@ class MessageAttributes(Sequence[FetchValue]):
     #: Placeholder value for fetch values requiring loaded message contents.
     placeholder: ClassVar[bytes] = b'...'
 
-    _simple_attrs: Mapping[bytes, Type[DynamicFetchValue]] = {
+    _simple_attrs: Mapping[bytes, type[DynamicFetchValue]] = {
         b'UID': _UidFetchValue,
         b'FLAGS': _FlagsFetchValue,
         b'INTERNALDATE': _InternalDateFetchValue,
         b'EMAILID': _EmailIdFetchValue,
         b'THREADID': _ThreadIdFetchValue}
 
-    _loaded_attrs: Mapping[bytes, Type[DynamicLoadedFetchValue]] = {
+    _loaded_attrs: Mapping[bytes, type[DynamicLoadedFetchValue]] = {
         b'ENVELOPE': _EnvelopeFetchValue,
         b'BODYSTRUCTURE': _BodyStructureFetchValue,
         b'BODY': _BodyFetchValue,

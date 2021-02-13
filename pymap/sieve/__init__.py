@@ -1,12 +1,12 @@
 
 from __future__ import annotations
 
-from typing import Type, Optional, Tuple, List
+from typing import Optional
 
 from pymap.exceptions import AppendFailure
 from pymap.interfaces.filter import FilterInterface, FilterCompilerInterface
 from pymap.parsing.message import AppendMessage
-from sievelib.parser import Parser  # type: ignore
+from sievelib.parser import Parser
 
 from .runner import SieveRunner
 from .util import unquote
@@ -23,7 +23,7 @@ class SieveCompiler(FilterCompilerInterface[bytes]):
     """Compiles sieve scripts into :class:`SieveFilter` objects."""
 
     #: The list of Sieve extensions supported by the compiler.
-    extensions: List[bytes] = [
+    extensions: list[bytes] = [
         b'fileinto', b'reject', b'envelope', b'body']
 
     def __init__(self) -> None:
@@ -31,11 +31,11 @@ class SieveCompiler(FilterCompilerInterface[bytes]):
         self.parser = Parser()
 
     @property
-    def value_type(self) -> Type[bytes]:
+    def value_type(self) -> type[bytes]:
         return bytes
 
     @property
-    def filter_type(self) -> Type[SieveFilter]:
+    def filter_type(self) -> type[SieveFilter]:
         return SieveFilter
 
     async def compile(self, value: bytes) -> SieveFilter:
@@ -67,7 +67,7 @@ class SieveFilter(FilterInterface):
 
     async def apply(self, sender: str, recipient: str, mailbox: str,
                     append_msg: AppendMessage) \
-            -> Tuple[Optional[str], AppendMessage]:
+            -> tuple[Optional[str], AppendMessage]:
         for action in self.runner.get_actions(sender, recipient, append_msg):
             if action.name == 'keep':
                 pass

@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 from abc import ABCMeta
-from contextlib import asynccontextmanager
-from typing import TypeVar, Type, Optional, List, Dict, Tuple, Hashable, \
-    AsyncContextManager, AsyncIterator
-from typing_extensions import Final
+from collections.abc import Hashable, AsyncIterator
+from contextlib import asynccontextmanager, AbstractAsyncContextManager
+from typing import TypeVar, Final, Optional
 
 from ...bytes import MaybeBytes, BytesFormat, WriteStream, Writeable
 
@@ -16,7 +15,7 @@ __all__ = ['ResponseCode', 'Response', 'CommandResponse', 'UntaggedResponse',
 #: Type variable with an upper bound of :class:`Response`.
 ResponseT = TypeVar('ResponseT', bound='Response')
 
-_Mergeable = Dict[Tuple[Type['Response'], Hashable], int]
+_Mergeable = dict[tuple[type['Response'], Hashable], int]
 
 
 class ResponseCode:
@@ -150,7 +149,7 @@ class CommandResponse(Response):
     def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
                  code: ResponseCode = None) -> None:
         super().__init__(tag, text, code)
-        self._untagged: List[UntaggedResponse] = []
+        self._untagged: list[UntaggedResponse] = []
         self._mergeable: _Mergeable = {}
 
     def add_untagged(self, *responses: UntaggedResponse) -> None:
@@ -227,7 +226,8 @@ class UntaggedResponse(Response):
 
     def __init__(self, text: MaybeBytes = None, code: ResponseCode = None, *,
                  condition: bytes = None,
-                 writing_hook: AsyncContextManager[None] = None) -> None:
+                 writing_hook: AbstractAsyncContextManager[None] = None) \
+            -> None:
         super().__init__(b'*', text, code)
         if condition is not None:
             self.condition = condition

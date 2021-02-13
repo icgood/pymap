@@ -5,9 +5,10 @@ import asyncio
 import sys
 from argparse import ArgumentParser, SUPPRESS
 from asyncio import CancelledError
+from collections.abc import Awaitable, Sequence
 from datetime import datetime, timedelta, timezone
 from ssl import SSLContext
-from typing import Optional, Sequence, List, Awaitable
+from typing import Optional
 
 from grpclib.events import listen, RecvRequest
 from grpclib.health.check import ServiceStatus
@@ -94,7 +95,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
         path: Optional[str] = self.config.args.admin_path
         host: Optional[str] = self.config.args.admin_host
         port: Optional[int] = self.config.args.admin_port
-        server_handlers: List[Handler] = [self._get_health()]
+        server_handlers: list[Handler] = [self._get_health()]
         server_handlers.extend(handler(backend) for _, handler in handlers)
         ssl = self.config.ssl_context
         servers = [await self._start_local(server_handlers, path),

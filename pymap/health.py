@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Any, List, Callable
-from typing_extensions import Protocol
+from collections.abc import Callable
+from typing import Any, Protocol
 
 __all__ = ['HealthStatusView', 'HealthStatus']
 
@@ -46,7 +46,7 @@ class HealthStatus(HealthStatusView):
 
     def __init__(self, initial: bool = False) -> None:
         super().__init__()
-        self._listeners: List[_Callback] = []
+        self._listeners: list[_Callback] = []
         self._healthy = initial
 
     @property

@@ -2,12 +2,11 @@
 from __future__ import annotations
 
 import base64
+from collections.abc import Iterable, Mapping, Sequence
 from email.headerregistry import ContentTypeHeader
 from email.policy import SMTP
 from itertools import chain, islice
-from typing import Any, Optional, Tuple, Iterable, Sequence, Mapping, \
-    List, Dict
-from typing_extensions import Final
+from typing import Any, Optional, Final
 
 from .parsed import ParsedHeaders
 from ._util import whitespace, find_any, get_raw
@@ -17,9 +16,9 @@ __all__ = ['MessageContent', 'MessageHeader', 'MessageBody']
 
 _default_type: Final = 'text/plain'
 
-_Line = Tuple[int, int, int]
+_Line = tuple[int, int, int]
 _Lines = Sequence[_Line]
-_Folded = Sequence[Tuple[str, _Lines]]
+_Folded = Sequence[tuple[str, _Lines]]
 
 
 class MessageContent(Writeable):
@@ -121,7 +120,7 @@ class MessageContent(Writeable):
     def _find_lines(cls, data: bytes) -> _Lines:
         start = 0
         end = len(data)
-        ret: List[_Line] = []
+        ret: list[_Line] = []
         while True:
             idx = data.find(b'\n', start, end)
             if idx < 0:
@@ -136,7 +135,7 @@ class MessageContent(Writeable):
         return ret
 
     @classmethod
-    def _split_lines(cls, data: bytes, lines: _Lines) -> Tuple[_Lines, _Lines]:
+    def _split_lines(cls, data: bytes, lines: _Lines) -> tuple[_Lines, _Lines]:
         for i, line in enumerate(lines):
             start, end, _ = line
             ws_end = find_any(data, whitespace, start, end, False, False)
@@ -220,13 +219,13 @@ class MessageHeader(Writeable):
 
     @classmethod
     def _get_folded(cls, view: memoryview, folded: _Folded) \
-            -> Sequence[Tuple[bytes, memoryview]]:
+            -> Sequence[tuple[bytes, memoryview]]:
         return [(cls._to_bytes(key), get_raw(view, lines))
                 for key, lines in folded]
 
     @classmethod
     def _get_parsed(cls, data: bytes, folded: _Folded) -> ParsedHeaders:
-        header_map: Dict[bytes, List[List[bytes]]] = {}
+        header_map: dict[bytes, list[list[bytes]]] = {}
         for key, lines in folded:
             name = cls._to_bytes(key)
             values = header_map.setdefault(name, [])
@@ -250,7 +249,7 @@ class MessageHeader(Writeable):
 
     @classmethod
     def _find_folds(cls, data: bytes, lines: _Lines) -> Sequence[_Lines]:
-        ret: List[List[Tuple[int, int, int]]] = []
+        ret: list[list[tuple[int, int, int]]] = []
         if not lines:
             return []
         for line in islice(lines, len(lines) - 1):
@@ -266,7 +265,7 @@ class MessageHeader(Writeable):
     @classmethod
     def _find_folded(cls, data: bytes, view: memoryview,
                      folds: Sequence[_Lines]) -> _Folded:
-        folded: List[Tuple[str, _Lines]] = []
+        folded: list[tuple[str, _Lines]] = []
         for group in folds:
             start, end, _ = group[0]
             colon = data.find(b':', start, end)
@@ -404,7 +403,7 @@ class MessageBody(Writeable):
                          content_type: ContentTypeHeader,
                          boundary: bytes) -> MessageBody:
         parts = cls._find_parts(data, view, lines, boundary)
-        nested: List[MessageContent] = []
+        nested: list[MessageContent] = []
         for part_lines in parts:
             sub_content = MessageContent._parse(data, view, part_lines)
             nested.append(sub_content)
@@ -413,7 +412,7 @@ class MessageBody(Writeable):
     @classmethod
     def _find_parts(cls, data: bytes, view: memoryview, lines: _Lines,
                     boundary: bytes) -> Sequence[_Lines]:
-        ret: List[List[_Line]] = []
+        ret: list[list[_Line]] = []
         part_match = (b'--%s' % boundary, b'--%s' % boundary)
         stop_match = (b'--%s--' % boundary, b'--%s--' % boundary)
         for line in lines:

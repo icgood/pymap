@@ -1,13 +1,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from email.headerregistry import Address, AddressHeader, SingleAddressHeader, \
     UnstructuredHeader, DateHeader, ContentDispositionHeader, \
     ContentTransferEncodingHeader
 from itertools import chain
-from typing import Any, SupportsBytes, Optional, Mapping, Sequence, Union, List
+from typing import Any, SupportsBytes, Optional, Union
 
-from ..primitives import ListP, Nil, Number, String
+from ..primitives import List, Nil, Number, String
 from ..specials import DateTime
 from ...bytes import Writeable, WriteStream
 
@@ -42,19 +43,19 @@ class _AddressList(Writeable):
         realname = String.build(address.display_name)
         localpart = String.build(address.username)
         domain = String.build(address.domain)
-        return ListP([realname, Nil(), localpart, domain])
+        return List([realname, Nil(), localpart, domain])
 
     @property
     def _value(self) -> Writeable:
         if self.headers:
-            addresses: List[Address] = []
+            addresses: list[Address] = []
             for header in self.headers:
                 if isinstance(header, SingleAddressHeader):
                     addresses.append(header.address)
                 else:
                     addresses.extend(header.addresses)
-            return ListP([self._parse(address)
-                          for address in addresses])
+            return List([self._parse(address)
+                         for address in addresses])
         else:
             return Nil()
 
@@ -76,7 +77,7 @@ class _ParamsList(Writeable):
         if self.params:
             values = [(String.build(key), String.build(value))
                       for key, value in self.params.items()]
-            return ListP(chain.from_iterable(values))
+            return List(chain.from_iterable(values))
         else:
             return Nil()
 
@@ -150,16 +151,16 @@ class EnvelopeStructure(Writeable):
     def _value(self) -> Writeable:
         datetime: Union[DateTime, Nil] = \
             DateTime(self.date.datetime) if self.date else Nil()
-        return ListP([datetime,
-                      String.build(self.subject),
-                      self._addresses(self.from_),
-                      self._addresses(self.sender, self.from_),
-                      self._addresses(self.reply_to, self.from_),
-                      self._addresses(self.to),
-                      self._addresses(self.cc),
-                      self._addresses(self.bcc),
-                      String.build(self.in_reply_to),
-                      String.build(self.message_id)])
+        return List([datetime,
+                     String.build(self.subject),
+                     self._addresses(self.from_),
+                     self._addresses(self.sender, self.from_),
+                     self._addresses(self.reply_to, self.from_),
+                     self._addresses(self.to),
+                     self._addresses(self.cc),
+                     self._addresses(self.bcc),
+                     String.build(self.in_reply_to),
+                     String.build(self.message_id)])
 
     def write(self, writer: WriteStream) -> None:
         self._value.write(writer)
@@ -208,7 +209,7 @@ class BodyStructure(Writeable):
         return _EmptyBodyStructure()
 
     @property
-    def _value(self) -> ListP:
+    def _value(self) -> List:
         raise NotImplementedError
 
     def write(self, writer: WriteStream) -> None:
@@ -218,7 +219,7 @@ class BodyStructure(Writeable):
         return bytes(self._value)
 
     @property
-    def extended(self) -> ListP:
+    def extended(self) -> List:
         """The body structure attributes with extension data."""
         raise NotImplementedError
 
@@ -249,18 +250,18 @@ class MultipartBodyStructure(BodyStructure):
         self.parts = parts
 
     @property
-    def _value(self) -> ListP:
-        return ListP([_Concatenated(self.parts), String.build(self.subtype)])
+    def _value(self) -> List:
+        return List([_Concatenated(self.parts), String.build(self.subtype)])
 
     @property
-    def extended(self) -> ListP:
+    def extended(self) -> List:
         """The body structure attributes with extension data."""
         parts = [part.extended for part in self.parts]
-        return ListP([_Concatenated(parts), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_disposition),
-                      String.build(self.content_language),
-                      String.build(self.content_location)])
+        return List([_Concatenated(parts), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_disposition),
+                     String.build(self.content_language),
+                     String.build(self.content_location)])
 
 
 class ContentBodyStructure(BodyStructure):
@@ -302,29 +303,29 @@ class ContentBodyStructure(BodyStructure):
         self.size = size
 
     @property
-    def _value(self) -> ListP:
-        return ListP([String.build(self.maintype), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_id),
-                      String.build(self.content_description),
-                      String.build(self.content_transfer_encoding,
-                                   fallback=b'7BIT'),
-                      Number(self.size)])
+    def _value(self) -> List:
+        return List([String.build(self.maintype), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_id),
+                     String.build(self.content_description),
+                     String.build(self.content_transfer_encoding,
+                                  fallback=b'7BIT'),
+                     Number(self.size)])
 
     @property
-    def extended(self) -> ListP:
+    def extended(self) -> List:
         """The body structure attributes with extension data."""
-        return ListP([String.build(self.maintype), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_id),
-                      String.build(self.content_description),
-                      String.build(self.content_transfer_encoding,
-                                   fallback=b'7BIT'),
-                      Number(self.size),
-                      String.build(self.body_md5),
-                      String.build(self.content_disposition),
-                      String.build(self.content_language),
-                      String.build(self.content_location)])
+        return List([String.build(self.maintype), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_id),
+                     String.build(self.content_description),
+                     String.build(self.content_transfer_encoding,
+                                  fallback=b'7BIT'),
+                     Number(self.size),
+                     String.build(self.body_md5),
+                     String.build(self.content_disposition),
+                     String.build(self.content_language),
+                     String.build(self.content_location)])
 
 
 class TextBodyStructure(ContentBodyStructure):
@@ -362,29 +363,29 @@ class TextBodyStructure(ContentBodyStructure):
         self.lines = lines
 
     @property
-    def _value(self) -> ListP:
-        return ListP([String.build(self.maintype), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_id),
-                      String.build(self.content_description),
-                      String.build(self.content_transfer_encoding,
-                                   fallback=b'7BIT'),
-                      Number(self.size), Number(self.lines)])
+    def _value(self) -> List:
+        return List([String.build(self.maintype), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_id),
+                     String.build(self.content_description),
+                     String.build(self.content_transfer_encoding,
+                                  fallback=b'7BIT'),
+                     Number(self.size), Number(self.lines)])
 
     @property
-    def extended(self) -> ListP:
+    def extended(self) -> List:
         """The body structure attributes with extension data."""
-        return ListP([String.build(self.maintype), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_id),
-                      String.build(self.content_description),
-                      String.build(self.content_transfer_encoding,
-                                   fallback=b'7BIT'),
-                      Number(self.size), Number(self.lines),
-                      String.build(self.body_md5),
-                      String.build(self.content_disposition),
-                      String.build(self.content_language),
-                      String.build(self.content_location)])
+        return List([String.build(self.maintype), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_id),
+                     String.build(self.content_description),
+                     String.build(self.content_transfer_encoding,
+                                  fallback=b'7BIT'),
+                     Number(self.size), Number(self.lines),
+                     String.build(self.body_md5),
+                     String.build(self.content_disposition),
+                     String.build(self.content_language),
+                     String.build(self.content_location)])
 
 
 class MessageBodyStructure(ContentBodyStructure):
@@ -426,35 +427,35 @@ class MessageBodyStructure(ContentBodyStructure):
         self.body_structure = body_structure
 
     @property
-    def _value(self) -> ListP:
-        return ListP([String.build(self.maintype), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_id),
-                      String.build(self.content_description),
-                      String.build(self.content_transfer_encoding,
-                                   fallback=b'7BIT'),
-                      Number(self.size),
-                      self.envelope_structure,
-                      self.body_structure,
-                      Number(self.lines)])
+    def _value(self) -> List:
+        return List([String.build(self.maintype), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_id),
+                     String.build(self.content_description),
+                     String.build(self.content_transfer_encoding,
+                                  fallback=b'7BIT'),
+                     Number(self.size),
+                     self.envelope_structure,
+                     self.body_structure,
+                     Number(self.lines)])
 
     @property
-    def extended(self) -> ListP:
+    def extended(self) -> List:
         """The body structure attributes with extension data."""
-        return ListP([String.build(self.maintype), String.build(self.subtype),
-                      _ParamsList(self.content_type_params),
-                      String.build(self.content_id),
-                      String.build(self.content_description),
-                      String.build(self.content_transfer_encoding,
-                                   fallback=b'7BIT'),
-                      Number(self.size),
-                      self.envelope_structure,
-                      self.body_structure.extended,
-                      Number(self.lines),
-                      String.build(self.body_md5),
-                      String.build(self.content_disposition),
-                      String.build(self.content_language),
-                      String.build(self.content_location)])
+        return List([String.build(self.maintype), String.build(self.subtype),
+                     _ParamsList(self.content_type_params),
+                     String.build(self.content_id),
+                     String.build(self.content_description),
+                     String.build(self.content_transfer_encoding,
+                                  fallback=b'7BIT'),
+                     Number(self.size),
+                     self.envelope_structure,
+                     self.body_structure.extended,
+                     Number(self.lines),
+                     String.build(self.body_md5),
+                     String.build(self.content_disposition),
+                     String.build(self.content_language),
+                     String.build(self.content_location)])
 
 
 class _EmptyEnvelopeStructure(EnvelopeStructure):

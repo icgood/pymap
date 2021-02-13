@@ -3,8 +3,7 @@ from __future__ import annotations
 
 import re
 from datetime import datetime, timezone
-from typing import Any, Optional, NoReturn
-from typing_extensions import Final
+from typing import Any, Final, Optional, NoReturn
 
 from pymacaroons import Macaroon, Verifier
 from pymacaroons.exceptions import MacaroonDeserializationException, \

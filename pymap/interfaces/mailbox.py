@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Optional, FrozenSet, Sequence
-from typing_extensions import Protocol
+from collections.abc import Sequence
+from typing import Optional, Protocol
 
 from ..parsing.specials import Flag, ObjectId
 
@@ -41,19 +41,19 @@ class MailboxInterface(Protocol):
 
     @property
     @abstractmethod
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         """The permanent flags allowed in the mailbox."""
         ...
 
     @property
     @abstractmethod
-    def session_flags(self) -> FrozenSet[Flag]:
+    def session_flags(self) -> frozenset[Flag]:
         """The session flags allowed in the mailbox."""
         ...
 
     @property
     @abstractmethod
-    def flags(self) -> FrozenSet[Flag]:
+    def flags(self) -> frozenset[Flag]:
         """Set of all permanent and session flags available on the mailbox."""
         ...
 

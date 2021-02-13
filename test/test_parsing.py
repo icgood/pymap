@@ -4,7 +4,7 @@ import unittest
 from pymap.parsing import Params, ExpectedParseable, Space, EndLine
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
-    ListP
+    List
 
 
 class TestExpectedParseable(unittest.TestCase):
@@ -18,8 +18,8 @@ class TestExpectedParseable(unittest.TestCase):
         self.assertIsInstance(atom, Atom)
         qstr, _ = ExpectedParseable.parse(b'"test"', Params(expected=[String]))
         self.assertIsInstance(qstr, QuotedString)
-        list_, _ = ExpectedParseable.parse(b'()', Params(expected=[ListP]))
-        self.assertIsInstance(list_, ListP)
+        list_, _ = ExpectedParseable.parse(b'()', Params(expected=[List]))
+        self.assertIsInstance(list_, List)
 
     def test_parse_expectation_failure(self):
         with self.assertRaises(NotParseable):

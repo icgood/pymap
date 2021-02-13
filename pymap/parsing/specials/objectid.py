@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import binascii
 import random as _random
-from typing import Optional, Tuple, AnyStr
+from typing import Optional, AnyStr
 
 from .. import Params, Parseable
 from ..exceptions import NotParseable
@@ -48,7 +48,7 @@ class ObjectId(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ObjectId, memoryview]:
+            -> tuple[ObjectId, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._pattern.match(buf, start)
         if not match:

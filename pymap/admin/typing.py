@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Mapping
-from typing_extensions import Protocol
+from collections.abc import Mapping
+from typing import Protocol
 
 from grpclib.const import Handler as _Handler
 

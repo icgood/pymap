@@ -3,17 +3,17 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
+from collections.abc import Iterable, Sequence
 from io import BytesIO
 from itertools import chain
-from typing import cast, Any, TypeVar, ByteString, SupportsBytes, Union, \
-    Iterable, Sequence
-from typing_extensions import final, Final, Protocol
+from typing import cast, final, Any, Final, TypeVar, SupportsBytes, Union, \
+    Protocol
 
 __all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
            'BytesFormat']
 
 #: A bytes object, memoryview,  or an object with a ``__bytes__`` method.
-MaybeBytes = Union[ByteString, memoryview, SupportsBytes]
+MaybeBytes = Union[bytes, bytearray, memoryview, SupportsBytes]
 
 #: A type variable bound to :class:`MaybeBytes`.
 MaybeBytesT = TypeVar('MaybeBytesT', bound=MaybeBytes)

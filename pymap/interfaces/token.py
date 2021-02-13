@@ -3,8 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from datetime import datetime
-from typing import Optional
-from typing_extensions import Protocol
+from typing import Optional, Protocol
 
 from pysasl.creds import AuthenticationCredentials
 

@@ -2,15 +2,15 @@
 from __future__ import annotations
 
 from bisect import bisect_right
+from collections.abc import Iterable, MutableSet, Sequence, Set
 from itertools import chain, groupby, islice
-from typing import Any, Optional, Tuple, Dict, Set, MutableSet, AbstractSet, \
-    FrozenSet, Iterable, List, Sequence
+from typing import Any, Optional
 from weakref import WeakSet
 
 from .flags import FlagOp, PermanentFlags, SessionFlags
 from .interfaces.message import CachedMessage, FlagsKey
 from .parsing.command import Command
-from .parsing.primitives import ListP, Number
+from .parsing.primitives import List, Number
 from .parsing.response import UntaggedResponse, ResponseBye
 from .parsing.response.specials import ExistsResponse, RecentResponse, \
     ExpungeResponse, FetchResponse
@@ -83,13 +83,13 @@ class SynchronizedMessages:
 
     def __init__(self) -> None:
         super().__init__()
-        self._uids: Set[int] = set()
-        self._sorted: List[int] = []
-        self._seqs_cache: Dict[int, int] = {}
-        self._cache: Dict[int, CachedMessage] = {}
-        self._flags_key_map: Dict[int, FlagsKey] = {}
-        self._flags_key_set: Set[FlagsKey] = set()
-        self._pending_remove: Set[int] = set()
+        self._uids: set[int] = set()
+        self._sorted: list[int] = []
+        self._seqs_cache: dict[int, int] = {}
+        self._cache: dict[int, CachedMessage] = {}
+        self._flags_key_map: dict[int, FlagsKey] = {}
+        self._flags_key_set: set[FlagsKey] = set()
+        self._pending_remove: set[int] = set()
 
     @property
     def exists(self) -> int:
@@ -157,7 +157,7 @@ class SynchronizedMessages:
         """
         return self._cache.get(uid)
 
-    def get_uids(self, seq_set: SequenceSet) -> Sequence[Tuple[int, int]]:
+    def get_uids(self, seq_set: SequenceSet) -> Sequence[tuple[int, int]]:
         """Return the message sequence numbers and their UIDs for the given
         sequence set.
 
@@ -175,7 +175,7 @@ class SynchronizedMessages:
                     if seq in all_seqs]
 
     def get_all(self, seq_set: SequenceSet) \
-            -> Sequence[Tuple[int, CachedMessage]]:
+            -> Sequence[tuple[int, CachedMessage]]:
         """Return the cached messages, and their sequence numbers, for the
         given sequence set.
 
@@ -236,8 +236,8 @@ class SelectedMailbox:
         self._mod_sequence = kwargs.get('_mod_sequence')
         self._is_deleted = False
         self._hide_expunged = False
-        self._silenced_flags: Set[Tuple[int, FrozenSet[Flag]]] = set()
-        self._silenced_sflags: Set[Tuple[int, FrozenSet[Flag]]] = set()
+        self._silenced_flags: set[tuple[int, frozenset[Flag]]] = set()
+        self._silenced_sflags: set[tuple[int, frozenset[Flag]]] = set()
         self._prev: Optional[_Frozen] = kwargs.get('_prev')
         try:
             self._messages: SynchronizedMessages = kwargs['_messages']
@@ -359,7 +359,7 @@ class SelectedMailbox:
         """Marks the selected mailbox as having been deleted."""
         self._is_deleted = True
 
-    def silence(self, seq_set: SequenceSet, flag_set: AbstractSet[Flag],
+    def silence(self, seq_set: SequenceSet, flag_set: Set[Flag],
                 flag_op: FlagOp) -> None:
         """Runs the flags update against the cached flags, to prevent untagged
         FETCH responses unless other updates have occurred.
@@ -388,7 +388,7 @@ class SelectedMailbox:
                 self._silenced_sflags.add((msg.uid, updated_sflags))
 
     def fork(self, command: Command) \
-            -> Tuple[SelectedMailbox, Iterable[UntaggedResponse]]:
+            -> tuple[SelectedMailbox, Iterable[UntaggedResponse]]:
         """Compares the state of the current object to that of the last fork,
         returning the untagged responses that reflect any changes. A new copy
         of the object is also returned, ready for the next command.
@@ -435,8 +435,8 @@ class SelectedMailbox:
         for uid, _ in groupby(sorted(fetch_uids)):
             seq = after.seqs_cache[uid]
             msg_flags = cache[uid].get_flags(session_flags)
-            fetch_data: List[FetchValue] = [
-                FetchValue.of(_flags_attr, ListP(msg_flags, sort=True))]
+            fetch_data: list[FetchValue] = [
+                FetchValue.of(_flags_attr, List(msg_flags, sort=True))]
             if with_uid:
                 fetch_data.append(FetchValue.of(_uid_attr, Number(uid)))
             yield FetchResponse(seq, fetch_data)

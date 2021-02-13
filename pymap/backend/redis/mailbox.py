@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import Optional, Sequence, Mapping, Tuple, List, FrozenSet, \
-    Iterable
+from typing import Optional
 
 import msgpack
 from aioredis import Redis, ReplyError, MultiExecError
@@ -35,7 +35,7 @@ __all__ = ['Message', 'MailboxData', 'MailboxSet']
 _scripts = MailboxScripts()
 _ns_scripts = NamespaceScripts()
 
-_ChangesRaw = Sequence[Tuple[bytes, Mapping[bytes, bytes]]]
+_ChangesRaw = Sequence[tuple[bytes, Mapping[bytes, bytes]]]
 
 
 class MailboxData(MailboxDataInterface[Message]):
@@ -159,7 +159,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._get_msg(uid, message_raw)
 
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
+                     flag_set: frozenset[Flag], mode: FlagOp) -> Message:
         keys = self._keys
         ns_keys = self._ns_keys
         try:
@@ -232,10 +232,10 @@ class MailboxData(MailboxDataInterface[Message]):
         selected.set_messages(messages)
 
     def _get_changes(self, changes: _ChangesRaw) \
-            -> Tuple[Sequence[Message], FrozenSet[int]]:
+            -> tuple[Sequence[Message], frozenset[int]]:
         expunged = frozenset(int(fields[b'uid']) for _, fields in changes
                              if fields[b'type'] == b'expunge')
-        messages: List[Message] = []
+        messages: list[Message] = []
         for _, fields in changes:
             uid = int(fields[b'uid'])
             if fields[b'type'] != b'fetch' or uid in expunged:

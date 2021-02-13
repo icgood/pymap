@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Any, TypeVar, Tuple, Union, Sequence, FrozenSet
+from typing import Any, TypeVar, Union
 
 from .astring import AString
 from .fetchattr import FetchRequirement
@@ -12,12 +13,12 @@ from .objectid import ObjectId
 from .sequenceset import SequenceSet
 from .. import Params, Parseable, ExpectedParseable, Space
 from ..exceptions import NotParseable, UnexpectedType
-from ..primitives import Atom, Number, QuotedString, ListP
+from ..primitives import Atom, Number, QuotedString, List
 from ...bytes import rev
 
 __all__ = ['SearchKey']
 
-_FilterType = Union[Tuple['SearchKey', 'SearchKey'], Tuple[str, str],
+_FilterType = Union[tuple['SearchKey', 'SearchKey'], tuple[str, str],
                     Sequence['SearchKey'], SequenceSet, Flag, ObjectId,
                     datetime, int, str]
 _FilterT = TypeVar('_FilterT', bound=_FilterType)
@@ -93,11 +94,11 @@ class SearchKey(Parseable[bytes]):
         return self._get_filter(SequenceSet)
 
     @property
-    def filter_key_set(self) -> FrozenSet[SearchKey]:
+    def filter_key_set(self) -> frozenset[SearchKey]:
         return self._get_filter(frozenset)
 
     @property
-    def filter_key_or(self) -> Tuple[SearchKey, SearchKey]:
+    def filter_key_or(self) -> tuple[SearchKey, SearchKey]:
         return self._get_filter(tuple)
 
     @property
@@ -117,7 +118,7 @@ class SearchKey(Parseable[bytes]):
         return self._get_filter(str)
 
     @property
-    def filter_header(self) -> Tuple[str, str]:
+    def filter_header(self) -> tuple[str, str]:
         return self._get_filter(tuple)
 
     @property
@@ -142,13 +143,13 @@ class SearchKey(Parseable[bytes]):
 
     @classmethod
     def _parse_astring_filter(cls, buf: memoryview, params: Params) \
-            -> Tuple[str, memoryview]:
+            -> tuple[str, memoryview]:
         ret, after = AString.parse(buf, params)
         return ret.value.decode(params.charset or 'ascii'), after
 
     @classmethod
     def _parse_date_filter(cls, buf: memoryview, params: Params) \
-            -> Tuple[datetime, memoryview]:
+            -> tuple[datetime, memoryview]:
         params_copy = params.copy(expected=[Atom, QuotedString])
         atom, after = ExpectedParseable.parse(buf, params_copy)
         date_str = str(atom.value, 'ascii', 'ignore')
@@ -160,7 +161,7 @@ class SearchKey(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[SearchKey, memoryview]:
+            -> tuple[SearchKey, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:
@@ -178,7 +179,7 @@ class SearchKey(Parseable[bytes]):
             return cls(b'SEQSET', seq_set, inverse), buf
         try:
             params_copy = params.copy(list_expected=[SearchKey])
-            key_list_p, buf = ListP.parse(buf, params_copy)
+            key_list_p, buf = List.parse(buf, params_copy)
         except UnexpectedType:
             raise
         except NotParseable:

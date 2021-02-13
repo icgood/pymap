@@ -4,12 +4,11 @@ from __future__ import annotations
 import asyncio
 import os.path
 from argparse import ArgumentParser, Namespace
+from collections.abc import Awaitable, Mapping, Sequence, AsyncIterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Any, Optional, Tuple, Sequence, Mapping, Awaitable, \
-    AsyncIterator
-from typing_extensions import Final
+from typing import Any, Optional, Final
 
 from pysasl.creds import AuthenticationCredentials
 
@@ -73,7 +72,7 @@ class MaildirBackend(BackendInterface):
 
     @classmethod
     async def init(cls, args: Namespace, **overrides: Any) \
-            -> Tuple[MaildirBackend, Config]:
+            -> tuple[MaildirBackend, Config]:
         config = Config.from_args(args)
         login = Login(config)
         return cls(login, config), config
@@ -271,7 +270,7 @@ class Identity(IdentityInterface):
         filter_set = FilterSet(layout.path)
         yield Session(self.name, config, mailbox_set, filter_set)
 
-    def _load_maildir(self) -> Tuple[Maildir, MaildirLayout]:
+    def _load_maildir(self) -> tuple[Maildir, MaildirLayout]:
         full_path = os.path.join(self.config.base_dir, self.mailbox_path)
         layout = MaildirLayout.get(full_path, self.config.layout, Maildir)
         create = not os.path.exists(full_path)

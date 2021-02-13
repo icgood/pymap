@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import random
 import time
-from typing import Optional, Iterable, FrozenSet
-from typing_extensions import Final
+from collections.abc import Iterable
+from typing import Optional, Final
 
 from .interfaces.mailbox import MailboxInterface
 from .parsing.specials import Flag, ObjectId
@@ -40,7 +40,7 @@ class MailboxSnapshot(MailboxInterface):
 
     def __init__(self, mailbox_id: ObjectId, readonly: bool, uid_validity: int,
                  permanent_flags: Iterable[Flag],
-                 session_flags: FrozenSet[Flag],
+                 session_flags: frozenset[Flag],
                  exists: int, recent: int, unseen: int,
                  first_unseen: Optional[int], next_uid: int) -> None:
         super().__init__()
@@ -66,5 +66,5 @@ class MailboxSnapshot(MailboxInterface):
         return (time_part << 20) + rand_part
 
     @property
-    def flags(self) -> FrozenSet[Flag]:
+    def flags(self) -> frozenset[Flag]:
         return self.permanent_flags | self.session_flags

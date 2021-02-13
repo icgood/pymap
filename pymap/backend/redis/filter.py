@@ -1,7 +1,8 @@
 
 from __future__ import annotations
 
-from typing import Optional, Tuple, Sequence, List
+from collections.abc import Sequence
+from typing import Optional
 
 from aioredis import Redis, ReplyError
 
@@ -89,12 +90,12 @@ class FilterSet(PluginFilterSet[bytes]):
                 return None
             raise
 
-    async def get_all(self) -> Tuple[Optional[str], Sequence[str]]:
+    async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
         keys = self._keys
         sieve_names = await self._redis.hgetall(keys.names)
         active_key: Optional[bytes] = sieve_names.get(self._active_name)
         active_name: Optional[str] = None
-        names: List[str] = []
+        names: list[str] = []
         for name, key in sieve_names.items():
             if name != self._active_name:
                 name_str = name.decode('utf-8')

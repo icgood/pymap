@@ -1,9 +1,8 @@
 
 from __future__ import annotations
 
-from collections import OrderedDict
-from typing import Optional, Dict, List, Callable, Union, Tuple, Awaitable, \
-    Iterable, NoReturn
+from collections.abc import Awaitable, Callable, Iterable
+from typing import Optional, Union, NoReturn
 
 from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
@@ -26,7 +25,7 @@ from pymap.parsing.command.select import CheckCommand, CloseCommand, \
     IdleCommand, ExpungeCommand, CopyCommand, MoveCommand, FetchCommand, \
     StoreCommand, SearchCommand
 from pymap.parsing.commands import InvalidCommand
-from pymap.parsing.primitives import ListP, Number
+from pymap.parsing.primitives import List, Number
 from pymap.parsing.response import ResponseOk, ResponseNo, ResponseBad, \
     ResponseCode, ResponsePreAuth, CommandResponse, UntaggedResponse
 from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
@@ -41,7 +40,7 @@ from pysasl import AuthenticationCredentials
 __all__ = ['ConnectionState']
 
 _AuthCommands = Union[AuthenticateCommand, LoginCommand]
-_CommandRet = Tuple[CommandResponse, Optional[SelectedMailbox]]
+_CommandRet = tuple[CommandResponse, Optional[SelectedMailbox]]
 _CommandFunc = Callable[[Command], Awaitable[_CommandRet]]
 
 _flags_attr = FetchAttribute(b'FLAGS')
@@ -201,7 +200,7 @@ class ConnectionState:
     async def do_status(self, cmd: StatusCommand) -> _CommandRet:
         mailbox, updates = await self.session.get_mailbox(
             cmd.mailbox, selected=self._selected)
-        data: Dict[StatusAttribute, MaybeBytes] = OrderedDict()
+        data: dict[StatusAttribute, MaybeBytes] = {}
         for attr in cmd.status_list:
             if attr == b'MESSAGES':
                 data[attr] = Number(mailbox.exists)
@@ -306,7 +305,7 @@ class ConnectionState:
         messages, updates = await self.session.search_mailbox(
             self.selected, cmd.keys)
         resp = ResponseOk(cmd.tag, cmd.command + b' completed.')
-        msg_ids: List[int] = []
+        msg_ids: list[int] = []
         for msg_seq, msg in messages:
             if msg.expunged:
                 resp.code = ResponseCode.of(b'EXPUNGEISSUED')
@@ -332,8 +331,8 @@ class ConnectionState:
             elif cmd.silent:
                 continue
             flags = msg.get_flags(session_flags)
-            fetch_data: List[FetchValue] = [
-                FetchValue.of(_flags_attr, ListP(flags, sort=True))]
+            fetch_data: list[FetchValue] = [
+                FetchValue.of(_flags_attr, List(flags, sort=True))]
             if cmd.uid:
                 fetch_data.append(
                     FetchValue.of(_uid_attr, Number(msg.uid)))

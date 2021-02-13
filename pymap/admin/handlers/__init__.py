@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from abc import ABCMeta
+from collections.abc import Mapping, AsyncGenerator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
-from typing import Type, Mapping, AsyncGenerator
-from typing_extensions import Final
+from typing import Final
 
 from pymap.context import connection_exit
 from pymap.exceptions import InvalidAuth, ResponseError
@@ -20,7 +20,7 @@ from ..typing import Handler
 __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
 
 #: Registers new admin handler plugins.
-handlers: Plugin[Type[BaseHandler]] = Plugin('pymap.admin.handlers')
+handlers: Plugin[type[BaseHandler]] = Plugin('pymap.admin.handlers')
 
 
 class BaseHandler(Handler, metaclass=ABCMeta):

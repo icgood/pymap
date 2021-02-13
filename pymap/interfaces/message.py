@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Collection, Sequence
 from datetime import datetime
-from typing import TypeVar, Tuple, Sequence, FrozenSet, Collection
-from typing_extensions import Protocol
+from typing import TypeVar, Protocol
 
 from ..bytes import Writeable
 from ..flags import SessionFlags
@@ -22,7 +22,7 @@ MessageT_co = TypeVar('MessageT_co', bound='MessageInterface', covariant=True)
 
 #: Type alias for the value used as a key in set comparisons detecting flag
 #: updates.
-FlagsKey = Tuple[int, FrozenSet[Flag]]
+FlagsKey = tuple[int, frozenset[Flag]]
 
 
 class CachedMessage(Protocol):
@@ -52,7 +52,7 @@ class CachedMessage(Protocol):
 
     @property
     @abstractmethod
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         """The permanent flags for the message."""
         ...
 
@@ -78,7 +78,7 @@ class CachedMessage(Protocol):
         ...
 
     @abstractmethod
-    def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
+    def get_flags(self, session_flags: SessionFlags) -> frozenset[Flag]:
         """Get the full set of permanent and session flags for the message.
 
         Args:
@@ -116,7 +116,7 @@ class MessageInterface(Protocol):
 
     @property
     @abstractmethod
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         """The permanent flags for the message."""
         ...
 
@@ -143,7 +143,7 @@ class MessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
+    def get_flags(self, session_flags: SessionFlags) -> frozenset[Flag]:
         """Get the full set of permanent and session flags for the message.
 
         Args:

@@ -3,11 +3,10 @@ from __future__ import annotations
 
 import hashlib
 from bisect import bisect_left
-from collections import OrderedDict
+from collections.abc import Iterable, Sequence, AsyncIterable
 from datetime import datetime
 from itertools import islice
-from typing import Tuple, Sequence, Dict, Optional, Iterable, \
-    AsyncIterable, List, Set, AbstractSet, FrozenSet
+from typing import Optional
 from weakref import finalize, WeakKeyDictionary, WeakValueDictionary
 
 from pymap.bytes import HashStream
@@ -76,17 +75,17 @@ class _ModSequenceMapping:
     def __init__(self) -> None:
         super().__init__()
         self._highest = 0
-        self._uids: Dict[int, int] = {}
-        self._updates: Dict[int, Set[int]] = {}
-        self._expunges: Dict[int, Set[int]] = {}
-        self._mod_seqs_order: List[int] = []
+        self._uids: dict[int, int] = {}
+        self._updates: dict[int, set[int]] = {}
+        self._expunges: dict[int, set[int]] = {}
+        self._mod_seqs_order: list[int] = []
 
     @property
     def highest(self) -> int:
         return self._highest
 
     def _remove_prev(self, uid: int, prev_mod_seq: int,
-                     data: Dict[int, Set[int]]) -> None:
+                     data: dict[int, set[int]]) -> None:
         uid_set = data.get(prev_mod_seq, None)
         if uid_set is not None:
             uid_set.discard(uid)
@@ -94,7 +93,7 @@ class _ModSequenceMapping:
                 del data[prev_mod_seq]
                 self._mod_seqs_order.remove(prev_mod_seq)
 
-    def _set(self, uids: Iterable[int], data: Dict[int, Set[int]]) -> None:
+    def _set(self, uids: Iterable[int], data: dict[int, set[int]]) -> None:
         self._highest = mod_seq = self._highest + 1
         self._mod_seqs_order.append(mod_seq)
         new_uid_set = data.setdefault(mod_seq, set())
@@ -113,9 +112,9 @@ class _ModSequenceMapping:
         return self._set(uids, self._expunges)
 
     def find_updated(self, mod_seq: int) \
-            -> Tuple[AbstractSet[int], AbstractSet[int]]:
-        updates_ret: Set[int] = set()
-        expunges_ret: Set[int] = set()
+            -> tuple[frozenset[int], frozenset[int]]:
+        updates_ret: set[int] = set()
+        expunges_ret: set[int] = set()
         updates = self._updates
         expunges = self._expunges
         mod_seqs_order = self._mod_seqs_order
@@ -128,15 +127,15 @@ class _ModSequenceMapping:
                 updates_ret.update(updates_set)
             if expunges_set is not None:
                 expunges_ret.update(expunges_set)
-        return updates_ret, expunges_ret
+        return frozenset(updates_ret), frozenset(expunges_ret)
 
 
 class _ContentCache:
 
     def __init__(self) -> None:
         super().__init__()
-        self._email_ids: Dict[bytes, ObjectId] = {}
-        self._hashes: Dict[ObjectId, bytes] = {}
+        self._email_ids: dict[bytes, ObjectId] = {}
+        self._hashes: dict[ObjectId, bytes] = {}
         self._content: WeakValueDictionary[ObjectId, MessageContent] = \
             WeakValueDictionary()
 
@@ -200,7 +199,7 @@ class MailboxData(MailboxDataInterface[Message]):
         self._uid_validity = MailboxSnapshot.new_uid_validity()
         self._max_uid = 100
         self._mod_sequences = _ModSequenceMapping()
-        self._messages: Dict[int, Message] = OrderedDict()
+        self._messages: dict[int, Message] = {}
 
     @property
     def mailbox_id(self) -> ObjectId:
@@ -299,7 +298,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return msg
 
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
+                     flag_set: frozenset[Flag], mode: FlagOp) -> Message:
         msg = await self.get(uid, cached_msg)
         msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
         self._mod_sequences.update([uid])
@@ -317,7 +316,7 @@ class MailboxData(MailboxDataInterface[Message]):
             self._updated.set()
 
     async def claim_recent(self, selected: SelectedMailbox) -> None:
-        uids: List[int] = []
+        uids: list[int] = []
         async for msg in self.messages():
             if msg.recent:
                 msg.recent = False
@@ -366,9 +365,9 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         self._content_cache = _ContentCache()
         self._thread_cache = _ThreadCache()
         self._inbox = MailboxData(self._content_cache, self._thread_cache)
-        self._set: Dict[str, MailboxData] = OrderedDict()
+        self._set: dict[str, MailboxData] = {}
         self._set_lock = subsystem.get().new_rwlock()
-        self._subscribed: Dict[str, bool] = {}
+        self._subscribed: dict[str, bool] = {}
 
     @property
     def delimiter(self) -> str:

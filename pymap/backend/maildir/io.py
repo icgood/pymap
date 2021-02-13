@@ -4,10 +4,10 @@ from __future__ import annotations
 import os
 import os.path
 from abc import abstractmethod, ABCMeta
-from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from tempfile import NamedTemporaryFile
-from typing import TypeVar, Type, Generic, Optional, IO, AsyncContextManager, \
-    AsyncIterator
+from typing import TypeVar, Generic, Optional, IO
 
 from pymap.concurrent import FileLock
 
@@ -34,12 +34,12 @@ class FileReadable(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def get_default(cls: Type[_RT], base_dir: str) -> _RT:
+    def get_default(cls: type[_RT], base_dir: str) -> _RT:
         ...
 
     @classmethod
     @abstractmethod
-    def open(cls: Type[_RT], base_dir: str, fp: IO[str]) -> _RT:
+    def open(cls: type[_RT], base_dir: str, fp: IO[str]) -> _RT:
         ...
 
     def read(self, fp: IO[str]) -> None:
@@ -51,7 +51,7 @@ class FileReadable(metaclass=ABCMeta):
         yield
 
     @classmethod
-    def read_lock(cls, base_dir: str) -> AsyncContextManager[None]:
+    def read_lock(cls, base_dir: str) -> AbstractAsyncContextManager[None]:
         lock_file = cls.get_lock()
         if lock_file:
             path = os.path.join(base_dir, lock_file)
@@ -60,7 +60,7 @@ class FileReadable(metaclass=ABCMeta):
             return cls._noop_lock()
 
     @classmethod
-    def write_lock(cls, base_dir: str) -> AsyncContextManager[None]:
+    def write_lock(cls, base_dir: str) -> AbstractAsyncContextManager[None]:
         lock_file = cls.get_lock()
         if lock_file:
             path = os.path.join(base_dir, lock_file)
@@ -74,7 +74,7 @@ class FileReadable(metaclass=ABCMeta):
         return os.path.exists(path)
 
     @classmethod
-    def file_open(cls: Type[_RT], base_dir: str) -> _RT:
+    def file_open(cls: type[_RT], base_dir: str) -> _RT:
         path = os.path.join(base_dir, cls.get_file())
         try:
             with open(path, 'r') as in_file:
@@ -83,7 +83,7 @@ class FileReadable(metaclass=ABCMeta):
             return cls.get_default(base_dir)
 
     @classmethod
-    def file_read(cls: Type[_RT], base_dir: str) -> _RT:
+    def file_read(cls: type[_RT], base_dir: str) -> _RT:
         path = os.path.join(base_dir, cls.get_file())
         try:
             with open(path, 'r') as in_file:
@@ -94,11 +94,11 @@ class FileReadable(metaclass=ABCMeta):
             return cls.get_default(base_dir)
 
     @classmethod
-    def with_open(cls: Type[_RT], base_dir: str) -> _FileReadWith[_RT]:
+    def with_open(cls: type[_RT], base_dir: str) -> _FileReadWith[_RT]:
         return _FileReadWith(base_dir, cls, True)
 
     @classmethod
-    def with_read(cls: Type[_RT], base_dir: str) -> _FileReadWith[_RT]:
+    def with_read(cls: type[_RT], base_dir: str) -> _FileReadWith[_RT]:
         return _FileReadWith(base_dir, cls, False)
 
 
@@ -131,13 +131,13 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
         os.rename(tmp_path, path)
 
     @classmethod
-    def with_write(cls: Type[_WT], base_dir: str) -> _FileWriteWith[_WT]:
+    def with_write(cls: type[_WT], base_dir: str) -> _FileWriteWith[_WT]:
         return _FileWriteWith(base_dir, cls)
 
 
 class _FileReadWith(Generic[_RT]):
 
-    def __init__(self, base_dir: str, cls: Type[_RT], only_open: bool) -> None:
+    def __init__(self, base_dir: str, cls: type[_RT], only_open: bool) -> None:
         super().__init__()
         self._base_dir = base_dir
         self._cls = cls
@@ -158,12 +158,12 @@ class _FileReadWith(Generic[_RT]):
 
 class _FileWriteWith(Generic[_WT]):
 
-    def __init__(self, base_dir: str, cls: Type[_WT]) -> None:
+    def __init__(self, base_dir: str, cls: type[_WT]) -> None:
         super().__init__()
         self._base_dir = base_dir
         self._cls = cls
         self._exists = False
-        self._lock: Optional[AsyncContextManager[None]] = None
+        self._lock: Optional[AbstractAsyncContextManager[None]] = None
         self._obj: Optional[_WT] = None
 
     async def _acquire_lock(self) -> None:

@@ -1,8 +1,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
-from typing_extensions import Final
+from typing import Optional, Final
 
 from .response import ResponseCode
 from ..bytes import MaybeBytes
