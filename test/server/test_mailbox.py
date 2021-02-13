@@ -1,7 +1,7 @@
 
 from textwrap import dedent
 
-import pytest  # type: ignore
+import pytest
 
 from .base import TestBase
 

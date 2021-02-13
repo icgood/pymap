@@ -4,10 +4,11 @@ from __future__ import annotations
 import socket as _socket
 from abc import abstractmethod, ABCMeta
 from asyncio import BaseTransport, StreamWriter
-from typing import Any, Union, Optional, Tuple, Sequence, Mapping, List
+from collections.abc import Mapping, Sequence
+from typing import Any, Union, Optional
 
 try:
-    import systemd.daemon  # type: ignore
+    import systemd.daemon
 except ImportError as exc:
     systemd_import_exc: Optional[ImportError] = exc
 else:
@@ -16,7 +17,7 @@ else:
 __all__ = ['InheritedSockets']
 
 _Transport = Union[BaseTransport, StreamWriter]
-_PeerName = Union[Tuple[str, int], Tuple[str, int, int, int], str]
+_PeerName = Union[tuple[str, int], tuple[str, int, int, int], str]
 _PeerCert = Mapping[str, Any]  # {'issuer': ..., ...}
 
 
@@ -89,7 +90,7 @@ class _SystemdSockets(InheritedSockets):
     def __init__(self) -> None:
         super().__init__()
         fds: Sequence[int] = systemd.daemon.listen_fds()
-        sockets: List[_socket.socket] = []
+        sockets: list[_socket.socket] = []
         for fd in fds:
             family = self._get_family(fd)
             sock = _socket.fromfd(fd, family, _socket.SOCK_STREAM)

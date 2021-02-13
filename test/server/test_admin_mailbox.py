@@ -1,5 +1,5 @@
 
-import pytest  # type: ignore
+import pytest
 from grpclib.testing import ChannelFor
 from pymapadmin.grpc.admin_grpc import MailboxStub
 from pymapadmin.grpc.admin_pb2 import AppendRequest, SUCCESS, FAILURE

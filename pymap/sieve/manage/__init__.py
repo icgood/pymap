@@ -8,9 +8,9 @@ import re
 from argparse import ArgumentParser
 from asyncio import StreamReader, StreamWriter, AbstractServer
 from base64 import b64encode, b64decode
-from collections import OrderedDict
+from collections.abc import Awaitable, Mapping
 from contextlib import closing, AsyncExitStack
-from typing import Optional, Union, Mapping, Dict, List, Awaitable
+from typing import Optional, Union
 
 from proxyprotocol import ProxyProtocolResult
 from proxyprotocol.reader import ProxyProtocolReader
@@ -146,7 +146,7 @@ class ManageSieveConnection:
 
     @property
     def capabilities(self) -> Mapping[bytes, Optional[bytes]]:
-        ret: Dict[bytes, Optional[bytes]] = OrderedDict()
+        ret: dict[bytes, Optional[bytes]] = {}
         ret[b'IMPLEMENTATION'] = self._impl
         if self._state is None:
             ret[b'SASL'] = b' '.join(
@@ -224,7 +224,7 @@ class ManageSieveConnection:
         mech = self.auth.get_server(cmd.mech_name)
         if not mech:
             return Response(Condition.NO, text='Invalid SASL mechanism.')
-        responses: List[ChallengeResponse] = []
+        responses: list[ChallengeResponse] = []
         if cmd.initial_data is not None:
             resp_dec = b64decode(cmd.initial_data)
             responses.append(ChallengeResponse(b'', resp_dec))

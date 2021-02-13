@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import enum
-from typing import Optional, Mapping, Sequence
+from collections.abc import Mapping, Sequence
+from typing import Optional
 
 from pymap.bytes import BytesFormat, MaybeBytes, WriteStream, Writeable
 from pymap.parsing.exceptions import NotParseable

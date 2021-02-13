@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 import random
-from collections import OrderedDict
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import IO, Optional, Iterable, Mapping, Dict, ClassVar, \
-    TypeVar, Type
+from typing import IO, Optional, ClassVar, TypeVar
 
 from pymap.mailbox import MailboxSnapshot
 
@@ -61,7 +60,7 @@ class UidList(FileWriteable):
         self.uid_validity = uid_validity
         self.next_uid = next_uid
         self.global_uid = global_uid or self._create_guid()
-        self._records: Dict[int, Record] = OrderedDict()
+        self._records: dict[int, Record] = {}
 
     @property
     def records(self) -> Iterable[Record]:
@@ -119,7 +118,7 @@ class UidList(FileWriteable):
     @classmethod
     def _read_line(cls, line: str) -> Record:
         before, filename = line.split(':', 1)
-        fields: Dict[str, str] = {}
+        fields: dict[str, str] = {}
         data = before.split(' ')
         num = int(data[0])
         for col in data[1:]:
@@ -128,7 +127,7 @@ class UidList(FileWriteable):
         return Record(num, fields, filename.rstrip())
 
     @classmethod
-    def _read_header(cls: Type[_UDT], base_dir: str, line: str) -> _UDT:
+    def _read_header(cls: type[_UDT], base_dir: str, line: str) -> _UDT:
         data = line.split()
         if data[0] != '3':
             raise ValueError(line)
@@ -168,7 +167,7 @@ class UidList(FileWriteable):
         return self._base_dir
 
     @classmethod
-    def get_default(cls: Type[_UDT], base_dir: str) -> _UDT:
+    def get_default(cls: type[_UDT], base_dir: str) -> _UDT:
         return cls(base_dir, MailboxSnapshot.new_uid_validity(), 1)
 
     def write(self, fp: IO[str]) -> None:
@@ -177,7 +176,7 @@ class UidList(FileWriteable):
             fp.write(self._build_line(rec))
 
     @classmethod
-    def open(cls: Type[_UDT], base_dir: str, fp: IO[str]) -> _UDT:
+    def open(cls: type[_UDT], base_dir: str, fp: IO[str]) -> _UDT:
         header = fp.readline()
         ret = cls._read_header(base_dir, header)
         return ret

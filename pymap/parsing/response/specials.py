@@ -1,14 +1,14 @@
 
 from __future__ import annotations
 
-from collections import OrderedDict
+from collections.abc import Iterable, Mapping
+from contextlib import AbstractAsyncContextManager
 from itertools import chain
-from typing import Optional, ClassVar, Iterable, Mapping, List, Dict, \
-    AsyncContextManager
+from typing import Optional, ClassVar
 
 from . import UntaggedResponse
 from ..modutf7 import modutf7_encode
-from ..primitives import Nil, ListP, QuotedString
+from ..primitives import Nil, List, QuotedString
 from ..specials import Mailbox, FetchAttribute, FetchValue, StatusAttribute
 from ...bytes import MaybeBytes, BytesFormat, WriteStream
 
@@ -33,7 +33,7 @@ class FlagsResponse(UntaggedResponse):
 
     @property
     def text(self) -> bytes:
-        text = BytesFormat(b'FLAGS %b') % ListP(self.flags, sort=True)
+        text = BytesFormat(b'FLAGS %b') % List(self.flags, sort=True)
         return super().text + text
 
 
@@ -103,11 +103,12 @@ class FetchResponse(UntaggedResponse):
     """
 
     def __init__(self, seq: int, data: Iterable[FetchValue], *,
-                 writing_hook: AsyncContextManager[None] = None) -> None:
+                 writing_hook: AbstractAsyncContextManager[None] = None) \
+            -> None:
         super().__init__(writing_hook=writing_hook)
         self.seq = seq
-        self.data: Dict[FetchAttribute, FetchValue] = OrderedDict(
-            (attr.attribute, attr) for attr in data)
+        self.data: dict[FetchAttribute, FetchValue] = {
+            attr.attribute: attr for attr in data}
 
     @property
     def merge_key(self) -> int:
@@ -130,8 +131,7 @@ class FetchResponse(UntaggedResponse):
         """
         if self.seq != other.seq:
             raise ValueError(other)
-        new_data = OrderedDict(self.data)
-        new_data.update(other.data)
+        new_data = self.data | other.data
         writing_hook = other.writing_hook or self.writing_hook
         return FetchResponse(self.seq, new_data.values(),
                              writing_hook=writing_hook)
@@ -142,7 +142,7 @@ class FetchResponse(UntaggedResponse):
 
     def write(self, writer: WriteStream) -> None:
         writer.write(b'%b %b ' % (self.tag, self.text))
-        data_list = ListP(self.data.values())
+        data_list = List(self.data.values())
         data_list.write(writer)
         writer.write(b'\r\n')
 
@@ -189,7 +189,7 @@ class ESearchResponse(UntaggedResponse):
 
     @property
     def text(self) -> bytes:
-        prefixes: List[bytes] = []
+        prefixes: list[bytes] = []
         if self.issuer_tag is not None:
             prefixes += [BytesFormat(b'(TAG "%b")') % self.issuer_tag]
         if self.uid:
@@ -216,7 +216,7 @@ class StatusResponse(UntaggedResponse):
 
     @property
     def text(self) -> bytes:
-        data_list = ListP(chain.from_iterable(self.data.items()))
+        data_list = List(chain.from_iterable(self.data.items()))
         return super().text + BytesFormat(b' ').join(
             [b'STATUS', Mailbox(self.name), data_list])
 
@@ -246,7 +246,7 @@ class ListResponse(UntaggedResponse):
             sep_obj: MaybeBytes = QuotedString(modutf7_encode(self.sep))
         else:
             sep_obj = Nil()
-        attrs_obj = ListP([b'\\' + attr for attr in self.attrs])
+        attrs_obj = List([b'\\' + attr for attr in self.attrs])
         return super().text + BytesFormat(b' ').join(
             (self._name, attrs_obj, sep_obj, Mailbox(self.mailbox)))
 

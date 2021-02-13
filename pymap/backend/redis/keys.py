@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import Union, Mapping, Sequence
-from typing_extensions import Final
+from collections.abc import Sequence, Mapping
+from typing import Union, Final
 
 from pymap.bytes import MaybeBytes, BytesFormat
 

@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from typing_extensions import Final
+from typing import Final
 
 from pymap.config import IMAPConfig
 from pymap.interfaces.filter import FilterSetInterface

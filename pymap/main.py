@@ -8,9 +8,9 @@ import logging
 import logging.config
 import os
 from argparse import ArgumentParser, Namespace, ArgumentTypeError
+from collections.abc import Sequence
 from contextlib import nullcontext
 from string import Template
-from typing import Type, Sequence, List
 
 from . import __version__
 from .backend import backends
@@ -18,7 +18,7 @@ from .interfaces.backend import BackendInterface, ServiceInterface
 from .service import services
 
 try:
-    import systemd.daemon  # type: ignore
+    import systemd.daemon
 except ImportError:
     def notify_ready() -> None:
         pass
@@ -27,13 +27,13 @@ else:
         systemd.daemon.notify('READY=1')
 
 try:
-    from pid import PidFile  # type: ignore
+    from pid import PidFile
 except ImportError:
     def PidFile(*args, **kwargs):
         return nullcontext()
 
 try:
-    import passlib  # type: ignore
+    import passlib
 except ImportError:
     passlib = None
 
@@ -83,8 +83,8 @@ def main() -> None:
             pass
 
 
-async def run(args: Namespace, backend_type: Type[BackendInterface],
-              service_types: Sequence[Type[ServiceInterface]]) -> None:
+async def run(args: Namespace, backend_type: type[BackendInterface],
+              service_types: Sequence[type[ServiceInterface]]) -> None:
     backend, config = await backend_type.init(args)
     config.apply_context()
 
@@ -141,7 +141,7 @@ class _PymapArgumentParser(ArgumentParser):
                          formatter_class=formatter_class,
                          **extra)
 
-    def convert_arg_line_to_args(self, arg_line: str) -> List[str]:
+    def convert_arg_line_to_args(self, arg_line: str) -> list[str]:
         try:
             return [Template(arg_line).substitute(os.environ)]
         except KeyError as exc:

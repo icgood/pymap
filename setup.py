@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 #
 
-from setuptools import setup, find_packages  # type: ignore
+from setuptools import setup, find_packages
 
 with open('README.md') as f:
     readme = f.read()
@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.22.3',
+      version='0.23.0',
       author='Ian Good',
       author_email='ian@icgood.net',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -44,14 +44,13 @@ setup(name='pymap',
           'Intended Audience :: Information Technology',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python',
-          'Programming Language :: Python :: 3.8'],
-      python_requires='~=3.8',
+          'Programming Language :: Python :: 3.9'],
+      python_requires='~=3.9',
       include_package_data=True,
       packages=find_packages(),
       install_requires=[
           'pysasl ~= 0.8.0',
-          'proxy-protocol ~= 0.6.0',
-          'typing-extensions'],
+          'proxy-protocol ~= 0.6.0'],
       extras_require={
           'redis': ['aioredis ~= 1.3.1', 'msgpack ~= 1.0'],
           'admin': ['pymap-admin ~= 0.5.3', 'googleapis-common-protos'],

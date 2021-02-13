@@ -1,9 +1,8 @@
 
 import asyncio
 from argparse import Namespace
-from typing import Dict
 
-import pytest  # type: ignore
+import pytest
 
 from pymap.backend.dict import DictBackend
 from pymap.context import subsystem
@@ -35,7 +34,7 @@ class TestBase:
     def init(cls, request, backend):
         test = request.instance
         test._fd = 1
-        test.matches: Dict[str, bytes] = {}
+        test.matches: dict[str, bytes] = {}
 
     @pytest.fixture
     def imap_server(self, backend):

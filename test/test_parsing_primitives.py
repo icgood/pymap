@@ -4,7 +4,7 @@ import unittest
 from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
-    LiteralString, ListP
+    LiteralString, List
 from pymap.parsing.state import ParsingState, ParsingInterrupt, \
     ExpectContinuation
 
@@ -166,35 +166,35 @@ class TestString(unittest.TestCase):
 class TestList(unittest.TestCase):
 
     def test_parse(self):
-        ret, buf = ListP.parse(
+        ret, buf = List.parse(
             b'  (ONE 2 (NIL) "four" )  ',
-            Params(list_expected=[Nil, Number, Atom, String, ListP]))
-        self.assertIsInstance(ret, ListP)
+            Params(list_expected=[Nil, Number, Atom, String, List]))
+        self.assertIsInstance(ret, List)
         self.assertEqual(4, len(ret.value))
         self.assertEqual(b'  ', buf)
         self.assertIsInstance(ret.value[0], Atom)
         self.assertEqual(b'ONE', ret.value[0].value)
         self.assertIsInstance(ret.value[1], Number)
         self.assertEqual(2, ret.value[1].value)
-        self.assertIsInstance(ret.value[2], ListP)
+        self.assertIsInstance(ret.value[2], List)
         self.assertIsNone(ret.value[2].value[0].value)
         self.assertIsInstance(ret.value[3], QuotedString)
         self.assertEqual(b'four', ret.value[3].value)
 
     def test_parse_empty(self):
-        ret, buf = ListP.parse(br'  ()  ', Params())
-        self.assertIsInstance(ret, ListP)
+        ret, buf = List.parse(br'  ()  ', Params())
+        self.assertIsInstance(ret, List)
         self.assertEqual([], ret.value)
         self.assertEqual(b'  ', buf)
 
     def test_parse_failure(self):
         with self.assertRaises(NotParseable):
-            ListP.parse(b'{}', Params())
+            List.parse(b'{}', Params())
         with self.assertRaises(NotParseable):
-            ListP.parse(b'("one"TWO)', Params(list_expected=[Atom, String]))
+            List.parse(b'("one"TWO)', Params(list_expected=[Atom, String]))
         with self.assertRaises(NotParseable):
-            ListP.parse(b'(123 abc 456)', Params(list_expected=[Number]))
+            List.parse(b'(123 abc 456)', Params(list_expected=[Number]))
 
     def test_bytes(self):
-        ret = ListP([QuotedString(b'abc'), Number(123), ListP([Nil()])])
+        ret = List([QuotedString(b'abc'), Number(123), List([Nil()])])
         self.assertEqual(b'("abc" 123 (NIL))', bytes(ret))

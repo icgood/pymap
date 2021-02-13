@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import re
 from abc import ABCMeta
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import Any, Optional, Tuple, Iterable, Mapping, FrozenSet, \
-    Sequence, Collection
-from typing_extensions import Final
+from typing import Any, Optional, Final
 
 from .bytes import Writeable
 from .flags import SessionFlags
@@ -70,15 +69,15 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
         return self._thread_id
 
     @property
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         return self._permanent_flags
 
     @permanent_flags.setter
-    def permanent_flags(self, permanent_flags: FrozenSet[Flag]) -> None:
+    def permanent_flags(self, permanent_flags: frozenset[Flag]) -> None:
         self._permanent_flags = permanent_flags
         self._flags_key = (self.uid, permanent_flags)
 
-    def get_flags(self, session_flags: SessionFlags) -> FrozenSet[Flag]:
+    def get_flags(self, session_flags: SessionFlags) -> frozenset[Flag]:
         msg_sflags = session_flags.get(self.uid)
         if msg_sflags:
             return self._permanent_flags | msg_sflags
@@ -209,7 +208,7 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
         return msg.body
 
     @classmethod
-    def _get_size_with_lines(cls, msg: MessageContent) -> Tuple[int, int]:
+    def _get_size_with_lines(cls, msg: MessageContent) -> tuple[int, int]:
         return len(msg), msg.lines
 
     def get_size(self, section: Sequence[int] = None) -> int:

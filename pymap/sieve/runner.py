@@ -1,11 +1,12 @@
 
 from __future__ import annotations
 
-from typing import Optional, Sequence, List
+from collections.abc import Sequence
+from typing import Optional
 
 from pymap.mime import MessageContent
 from pymap.parsing.message import AppendMessage
-from sievelib.commands import Command  # type: ignore
+from sievelib.commands import Command
 
 from .tests import SieveTest
 
@@ -24,7 +25,7 @@ class SieveRunner:
 
     def get_actions(self, sender: str, recipient: str,
                     append_msg: AppendMessage) -> Sequence[Command]:
-        actions: List[Command] = []
+        actions: list[Command] = []
         try:
             content = MessageContent.parse(append_msg.literal)
             self._get_actions(actions, sender, recipient, append_msg, content)
@@ -32,7 +33,7 @@ class SieveRunner:
             pass
         return actions
 
-    def _get_actions(self, actions: List[Command], sender: str, recipient: str,
+    def _get_actions(self, actions: list[Command], sender: str, recipient: str,
                      append_msg: AppendMessage, content: MessageContent) \
             -> None:
         running_if: Optional[Command] = None

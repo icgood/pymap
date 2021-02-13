@@ -1,8 +1,6 @@
 
 from __future__ import annotations
 
-from typing import Tuple
-
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable, InvalidContent
 from ..primitives import Atom
@@ -36,7 +34,7 @@ class StatusAttribute(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[StatusAttribute, memoryview]:
+            -> tuple[StatusAttribute, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

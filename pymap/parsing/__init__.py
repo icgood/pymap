@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import Any, Type, TypeVar, Generic, Tuple, Sequence, Dict, List
+from collections.abc import Sequence
+from typing import Any, TypeVar, Generic
 
 from .exceptions import NotParseable, UnexpectedType
 from .state import ParsingState
@@ -40,8 +41,8 @@ class Params:
                  'charset', 'tag', 'max_append_len', 'allow_continuations']
 
     def __init__(self, state: ParsingState = None, *,
-                 expected: Sequence[Type[Parseable]] = None,
-                 list_expected: Sequence[Type[Parseable]] = None,
+                 expected: Sequence[type[Parseable]] = None,
+                 list_expected: Sequence[type[Parseable]] = None,
                  command_name: bytes = None,
                  uid: bool = False,
                  charset: str = None,
@@ -59,15 +60,15 @@ class Params:
         self.max_append_len = max_append_len
         self.allow_continuations = allow_continuations
 
-    def _set_if_none(self, kwargs: Dict[str, Any], attr: str, value) -> None:
+    def _set_if_none(self, kwargs: dict[str, Any], attr: str, value) -> None:
         if value is not None:
             kwargs[attr] = value
         else:
             kwargs[attr] = getattr(self, attr)
 
     def copy(self, state: ParsingState = None, *,
-             expected: Sequence[Type[Parseable]] = None,
-             list_expected: Sequence[Type[Parseable]] = None,
+             expected: Sequence[type[Parseable]] = None,
+             list_expected: Sequence[type[Parseable]] = None,
              command_name: bytes = None,
              uid: bool = None,
              charset: str = None,
@@ -75,7 +76,7 @@ class Params:
              max_append_len: int = None,
              allow_continuations: bool = None) -> Params:
         """Copy the parameters, possibly replacing a subset."""
-        kwargs: Dict[str, Any] = {}
+        kwargs: dict[str, Any] = {}
         self._set_if_none(kwargs, 'state', state)
         self._set_if_none(kwargs, 'expected', expected)
         self._set_if_none(kwargs, 'list_expected', list_expected)
@@ -101,7 +102,7 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
     _atom_pattern = rev.compile(
         br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5E-\x7A\x7C\x7E]+')
 
-    __slots__: List[str] = []
+    __slots__: list[str] = []
 
     @property
     @abstractmethod
@@ -124,7 +125,7 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
     @classmethod
     @abstractmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Parseable, memoryview]:
+            -> tuple[Parseable, memoryview]:
         """Implemented by sub-classes to define how to parse the given buffer.
 
         Args:
@@ -154,7 +155,7 @@ class ExpectedParseable(Parseable[None]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Parseable, memoryview]:
+            -> tuple[Parseable, memoryview]:
         """Parses the given buffer by attempting to parse the list of
         :attr:`~Params.expected` types until one of them succeeds,
         then returns the parsed object.
@@ -193,7 +194,7 @@ class Space(Parseable[int]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Space, memoryview]:
+            -> tuple[Space, memoryview]:
         ret = cls._whitespace_length(buf)
         if not ret:
             raise NotParseable(buf)
@@ -234,7 +235,7 @@ class EndLine(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[EndLine, memoryview]:
+            -> tuple[EndLine, memoryview]:
         match = cls._pattern.match(buf)
         if not match:
             raise NotParseable(buf)

@@ -1,9 +1,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator, Sequence
 from itertools import chain
-from typing import Iterable, Iterator, Tuple, Union, Sequence, Optional, \
-    List, FrozenSet
+from typing import Union, Optional
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
@@ -12,7 +12,7 @@ from ...bytes import rev
 __all__ = ['MaxValue', 'SequenceSet']
 
 _SeqIdx = Union['MaxValue', int]
-_SeqElem = Union[_SeqIdx, Tuple[_SeqIdx, _SeqIdx]]
+_SeqElem = Union[_SeqIdx, tuple[_SeqIdx, _SeqIdx]]
 
 
 class MaxValue:
@@ -95,7 +95,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
             else:
                 return ()
 
-    def flatten(self, max_value: int) -> FrozenSet[int]:
+    def flatten(self, max_value: int) -> frozenset[int]:
         """Return a set of all values contained in the sequence set.
 
         Args:
@@ -149,7 +149,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         return '<SequenceSet %s=%r>' % (attr, self.sequences)
 
     @classmethod
-    def _parse_part(cls, buf: memoryview) -> Tuple[_SeqElem, memoryview]:
+    def _parse_part(cls, buf: memoryview) -> tuple[_SeqElem, memoryview]:
         if buf and buf[0] == 0x2a:
             item1: _SeqIdx = cls._max
             buf = buf[1:]
@@ -182,8 +182,8 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
         """
         seqs_list = sorted(set(seqs))
-        groups: List[Union[int, Tuple[int, int]]] = []
-        group: Union[int, Tuple[int, int]] = seqs_list[0]
+        groups: list[Union[int, tuple[int, int]]] = []
+        group: Union[int, tuple[int, int]] = seqs_list[0]
         for i in range(1, len(seqs_list)):
             group_i = seqs_list[i]
             if isinstance(group, int):
@@ -203,7 +203,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[SequenceSet, memoryview]:
+            -> tuple[SequenceSet, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:

@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import re
-from collections import OrderedDict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Optional, Pattern, Tuple, Dict, Iterable, Sequence, List
+from re import Pattern
+from typing import Optional
 
 __all__ = ['ListEntry', 'ListTree']
 
@@ -37,7 +38,7 @@ class ListEntry:
             `RFC 3348 <https://tools.ietf.org/html/rfc3348>`_
 
         """
-        ret: List[bytes] = []
+        ret: list[bytes] = []
         if not self.exists:
             ret.append(b'Noselect')
         if self.has_children:
@@ -60,7 +61,7 @@ class _TreeNode:
         self.parent = parent
         self.name = name
         self.exists = False
-        self.children: Dict[str, _TreeNode] = OrderedDict()
+        self.children: dict[str, _TreeNode] = {}
 
     def add(self, node_name: str, *extra: str) -> None:
         child = self.children.get(node_name)
@@ -91,7 +92,7 @@ class ListTree:
         self._delimiter = delimiter
         self._no_delimiter = '[^' + re.escape(delimiter) + ']*?'
         self._root = _TreeNode('')
-        self._marked: Dict[str, bool] = {}
+        self._marked: dict[str, bool] = {}
 
     def update(self, *names: str) -> ListTree:
         """Add all the mailbox names to the tree, filling in any missing nodes.
@@ -159,7 +160,7 @@ class ListTree:
             return ListEntry(name, node.exists, marked, bool(node.children))
 
     def get_renames(self, from_name: str, to_name: str) \
-            -> Sequence[Tuple[str, str]]:
+            -> Sequence[tuple[str, str]]:
         """Return a list of tuples for all mailboxes that must be renamed, for
         the given rename operation. This should include
         ``(from_name, to_name)`` as well as all inferior names in the heirarchy
@@ -191,8 +192,8 @@ class ListTree:
         for entry in self._iter(self._root, ''):
             yield entry
 
-    def _get_pattern(self, query: str) -> Tuple[Pattern, Pattern]:
-        pattern_parts: List[str] = []
+    def _get_pattern(self, query: str) -> tuple[Pattern, Pattern]:
+        pattern_parts: list[str] = []
         for part in self._wildcards.split(query):
             if part == '*':
                 pattern_parts.append('.*?')

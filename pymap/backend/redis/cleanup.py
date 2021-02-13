@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Awaitable, Callable
 from contextlib import AsyncExitStack
-from typing import ClassVar, Callable, Awaitable, NoReturn
+from typing import ClassVar, NoReturn
 
 from aioredis import Redis, ConnectionClosedError
 from pymap.context import connection_exit

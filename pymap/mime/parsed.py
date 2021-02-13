@@ -1,12 +1,12 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from email.headerregistry import HeaderRegistry, BaseHeader, \
     UnstructuredHeader, DateHeader, AddressHeader, SingleAddressHeader, \
     ContentDispositionHeader, ContentTransferEncodingHeader, ContentTypeHeader
 from email.policy import SMTP
-from typing import cast, Any, Optional, ClassVar, Iterable, Iterator, \
-    Sequence, Mapping, Dict
+from typing import cast, Any, Optional, ClassVar
 
 __all__ = ['ParsedHeaders']
 
@@ -27,7 +27,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
     def __init__(self, headers: _Headers) -> None:
         super().__init__()
         self._headers = headers
-        self._parsed: Dict[bytes, Sequence[BaseHeader]] = {}
+        self._parsed: dict[bytes, Sequence[BaseHeader]] = {}
 
     def __getitem__(self, name: bytes) -> Sequence[BaseHeader]:
         name_lower = name.lower()

@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import enum
-from typing import Union, Optional, Sequence
+from collections.abc import Sequence
+from typing import Union, Optional
 
 __all__ = ['AddressPart', 'MatchType', 'SizeComparator', 'str_list', 'unquote']
 

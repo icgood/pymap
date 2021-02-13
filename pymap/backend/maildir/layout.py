@@ -5,9 +5,9 @@ import errno
 import os
 import os.path
 from abc import abstractmethod, ABCMeta
+from collections.abc import Iterable, Sequence
 from mailbox import Maildir, NoSuchMailboxError
-from typing import TypeVar, Type, Sequence, Iterable
-from typing_extensions import Protocol
+from typing import TypeVar, Protocol
 
 __all__ = ['MaildirLayout', 'DefaultLayout', 'FilesystemLayout']
 
@@ -26,7 +26,7 @@ class MaildirLayout(Protocol[_MaildirT]):
 
     @classmethod
     def get(cls, path: str, layout: str,
-            maildir_type: Type[_MaildirT]) -> MaildirLayout[_MaildirT]:
+            maildir_type: type[_MaildirT]) -> MaildirLayout[_MaildirT]:
         """
 
         Args:
@@ -142,7 +142,7 @@ class MaildirLayout(Protocol[_MaildirT]):
 
 class _BaseLayout(MaildirLayout[_MaildirT], metaclass=ABCMeta):
 
-    def __init__(self, path: str, maildir_type: Type[_MaildirT]) -> None:
+    def __init__(self, path: str, maildir_type: type[_MaildirT]) -> None:
         super().__init__()
         self._path = path
         self._maildir = maildir_type

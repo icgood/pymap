@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import TypeVar, Generic, Optional, Sequence
-from typing_extensions import Final
+from collections.abc import Sequence
+from typing import TypeVar, Generic, Final, Optional
 
 __all__ = ['ParsingExpectedT', 'ParsingState', 'ParsingInterrupt',
            'ParsingExpectation']

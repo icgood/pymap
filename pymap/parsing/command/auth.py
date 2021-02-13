@@ -2,15 +2,15 @@
 from __future__ import annotations
 
 from abc import ABCMeta
-from typing import ClassVar, Optional, Tuple, Sequence, Iterable, List, \
-    FrozenSet
+from collections.abc import Iterable, Sequence
+from typing import ClassVar, Optional
 
 from . import CommandAuth
 from .. import Space, EndLine, Params
 from ..exceptions import NotParseable, UnexpectedType, InvalidContent
 from ..message import AppendMessage
 from ..modutf7 import modutf7_decode
-from ..primitives import ListP, String, LiteralString
+from ..primitives import List, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
 from ...bytes import rev
@@ -32,7 +32,7 @@ class CommandMailboxArg(CommandAuth, metaclass=ABCMeta):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[CommandMailboxArg, memoryview]:
+            -> tuple[CommandMailboxArg, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = EndLine.parse(buf, params)
@@ -72,15 +72,15 @@ class AppendCommand(CommandAuth):
 
     @classmethod
     def _parse_msg(cls, name: str, buf: memoryview, params: Params) \
-            -> Tuple[Optional[AppendMessage], memoryview]:
+            -> tuple[Optional[AppendMessage], memoryview]:
         _, buf = Space.parse(buf, params)
         try:
             params_copy = params.copy(list_expected=[Flag])
-            flag_list, buf = ListP.parse(buf, params_copy)
+            flag_list, buf = List.parse(buf, params_copy)
         except UnexpectedType:
             raise
         except NotParseable:
-            flags: FrozenSet[Flag] = frozenset()
+            flags: frozenset[Flag] = frozenset()
         else:
             flags = frozenset(flag_list.get_as(Flag))
             _, buf = Space.parse(buf, params)
@@ -93,7 +93,7 @@ class AppendCommand(CommandAuth):
         else:
             date_time = date_time_p.value
             _, buf = Space.parse(buf, params)
-        options_list: List[ExtensionOption] = []
+        options_list: list[ExtensionOption] = []
         while True:
             try:
                 option, buf = ExtensionOption.parse(buf, params)
@@ -118,10 +118,10 @@ class AppendCommand(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[AppendCommand, memoryview]:
+            -> tuple[AppendCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
-        messages: List[AppendMessage] = []
+        messages: list[AppendMessage] = []
         error: Optional[Exception] = None
         cancelled = False
         while True:
@@ -152,7 +152,7 @@ class CreateCommand(CommandMailboxArg):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[CreateCommand, memoryview]:
+            -> tuple[CreateCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -191,7 +191,7 @@ class ListCommand(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ListCommand, memoryview]:
+            -> tuple[ListCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         ref_name, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -246,7 +246,7 @@ class RenameCommand(CommandAuth):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[RenameCommand, memoryview]:
+            -> tuple[RenameCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         from_mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
@@ -275,7 +275,7 @@ class SelectCommand(CommandMailboxArg):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[SelectCommand, memoryview]:
+            -> tuple[SelectCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         options, buf = ExtensionOptions.parse(buf, params)
@@ -316,12 +316,12 @@ class StatusCommand(CommandMailboxArg):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[StatusCommand, memoryview]:
+            -> tuple[StatusCommand, memoryview]:
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
         params_copy = params.copy(list_expected=[StatusAttribute])
-        status_list_p, after = ListP.parse(buf, params_copy)
+        status_list_p, after = List.parse(buf, params_copy)
         if not status_list_p.value:
             raise NotParseable(buf)
         _, buf = EndLine.parse(after, params)

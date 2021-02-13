@@ -6,12 +6,10 @@ import socket
 import ssl
 from abc import abstractmethod, ABCMeta
 from argparse import Namespace
-from collections import OrderedDict
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from ssl import SSLContext
-from typing import Any, TypeVar, Type, Union, Optional, Iterable, Iterator, \
-    Sequence, Mapping, Dict
-from typing_extensions import Final
+from typing import Any, Final, TypeVar, Union, Optional
 
 from proxyprotocol import ProxyProtocol
 from proxyprotocol.version import ProxyProtocolVersion
@@ -52,7 +50,7 @@ class BackendCapability(Iterable[bytes]):
                  multi_append: bool,
                  custom: Sequence[bytes] = None) -> None:
         super().__init__()
-        capability: Dict[bytes, bool] = OrderedDict()
+        capability: dict[bytes, bool] = {}
         if idle:
             capability[b'IDLE'] = True
         if object_id:
@@ -167,7 +165,7 @@ class IMAPConfig(metaclass=ABCMeta):
         return {}
 
     @classmethod
-    def from_args(cls: Type[ConfigT], args: Namespace,
+    def from_args(cls: type[ConfigT], args: Namespace,
                   **overrides: Any) -> ConfigT:
         """Build and return a new :class:`IMAPConfig` using command-line
         arguments.

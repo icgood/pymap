@@ -1,9 +1,8 @@
 
 from __future__ import annotations
 
-from typing import TypeVar, Generic, Optional, Callable, Iterable, Iterator, \
-    Tuple, Mapping, Dict
-from typing_extensions import Final
+from collections.abc import Callable, Iterable, Iterator, Mapping
+from typing import TypeVar, Generic, Optional, Final
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
@@ -13,11 +12,11 @@ __all__ = ['PluginT', 'Plugin']
 PluginT = TypeVar('PluginT')
 
 
-class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
+class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
     """Plugin system, typically loaded from :mod:`pkg_resources` `entry points
     <https://packaging.python.org/guides/creating-and-discovering-plugins/#using-package-metadata>`_.
 
-    >>> example: Plugin[Type[Example]] = Plugin('plugins.example')
+    >>> example: Plugin[type[Example]] = Plugin('plugins.example')
     >>> example.add('two', ExampleTwo)
     >>> example.registered
     {'one': ExampleOne, 'two': ExampleTwo}
@@ -34,10 +33,10 @@ class Plugin(Generic[PluginT], Iterable[Tuple[str, PluginT]]):
     def __init__(self, group: str) -> None:
         super().__init__()
         self.group: Final = group
-        self._loaded: Optional[Dict[str, PluginT]] = None
-        self._added: Dict[str, PluginT] = {}
+        self._loaded: Optional[dict[str, PluginT]] = None
+        self._added: dict[str, PluginT] = {}
 
-    def __iter__(self) -> Iterator[Tuple[str, PluginT]]:
+    def __iter__(self) -> Iterator[tuple[str, PluginT]]:
         return iter(self.registered.items())
 
     @property

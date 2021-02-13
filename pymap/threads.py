@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import re
-from typing import Optional, Sequence, List, Match, Pattern, Iterable, Iterator
-from typing_extensions import Final
+from collections.abc import Iterable, Iterator, Sequence
+from re import Match, Pattern
+from typing import Final, Optional
 
 from .mime import MessageHeader
 
@@ -79,7 +80,7 @@ class ThreadKey(Iterable[str]):
             header: The message header.
 
         """
-        ret: List[ThreadKey] = []
+        ret: list[ThreadKey] = []
         message_id = header.parsed.message_id
         in_reply_to = header.parsed.in_reply_to
         references = header.parsed.references

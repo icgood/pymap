@@ -4,11 +4,10 @@ from __future__ import annotations
 import errno
 import os
 import os.path
+from collections.abc import Iterable, AsyncIterable
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage
-from typing import Dict, Optional, Union, Tuple, FrozenSet, Iterable, \
-    AsyncIterable
-from typing_extensions import Final, Literal
+from typing import Optional, Union, Final, Literal
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.context import subsystem
@@ -49,7 +48,7 @@ class Maildir(_Maildir):
         return os.path.join(base_path, subpath)
 
     def _split(self, subpath: str) \
-            -> Tuple[Union[Literal['new'], Literal['cur']], str]:
+            -> tuple[Union[Literal['new'], Literal['cur']], str]:
         subdir, name = os.path.split(subpath)
         if subdir == 'new':
             return 'new', name
@@ -226,7 +225,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return flags
 
     @property
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         return self.maildir_flags.permanent_flags
 
     @property
@@ -238,7 +237,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._selected_set
 
     async def _get_maildir_msg(self, uid: int) \
-            -> Tuple[Record, MaildirMessage]:
+            -> tuple[Record, MaildirMessage]:
         async with UidList.with_read(self._path) as uidl:
             record = uidl.get(uid)
         maildir = self._maildir
@@ -331,7 +330,7 @@ class MailboxData(MailboxDataInterface[Message]):
             self.maildir_flags)
 
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: FrozenSet[Flag], mode: FlagOp) -> Message:
+                     flag_set: frozenset[Flag], mode: FlagOp) -> Message:
         maildir = self._maildir
         try:
             record, maildir_msg = await self._get_maildir_msg(uid)
@@ -443,8 +442,8 @@ class MailboxData(MailboxDataInterface[Message]):
                                self.session_flags, exists, recent, unseen,
                                first_unseen, next_uid)
 
-    async def _get_keys(self) -> Dict[str, str]:
-        keys: Dict[str, str] = {}
+    async def _get_keys(self) -> dict[str, str]:
+        keys: dict[str, str] = {}
         async with self.messages_lock.read_lock():
             for key in self._maildir.keys():
                 try:
@@ -463,7 +462,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         self._layout = layout
         self._inbox_maildir = maildir
         self._path = layout.path
-        self._cache: Dict[str, MailboxData] = {}
+        self._cache: dict[str, MailboxData] = {}
 
     @property
     def delimiter(self) -> str:

@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from argparse import Namespace, ArgumentParser
-from typing import Any, Tuple, Sequence, Awaitable
-from typing_extensions import Protocol
+from collections.abc import Awaitable, Sequence
+from typing import Any, Protocol
 
 from .login import LoginInterface
 from ..config import IMAPConfig
@@ -44,7 +44,7 @@ class BackendInterface(Protocol):
     @classmethod
     @abstractmethod
     async def init(cls, args: Namespace, **overrides: Any) \
-            -> Tuple[BackendInterface, IMAPConfig]:
+            -> tuple[BackendInterface, IMAPConfig]:
         """Initialize the backend and return an instance.
 
         Args:

@@ -1,7 +1,8 @@
 
 from __future__ import annotations
 
-from typing import Optional, Type, Tuple, Dict, List, Collection
+from collections.abc import Collection
+from typing import Optional
 
 from . import Space, Params
 from .command import Command
@@ -22,7 +23,7 @@ __all__ = ['builtin_commands', 'InvalidCommand', 'Commands']
 
 #: List of built-in commands. These commands are automatically registered by a
 #: new :class:`Commands` object.
-builtin_commands: Collection[Type[Command]] = [
+builtin_commands: Collection[type[Command]] = [
     CapabilityCommand, LogoutCommand, NoOpCommand, AppendCommand,
     CreateCommand, DeleteCommand, ExamineCommand, ListCommand, LSubCommand,
     RenameCommand, SelectCommand, StatusCommand, SubscribeCommand,
@@ -50,7 +51,7 @@ class InvalidCommand(Command):
 
     def __init__(self, params: Params, parse_exc: Optional[NotParseable],
                  command: Optional[bytes] = None,
-                 command_type: Optional[Type[Command]] = None) -> None:
+                 command_type: Optional[type[Command]] = None) -> None:
         super().__init__(params.tag)
         self._parse_exc = parse_exc
         self._command = command
@@ -76,7 +77,7 @@ class InvalidCommand(Command):
         return self._command
 
     @property
-    def command_type(self) -> Optional[Type[Command]]:
+    def command_type(self) -> Optional[type[Command]]:
         """The command type, if parsing failed due to invalid arguments."""
         return self._command_type
 
@@ -87,7 +88,7 @@ class InvalidCommand(Command):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[InvalidCommand, memoryview]:
+            -> tuple[InvalidCommand, memoryview]:
         raise RuntimeError('Do not call')
 
 
@@ -98,14 +99,14 @@ class Commands:
 
     def __init__(self) -> None:
         super().__init__()
-        self.commands: Dict[bytes, Type[Command]] = {}
+        self.commands: dict[bytes, type[Command]] = {}
         self._load_commands()
 
     def _load_commands(self):
         for cmd in builtin_commands:
             self.register(cmd)
 
-    def register(self, cmd: Type[Command]) -> None:
+    def register(self, cmd: type[Command]) -> None:
         """Register a new IMAP command.
 
         Args:
@@ -125,7 +126,7 @@ class Commands:
         self.commands.pop(name.upper(), None)
 
     def parse(self, buf: memoryview, params: Params) \
-            -> Tuple[Command, memoryview]:
+            -> tuple[Command, memoryview]:
         """Parse the given bytes into a command. The basic syntax is a tag
         string, a command name, possibly some arguments, and then an endline.
         If the command has a complete structure but cannot be parsed, an
@@ -142,7 +143,7 @@ class Commands:
             return InvalidCommand(params, exc), buf[0:0]
         else:
             params = params.copy(tag=tag.value)
-        cmd_parts: List[bytes] = []
+        cmd_parts: list[bytes] = []
         while True:
             try:
                 _, buf = Space.parse(buf, params)

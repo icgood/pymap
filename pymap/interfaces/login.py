@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from contextlib import AbstractAsyncContextManager
 from datetime import datetime
-from typing import Optional, AsyncContextManager
-from typing_extensions import Protocol
+from typing import Optional, Protocol
 
 from pysasl import AuthenticationCredentials
 
@@ -49,7 +49,7 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    def new_session(self) -> AsyncContextManager[SessionInterface]:
+    def new_session(self) -> AbstractAsyncContextManager[SessionInterface]:
         """Authenticate and authorize the credentials, returning a new IMAP
         session.
 

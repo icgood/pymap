@@ -1,8 +1,8 @@
 
 from __future__ import annotations
 
-from typing import IO, TypeVar, Type, Iterable, Union, Mapping, FrozenSet, \
-    Sequence
+from collections.abc import Iterable, Mapping, Sequence
+from typing import IO, TypeVar, Union
 
 from pymap.parsing.specials.flag import Flag, Seen, Flagged, Deleted, Draft, \
     Answered
@@ -57,17 +57,17 @@ class MaildirFlags(FileReadable):
                           for i, kwd in enumerate(keywords)}
 
     @property
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         """Return the set of all permanent flags, system and keyword."""
         return self.system_flags | self.keywords
 
     @property
-    def system_flags(self) -> FrozenSet[Flag]:
+    def system_flags(self) -> frozenset[Flag]:
         """Return the set of defined IMAP system flags."""
         return frozenset(self._from_sys.keys())
 
     @property
-    def keywords(self) -> FrozenSet[Flag]:
+    def keywords(self) -> frozenset[Flag]:
         """Return the set of available IMAP keywords."""
         return self._keywords
 
@@ -92,7 +92,7 @@ class MaildirFlags(FileReadable):
                     codes.append(from_kwd)
         return ''.join(codes)
 
-    def from_maildir(self, codes: str) -> FrozenSet[Flag]:
+    def from_maildir(self, codes: str) -> frozenset[Flag]:
         """Return the set of IMAP flags that correspond to the letter codes.
 
         Args:
@@ -117,11 +117,11 @@ class MaildirFlags(FileReadable):
         return 'dovecot-keywords'
 
     @classmethod
-    def get_default(cls: Type[_MFT], base_dir: str) -> _MFT:
+    def get_default(cls: type[_MFT], base_dir: str) -> _MFT:
         return cls([])
 
     @classmethod
-    def open(cls: Type[_MFT], base_dir: str, fp: IO[str]) -> _MFT:
+    def open(cls: type[_MFT], base_dir: str, fp: IO[str]) -> _MFT:
         ret = []
         for line in fp:
             i, kwd = line.split()

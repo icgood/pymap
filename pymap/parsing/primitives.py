@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import re
 from abc import abstractmethod, ABCMeta
-from collections.abc import Sequence as SequenceABC
+from collections.abc import Iterable, Iterator, Sequence
 from functools import total_ordering
-from typing import cast, Type, Tuple, List, Union, Iterable, Sequence, Match, \
-    Optional, Iterator, SupportsBytes
+from re import Match
+from typing import cast, Union, Optional, SupportsBytes
 
 from . import Parseable, ExpectedParseable, Params
 from .exceptions import NotParseable
@@ -15,7 +15,7 @@ from .state import ExpectContinuation
 from ..bytes import rev, MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
     Writeable
 
-__all__ = ['Nil', 'Number', 'Atom', 'ListP', 'String',
+__all__ = ['Nil', 'Number', 'Atom', 'List', 'String',
            'QuotedString', 'LiteralString']
 
 
@@ -24,7 +24,7 @@ class Nil(Parseable[None]):
 
     _nil_pattern = rev.compile(b'^NIL$', re.I)
 
-    __slots__: List[str] = []
+    __slots__: list[str] = []
 
     def __init__(self) -> None:
         super().__init__()
@@ -47,7 +47,7 @@ class Nil(Parseable[None]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Nil, memoryview]:
+            -> tuple[Nil, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -83,7 +83,7 @@ class Number(Parseable[int]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Number, memoryview]:
+            -> tuple[Number, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -135,7 +135,7 @@ class Atom(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Atom, memoryview]:
+            -> tuple[Atom, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._atom_pattern.match(buf, start)
         if not match:
@@ -163,7 +163,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
 
     _MAX_LEN = 4096
 
-    __slots__: List[str] = []
+    __slots__: list[str] = []
 
     @property
     @abstractmethod
@@ -179,7 +179,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[String, memoryview]:
+            -> tuple[String, memoryview]:
         try:
             return QuotedString.parse(buf, params)
         except NotParseable:
@@ -274,7 +274,7 @@ class QuotedString(String):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[QuotedString, memoryview]:
+            -> tuple[QuotedString, memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'"':
             raise NotParseable(buf)
@@ -360,7 +360,7 @@ class LiteralString(String):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[LiteralString, memoryview]:
+            -> tuple[LiteralString, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._literal_pattern.match(buf, start)
         if not match:
@@ -400,7 +400,7 @@ class LiteralString(String):
         return self._raw
 
 
-class ListP(Parseable[Sequence[MaybeBytes]]):
+class List(Parseable[Sequence[MaybeBytes]]):
     """Represents a list of :class:`Parseable` objects from an IMAP stream.
 
     Args:
@@ -427,7 +427,7 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
         """The list of parsed objects."""
         return self.items
 
-    def get_as(self, cls: Type[MaybeBytesT]) -> Sequence[MaybeBytesT]:
+    def get_as(self, cls: type[MaybeBytesT]) -> Sequence[MaybeBytesT]:
         """Return the list of parsed objects."""
         _ = cls  # noqa
         return cast(Sequence[MaybeBytesT], self.items)
@@ -440,11 +440,11 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ListP, memoryview]:
+            -> tuple[List, memoryview]:
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)
-        items: List[Parseable] = []
+        items: list[Parseable] = []
         buf = buf[start + 1:]
         while True:
             match = cls._end_pattern.match(buf)
@@ -475,12 +475,12 @@ class ListP(Parseable[Sequence[MaybeBytes]]):
         return b'(%b)' % raw_items
 
     def __hash__(self) -> int:
-        return hash((ListP, self.value))
+        return hash((List, self.value))
 
     def __eq__(self, other) -> bool:
-        if isinstance(other, ListP):
+        if isinstance(other, List):
             return self.__eq__(other.value)
-        elif isinstance(other, SequenceABC):
+        elif isinstance(other, Sequence):
             if len(self.value) != len(other):
                 return False
             for i, val in enumerate(self.value):

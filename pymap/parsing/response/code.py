@@ -1,10 +1,11 @@
 
 from __future__ import annotations
 
-from typing import Iterable, Optional, Sequence, Tuple
+from collections.abc import Iterable, Sequence
+from typing import Optional
 
 from . import ResponseCode
-from ..primitives import ListP
+from ..primitives import List
 from ..specials import SequenceSet, ObjectId
 from ...bytes import MaybeBytes, BytesFormat
 
@@ -53,7 +54,7 @@ class PermanentFlags(ResponseCode):
         super().__init__()
         self.flags: Sequence[MaybeBytes] = list(flags)
         self._raw = BytesFormat(b'[PERMANENTFLAGS %b]') \
-            % ListP(self.flags, sort=True)
+            % List(self.flags, sort=True)
 
     def __bytes__(self) -> bytes:
         return self._raw
@@ -146,7 +147,7 @@ class CopyUid(ResponseCode):
 
     """
 
-    def __init__(self, validity: int, uids: Iterable[Tuple[int, int]]) -> None:
+    def __init__(self, validity: int, uids: Iterable[tuple[int, int]]) -> None:
         super().__init__()
         source_uids, dest_uids = zip(*uids)
         source_uid_set = SequenceSet.build(source_uids)

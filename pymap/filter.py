@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Type, Optional, Tuple, Sequence
+from collections.abc import Sequence
+from typing import Optional
 
 from .interfaces.filter import FilterValueT, FilterCompilerInterface, \
     FilterSetInterface
@@ -11,7 +12,7 @@ from .plugin import Plugin
 __all__ = ['filters', 'PluginFilterSet', 'SingleFilterSet']
 
 #: Registers filter compiler plugins.
-filters: Plugin[Type[FilterCompilerInterface]] = Plugin('pymap.filter')
+filters: Plugin[type[FilterCompilerInterface]] = Plugin('pymap.filter')
 
 
 class PluginFilterSet(FilterSetInterface[FilterValueT]):
@@ -26,7 +27,7 @@ class PluginFilterSet(FilterSetInterface[FilterValueT]):
     """
 
     def __init__(self, plugin_name: str,
-                 value_type: Type[FilterValueT]) -> None:
+                 value_type: type[FilterValueT]) -> None:
         super().__init__()
         self._plugin_name = plugin_name
         self._value_type = value_type
@@ -86,7 +87,7 @@ class SingleFilterSet(FilterSetInterface[FilterValueT]):
         else:
             raise KeyError(name)
 
-    async def get_all(self) -> Tuple[Optional[str], Sequence[str]]:
+    async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
         value = await self.get_active()
         if value is None:
             return None, []

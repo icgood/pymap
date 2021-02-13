@@ -1,7 +1,7 @@
 
-from typing import Mapping
+from collections.abc import Mapping
 
-import pytest  # type: ignore
+import pytest
 from grpclib.testing import ChannelFor
 from pymapadmin.grpc.admin_grpc import SystemStub, UserStub
 from pymapadmin.grpc.admin_pb2 import SUCCESS, FAILURE, UserData, \

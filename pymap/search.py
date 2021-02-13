@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import re
 from abc import abstractmethod, ABCMeta
+from collections.abc import Iterable
 from datetime import datetime
-from typing import AnyStr, FrozenSet, Optional, Iterable
-from typing_extensions import Final
+from typing import AnyStr, Optional, Final
 
 from .exceptions import SearchNotAllowed
 from .interfaces.message import MessageInterface, LoadedMessageInterface
@@ -166,7 +166,7 @@ class SearchCriteriaSet(SearchCriteria):
 
     """
 
-    def __init__(self, keys: FrozenSet[SearchKey],
+    def __init__(self, keys: frozenset[SearchKey],
                  params: SearchParams) -> None:
         super().__init__(params)
         self.all_criteria = [SearchCriteria.of(key, params) for key in keys]

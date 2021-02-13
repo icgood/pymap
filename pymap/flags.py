@@ -8,7 +8,7 @@ See Also:
 from __future__ import annotations
 
 import enum
-from typing import Iterable, Mapping, AbstractSet, FrozenSet, Dict, Set
+from collections.abc import Iterable, Mapping, Set
 
 from .parsing.specials.flag import Flag, Recent, Wildcard
 
@@ -32,8 +32,8 @@ class FlagOp(enum.Enum):
     def __bytes__(self) -> bytes:
         return self.name.encode('ascii')
 
-    def apply(self, flag_set: AbstractSet[Flag], operand: AbstractSet[Flag]) \
-            -> FrozenSet[Flag]:
+    def apply(self, flag_set: Set[Flag], operand: Set[Flag]) \
+            -> frozenset[Flag]:
         """Apply the flag operation on the two sets, returning the result.
 
         Args:
@@ -67,11 +67,11 @@ class PermanentFlags:
         self._defined = frozenset(defined) - _recent_set
 
     @property
-    def defined(self) -> FrozenSet[Flag]:
+    def defined(self) -> frozenset[Flag]:
         """The defined permanent flags for the mailbox."""
         return self._defined
 
-    def intersect(self, other: Iterable[Flag]) -> FrozenSet[Flag]:
+    def intersect(self, other: Iterable[Flag]) -> frozenset[Flag]:
         """Returns the subset of flags in ``other`` that are also in
         :attr:`.defined`. If the wildcard flag is defined, then all flags in
         ``other`` are returned.
@@ -91,7 +91,7 @@ class PermanentFlags:
         else:
             return self._defined & frozenset(other)
 
-    def __and__(self, other: Iterable[Flag]) -> FrozenSet[Flag]:
+    def __and__(self, other: Iterable[Flag]) -> frozenset[Flag]:
         return self.intersect(other)
 
 
@@ -110,15 +110,15 @@ class SessionFlags:
     def __init__(self, defined: Iterable[Flag]):
         super().__init__()
         self._defined = frozenset(defined) - _recent_set
-        self._flags: Dict[int, FrozenSet[Flag]] = {}
-        self._recent: Set[int] = set()
+        self._flags: dict[int, frozenset[Flag]] = {}
+        self._recent: set[int] = set()
 
     @property
-    def defined(self) -> FrozenSet[Flag]:
+    def defined(self) -> frozenset[Flag]:
         """The defined session flags for the mailbox."""
         return self._defined
 
-    def intersect(self, other: Iterable[Flag]) -> FrozenSet[Flag]:
+    def intersect(self, other: Iterable[Flag]) -> frozenset[Flag]:
         """Returns the subset of flags in ``other`` that are also in
         :attr:`.defined`. If the wildcard flag is defined, then all flags in
         ``other`` are returned.
@@ -138,10 +138,10 @@ class SessionFlags:
         else:
             return self._defined & frozenset(other)
 
-    def __and__(self, other: Iterable[Flag]) -> FrozenSet[Flag]:
+    def __and__(self, other: Iterable[Flag]) -> frozenset[Flag]:
         return self.intersect(other)
 
-    def get(self, uid: int) -> FrozenSet[Flag]:
+    def get(self, uid: int) -> frozenset[Flag]:
         """Return the session flags for the mailbox session.
 
         Args:
@@ -164,7 +164,7 @@ class SessionFlags:
             self._flags.pop(uid, None)
 
     def update(self, uid: int, flag_set: Iterable[Flag],
-               op: FlagOp = FlagOp.REPLACE) -> FrozenSet[Flag]:
+               op: FlagOp = FlagOp.REPLACE) -> frozenset[Flag]:
         """Update the flags for the session, returning the resulting flags.
 
         Args:
@@ -196,12 +196,12 @@ class SessionFlags:
         return len(self._recent)
 
     @property
-    def recent_uids(self) -> AbstractSet[int]:
+    def recent_uids(self) -> Set[int]:
         """The message UIDs with the ``\\Recent`` flag."""
         return self._recent
 
     @property
-    def flags(self) -> Mapping[int, FrozenSet[Flag]]:
+    def flags(self) -> Mapping[int, frozenset[Flag]]:
         """The mapping of UID to its associated session flags, not including
         ``\\Recent``.
 

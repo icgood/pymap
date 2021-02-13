@@ -3,12 +3,13 @@ from __future__ import annotations
 
 import re
 from abc import abstractmethod, ABCMeta
+from collections.abc import Sequence
 from email.headerregistry import Address, AddressHeader
-from typing import Sequence, List, Pattern
+from re import Pattern
 
 from pymap.mime import MessageContent
 from pymap.parsing.message import AppendMessage
-from sievelib.commands import Command  # type: ignore
+from sievelib.commands import Command
 
 from .util import AddressPart, MatchType, SizeComparator, str_list
 
@@ -146,10 +147,10 @@ class MatchTest(SieveTest):
     def _compile(cls, key_list: Sequence[str], match_type: MatchType,
                  case_sensitive: bool) -> Sequence[Pattern]:
         flags = 0 if case_sensitive else re.I
-        ret: List[Pattern] = []
+        ret: list[Pattern] = []
         for key in key_list:
             if match_type == MatchType.MATCHES:
-                pattern_parts: List[str] = []
+                pattern_parts: list[str] = []
                 for part in cls._wildcards.split(key):
                     if part == '*':
                         pattern_parts.append('.*?')

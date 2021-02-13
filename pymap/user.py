@@ -1,8 +1,8 @@
 
 from __future__ import annotations
 
-from typing import Optional, Mapping
-from typing_extensions import Final
+from collections.abc import Mapping
+from typing import Optional, Final
 
 from pysasl.creds import StoredSecret, AuthenticationCredentials
 

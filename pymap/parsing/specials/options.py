@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import re
-from typing import Tuple, Optional, List, Mapping, Iterable
+from collections.abc import Iterable, Mapping
+from typing import Optional
 
 from . import AString, SequenceSet
 from .. import Params, Parseable
 from ..exceptions import NotParseable
-from ..primitives import Number, ListP
+from ..primitives import Number, List
 from ...bytes import BytesFormat, rev
 
 __all__ = ['ExtensionOption', 'ExtensionOptions']
@@ -28,7 +29,7 @@ class ExtensionOption(Parseable[bytes]):
 
     _opt_pattern = rev.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
 
-    def __init__(self, option: bytes, arg: ListP) -> None:
+    def __init__(self, option: bytes, arg: List) -> None:
         super().__init__()
         self.option = option
         self.arg = arg
@@ -61,31 +62,31 @@ class ExtensionOption(Parseable[bytes]):
 
     @classmethod
     def _parse_arg(cls, buf: memoryview, params: Params) \
-            -> Tuple[ListP, memoryview]:
+            -> tuple[List, memoryview]:
         try:
             num, buf = Number.parse(buf, params)
         except NotParseable:
             pass
         else:
-            arg = ListP([num])
+            arg = List([num])
             return arg, buf
         try:
             seq_set, buf = SequenceSet.parse(buf, params)
         except NotParseable:
             pass
         else:
-            arg = ListP([seq_set])
+            arg = List([seq_set])
             return arg, buf
         try:
-            params_copy = params.copy(list_expected=[AString, ListP])
-            return ListP.parse(buf, params_copy)
+            params_copy = params.copy(list_expected=[AString, List])
+            return List.parse(buf, params_copy)
         except NotParseable:
             pass
-        return ListP([]), buf
+        return List([]), buf
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ExtensionOption, memoryview]:
+            -> tuple[ExtensionOption, memoryview]:
         start = cls._whitespace_length(buf)
         match = cls._opt_pattern.match(buf, start)
         if not match:
@@ -96,7 +97,7 @@ class ExtensionOption(Parseable[bytes]):
         return cls(option, arg), buf
 
 
-class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
+class ExtensionOptions(Parseable[Mapping[bytes, List]]):
     """Represents a set of command options, which may or may not have an
     associated argument. Command options are always optional, so the parsing
     will not fail, it will just return an empty object.
@@ -114,7 +115,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
 
     def __init__(self, options: Iterable[ExtensionOption]) -> None:
         super().__init__()
-        self.options: Mapping[bytes, ListP] = \
+        self.options: Mapping[bytes, List] = \
             {opt.option: opt.arg for opt in options}
         self._raw: Optional[bytes] = None
 
@@ -126,13 +127,13 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
         return cls._empty
 
     @property
-    def value(self) -> Mapping[bytes, ListP]:
+    def value(self) -> Mapping[bytes, List]:
         return self.options
 
     def has(self, option: bytes) -> bool:
         return option in self.options
 
-    def get(self, option: bytes) -> Optional[ListP]:
+    def get(self, option: bytes) -> Optional[List]:
         return self.options.get(option, None)
 
     def __bool__(self) -> bool:
@@ -157,9 +158,9 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
 
     @classmethod
     def _parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ExtensionOptions, memoryview]:
+            -> tuple[ExtensionOptions, memoryview]:
         buf = cls._parse_paren(buf, b'(')
-        result: List[ExtensionOption] = []
+        result: list[ExtensionOption] = []
         while True:
             try:
                 option, buf = ExtensionOption.parse(buf, params)
@@ -172,7 +173,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, ListP]]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[ExtensionOptions, memoryview]:
+            -> tuple[ExtensionOptions, memoryview]:
         try:
             return cls._parse(buf, params)
         except NotParseable:

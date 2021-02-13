@@ -5,12 +5,11 @@ import asyncio
 import os.path
 import uuid
 from argparse import ArgumentParser, Namespace
+from collections.abc import Awaitable, Mapping, Sequence, AsyncIterator
 from contextlib import closing, asynccontextmanager
 from datetime import datetime, timezone
 from secrets import token_bytes
-from typing import Any, Optional, Tuple, Sequence, Mapping, Dict, Awaitable, \
-    AsyncIterator
-from typing_extensions import Final
+from typing import Any, Optional, Final
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl.creds import AuthenticationCredentials
@@ -71,7 +70,7 @@ class DictBackend(BackendInterface):
 
     @classmethod
     async def init(cls, args: Namespace, **overrides: Any) \
-            -> Tuple[DictBackend, Config]:
+            -> tuple[DictBackend, Config]:
         config = Config.from_args(args, **overrides)
         login = Login(config)
         return cls(login, config), config
@@ -95,7 +94,7 @@ class Config(IMAPConfig):
         self._demo_user = demo_user
         self._demo_password = demo_password
         self._demo_data_resource = demo_data_resource
-        self.set_cache: Dict[str, Tuple[MailboxSet, FilterSet]] = {}
+        self.set_cache: dict[str, tuple[MailboxSet, FilterSet]] = {}
 
     @property
     def backend_capability(self) -> BackendCapability:
@@ -166,7 +165,7 @@ class Login(LoginInterface):
         self.config = config
         self.users_dict = {config.demo_user: UserMetadata(
             config, password=config.demo_password)}
-        self.tokens_dict: Dict[str, Tuple[str, bytes]] = {}
+        self.tokens_dict: dict[str, tuple[str, bytes]] = {}
         self._tokens = AllTokens()
 
     @property

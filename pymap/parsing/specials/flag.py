@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from functools import total_ordering
-from typing import Tuple, FrozenSet, Union
+from typing import Union
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
@@ -80,7 +80,7 @@ class Flag(Parseable[bytes]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Flag, memoryview]:
+            -> tuple[Flag, memoryview]:
         try:
             _, buf = Space.parse(buf, params)
         except NotParseable:
@@ -95,7 +95,7 @@ class Flag(Parseable[bytes]):
         raise NotParseable(buf)
 
 
-def get_system_flags() -> FrozenSet[Flag]:
+def get_system_flags() -> frozenset[Flag]:
     """Return the set of implemented system flags."""
     return frozenset({Seen, Recent, Deleted, Flagged, Answered, Draft})
 

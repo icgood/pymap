@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Type, Optional
+from typing import Optional
 
 from pysasl.creds import AuthenticationCredentials
 
@@ -12,7 +12,7 @@ from ..plugin import Plugin
 __all__ = ['tokens', 'AllTokens']
 
 #: Registers token plugins.
-tokens: Plugin[Type[TokensInterface]] = Plugin('pymap.token')
+tokens: Plugin[type[TokensInterface]] = Plugin('pymap.token')
 
 
 class AllTokens(TokensInterface):

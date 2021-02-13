@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import Tuple, Optional, Type, ClassVar
+from typing import Optional, ClassVar
 
 from .. import Params, Parseable, EndLine
 
@@ -22,7 +22,7 @@ class Command(Parseable[bytes], metaclass=ABCMeta):
     command: ClassVar[bytes] = b''
 
     #: If given, execution of this command is handled by the delegate command.
-    delegate: ClassVar[Optional[Type[Command]]] = None
+    delegate: ClassVar[Optional[type[Command]]] = None
 
     #: True if the command is part of a compound command.
     compound: ClassVar[bool] = False
@@ -41,7 +41,7 @@ class Command(Parseable[bytes], metaclass=ABCMeta):
     @classmethod
     @abstractmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[Command, memoryview]:
+            -> tuple[Command, memoryview]:
         ...
 
     def __bytes__(self) -> bytes:
@@ -59,7 +59,7 @@ class CommandNoArgs(Command, metaclass=ABCMeta):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> Tuple[CommandNoArgs, memoryview]:
+            -> tuple[CommandNoArgs, memoryview]:
         _, buf = EndLine.parse(buf, params)
         return cls(params.tag), buf
 

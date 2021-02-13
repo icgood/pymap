@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeVar, Optional, Tuple, Sequence, FrozenSet, \
-    Iterable, AsyncIterable
-from typing_extensions import Protocol
+from collections.abc import Iterable, Sequence, AsyncIterable
+from typing import TypeVar, Optional, Protocol
 
 from pymap.concurrent import Event
 from pymap.flags import FlagOp
@@ -55,12 +54,12 @@ class MailboxDataInterface(Protocol[MessageT_co]):
         ...
 
     @property
-    def permanent_flags(self) -> FrozenSet[Flag]:
+    def permanent_flags(self) -> frozenset[Flag]:
         """The permanent flags allowed in the mailbox."""
         return get_system_flags() - {Recent}
 
     @property
-    def session_flags(self) -> FrozenSet[Flag]:
+    def session_flags(self) -> frozenset[Flag]:
         """The session flags allowed in the mailbox."""
         return frozenset({Recent})
 
@@ -138,7 +137,7 @@ class MailboxDataInterface(Protocol[MessageT_co]):
 
     @abstractmethod
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: FrozenSet[Flag], mode: FlagOp) -> MessageT_co:
+                     flag_set: frozenset[Flag], mode: FlagOp) -> MessageT_co:
         """Update the permanent flags of the message.
 
         Args:
@@ -188,7 +187,7 @@ class MailboxDataInterface(Protocol[MessageT_co]):
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
-            -> AsyncIterable[Tuple[int, MessageT_co]]:
+            -> AsyncIterable[tuple[int, MessageT_co]]:
         """Find the active message UID and message pairs in the mailbox that
         are contained in the given sequences set. Message sequence numbers
         are resolved by the selected mailbox session.

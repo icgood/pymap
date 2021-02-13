@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import hashlib
 import os.path
+from collections.abc import Sequence
 from contextlib import closing
-from typing import Generic, TypeVar, Any, Union, Optional, Tuple, Sequence
+from typing import Generic, TypeVar, Any, Union, Optional
 
 import msgpack
 from aioredis import Redis, ReplyError
@@ -31,7 +32,7 @@ class ScriptBase(Generic[_RetT]):
         self._name = name
         self._sha, _ = self._load()
 
-    def _load(self) -> Tuple[str, bytes]:
+    def _load(self) -> tuple[str, bytes]:
         fname = os.path.join('lua', f'{self._name}.lua')
         with closing(resource_stream(__name__, fname)) as script:
             data = script.read()
