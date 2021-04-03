@@ -48,11 +48,13 @@ class SystemHandlers(SystemBase, BaseHandler):
             credentials = AuthenticationCredentials(
                 request.authcid, request.secret, request.authzid)
             expiration: Optional[datetime] = None
-            if request.token_expiration:
+            if request.HasField('token_expiration'):
                 expiration = datetime.fromtimestamp(request.token_expiration)
             identity = await self.login.authenticate(credentials)
             bearer_token = await identity.new_token(expiration=expiration)
-        resp = LoginResponse(result=result, bearer_token=bearer_token)
+        resp = LoginResponse(result=result)
+        if bearer_token is not None:
+            resp.bearer_token = bearer_token
         await stream.send_message(resp)
 
     async def Ping(self, stream: _PingStream) -> None:
@@ -72,3 +74,4 @@ class SystemHandlers(SystemBase, BaseHandler):
         resp = PingResponse(pymap_version=pymap_version,
                             pymap_admin_version=pymap_admin_version)
         await stream.send_message(resp)
+        assert request is not None

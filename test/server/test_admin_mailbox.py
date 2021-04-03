@@ -133,7 +133,7 @@ class TestMailboxHandlers(TestBase):
         handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
-                                sender='foo@example.com', recipient=None,
+                                sender='foo@example.com',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
@@ -145,7 +145,7 @@ class TestMailboxHandlers(TestBase):
         handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
-                                sender='user@foo.com', recipient=None,
+                                sender='user@foo.com',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:
@@ -157,7 +157,7 @@ class TestMailboxHandlers(TestBase):
         handlers = MailboxHandlers(backend)
         data = b'From: user@example.com\n\ntest message!\n'
         request = AppendRequest(user='testuser', mailbox='INBOX',
-                                sender=None, recipient='bigfoot@example.com',
+                                recipient='bigfoot@example.com',
                                 flags=['\\Flagged', '\\Seen'],
                                 when=1234567890, data=data)
         async with ChannelFor([handlers]) as channel:

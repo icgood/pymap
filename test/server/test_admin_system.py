@@ -33,6 +33,7 @@ class TestSystemHandlers(TestBase):
             response = await stub.Login(request)
         assert FAILURE == response.result.code
         assert 'InvalidAuth' == response.result.key
+        assert not response.HasField('bearer_token')
 
     async def test_ping(self, backend) -> None:
         handlers = SystemHandlers(backend)

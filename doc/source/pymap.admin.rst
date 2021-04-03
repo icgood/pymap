@@ -8,7 +8,7 @@
 .. automodule:: pymap.admin.errors
    :members:
 
-.. automodule:: pymap.admin.token
+.. automodule:: pymap.admin.typing
    :members:
 
 ``pymap.admin.handlers``

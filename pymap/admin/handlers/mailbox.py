@@ -48,7 +48,10 @@ class MailboxHandlers(MailboxBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        mailbox = request.mailbox or 'INBOX'
+        sender = request.sender if request.HasField('sender') else ''
+        recipient = request.recipient \
+            if request.HasField('recipient') else request.user
+        mailbox = request.mailbox if request.HasField('mailbox') else 'INBOX'
         flag_set = frozenset(Flag(flag) for flag in request.flags)
         when = datetime.fromtimestamp(request.when, timezone.utc)
         append_msg = AppendMessage(request.data, when, flag_set,
@@ -64,8 +67,7 @@ class MailboxHandlers(MailboxBase, BaseHandler):
                     compiler = session.filter_set.compiler
                     filter_ = await compiler.compile(filter_value)
                     new_mailbox, append_msg = await filter_.apply(
-                        request.sender, request.recipient,
-                        mailbox, append_msg)
+                        sender, recipient, mailbox, append_msg)
                     if new_mailbox is None:
                         await stream.send_message(AppendResponse())
                         return
