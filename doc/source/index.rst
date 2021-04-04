@@ -33,6 +33,7 @@ Table of Contents
    pymap.backend
    pymap.imap
    pymap.admin
+   pymap.token
    pymap.sieve
 
 Indices and tables

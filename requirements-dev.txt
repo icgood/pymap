@@ -1,0 +1,9 @@
+mypy
+flake8
+autopep8
+pytest
+pytest-asyncio
+pytest-cov
+rope
+
+-e '.[redis,admin,macaroon,sieve,optional]'
