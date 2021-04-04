@@ -1,0 +1,395 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>pymap.token &#8212; pymap 0.23.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pymap.sieve" href="pymap.sieve.html" />
+    <link rel="prev" title="pymap.admin" href="pymap.admin.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.sieve.html" title="pymap.sieve"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.admin.html" title="pymap.admin"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-pymap.token">
+<span id="pymap-token"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code><a class="headerlink" href="#module-pymap.token" title="Permalink to this headline">¶</a></h1>
+<dl class="py data">
+<dt id="pymap.token.tokens">
+<code class="sig-prename descclassname"><span class="pre">pymap.token.</span></code><code class="sig-name descname"><span class="pre">tokens</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">pymap.plugin.Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)"><span class="pre">type</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">Plugin('pymap.token')</span></em><a class="headerlink" href="#pymap.token.tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers token plugins.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pymap.token.AllTokens">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.token.</span></code><code class="sig-name descname"><span class="pre">AllTokens</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.AllTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses <a class="reference internal" href="#pymap.token.tokens" title="pymap.token.tokens"><code class="xref py py-data docutils literal notranslate"><span class="pre">tokens</span></code></a> to support all registered token types.</p>
+<p>For token creation, the <code class="xref py py-attr docutils literal notranslate"><span class="pre">first</span></code> token plugin is used.
+For token parsing, each token plugin is tried until one succeeds.</p>
+<dl class="py method">
+<dt id="pymap.token.AllTokens.get_login_token">
+<code class="sig-name descname"><span class="pre">get_login_token</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.AllTokens.get_login_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new token string that encapsulates the provided login
+data, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if tokens are not supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Any string that can facilitate the lookup of <em>key</em>.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The private key used to create and verify the token.</p></li>
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Limits the token to authorizing as this identity.</p></li>
+<li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Arbitrary metadata string, application-specific.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]) – An expiration when this token shall no longer be valid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.token.AllTokens.get_admin_token">
+<code class="sig-name descname"><span class="pre">get_admin_token</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">admin_key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.AllTokens.get_admin_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new token string that encapsulates the provided login
+data, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if tokens are not supported. This token uses a
+special private admin key that grants unrestricted access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The private admin key.</p></li>
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Limits the token to authorizing as this identity.</p></li>
+<li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Arbitrary metadata string, application-specific.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]) – An expiration when this token shall no longer be valid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.token.AllTokens.parse">
+<code class="sig-name descname"><span class="pre">parse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">authzid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.AllTokens.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses a token string to produce authentication credentials.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Check token for authorization to this identity.</p></li>
+<li><p><strong>token</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The token string.</p></li>
+<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The private admin key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – The <em>token</em> string was not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://icgood.github.io/pysasl/pysasl.html#pysasl.creds.AuthenticationCredentials" title="(in pysasl v0.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthenticationCredentials</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<section id="module-pymap.token.macaroon">
+<span id="pymap-token-macaroon"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.token.macaroon</span></code><a class="headerlink" href="#module-pymap.token.macaroon" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pymap.token.macaroon.MacaroonTokens">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.token.macaroon.</span></code><code class="sig-name descname"><span class="pre">MacaroonTokens</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and parses <code class="xref py py-class docutils literal notranslate"><span class="pre">Macaroon</span></code> tokens.</p>
+<dl class="py method">
+<dt id="pymap.token.macaroon.MacaroonTokens.get_login_token">
+<code class="sig-name descname"><span class="pre">get_login_token</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens.get_login_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new token string that encapsulates the provided login
+data, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if tokens are not supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Any string that can facilitate the lookup of <em>key</em>.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The private key used to create and verify the token.</p></li>
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Limits the token to authorizing as this identity.</p></li>
+<li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Arbitrary metadata string, application-specific.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]) – An expiration when this token shall no longer be valid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.token.macaroon.MacaroonTokens.get_admin_token">
+<code class="sig-name descname"><span class="pre">get_admin_token</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">admin_key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens.get_admin_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new token string that encapsulates the provided login
+data, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if tokens are not supported. This token uses a
+special private admin key that grants unrestricted access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The private admin key.</p></li>
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Limits the token to authorizing as this identity.</p></li>
+<li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – Arbitrary metadata string, application-specific.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>]) – An expiration when this token shall no longer be valid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.token.macaroon.MacaroonTokens.parse">
+<code class="sig-name descname"><span class="pre">parse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">authzid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses a token string to produce authentication credentials.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Check token for authorization to this identity.</p></li>
+<li><p><strong>token</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The token string.</p></li>
+<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The private admin key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.9)"><strong>ValueError</strong></a> – The <em>token</em> string was not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials" title="pymap.token.macaroon.MacaroonCredentials"><code class="xref py py-class docutils literal notranslate"><span class="pre">MacaroonCredentials</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pymap.token.macaroon.MacaroonCredentials">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.token.macaroon.</span></code><code class="sig-name descname"><span class="pre">MacaroonCredentials</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.macaroon.MacaroonCredentials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Authenticate using a <a href="#id3"><span class="problematic" id="id4">`Macaroon`_</span></a> token. Tokens may be created with
+either <a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.get_login_token" title="pymap.token.macaroon.MacaroonTokens.get_login_token"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_login_token()</span></code></a> or
+<a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.get_admin_token" title="pymap.token.macaroon.MacaroonTokens.get_admin_token"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_admin_token()</span></code></a>.</p>
+<p>Either type of token may use a caveat with <a href="#id1"><span class="problematic" id="id2">``</span></a>time &lt; `` and a
+<code class="xref py py-func docutils literal notranslate"><span class="pre">fromisoformat()</span></code> string to limit how long the token
+is valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The identity to be authorized.</p></li>
+<li><p><strong>serialized</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The serialized macaroon string.</p></li>
+<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – The admin token string.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pymap.token.macaroon.MacaroonCredentials.has_secret">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">has_secret</span></code><a class="headerlink" href="#pymap.token.macaroon.MacaroonCredentials.has_secret" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the <a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.secret" title="pymap.token.macaroon.MacaroonCredentials.secret"><code class="xref py py-attr docutils literal notranslate"><span class="pre">secret</span></code></a> attribute is valid for this credentials
+type.</p>
+<p>If this returns False, the <a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.secret" title="pymap.token.macaroon.MacaroonCredentials.secret"><code class="xref py py-attr docutils literal notranslate"><span class="pre">secret</span></code></a> attribute should raise
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.9)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AttributeError</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.token.macaroon.MacaroonCredentials.secret">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">secret</span></code><a class="headerlink" href="#pymap.token.macaroon.MacaroonCredentials.secret" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains the secret string used in the authentication attempt,
+if available. Use <a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.check_secret" title="pymap.token.macaroon.MacaroonCredentials.check_secret"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_secret()</span></code></a> instead, when possible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pymap.token.macaroon.MacaroonCredentials.check_secret">
+<code class="sig-name descname"><span class="pre">check_secret</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secret</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.token.macaroon.MacaroonCredentials.check_secret" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the secret string used in the authentication attempt
+matches the “known” secret string. Some mechanisms will override this
+method to control how this comparison is made.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>secret</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.html#pysasl.creds.StoredSecret" title="(in pysasl v0.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StoredSecret</span></code></a>]) – The secret to compare against what was used in the
+authentication attempt.</p></li>
+<li><p><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Additional keyword arguments to allow subclasses to accept
+additional data as needed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the given secret matches the authentication attempt.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ExternalVerificationRequired</strong> – The credentials cannot
+    be verified using the given <em>secret</em> and require external
+    verification.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a><ul>
+<li><a class="reference internal" href="#module-pymap.token.macaroon"><code class="docutils literal notranslate"><span class="pre">pymap.token.macaroon</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="pymap.admin.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="pymap.sieve.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pymap.token.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.sieve.html" title="pymap.sieve"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.admin.html" title="pymap.admin"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pymap 0.23.0 documentation</title>
+    <title>Index &#8212; pymap 0.23.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -143,10 +143,12 @@
 </li>
       <li><a href="pymap.search.html#pymap.search.AllSearchCriteria">AllSearchCriteria (class in pymap.search)</a>
 </li>
-      <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Answered">Answered (in module pymap.parsing.specials.flag)</a>
+      <li><a href="pymap.token.html#pymap.token.AllTokens">AllTokens (class in pymap.token)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Answered">Answered (in module pymap.parsing.specials.flag)</a>
+</li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedSet.any_selected">any_selected() (pymap.selected.SelectedSet property)</a>
 </li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.mailbox.MailboxHandlers.Append">Append() (pymap.admin.handlers.mailbox.MailboxHandlers method)</a>
@@ -285,6 +287,8 @@
       </ul></li>
       <li><a href="pymap.user.html#pymap.user.UserMetadata.check_password">check_password() (pymap.user.UserMetadata method)</a>
 </li>
+      <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.check_secret">check_secret() (pymap.token.macaroon.MacaroonCredentials method)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.select.CheckCommand">CheckCommand (class in pymap.parsing.command.select)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.claim_recent">claim_recent() (pymap.backend.mailbox.MailboxDataInterface method)</a>
@@ -353,14 +357,14 @@
         <li><a href="pymap.sieve.html#pymap.sieve.SieveCompiler.compile">(pymap.sieve.SieveCompiler method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.filter.html#pymap.filter.PluginFilterSet.compiler">compiler() (pymap.filter.PluginFilterSet property)</a>
 
       <ul>
         <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface.compiler">(pymap.interfaces.filter.FilterSetInterface property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.command.Command.compound">compound (pymap.parsing.command.Command attribute)</a>
 </li>
       <li><a href="pymap.bytes.html#pymap.bytes.Writeable.concat">concat() (pymap.bytes.Writeable class method)</a>
@@ -801,6 +805,12 @@
         <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface.get_active">(pymap.interfaces.filter.FilterSetInterface method)</a>
 </li>
       </ul></li>
+      <li><a href="pymap.token.html#pymap.token.AllTokens.get_admin_token">get_admin_token() (pymap.token.AllTokens method)</a>
+
+      <ul>
+        <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonTokens.get_admin_token">(pymap.token.macaroon.MacaroonTokens method)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.get_all">get_all() (pymap.backend.maildir.uidlist.UidList method)</a>
 
       <ul>
@@ -863,6 +873,12 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.datetime_.DateTime.get_local_tzinfo">get_local_tzinfo() (pymap.parsing.specials.datetime_.DateTime class method)</a>
 </li>
+      <li><a href="pymap.token.html#pymap.token.AllTokens.get_login_token">get_login_token() (pymap.token.AllTokens method)</a>
+
+      <ul>
+        <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonTokens.get_login_token">(pymap.token.macaroon.MacaroonTokens method)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.get_mailbox">get_mailbox() (pymap.backend.mailbox.MailboxSetInterface method)</a>
 
       <ul>
@@ -935,6 +951,8 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.admin.html#pymap.admin.typing.Handler">Handler (class in pymap.admin.typing)</a>
+</li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.handlers">handlers (in module pymap.admin.handlers)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.has_all">has_all() (pymap.parsing.specials.fetchattr.FetchRequirement method)</a>
@@ -943,10 +961,12 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.has_none">has_none() (pymap.parsing.specials.fetchattr.FetchRequirement method)</a>
 </li>
-      <li><a href="pymap.search.html#pymap.search.HasEmailIdSearchCriteria">HasEmailIdSearchCriteria (class in pymap.search)</a>
+      <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.has_secret">has_secret() (pymap.token.macaroon.MacaroonCredentials property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.search.html#pymap.search.HasEmailIdSearchCriteria">HasEmailIdSearchCriteria (class in pymap.search)</a>
+</li>
       <li><a href="pymap.search.html#pymap.search.HasFlagSearchCriteria">HasFlagSearchCriteria (class in pymap.search)</a>
 </li>
       <li><a href="pymap.search.html#pymap.search.HasThreadIdSearchCriteria">HasThreadIdSearchCriteria (class in pymap.search)</a>
@@ -1185,6 +1205,10 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials">MacaroonCredentials (class in pymap.token.macaroon)</a>
+</li>
+      <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonTokens">MacaroonTokens (class in pymap.token.macaroon)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.mailbox.Mailbox">Mailbox (class in pymap.parsing.specials.mailbox)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.mailbox_id">mailbox_id() (pymap.backend.mailbox.MailboxDataInterface property)</a>
@@ -1333,6 +1357,8 @@
 </li>
         <li><a href="pymap.admin.html#module-pymap.admin.handlers.user">pymap.admin.handlers.user</a>
 </li>
+        <li><a href="pymap.admin.html#module-pymap.admin.typing">pymap.admin.typing</a>
+</li>
         <li><a href="pymap.backend.html#module-pymap.backend">pymap.backend</a>
 </li>
         <li><a href="pymap.backend.dict.html#module-pymap.backend.dict">pymap.backend.dict</a>
@@ -1474,6 +1500,10 @@
         <li><a href="pymap.sockets.html#module-pymap.sockets">pymap.sockets</a>
 </li>
         <li><a href="pymap.threads.html#module-pymap.threads">pymap.threads</a>
+</li>
+        <li><a href="pymap.token.html#module-pymap.token">pymap.token</a>
+</li>
+        <li><a href="pymap.token.html#module-pymap.token.macaroon">pymap.token.macaroon</a>
 </li>
         <li><a href="pymap.user.html#module-pymap.user">pymap.user</a>
 </li>
@@ -1703,6 +1733,10 @@
 </li>
         <li><a href="pymap.parsing.html#pymap.parsing.specials.tag.Tag.parse">(pymap.parsing.specials.tag.Tag class method)</a>
 </li>
+        <li><a href="pymap.token.html#pymap.token.AllTokens.parse">(pymap.token.AllTokens method)</a>
+</li>
+        <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonTokens.parse">(pymap.token.macaroon.MacaroonTokens method)</a>
+</li>
       </ul></li>
       <li><a href="pymap.backend.dict.html#pymap.backend.dict.Config.parse_args">parse_args() (pymap.backend.dict.Config class method)</a>
 
@@ -1820,6 +1854,13 @@
 
       <ul>
         <li><a href="pymap.admin.html#module-pymap.admin.handlers.user">module</a>
+</li>
+      </ul></li>
+      <li>
+    pymap.admin.typing
+
+      <ul>
+        <li><a href="pymap.admin.html#module-pymap.admin.typing">module</a>
 </li>
       </ul></li>
       <li>
@@ -2322,6 +2363,20 @@
 </li>
       </ul></li>
       <li>
+    pymap.token
+
+      <ul>
+        <li><a href="pymap.token.html#module-pymap.token">module</a>
+</li>
+      </ul></li>
+      <li>
+    pymap.token.macaroon
+
+      <ul>
+        <li><a href="pymap.token.html#module-pymap.token.macaroon">module</a>
+</li>
+      </ul></li>
+      <li>
     pymap.user
 
       <ul>
@@ -2514,6 +2569,8 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.specials.SearchResponse">SearchResponse (class in pymap.parsing.response.specials)</a>
 </li>
+      <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.secret">secret() (pymap.token.macaroon.MacaroonCredentials property)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute.section">section (pymap.parsing.specials.fetchattr.FetchAttribute attribute)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Seen">Seen (in module pymap.parsing.specials.flag)</a>
@@ -2590,10 +2647,10 @@
 </li>
       <li><a href="pymap.sieve.html#pymap.sieve.SieveCompiler">SieveCompiler (class in pymap.sieve)</a>
 </li>
-      <li><a href="pymap.sieve.html#pymap.sieve.SieveFilter">SieveFilter (class in pymap.sieve)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.sieve.html#pymap.sieve.SieveFilter">SieveFilter (class in pymap.sieve)</a>
+</li>
       <li><a href="pymap.sieve.html#pymap.sieve.SieveParseError">SieveParseError</a>
 </li>
       <li><a href="pymap.sieve.html#pymap.sieve.tests.SieveTest">SieveTest (class in pymap.sieve.tests)</a>
@@ -2749,6 +2806,8 @@
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.to_maildir">to_maildir() (pymap.backend.maildir.flags.MaildirFlags method)</a>
 </li>
       <li><a href="pymap.bytes.html#pymap.bytes.Writeable.tobytes">tobytes() (pymap.bytes.Writeable method)</a>
+</li>
+      <li><a href="pymap.token.html#pymap.token.tokens">tokens (in module pymap.token)</a>
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface.tokens">tokens() (pymap.interfaces.login.LoginInterface property)</a>
 </li>
@@ -3013,7 +3072,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -3022,7 +3081,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

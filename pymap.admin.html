@@ -6,8 +6,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.admin &#8212; pymap 0.23.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>pymap.admin &#8212; pymap 0.23.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -35,7 +36,7 @@
 
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pymap.sieve" href="pymap.sieve.html" />
+    <link rel="next" title="pymap.token" href="pymap.token.html" />
     <link rel="prev" title="pymap.imap" href="pymap.imap.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
@@ -51,12 +52,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.sieve.html" title="pymap.sieve"
+          <a href="pymap.token.html" title="pymap.token"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -69,11 +70,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.admin">
+  <section id="module-pymap.admin">
 <span id="pymap-admin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code><a class="headerlink" href="#module-pymap.admin" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="pymap.admin.AdminService">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.admin.</code><code class="sig-name descname">AdminService</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.admin.</span></code><code class="sig-name descname"><span class="pre">AdminService</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
 <dd><p>A pymap service implemented using a <a class="reference external" href="https://grpc.io/">grpc</a> server
 to perform admin functions on a running backend.</p>
 <p>This service can be exposed in <em>private</em> or <em>public</em> mode. Private mode
@@ -87,7 +88,7 @@ to interact with the admin service and serves as a reference client
 implementation.</p>
 <dl class="py method">
 <dt id="pymap.admin.AdminService.add_arguments">
-<em class="property">classmethod </em><code class="sig-name descname">add_arguments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parser</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.add_arguments" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">add_arguments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.add_arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the arguments or argument group used to configure the service.
 For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;foo service arguments&#39;</span><span class="p">)</span>
@@ -106,7 +107,7 @@ For example:</p>
 
 <dl class="py method">
 <dt id="pymap.admin.AdminService.start">
-<em class="property">async </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -119,7 +120,7 @@ For example:</p>
 
 <span class="target" id="module-pymap.admin.errors"></span><dl class="py function">
 <dt id="pymap.admin.errors.get_unimplemented_error">
-<code class="sig-prename descclassname">pymap.admin.errors.</code><code class="sig-name descname">get_unimplemented_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.errors.get_unimplemented_error" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pymap.admin.errors.</span></code><code class="sig-name descname"><span class="pre">get_unimplemented_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.errors.get_unimplemented_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">GRPCError</span></code></a> exception for an
 operation that is not implemented by the server.</p>
 <dl class="field-list simple">
@@ -137,7 +138,7 @@ operation that is not implemented by the server.</p>
 
 <dl class="py function">
 <dt id="pymap.admin.errors.get_incompatible_version_error">
-<code class="sig-prename descclassname">pymap.admin.errors.</code><code class="sig-name descname">get_incompatible_version_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client_version</span></em>, <em class="sig-param"><span class="n">server_version</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">domain</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">metadata</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.errors.get_incompatible_version_error" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pymap.admin.errors.</span></code><code class="sig-name descname"><span class="pre">get_incompatible_version_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_version</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.errors.get_incompatible_version_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">GRPCError</span></code></a> exception for an
 incompatible version error.</p>
 <dl class="field-list simple">
@@ -155,17 +156,24 @@ incompatible version error.</p>
 </dl>
 </dd></dl>
 
-<div class="section" id="module-pymap.admin.handlers">
+<span class="target" id="module-pymap.admin.typing"></span><dl class="py class">
+<dt id="pymap.admin.typing.Handler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.admin.typing.</span></code><code class="sig-name descname"><span class="pre">Handler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.typing.Handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the protocol for <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Server" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Server</span></code></a> handlers. This
+can be removed if <code class="docutils literal notranslate"><span class="pre">grpclib._typing.IServable</span></code> becomes public API.</p>
+</dd></dl>
+
+<section id="module-pymap.admin.handlers">
 <span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.admin.handlers.handlers">
-<code class="sig-prename descclassname">pymap.admin.handlers.</code><code class="sig-name descname">handlers</code><em class="property">: <a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin">pymap.plugin.Plugin</a><span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)">type</a><span class="p">]</span></em><em class="property"> = Plugin('pymap.admin.handlers')</em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></code><code class="sig-name descname"><span class="pre">handlers</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">pymap.plugin.Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)"><span class="pre">type</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers new admin handler plugins.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pymap.admin.handlers.BaseHandler">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.admin.handlers.</code><code class="sig-name descname">BaseHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></code><code class="sig-name descname"><span class="pre">BaseHandler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for implementing admin request handlers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -174,7 +182,7 @@ incompatible version error.</p>
 </dl>
 <dl class="py method">
 <dt id="pymap.admin.handlers.BaseHandler.catch_errors">
-<code class="sig-name descname">catch_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">command</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.catch_errors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">catch_errors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.catch_errors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager to catch
 <a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseError</span></code></a> exceptions and include them in
 the response.</p>
@@ -190,7 +198,7 @@ the response.</p>
 
 <dl class="py method">
 <dt id="pymap.admin.handlers.BaseHandler.login_as">
-<code class="sig-name descname">login_as</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">metadata</span></em>, <em class="sig-param"><span class="n">user</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.login_as" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">login_as</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.login_as" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager to login and get an identity object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -210,7 +218,7 @@ the response.</p>
 
 <dl class="py method">
 <dt id="pymap.admin.handlers.BaseHandler.with_session">
-<code class="sig-name descname">with_session</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">identity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.with_session" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">with_session</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.with_session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager to create a mail session for the identity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -229,7 +237,7 @@ the response.</p>
 
 <span class="target" id="module-pymap.admin.handlers.system"></span><dl class="py class">
 <dt id="pymap.admin.handlers.system.SystemHandlers">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.admin.handlers.system.</code><code class="sig-name descname">SystemHandlers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.system.SystemHandlers" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.system.</span></code><code class="sig-name descname"><span class="pre">SystemHandlers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.system.SystemHandlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The GRPC handlers, executed when an admin request is received. Each
 handler should receive a request, take action, and send the response.</p>
 <div class="admonition seealso">
@@ -238,7 +246,7 @@ handler should receive a request, take action, and send the response.</p>
 </div>
 <dl class="py method">
 <dt id="pymap.admin.handlers.system.SystemHandlers.Login">
-<em class="property">async </em><code class="sig-name descname">Login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.system.SystemHandlers.Login" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">Login</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.system.SystemHandlers.Login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Response to a login request. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pymap-admin login
 </pre></div>
@@ -257,7 +265,7 @@ request and response.</p>
 
 <dl class="py method">
 <dt id="pymap.admin.handlers.system.SystemHandlers.Ping">
-<em class="property">async </em><code class="sig-name descname">Ping</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.system.SystemHandlers.Ping" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">Ping</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.system.SystemHandlers.Ping" title="Permalink to this definition">¶</a></dt>
 <dd><p>Respond to a ping request. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pymap-admin ping
 </pre></div>
@@ -278,7 +286,7 @@ request and response.</p>
 
 <span class="target" id="module-pymap.admin.handlers.mailbox"></span><dl class="py class">
 <dt id="pymap.admin.handlers.mailbox.MailboxHandlers">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.admin.handlers.mailbox.</code><code class="sig-name descname">MailboxHandlers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.mailbox.MailboxHandlers" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.mailbox.</span></code><code class="sig-name descname"><span class="pre">MailboxHandlers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.mailbox.MailboxHandlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The GRPC handlers, executed when an admin request is received. Each
 handler should receive a request, take action, and send the response.</p>
 <div class="admonition seealso">
@@ -287,7 +295,7 @@ handler should receive a request, take action, and send the response.</p>
 </div>
 <dl class="py method">
 <dt id="pymap.admin.handlers.mailbox.MailboxHandlers.Append">
-<em class="property">async </em><code class="sig-name descname">Append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.mailbox.MailboxHandlers.Append" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">Append</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.mailbox.MailboxHandlers.Append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append a message directly to a user’s mailbox.</p>
 <p>If the backend session defines a
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.filter_set" title="pymap.interfaces.session.SessionInterface.filter_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">filter_set</span></code></a>, the
@@ -314,7 +322,7 @@ request and response.</p>
 
 <span class="target" id="module-pymap.admin.handlers.user"></span><dl class="py class">
 <dt id="pymap.admin.handlers.user.UserHandlers">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.admin.handlers.user.</code><code class="sig-name descname">UserHandlers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.user.</span></code><code class="sig-name descname"><span class="pre">UserHandlers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The GRPC handlers, executed when an admin request is received. Each
 handler should receive a request, take action, and send the response.</p>
 <div class="admonition seealso">
@@ -323,7 +331,7 @@ handler should receive a request, take action, and send the response.</p>
 </div>
 <dl class="py method">
 <dt id="pymap.admin.handlers.user.UserHandlers.GetUser">
-<em class="property">async </em><code class="sig-name descname">GetUser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.GetUser" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">GetUser</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.GetUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">get-user</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -338,7 +346,7 @@ request and response.</p>
 
 <dl class="py method">
 <dt id="pymap.admin.handlers.user.UserHandlers.SetUser">
-<em class="property">async </em><code class="sig-name descname">SetUser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.SetUser" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">SetUser</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.SetUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">set-user</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -353,7 +361,7 @@ request and response.</p>
 
 <dl class="py method">
 <dt id="pymap.admin.handlers.user.UserHandlers.DeleteUser">
-<em class="property">async </em><code class="sig-name descname">DeleteUser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stream</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.DeleteUser" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">DeleteUser</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.DeleteUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">delete-user</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -368,8 +376,8 @@ request and response.</p>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -394,8 +402,8 @@ request and response.</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="pymap.sieve.html"
-                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></p>
+    <p class="topless"><a href="pymap.token.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -447,12 +455,12 @@ request and response.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.sieve.html" title="pymap.sieve"
+          <a href="pymap.token.html" title="pymap.token"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -461,7 +469,7 @@ request and response.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

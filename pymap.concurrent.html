@@ -6,8 +6,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.concurrent &#8212; pymap 0.23.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>pymap.concurrent &#8212; pymap 0.23.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -69,19 +70,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.concurrent">
+  <section id="module-pymap.concurrent">
 <span id="pymap-concurrent"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code><a class="headerlink" href="#module-pymap.concurrent" title="Permalink to this headline">¶</a></h1>
 <p>Implements some concurrency utilities used by pymap. Each has
 an implementation using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a> concurrency
 primitives.</p>
 <dl class="py class">
 <dt id="pymap.concurrent.Subsystem">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">Subsystem</code><a class="headerlink" href="#pymap.concurrent.Subsystem" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></code><code class="sig-name descname"><span class="pre">Subsystem</span></code><a class="headerlink" href="#pymap.concurrent.Subsystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Utility for creating concurrency primitives for a subsystem, either
 <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.for_executor">
-<em class="property">classmethod </em><code class="sig-name descname">for_executor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">executor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_executor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_executor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_executor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem based on the given executor. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is
 None, use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is a
 <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a>, use <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
@@ -97,7 +98,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.for_asyncio">
-<em class="property">classmethod </em><code class="sig-name descname">for_asyncio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_asyncio" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_asyncio</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_asyncio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -108,7 +109,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.for_threading">
-<em class="property">classmethod </em><code class="sig-name descname">for_threading</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">executor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_threading" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_threading</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.for_threading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -119,7 +120,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.subsystem">
-<em class="property">abstract property </em><code class="sig-name descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.Subsystem.subsystem" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subsystem</span></code><a class="headerlink" href="#pymap.concurrent.Subsystem.subsystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>The subsystem name, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -130,7 +131,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.execute">
-<em class="property">abstract </em><code class="sig-name descname">execute</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">future</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.execute" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">future</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the future and returns its result in the subsystem. For
 <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>, this simply means <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">await</span> <span class="pre">future</span></code>. For
 <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>, it uses
@@ -148,7 +149,7 @@ another thread.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.new_rwlock">
-<em class="property">abstract </em><code class="sig-name descname">new_rwlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.new_rwlock" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">new_rwlock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.new_rwlock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new read-write lock.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -159,7 +160,7 @@ another thread.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Subsystem.new_event">
-<em class="property">abstract </em><code class="sig-name descname">new_event</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.new_event" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">new_event</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Subsystem.new_event" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new concurrent event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -172,11 +173,11 @@ another thread.</p>
 
 <dl class="py class">
 <dt id="pymap.concurrent.Event">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">Event</code><a class="headerlink" href="#pymap.concurrent.Event" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></code><code class="sig-name descname"><span class="pre">Event</span></code><a class="headerlink" href="#pymap.concurrent.Event" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concurrent event, one thread signals and any waiting event is released.</p>
 <dl class="py method">
 <dt id="pymap.concurrent.Event.for_asyncio">
-<em class="property">classmethod </em><code class="sig-name descname">for_asyncio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.for_asyncio" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_asyncio</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.for_asyncio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an event for asyncio.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -187,7 +188,7 @@ another thread.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.for_threading">
-<em class="property">classmethod </em><code class="sig-name descname">for_threading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.for_threading" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_threading</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.for_threading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an event for threading.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -198,7 +199,7 @@ another thread.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.subsystem">
-<em class="property">abstract property </em><code class="sig-name descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.Event.subsystem" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subsystem</span></code><a class="headerlink" href="#pymap.concurrent.Event.subsystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>The subsystem the event was created for, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or
 <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <dl class="field-list simple">
@@ -210,7 +211,7 @@ another thread.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.or_event">
-<em class="property">abstract </em><code class="sig-name descname">or_event</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">events</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.or_event" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">or_event</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.or_event" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new event that is signalled when either the current event
 or any of the provided events are signalled.</p>
 <dl class="field-list simple">
@@ -222,7 +223,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.is_set">
-<em class="property">abstract </em><code class="sig-name descname">is_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.is_set" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">is_set</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.is_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if the event is set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -233,7 +234,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.set">
-<em class="property">abstract </em><code class="sig-name descname">set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.set" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">set</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signal the waiting threads to release.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -244,7 +245,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.clear">
-<em class="property">abstract </em><code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.clear" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">clear</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the signal, allowing threads to wait again.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -255,7 +256,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.Event.wait">
-<em class="property">abstract async </em><code class="sig-name descname">wait</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">wait</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait until another thread signals the event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -271,11 +272,11 @@ or any of the provided events are signalled.</p>
 
 <dl class="py class">
 <dt id="pymap.concurrent.ReadWriteLock">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">ReadWriteLock</code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></code><code class="sig-name descname"><span class="pre">ReadWriteLock</span></code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read-write lock.</p>
 <dl class="py method">
 <dt id="pymap.concurrent.ReadWriteLock.for_asyncio">
-<em class="property">classmethod </em><code class="sig-name descname">for_asyncio</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.for_asyncio" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_asyncio</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.for_asyncio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a read-write lock for asyncio.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -286,7 +287,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.ReadWriteLock.for_threading">
-<em class="property">classmethod </em><code class="sig-name descname">for_threading</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.for_threading" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">for_threading</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.for_threading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a read-write lock for threading.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -297,7 +298,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.ReadWriteLock.subsystem">
-<em class="property">abstract property </em><code class="sig-name descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.subsystem" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subsystem</span></code><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.subsystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>The subsystem the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'asyncio'</span></code> or
 <code class="docutils literal notranslate"><span class="pre">'threading'</span></code>.</p>
 <dl class="field-list simple">
@@ -309,7 +310,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.ReadWriteLock.read_lock">
-<em class="property">abstract </em><code class="sig-name descname">read_lock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.read_lock" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">read_lock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.read_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acquires a read-lock, blocking until any write-locks are released.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -320,7 +321,7 @@ or any of the provided events are signalled.</p>
 
 <dl class="py method">
 <dt id="pymap.concurrent.ReadWriteLock.write_lock">
-<em class="property">abstract </em><code class="sig-name descname">write_lock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.write_lock" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">write_lock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.write_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acquires a write-lock, blocking until all read- or write-locks are
 released.</p>
 <dl class="field-list simple">
@@ -334,7 +335,7 @@ released.</p>
 
 <dl class="py class">
 <dt id="pymap.concurrent.FileLock">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">FileLock</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">expiration</span><span class="o">=</span><span class="default_value">600.0</span></em>, <em class="sig-param"><span class="n">read_retry_delay</span><span class="o">=</span><span class="default_value">(0.01, 0.03, 0.06, 0.1, 0.15, 0.25, 0.4, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)</span></em>, <em class="sig-param"><span class="n">write_retry_delay</span><span class="o">=</span><span class="default_value">(0.01, 0.03, 0.06, 0.1, 0.15, 0.25, 0.4, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.FileLock" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></code><code class="sig-name descname"><span class="pre">FileLock</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_retry_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">0.03,</span> <span class="pre">0.06,</span> <span class="pre">0.1,</span> <span class="pre">0.15,</span> <span class="pre">0.25,</span> <span class="pre">0.4,</span> <span class="pre">0.5,</span> <span class="pre">0.5,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_retry_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">0.03,</span> <span class="pre">0.06,</span> <span class="pre">0.1,</span> <span class="pre">0.15,</span> <span class="pre">0.25,</span> <span class="pre">0.4,</span> <span class="pre">0.5,</span> <span class="pre">0.5,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.FileLock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses the presence or absence of a file on the filesystem to simulate
 a read-write lock. If the file is present, other read- and write-locks will
 block until the file is gone. If the file is absent, read-locks will not
@@ -355,7 +356,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 </dl>
 <dl class="py method">
 <dt id="pymap.concurrent.FileLock.subsystem">
-<em class="property">property </em><code class="sig-name descname">subsystem</code><a class="headerlink" href="#pymap.concurrent.FileLock.subsystem" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subsystem</span></code><a class="headerlink" href="#pymap.concurrent.FileLock.subsystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>The subsystem the read-write lock was created for, <code class="docutils literal notranslate"><span class="pre">'file'</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -366,7 +367,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 
 <dl class="py method">
 <dt id="pymap.concurrent.FileLock.read_lock">
-<code class="sig-name descname">read_lock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.FileLock.read_lock" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">read_lock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.FileLock.read_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acquires a read-lock, blocking until any write-locks are released.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -377,7 +378,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 
 <dl class="py method">
 <dt id="pymap.concurrent.FileLock.write_lock">
-<code class="sig-name descname">write_lock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.FileLock.write_lock" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">write_lock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.concurrent.FileLock.write_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acquires a write-lock, blocking until all read- or write-locks are
 released.</p>
 <dl class="field-list simple">
@@ -391,19 +392,19 @@ released.</p>
 
 <dl class="py data">
 <dt id="pymap.concurrent.EventT">
-<code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">EventT</code><a class="headerlink" href="#pymap.concurrent.EventT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></code><code class="sig-name descname"><span class="pre">EventT</span></code><a class="headerlink" href="#pymap.concurrent.EventT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>.</p>
 <p>alias of TypeVar(‘EventT’)</p>
 </dd></dl>
 
 <dl class="py data">
 <dt id="pymap.concurrent.RetT">
-<code class="sig-prename descclassname">pymap.concurrent.</code><code class="sig-name descname">RetT</code><a class="headerlink" href="#pymap.concurrent.RetT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></code><code class="sig-name descname"><span class="pre">RetT</span></code><a class="headerlink" href="#pymap.concurrent.RetT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable for any return type.</p>
 <p>alias of TypeVar(‘RetT’)</p>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -477,7 +478,7 @@ released.</p>
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -486,7 +487,7 @@ released.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

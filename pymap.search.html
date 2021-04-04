@@ -6,8 +6,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.search &#8212; pymap 0.23.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>pymap.search &#8212; pymap 0.23.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.message.html" title="pymap.message"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li> 
       </ul>
@@ -69,12 +70,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.search">
+  <section id="module-pymap.search">
 <span id="pymap-search"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code><a class="headerlink" href="#module-pymap.search" title="Permalink to this headline">¶</a></h1>
 <p>Utilities for managing IMAP searches.</p>
 <dl class="py class">
 <dt id="pymap.search.SearchParams">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">SearchParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selected</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">disabled</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchParams" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">SearchParams</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines certain parameters and routines necessary to process any
 kind of search criteria. If a parameter is not supplied, or a method not
 implemented, any search keys that require it will fail.</p>
@@ -92,7 +93,7 @@ implemented, any search keys that require it will fail.</p>
 
 <dl class="py class">
 <dt id="pymap.search.SearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">SearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">SearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for different types of search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -101,7 +102,7 @@ implemented, any search keys that require it will fail.</p>
 </dl>
 <dl class="py method">
 <dt id="pymap.search.SearchCriteria.matches">
-<em class="property">abstract </em><code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -119,7 +120,7 @@ implemented, any search keys that require it will fail.</p>
 
 <dl class="py method">
 <dt id="pymap.search.SearchCriteria.of">
-<em class="property">classmethod </em><code class="sig-name descname">of</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria.of" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">of</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteria.of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Factory method for producing a search criteria sub-class from a
 search key.</p>
 <dl class="field-list simple">
@@ -139,7 +140,7 @@ search key.</p>
 
 <dl class="py class">
 <dt id="pymap.search.SearchCriteriaSet">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">SearchCriteriaSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">keys</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteriaSet" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">SearchCriteriaSet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteriaSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search criteria composed of a set of search criteria that must all
 match. If the set is empty, nothing will match.</p>
 <dl class="field-list simple">
@@ -152,7 +153,7 @@ match. If the set is empty, nothing will match.</p>
 </dl>
 <dl class="py method">
 <dt id="pymap.search.SearchCriteriaSet.sequence_set">
-<em class="property">property </em><code class="sig-name descname">sequence_set</code><a class="headerlink" href="#pymap.search.SearchCriteriaSet.sequence_set" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sequence_set</span></code><a class="headerlink" href="#pymap.search.SearchCriteriaSet.sequence_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>The sequence set to use when finding the messages to match against.
 This will default to all messages unless the search criteria set
 contains a sequence set.</p>
@@ -165,7 +166,7 @@ contains a sequence set.</p>
 
 <dl class="py method">
 <dt id="pymap.search.SearchCriteriaSet.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteriaSet.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SearchCriteriaSet.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message matches if all the defined search key criteria match.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -184,11 +185,11 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.InverseSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">InverseSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.InverseSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">InverseSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.InverseSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches only if the given search criteria does not match.</p>
 <dl class="py method">
 <dt id="pymap.search.InverseSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.InverseSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.InverseSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -208,11 +209,11 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.AllSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">AllSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.AllSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">AllSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.AllSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Always matches anything.</p>
 <dl class="py method">
 <dt id="pymap.search.AllSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.AllSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.AllSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -232,11 +233,11 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.OrSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">OrSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">left</span></em>, <em class="sig-param"><span class="n">right</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.OrSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">OrSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.OrSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if either of the search criteria match.</p>
 <dl class="py method">
 <dt id="pymap.search.OrSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.OrSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.OrSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -256,11 +257,11 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.SequenceSetSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">SequenceSetSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seq_set</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">SequenceSetSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message is contained in the sequence set.</p>
 <dl class="py method">
 <dt id="pymap.search.SequenceSetSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -280,12 +281,12 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.HasEmailIdSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">HasEmailIdSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email_id</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">HasEmailIdSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message has the same
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.email_id" title="pymap.interfaces.message.MessageInterface.email_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">email_id</span></code></a> value.</p>
 <dl class="py method">
 <dt id="pymap.search.HasEmailIdSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -305,12 +306,12 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.HasThreadIdSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">HasThreadIdSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">thread_id</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">HasThreadIdSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thread_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message has the same
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.thread_id" title="pymap.interfaces.message.MessageInterface.thread_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thread_id</span></code></a> value.</p>
 <dl class="py method">
 <dt id="pymap.search.HasThreadIdSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -330,12 +331,12 @@ contains a sequence set.</p>
 
 <dl class="py class">
 <dt id="pymap.search.HasFlagSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">HasFlagSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flag</span></em>, <em class="sig-param"><span class="n">expected</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">HasFlagSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message has the given flag in their permanent or
 session flag sets.</p>
 <dl class="py method">
 <dt id="pymap.search.HasFlagSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -355,11 +356,11 @@ session flag sets.</p>
 
 <dl class="py class">
 <dt id="pymap.search.NewSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">NewSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.NewSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">NewSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.NewSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message is considered “new”, i.e. recent and unseen.</p>
 <dl class="py method">
 <dt id="pymap.search.NewSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.NewSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.NewSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -379,11 +380,11 @@ session flag sets.</p>
 
 <dl class="py class">
 <dt id="pymap.search.DateSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">DateSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">when</span></em>, <em class="sig-param"><span class="n">op</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.DateSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">DateSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">when</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.DateSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by comparing against the internal date of the message.</p>
 <dl class="py method">
 <dt id="pymap.search.DateSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.DateSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.DateSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -403,17 +404,17 @@ session flag sets.</p>
 
 <dl class="py class">
 <dt id="pymap.search.HeaderDateSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">HeaderDateSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">when</span></em>, <em class="sig-param"><span class="n">op</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderDateSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">HeaderDateSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">when</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderDateSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by comparing against the <code class="docutils literal notranslate"><span class="pre">Date:</span></code> header of the message.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pymap.search.SizeSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">SizeSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span></em>, <em class="sig-param"><span class="n">op</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">SizeSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by comparing against the size of the message.</p>
 <dl class="py method">
 <dt id="pymap.search.SizeSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.SizeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -433,12 +434,12 @@ session flag sets.</p>
 
 <dl class="py class">
 <dt id="pymap.search.EnvelopeSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">EnvelopeSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">EnvelopeSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by checking for strings within various fields of the envelope
 structure.</p>
 <dl class="py method">
 <dt id="pymap.search.EnvelopeSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -458,11 +459,11 @@ structure.</p>
 
 <dl class="py class">
 <dt id="pymap.search.HeaderSearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">HeaderSearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">HeaderSearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message has a header containing a value.</p>
 <dl class="py method">
 <dt id="pymap.search.HeaderSearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.HeaderSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -482,11 +483,11 @@ structure.</p>
 
 <dl class="py class">
 <dt id="pymap.search.BodySearchCriteria">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.search.</code><code class="sig-name descname">BodySearchCriteria</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.search.</span></code><code class="sig-name descname"><span class="pre">BodySearchCriteria</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message body contains a value.</p>
 <dl class="py method">
 <dt id="pymap.search.BodySearchCriteria.matches">
-<code class="sig-name descname">matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_seq</span></em>, <em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">loaded_msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">matches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.search.BodySearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -504,7 +505,7 @@ structure.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -578,7 +579,7 @@ structure.</p>
         <li class="right" >
           <a href="pymap.message.html" title="pymap.message"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li> 
       </ul>
@@ -587,7 +588,7 @@ structure.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

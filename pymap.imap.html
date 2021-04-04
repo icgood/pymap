@@ -6,8 +6,9 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap &#8212; pymap 0.23.0 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>pymap.imap &#8212; pymap 0.23.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li> 
       </ul>
@@ -69,15 +70,15 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.imap">
+  <section id="module-pymap.imap">
 <span id="pymap-imap"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code><a class="headerlink" href="#module-pymap.imap" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="pymap.imap.IMAPService">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPService</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">backend</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.imap.</span></code><code class="sig-name descname"><span class="pre">IMAPService</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
 <dd><p>A pymap service implementing an IMAP server.</p>
 <dl class="py method">
 <dt id="pymap.imap.IMAPService.add_arguments">
-<em class="property">classmethod </em><code class="sig-name descname">add_arguments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parser</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.add_arguments" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">add_arguments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.add_arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the arguments or argument group used to configure the service.
 For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;foo service arguments&#39;</span><span class="p">)</span>
@@ -96,7 +97,7 @@ For example:</p>
 
 <dl class="py method">
 <dt id="pymap.imap.IMAPService.start">
-<em class="property">async </em><code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.start" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -109,7 +110,7 @@ For example:</p>
 
 <dl class="py class">
 <dt id="pymap.imap.IMAPServer">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPServer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPServer" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.imap.</span></code><code class="sig-name descname"><span class="pre">IMAPServer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPServer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callable object that creates and runs <a class="reference internal" href="#pymap.imap.IMAPConnection" title="pymap.imap.IMAPConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConnection</span></code></a> objects
 when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
 <dl class="field-list simple">
@@ -125,7 +126,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 
 <dl class="py class">
 <dt id="pymap.imap.IMAPConnection">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.</code><code class="sig-name descname">IMAPConnection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">commands</span></em>, <em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">reader</span></em>, <em class="sig-param"><span class="n">writer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.imap.</span></code><code class="sig-name descname"><span class="pre">IMAPConnection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a single IMAP connection from start to finish.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -139,7 +140,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 </dl>
 <dl class="py method">
 <dt id="pymap.imap.IMAPConnection.run">
-<em class="property">async </em><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection.run" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.IMAPConnection.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the socket communication with the IMAP greeting, and then
 enter the command/response cycle.</p>
 <dl class="field-list simple">
@@ -156,13 +157,13 @@ enter the command/response cycle.</p>
 
 <span class="target" id="module-pymap.imap.state"></span><dl class="py class">
 <dt id="pymap.imap.state.ConnectionState">
-<em class="property">class </em><code class="sig-prename descclassname">pymap.imap.state.</code><code class="sig-name descname">ConnectionState</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">login</span></em>, <em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.state.ConnectionState" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.imap.state.</span></code><code class="sig-name descname"><span class="pre">ConnectionState</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.imap.state.ConnectionState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the state flow of the IMAP connection. Determines if a command
 can be processed at that point in the connection, and interacts with the
 backend plugin.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -236,7 +237,7 @@ backend plugin.</p>
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li> 
       </ul>
@@ -245,7 +246,7 @@ backend plugin.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
