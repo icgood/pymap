@@ -1,13 +1,11 @@
 
 from __future__ import annotations
 
-import asyncio
 import json
 import uuid
 from argparse import ArgumentParser, Namespace
-from collections.abc import Awaitable, Callable, Mapping, Sequence, \
-    AsyncIterator
-from contextlib import closing, asynccontextmanager
+from collections.abc import Awaitable, Callable, Mapping, AsyncIterator
+from contextlib import closing, asynccontextmanager, AsyncExitStack
 from datetime import datetime
 from functools import partial
 from secrets import token_bytes
@@ -22,7 +20,7 @@ from pymap.context import connection_exit
 from pymap.exceptions import AuthorizationFailure, IncompatibleData, \
     NotAllowedError, UserNotFound
 from pymap.health import HealthStatus
-from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.interfaces.token import TokensInterface
 from pymap.token import AllTokens
@@ -103,15 +101,12 @@ class RedisBackend(BackendInterface):
             stack.enter_context(closing(redis))
             return redis
 
-    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
+    async def start(self, stack: AsyncExitStack) -> None:
         config = self._config
         global_keys = config._global_keys
         connect_redis = partial(self._connect_redis, config, self._status)
-        cleanup_task = CleanupTask(connect_redis, global_keys)
-        tasks = [await cleanup_task.start()]
-        for service in services:
-            tasks.append(await service.start())
-        return asyncio.gather(*tasks)
+        cleanup_task = CleanupTask(connect_redis, global_keys).start()
+        stack.callback(cleanup_task.cancel)
 
 
 class Config(IMAPConfig):

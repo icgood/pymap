@@ -21,7 +21,7 @@ class FilterSet(PluginFilterSet[bytes]):
     _active_name = b''
 
     def __init__(self, redis: Redis, ns_keys: NamespaceKeys) -> None:
-        super().__init__('sieve', bytes)
+        super().__init__(None, bytes)
         self._redis = redis
         self._keys = FilterKeys(ns_keys)
 
@@ -92,11 +92,11 @@ class FilterSet(PluginFilterSet[bytes]):
 
     async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
         keys = self._keys
-        sieve_names = await self._redis.hgetall(keys.names)
-        active_key: Optional[bytes] = sieve_names.get(self._active_name)
+        filter_names = await self._redis.hgetall(keys.names)
+        active_key: Optional[bytes] = filter_names.get(self._active_name)
         active_name: Optional[str] = None
         names: list[str] = []
-        for name, key in sieve_names.items():
+        for name, key in filter_names.items():
             if name != self._active_name:
                 name_str = name.decode('utf-8')
                 names.append(name_str)

@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from abc import ABCMeta
-from collections.abc import Mapping, AsyncGenerator
+from collections.abc import Mapping, Set, AsyncGenerator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
 from typing import Final
 
-from pymap.context import connection_exit
+from pymap.context import cluster_metadata, connection_exit
 from pymap.exceptions import InvalidAuth, ResponseError
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import IdentityInterface
@@ -35,6 +35,15 @@ class BaseHandler(Handler, metaclass=ABCMeta):
         super().__init__()
         self.config: Final = backend.config
         self.login: Final = backend.login
+
+    def _get_admin_keys(self) -> Set[bytes]:
+        admin_keys: set[bytes] = set()
+        if self.config.admin_key is not None:
+            admin_keys.add(self.config.admin_key)
+        remote_keys = cluster_metadata.get().remote.get('admin')
+        if remote_keys is not None:
+            admin_keys.update(remote_keys.values())
+        return admin_keys
 
     @asynccontextmanager
     async def catch_errors(self, command: str) -> AsyncGenerator[Result, None]:
@@ -72,10 +81,10 @@ class BaseHandler(Handler, metaclass=ABCMeta):
             :class:`~pymap.exceptions.InvalidAuth`
 
         """
-
+        admin_keys = self._get_admin_keys()
         try:
             creds = self.login.tokens.parse(user, metadata['auth-token'],
-                                            admin_key=self.config.admin_key)
+                                            admin_keys=admin_keys)
         except (KeyError, ValueError) as exc:
             raise InvalidAuth() from exc
         yield await self.login.authenticate(creds)

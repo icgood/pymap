@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from asyncio import Task
 from collections.abc import Awaitable, Callable
 from contextlib import AsyncExitStack
 from typing import ClassVar, NoReturn
@@ -39,11 +40,7 @@ class CleanupTask:
         self._connect_redis = connect_redis
         self._global_keys = global_keys
 
-    async def start(self) -> Awaitable:
-        return self.run_forever()
-
-    async def run_forever(self) -> NoReturn:
-        """Run the cleanup loop indefinitely."""
+    async def _run_forever(self) -> NoReturn:
         while True:
             try:
                 async with AsyncExitStack() as stack:
@@ -53,6 +50,10 @@ class CleanupTask:
             except (ConnectionClosedError, OSError):
                 pass
             await asyncio.sleep(self.connection_delay)
+
+    def start(self) -> Task[NoReturn]:
+        """Return a task running the cleanup loop indefinitely."""
+        return asyncio.create_task(self._run_forever())
 
 
 class CleanupThread:

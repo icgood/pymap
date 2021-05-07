@@ -7,9 +7,11 @@ import asyncio
 import logging
 import logging.config
 import os
+import signal
 from argparse import ArgumentParser, Namespace, ArgumentTypeError
+from asyncio import CancelledError
 from collections.abc import Sequence
-from contextlib import nullcontext
+from contextlib import nullcontext, suppress, AsyncExitStack
 from string import Template
 
 from . import __version__
@@ -44,6 +46,8 @@ def main() -> None:
                         help='increase printed output for debugging')
     parser.add_argument('--version', action='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('--pid-file', metavar='NAME',
+                        help='change the filename of the PID file')
     parser.add_argument('--set-uid', metavar='USER', type=_get_pwd,
                         help='drop privileges to user name or uid')
     parser.add_argument('--set-gid', metavar='GROUP', type=_get_grp,
@@ -75,25 +79,36 @@ def main() -> None:
 
     service_types = [service for name, service in services
                      if name not in args.skip_services]
-    with PidFile(force_tmpdir=True):
-        try:
-            return asyncio.run(run(args, args.backend_type, service_types),
-                               debug=False)
-        except KeyboardInterrupt:
-            pass
+    with PidFile(pidname=args.pid_file, force_tmpdir=True):
+        return asyncio.run(run(args, args.backend_type, service_types),
+                           debug=False)
 
 
 async def run(args: Namespace, backend_type: type[BackendInterface],
               service_types: Sequence[type[ServiceInterface]]) -> None:
+    loop = asyncio.get_running_loop()
     backend, config = await backend_type.init(args)
     config.apply_context()
 
     services = [svc_type(backend, config) for svc_type in service_types]
-    task = await backend.start(services)
+    async with AsyncExitStack() as stack:
+        await backend.start(stack)
+        for service in services:
+            await service.start(stack)
 
-    _drop_privileges(args)
-    notify_ready()
-    await task
+        _drop_privileges(args)
+        notify_ready()
+        forever = asyncio.create_task(_sleep_forever())
+        loop.add_signal_handler(signal.SIGINT, forever.cancel)
+        loop.add_signal_handler(signal.SIGTERM, forever.cancel)
+        await forever
+
+
+async def _sleep_forever() -> None:
+    with suppress(CancelledError):
+        while True:
+            await asyncio.sleep(60.0)
+    print()
 
 
 def _get_pwd(setuid: str) -> int:

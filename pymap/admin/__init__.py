@@ -4,8 +4,9 @@ from __future__ import annotations
 import asyncio
 import sys
 from argparse import ArgumentParser, SUPPRESS
-from asyncio import CancelledError
-from collections.abc import Awaitable, Sequence
+from asyncio import Task, CancelledError
+from collections.abc import Sequence
+from contextlib import AsyncExitStack
 from datetime import datetime, timedelta, timezone
 from ssl import SSLContext
 from typing import Optional
@@ -14,6 +15,7 @@ from grpclib.events import listen, RecvRequest
 from grpclib.health.check import ServiceStatus
 from grpclib.health.service import Health, OVERALL
 from grpclib.server import Server
+from pymap.context import cluster_metadata
 from pymap.interfaces.backend import ServiceInterface
 from pymapadmin import is_compatible, __version__ as server_version
 from pymapadmin.local import socket_file, token_file
@@ -62,11 +64,14 @@ class AdminService(ServiceInterface):  # pragma: no cover
             duration_sec: int = self.config.args.admin_token_duration
             duration = timedelta(seconds=duration_sec)
             expiration = datetime.now(tz=timezone.utc) + duration
+        admin_key = self.config.admin_key
         token = self.backend.login.tokens.get_admin_token(
-            self.config.admin_key, expiration=expiration)
+            admin_key, expiration=expiration)
         if token is not None:
             self._write_admin_token(token)
             print(f'PYMAP_ADMIN_TOKEN={token}', file=sys.stderr)
+        if admin_key is not None:
+            cluster_metadata.get().local['admin'] = admin_key
 
     def _write_admin_token(self, admin_token: str) -> None:
         try:
@@ -89,7 +94,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
         self.backend.status.register(backend_status.set)
         return Health({OVERALL: [backend_status]})
 
-    async def start(self) -> Awaitable:
+    async def start(self, stack: AsyncExitStack) -> None:
         self._init_admin_token()
         backend = self.backend
         path: Optional[str] = self.config.args.admin_path
@@ -98,9 +103,10 @@ class AdminService(ServiceInterface):  # pragma: no cover
         server_handlers: list[Handler] = [self._get_health()]
         server_handlers.extend(handler(backend) for _, handler in handlers)
         ssl = self.config.ssl_context
-        servers = [await self._start_local(server_handlers, path),
-                   await self._start(server_handlers, host, port, ssl)]
-        return asyncio.create_task(self._run(servers))
+        local_task = await self._start_local(server_handlers, path)
+        remote_task = await self._start(server_handlers, host, port, ssl)
+        stack.callback(local_task.cancel)
+        stack.callback(remote_task.cancel)
 
     def _new_server(self, server_handlers: Sequence[Handler]) -> Server:
         server = Server(server_handlers)
@@ -108,24 +114,23 @@ class AdminService(ServiceInterface):  # pragma: no cover
         return server
 
     async def _start_local(self, server_handlers: Sequence[Handler],
-                           path: Optional[str]) -> Server:
+                           path: Optional[str]) -> Task[None]:
         server = self._new_server(server_handlers)
         path = str(socket_file.get_temp(mkdir=True))
         await server.start(path=path)
-        return server
+        return asyncio.create_task(self._run(server))
 
     async def _start(self, server_handlers: Sequence[Handler],
                      host: Optional[str], port: Optional[int],
-                     ssl: Optional[SSLContext]) -> Server:
+                     ssl: Optional[SSLContext]) -> Task[None]:
         server = self._new_server(server_handlers)
         await server.start(host=host, port=port, ssl=ssl, reuse_address=True)
-        return server
+        return asyncio.create_task(self._run(server))
 
-    async def _run(self, servers: Sequence[Server]) -> None:
+    async def _run(self, server: Server) -> None:
         try:
-            for server in servers:
-                await server.wait_closed()
+            await server.wait_closed()
         except CancelledError:
-            for server in servers:
-                server.close()
-                await server.wait_closed()
+            server.close()
+            await server.wait_closed()
+            raise

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Set
 from datetime import datetime
 from typing import Optional, Protocol
 
@@ -49,13 +50,13 @@ class TokensInterface(Protocol):
 
     @abstractmethod
     def parse(self, authzid: str, token: str, *,
-              admin_key: bytes = None) -> AuthenticationCredentials:
+              admin_keys: Set[bytes] = ...) -> AuthenticationCredentials:
         """Parses a token string to produce authentication credentials.
 
         Args:
             authzid: Check token for authorization to this identity.
             token: The token string.
-            admin_key: The private admin key.
+            admin_keys: The set of possible private admin keys.
 
         Raises:
             ValueError: The *token* string was not valid.
