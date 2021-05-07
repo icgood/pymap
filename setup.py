@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.23.1',
+      version='0.24.0',
       author='Ian Good',
       author_email='ian@icgood.net',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -52,10 +52,11 @@ setup(name='pymap',
           'pysasl ~= 0.8.0',
           'proxy-protocol ~= 0.6.0'],
       extras_require={
-          'redis': ['aioredis ~= 1.3.1', 'msgpack ~= 1.0'],
           'admin': ['pymap-admin ~= 0.7.0', 'googleapis-common-protos'],
           'macaroon': ['pymacaroons'],
+          'redis': ['aioredis ~= 1.3.1', 'msgpack ~= 1.0'],
           'sieve': ['sievelib'],
+          'swim': ['swim-protocol ~= 0.3'],
           'systemd': ['systemd-python'],
           'optional': ['hiredis', 'passlib', 'pid']},
       entry_points={
@@ -68,7 +69,8 @@ setup(name='pymap',
           'pymap.service': [
               'imap = pymap.imap:IMAPService',
               'admin = pymap.admin:AdminService [admin]',
-              'managesieve = pymap.sieve.manage:ManageSieveService [sieve]'],
+              'managesieve = pymap.sieve.manage:ManageSieveService [sieve]',
+              'swim = pymap.cluster.swim:SwimService [swim]'],
           'pymap.filter': [
               'sieve = pymap.sieve:SieveCompiler [sieve]'],
           'pymap.token': [

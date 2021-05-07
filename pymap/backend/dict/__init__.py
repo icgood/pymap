@@ -1,12 +1,11 @@
 
 from __future__ import annotations
 
-import asyncio
 import os.path
 import uuid
 from argparse import ArgumentParser, Namespace
-from collections.abc import Awaitable, Mapping, Sequence, AsyncIterator
-from contextlib import closing, asynccontextmanager
+from collections.abc import Mapping, AsyncIterator
+from contextlib import closing, asynccontextmanager, AsyncExitStack
 from datetime import datetime, timezone
 from secrets import token_bytes
 from typing import Any, Optional, Final
@@ -19,7 +18,7 @@ from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
     UserNotFound
 from pymap.health import HealthStatus
-from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
@@ -75,9 +74,8 @@ class DictBackend(BackendInterface):
         login = Login(config)
         return cls(login, config), config
 
-    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
-        tasks = [await service.start() for service in services]
-        return asyncio.gather(*tasks)
+    async def start(self, stack: AsyncExitStack) -> None:
+        pass
 
 
 class Config(IMAPConfig):

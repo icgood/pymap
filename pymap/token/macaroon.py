@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Set
 from datetime import datetime, timezone
 from typing import Any, Final, Optional, NoReturn
 
@@ -43,9 +44,9 @@ class MacaroonTokens(TokensInterface):
         return macaroon.serialize()
 
     def parse(self, authzid: str, token: str, *,
-              admin_key: bytes = None) -> MacaroonCredentials:
+              admin_keys: Set[bytes] = frozenset()) -> MacaroonCredentials:
         try:
-            return MacaroonCredentials(authzid, token, admin_key)
+            return MacaroonCredentials(authzid, token, admin_keys)
         except MacaroonDeserializationException as exc:
             raise ValueError('invalid macaroon') from exc
 
@@ -55,29 +56,29 @@ class MacaroonCredentials(AuthenticationCredentials):
     either :meth:`~MacaroonTokens.get_login_token` or
     :meth:`~MacaroonTokens.get_admin_token`.
 
-    Either type of token may use a caveat with ``time < `` and a
+    Either type of token may use a caveat with ``time <`` and a
     :func:`~datetime.datetime.fromisoformat` string to limit how long the token
     is valid.
 
-    .. Macaroon: https://github.com/ecordell/pymacaroons#readme
+    .. _Macaroon: https://github.com/ecordell/pymacaroons#readme
 
     Args:
         identity: The identity to be authorized.
         serialized: The serialized macaroon string.
-        admin_key: The admin token string.
+        admin_keys: The admin token string.
 
     """
 
     _caveat = re.compile(r'^(\w+) ([^\w\s]+) (.*)$', re.ASCII)
 
     def __init__(self, identity: str, serialized: str,
-                 admin_key: Optional[bytes]) -> None:
+                 admin_keys: Set[bytes]) -> None:
         macaroon = Macaroon.deserialize(serialized)
         authcid_type = self._find_type(macaroon)
         super().__init__(macaroon.identifier, '', identity,
                          authcid_type=authcid_type)
         self.macaroon: Final = macaroon
-        self.admin_key: Final = admin_key
+        self.admin_keys: Final = admin_keys
 
     @classmethod
     def _find_type(cls, macaroon: Macaroon) -> Optional[str]:
@@ -138,8 +139,7 @@ class MacaroonCredentials(AuthenticationCredentials):
             verifier = self._get_login_verifier()
             if self._verify(verifier, key):
                 return True
-        admin_key = self.admin_key
-        if admin_key is not None:
+        for admin_key in self.admin_keys:
             verifier = self._get_admin_verifier()
             if self._verify(verifier, admin_key):
                 return True

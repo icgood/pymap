@@ -81,6 +81,6 @@ napoleon_numpy_docstring = False
 intersphinx_mapping = {'https://docs.python.org/3/': None,
                        'https://icgood.github.io/pymap-admin/': None,
                        'https://icgood.github.io/pysasl/': None,
-                       'https://aioredis.readthedocs.io/en/latest/': None,
+                       'https://icgood.github.io/swim-protocol/': None,
                        'https://grpclib.readthedocs.io/en/latest/': None,
                        'https://pymacaroons.readthedocs.io/en/latest/': None}

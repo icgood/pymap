@@ -1,12 +1,11 @@
 
 from __future__ import annotations
 
-import asyncio
 import os.path
 from argparse import ArgumentParser, Namespace
-from collections.abc import Awaitable, Mapping, Sequence, AsyncIterator
+from collections.abc import Mapping, AsyncIterator
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, AsyncExitStack
 from datetime import datetime
 from typing import Any, Optional, Final
 
@@ -17,7 +16,7 @@ from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import AuthorizationFailure, NotSupportedError
 from pymap.filter import PluginFilterSet, SingleFilterSet
 from pymap.health import HealthStatus
-from pymap.interfaces.backend import BackendInterface, ServiceInterface
+from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.token import AllTokens
 from pymap.user import UserMetadata
@@ -77,9 +76,8 @@ class MaildirBackend(BackendInterface):
         login = Login(config)
         return cls(login, config), config
 
-    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
-        tasks = [await service.start() for service in services]
-        return asyncio.gather(*tasks)
+    async def start(self, stack: AsyncExitStack) -> None:
+        pass
 
 
 class Config(IMAPConfig):

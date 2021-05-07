@@ -19,7 +19,8 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
     >>> example: Plugin[type[Example]] = Plugin('plugins.example')
     >>> example.add('two', ExampleTwo)
     >>> example.registered
-    {'one': ExampleOne, 'two': ExampleTwo}
+    {'one': <class 'examples.ExampleOne'>,
+     'two': <class 'examples.ExampleTwo'>}
 
     Note:
         Plugins registered from *group* entry points are lazy-loaded. This is
@@ -30,9 +31,10 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
 
     """
 
-    def __init__(self, group: str) -> None:
+    def __init__(self, group: str, *, default: str = None) -> None:
         super().__init__()
         self.group: Final = group
+        self._default = default
         self._loaded: Optional[dict[str, PluginT]] = None
         self._added: dict[str, PluginT] = {}
 
@@ -46,17 +48,32 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
         return {**loaded, **self._added}
 
     @property
-    def first(self) -> PluginT:
-        """The first registered plugin.
+    def default(self) -> PluginT:
+        """The default plugin implementation.
+
+        This property may also be assigned a new string value to change the
+        name of the default plugin.
+
+        >>> example: Plugin[type[Example]] = Plugin('plugins.example',
+        ...                                         default='one')
+        >>> example.default
+        <class 'examples.ExampleOne'>
+        >>> example.default = 'two'
+        >>> example.default
+        <class 'examples.ExampleTwo'>
 
         Raises:
-            IndexError
+            KeyError: The default plugin name was not registered.
 
         """
-        first = next(iter(self.registered.values()), None)
-        if first is None:
-            raise IndexError(f'No plugins registered: {self.group}')
-        return first
+        if self._default is None:
+            raise KeyError(f'{self.group!r} has no default plugin')
+        else:
+            return self.registered[self._default]
+
+    @default.setter
+    def default(self, default: Optional[str]) -> None:
+        self._default = default
 
     def _load(self) -> Mapping[str, PluginT]:
         loaded = self._loaded

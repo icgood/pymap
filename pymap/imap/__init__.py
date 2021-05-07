@@ -71,7 +71,7 @@ class IMAPService(ServiceInterface):  # pragma: no cover
         group.add_argument('--proxy-protocol', choices=pp_choices,
                            help='the PROXY protocol version string')
 
-    async def start(self) -> Awaitable:
+    async def start(self, stack: AsyncExitStack) -> None:
         backend = self.backend
         config = self.config
         servers: list[AbstractServer] = []
@@ -87,12 +87,10 @@ class IMAPService(ServiceInterface):  # pragma: no cover
             server = await asyncio.start_server(
                 imap_server, host=config.host, port=config.port)
             servers.append(server)
-        return asyncio.gather(*[self._run(server) for server in servers])
-
-    @classmethod
-    async def _run(cls, server: AbstractServer) -> None:
-        async with server:
-            await server.serve_forever()
+        for server in servers:
+            await stack.enter_async_context(server)
+            task = asyncio.create_task(server.serve_forever())
+            stack.callback(task.cancel)
 
 
 class IMAPServer:

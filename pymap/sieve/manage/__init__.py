@@ -6,9 +6,9 @@ import binascii
 import logging
 import re
 from argparse import ArgumentParser
-from asyncio import StreamReader, StreamWriter, AbstractServer
+from asyncio import StreamReader, StreamWriter
 from base64 import b64encode, b64decode
-from collections.abc import Awaitable, Mapping
+from collections.abc import Mapping
 from contextlib import closing, AsyncExitStack
 from typing import Optional, Union
 
@@ -58,7 +58,7 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         group.add_argument('--sieve-port',  metavar='NUM', default='4190',
                            help='the port or service name to listen on')
 
-    async def start(self) -> Awaitable:
+    async def start(self, stack: AsyncExitStack) -> None:
         backend = self.backend
         config = self.config
         managesieve_server = ManageSieveServer(backend.login, config)
@@ -66,12 +66,9 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         port: Union[str, int] = config.args.sieve_port
         server = await asyncio.start_server(
             managesieve_server, host=host, port=port)
-        return asyncio.create_task(self._run(server))
-
-    @classmethod
-    async def _run(cls, server: AbstractServer) -> None:
-        async with server:
-            await server.serve_forever()
+        await stack.enter_async_context(server)
+        task = asyncio.create_task(server.serve_forever())
+        stack.callback(task.cancel)
 
 
 class ManageSieveServer:

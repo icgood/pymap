@@ -186,7 +186,7 @@ class ContentKeys(KeysGroup):
 
 
 class FilterKeys(KeysGroup):
-    """The key group for managing sieve filters.
+    """The key group for managing filters.
 
     Args:
         root: The root redis key.

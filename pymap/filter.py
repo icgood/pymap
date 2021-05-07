@@ -12,7 +12,8 @@ from .plugin import Plugin
 __all__ = ['filters', 'PluginFilterSet', 'SingleFilterSet']
 
 #: Registers filter compiler plugins.
-filters: Plugin[type[FilterCompilerInterface]] = Plugin('pymap.filter')
+filters: Plugin[type[FilterCompilerInterface]] = Plugin(
+    'pymap.filter', default='sieve')
 
 
 class PluginFilterSet(FilterSetInterface[FilterValueT]):
@@ -21,12 +22,12 @@ class PluginFilterSet(FilterSetInterface[FilterValueT]):
     must sub-class :class:`FilterCompiler`.
 
     Args:
-        plugin_name: The filter plugin name.
-        group: The entry point group.
+        plugin_name: The filter plugin name, or ``None`` for default.
+        value_type: The filter value representation type.
 
     """
 
-    def __init__(self, plugin_name: str,
+    def __init__(self, plugin_name: Optional[str],
                  value_type: type[FilterValueT]) -> None:
         super().__init__()
         self._plugin_name = plugin_name
@@ -37,7 +38,10 @@ class PluginFilterSet(FilterSetInterface[FilterValueT]):
     def compiler(self) -> FilterCompilerInterface[FilterValueT]:
         if self._compiler is None:
             name = self._plugin_name
-            filter_cls = filters.registered[name]
+            if name is not None:
+                filter_cls = filters.registered[name]
+            else:
+                filter_cls = filters.default
             compiler = filter_cls()
             if not issubclass(compiler.value_type, self._value_type):
                 raise TypeError(f'{filter_cls} does not support '

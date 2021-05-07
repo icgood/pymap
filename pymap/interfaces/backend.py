@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from argparse import Namespace, ArgumentParser
-from collections.abc import Awaitable, Sequence
-from typing import Any, Protocol
+from collections.abc import Sequence
+from contextlib import AsyncExitStack
+from typing import Protocol, Any
 
 from .login import LoginInterface
 from ..config import IMAPConfig
@@ -55,11 +56,11 @@ class BackendInterface(Protocol):
         ...
 
     @abstractmethod
-    async def start(self, services: Sequence[ServiceInterface]) -> Awaitable:
-        """Start the backend, as well as any services.
+    async def start(self, stack: AsyncExitStack) -> None:
+        """Start the backend.
 
         Args:
-            services: Available services that may also be started.
+            stack: An exit stack that should be used for cleanup.
 
         """
         ...
@@ -112,6 +113,11 @@ class ServiceInterface(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def start(self) -> Awaitable:
-        """Start the service."""
+    async def start(self, stack: AsyncExitStack) -> None:
+        """Start the service.
+
+        Args:
+            stack: An exit stack that should be used for cleanup.
+
+        """
         ...
