@@ -6,9 +6,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-    <title>pymap.plugin &#8212; pymap 0.23.1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.plugin &#8212; pymap 0.24.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +56,7 @@
         <li class="right" >
           <a href="pymap.threads.html" title="pymap.threads"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.plugin</span></code></a></li> 
       </ul>
@@ -70,7 +69,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="module-pymap.plugin">
+  <div class="section" id="module-pymap.plugin">
 <span id="pymap-plugin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.plugin</span></code><a class="headerlink" href="#module-pymap.plugin" title="Permalink to this headline">¶</a></h1>
 <dl class="py data">
 <dt id="pymap.plugin.PluginT">
@@ -81,12 +80,13 @@
 
 <dl class="py class">
 <dt id="pymap.plugin.Plugin">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.plugin.</span></code><code class="sig-name descname"><span class="pre">Plugin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.plugin.Plugin" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.plugin.</span></code><code class="sig-name descname"><span class="pre">Plugin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.plugin.Plugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plugin system, typically loaded from <code class="xref py py-mod docutils literal notranslate"><span class="pre">pkg_resources</span></code> <a class="reference external" href="https://packaging.python.org/guides/creating-and-discovering-plugins/#using-package-metadata">entry points</a>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Example</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Plugin</span><span class="p">(</span><span class="s1">&#39;plugins.example&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="n">ExampleTwo</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">registered</span>
-<span class="go">{&#39;one&#39;: ExampleOne, &#39;two&#39;: ExampleTwo}</span>
+<span class="go">{&#39;one&#39;: &lt;class &#39;examples.ExampleOne&#39;&gt;,</span>
+<span class="go"> &#39;two&#39;: &lt;class &#39;examples.ExampleTwo&#39;&gt;}</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -111,12 +111,23 @@ to avoid cyclic imports.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.plugin.Plugin.first">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">first</span></code><a class="headerlink" href="#pymap.plugin.Plugin.first" title="Permalink to this definition">¶</a></dt>
-<dd><p>The first registered plugin.</p>
+<dt id="pymap.plugin.Plugin.default">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">default</span></code><a class="headerlink" href="#pymap.plugin.Plugin.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default plugin implementation.</p>
+<p>This property may also be assigned a new string value to change the
+name of the default plugin.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Example</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Plugin</span><span class="p">(</span><span class="s1">&#39;plugins.example&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;one&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">default</span>
+<span class="go">&lt;class &#39;examples.ExampleOne&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;two&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">default</span>
+<span class="go">&lt;class &#39;examples.ExampleTwo&#39;&gt;</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IndexError" title="(in Python v3.9)"><strong>IndexError</strong></a> – </p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.9)"><strong>KeyError</strong></a> – The default plugin name was not registered.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>~PluginT</p>
@@ -157,7 +168,7 @@ to avoid cyclic imports.</p>
 
 </dd></dl>
 
-</section>
+</div>
 
 
             <div class="clearer"></div>
@@ -231,7 +242,7 @@ to avoid cyclic imports.</p>
         <li class="right" >
           <a href="pymap.threads.html" title="pymap.threads"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.plugin</span></code></a></li> 
       </ul>
@@ -240,7 +251,7 @@ to avoid cyclic imports.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

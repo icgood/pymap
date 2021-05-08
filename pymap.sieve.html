@@ -6,9 +6,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-    <title>pymap.sieve &#8212; pymap 0.23.1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.sieve &#8212; pymap 0.24.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -53,7 +52,7 @@
         <li class="right" >
           <a href="pymap.token.html" title="pymap.token"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></li> 
       </ul>
@@ -66,7 +65,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="module-pymap.sieve">
+  <div class="section" id="module-pymap.sieve">
 <span id="pymap-sieve"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code><a class="headerlink" href="#module-pymap.sieve" title="Permalink to this headline">¶</a></h1>
 <dl class="py exception">
 <dt id="pymap.sieve.SieveParseError">
@@ -159,7 +158,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 
 </dd></dl>
 
-<section id="module-pymap.sieve.tests">
+<div class="section" id="module-pymap.sieve.tests">
 <span id="pymap-sieve-tests"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.tests</span></code><a class="headerlink" href="#module-pymap.sieve.tests" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.sieve.tests.SieveTest">
@@ -206,8 +205,8 @@ True if the test matched the data. Must be overridden by sub-classes.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pymap.sieve.manage">
+</div>
+<div class="section" id="module-pymap.sieve.manage">
 <span id="pymap-sieve-manage"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.manage</span></code><a class="headerlink" href="#module-pymap.sieve.manage" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.sieve.manage.ManageSieveService">
@@ -240,11 +239,14 @@ For example:</p>
 
 <dl class="py method">
 <dt id="pymap.sieve.manage.ManageSieveService.start">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService.start" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a>) – An exit stack that should be used for cleanup.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -296,8 +298,8 @@ enter the command/response cycle.</p>
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
             <div class="clearer"></div>
@@ -373,7 +375,7 @@ enter the command/response cycle.</p>
         <li class="right" >
           <a href="pymap.token.html" title="pymap.token"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></li> 
       </ul>
@@ -382,7 +384,7 @@ enter the command/response cycle.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

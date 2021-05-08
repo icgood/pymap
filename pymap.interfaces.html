@@ -6,9 +6,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-    <title>pymap.interfaces &#8212; pymap 0.23.1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.interfaces &#8212; pymap 0.24.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +56,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
@@ -70,9 +69,9 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="pymap-interfaces">
+  <div class="section" id="pymap-interfaces">
 <h1><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code><a class="headerlink" href="#pymap-interfaces" title="Permalink to this headline">¶</a></h1>
-<section id="module-pymap.interfaces.backend">
+<div class="section" id="module-pymap.interfaces.backend">
 <span id="pymap-interfaces-backend"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.backend</span></code><a class="headerlink" href="#module-pymap.interfaces.backend" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.backend.BackendInterface">
@@ -124,14 +123,14 @@ this backend. For example:</p>
 
 <dl class="py method">
 <dt id="pymap.interfaces.backend.BackendInterface.start">
-<em class="property"><span class="pre">abstract</span> <span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">services</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the backend, as well as any services.</p>
+<em class="property"><span class="pre">abstract</span> <span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.BackendInterface.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>services</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference internal" href="#pymap.interfaces.backend.ServiceInterface" title="pymap.interfaces.backend.ServiceInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceInterface</span></code></a>]) – Available services that may also be started.</p>
+<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a>) – An exit stack that should be used for cleanup.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -197,19 +196,22 @@ For example:</p>
 
 <dl class="py method">
 <dt id="pymap.interfaces.backend.ServiceInterface.start">
-<em class="property"><span class="pre">abstract</span> <span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.ServiceInterface.start" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span> <span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.interfaces.backend.ServiceInterface.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a>) – An exit stack that should be used for cleanup.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
-</section>
-<section id="module-pymap.interfaces.message">
+</div>
+<div class="section" id="module-pymap.interfaces.message">
 <span id="pymap-interfaces-message"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code><a class="headerlink" href="#module-pymap.interfaces.message" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.interfaces.message.MessageT">
@@ -605,8 +607,8 @@ optimized to only search headers and <code class="docutils literal notranslate">
 
 </dd></dl>
 
-</section>
-<section id="module-pymap.interfaces.mailbox">
+</div>
+<div class="section" id="module-pymap.interfaces.mailbox">
 <span id="pymap-interfaces-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.mailbox</span></code><a class="headerlink" href="#module-pymap.interfaces.mailbox" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.mailbox.MailboxInterface">
@@ -743,8 +745,8 @@ mailbox of the same name must have a different ID.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pymap.interfaces.session">
+</div>
+<div class="section" id="module-pymap.interfaces.session">
 <span id="pymap-interfaces-session"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.session</span></code><a class="headerlink" href="#module-pymap.interfaces.session" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.session.SessionInterface">
@@ -1226,8 +1228,8 @@ the selected mailbox.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pymap.interfaces.login">
+</div>
+<div class="section" id="module-pymap.interfaces.login">
 <span id="pymap-interfaces-login"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.login</span></code><a class="headerlink" href="#module-pymap.interfaces.login" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pymap.interfaces.login.LoginInterface">
@@ -1360,8 +1362,8 @@ private key.</p>
 
 </dd></dl>
 
-</section>
-<section id="module-pymap.interfaces.filter">
+</div>
+<div class="section" id="module-pymap.interfaces.filter">
 <span id="pymap-interfaces-filter"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.filter</span></code><a class="headerlink" href="#module-pymap.interfaces.filter" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.interfaces.filter.FilterValueT">
@@ -1593,8 +1595,8 @@ exists.</p>
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
             <div class="clearer"></div>
@@ -1682,7 +1684,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
@@ -1691,7 +1693,7 @@ exists.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

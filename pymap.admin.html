@@ -6,9 +6,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-    <title>pymap.admin &#8212; pymap 0.23.1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.admin &#8212; pymap 0.24.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -36,7 +35,7 @@
 
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pymap.token" href="pymap.token.html" />
+    <link rel="next" title="pymap.cluster" href="pymap.cluster.html" />
     <link rel="prev" title="pymap.imap" href="pymap.imap.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head><body>
@@ -52,12 +51,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.token.html" title="pymap.token"
+          <a href="pymap.cluster.html" title="pymap.cluster"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -70,7 +69,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="module-pymap.admin">
+  <div class="section" id="module-pymap.admin">
 <span id="pymap-admin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code><a class="headerlink" href="#module-pymap.admin" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="pymap.admin.AdminService">
@@ -107,11 +106,14 @@ For example:</p>
 
 <dl class="py method">
 <dt id="pymap.admin.AdminService.start">
-<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span> </em><code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a>) – An exit stack that should be used for cleanup.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -163,7 +165,7 @@ incompatible version error.</p>
 can be removed if <code class="docutils literal notranslate"><span class="pre">grpclib._typing.IServable</span></code> becomes public API.</p>
 </dd></dl>
 
-<section id="module-pymap.admin.handlers">
+<div class="section" id="module-pymap.admin.handlers">
 <span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt id="pymap.admin.handlers.handlers">
@@ -376,8 +378,8 @@ request and response.</p>
 
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
             <div class="clearer"></div>
@@ -402,8 +404,8 @@ request and response.</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="pymap.token.html"
-                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></p>
+    <p class="topless"><a href="pymap.cluster.html"
+                          title="Next page">&rarr; <code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -455,12 +457,12 @@ request and response.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pymap.token.html" title="pymap.token"
+          <a href="pymap.cluster.html" title="pymap.cluster"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -469,7 +471,7 @@ request and response.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

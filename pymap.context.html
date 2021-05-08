@@ -6,9 +6,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
-    <title>pymap.context &#8212; pymap 0.23.1 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.context &#8212; pymap 0.24.1 documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +56,7 @@
         <li class="right" >
           <a href="pymap.config.html" title="pymap.config"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.context</span></code></a></li> 
       </ul>
@@ -70,7 +69,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="module-pymap.context">
+  <div class="section" id="module-pymap.context">
 <span id="pymap-context"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.context</span></code><a class="headerlink" href="#module-pymap.context" title="Permalink to this headline">¶</a></h1>
 <p>Contains the context variables that are made available by the IMAP server to
 backend implementations.</p>
@@ -78,66 +77,46 @@ backend implementations.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference external" href="https://docs.python.org/3/library/contextvars.html#module-contextvars" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">contextvars</span></code></a></p>
 </div>
-<dl class="py attribute">
+<dl class="py data">
 <dt id="pymap.context.subsystem">
-<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">subsystem</span></code><a class="headerlink" href="#pymap.context.subsystem" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a> for concurrency
-primitives.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ContextVar</p>
-</dd>
-</dl>
+<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">subsystem</span></code><em class="property"><span class="pre">:</span> <span class="pre">ContextVar</span></em><em class="property"> <span class="pre">=</span> <span class="pre">&lt;ContextVar</span> <span class="pre">name='subsystem'</span> <span class="pre">default=&lt;pymap.concurrent._AsyncioSubsystem</span> <span class="pre">object&gt;&gt;</span></em><a class="headerlink" href="#pymap.context.subsystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">Subsystem</span></code></a> for concurrency primitives.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py data">
 <dt id="pymap.context.current_command">
-<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">current_command</span></code><a class="headerlink" href="#pymap.context.current_command" title="Permalink to this definition">¶</a></dt>
-<dd><p>The currently executing
-<a class="reference internal" href="pymap.parsing.html#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ContextVar</p>
-</dd>
-</dl>
+<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">current_command</span></code><em class="property"><span class="pre">:</span> <span class="pre">ContextVar</span></em><em class="property"> <span class="pre">=</span> <span class="pre">&lt;ContextVar</span> <span class="pre">name='current_command'&gt;</span></em><a class="headerlink" href="#pymap.context.current_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently executing <a class="reference internal" href="pymap.parsing.html#pymap.parsing.command.Command" title="pymap.parsing.command.Command"><code class="xref py py-class docutils literal notranslate"><span class="pre">Command</span></code></a>.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py data">
 <dt id="pymap.context.socket_info">
-<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">socket_info</span></code><a class="headerlink" href="#pymap.context.socket_info" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SocketInfo</span></code> about the currently
-connected client.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ContextVar</p>
-</dd>
-</dl>
+<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">socket_info</span></code><em class="property"><span class="pre">:</span> <span class="pre">ContextVar</span></em><em class="property"> <span class="pre">=</span> <span class="pre">&lt;ContextVar</span> <span class="pre">name='socket_info'&gt;</span></em><a class="headerlink" href="#pymap.context.socket_info" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SocketInfo</span></code> about the currently connected
+client.</p>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py data">
 <dt id="pymap.context.language_code">
-<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">language_code</span></code><a class="headerlink" href="#pymap.context.language_code" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">language_code</span></code><em class="property"><span class="pre">:</span> <span class="pre">ContextVar</span></em><em class="property"> <span class="pre">=</span> <span class="pre">&lt;ContextVar</span> <span class="pre">name='language_code'&gt;</span></em><a class="headerlink" href="#pymap.context.language_code" title="Permalink to this definition">¶</a></dt>
 <dd><p>The language code string, e.g. <code class="docutils literal notranslate"><span class="pre">en</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ContextVar</p>
-</dd>
-</dl>
 </dd></dl>
 
-<dl class="py attribute">
+<dl class="py data">
 <dt id="pymap.context.connection_exit">
-<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">connection_exit</span></code><a class="headerlink" href="#pymap.context.connection_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>The active <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a> that will
-be exited when the connection closes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>ContextVar</p>
-</dd>
-</dl>
+<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">connection_exit</span></code><em class="property"><span class="pre">:</span> <span class="pre">ContextVar</span></em><em class="property"> <span class="pre">=</span> <span class="pre">&lt;ContextVar</span> <span class="pre">name='connection_exit'&gt;</span></em><a class="headerlink" href="#pymap.context.connection_exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The active <a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a> that will be exited when the
+connection closes.</p>
 </dd></dl>
 
-</section>
+<dl class="py data">
+<dt id="pymap.context.cluster_metadata">
+<code class="sig-prename descclassname"><span class="pre">pymap.context.</span></code><code class="sig-name descname"><span class="pre">cluster_metadata</span></code><em class="property"><span class="pre">:</span> <span class="pre">ContextVar</span></em><em class="property"> <span class="pre">=</span> <span class="pre">&lt;ContextVar</span> <span class="pre">name='cluster_metdata'</span> <span class="pre">default=&lt;pymap.cluster.ClusterMetadata</span> <span class="pre">object&gt;&gt;</span></em><a class="headerlink" href="#pymap.context.cluster_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages local cluster metadata updates and access to remote status and
+metadata.</p>
+</dd></dl>
+
+</div>
 
 
             <div class="clearer"></div>
@@ -211,7 +190,7 @@ be exited when the connection closes.</p>
         <li class="right" >
           <a href="pymap.config.html" title="pymap.config"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.23.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.context</span></code></a></li> 
       </ul>
@@ -220,7 +199,7 @@ be exited when the connection closes.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
