@@ -6,13 +6,14 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.message &#8212; pymap 0.24.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>pymap.message &#8212; pymap 0.24.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -69,12 +70,12 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.message">
+  <section id="module-pymap.message">
 <span id="pymap-message"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code><a class="headerlink" href="#module-pymap.message" title="Permalink to this headline">¶</a></h1>
 <p>Base implementations of the <a class="reference internal" href="pymap.interfaces.html#module-pymap.interfaces.message" title="pymap.interfaces.message"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code></a> interfaces.</p>
 <dl class="py class">
-<dt id="pymap.message.BaseMessage">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.message.</span></code><code class="sig-name descname"><span class="pre">BaseMessage</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internal_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expunged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseMessage">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.message.</span></span><span class="sig-name descname"><span class="pre">BaseMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internal_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expunged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Message metadata such as UID, permanent flags, and when the message
 was added to the system.</p>
 <dl class="field-list simple">
@@ -89,9 +90,9 @@ was added to the system.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="pymap.message.BaseMessage.email_id">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">email_id</span></code><a class="headerlink" href="#pymap.message.BaseMessage.email_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.message.BaseMessage.email_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">email_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.parsing.specials.objectid.ObjectId</span></em><a class="headerlink" href="#pymap.message.BaseMessage.email_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message’s email object ID, which can identify its content.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -104,9 +105,9 @@ was added to the system.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.message.BaseMessage.thread_id">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">thread_id</span></code><a class="headerlink" href="#pymap.message.BaseMessage.thread_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.message.BaseMessage.thread_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">thread_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.parsing.specials.objectid.ObjectId</span></em><a class="headerlink" href="#pymap.message.BaseMessage.thread_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message’s thread object ID, which groups messages together.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -119,9 +120,9 @@ was added to the system.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.message.BaseMessage.permanent_flags">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">permanent_flags</span></code><a class="headerlink" href="#pymap.message.BaseMessage.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.message.BaseMessage.permanent_flags">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">permanent_flags</span></span><em class="property"><span class="pre">:</span> <span class="pre">frozenset</span></em><a class="headerlink" href="#pymap.message.BaseMessage.permanent_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>The permanent flags for the message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -131,8 +132,8 @@ was added to the system.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseMessage.get_flags">
-<code class="sig-name descname"><span class="pre">get_flags</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage.get_flags" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseMessage.get_flags">
+<span class="sig-name descname"><span class="pre">get_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseMessage.get_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the full set of permanent and session flags for the message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -144,9 +145,9 @@ was added to the system.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.message.BaseMessage.flags_key">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">flags_key</span></code><a class="headerlink" href="#pymap.message.BaseMessage.flags_key" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.message.BaseMessage.flags_key">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">flags_key</span></span><em class="property"><span class="pre">:</span> <span class="pre">tuple</span></em><a class="headerlink" href="#pymap.message.BaseMessage.flags_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hashable value that represents the current flags of this
 message, used for detecting mailbox updates.</p>
 <dl class="field-list simple">
@@ -159,8 +160,8 @@ message, used for detecting mailbox updates.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.message.BaseLoadedMessage">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.message.</span></code><code class="sig-name descname"><span class="pre">BaseLoadedMessage</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requirement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.message.</span></span><span class="sig-name descname"><span class="pre">BaseLoadedMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requirement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>The loaded message content, implemented using an instance of
 <a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>.</p>
 <dl class="field-list simple">
@@ -172,9 +173,9 @@ message, used for detecting mailbox updates.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.requirement">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">requirement</span></code><a class="headerlink" href="#pymap.message.BaseLoadedMessage.requirement" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.requirement">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">requirement</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.parsing.specials.fetchattr.FetchRequirement</span></em><a class="headerlink" href="#pymap.message.BaseLoadedMessage.requirement" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code> used to load
 the message content.</p>
 <dl class="field-list simple">
@@ -185,8 +186,8 @@ the message content.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_header">
-<code class="sig-name descname"><span class="pre">get_header</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_header" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_header">
+<span class="sig-name descname"><span class="pre">get_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_header" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the values of a header from the message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -199,8 +200,8 @@ the message content.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_headers">
-<code class="sig-name descname"><span class="pre">get_headers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_headers" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_headers">
+<span class="sig-name descname"><span class="pre">get_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the headers from the message part.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">section</span></code> argument indexes a nested sub-part of the message. For
 example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and then
@@ -216,8 +217,8 @@ index it for its 3rd sub-part.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_body">
-<code class="sig-name descname"><span class="pre">get_body</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_body" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_body">
+<span class="sig-name descname"><span class="pre">get_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_body" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the full body of the message part, including headers.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">section</span></code> argument can index a nested sub-part of the message.
 For example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and
@@ -237,8 +238,8 @@ Content-Transfer-Encoding.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_message_headers">
-<code class="sig-name descname"><span class="pre">get_message_headers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_message_headers" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_message_headers">
+<span class="sig-name descname"><span class="pre">get_message_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_message_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the headers from the message or a <code class="docutils literal notranslate"><span class="pre">message/rfc822</span></code> sub-part of
 the message..</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">section</span></code> argument can index a nested sub-part of the message.
@@ -260,8 +261,8 @@ the headers <em>not</em> in <code class="docutils literal notranslate"><span cla
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_message_text">
-<code class="sig-name descname"><span class="pre">get_message_text</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_message_text" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_message_text">
+<span class="sig-name descname"><span class="pre">get_message_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_message_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the text of the message part, not including headers.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">section</span></code> argument can index a nested sub-part of the message.
 For example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and
@@ -277,8 +278,8 @@ then index it for its 3rd sub-part.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_size">
-<code class="sig-name descname"><span class="pre">get_size</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_size" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_size">
+<span class="sig-name descname"><span class="pre">get_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the size of the message, in octets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -291,8 +292,8 @@ then index it for its 3rd sub-part.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_envelope_structure">
-<code class="sig-name descname"><span class="pre">get_envelope_structure</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_envelope_structure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_envelope_structure">
+<span class="sig-name descname"><span class="pre">get_envelope_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_envelope_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build and return the envelope structure.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -306,8 +307,8 @@ then index it for its 3rd sub-part.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.get_body_structure">
-<code class="sig-name descname"><span class="pre">get_body_structure</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_body_structure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.get_body_structure">
+<span class="sig-name descname"><span class="pre">get_body_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_body_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build and return the body structure.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -321,8 +322,8 @@ then index it for its 3rd sub-part.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.message.BaseLoadedMessage.contains">
-<code class="sig-name descname"><span class="pre">contains</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.contains" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.contains">
+<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.message.BaseLoadedMessage.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the body of the message for a sub-string. This may be
 optimized to only search headers and <code class="docutils literal notranslate"><span class="pre">text/*</span></code> MIME parts.</p>
 <dl class="field-list simple">
@@ -337,7 +338,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
 
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -411,7 +412,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -420,7 +421,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

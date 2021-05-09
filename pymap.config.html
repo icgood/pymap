@@ -6,13 +6,14 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.config &#8212; pymap 0.24.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>pymap.config &#8212; pymap 0.24.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li> 
       </ul>
@@ -69,25 +70,25 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.config">
+  <section id="module-pymap.config">
 <span id="pymap-config"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code><a class="headerlink" href="#module-pymap.config" title="Permalink to this headline">¶</a></h1>
 <dl class="py data">
-<dt id="pymap.config.ConfigT">
-<code class="sig-prename descclassname"><span class="pre">pymap.config.</span></code><code class="sig-name descname"><span class="pre">ConfigT</span></code><a class="headerlink" href="#pymap.config.ConfigT" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.ConfigT">
+<span class="sig-prename descclassname"><span class="pre">pymap.config.</span></span><span class="sig-name descname"><span class="pre">ConfigT</span></span><a class="headerlink" href="#pymap.config.ConfigT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
-<p>alias of TypeVar(‘ConfigT’)</p>
+<p>alias of TypeVar(‘ConfigT’, bound=<a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>)</p>
 </dd></dl>
 
 <dl class="py data">
-<dt id="pymap.config.ConfigT_contra">
-<code class="sig-prename descclassname"><span class="pre">pymap.config.</span></code><code class="sig-name descname"><span class="pre">ConfigT_contra</span></code><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.ConfigT_contra">
+<span class="sig-prename descclassname"><span class="pre">pymap.config.</span></span><span class="sig-name descname"><span class="pre">ConfigT_contra</span></span><a class="headerlink" href="#pymap.config.ConfigT_contra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contravariant type variable with an upper bound of <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>.</p>
-<p>alias of TypeVar(‘ConfigT_contra’, contravariant=True)</p>
+<p>alias of TypeVar(‘ConfigT_contra’, bound=<a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a>, contravariant=True)</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.config.BackendCapability">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.config.</span></code><code class="sig-name descname"><span class="pre">BackendCapability</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_append</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.BackendCapability" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.BackendCapability">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.config.</span></span><span class="sig-name descname"><span class="pre">BackendCapability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_append</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.BackendCapability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Declares the IMAP capabilities that the backend supports.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -102,8 +103,8 @@
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.config.IMAPConfig">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.config.</span></code><code class="sig-name descname"><span class="pre">IMAPConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tls_enabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preauth_credentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_append_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad_command_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_search_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_idle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.IMAPConfig">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.config.</span></span><span class="sig-name descname"><span class="pre">IMAPConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tls_enabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secure_auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preauth_credentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proxy_protocol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpu_subsystem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_append_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bad_command_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_search_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_idle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Configurable settings that control how the IMAP server operates and what
 extensions it supports.</p>
 <dl class="field-list simple">
@@ -135,14 +136,14 @@ the client with parsing errors before the client is disconnected.</p></li>
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="pymap.config.IMAPConfig.args">
-<code class="sig-name descname"><span class="pre">args</span></code><a class="headerlink" href="#pymap.config.IMAPConfig.args" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.IMAPConfig.args">
+<span class="sig-name descname"><span class="pre">args</span></span><a class="headerlink" href="#pymap.config.IMAPConfig.args" title="Permalink to this definition">¶</a></dt>
 <dd><p>The command-line arguments.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.config.IMAPConfig.parse_args">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">parse_args</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.parse_args" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.IMAPConfig.parse_args">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.parse_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given command-line arguments, return a dictionary of keywords that
 should be passed in to the <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a> (or sub-class)
 constructor. Sub-classes should override this method as needed.</p>
@@ -157,8 +158,8 @@ constructor. Sub-classes should override this method as needed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.config.IMAPConfig.from_args">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_args</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.from_args" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.IMAPConfig.from_args">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.from_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build and return a new <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a> using command-line
 arguments.</p>
 <dl class="field-list simple">
@@ -175,8 +176,8 @@ arguments.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.config.IMAPConfig.apply_context">
-<code class="sig-name descname"><span class="pre">apply_context</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.apply_context" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.config.IMAPConfig.apply_context">
+<span class="sig-name descname"><span class="pre">apply_context</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.config.IMAPConfig.apply_context" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the configured settings to any <a class="reference internal" href="pymap.context.html#module-pymap.context" title="pymap.context"><code class="xref py py-mod docutils literal notranslate"><span class="pre">context</span></code></a>
 variables.</p>
 <dl class="field-list simple">
@@ -186,9 +187,9 @@ variables.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.config.IMAPConfig.backend_capability">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">backend_capability</span></code><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.config.IMAPConfig.backend_capability">
+<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">backend_capability</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.config.BackendCapability</span></em><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows backends to declare support for IMAP extensions and other
 capabilities.</p>
 <dl class="field-list simple">
@@ -200,7 +201,7 @@ capabilities.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -274,7 +275,7 @@ capabilities.</p>
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li> 
       </ul>
@@ -283,7 +284,7 @@ capabilities.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

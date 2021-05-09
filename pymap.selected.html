@@ -6,13 +6,14 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.selected &#8212; pymap 0.24.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>pymap.selected &#8212; pymap 0.24.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.search.html" title="pymap.search"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code></a></li> 
       </ul>
@@ -69,17 +70,17 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.selected">
+  <section id="module-pymap.selected">
 <span id="pymap-selected"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code><a class="headerlink" href="#module-pymap.selected" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="pymap.selected.SelectedSet">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.selected.</span></code><code class="sig-name descname"><span class="pre">SelectedSet</span></code><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedSet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.selected.</span></span><span class="sig-name descname"><span class="pre">SelectedSet</span></span><a class="headerlink" href="#pymap.selected.SelectedSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maintains a weak set of <a class="reference internal" href="#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><code class="xref py py-class docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a> objects that exist for
 a mailbox, across all sessions. This is useful for assigning the
 <code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag, as well as notifying other sessions about updates.</p>
 <dl class="py method">
-<dt id="pymap.selected.SelectedSet.add">
-<code class="sig-name descname"><span class="pre">add</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedSet.add" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedSet.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedSet.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new selected mailbox object to the set, which may then be
 returned by <a class="reference internal" href="#pymap.selected.SelectedSet.any_selected" title="pymap.selected.SelectedSet.any_selected"><code class="xref py py-meth docutils literal notranslate"><span class="pre">any_selected()</span></code></a>.</p>
 <dl class="field-list simple">
@@ -96,9 +97,9 @@ from the weak set.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedSet.any_selected">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">any_selected</span></code><a class="headerlink" href="#pymap.selected.SelectedSet.any_selected" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedSet.any_selected">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">any_selected</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[pymap.selected.SelectedMailbox]</span></em><a class="headerlink" href="#pymap.selected.SelectedSet.any_selected" title="Permalink to this definition">¶</a></dt>
 <dd><p>A single, random object in the set of selected mailbox objects.
 Selected mailbox object’s marked <a class="reference internal" href="#pymap.selected.SelectedMailbox.readonly" title="pymap.selected.SelectedMailbox.readonly"><code class="xref py py-attr docutils literal notranslate"><span class="pre">readonly</span></code></a>
 will not be chosen.</p>
@@ -112,12 +113,12 @@ will not be chosen.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.selected.SynchronizedMessages">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.selected.</span></code><code class="sig-name descname"><span class="pre">SynchronizedMessages</span></code><a class="headerlink" href="#pymap.selected.SynchronizedMessages" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SynchronizedMessages">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.selected.</span></span><span class="sig-name descname"><span class="pre">SynchronizedMessages</span></span><a class="headerlink" href="#pymap.selected.SynchronizedMessages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the message data that has been synchronized with the client.</p>
-<dl class="py method">
-<dt id="pymap.selected.SynchronizedMessages.exists">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">exists</span></code><a class="headerlink" href="#pymap.selected.SynchronizedMessages.exists" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SynchronizedMessages.exists">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">exists</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pymap.selected.SynchronizedMessages.exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>The total number of messages in the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -126,9 +127,9 @@ will not be chosen.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SynchronizedMessages.max_uid">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">max_uid</span></code><a class="headerlink" href="#pymap.selected.SynchronizedMessages.max_uid" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SynchronizedMessages.max_uid">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_uid</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pymap.selected.SynchronizedMessages.max_uid" title="Permalink to this definition">¶</a></dt>
 <dd><p>The highest message UID value of the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -138,8 +139,8 @@ will not be chosen.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SynchronizedMessages.get">
-<code class="sig-name descname"><span class="pre">get</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SynchronizedMessages.get" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SynchronizedMessages.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SynchronizedMessages.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the given cached message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -152,8 +153,8 @@ will not be chosen.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SynchronizedMessages.get_uids">
-<code class="sig-name descname"><span class="pre">get_uids</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SynchronizedMessages.get_uids" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SynchronizedMessages.get_uids">
+<span class="sig-name descname"><span class="pre">get_uids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SynchronizedMessages.get_uids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the message sequence numbers and their UIDs for the given
 sequence set.</p>
 <dl class="field-list simple">
@@ -167,8 +168,8 @@ sequence set.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SynchronizedMessages.get_all">
-<code class="sig-name descname"><span class="pre">get_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SynchronizedMessages.get_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SynchronizedMessages.get_all">
+<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SynchronizedMessages.get_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the cached messages, and their sequence numbers, for the
 given sequence set.</p>
 <dl class="field-list simple">
@@ -184,8 +185,8 @@ given sequence set.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.selected.SelectedMailbox">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.selected.</span></code><code class="sig-name descname"><span class="pre">SelectedMailbox</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.selected.</span></span><span class="sig-name descname"><span class="pre">SelectedMailbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the updates to the current selected mailbox from other
 concurrent sessions.</p>
 <p>The current state of the selected mailbox will be written to this object by
@@ -204,9 +205,9 @@ kept in in this set.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.mailbox_id">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">mailbox_id</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.mailbox_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.mailbox_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mailbox_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.parsing.specials.objectid.ObjectId</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.mailbox_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The selected mailbox object ID.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -219,9 +220,9 @@ kept in in this set.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.lookup">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">lookup</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.lookup" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.lookup">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">lookup</span></span><em class="property"><span class="pre">:</span> <span class="pre">Any</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.lookup" title="Permalink to this definition">¶</a></dt>
 <dd><p>The lookup value, if any, needed by backends that cannot lookup
 mailboxes by <a class="reference internal" href="#pymap.selected.SelectedMailbox.mailbox_id" title="pymap.selected.SelectedMailbox.mailbox_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mailbox_id</span></code></a>. A typical lookup value might be the
 name of the mailbox.</p>
@@ -232,9 +233,9 @@ name of the mailbox.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.mod_sequence">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">mod_sequence</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.mod_sequence" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.mod_sequence">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mod_sequence</span></span><em class="property"><span class="pre">:</span> <span class="pre">Any</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.mod_sequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>The highest modification sequence of the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -243,9 +244,9 @@ name of the mailbox.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.hide_expunged">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hide_expunged</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.hide_expunged" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.hide_expunged">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">hide_expunged</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.hide_expunged" title="Permalink to this definition">¶</a></dt>
 <dd><p>If True, no untagged <code class="docutils literal notranslate"><span class="pre">EXPUNGE</span></code> responses will be generated, and
 message sequence numbers will not be adjusted, until the next
 <a class="reference internal" href="#pymap.selected.SelectedMailbox.fork" title="pymap.selected.SelectedMailbox.fork"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fork()</span></code></a>.</p>
@@ -257,8 +258,8 @@ message sequence numbers will not be adjusted, until the next
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.add_updates">
-<code class="sig-name descname"><span class="pre">add_updates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expunged</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.add_updates" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.add_updates">
+<span class="sig-name descname"><span class="pre">add_updates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expunged</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.add_updates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the messages in the selected mailboxes. The <code class="docutils literal notranslate"><span class="pre">messages</span></code>
 should include non-expunged messages in the mailbox that should be
 checked for updates. The <code class="docutils literal notranslate"><span class="pre">expunged</span></code> argument is the set of UIDs that
@@ -285,8 +286,8 @@ of messages that have been updated, it should instead use
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.set_messages">
-<code class="sig-name descname"><span class="pre">set_messages</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.set_messages" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.set_messages">
+<span class="sig-name descname"><span class="pre">set_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">messages</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.set_messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the non-optimized alternative to <a class="reference internal" href="#pymap.selected.SelectedMailbox.add_updates" title="pymap.selected.SelectedMailbox.add_updates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_updates()</span></code></a> for
 backend implementations that cannot detect their own updates and must
 instead compare the entire state of the mailbox.</p>
@@ -303,9 +304,9 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.readonly">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">readonly</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.readonly" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.readonly">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">readonly</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.readonly" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indicates the mailbox is selected as read-only.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -314,9 +315,9 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.messages">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">messages</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.messages" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.messages">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">messages</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.selected.SynchronizedMessages</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.messages" title="Permalink to this definition">¶</a></dt>
 <dd><p>The messages in the mailbox, as synchronized with the client.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -325,9 +326,9 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.permanent_flags">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">permanent_flags</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.permanent_flags">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">permanent_flags</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.flags.PermanentFlags</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.permanent_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>The defined permanent flags for the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -336,9 +337,9 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.session_flags">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">session_flags</span></code><a class="headerlink" href="#pymap.selected.SelectedMailbox.session_flags" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.session_flags">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">session_flags</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.flags.SessionFlags</span></em><a class="headerlink" href="#pymap.selected.SelectedMailbox.session_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Session-only flags for the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -348,8 +349,8 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.set_deleted">
-<code class="sig-name descname"><span class="pre">set_deleted</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.set_deleted" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.set_deleted">
+<span class="sig-name descname"><span class="pre">set_deleted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.set_deleted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Marks the selected mailbox as having been deleted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -359,8 +360,8 @@ included in <code class="docutils literal notranslate"><span class="pre">message
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.silence">
-<code class="sig-name descname"><span class="pre">silence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.silence" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.silence">
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_op</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.silence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the flags update against the cached flags, to prevent untagged
 FETCH responses unless other updates have occurred.</p>
 <p>For example, if a session adds <code class="docutils literal notranslate"><span class="pre">\Deleted</span></code> and calls this method,
@@ -381,8 +382,8 @@ at the same time, the FETCH response will be sent.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.selected.SelectedMailbox.fork">
-<code class="sig-name descname"><span class="pre">fork</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.fork" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.selected.SelectedMailbox.fork">
+<span class="sig-name descname"><span class="pre">fork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.selected.SelectedMailbox.fork" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares the state of the current object to that of the last fork,
 returning the untagged responses that reflect any changes. A new copy
 of the object is also returned, ready for the next command.</p>
@@ -398,7 +399,7 @@ of the object is also returned, ready for the next command.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
@@ -472,7 +473,7 @@ of the object is also returned, ready for the next command.</p>
         <li class="right" >
           <a href="pymap.search.html" title="pymap.search"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code></a></li> 
       </ul>
@@ -481,7 +482,7 @@ of the object is also returned, ready for the next command.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

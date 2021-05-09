@@ -6,13 +6,14 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.mime &#8212; pymap 0.24.1 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/cloud.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>pymap.mime &#8212; pymap 0.24.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
@@ -56,7 +57,7 @@
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></li> 
       </ul>
@@ -69,11 +70,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-pymap.mime">
+  <section id="module-pymap.mime">
 <span id="pymap-mime"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code><a class="headerlink" href="#module-pymap.mime" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="pymap.mime.MessageContent">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.mime.</span></code><code class="sig-name descname"><span class="pre">MessageContent</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageContent">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.mime.</span></span><span class="sig-name descname"><span class="pre">MessageContent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contains the message content, parsed for IMAP processing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -85,14 +86,14 @@
 </dd>
 </dl>
 <dl class="py attribute">
-<dt id="pymap.mime.MessageContent.lines">
-<code class="sig-name descname"><span class="pre">lines</span></code><a class="headerlink" href="#pymap.mime.MessageContent.lines" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.lines">
+<span class="sig-name descname"><span class="pre">lines</span></span><a class="headerlink" href="#pymap.mime.MessageContent.lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of lines in the message content.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageContent.walk">
-<code class="sig-name descname"><span class="pre">walk</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.walk" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.walk">
+<span class="sig-name descname"><span class="pre">walk</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.walk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate through the message and all its nested sub-parts in the
 order they occur.</p>
 <dl class="field-list simple">
@@ -102,9 +103,9 @@ order they occur.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageContent.is_rfc822">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_rfc822</span></code><a class="headerlink" href="#pymap.mime.MessageContent.is_rfc822" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.is_rfc822">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_rfc822</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pymap.mime.MessageContent.is_rfc822" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the content-type of the message is <code class="docutils literal notranslate"><span class="pre">message/rfc822</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -113,9 +114,9 @@ order they occur.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageContent.json">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">json</span></code><a class="headerlink" href="#pymap.mime.MessageContent.json" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.json">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">json</span></span><em class="property"><span class="pre">:</span> <span class="pre">collections.abc.Mapping[str,</span> <span class="pre">Any]</span></em><a class="headerlink" href="#pymap.mime.MessageContent.json" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
 this object may be re-created without parsing.</p>
 <div class="admonition seealso">
@@ -130,8 +131,8 @@ this object may be re-created without parsing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageContent.from_json">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.from_json" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.from_json">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recover the parsed message content without re-parsing, using the
 original raw data and the <a class="reference internal" href="#pymap.mime.MessageContent.json" title="pymap.mime.MessageContent.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a>.</p>
 <p>In this example, <code class="docutils literal notranslate"><span class="pre">content1</span></code> and <code class="docutils literal notranslate"><span class="pre">content2</span></code> should be equivalent:</p>
@@ -154,8 +155,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageContent.parse">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">parse</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.parse" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.parse">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.parse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse the bytestring into message content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -168,8 +169,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageContent.write">
-<code class="sig-name descname"><span class="pre">write</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.write" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageContent.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageContent.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the object to the stream, with one or more calls to
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code>.</p>
 <dl class="field-list simple">
@@ -185,29 +186,29 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.mime.MessageHeader">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.mime.</span></code><code class="sig-name descname"><span class="pre">MessageHeader</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folded</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.mime.</span></span><span class="sig-name descname"><span class="pre">MessageHeader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folded</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message header. Contains lines in the form of <code class="docutils literal notranslate"><span class="pre">Header:</span> <span class="pre">value\n</span></code>,
 possibly folded onto multiple lines where subsequent lines start with
 whitespace.</p>
 <dl class="py attribute">
-<dt id="pymap.mime.MessageHeader.folded">
-<code class="sig-name descname"><span class="pre">folded</span></code><a class="headerlink" href="#pymap.mime.MessageHeader.folded" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.folded">
+<span class="sig-name descname"><span class="pre">folded</span></span><a class="headerlink" href="#pymap.mime.MessageHeader.folded" title="Permalink to this definition">¶</a></dt>
 <dd><p>A list of headers, as they occurred in the original data, as
 tuples of the lower-cased header name and the full header value,
 including the header name and any extra folded lines.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="pymap.mime.MessageHeader.parsed">
-<code class="sig-name descname"><span class="pre">parsed</span></code><a class="headerlink" href="#pymap.mime.MessageHeader.parsed" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.parsed">
+<span class="sig-name descname"><span class="pre">parsed</span></span><a class="headerlink" href="#pymap.mime.MessageHeader.parsed" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message headers, as a dictionary-like object that parses
 headers on-demand.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageHeader.lines">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">lines</span></code><a class="headerlink" href="#pymap.mime.MessageHeader.lines" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.lines">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">lines</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pymap.mime.MessageHeader.lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of lines in the message header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -216,9 +217,9 @@ headers on-demand.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageHeader.json">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">json</span></code><a class="headerlink" href="#pymap.mime.MessageHeader.json" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.json">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">json</span></span><em class="property"><span class="pre">:</span> <span class="pre">collections.abc.Mapping[str,</span> <span class="pre">Any]</span></em><a class="headerlink" href="#pymap.mime.MessageHeader.json" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
 this object may be re-created without parsing.</p>
 <div class="admonition seealso">
@@ -233,8 +234,8 @@ this object may be re-created without parsing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageHeader.from_json">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader.from_json" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.from_json">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader.from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recover the parsed message header without re-parsing, using the
 original raw data and the <a class="reference internal" href="#pymap.mime.MessageHeader.json" title="pymap.mime.MessageHeader.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a>.</p>
 <div class="admonition seealso">
@@ -255,8 +256,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageHeader.empty">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">empty</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader.empty" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.empty">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader.empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an empty header object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -266,8 +267,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageHeader.write">
-<code class="sig-name descname"><span class="pre">write</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader.write" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageHeader.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageHeader.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the object to the stream, with one or more calls to
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code>.</p>
 <dl class="field-list simple">
@@ -283,20 +284,20 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py class">
-<dt id="pymap.mime.MessageBody">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.mime.</span></code><code class="sig-name descname"><span class="pre">MessageBody</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageBody">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.mime.</span></span><span class="sig-name descname"><span class="pre">MessageBody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message body, starting immediately after the header. The body may
 contain nested sub-parts, which are each valid <a class="reference internal" href="#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>
 objects.</p>
 <dl class="py attribute">
-<dt id="pymap.mime.MessageBody.content_type">
-<code class="sig-name descname"><span class="pre">content_type</span></code><a class="headerlink" href="#pymap.mime.MessageBody.content_type" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.content_type">
+<span class="sig-name descname"><span class="pre">content_type</span></span><a class="headerlink" href="#pymap.mime.MessageBody.content_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>The content type of the message body.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageBody.lines">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">lines</span></code><a class="headerlink" href="#pymap.mime.MessageBody.lines" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.lines">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">lines</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pymap.mime.MessageBody.lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of lines in the message body.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -305,9 +306,9 @@ objects.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageBody.has_nested">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">has_nested</span></code><a class="headerlink" href="#pymap.mime.MessageBody.has_nested" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.has_nested">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">has_nested</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pymap.mime.MessageBody.has_nested" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the message body is composed of nested sub-parts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -316,9 +317,9 @@ objects.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageBody.nested">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">nested</span></code><a class="headerlink" href="#pymap.mime.MessageBody.nested" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.nested">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">nested</span></span><em class="property"><span class="pre">:</span> <span class="pre">collections.abc.Sequence[pymap.mime.MessageContent]</span></em><a class="headerlink" href="#pymap.mime.MessageBody.nested" title="Permalink to this definition">¶</a></dt>
 <dd><p>If <a class="reference internal" href="#pymap.mime.MessageBody.has_nested" title="pymap.mime.MessageBody.has_nested"><code class="xref py py-attr docutils literal notranslate"><span class="pre">has_nested</span></code></a> is True, contains the list of sub-parts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -327,9 +328,9 @@ objects.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.MessageBody.json">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">json</span></code><a class="headerlink" href="#pymap.mime.MessageBody.json" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.json">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">json</span></span><em class="property"><span class="pre">:</span> <span class="pre">collections.abc.Mapping[str,</span> <span class="pre">Any]</span></em><a class="headerlink" href="#pymap.mime.MessageBody.json" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dictionary that can be serialized (e.g. with <a class="reference external" href="https://docs.python.org/3/library/json.html#module-json" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code></a>), so that
 this object may be re-created without parsing.</p>
 <div class="admonition seealso">
@@ -344,8 +345,8 @@ this object may be re-created without parsing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageBody.from_json">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_json</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody.from_json" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.from_json">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody.from_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recover the parsed message body without re-parsing, using the
 original raw data and the <a class="reference internal" href="#pymap.mime.MessageBody.json" title="pymap.mime.MessageBody.json"><code class="xref py py-attr docutils literal notranslate"><span class="pre">json</span></code></a>.</p>
 <div class="admonition seealso">
@@ -366,8 +367,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageBody.empty">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">empty</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody.empty" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.empty">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody.empty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an empty body object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -377,8 +378,8 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.MessageBody.write">
-<code class="sig-name descname"><span class="pre">write</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody.write" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.MessageBody.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.MessageBody.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the object to the stream, with one or more calls to
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code>.</p>
 <dl class="field-list simple">
@@ -393,16 +394,16 @@ original raw data and the <a class="reference internal" href="#pymap.mime.Messag
 
 </dd></dl>
 
-<div class="section" id="module-pymap.mime.cte">
+<section id="module-pymap.mime.cte">
 <span id="pymap-mime-cte"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.mime.cte</span></code><a class="headerlink" href="#module-pymap.mime.cte" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pymap.mime.cte.MessageDecoder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.mime.cte.</span></code><code class="sig-name descname"><span class="pre">MessageDecoder</span></code><a class="headerlink" href="#pymap.mime.cte.MessageDecoder" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.cte.MessageDecoder">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.mime.cte.</span></span><span class="sig-name descname"><span class="pre">MessageDecoder</span></span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decodes a <a class="reference internal" href="#pymap.mime.MessageBody" title="pymap.mime.MessageBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageBody</span></code></a> as decided by its
 <code class="docutils literal notranslate"><span class="pre">Content-Transfer-Encoding</span></code> header.</p>
 <dl class="py attribute">
-<dt id="pymap.mime.cte.MessageDecoder.registry">
-<code class="sig-name descname"><span class="pre">registry</span></code><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.registry" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.cte.MessageDecoder.registry">
+<span class="sig-name descname"><span class="pre">registry</span></span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registry of custom
 decoders. Keys should be lower-case.</p>
 <dl class="field-list simple">
@@ -413,8 +414,8 @@ decoders. Keys should be lower-case.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.cte.MessageDecoder.of">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">of</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.of" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.cte.MessageDecoder.of">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a decoder from the message header object.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -431,8 +432,8 @@ decoders. Keys should be lower-case.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.cte.MessageDecoder.of_cte">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">of_cte</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.of_cte" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.cte.MessageDecoder.of_cte">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">of_cte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.of_cte" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a decoder from the CTE header value.</p>
 <p>There is built-in support for <code class="docutils literal notranslate"><span class="pre">7bit</span></code>, <code class="docutils literal notranslate"><span class="pre">8bit</span></code>, <code class="docutils literal notranslate"><span class="pre">quoted-printable</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">base64</span></code> CTE header values. Decoders can be added or overridden
@@ -448,8 +449,8 @@ with the <a class="reference internal" href="#pymap.mime.cte.MessageDecoder.regi
 </dd></dl>
 
 <dl class="py method">
-<dt id="pymap.mime.cte.MessageDecoder.decode">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">decode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.decode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.cte.MessageDecoder.decode">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.cte.MessageDecoder.decode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decode and return the decoded body of the message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -463,18 +464,18 @@ with the <a class="reference internal" href="#pymap.mime.cte.MessageDecoder.regi
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-pymap.mime.parsed">
+</section>
+<section id="module-pymap.mime.parsed">
 <span id="pymap-mime-parsed"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.mime.parsed</span></code><a class="headerlink" href="#module-pymap.mime.parsed" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="pymap.mime.parsed.ParsedHeaders">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pymap.mime.parsed.</span></code><code class="sig-name descname"><span class="pre">ParsedHeaders</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">headers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.mime.parsed.</span></span><span class="sig-name descname"><span class="pre">ParsedHeaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">headers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mapping of message headers, parsed on-demand using a
 <a class="reference external" href="https://docs.python.org/3/library/email.headerregistry.html#email.headerregistry.HeaderRegistry" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">HeaderRegistry</span></code></a>. Also provides typed
 properties for standard headers used in IMAP processing.</p>
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_type">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_type</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_type" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_type">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_type</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.ContentTypeHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -483,9 +484,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.date">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">date</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.date" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.date">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">date</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.DateHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.date" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Date</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -494,9 +495,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.subject">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">subject</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.subject" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.subject">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">subject</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.subject" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Subject</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -505,9 +506,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.from_">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">from_</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.from_" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.from_">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">from_</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[collections.abc.Sequence[email.headerregistry.AddressHeader]]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.from_" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">From</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -516,9 +517,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.sender">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">sender</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.sender" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.sender">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sender</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[collections.abc.Sequence[email.headerregistry.SingleAddressHeader]]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.sender" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Sender</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -527,9 +528,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.reply_to">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">reply_to</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.reply_to" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.reply_to">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">reply_to</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[collections.abc.Sequence[email.headerregistry.AddressHeader]]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.reply_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Reply-To</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -538,9 +539,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.to">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">to</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.to" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.to">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">to</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[collections.abc.Sequence[email.headerregistry.AddressHeader]]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.to" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">To</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -549,9 +550,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.cc">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">cc</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.cc" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.cc">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cc</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[collections.abc.Sequence[email.headerregistry.AddressHeader]]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.cc" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Cc</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -560,9 +561,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.bcc">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">bcc</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.bcc" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.bcc">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">bcc</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[collections.abc.Sequence[email.headerregistry.AddressHeader]]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.bcc" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Bcc</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -571,9 +572,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.in_reply_to">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">in_reply_to</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.in_reply_to" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.in_reply_to">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">in_reply_to</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.in_reply_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">In-Reply-To</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -582,9 +583,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.references">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">references</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.references" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.references">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">references</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.references" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">References</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -593,9 +594,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.message_id">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">message_id</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.message_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.message_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">message_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.message_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Message-Id</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -604,9 +605,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_disposition">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_disposition</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_disposition" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_disposition">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_disposition</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.ContentDispositionHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_disposition" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Disposition</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -615,9 +616,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_language">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_language</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_language" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_language">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_language</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_language" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Language</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -626,9 +627,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_location">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_location</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_location" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_location">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_location</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Location</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -637,9 +638,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_id">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_id</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_id" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_id">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Id</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -648,9 +649,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_description">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_description</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_description" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_description">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_description</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.UnstructuredHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_description" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Description</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -659,9 +660,9 @@ properties for standard headers used in IMAP processing.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pymap.mime.parsed.ParsedHeaders.content_transfer_encoding">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">content_transfer_encoding</span></code><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_transfer_encoding" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.mime.parsed.ParsedHeaders.content_transfer_encoding">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">content_transfer_encoding</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[email.headerregistry.ContentTransferEncodingHeader]</span></em><a class="headerlink" href="#pymap.mime.parsed.ParsedHeaders.content_transfer_encoding" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">Content-Transfer-Encoding</span></code> header.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -672,8 +673,8 @@ properties for standard headers used in IMAP processing.</p>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -757,7 +758,7 @@ properties for standard headers used in IMAP processing.</p>
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.24.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.24.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></li> 
       </ul>
@@ -766,7 +767,7 @@ properties for standard headers used in IMAP processing.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.4.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
