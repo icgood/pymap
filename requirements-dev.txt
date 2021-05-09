@@ -6,4 +6,4 @@ pytest-asyncio
 pytest-cov
 rope
 
--e '.[redis,admin,macaroon,sieve,swim,optional]'
+-r requirements-all.txt
