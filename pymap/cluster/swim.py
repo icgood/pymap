@@ -48,7 +48,11 @@ class SwimService(ServiceInterface):  # pragma: no cover
     async def _start(self, args: Namespace, stack: AsyncExitStack) -> None:
         while True:
             try:
-                config = transport_type.config_type.from_args(args)
+                config = transport_type.config_type.from_args(
+                    args, ping_interval=10.0,
+                    ping_timeout=1.0,
+                    suspect_timeout=300.0,
+                    sync_interval=30.0)
             except TransientConfigError as exc:
                 _log.debug('SWIM configuration failure: %s', exc)
                 await asyncio.sleep(exc.wait_hint)
@@ -56,6 +60,8 @@ class SwimService(ServiceInterface):  # pragma: no cover
                 return  # do not run SWIM if not configured properly
             else:
                 break
+        _log.debug('SWIM configuration: %r %r',
+                   config.local_name, config.peers)
 
         transport = transport_type(config)
         members = Members(config)
