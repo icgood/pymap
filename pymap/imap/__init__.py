@@ -12,6 +12,7 @@ from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
 from base64 import b64encode, b64decode
 from collections.abc import Awaitable, Iterable
 from contextlib import closing, AsyncExitStack
+from ssl import SSLError
 from typing import TypeVar, Union, Optional
 from uuid import uuid4
 
@@ -283,7 +284,7 @@ class IMAPConnection:
         new_writer = StreamWriter(new_transport, new_protocol,
                                   self.reader, loop)
         self._reset_streams(self.reader, new_writer)
-        self._print('%s <->| %s', b'<TLS handshake>')
+        self._print('%s <->| %s', '<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
         _, exc, _ = sys.exc_info()
@@ -414,7 +415,13 @@ class IMAPConnection:
                         break
                     if isinstance(cmd, StartTLSCommand) \
                             and isinstance(response, ResponseOk):
-                        await self.start_tls()
+                        try:
+                            await self.start_tls()
+                        except ConnectionError:
+                            break
+                        except SSLError as exc:
+                            self._print('%s <->| %s', f'<TLS: {exc.reason}>')
+                            return
                 finally:
                     await state.do_cleanup()
                     current_command.reset(prev_cmd)
