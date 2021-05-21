@@ -8,7 +8,8 @@ from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
 from pymap.context import socket_info, connection_exit
-from pymap.exceptions import NotSupportedError, CloseConnection
+from pymap.exceptions import NotAllowedError, NotSupportedError, \
+    CloseConnection
 from pymap.fetch import MessageAttributes
 from pymap.interfaces.login import LoginInterface
 from pymap.interfaces.session import SessionInterface
@@ -101,10 +102,13 @@ class ConnectionState:
         return await stack.enter_async_context(identity.new_session())
 
     async def do_greeting(self) -> CommandResponse:
+        sock_info = socket_info.get()
+        if self.config.reject_dnsbl and sock_info.dnsbl is not None:
+            raise NotAllowedError(f'Connection rejected: {sock_info.dnsbl}')
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
             self._session = await self._login(preauth_creds)
-        elif socket_info.get().from_localhost:
+        elif sock_info.from_localhost:
             self.auth = self.config.tls_auth
         resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
         return resp_cls(b'*', self.config.greeting, self.capability)

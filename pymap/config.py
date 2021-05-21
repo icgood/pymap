@@ -102,6 +102,7 @@ class IMAPConfig(metaclass=ABCMeta):
         preauth_credentials: If given, clients will pre-authenticate on
             connection using these credentials.
         proxy_protocol: The PROXY protocol implementation to use.
+        reject_dnsbl: Reject connections with a non-empty DNSBL result.
         max_append_len: The maximum allowed length of the message body to an
             ``APPEND`` command.
         bad_command_limit: The number of consecutive commands received from
@@ -124,6 +125,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  secure_auth: bool = True,
                  preauth_credentials: AuthenticationCredentials = None,
                  proxy_protocol: ProxyProtocol = None,
+                 reject_dnsbl: bool = True,
                  admin_key: bytes = None,
                  hash_context: HashInterface = None,
                  cpu_subsystem: Subsystem = None,
@@ -145,6 +147,7 @@ class IMAPConfig(metaclass=ABCMeta):
             get_hash(passlib_config=args.passlib_cfg)
         self.cpu_subsystem: Final = cpu_subsystem or \
             self._get_cpu_subsystem()
+        self.reject_dnsbl: Final = reject_dnsbl
         self._ssl_context = ssl_context or self._load_certs(extra)
         self._tls_enabled = tls_enabled
         self._preauth_credentials = preauth_credentials

@@ -208,6 +208,10 @@ class ManageSieveConnection:
         return await stack.enter_async_context(identity.new_session())
 
     async def _do_greeting(self) -> Response:
+        sock_info = socket_info.get()
+        if self.config.reject_dnsbl and sock_info.dnsbl is not None:
+            return Response(Condition.BYE,
+                            text=f'Connection rejected: {sock_info.dnsbl}')
         preauth_creds = self.config.preauth_credentials
         if preauth_creds:
             session = await self._login(preauth_creds)
@@ -298,7 +302,8 @@ class ManageSieveConnection:
         self._print('%d +++| %s', str(socket_info.get()))
         greeting = await self._do_greeting()
         await self._write_response(greeting)
-        while True:
+        done = greeting.is_bye
+        while not done:
             resp: Response
             try:
                 cmd = await self._read_command()
@@ -330,6 +335,5 @@ class ManageSieveConnection:
                     _log.exception('Unhandled exception')
                     resp = Response(Condition.NO, text='Server error.')
             await self._write_response(resp)
-            if resp.is_bye:
-                break
+            done = resp.is_bye
         self._print('%d ---| %s', b'<disconnected>')
