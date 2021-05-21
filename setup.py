@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Ian C. Good
+# Copyright (c) 2021 Ian C. Good
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ with open('LICENSE.md') as f:
     license = f.read()
 
 setup(name='pymap',
-      version='0.25.0',
+      version='0.25.1',
       author='Ian Good',
       author_email='ian@icgood.net',
       description='Lightweight, asynchronous IMAP serving in Python.',
@@ -50,7 +50,7 @@ setup(name='pymap',
       packages=find_packages(),
       install_requires=[
           'pysasl ~= 0.8.0',
-          'proxy-protocol ~= 0.7.0'],
+          'proxy-protocol ~= 0.7.2'],
       extras_require={
           'admin': ['pymap-admin ~= 0.7.0', 'googleapis-common-protos'],
           'macaroon': ['pymacaroons'],
