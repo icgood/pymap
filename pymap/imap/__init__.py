@@ -350,6 +350,12 @@ class IMAPConnection:
         """
         await self._read_proxy_protocol()
         self._print('%s +++| %s', str(socket_info.get()))
+        try:
+            await self._run_state(state)
+        finally:
+            self._print('%s ---| %s', b'<disconnected>')
+
+    async def _run_state(self, state: ConnectionState) -> None:
         bad_commands = 0
         try:
             greeting = await self._exec(state.do_greeting())
@@ -420,9 +426,9 @@ class IMAPConnection:
                         except ConnectionError:
                             break
                         except SSLError as exc:
-                            self._print('%s <->| %s', f'<TLS: {exc.reason}>')
+                            self._print('%s <->| <TLS failure: %s>',
+                                        exc.reason)
                             return
                 finally:
                     await state.do_cleanup()
                     current_command.reset(prev_cmd)
-        self._print('%s ---| %s', b'<disconnected>')
