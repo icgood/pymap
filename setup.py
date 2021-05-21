@@ -50,7 +50,7 @@ setup(name='pymap',
       packages=find_packages(),
       install_requires=[
           'pysasl ~= 0.8.0',
-          'proxy-protocol ~= 0.6.0'],
+          'proxy-protocol ~= 0.7.0'],
       extras_require={
           'admin': ['pymap-admin ~= 0.7.0', 'googleapis-common-protos'],
           'macaroon': ['pymacaroons'],
