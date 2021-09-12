@@ -6,4 +6,9 @@ pytest-asyncio
 pytest-cov
 rope
 
+types-certifi
+types-protobuf
+types-setuptools
+types-toml
+
 -r requirements-all.txt
