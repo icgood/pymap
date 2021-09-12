@@ -2,8 +2,7 @@ name: draft
 
 on:
   push:
-    branches:
-      - master
+    branches: [ main ]
 
 jobs:
   update_release_draft:
