@@ -2,11 +2,9 @@ name: docker
 
 on:
   pull_request:
-    branches:
-      - 'master'
+    branches: [ main ]
   push:
-    branches:
-      - 'master'
+    branches: [ main ]
   release:
     types: [ published ]
 
@@ -23,7 +21,7 @@ jobs:
           images: |
             icgood/pymap
           tags: |
-            type=edge,branch=$repo.default_branch
+            type=edge,branch=main
             type=ref,event=tag
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
