@@ -22,7 +22,9 @@ jobs:
             icgood/pymap
           tags: |
             type=edge,branch=main
-            type=ref,event=tag
+            type=pep440,pattern={{major}}
+            type=pep440,pattern={{major}}.{{minor}}
+            type=pep440,pattern={{version}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
