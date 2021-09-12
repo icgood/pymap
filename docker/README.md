@@ -49,28 +49,21 @@ First, expose your certificates directory as a volume, e.g.:
       - /etc/ssl/private:/etc/ssl/private
 ```
 
-And add the new arguments to the entrypoint, e.g.:
+And add the `$CERT_FILE` and `$KEY_FILE`  environment variables to the service,
+e.g.:
 
 ```yaml
-    entrypoint: >-
-      pymap --debug
-        --cert /etc/ssl/private/mail/fullchain.pem
-        --key /etc/ssl/private/mail/privkey.pem
-        dict --demo-data
+    environment:
+      CERT_FILE: /etc/ssl/private/mail/fullchain.pem
+      KEY_FILE: /etc/ssl/private/mail/privkey.pem
 ```
 
-Finally, add a healthcheck so that [pymap][1] will restart whenever a new
-certificate is generated.
-
-```yaml
-    healthcheck:
-      interval: 10s
-      retries: 1
-      test: test /etc/ssl/private/mail/privkey.pem -ot /tmp/pymap.pid
-```
+The Docker image includes a [healthcheck][6] that will mark the service as
+`unhealthy` if `$KEY_FILE` has changed since the service started.
 
 [1]: https://github.com/icgood/pymap
 [2]: https://hub.docker.com/repository/docker/icgood/proxy-protocol
 [3]: https://docs.docker.com/compose/compose-file/#volumes
 [4]: https://letsencrypt.org/
 [5]: https://hub.docker.com/repository/docker/icgood/letsencrypt-service
+[6]: https://docs.docker.com/compose/compose-file/compose-file-v3/#healthcheck

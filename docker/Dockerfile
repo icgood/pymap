@@ -11,6 +11,7 @@ RUN apk --update add --virtual build-dependencies \
   && apk del build-dependencies
 
 EXPOSE 143 4190 50051
+HEALTHCHECK CMD ./docker/check-stale-pid.sh $KEY_FILE
 
 ENTRYPOINT ["pymap"]
 CMD ["--help"]
