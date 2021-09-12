@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>pymap.admin &#8212; pymap 0.25.1 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.25.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.25.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.25.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -86,25 +86,6 @@ another user’s password.</p>
 <p>The <a class="reference external" href="https://github.com/icgood/pymap-admin">pymap-admin</a> CLI may be used
 to interact with the admin service and serves as a reference client
 implementation.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.admin.AdminService.add_arguments">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">add_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.add_arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the arguments or argument group used to configure the service.
-For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;foo service arguments&#39;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a>) – The argument parser.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.admin.AdminService.start">
 <em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
@@ -170,7 +151,7 @@ can be removed if <code class="docutils literal notranslate"><span class="pre">g
 <span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this headline">¶</a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.admin.handlers.handlers">
-<span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">pymap.plugin.Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)"><span class="pre">type</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">pymap.plugin.Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.admin.handlers.BaseHandler" title="pymap.admin.handlers.BaseHandler"><span class="pre">pymap.admin.handlers.BaseHandler</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers new admin handler plugins.</p>
 </dd></dl>
 
@@ -419,7 +400,7 @@ request and response.</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -463,7 +444,7 @@ request and response.</p>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.25.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.25.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -472,7 +453,7 @@ request and response.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
