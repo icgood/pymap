@@ -282,19 +282,13 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         return '/'
 
     async def set_subscribed(self, name: str, subscribed: bool) -> None:
-        async with self._redis.pipeline() as multi:
-            multi.unwatch()
-            if subscribed:
-                multi.sadd(self._keys.subscribed, name)
-            else:
-                multi.srem(self._keys.subscribed, name)
-            await multi.execute()
+        if subscribed:
+            await self._redis.sadd(self._keys.subscribed, name)
+        else:
+            await self._redis.srem(self._keys.subscribed, name)
 
     async def list_subscribed(self) -> ListTree:
-        async with self._redis.pipeline() as multi:
-            multi.unwatch()
-            multi.smembers(self._keys.subscribed)
-            _, mailboxes = await multi.execute()
+        mailboxes = await self._redis.smembers(self._keys.subscribed)
         return ListTree(self.delimiter).update('INBOX', *(
             modutf7_decode(name) for name in mailboxes))
 
@@ -342,11 +336,11 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     async def rename_mailbox(self, before: str, after: str) -> None:
         redis = self._redis
-        async with redis.pipeline() as multi:
-            multi.unwatch()
-            multi.watch(self._keys.mailboxes)
-            multi.hgetall(self._keys.mailboxes)
-            _, _, all_keys = await multi.execute()
+        async with redis.pipeline() as pipe:
+            await pipe.watch(self._keys.mailboxes)
+            pipe.multi()
+            pipe.hgetall(self._keys.mailboxes)
+            all_keys, = await pipe.execute()
         all_mbx = {modutf7_decode(key): ns for key, ns in all_keys.items()}
         tree = ListTree(self.delimiter).update('INBOX', *all_mbx.keys())
         before_entry = tree.get(before)
