@@ -34,14 +34,6 @@ class TestHealthStatus(unittest.TestCase):
         child3 = child1.new_dependency(name='oof')
         self.assertEqual('foo.bar.oof', child3.name)
 
-    def test_walk(self) -> None:
-        status = HealthStatus(name='foo')
-        child1 = status.new_dependency(name='bar')
-        child2 = status.new_dependency(name='baz')
-        child3 = child1.new_dependency(name='oof')
-        tree = list(status.walk())
-        self.assertEqual([status, child1, child3, child2], tree)
-
     def test_set(self) -> None:
         status = HealthStatus()
         self.assertTrue(status.healthy)

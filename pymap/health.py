@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable, Iterator
-from itertools import chain
+from collections.abc import Callable
 from types import MethodType
 from typing import Any, Optional
 from weakref import finalize, ref, WeakMethod, WeakSet
@@ -78,13 +77,6 @@ class HealthStatus:
             for watcher in self._watchers:
                 if watcher not in seen:
                     watcher._check(seen)
-
-    def walk(self) -> Iterator[HealthStatus]:
-        """Traverses the tree of :class:`HealthStatus` objects rooted at this
-        object, breadth-first.
-
-        """
-        return chain([self], *(dep.walk() for dep in self._dependencies))
 
     def new_dependency(self, initial: bool = True, *,
                        name: str = '') -> HealthStatus:
