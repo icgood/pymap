@@ -1,5 +1,4 @@
-# TODO: remove ".6" when 3.9.10 is released
-FROM python:3.9.6-alpine
+FROM python:3.10-alpine
 
 WORKDIR /pymap
 COPY . .

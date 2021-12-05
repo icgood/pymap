@@ -6,7 +6,7 @@ local email_id = ARGV[2]
 
 local refs = redis.call('HINCRBY', refs_key, email_id, -1)
 
-if refs == 0 then
+if refs <= 0 then
     redis.call('EXPIRE', data_key, ttl)
 end
 

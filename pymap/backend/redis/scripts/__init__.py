@@ -8,7 +8,8 @@ from contextlib import closing
 from typing import Generic, TypeVar, Any, Union, Optional
 
 import msgpack
-from aioredis import Redis, ReplyError
+from aioredis import Redis
+from aioredis.exceptions import NoScriptError
 from pkg_resources import resource_stream
 
 __all__ = ['ScriptBase']
@@ -59,15 +60,15 @@ class ScriptBase(Generic[_RetT]):
             a NOSCRIPT error is returned.
 
         Raises:
-            :class:`~asyncio.ReplyError`
+            :class:`~asyncio.ResponseError`
 
         """
+        num_keys = len(keys)
+        # TODO: remove after aioredis > 2.0.0
+        tmp_args: list[str] = [*keys, *args]  # type: ignore
         try:
-            ret = await redis.evalsha(self._sha, keys, args)
-        except ReplyError as exc:
-            if 'NOSCRIPT' in str(exc):
-                self._sha, data = self._load()
-                ret = await redis.eval(data, keys, args)
-            else:
-                raise
+            ret = await redis.evalsha(self._sha, num_keys, *tmp_args)
+        except NoScriptError:
+            self._sha, data = self._load()
+            ret = await redis.eval(data, num_keys, *keys, *args)
         return self._convert(ret)

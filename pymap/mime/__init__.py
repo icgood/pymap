@@ -376,7 +376,9 @@ class MessageBody(Writeable):
 
     @classmethod
     def _parse_content_type(cls, header: str) -> ContentTypeHeader:
-        return SMTP.header_fetch_parse('Content-Type', header)  # type: ignore
+        val = SMTP.header_fetch_parse('Content-Type', header)
+        assert isinstance(val, ContentTypeHeader)
+        return val
 
     @classmethod
     def _get_boundary(cls, content_type: ContentTypeHeader) -> Optional[bytes]:

@@ -14,7 +14,7 @@ end
 redis.call('HDEL', mailboxes_key, name)
 redis.call('ZREM', order_key, mailbox_id)
 
-local cleanup_val = string.format('%s\0\%s', namespace, mailbox_id)
+local cleanup_val = string.format('%s\0%s', namespace, mailbox_id)
 redis.call('RPUSH', cleanup_mailboxes_key, cleanup_val)
 
 return redis.status_reply('OK')

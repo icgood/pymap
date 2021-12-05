@@ -82,12 +82,11 @@ class IMAPService(ServiceInterface):  # pragma: no cover
             if not sockets:
                 raise ValueError('No inherited sockets found')
             for sock in sockets:
-                server = await asyncio.start_server(imap_server, sock=sock)
-                servers.append(server)
+                servers.append(await asyncio.start_server(
+                    imap_server, sock=sock))
         else:
-            server = await asyncio.start_server(
-                imap_server, host=config.host, port=config.port)
-            servers.append(server)
+            servers.append(await asyncio.start_server(
+                imap_server, host=config.host, port=config.port))
         for server in servers:
             await stack.enter_async_context(server)
             task = asyncio.create_task(server.serve_forever())

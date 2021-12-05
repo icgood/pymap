@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import zlib
 from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Sequence
 from io import BytesIO
@@ -43,22 +44,19 @@ class WriteStream(Protocol):
 
 
 class HashStream(WriteStream):
-    """A stream that a :class:`Writeable` can use to generate a secure hash,
-    using a hash algorithm as returned by a :mod:`hashlib` constructor.
-
-    Args:
-        algo: The hash algorithm object.
+    """A stream that a :class:`Writeable` can use to generate a
+    non-cryptographic hash using :func:`zlib.adler32`.
 
     """
 
-    __slots__ = ['_algo']
+    __slots__ = ['_digest']
 
-    def __init__(self, algo: Any) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self._algo = algo
+        self._digest = zlib.adler32(b'')
 
     def write(self, data: bytes) -> None:
-        self._algo.update(data)
+        self._digest = zlib.adler32(data, self._digest)
 
     def digest(self, data: Writeable = None) -> bytes:
         """Return the digest of the data written to the hash stream.
@@ -69,7 +67,7 @@ class HashStream(WriteStream):
         """
         if data is not None:
             data.write(self)
-        return self._algo.digest()
+        return self._digest.to_bytes(4, 'big')
 
 
 class Writeable(metaclass=ABCMeta):

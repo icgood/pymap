@@ -41,8 +41,7 @@ class CleanupMailbox(ScriptBase[None]):
     async def __call__(self, redis: Redis,
                        cl_keys: CleanupKeys, mbx_keys: MailboxKeys, *,
                        ttl: int) -> None:
-        keys = [cl_keys.contents, mbx_keys.uids, mbx_keys.content,
-                *mbx_keys.keys]
+        keys = [cl_keys.contents, mbx_keys.content, *mbx_keys.keys]
         return await self.eval(redis, keys, [
             ttl, mbx_keys.root.named['namespace'],
             mbx_keys.root.named['mailbox_id']])
