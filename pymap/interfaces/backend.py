@@ -9,7 +9,7 @@ from typing import Protocol, Any
 
 from .login import LoginInterface
 from ..config import IMAPConfig
-from ..health import HealthStatusView
+from ..health import HealthStatus
 
 __all__ = ['BackendInterface', 'ServiceInterface']
 
@@ -79,8 +79,8 @@ class BackendInterface(Protocol):
 
     @property
     @abstractmethod
-    def status(self) -> HealthStatusView:
-        """The health status view for the backend."""
+    def status(self) -> HealthStatus:
+        """The health status for the backend."""
         ...
 
 

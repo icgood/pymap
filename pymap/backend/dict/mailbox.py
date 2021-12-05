@@ -1,7 +1,6 @@
 
 from __future__ import annotations
 
-import hashlib
 from bisect import bisect_left
 from collections.abc import Iterable, Sequence, AsyncIterable
 from datetime import datetime
@@ -140,7 +139,7 @@ class _ContentCache:
             WeakValueDictionary()
 
     def add(self, content: MessageContent) -> ObjectId:
-        msg_hash = HashStream(hashlib.sha1()).digest(content)
+        msg_hash = HashStream().digest(content)
         existing = self._email_ids.get(msg_hash)
         if existing is not None:
             return existing

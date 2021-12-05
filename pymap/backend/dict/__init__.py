@@ -42,7 +42,7 @@ class DictBackend(BackendInterface):
         super().__init__()
         self._login = login
         self._config = config
-        self._status = HealthStatus(True)
+        self._status = HealthStatus()
 
     @property
     def login(self) -> Login:

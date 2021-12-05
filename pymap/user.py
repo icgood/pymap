@@ -62,7 +62,7 @@ class UserMetadata:
             :class:`~pymap.exceptions.InvalidAuth`
 
         """
-        hash_context = self.config.hash_context
+        hash_context = self.config.hash_context.copy()
         cpu_subsystem = self.config.cpu_subsystem
         stored_secret: Optional[StoredSecret] = None
         if self.password is not None:

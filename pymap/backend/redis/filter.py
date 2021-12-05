@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Optional
 
-from aioredis import Redis, ReplyError
+from aioredis import Redis, ResponseError
 
 from .keys import NamespaceKeys, FilterKeys
 from .scripts.filter import FilterScripts
@@ -39,7 +39,7 @@ class FilterSet(PluginFilterSet[bytes]):
             await _scripts.delete(self._redis, self._keys,
                                   name=name.encode('utf-8'),
                                   active_name=self._active_name)
-        except ReplyError as exc:
+        except ResponseError as exc:
             if 'filter not found' in str(exc):
                 raise KeyError(name) from exc
             elif 'filter is active' in str(exc):
@@ -51,7 +51,7 @@ class FilterSet(PluginFilterSet[bytes]):
             await _scripts.rename(self._redis, self._keys,
                                   before_name=before_name.encode('utf-8'),
                                   after_name=after_name.encode('utf-8'))
-        except ReplyError as exc:
+        except ResponseError as exc:
             if 'filter not found' in str(exc):
                 raise KeyError(before_name) from exc
             elif 'filter already exists' in str(exc):
@@ -67,7 +67,7 @@ class FilterSet(PluginFilterSet[bytes]):
             await _scripts.set_active(self._redis, self._keys,
                                       name=name.encode('utf-8'),
                                       active_name=self._active_name)
-        except ReplyError as exc:
+        except ResponseError as exc:
             if 'filter not found' in str(exc):
                 raise KeyError(name) from exc
             raise
@@ -76,7 +76,7 @@ class FilterSet(PluginFilterSet[bytes]):
         try:
             return await _scripts.get(self._redis, self._keys,
                                       name=name.encode('utf-8'))
-        except ReplyError as exc:
+        except ResponseError as exc:
             if 'filter not found' in str(exc):
                 raise KeyError(name) from exc
             raise
@@ -85,7 +85,7 @@ class FilterSet(PluginFilterSet[bytes]):
         try:
             return await _scripts.get(self._redis, self._keys,
                                       name=self._active_name)
-        except ReplyError as exc:
+        except ResponseError as exc:
             if 'filter not found' in str(exc):
                 return None
             raise
