@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>pymap.backend.redis &#8212; pymap 0.25.2 documentation</title>
+    <title>pymap.backend.redis &#8212; pymap 0.26.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.25.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.26.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a></li> 
@@ -75,11 +75,11 @@
 <span id="pymap-backend-redis"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code><a class="headerlink" href="#module-pymap.backend.redis" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.</span></span><span class="sig-name descname"><span class="pre">RedisBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.</span></span><span class="sig-name descname"><span class="pre">RedisBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a backend that uses redis data structures for mailbox storage.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend.login">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">login</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.backend.redis.Login</span></em><a class="headerlink" href="#pymap.backend.redis.RedisBackend.login" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">login</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pymap.backend.redis.Login</span></em><a class="headerlink" href="#pymap.backend.redis.RedisBackend.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Login interface that handles authentication credentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -90,7 +90,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend.config">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><span class="pre">pymap.backend.redis.Config</span></a></em><a class="headerlink" href="#pymap.backend.redis.RedisBackend.config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><span class="pre">pymap.backend.redis.Config</span></a></em><a class="headerlink" href="#pymap.backend.redis.RedisBackend.config" title="Permalink to this definition">¶</a></dt>
 <dd><p>The IMAP config in use by the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -101,8 +101,8 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend.status">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.health.HealthStatus</span></em><a class="headerlink" href="#pymap.backend.redis.RedisBackend.status" title="Permalink to this definition">¶</a></dt>
-<dd><p>The health status view for the backend.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pymap.health.HealthStatus</span></em><a class="headerlink" href="#pymap.backend.redis.RedisBackend.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>The health status for the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">HealthStatus</span></code></p>
@@ -111,15 +111,58 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend.add_subparser">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_subparser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subparsers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend.add_subparser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a command-line argument sub-parser that will be used to choose
+this backend. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;foo backend&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name to use for the subparser.</p></li>
+<li><p><strong>subparsers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The special action object as returned by
+<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.add_subparsers" title="(in Python v3.10)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_subparsers()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentParser</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The new sub-parser object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend.init">
+<em class="property"><span class="pre">async</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the backend and return an instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p></li>
+<li><p><strong>overrides</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – Override keyword arguments to the config constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="#pymap.backend.redis.RedisBackend" title="pymap.backend.redis.RedisBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">RedisBackend</span></code></a>, <a class="reference internal" href="#pymap.backend.redis.Config" title="pymap.backend.redis.Config"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pymap.backend.redis.RedisBackend.start">
-<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend.start" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.RedisBackend.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a>) – An exit stack that should be used for cleanup.</p>
+<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncExitStack</span></code></a>) – An exit stack that should be used for cleanup.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -128,24 +171,24 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">select</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_json</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_json</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>The config implementation for the redis backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p></li>
-<li><p><strong>address</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The redis server address.</p></li>
-<li><p><strong>select</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The redis database for mail data.</p></li>
-<li><p><strong>separator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The redis key segment separator.</p></li>
-<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The prefix for mail data keys.</p></li>
-<li><p><strong>users_prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The user lookup key prefix.</p></li>
-<li><p><strong>users_json</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the user lookup value contains JSON.</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The command-line arguments.</p></li>
+<li><p><strong>address</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The redis server address.</p></li>
+<li><p><strong>data_address</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – The redis server address for mail data, if different.</p></li>
+<li><p><strong>separator</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The redis key segment separator.</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The prefix for mail data keys.</p></li>
+<li><p><strong>users_prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The user lookup key prefix.</p></li>
+<li><p><strong>users_json</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the user lookup value contains JSON.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config.backend_capability">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">backend_capability</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="pymap.config.html#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><span class="pre">pymap.config.BackendCapability</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.backend_capability" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backend_capability</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.config.html#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><span class="pre">pymap.config.BackendCapability</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.backend_capability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows backends to declare support for IMAP extensions and other
 capabilities.</p>
 <dl class="field-list simple">
@@ -157,68 +200,73 @@ capabilities.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config.address">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">address</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.address" title="Permalink to this definition">¶</a></dt>
-<dd><p>The redis server address. Defaults to a connection to localhost.</p>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.address" title="Permalink to this definition">¶</a></dt>
+<dd><p>The redis server address for user data. Defaults to a connection to
+localhost.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><code class="xref py py-func docutils literal notranslate"><span class="pre">aioredis.create_connection()</span></code></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="pymap.backend.redis.Config.select">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">select</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.Config.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>The redis database for mail data. If given, the <a class="reference external" href="https://redis.io/commands/select">SELECT</a> command is
-called after successful user lookup.</p>
+<dt class="sig sig-object py" id="pymap.backend.redis.Config.data_address">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_address</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.data_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>The redis server address for mail data. Defaults to a connection to
+localhost.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">aioredis.create_connection()</span></code></p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config.separator">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">separator</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.separator" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">separator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.separator" title="Permalink to this definition">¶</a></dt>
 <dd><p>The bytestring used to separate segments of composite redis keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config.prefix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.prefix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>The prefix for mail data keys. This prefix does not apply to
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">users_key</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config.users_prefix">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">users_prefix</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.users_prefix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">users_prefix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.users_prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>The prefix for user lookup keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Config.users_json">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">users_json</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.users_json" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">users_json</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></em><a class="headerlink" href="#pymap.backend.redis.Config.users_json" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the value from the user lookup key contains a JSON object
 with a <code class="docutils literal notranslate"><span class="pre">&quot;password&quot;</span></code> attribute, instead of a redis hash with a
 <code class="docutils literal notranslate"><span class="pre">password</span></code> key.</p>
@@ -228,7 +276,23 @@ with a <code class="docutils literal notranslate"><span class="pre">&quot;passwo
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.redis.Config.parse_args">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Config.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given command-line arguments, return a dictionary of keywords that
+should be passed in to the <code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code> (or sub-class)
+constructor. Sub-classes should override this method as needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Namespace</span></code></a>) – The arguments parsed from the command-line.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -237,11 +301,11 @@ with a <code class="docutils literal notranslate"><span class="pre">&quot;passwo
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.Session">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">owner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mailbox_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">owner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mailbox_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.Session" title="Permalink to this definition">¶</a></dt>
 <dd><p>The session implementation for the redis backend.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.Session.filter_set">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">filter_set</span></span><em class="property"><span class="pre">:</span> <span class="pre">pymap.backend.redis.filter.FilterSet</span></em><a class="headerlink" href="#pymap.backend.redis.Session.filter_set" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filter_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pymap.backend.redis.filter.FilterSet</span></em><a class="headerlink" href="#pymap.backend.redis.Session.filter_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the active and inactive filters for the login user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -256,14 +320,14 @@ with a <code class="docutils literal notranslate"><span class="pre">&quot;passwo
 <span id="pymap-backend-redis-keys"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code><a class="headerlink" href="#module-pymap.backend.redis.keys" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.RedisKey">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">RedisKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joiner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">named</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.RedisKey" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">RedisKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">joiner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">named</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.RedisKey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines complex redis keys using composite segments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>joiner</strong> (<a class="reference internal" href="pymap.bytes.html#pymap.bytes.BytesFormat" title="pymap.bytes.BytesFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">BytesFormat</span></code></a>) – The object used to join segments.</p></li>
-<li><p><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]) – The current list of key segments.</p></li>
-<li><p><strong>named</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – A mapping of named segments.</p></li>
+<li><p><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]]) – The current list of key segments.</p></li>
+<li><p><strong>named</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]) – A mapping of named segments.</p></li>
 </ul>
 </dd>
 </dl>
@@ -274,8 +338,8 @@ with a <code class="docutils literal notranslate"><span class="pre">&quot;passwo
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The new key segment to append.</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – An optional name to assign to the value.</p></li>
+<li><p><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The new key segment to append.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – An optional name to assign to the value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -290,10 +354,10 @@ with a <code class="docutils literal notranslate"><span class="pre">&quot;passwo
 <dd><p>Terminate the redis key producing a bytestring.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – Optional segments to add to the result.</p>
+<dd class="field-odd"><p><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – Optional segments to add to the result.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -302,7 +366,7 @@ with a <code class="docutils literal notranslate"><span class="pre">&quot;passwo
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.KeysGroup">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">KeysGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.KeysGroup" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">KeysGroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.KeysGroup" title="Permalink to this definition">¶</a></dt>
 <dd><p>A group of redis keys that are related and contained in the same root
 key.</p>
 <dl class="field-list simple">
@@ -312,11 +376,11 @@ key.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.KeysGroup.keys">
-<em class="property"><span class="pre">abstract</span> <span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.KeysGroup.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.KeysGroup.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -325,7 +389,7 @@ key.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.GlobalKeys">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">GlobalKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.GlobalKeys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">GlobalKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.GlobalKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>The key group that is considered global. New <code class="xref py py-attr docutils literal notranslate"><span class="pre">DATA_VERSION</span></code> values
 must be compatible with these keys.</p>
 <dl class="field-list simple">
@@ -335,11 +399,11 @@ must be compatible with these keys.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.GlobalKeys.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.GlobalKeys.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.GlobalKeys.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -348,7 +412,7 @@ must be compatible with these keys.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.CleanupKeys">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">CleanupKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.CleanupKeys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">CleanupKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.CleanupKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>The key group for cleaning up keys that are no longer active.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -357,11 +421,11 @@ must be compatible with these keys.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.CleanupKeys.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.CleanupKeys.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.CleanupKeys.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -370,24 +434,24 @@ must be compatible with these keys.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.NamespaceKeys">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">NamespaceKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.NamespaceKeys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">NamespaceKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.NamespaceKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>The key group for managing mailbox namespaces, groups of mailboxes that
 typically correspond to a login user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – The root redis key.</p></li>
-<li><p><strong>namespace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The namespace ID.</p></li>
+<li><p><strong>namespace</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The namespace ID.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.NamespaceKeys.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.NamespaceKeys.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.NamespaceKeys.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -396,23 +460,23 @@ typically correspond to a login user.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.ContentKeys">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">ContentKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.ContentKeys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">ContentKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.ContentKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>The key group for managing the content of messages.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – The root redis key.</p></li>
-<li><p><strong>email_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The email object ID.</p></li>
+<li><p><strong>email_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The email object ID.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.ContentKeys.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.ContentKeys.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.ContentKeys.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -421,7 +485,7 @@ typically correspond to a login user.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.FilterKeys">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">FilterKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.FilterKeys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">FilterKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.FilterKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>The key group for managing filters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -430,11 +494,11 @@ typically correspond to a login user.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.FilterKeys.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.FilterKeys.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.FilterKeys.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -443,23 +507,23 @@ typically correspond to a login user.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.MailboxKeys">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">MailboxKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.MailboxKeys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.keys.</span></span><span class="sig-name descname"><span class="pre">MailboxKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.keys.MailboxKeys" title="Permalink to this definition">¶</a></dt>
 <dd><p>The key group for managing a single mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>root</strong> – The root redis key.</p></li>
-<li><p><strong>mailbox_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The mailbox object ID.</p></li>
+<li><p><strong>mailbox_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytearray</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">memoryview</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>]) – The mailbox object ID.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.redis.keys.MailboxKeys.keys">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.MailboxKeys.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><span class="pre">collections.abc.Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.redis.keys.MailboxKeys.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>All the keys in the group, not including nested key groups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -470,65 +534,19 @@ typically correspond to a login user.</p>
 <section id="module-pymap.backend.redis.cleanup">
 <span id="pymap-backend-redis-cleanup"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code><a class="headerlink" href="#module-pymap.backend.redis.cleanup" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="pymap.backend.redis.cleanup.CleanupTask">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.cleanup.</span></span><span class="sig-name descname"><span class="pre">CleanupTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connect_redis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maintains a <a class="reference internal" href="#pymap.backend.redis.cleanup.CleanupThread" title="pymap.backend.redis.cleanup.CleanupThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">CleanupThread</span></code></a> for the duration of the process
-lifetime, restarting on failure.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>connect_redis</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Awaitable</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>]]) – Supplies a connected redis object.</p></li>
-<li><p><strong>root</strong> – The root redis key.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pymap.backend.redis.cleanup.CleanupTask.connection_delay">
-<span class="sig-name descname"><span class="pre">connection_delay</span></span><em class="property"><span class="pre">:</span> <span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">5.0</span></em><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask.connection_delay" title="Permalink to this definition">¶</a></dt>
-<dd><p>The delay between redis reconnect attempts, on connection failure.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.backend.redis.cleanup.CleanupTask.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupTask.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a task running the cleanup loop indefinitely.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pymap.backend.redis.cleanup.CleanupThread">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.cleanup.</span></span><span class="sig-name descname"><span class="pre">CleanupThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">redis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupThread" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pymap.backend.redis.cleanup.CleanupAction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.redis.cleanup.</span></span><span class="sig-name descname"><span class="pre">CleanupAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">global_keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines the logic for monitoring and executing cleanup of various
 entities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>redis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Redis</span></code>) – The redis connection object.</p></li>
+<li><p><strong>address</strong> – The redis server address.</p></li>
+<li><p><strong>redis</strong> – The redis connection object.</p></li>
 <li><p><strong>global_keys</strong> (<a class="reference internal" href="#pymap.backend.redis.keys.GlobalKeys" title="pymap.backend.redis.keys.GlobalKeys"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlobalKeys</span></code></a>) – The global keys group.</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.backend.redis.cleanup.CleanupThread.run">
-<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.backend.redis.cleanup.CleanupThread.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the cleanup loop indefinitely.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>ConnectionClosedError</strong> – The connection to redis
-    was interrupted.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NoReturn" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">NoReturn</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>
@@ -616,7 +634,7 @@ entities.</p>
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.25.2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.26.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a></li> 
@@ -626,7 +644,7 @@ entities.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
