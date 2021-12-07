@@ -67,6 +67,8 @@ class MaildirBackend(BackendInterface):
                             help='maximum number of IO workers')
         parser.add_argument('--layout', metavar='TYPE', default='++',
                             help='maildir directory layout')
+        parser.add_argument('--colon', metavar='CHAR', default=None,
+                            help='info delimiter in mail filename')
         return parser
 
     @classmethod
@@ -88,15 +90,18 @@ class Config(IMAPConfig):
         users_file: The path to the users file.
         base_dir: The base directory for all relative mailbox paths.
         layout: The Maildir directory layout.
+        colon: The info delimiter in mail filename.
 
     """
 
     def __init__(self, args: Namespace, *, users_file: str,
-                 base_dir: Optional[str], layout: str, **extra: Any) -> None:
+                 base_dir: Optional[str], layout: str,
+                 colon: Optional[str], **extra: Any) -> None:
         super().__init__(args, **extra)
         self._users_file = users_file
         self._base_dir = self._get_base_dir(base_dir, users_file)
         self._layout = layout
+        self._colon = colon
 
     @classmethod
     def _get_base_dir(cls, base_dir: Optional[str],
@@ -148,6 +153,16 @@ class Config(IMAPConfig):
         """
         return self._layout
 
+    @property
+    def colon(self) -> Optional[str]:
+        """The info delimiter in mail filename.
+
+        See Also:
+            Note on ``colon`` in :class:`mailbox.Maildir`.
+
+        """
+        return self._colon
+
     @classmethod
     def parse_args(cls, args: Namespace) -> Mapping[str, Any]:
         executor = ThreadPoolExecutor(args.concurrency)
@@ -156,6 +171,7 @@ class Config(IMAPConfig):
                 'users_file': args.users_file,
                 'base_dir': args.base_dir,
                 'layout': args.layout,
+                'colon': args.colon,
                 'subsystem': subsystem}
 
 
@@ -272,7 +288,11 @@ class Identity(IdentityInterface):
         full_path = os.path.join(self.config.base_dir, self.mailbox_path)
         layout = MaildirLayout.get(full_path, self.config.layout, Maildir)
         create = not os.path.exists(full_path)
-        return Maildir(full_path, create=create), layout
+        maildir = Maildir(full_path, create=create)
+        colon = self.config.colon
+        if colon is not None:
+            maildir.colon = colon
+        return maildir, layout
 
     async def get(self) -> UserMetadata:
         return self.metadata
