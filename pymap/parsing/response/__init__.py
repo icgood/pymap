@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import ABCMeta
 from collections.abc import Hashable, AsyncIterator
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
-from typing import TypeVar, Final, Optional
+from typing import TypeAlias, TypeVar, Final
 
 from ...bytes import MaybeBytes, BytesFormat, WriteStream, Writeable
 
@@ -15,7 +15,7 @@ __all__ = ['ResponseCode', 'Response', 'CommandResponse', 'UntaggedResponse',
 #: Type variable with an upper bound of :class:`Response`.
 ResponseT = TypeVar('ResponseT', bound='Response')
 
-_Mergeable = dict[tuple[type['Response'], Hashable], int]
+_Mergeable: TypeAlias = dict[tuple[type['Response'], Hashable], int]
 
 
 class ResponseCode:
@@ -28,7 +28,7 @@ class ResponseCode:
         raise NotImplementedError
 
     @classmethod
-    def of(cls, code: Optional[MaybeBytes]) -> Optional[ResponseCode]:
+    def of(cls, code: MaybeBytes | None) -> ResponseCode | None:
         """Build and return an anonymous response code object.
 
         Args:
@@ -69,7 +69,7 @@ class Response(Writeable, metaclass=ABCMeta):
     """
 
     #: The condition bytestring, e.g. ``OK``.
-    condition: Optional[bytes] = None
+    condition: bytes | None = None
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
                  code: ResponseCode = None) -> None:
@@ -77,7 +77,7 @@ class Response(Writeable, metaclass=ABCMeta):
         self.tag = bytes(tag)
         self._code = code
         self._text = text or b''
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     @property
     def text(self) -> bytes:
@@ -92,12 +92,12 @@ class Response(Writeable, metaclass=ABCMeta):
             return bytes(self._text)
 
     @property
-    def code(self) -> Optional[ResponseCode]:
+    def code(self) -> ResponseCode | None:
         """Optional response code."""
         return self._code
 
     @code.setter
-    def code(self, code: Optional[ResponseCode]) -> None:
+    def code(self, code: ResponseCode | None) -> None:
         self._code = code
         self._raw = None
 
@@ -179,7 +179,7 @@ class CommandResponse(Response):
         self._raw = None
 
     def add_untagged_ok(self, text: MaybeBytes,
-                        code: Optional[ResponseCode] = None) -> None:
+                        code: ResponseCode | None = None) -> None:
         """Add an untagged ``OK`` response.
 
         See Also:
@@ -298,7 +298,7 @@ class ResponseBad(CommandResponse):
     condition = b'BAD'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None) -> None:
+                 code: ResponseCode | None = None) -> None:
         super().__init__(tag, text, code)
 
     @property
@@ -320,7 +320,7 @@ class ResponseNo(CommandResponse):
     condition = b'NO'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None) -> None:
+                 code: ResponseCode | None = None) -> None:
         super().__init__(tag, text, code)
 
 
@@ -371,5 +371,5 @@ class ResponsePreAuth(CommandResponse):
     condition = b'PREAUTH'
 
     def __init__(self, tag: MaybeBytes, text: MaybeBytes,
-                 code: Optional[ResponseCode] = None) -> None:
+                 code: ResponseCode | None = None) -> None:
         super().__init__(tag, text, code)

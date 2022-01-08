@@ -6,11 +6,11 @@ from email.headerregistry import HeaderRegistry, BaseHeader, \
     UnstructuredHeader, DateHeader, AddressHeader, SingleAddressHeader, \
     ContentDispositionHeader, ContentTransferEncodingHeader, ContentTypeHeader
 from email.policy import SMTP
-from typing import cast, Any, Optional, ClassVar
+from typing import cast, TypeAlias, Any, ClassVar
 
 __all__ = ['ParsedHeaders']
 
-_Headers = Mapping[bytes, Sequence[Sequence[bytes]]]
+_Headers: TypeAlias = Mapping[bytes, Sequence[Sequence[bytes]]]
 
 
 class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
@@ -65,7 +65,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
         return repr(dict(self))
 
     @property
-    def content_type(self) -> Optional[ContentTypeHeader]:
+    def content_type(self) -> ContentTypeHeader | None:
         """The ``Content-Type`` header."""
         try:
             return cast(ContentTypeHeader, self[b'content-type'][0])
@@ -73,7 +73,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def date(self) -> Optional[DateHeader]:
+    def date(self) -> DateHeader | None:
         """The ``Date`` header."""
         try:
             return cast(DateHeader, self[b'date'][0])
@@ -81,7 +81,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def subject(self) -> Optional[UnstructuredHeader]:
+    def subject(self) -> UnstructuredHeader | None:
         """The ``Subject`` header."""
         try:
             return cast(UnstructuredHeader, self[b'subject'][0])
@@ -89,7 +89,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def from_(self) -> Optional[Sequence[AddressHeader]]:
+    def from_(self) -> Sequence[AddressHeader] | None:
         """The ``From`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'from'])
@@ -97,7 +97,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def sender(self) -> Optional[Sequence[SingleAddressHeader]]:
+    def sender(self) -> Sequence[SingleAddressHeader] | None:
         """The ``Sender`` header."""
         try:
             return cast(Sequence[SingleAddressHeader], self[b'sender'])
@@ -105,7 +105,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def reply_to(self) -> Optional[Sequence[AddressHeader]]:
+    def reply_to(self) -> Sequence[AddressHeader] | None:
         """The ``Reply-To`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'reply-to'])
@@ -113,7 +113,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def to(self) -> Optional[Sequence[AddressHeader]]:
+    def to(self) -> Sequence[AddressHeader] | None:
         """The ``To`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'to'])
@@ -121,7 +121,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def cc(self) -> Optional[Sequence[AddressHeader]]:
+    def cc(self) -> Sequence[AddressHeader] | None:
         """The ``Cc`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'cc'])
@@ -129,7 +129,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def bcc(self) -> Optional[Sequence[AddressHeader]]:
+    def bcc(self) -> Sequence[AddressHeader] | None:
         """The ``Bcc`` header."""
         try:
             return cast(Sequence[AddressHeader], self[b'bcc'])
@@ -137,7 +137,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def in_reply_to(self) -> Optional[UnstructuredHeader]:
+    def in_reply_to(self) -> UnstructuredHeader | None:
         """The ``In-Reply-To`` header."""
         try:
             return cast(UnstructuredHeader, self[b'in-reply-to'][0])
@@ -145,7 +145,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def references(self) -> Optional[UnstructuredHeader]:
+    def references(self) -> UnstructuredHeader | None:
         """The ``References`` header."""
         try:
             return cast(UnstructuredHeader, self[b'references'][0])
@@ -153,7 +153,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def message_id(self) -> Optional[UnstructuredHeader]:
+    def message_id(self) -> UnstructuredHeader | None:
         """The ``Message-Id`` header."""
         try:
             return cast(UnstructuredHeader, self[b'message-id'][0])
@@ -161,7 +161,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def content_disposition(self) -> Optional[ContentDispositionHeader]:
+    def content_disposition(self) -> ContentDispositionHeader | None:
         """The ``Content-Disposition`` header."""
         try:
             return cast(ContentDispositionHeader,
@@ -170,7 +170,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def content_language(self) -> Optional[UnstructuredHeader]:
+    def content_language(self) -> UnstructuredHeader | None:
         """The ``Content-Language`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-language'][0])
@@ -178,7 +178,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def content_location(self) -> Optional[UnstructuredHeader]:
+    def content_location(self) -> UnstructuredHeader | None:
         """The ``Content-Location`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-location'][0])
@@ -186,7 +186,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def content_id(self) -> Optional[UnstructuredHeader]:
+    def content_id(self) -> UnstructuredHeader | None:
         """The ``Content-Id`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-id'][0])
@@ -194,7 +194,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             return None
 
     @property
-    def content_description(self) -> Optional[UnstructuredHeader]:
+    def content_description(self) -> UnstructuredHeader | None:
         """The ``Content-Description`` header."""
         try:
             return cast(UnstructuredHeader, self[b'content-description'][0])
@@ -203,7 +203,7 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
 
     @property
     def content_transfer_encoding(self) \
-            -> Optional[ContentTransferEncodingHeader]:
+            -> ContentTransferEncodingHeader | None:
         """The ``Content-Transfer-Encoding`` header."""
         try:
             return cast(ContentTransferEncodingHeader,

@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from typing import Optional, Final
+from typing import Final
 
 from .response import ResponseCode
 from ..bytes import MaybeBytes
@@ -22,12 +22,12 @@ class NotParseable(Exception):
 
     __slots__ = ['buf', 'code', '_raw']
 
-    def __init__(self, buf: memoryview, code:
-                 Optional[MaybeBytes] = None) -> None:
+    def __init__(self, buf: memoryview,
+                 code: MaybeBytes | None = None) -> None:
         super().__init__()
         self.buf: Final = bytes(buf)
         self.code: Final = ResponseCode.of(code)
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     def __bytes__(self) -> bytes:
         if self._raw is not None:

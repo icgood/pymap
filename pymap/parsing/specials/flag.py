@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from functools import total_ordering
-from typing import Union
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
@@ -21,7 +20,7 @@ class Flag(Parseable[bytes]):
 
     """
 
-    def __init__(self, value: Union[str, bytes]) -> None:
+    def __init__(self, value: str | bytes) -> None:
         super().__init__()
         if isinstance(value, bytes):
             value_bytes = value

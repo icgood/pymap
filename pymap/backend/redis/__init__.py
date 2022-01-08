@@ -10,7 +10,7 @@ from collections.abc import Awaitable, Callable, Mapping, AsyncIterator
 from contextlib import asynccontextmanager, suppress, AsyncExitStack
 from datetime import datetime
 from secrets import token_bytes
-from typing import Any, Optional, Final
+from typing import TypeAlias, Any, Final
 
 from aioredis import Redis, ConnectionError
 from pysasl.creds import AuthenticationCredentials
@@ -39,7 +39,7 @@ __all__ = ['RedisBackend', 'Config', 'Session']
 
 _log = logging.getLogger(__name__)
 
-_Connect = Callable[[], Awaitable[Redis]]
+_Connect: TypeAlias = Callable[[], Awaitable[Redis]]
 
 
 class RedisBackend(BackendInterface):
@@ -117,7 +117,7 @@ class Config(IMAPConfig):
     """
 
     def __init__(self, args: Namespace, *, address: str,
-                 data_address: Optional[str],
+                 data_address: str | None,
                  separator: bytes, prefix: bytes, users_prefix: bytes,
                  users_json: bool, **extra: Any) -> None:
         super().__init__(args, admin_key=token_bytes(), **extra)
@@ -299,8 +299,8 @@ class Login(LoginInterface):
             -> Identity:
         config = self._config
         authcid = credentials.authcid
-        token_key: Optional[bytes] = None
-        role: Optional[str] = None
+        token_key: bytes | None = None
+        role: str | None = None
         if credentials.authcid_type == 'admin-token':
             authcid = credentials.identity
             role = 'admin'
@@ -340,7 +340,7 @@ class Identity(IdentityInterface):
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime = None) -> Optional[str]:
+    async def new_token(self, *, expiration: datetime = None) -> str | None:
         metadata = await self.get()
         if 'key' not in metadata.params:
             return None

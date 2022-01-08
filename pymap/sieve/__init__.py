@@ -1,8 +1,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pymap.exceptions import AppendFailure
 from pymap.interfaces.filter import FilterInterface, FilterCompilerInterface
 from pymap.parsing.message import AppendMessage
@@ -67,7 +65,7 @@ class SieveFilter(FilterInterface):
 
     async def apply(self, sender: str, recipient: str, mailbox: str,
                     append_msg: AppendMessage) \
-            -> tuple[Optional[str], AppendMessage]:
+            -> tuple[str | None, AppendMessage]:
         for action in self.runner.get_actions(sender, recipient, append_msg):
             if action.name == 'keep':
                 pass

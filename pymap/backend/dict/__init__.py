@@ -8,7 +8,7 @@ from collections.abc import Mapping, AsyncIterator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
 from datetime import datetime, timezone
 from secrets import token_bytes
-from typing import Any, Optional, Final
+from typing import Any, Final
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl.creds import AuthenticationCredentials
@@ -173,8 +173,8 @@ class Login(LoginInterface):
     async def authenticate(self, credentials: AuthenticationCredentials) \
             -> Identity:
         authcid = credentials.authcid
-        token_key: Optional[bytes] = None
-        role: Optional[str] = None
+        token_key: bytes | None = None
+        role: str | None = None
         if credentials.authcid_type == 'login-token':
             if authcid in self.tokens_dict:
                 authcid, token_key = self.tokens_dict[authcid]
@@ -195,7 +195,7 @@ class Login(LoginInterface):
 class Identity(IdentityInterface):
     """The identity implementation for the dict backend."""
 
-    def __init__(self, name: str, login: Login, role: Optional[str]) -> None:
+    def __init__(self, name: str, login: Login, role: str | None) -> None:
         super().__init__()
         self.login: Final = login
         self.config: Final = login.config
@@ -206,7 +206,7 @@ class Identity(IdentityInterface):
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime = None) -> Optional[str]:
+    async def new_token(self, *, expiration: datetime = None) -> str | None:
         token_id = uuid.uuid4().hex
         token_key = token_bytes()
         self.login.tokens_dict[token_id] = (self.name, token_key)

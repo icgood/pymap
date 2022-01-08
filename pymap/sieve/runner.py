@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Optional
 
 from pymap.mime import MessageContent
 from pymap.parsing.message import AppendMessage
@@ -36,7 +35,7 @@ class SieveRunner:
     def _get_actions(self, actions: list[Command], sender: str, recipient: str,
                      append_msg: AppendMessage, content: MessageContent) \
             -> None:
-        running_if: Optional[Command] = None
+        running_if: Command | None = None
         for cmd in self._commands:
             cmd_type = cmd.get_type()
             if cmd_type == 'action':

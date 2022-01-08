@@ -1,9 +1,10 @@
 
 from __future__ import annotations
 
+import re
+
 from .. import Params, Parseable
 from ..primitives import String, QuotedString
-from ...bytes import rev
 
 __all__ = ['AString']
 
@@ -22,7 +23,7 @@ class AString(Parseable[bytes]):
 
     """
 
-    _pattern = rev.compile(
+    _pattern = re.compile(
         br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5D\x5E-\x7A\x7C\x7E]+')
 
     def __init__(self, string: bytes, raw: bytes = None) -> None:

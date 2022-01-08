@@ -1,9 +1,10 @@
 
 from __future__ import annotations
 
+import re
+
 from .. import Params, Parseable
 from ..exceptions import NotParseable
-from ...bytes import rev
 
 __all__ = ['Tag']
 
@@ -16,8 +17,8 @@ class Tag(Parseable[bytes]):
 
     """
 
-    _pattern = rev.compile(br'[\x21\x23\x24\x26\x27\x2C-\x5B'
-                           br'\x5D\x5E-\x7A\x7C\x7E]+')
+    _pattern = re.compile(br'[\x21\x23\x24\x26\x27\x2C-\x5B'
+                          br'\x5D\x5E-\x7A\x7C\x7E]+')
 
     def __init__(self, tag: bytes) -> None:
         super().__init__()

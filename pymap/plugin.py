@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Mapping
-from typing import TypeVar, Generic, Optional, Final
+from typing import TypeVar, Generic, Final
 
 from pkg_resources import iter_entry_points, DistributionNotFound
 
@@ -35,7 +35,7 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
         super().__init__()
         self.group: Final = group
         self._default = default
-        self._loaded: Optional[dict[str, PluginT]] = None
+        self._loaded: dict[str, PluginT] | None = None
         self._added: dict[str, PluginT] = {}
 
     def __iter__(self) -> Iterator[tuple[str, PluginT]]:
@@ -72,7 +72,7 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
             return self.registered[self._default]
 
     @default.setter
-    def default(self, default: Optional[str]) -> None:
+    def default(self, default: str | None) -> None:
         self._default = default
 
     def _load(self) -> Mapping[str, PluginT]:

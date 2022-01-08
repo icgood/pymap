@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Optional
 
 from pymap.filter import PluginFilterSet
 
@@ -14,7 +13,7 @@ class FilterSet(PluginFilterSet[bytes]):
     def __init__(self) -> None:
         super().__init__('sieve', bytes)
         self._filters: dict[str, bytes] = {}
-        self._active: Optional[str] = None
+        self._active: str | None = None
 
     async def put(self, name: str, value: bytes) -> None:
         self._filters[name] = value
@@ -48,11 +47,11 @@ class FilterSet(PluginFilterSet[bytes]):
     async def get(self, name: str) -> bytes:
         return self._filters[name]
 
-    async def get_active(self) -> Optional[bytes]:
+    async def get_active(self) -> bytes | None:
         if self._active is None:
             return None
         else:
             return self._filters[self._active]
 
-    async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
+    async def get_all(self) -> tuple[str | None, Sequence[str]]:
         return self._active, list(self._filters.keys())

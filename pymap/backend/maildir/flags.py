@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
-from typing import IO, TypeVar, Union
+from typing import IO, TypeVar
 
 from pymap.parsing.specials.flag import Flag, Seen, Flagged, Deleted, Draft, \
     Answered
@@ -71,7 +71,7 @@ class MaildirFlags(FileReadable):
         """Return the set of available IMAP keywords."""
         return self._keywords
 
-    def to_maildir(self, flags: Iterable[Union[bytes, Flag]]) -> str:
+    def to_maildir(self, flags: Iterable[bytes | Flag]) -> str:
         """Return the string of letter codes that are used to map to defined
         IMAP flags and keywords.
 

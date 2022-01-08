@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Final, Optional
+from typing import Any, Final
 
 from aioredis import Redis
 
@@ -126,18 +126,18 @@ class MessageDelete(ScriptBase[None]):
             mbx_keys.root.named['mailbox_id']])
 
 
-class MailboxSnapshot(ScriptBase[tuple[int, int, int, int, Optional[int]]]):
+class MailboxSnapshot(ScriptBase[tuple[int, int, int, int, int | None]]):
 
     def __init__(self) -> None:
         super().__init__('mailbox_snapshot')
 
     def _convert(self, ret: tuple[bytes, bytes, bytes, bytes, bytes]) \
-            -> tuple[int, int, int, int, Optional[int]]:
+            -> tuple[int, int, int, int, int | None]:
         return (int(ret[0]), int(ret[1]), int(ret[2]),
                 int(ret[3]), self._maybe_int(ret[4]))
 
     async def __call__(self, redis: Redis, mbx_keys: MailboxKeys) \
-            -> tuple[int, int, int, int, Optional[int]]:
+            -> tuple[int, int, int, int, int | None]:
         keys = [mbx_keys.max_uid, mbx_keys.uids, mbx_keys.seq,
                 mbx_keys.recent, mbx_keys.unseen]
         return await self.eval(redis, keys, [])

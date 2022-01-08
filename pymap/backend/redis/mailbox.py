@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import Optional
+from typing import TypeAlias
 
 import msgpack
 from aioredis import Redis, ResponseError, WatchError
@@ -34,7 +34,7 @@ __all__ = ['Message', 'MailboxData', 'MailboxSet']
 _scripts = MailboxScripts()
 _ns_scripts = NamespaceScripts()
 
-_ChangesRaw = Sequence[tuple[bytes, Mapping[bytes, bytes]]]
+_ChangesRaw: TypeAlias = Sequence[tuple[bytes, Mapping[bytes, bytes]]]
 
 
 class MailboxData(MailboxDataInterface[Message]):
@@ -118,7 +118,7 @@ class MailboxData(MailboxDataInterface[Message]):
                        redis=redis, ns_keys=ns_keys)
 
     async def copy(self, uid: int, destination: MailboxData, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         redis = self._redis
         keys = self._keys
         ns_keys = self._ns_keys
@@ -133,7 +133,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return dest_uid
 
     async def move(self, uid: int, destination: MailboxData, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         redis = self._redis
         keys = self._keys
         ns_keys = self._ns_keys
@@ -209,7 +209,7 @@ class MailboxData(MailboxDataInterface[Message]):
                                self.session_flags, num_exists, num_recent,
                                num_unseen, first_unseen, next_uid)
 
-    def _get_mod_seq(self, changes: _ChangesRaw) -> Optional[bytes]:
+    def _get_mod_seq(self, changes: _ChangesRaw) -> bytes | None:
         try:
             ret = changes[-1][0]
         except IndexError:

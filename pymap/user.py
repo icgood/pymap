@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Optional, Final
+from typing import Final
 
 from pysasl.creds import StoredSecret, AuthenticationCredentials
 
@@ -23,7 +23,7 @@ class UserMetadata:
     """
 
     def __init__(self, config: IMAPConfig, *, password: str = None,
-                 **params: Optional[str]) -> None:
+                 **params: str | None) -> None:
         super().__init__()
         self.config: Final = config
         self.password: Final = password
@@ -31,7 +31,7 @@ class UserMetadata:
                               if val is not None}
 
     @property
-    def role(self) -> Optional[str]:
+    def role(self) -> str | None:
         """The value of the ``role`` key from *params*."""
         return self.params.get('role')
 
@@ -64,7 +64,7 @@ class UserMetadata:
         """
         hash_context = self.config.hash_context.copy()
         cpu_subsystem = self.config.cpu_subsystem
-        stored_secret: Optional[StoredSecret] = None
+        stored_secret: StoredSecret | None = None
         if self.password is not None:
             stored_secret = StoredSecret(self.password, hash=hash_context)
         fut = self._check_secret(creds, stored_secret, token_key)
@@ -72,6 +72,6 @@ class UserMetadata:
             raise InvalidAuth()
 
     async def _check_secret(self, creds: AuthenticationCredentials,
-                            stored_secret: Optional[StoredSecret],
-                            key: Optional[bytes]) -> bool:
+                            stored_secret: StoredSecret | None,
+                            key: bytes | None) -> bool:
         return creds.check_secret(stored_secret, key=key)

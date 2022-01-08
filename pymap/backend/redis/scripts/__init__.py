@@ -5,7 +5,7 @@ import hashlib
 import os.path
 from collections.abc import Sequence
 from contextlib import closing
-from typing import Generic, TypeVar, Any, Union, Optional
+from typing import Generic, TypeAlias, TypeVar, Any
 
 import msgpack
 from aioredis import Redis
@@ -14,7 +14,7 @@ from pkg_resources import resource_stream
 
 __all__ = ['ScriptBase']
 
-_Val = Union[int, bytes]
+_Val: TypeAlias = int | bytes
 _RetT = TypeVar('_RetT')
 
 
@@ -45,7 +45,7 @@ class ScriptBase(Generic[_RetT]):
     def _pack(self, val: Any) -> bytes:
         return msgpack.packb(val)
 
-    def _maybe_int(self, val: bytes) -> Optional[int]:
+    def _maybe_int(self, val: bytes) -> int | None:
         if val == b'':
             return None
         else:

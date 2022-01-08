@@ -6,7 +6,7 @@ import re
 from abc import ABCMeta
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from datetime import datetime
-from typing import Any, Optional, Final
+from typing import Any, Final
 
 from .bytes import Writeable
 from .flags import SessionFlags
@@ -108,7 +108,7 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
 
     def __init__(self, message: MessageInterface,
                  requirement: FetchRequirement,
-                 content: Optional[MessageContent]) -> None:
+                 content: MessageContent | None) -> None:
         super().__init__()
         self._message = message
         self._requirement = requirement

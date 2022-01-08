@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import ClassVar, Final, Optional
+from typing import ClassVar, Final
 
 from pymap.parsing import Parseable, Params, EndLine
 from pymap.parsing.exceptions import NotParseable
@@ -21,7 +21,7 @@ class Command(Parseable[bytes]):
     #: The command key, e.g. ``b'NOOP'``.
     command: ClassVar[bytes] = b''
 
-    _commands: Optional[Mapping[bytes, type[Command]]] = None
+    _commands: Mapping[bytes, type[Command]] | None = None
 
     @property
     def value(self) -> bytes:
@@ -83,7 +83,7 @@ class NoOpCommand(Command):
 
     command = b'NOOP'
 
-    def __init__(self, tag: Optional[bytes]) -> None:
+    def __init__(self, tag: bytes | None) -> None:
         super().__init__()
         self.tag: Final = tag
 
@@ -91,7 +91,7 @@ class NoOpCommand(Command):
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[NoOpCommand, memoryview]:
         whitespace = cls._whitespace_length(buf)
-        tag: Optional[bytes] = None
+        tag: bytes | None = None
         if whitespace > 0:
             buf = buf[whitespace:]
             try:
@@ -142,7 +142,7 @@ class AuthenticateCommand(Command):
         try:
             data_obj, buf = String.parse(buf, params)
         except NotParseable:
-            initial_data: Optional[bytes] = None
+            initial_data: bytes | None = None
         else:
             initial_data = data_obj.value
         return cls(mech_name.value, initial_data), buf
@@ -223,7 +223,7 @@ class SetActiveCommand(Command):
 
     command = b'SETACTIVE'
 
-    def __init__(self, script_name: Optional[str]) -> None:
+    def __init__(self, script_name: str | None) -> None:
         super().__init__()
         self.script_name: Final = script_name
 

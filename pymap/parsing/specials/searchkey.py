@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Any, TypeVar, Union
+from typing import TypeAlias, TypeVar, Any, Union
 
 from .astring import AString
 from .fetchattr import FetchRequirement
@@ -14,13 +14,13 @@ from .sequenceset import SequenceSet
 from .. import Params, Parseable, ExpectedParseable, Space
 from ..exceptions import NotParseable, UnexpectedType
 from ..primitives import Atom, Number, QuotedString, List
-from ...bytes import rev
 
 __all__ = ['SearchKey']
 
-_FilterType = Union[tuple['SearchKey', 'SearchKey'], tuple[str, str],
-                    Sequence['SearchKey'], SequenceSet, Flag, ObjectId,
-                    datetime, int, str]
+_FilterType: TypeAlias = Union[
+    tuple['SearchKey', 'SearchKey'], tuple[str, str],
+    Sequence['SearchKey'], SequenceSet, Flag, ObjectId,
+    datetime, int, str]
 _FilterT = TypeVar('_FilterT', bound=_FilterType)
 
 
@@ -38,7 +38,7 @@ class SearchKey(Parseable[bytes]):
 
     """
 
-    _not_pattern = rev.compile(br'NOT +', re.I)
+    _not_pattern = re.compile(br'NOT +', re.I)
 
     def __init__(self, key: bytes,
                  filter_: _FilterType = None,

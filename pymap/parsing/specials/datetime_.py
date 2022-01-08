@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import datetime, tzinfo
-from typing import Optional
 
 from .. import Params, Parseable
 from ..exceptions import InvalidContent
@@ -34,7 +33,7 @@ class DateTime(Parseable[datetime]):
         return self.when
 
     @classmethod
-    def get_local_tzinfo(cls) -> Optional[tzinfo]:
+    def get_local_tzinfo(cls) -> tzinfo | None:
         """The system timezone, used when no timezone is specified."""
         return datetime.now().astimezone().tzinfo
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Set
 from datetime import datetime
-from typing import Optional, Protocol
+from typing import Protocol
 
 from pysasl.creds import AuthenticationCredentials
 
@@ -17,7 +17,7 @@ class TokensInterface(Protocol):
     @abstractmethod
     def get_login_token(self, identifier: str, key: bytes, *,
                         authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> Optional[str]:
+                        expiration: datetime = None) -> str | None:
         """Returns a new token string that encapsulates the provided login
         data, or ``None`` if tokens are not supported.
 
@@ -32,9 +32,9 @@ class TokensInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_admin_token(self, admin_key: Optional[bytes], *,
+    def get_admin_token(self, admin_key: bytes | None, *,
                         authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> Optional[str]:
+                        expiration: datetime = None) -> str | None:
         """Returns a new token string that encapsulates the provided login
         data, or ``None`` if tokens are not supported. This token uses a
         special private admin key that grants unrestricted access.

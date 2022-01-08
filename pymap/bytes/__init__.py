@@ -7,19 +7,19 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Sequence
 from io import BytesIO
 from itertools import chain
-from typing import cast, final, Any, Final, TypeVar, SupportsBytes, Union, \
-    Protocol
+from typing import cast, final, Any, Final, TypeAlias, TypeVar, \
+    SupportsBytes, Protocol
 
 __all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
            'BytesFormat']
 
 #: A bytes object, memoryview,  or an object with a ``__bytes__`` method.
-MaybeBytes = Union[bytes, bytearray, memoryview, SupportsBytes]
+MaybeBytes: TypeAlias = bytes | bytearray | memoryview | SupportsBytes
 
 #: A type variable bound to :class:`MaybeBytes`.
 MaybeBytesT = TypeVar('MaybeBytesT', bound=MaybeBytes)
 
-_FormatArg = Union[MaybeBytes, int]
+_FormatArg: TypeAlias = int | MaybeBytes
 
 
 class WriteStream(Protocol):
@@ -199,7 +199,7 @@ class BytesFormat:
         super().__init__()
         self.how: Final = how
 
-    def __mod__(self, other: Union[_FormatArg, Iterable[_FormatArg]]) -> bytes:
+    def __mod__(self, other: _FormatArg | Iterable[_FormatArg]) -> bytes:
         """String interpolation, shortcut for :meth:`.format`.
 
         Args:

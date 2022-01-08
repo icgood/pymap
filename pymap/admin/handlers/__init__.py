@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import ABCMeta
 from collections.abc import Mapping, Set, AsyncGenerator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
-from typing import Final
+from typing import TypeAlias, Final
 
 from pymap.context import cluster_metadata, connection_exit
 from pymap.exceptions import InvalidAuth, ResponseError
@@ -18,6 +18,8 @@ from ..errors import get_unimplemented_error
 from ..typing import Handler
 
 __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
+
+_Metadata: TypeAlias = Mapping[str, str | bytes] | None
 
 #: Registers new admin handler plugins.
 handlers: Plugin[type[BaseHandler]] = Plugin('pymap.admin.handlers')
@@ -68,8 +70,16 @@ class BaseHandler(Handler, metaclass=ABCMeta):
                 result.response = bytes(exc.get_response(b'.'))
                 result.key = type(exc).__name__
 
+    def _get_token(self, metadata: _Metadata) -> str:
+        if metadata is not None:
+            token = metadata['auth-token']
+            assert isinstance(token, str)
+            return token
+        else:
+            raise KeyError()
+
     @asynccontextmanager
-    async def login_as(self, metadata: Mapping[str, str], user: str) \
+    async def login_as(self, metadata: _Metadata, user: str) \
             -> AsyncGenerator[IdentityInterface, None]:
         """Context manager to login and get an identity object.
 
@@ -83,7 +93,8 @@ class BaseHandler(Handler, metaclass=ABCMeta):
         """
         admin_keys = self._get_admin_keys()
         try:
-            creds = self.login.tokens.parse(user, metadata['auth-token'],
+            token = self._get_token(metadata)
+            creds = self.login.tokens.parse(user, token,
                                             admin_keys=admin_keys)
         except (KeyError, ValueError) as exc:
             raise InvalidAuth() from exc

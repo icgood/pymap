@@ -1,7 +1,7 @@
 
 import unittest
 from collections.abc import Callable
-from typing import TypeVar, Optional
+from typing import TypeVar
 from unittest.mock import MagicMock
 
 from pymap.health import HealthStatus
@@ -14,7 +14,7 @@ class TestHealthStatus(unittest.TestCase):
     def setUp(self) -> None:
         self._callback = MagicMock()
 
-    def _check_call(self, healthy: Optional[bool],
+    def _check_call(self, healthy: bool | None,
                     func: Callable[..., _T], *args) -> _T:
         ret = func(*args)
         if healthy is None:

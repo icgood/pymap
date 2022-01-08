@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import Optional
 
 from .parsing.specials import SearchKey
 from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
@@ -148,8 +147,8 @@ class MailboxError(ResponseError):
 
     """
 
-    def __init__(self, mailbox: Optional[str], message: bytes,
-                 code: Optional[ResponseCode] = None) -> None:
+    def __init__(self, mailbox: str | None, message: bytes,
+                 code: ResponseCode | None = None) -> None:
         super().__init__()
         self.mailbox = mailbox
         self.message = message
@@ -209,7 +208,7 @@ class MailboxReadOnly(MailboxError):
 
     """
 
-    def __init__(self, mailbox: Optional[str] = None) -> None:
+    def __init__(self, mailbox: str | None = None) -> None:
         super().__init__(mailbox, b'Mailbox is read-only.',
                          ResponseCode.of(b'READ-ONLY'))
 

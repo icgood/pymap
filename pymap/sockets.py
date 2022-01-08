@@ -5,20 +5,20 @@ import socket as _socket
 from abc import abstractmethod, ABCMeta
 from asyncio import BaseTransport, StreamWriter
 from collections.abc import Mapping, Sequence
-from typing import Any, Union, Optional
+from typing import TypeAlias, Any, Union
 
 try:
     import systemd.daemon
 except ImportError as exc:
-    systemd_import_exc: Optional[ImportError] = exc
+    systemd_import_exc: ImportError | None = exc
 else:
     systemd_import_exc = None
 
 __all__ = ['InheritedSockets']
 
-_Transport = Union[BaseTransport, StreamWriter]
-_PeerName = Union[tuple[str, int], tuple[str, int, int, int], str]
-_PeerCert = Mapping[str, Any]  # {'issuer': ..., ...}
+_Transport: TypeAlias = Union[BaseTransport, StreamWriter]
+_PeerName: TypeAlias = Union[tuple[str, int], tuple[str, int, int, int], str]
+_PeerCert: TypeAlias = Mapping[str, Any]  # {'issuer': ..., ...}
 
 
 class InheritedSockets(metaclass=ABCMeta):

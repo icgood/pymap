@@ -10,7 +10,6 @@ from asyncio import StreamReader, StreamWriter
 from base64 import b64encode, b64decode
 from collections.abc import Mapping
 from contextlib import closing, AsyncExitStack
-from typing import Optional, Union
 
 from proxyprotocol import ProxyProtocolResult
 from proxyprotocol.reader import ProxyProtocolReader
@@ -62,8 +61,8 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         backend = self.backend
         config = self.config
         managesieve_server = ManageSieveServer(backend.login, config)
-        host: Optional[str] = config.args.sieve_host
-        port: Union[str, int] = config.args.sieve_port
+        host: str | None = config.args.sieve_host
+        port: str | int = config.args.sieve_port
         server = await asyncio.start_server(
             managesieve_server, host=host, port=port)
         await stack.enter_async_context(server)
@@ -120,9 +119,9 @@ class ManageSieveConnection:
         self.auth = config.initial_auth
         self.params = config.parsing_params.copy(allow_continuations=False)
         self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
-        self.pp_result: Optional[ProxyProtocolResult] = None
+        self.pp_result: ProxyProtocolResult | None = None
         self._offer_starttls = b'STARTTLS' in config.initial_capability
-        self._state: Optional[FilterState] = None
+        self._state: FilterState | None = None
         self._reset_streams(reader, writer)
 
     def _reset_streams(self, reader: StreamReader,
@@ -142,8 +141,8 @@ class ManageSieveConnection:
         return FilterState(session.filter_set, owner, self.config)
 
     @property
-    def capabilities(self) -> Mapping[bytes, Optional[bytes]]:
-        ret: dict[bytes, Optional[bytes]] = {}
+    def capabilities(self) -> Mapping[bytes, bytes | None]:
+        ret: dict[bytes, bytes | None] = {}
         ret[b'IMPLEMENTATION'] = self._impl
         if self._state is None:
             ret[b'SASL'] = b' '.join(
@@ -162,7 +161,7 @@ class ManageSieveConnection:
         return ret
 
     @classmethod
-    def _print(cls, log_format: str, output: Union[str, bytes]) -> None:
+    def _print(cls, log_format: str, output: str | bytes) -> None:
         if _log.isEnabledFor(logging.DEBUG):
             fd = socket_info.get().socket.fileno()
             if not isinstance(output, str):
@@ -253,7 +252,7 @@ class ManageSieveConnection:
             else:
                 break
         if final is None:
-            code: Optional[bytes] = None
+            code: bytes | None = None
         else:
             code = BytesFormat(b'SASL %b') % String.build(final)
         try:

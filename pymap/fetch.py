@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABCMeta
 from collections.abc import Iterator, Mapping, Sequence, AsyncIterator
 from contextlib import contextmanager, asynccontextmanager
-from typing import ClassVar, Optional, Final, Protocol
+from typing import TypeAlias, ClassVar, Final, Protocol, Union
 
 from .bytes import BytesFormat, MaybeBytes, Writeable
 from .interfaces.message import MessageInterface, LoadedMessageInterface
@@ -16,7 +16,7 @@ from .selected import SelectedMailbox
 __all__ = ['LoadedMessageProvider', 'DynamicFetchValue',
            'DynamicLoadedFetchValue', 'MessageAttributes']
 
-_Partial = Optional[tuple[int, Optional[int]]]
+_Partial: TypeAlias = Union[tuple[int, int | None], None]
 
 
 class LoadedMessageProvider(Protocol):
@@ -27,7 +27,7 @@ class LoadedMessageProvider(Protocol):
 
     @property
     @abstractmethod
-    def loaded_msg(self) -> Optional[LoadedMessageInterface]:
+    def loaded_msg(self) -> LoadedMessageInterface | None:
         """The loaded message, if available."""
 
 
@@ -174,7 +174,7 @@ class _LoadedMessageProvider(LoadedMessageProvider):
 
     def __init__(self) -> None:
         super().__init__()
-        self.loaded_msg: Optional[LoadedMessageInterface] = None
+        self.loaded_msg: LoadedMessageInterface | None = None
 
     @contextmanager
     def apply(self, loaded_msg: LoadedMessageInterface) -> Iterator[None]:
@@ -302,7 +302,7 @@ class MessageAttributes(Sequence[FetchValue]):
         self.requirement: Final = FetchRequirement.reduce(
             attr.requirement for attr in attributes)
         self._get_loaded = _LoadedMessageProvider()
-        self._values: Optional[Sequence[FetchValue]] = None
+        self._values: Sequence[FetchValue] | None = None
 
     @asynccontextmanager
     async def load_hook(self) -> AsyncIterator[None]:

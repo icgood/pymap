@@ -1,8 +1,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from . import AString
 from .. import Params, Parseable
 from ..modutf7 import modutf7_encode, modutf7_decode
@@ -22,7 +20,7 @@ class Mailbox(Parseable[str]):
         super().__init__()
         if mailbox.upper() == 'INBOX':
             self.mailbox = 'INBOX'
-            self._raw: Optional[bytes] = b'INBOX'
+            self._raw: bytes | None = b'INBOX'
         else:
             self.mailbox = mailbox
             self._raw = None

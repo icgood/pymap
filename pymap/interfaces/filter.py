@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Sequence
-from typing import TypeVar, Optional, Protocol
+from typing import TypeVar, Protocol
 
 from ..parsing.message import AppendMessage
 
@@ -27,7 +27,7 @@ class FilterInterface(Protocol):
     @abstractmethod
     async def apply(self, sender: str, recipient: str, mailbox: str,
                     append_msg: AppendMessage) \
-            -> tuple[Optional[str], AppendMessage]:
+            -> tuple[str | None, AppendMessage]:
         """Run the filter and return the mailbox where it should be appended,
         or None to discard, and the message to be appended, which is usually
         the same as ``append_msg``.
@@ -166,11 +166,11 @@ class FilterSetInterface(Protocol[FilterValueT]):
         ...
 
     @abstractmethod
-    async def get_active(self) -> Optional[FilterValueT]:
+    async def get_active(self) -> FilterValueT | None:
         """Return the active filter value, if any."""
         ...
 
     @abstractmethod
-    async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
+    async def get_all(self) -> tuple[str | None, Sequence[str]]:
         """Return the active filter name and a list of all filter names."""
         ...

@@ -17,7 +17,7 @@ from concurrent.futures import Executor, ThreadPoolExecutor
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from contextvars import copy_context, Context
 from threading import local, Event as _threading_Event, Lock as _threading_Lock
-from typing import cast, TypeVar, Optional
+from typing import cast, TypeVar, TypeAlias
 from weakref import WeakSet
 
 __all__ = ['Subsystem', 'Event', 'ReadWriteLock', 'FileLock', 'EventT', 'RetT']
@@ -28,7 +28,7 @@ EventT = TypeVar('EventT', bound='Event')
 #: Type variable for any return type.
 RetT = TypeVar('RetT')
 
-_Delay = Sequence[float]
+_Delay: TypeAlias = Sequence[float]
 
 
 class Subsystem(metaclass=ABCMeta):
@@ -38,7 +38,7 @@ class Subsystem(metaclass=ABCMeta):
     """
 
     @classmethod
-    def for_executor(cls, executor: Optional[Executor]) -> Subsystem:
+    def for_executor(cls, executor: Executor | None) -> Subsystem:
         """Return a subsystem based on the given executor. If ``executor`` is
         None, use :mod:`asyncio`. If ``executor`` is a
         :class:`concurrent.futures.ThreadPoolExecutor`, use :mod:`threading`.

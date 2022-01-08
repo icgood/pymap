@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Iterable, Sequence, AsyncIterable
-from typing import TypeVar, Optional, Protocol
+from typing import TypeVar, Protocol
 
 from pymap.concurrent import Event
 from pymap.flags import FlagOp
@@ -98,7 +98,7 @@ class MailboxDataInterface(Protocol[MessageT_co]):
 
     @abstractmethod
     async def copy(self: MailboxDataT, uid: int, destination: MailboxDataT, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         """Copies a message, if it exists, from this mailbox to the
         *destination* mailbox.
 
@@ -112,7 +112,7 @@ class MailboxDataInterface(Protocol[MessageT_co]):
 
     @abstractmethod
     async def move(self: MailboxDataT, uid: int, destination: MailboxDataT, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         """Moves a message, if it exists, from this mailbox to the
         *destination* mailbox.
 

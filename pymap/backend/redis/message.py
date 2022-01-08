@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import datetime
-from typing import Optional
 
 import msgpack
 from aioredis import Redis
@@ -34,7 +33,7 @@ class Message(BaseMessage):
     async def _load_full(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
         literal, full_json_raw = await redis.hmget(
-            ct_keys.data, b'full', b'full-json')
+            ct_keys.data, [b'full', b'full-json'])
         if literal is None or full_json_raw is None:
             raise ValueError(f'Missing message content: {self.email_id}')
         full_json = msgpack.unpackb(full_json_raw, raw=False)
@@ -43,7 +42,7 @@ class Message(BaseMessage):
     async def _load_header(self, redis: Redis, ct_keys: ContentKeys) \
             -> MessageContent:
         literal, header_json_raw = await redis.hmget(
-            ct_keys.data, b'header', b'header-json')
+            ct_keys.data, [b'header', b'header-json'])
         if literal is None or header_json_raw is None:
             raise ValueError(f'Missing message header: {self.email_id}')
         header_json = msgpack.unpackb(header_json_raw, raw=False)
@@ -58,7 +57,7 @@ class Message(BaseMessage):
         if redis is None or ns_keys is None:
             return LoadedMessage(self, requirement, None)
         ct_keys = ContentKeys(ns_keys, self.email_id)
-        content: Optional[MessageContent] = None
+        content: MessageContent | None = None
         if requirement & FetchRequirement.BODY:
             content = await self._load_full(redis, ct_keys)
         elif requirement & FetchRequirement.HEADER:

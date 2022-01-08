@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable, Sequence
-from typing import Optional, ClassVar
+from typing import ClassVar
 
 from . import CommandSelect, CommandNoArgs
 from .. import Params, Space, EndLine
@@ -11,7 +11,6 @@ from ..exceptions import NotParseable
 from ..primitives import Atom, List
 from ..specials import AString, Mailbox, SequenceSet, Flag, FetchAttribute, \
     SearchKey, ExtensionOptions
-from ...bytes import rev
 from ...flags import FlagOp
 
 __all__ = ['CheckCommand', 'CloseCommand', 'ExpungeCommand', 'CopyCommand',
@@ -68,7 +67,7 @@ class ExpungeCommand(CommandSelect):
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[ExpungeCommand, memoryview]:
-        uid_set: Optional[SequenceSet] = None
+        uid_set: SequenceSet | None = None
         if params.uid:
             _, buf = Space.parse(buf, params)
             uid_set, buf = SequenceSet.parse(buf, params)
@@ -248,7 +247,7 @@ class StoreCommand(CommandSelect):
     command = b'STORE'
     uid: ClassVar[bool] = False
 
-    _info_pattern = rev.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
+    _info_pattern = re.compile(br'^([+-]?)FLAGS(\.SILENT)?$', re.I)
     _modes = {b'': FlagOp.REPLACE, b'+': FlagOp.ADD, b'-': FlagOp.DELETE}
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
@@ -323,7 +322,7 @@ class SearchCommand(CommandSelect):
     uid: ClassVar[bool] = False
 
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
-                 charset: Optional[str],
+                 charset: str | None,
                  options: ExtensionOptions = None) -> None:
         super().__init__(tag)
         self.keys = frozenset(keys)
@@ -332,7 +331,7 @@ class SearchCommand(CommandSelect):
 
     @classmethod
     def _parse_charset(cls, buf: memoryview, params: Params) \
-            -> tuple[Optional[str], memoryview]:
+            -> tuple[str | None, memoryview]:
         try:
             _, after = Space.parse(buf, params)
             atom, after = Atom.parse(after, params)
@@ -534,7 +533,7 @@ class IdleCommand(CommandSelect):
     #: The string used to end the command.
     continuation = b'DONE'
 
-    _pattern = rev.compile(br'^(.*?)\r?\n')
+    _pattern = re.compile(br'^(.*?)\r?\n')
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Optional
 
 from aioredis import Redis, ResponseError
 
@@ -81,7 +80,7 @@ class FilterSet(PluginFilterSet[bytes]):
                 raise KeyError(name) from exc
             raise
 
-    async def get_active(self) -> Optional[bytes]:
+    async def get_active(self) -> bytes | None:
         try:
             return await _scripts.get(self._redis, self._keys,
                                       name=self._active_name)
@@ -90,11 +89,11 @@ class FilterSet(PluginFilterSet[bytes]):
                 return None
             raise
 
-    async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
+    async def get_all(self) -> tuple[str | None, Sequence[str]]:
         keys = self._keys
         filter_names = await self._redis.hgetall(keys.names)
-        active_key: Optional[bytes] = filter_names.get(self._active_name)
-        active_name: Optional[str] = None
+        active_key: bytes | None = filter_names.get(self._active_name)
+        active_name: str | None = None
         names: list[str] = []
         for name, key in filter_names.items():
             if name != self._active_name:

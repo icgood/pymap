@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import TypeAlias
 
 from grpclib.server import Stream
 from pymap.parsing.message import AppendMessage
@@ -14,7 +14,7 @@ from . import BaseHandler
 
 __all__ = ['MailboxHandlers']
 
-_AppendStream = Stream[AppendRequest, AppendResponse]
+_AppendStream: TypeAlias = Stream[AppendRequest, AppendResponse]
 
 
 class MailboxHandlers(MailboxBase, BaseHandler):
@@ -56,8 +56,8 @@ class MailboxHandlers(MailboxBase, BaseHandler):
         when = datetime.fromtimestamp(request.when, timezone.utc)
         append_msg = AppendMessage(request.data, when, flag_set,
                                    ExtensionOptions.empty())
-        validity: Optional[int] = None
-        uid: Optional[int] = None
+        validity: int | None = None
+        uid: int | None = None
         async with self.catch_errors('Append') as result, \
                 self.login_as(stream.metadata, request.user) as identity, \
                 self.with_session(identity) as session:

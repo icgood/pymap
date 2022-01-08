@@ -7,7 +7,7 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from tempfile import NamedTemporaryFile
-from typing import TypeVar, Generic, Optional, IO
+from typing import TypeVar, Generic, IO
 
 from pymap.concurrent import FileLock
 
@@ -29,7 +29,7 @@ class FileReadable(metaclass=ABCMeta):
         ...
 
     @classmethod
-    def get_lock(cls) -> Optional[str]:
+    def get_lock(cls) -> str | None:
         return None
 
     @classmethod
@@ -141,7 +141,7 @@ class _FileReadWith(Generic[_RT]):
         super().__init__()
         self._base_dir = base_dir
         self._cls = cls
-        self._obj: Optional[_RT] = None
+        self._obj: _RT | None = None
         self._only_open = only_open
 
     async def __aenter__(self) -> _RT:
@@ -163,8 +163,8 @@ class _FileWriteWith(Generic[_WT]):
         self._base_dir = base_dir
         self._cls = cls
         self._exists = False
-        self._lock: Optional[AbstractAsyncContextManager[None]] = None
-        self._obj: Optional[_WT] = None
+        self._lock: AbstractAsyncContextManager[None] | None = None
+        self._obj: _WT | None = None
 
     async def _acquire_lock(self) -> None:
         self._lock = self._cls.write_lock(self._base_dir)

@@ -1,9 +1,10 @@
 
 from __future__ import annotations
 
+import re
 from abc import ABCMeta
 from collections.abc import Iterable, Sequence
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 from . import CommandAuth
 from .. import Space, EndLine, Params
@@ -13,7 +14,6 @@ from ..modutf7 import modutf7_decode
 from ..primitives import List, String, LiteralString
 from ..specials import Mailbox, DateTime, Flag, StatusAttribute, \
     ExtensionOption, ExtensionOptions
-from ...bytes import rev
 
 __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'ListCommand', 'LSubCommand', 'RenameCommand', 'SelectCommand',
@@ -72,7 +72,7 @@ class AppendCommand(CommandAuth):
 
     @classmethod
     def _parse_msg(cls, name: str, buf: memoryview, params: Params) \
-            -> tuple[Optional[AppendMessage], memoryview]:
+            -> tuple[AppendMessage | None, memoryview]:
         _, buf = Space.parse(buf, params)
         try:
             params_copy = params.copy(list_expected=[Flag])
@@ -122,7 +122,7 @@ class AppendCommand(CommandAuth):
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         messages: list[AppendMessage] = []
-        error: Optional[Exception] = None
+        error: Exception | None = None
         cancelled = False
         while True:
             try:
@@ -181,8 +181,8 @@ class ListCommand(CommandAuth):
     #: All mailboxes may be listed, not only subscribed mailboxes.
     only_subscribed: ClassVar[bool] = False
 
-    _list_mailbox_pattern = rev.compile(br'[\x21\x23-\x27\x2A-\x5B'
-                                        br'\x5D-\x7A\x7C\x7E]+')
+    _list_mailbox_pattern = re.compile(br'[\x21\x23-\x27\x2A-\x5B'
+                                       br'\x5D-\x7A\x7C\x7E]+')
 
     def __init__(self, tag: bytes, ref_name: str, filter_: str) -> None:
         super().__init__(tag)

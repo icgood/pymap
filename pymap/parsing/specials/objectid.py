@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import binascii
 import random as _random
-from typing import Optional, AnyStr
+import re
+from typing import AnyStr
 
 from .. import Params, Parseable
 from ..exceptions import NotParseable
-from ...bytes import rev
 
 __all__ = ['ObjectId']
 
@@ -26,7 +26,7 @@ class ObjectId(Parseable[bytes]):
 
     """
 
-    _pattern = rev.compile(br'[a-zA-Z0-9_-]{1,255}')
+    _pattern = re.compile(br'[a-zA-Z0-9_-]{1,255}')
 
     def __init__(self, object_id: bytes = None) -> None:
         super().__init__()
@@ -122,7 +122,7 @@ class ObjectId(Parseable[bytes]):
         return cls.random(b'T')
 
     @classmethod
-    def maybe(cls, value: Optional[AnyStr]) -> ObjectId:
+    def maybe(cls, value: AnyStr | None) -> ObjectId:
         """Return an object ID representing the string or bytestring value. If
         the input is empty or ``None``, the object ID returned will have
         :attr:`.not_defined` be true.

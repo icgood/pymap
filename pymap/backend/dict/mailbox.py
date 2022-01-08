@@ -5,7 +5,6 @@ from bisect import bisect_left
 from collections.abc import Iterable, Sequence, AsyncIterable
 from datetime import datetime
 from itertools import islice
-from typing import Optional
 from weakref import finalize, WeakKeyDictionary, WeakValueDictionary
 
 from pymap.bytes import HashStream
@@ -254,7 +253,7 @@ class MailboxData(MailboxDataInterface[Message]):
             return message
 
     async def copy(self, uid: int, destination: MailboxData, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         async with self.messages_lock.read_lock():
             try:
                 message = self._messages[uid]
@@ -269,7 +268,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return dest_uid
 
     async def move(self, uid: int, destination: MailboxData, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         async with self.messages_lock.write_lock():
             try:
                 message = self._messages.pop(uid)
@@ -337,7 +336,7 @@ class MailboxData(MailboxDataInterface[Message]):
         exists = 0
         recent = 0
         unseen = 0
-        first_unseen: Optional[int] = None
+        first_unseen: int | None = None
         next_uid = self._max_uid + 1
         async for msg in self.messages():
             exists += 1
