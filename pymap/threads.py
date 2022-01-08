@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Iterator, Sequence
 from re import Match, Pattern
-from typing import Final, Optional
+from typing import Final
 
 from .mime import MessageHeader
 
@@ -56,7 +56,7 @@ class ThreadKey(Iterable[str]):
 
     @classmethod
     def _first_match(cls, value: str, *patterns: Pattern[str]) \
-            -> Optional[Match[str]]:
+            -> Match[str] | None:
         for pattern in patterns:
             match = pattern.match(value)
             if match is not None:

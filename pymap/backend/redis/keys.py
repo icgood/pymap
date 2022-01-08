@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence, Mapping
-from typing import Union, Final
+from typing import TypeAlias, Final
 
 from pymap.bytes import MaybeBytes, BytesFormat
 
@@ -14,7 +14,7 @@ __all__ = ['RedisKey', 'KeysGroup', 'GlobalKeys', 'CleanupKeys',
 #: changes.
 DATA_VERSION: Final = 4
 
-_Value = Union[int, MaybeBytes]
+_Value: TypeAlias = int | MaybeBytes
 
 
 class RedisKey:

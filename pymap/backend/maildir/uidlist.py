@@ -4,7 +4,7 @@ from __future__ import annotations
 import random
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import IO, Optional, ClassVar, TypeVar
+from typing import IO, ClassVar, TypeVar
 
 from pymap.mailbox import MailboxSnapshot
 
@@ -131,9 +131,9 @@ class UidList(FileWriteable):
         data = line.split()
         if data[0] != '3':
             raise ValueError(line)
-        uid_validity: Optional[int] = None
-        next_uid: Optional[int] = None
-        global_uid: Optional[bytes] = None
+        uid_validity: int | None = None
+        next_uid: int | None = None
+        global_uid: bytes | None = None
         for field in data[1:]:
             if field[0] == 'V':
                 uid_validity = int(field[1:])

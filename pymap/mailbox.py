@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 import time
 from collections.abc import Iterable
-from typing import Optional, Final
+from typing import Final
 
 from .interfaces.mailbox import MailboxInterface
 from .parsing.specials import Flag, ObjectId
@@ -42,7 +42,7 @@ class MailboxSnapshot(MailboxInterface):
                  permanent_flags: Iterable[Flag],
                  session_flags: frozenset[Flag],
                  exists: int, recent: int, unseen: int,
-                 first_unseen: Optional[int], next_uid: int) -> None:
+                 first_unseen: int | None, next_uid: int) -> None:
         super().__init__()
         self.mailbox_id: Final = mailbox_id
         self.readonly: Final = readonly

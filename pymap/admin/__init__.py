@@ -9,7 +9,6 @@ from collections.abc import Sequence
 from contextlib import AsyncExitStack
 from datetime import datetime, timedelta, timezone
 from ssl import SSLContext
-from typing import Optional
 
 from grpclib.events import listen, RecvRequest
 from grpclib.health.check import ServiceStatus
@@ -59,7 +58,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
                            help=SUPPRESS)
 
     def _init_admin_token(self) -> None:
-        expiration: Optional[datetime] = None
+        expiration: datetime | None = None
         if self.config.args.admin_token_duration:
             duration_sec: int = self.config.args.admin_token_duration
             duration = timedelta(seconds=duration_sec)
@@ -97,9 +96,9 @@ class AdminService(ServiceInterface):  # pragma: no cover
     async def start(self, stack: AsyncExitStack) -> None:
         self._init_admin_token()
         backend = self.backend
-        path: Optional[str] = self.config.args.admin_path
-        host: Optional[str] = self.config.args.admin_host
-        port: Optional[int] = self.config.args.admin_port
+        path: str | None = self.config.args.admin_path
+        host: str | None = self.config.args.admin_host
+        port: int | None = self.config.args.admin_port
         server_handlers: list[Handler] = [self._get_health()]
         server_handlers.extend(handler(backend) for _, handler in handlers)
         ssl = self.config.ssl_context
@@ -114,15 +113,15 @@ class AdminService(ServiceInterface):  # pragma: no cover
         return server
 
     async def _start_local(self, server_handlers: Sequence[Handler],
-                           path: Optional[str]) -> Task[None]:
+                           path: str | None) -> Task[None]:
         server = self._new_server(server_handlers)
         path = str(socket_file.get_temp(mkdir=True))
         await server.start(path=path)
         return asyncio.create_task(self._run(server))
 
     async def _start(self, server_handlers: Sequence[Handler],
-                     host: Optional[str], port: Optional[int],
-                     ssl: Optional[SSLContext]) -> Task[None]:
+                     host: str | None, port: int | None,
+                     ssl: SSLContext | None) -> Task[None]:
         server = self._new_server(server_handlers)
         await server.start(host=host, port=port, ssl=ssl, reuse_address=True)
         return asyncio.create_task(self._run(server))

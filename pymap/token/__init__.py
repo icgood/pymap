@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from collections.abc import Set
 from datetime import datetime
-from typing import Optional
 
 from pysasl.creds import AuthenticationCredentials
 
@@ -27,7 +26,7 @@ class AllTokens(TokensInterface):
 
     def get_login_token(self, identifier: str, key: bytes, *,
                         authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> Optional[str]:
+                        expiration: datetime = None) -> str | None:
         try:
             token_type = tokens.default
         except KeyError:
@@ -36,9 +35,9 @@ class AllTokens(TokensInterface):
             identifier, key, authzid=authzid, location=location,
             expiration=expiration)
 
-    def get_admin_token(self, admin_key: Optional[bytes], *,
+    def get_admin_token(self, admin_key: bytes | None, *,
                         authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> Optional[str]:
+                        expiration: datetime = None) -> str | None:
         try:
             token_type = tokens.default
         except KeyError:

@@ -7,12 +7,12 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Iterator, Sequence
 from functools import total_ordering
 from re import Match
-from typing import cast, Union, Optional, SupportsBytes
+from typing import cast, SupportsBytes
 
 from . import Parseable, ExpectedParseable, Params
 from .exceptions import NotParseable
 from .state import ExpectContinuation
-from ..bytes import rev, MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
+from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
     Writeable
 
 __all__ = ['Nil', 'Number', 'Atom', 'List', 'String',
@@ -22,7 +22,7 @@ __all__ = ['Nil', 'Number', 'Atom', 'List', 'String',
 class Nil(Parseable[None]):
     """Represents a ``NIL`` object from an IMAP stream."""
 
-    _nil_pattern = rev.compile(b'^NIL$', re.I)
+    _nil_pattern = re.compile(b'^NIL$', re.I)
 
     __slots__: list[str] = []
 
@@ -67,7 +67,7 @@ class Number(Parseable[int]):
 
     """
 
-    _num_pattern = rev.compile(br'^\d+$')
+    _num_pattern = re.compile(br'^\d+$')
 
     __slots__ = ['num', '_raw']
 
@@ -188,7 +188,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
 
     @classmethod
     def build(cls, value: object, binary: bool = False,
-              fallback: object = None) -> Union[Nil, String]:
+              fallback: object = None) -> Nil | String:
         """Produce either a :class:`QuotedString` or :class:`LiteralString`
         based on the contents of ``data``. This is useful to improve
         readability of response data.
@@ -249,8 +249,8 @@ class QuotedString(String):
 
     """
 
-    _quoted_pattern = rev.compile(br'(?:\r|\n|\\.|\")')
-    _quoted_specials_pattern = rev.compile(br'[\"\\]')
+    _quoted_pattern = re.compile(br'(?:\r|\n|\\.|\")')
+    _quoted_specials_pattern = re.compile(br'[\"\\]')
 
     __slots__ = ['_string', '_raw']
 
@@ -321,17 +321,17 @@ class LiteralString(String):
 
     """
 
-    _literal_pattern = rev.compile(br'(~?){(\d+)(\+?)}\r?\n')
+    _literal_pattern = re.compile(br'(~?){(\d+)(\+?)}\r?\n')
 
     __slots__ = ['_string', '_length', '_binary', '_raw']
 
-    def __init__(self, string: Union[bytes, Writeable],
+    def __init__(self, string: bytes | Writeable,
                  binary: bool = False) -> None:
         super().__init__()
         self._string = string
         self._length = len(string)
         self._binary = binary
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     @property
     def value(self) -> bytes:
@@ -409,7 +409,7 @@ class List(Parseable[Sequence[MaybeBytes]]):
 
     """
 
-    _end_pattern = rev.compile(br' *\)')
+    _end_pattern = re.compile(br' *\)')
 
     __slots__ = ['items']
 

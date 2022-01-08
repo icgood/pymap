@@ -5,7 +5,6 @@ import base64
 import quopri
 from abc import abstractmethod, ABCMeta
 from email.headerregistry import ContentTransferEncodingHeader
-from typing import Optional
 
 from . import MessageHeader, MessageBody
 from ..bytes import Writeable
@@ -40,7 +39,7 @@ class MessageDecoder(metaclass=ABCMeta):
         return cls.of_cte(cte_hdr)
 
     @classmethod
-    def of_cte(cls, header: Optional[ContentTransferEncodingHeader]) \
+    def of_cte(cls, header: ContentTransferEncodingHeader | None) \
             -> MessageDecoder:
         """Return a decoder from the CTE header value.
 

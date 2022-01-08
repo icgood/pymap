@@ -7,7 +7,7 @@ from collections.abc import Mapping, AsyncIterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager, AsyncExitStack
 from datetime import datetime
-from typing import Any, Optional, Final
+from typing import Any, Final
 
 from pysasl.creds import AuthenticationCredentials
 
@@ -95,8 +95,8 @@ class Config(IMAPConfig):
     """
 
     def __init__(self, args: Namespace, *, users_file: str,
-                 base_dir: Optional[str], layout: str,
-                 colon: Optional[str], **extra: Any) -> None:
+                 base_dir: str | None, layout: str,
+                 colon: str | None, **extra: Any) -> None:
         super().__init__(args, **extra)
         self._users_file = users_file
         self._base_dir = self._get_base_dir(base_dir, users_file)
@@ -104,8 +104,8 @@ class Config(IMAPConfig):
         self._colon = colon
 
     @classmethod
-    def _get_base_dir(cls, base_dir: Optional[str],
-                      users_file: Optional[str]) -> str:
+    def _get_base_dir(cls, base_dir: str | None,
+                      users_file: str | None) -> str:
         if base_dir:
             return base_dir
         elif users_file:
@@ -154,7 +154,7 @@ class Config(IMAPConfig):
         return self._layout
 
     @property
-    def colon(self) -> Optional[str]:
+    def colon(self) -> str | None:
         """The info delimiter in mail filename.
 
         See Also:
@@ -181,7 +181,7 @@ class FilterSet(PluginFilterSet[bytes], SingleFilterSet[bytes]):
         super().__init__('sieve', bytes)
         self._user_dir = user_dir
 
-    async def replace_active(self, value: Optional[bytes]) -> None:
+    async def replace_active(self, value: bytes | None) -> None:
         path = os.path.join(self._user_dir, 'dovecot.sieve')
         if value is None:
             try:
@@ -192,7 +192,7 @@ class FilterSet(PluginFilterSet[bytes], SingleFilterSet[bytes]):
             with open(path, 'wb') as sieve_file:
                 sieve_file.write(value)
 
-    async def get_active(self) -> Optional[bytes]:
+    async def get_active(self) -> bytes | None:
         path = os.path.join(self._user_dir, 'dovecot.sieve')
         try:
             with open(path, 'rb') as sieve_file:
@@ -242,8 +242,8 @@ class Login(LoginInterface):
             -> Identity:
         authcid = credentials.authcid
         identity = credentials.identity
-        password: Optional[str] = None
-        mailbox_path: Optional[str] = None
+        password: str | None = None
+        mailbox_path: str | None = None
         with open(self.config.users_file, 'r') as users_file:
             for line in users_file:
                 this_user, this_user_dir, this_password = line.split(':', 2)

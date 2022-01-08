@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import enum
 from collections.abc import Mapping, Sequence
-from typing import Optional
+from typing import TypeAlias
 
 from pymap.bytes import BytesFormat, MaybeBytes, WriteStream, Writeable
 from pymap.parsing.exceptions import NotParseable
@@ -12,7 +12,7 @@ from pymap.parsing.primitives import String, QuotedString, LiteralString
 __all__ = ['Condition', 'Response', 'BadCommandResponse',
            'CapabilitiesResponse', 'GetScriptResponse', 'ListScriptsResponse']
 
-_Capabilities = Mapping[bytes, Optional[MaybeBytes]]
+_Capabilities: TypeAlias = Mapping[bytes, MaybeBytes | None]
 
 
 class Condition(enum.Enum):
@@ -32,7 +32,7 @@ class Response(Writeable):
         self.condition = condition
         self.code = code
         self.text = text
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     @property
     def is_bye(self) -> bool:
@@ -67,9 +67,9 @@ class BadCommandResponse(Response):
 
 class NoOpResponse(Response):
 
-    def __init__(self, tag: Optional[bytes]) -> None:
+    def __init__(self, tag: bytes | None) -> None:
         if tag is None:
-            code: Optional[bytes] = None
+            code: bytes | None = None
         else:
             code = BytesFormat(b'TAG %b') % String.build(tag)
         super().__init__(Condition.OK, code=code)
@@ -109,7 +109,7 @@ class GetScriptResponse(Response):
 
 class ListScriptsResponse(Response):
 
-    def __init__(self, active: Optional[str], names: Sequence[str]) -> None:
+    def __init__(self, active: str | None, names: Sequence[str]) -> None:
         super().__init__(Condition.OK)
         self.active = active
         self.names = names

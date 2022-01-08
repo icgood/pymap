@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from collections.abc import Set
 from datetime import datetime, timezone
-from typing import Any, Final, Optional, NoReturn
+from typing import Any, Final, NoReturn
 
 from pymacaroons import Macaroon, Verifier
 from pymacaroons.exceptions import MacaroonDeserializationException, \
@@ -30,9 +30,9 @@ class MacaroonTokens(TokensInterface):
             macaroon.add_first_party_caveat(f'time < {expiration.isoformat()}')
         return macaroon.serialize()
 
-    def get_admin_token(self, admin_key: Optional[bytes], *,
+    def get_admin_token(self, admin_key: bytes | None, *,
                         authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> Optional[str]:
+                        expiration: datetime = None) -> str | None:
         if admin_key is None:
             return None
         macaroon = Macaroon(location=location, identifier='', key=admin_key)
@@ -81,7 +81,7 @@ class MacaroonCredentials(AuthenticationCredentials):
         self.admin_keys: Final = admin_keys
 
     @classmethod
-    def _find_type(cls, macaroon: Macaroon) -> Optional[str]:
+    def _find_type(cls, macaroon: Macaroon) -> str | None:
         for caveat in macaroon.first_party_caveats():
             caveat_id = caveat.caveat_id
             if caveat_id == 'type = admin':
@@ -133,7 +133,7 @@ class MacaroonCredentials(AuthenticationCredentials):
         verifier.satisfy_exact('type = admin')
         return verifier
 
-    def check_secret(self, secret: Optional[StoredSecret], *,
+    def check_secret(self, secret: StoredSecret | None, *,
                      key: bytes = None, **other: Any) -> bool:
         if key is not None:
             verifier = self._get_login_verifier()

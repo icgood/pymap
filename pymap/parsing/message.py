@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 
 from ..parsing.specials import Flag, ExtensionOptions
 
@@ -23,6 +22,6 @@ class AppendMessage:
     """
 
     literal: bytes
-    when: Optional[datetime] = None
+    when: datetime | None = None
     flag_set: frozenset[Flag] = field(default_factory=frozenset)
     options: ExtensionOptions = field(default_factory=ExtensionOptions.empty)

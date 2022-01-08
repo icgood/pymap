@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Collection
-from typing import Optional
 
 from . import Space, Params
 from .command import Command
@@ -49,9 +48,9 @@ class InvalidCommand(Command):
 
     command = b'[INVALID]'
 
-    def __init__(self, params: Params, parse_exc: Optional[NotParseable],
-                 command: Optional[bytes] = None,
-                 command_type: Optional[type[Command]] = None) -> None:
+    def __init__(self, params: Params, parse_exc: NotParseable | None,
+                 command: bytes | None = None,
+                 command_type: type[Command] | None = None) -> None:
         super().__init__(params.tag)
         self._parse_exc = parse_exc
         self._command = command
@@ -72,17 +71,17 @@ class InvalidCommand(Command):
             return b'%b: Invalid arguments.' % (self.command_name, )
 
     @property
-    def command_name(self) -> Optional[bytes]:
+    def command_name(self) -> bytes | None:
         """The command name, if the name could be parsed."""
         return self._command
 
     @property
-    def command_type(self) -> Optional[type[Command]]:
+    def command_type(self) -> type[Command] | None:
         """The command type, if parsing failed due to invalid arguments."""
         return self._command_type
 
     @property
-    def parse_exc(self) -> Optional[NotParseable]:
+    def parse_exc(self) -> NotParseable | None:
         """The parsing exception, if any."""
         return self._parse_exc
 

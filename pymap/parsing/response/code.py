@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Optional
 
 from . import ResponseCode
 from ..primitives import List
@@ -24,7 +23,7 @@ class Capability(ResponseCode):
     def __init__(self, server_capabilities: Iterable[MaybeBytes]) -> None:
         super().__init__()
         self.capabilities = [bytes(cap) for cap in server_capabilities]
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     def __contains__(self, capability: MaybeBytes) -> bool:
         return capability in self.capabilities

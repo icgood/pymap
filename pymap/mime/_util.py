@@ -1,16 +1,16 @@
 
 from collections.abc import Iterable, Sequence
-from typing import Union
+from typing import TypeAlias
 
 __all__ = ['whitespace', 'find_any', 'get_raw']
 
 whitespace = frozenset(b' \t\n\r\x0b\f')
 
-_Line = tuple[int, int, int]
-_Lines = Sequence[_Line]
+_Line: TypeAlias = tuple[int, int, int]
+_Lines: TypeAlias = Sequence[_Line]
 
 
-def find_any(data: Union[bytes, memoryview], end_marker: frozenset[int],
+def find_any(data: bytes | memoryview, end_marker: frozenset[int],
              start: int, end: int, inverse: bool, reverse: bool) -> int:
     if reverse:
         range_iter: Iterable[int] = reversed(range(start, end))

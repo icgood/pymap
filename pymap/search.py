@@ -6,7 +6,7 @@ import re
 from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable
 from datetime import datetime
-from typing import AnyStr, Optional, Final
+from typing import AnyStr, Final
 
 from .exceptions import SearchNotAllowed
 from .interfaces.message import MessageInterface, LoadedMessageInterface
@@ -327,7 +327,7 @@ class DateSearchCriteria(SearchCriteria):
     @classmethod
     def _get_msg_date(cls, msg: MessageInterface,
                       loaded_msg: LoadedMessageInterface) \
-            -> Optional[datetime]:
+            -> datetime | None:
         return msg.internal_date
 
     def matches(self, msg_seq: int, msg: MessageInterface,
@@ -351,7 +351,7 @@ class HeaderDateSearchCriteria(DateSearchCriteria):
     @classmethod
     def _get_msg_date(cls, msg: MessageInterface,
                       loaded_msg: LoadedMessageInterface) \
-            -> Optional[datetime]:
+            -> datetime | None:
         envelope = loaded_msg.get_envelope_structure()
         return envelope.date.datetime if envelope.date else None
 

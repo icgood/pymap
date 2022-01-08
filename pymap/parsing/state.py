@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence
-from typing import TypeVar, Generic, Final, Optional
+from typing import TypeVar, Generic, Final
 
 __all__ = ['ParsingExpectedT', 'ParsingState', 'ParsingInterrupt',
            'ParsingExpectation']
@@ -62,7 +62,7 @@ class ParsingExpectation(Generic[ParsingExpectedT], metaclass=ABCMeta):
     __slots__: Sequence[str] = []
 
     @abstractmethod
-    def consume(self, state: ParsingState) -> Optional[ParsingExpectedT]:
+    def consume(self, state: ParsingState) -> ParsingExpectedT | None:
         """Consume and return a piece of data, if available.
 
         Args:
@@ -107,5 +107,5 @@ class ExpectContinuation(ParsingExpectation[memoryview]):
         self.message: Final = message
         self.literal_length: Final = literal_length
 
-    def consume(self, state: ParsingState) -> Optional[memoryview]:
+    def consume(self, state: ParsingState) -> memoryview | None:
         return next(state.continuations, None)

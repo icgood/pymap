@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Sequence
-from typing import Optional, Protocol
+from typing import Protocol
 
 from ..parsing.specials import Flag, ObjectId
 
@@ -77,7 +77,7 @@ class MailboxInterface(Protocol):
 
     @property
     @abstractmethod
-    def first_unseen(self) -> Optional[int]:
+    def first_unseen(self) -> int | None:
         """The sequence number of the first unseen message."""
         ...
 

@@ -6,7 +6,7 @@ from email.headerregistry import Address, AddressHeader, SingleAddressHeader, \
     UnstructuredHeader, DateHeader, ContentDispositionHeader, \
     ContentTransferEncodingHeader
 from itertools import chain
-from typing import Any, SupportsBytes, Optional, Union
+from typing import TypeAlias, Any, SupportsBytes
 
 from ..primitives import List, Nil, Number, String
 from ..specials import DateTime
@@ -15,7 +15,7 @@ from ...bytes import Writeable, WriteStream
 __all__ = ['EnvelopeStructure', 'BodyStructure', 'MultipartBodyStructure',
            'ContentBodyStructure', 'TextBodyStructure', 'MessageBodyStructure']
 
-_CTEHeader = ContentTransferEncodingHeader
+_CTEHeader: TypeAlias = ContentTransferEncodingHeader
 
 
 class _Concatenated(Writeable):
@@ -34,7 +34,7 @@ class _Concatenated(Writeable):
 
 class _AddressList(Writeable):
 
-    def __init__(self, headers: Optional[Sequence[AddressHeader]]) -> None:
+    def __init__(self, headers: Sequence[AddressHeader] | None) -> None:
         super().__init__()
         self.headers: Sequence[AddressHeader] = headers or []
 
@@ -68,7 +68,7 @@ class _AddressList(Writeable):
 
 class _ParamsList(Writeable):
 
-    def __init__(self, params: Optional[Mapping[str, Any]]) -> None:
+    def __init__(self, params: Mapping[str, Any] | None) -> None:
         super().__init__()
         self.params = params
 
@@ -107,16 +107,16 @@ class EnvelopeStructure(Writeable):
 
     """
 
-    def __init__(self, date: Optional[DateHeader],
-                 subject: Optional[UnstructuredHeader],
-                 from_: Optional[Sequence[AddressHeader]],
-                 sender: Optional[Sequence[SingleAddressHeader]],
-                 reply_to: Optional[Sequence[AddressHeader]],
-                 to: Optional[Sequence[AddressHeader]],
-                 cc: Optional[Sequence[AddressHeader]],
-                 bcc: Optional[Sequence[AddressHeader]],
-                 in_reply_to: Optional[UnstructuredHeader],
-                 message_id: Optional[UnstructuredHeader]) -> None:
+    def __init__(self, date: DateHeader | None,
+                 subject: UnstructuredHeader | None,
+                 from_: Sequence[AddressHeader] | None,
+                 sender: Sequence[SingleAddressHeader] | None,
+                 reply_to: Sequence[AddressHeader] | None,
+                 to: Sequence[AddressHeader] | None,
+                 cc: Sequence[AddressHeader] | None,
+                 bcc: Sequence[AddressHeader] | None,
+                 in_reply_to: UnstructuredHeader | None,
+                 message_id: UnstructuredHeader | None) -> None:
         super().__init__()
         self.date = date
         self.subject = subject
@@ -140,8 +140,8 @@ class EnvelopeStructure(Writeable):
         """
         return _EmptyEnvelopeStructure()
 
-    def _addresses(self, headers: Optional[Sequence[AddressHeader]],
-                   fallback: Optional[Sequence[AddressHeader]] = None) \
+    def _addresses(self, headers: Sequence[AddressHeader] | None,
+                   fallback: Sequence[AddressHeader] | None = None) \
             -> SupportsBytes:
         if not headers and fallback:
             return self._addresses(fallback)
@@ -149,7 +149,7 @@ class EnvelopeStructure(Writeable):
 
     @property
     def _value(self) -> Writeable:
-        datetime: Union[DateTime, Nil] = \
+        datetime: DateTime | Nil = \
             DateTime(self.date.datetime) if self.date else Nil()
         return List([datetime,
                      String.build(self.subject),
@@ -185,10 +185,10 @@ class BodyStructure(Writeable):
     """
 
     def __init__(self, maintype: str, subtype: str,
-                 content_type_params: Optional[Mapping[str, Any]],
-                 content_disposition: Optional[ContentDispositionHeader],
-                 content_language: Optional[UnstructuredHeader],
-                 content_location: Optional[UnstructuredHeader]) -> None:
+                 content_type_params: Mapping[str, Any] | None,
+                 content_disposition: ContentDispositionHeader | None,
+                 content_language: UnstructuredHeader | None,
+                 content_location: UnstructuredHeader | None) -> None:
         super().__init__()
         self.maintype = maintype
         self.subtype = subtype
@@ -239,10 +239,10 @@ class MultipartBodyStructure(BodyStructure):
     """
 
     def __init__(self, subtype: str,
-                 content_type_params: Optional[Mapping[str, Any]],
-                 content_disposition: Optional[ContentDispositionHeader],
-                 content_language: Optional[UnstructuredHeader],
-                 content_location: Optional[UnstructuredHeader],
+                 content_type_params: Mapping[str, Any] | None,
+                 content_disposition: ContentDispositionHeader | None,
+                 content_language: UnstructuredHeader | None,
+                 content_location: UnstructuredHeader | None,
                  parts: Sequence[BodyStructure]) -> None:
         super().__init__('multipart', subtype, content_type_params,
                          content_disposition, content_language,
@@ -284,14 +284,14 @@ class ContentBodyStructure(BodyStructure):
     """
 
     def __init__(self, maintype: str, subtype: str,
-                 content_type_params: Optional[Mapping[str, Any]],
-                 content_disposition: Optional[ContentDispositionHeader],
-                 content_language: Optional[UnstructuredHeader],
-                 content_location: Optional[UnstructuredHeader],
-                 content_id: Optional[UnstructuredHeader],
-                 content_description: Optional[UnstructuredHeader],
-                 content_transfer_encoding: Optional[_CTEHeader],
-                 body_md5: Optional[str],
+                 content_type_params: Mapping[str, Any] | None,
+                 content_disposition: ContentDispositionHeader | None,
+                 content_language: UnstructuredHeader | None,
+                 content_location: UnstructuredHeader | None,
+                 content_id: UnstructuredHeader | None,
+                 content_description: UnstructuredHeader | None,
+                 content_transfer_encoding: _CTEHeader | None,
+                 body_md5: str | None,
                  size: int) -> None:
         super().__init__(maintype, subtype, content_type_params,
                          content_disposition, content_language,
@@ -347,14 +347,14 @@ class TextBodyStructure(ContentBodyStructure):
     """
 
     def __init__(self, subtype: str,
-                 content_type_params: Optional[Mapping[str, Any]],
-                 content_disposition: Optional[ContentDispositionHeader],
-                 content_language: Optional[UnstructuredHeader],
-                 content_location: Optional[UnstructuredHeader],
-                 content_id: Optional[UnstructuredHeader],
-                 content_description: Optional[UnstructuredHeader],
-                 content_transfer_encoding: Optional[_CTEHeader],
-                 body_md5: Optional[str],
+                 content_type_params: Mapping[str, Any] | None,
+                 content_disposition: ContentDispositionHeader | None,
+                 content_language: UnstructuredHeader | None,
+                 content_location: UnstructuredHeader | None,
+                 content_id: UnstructuredHeader | None,
+                 content_description: UnstructuredHeader | None,
+                 content_transfer_encoding: _CTEHeader | None,
+                 body_md5: str | None,
                  size: int, lines: int) -> None:
         super().__init__('text', subtype, content_type_params,
                          content_disposition, content_language,
@@ -407,14 +407,14 @@ class MessageBodyStructure(ContentBodyStructure):
 
     """
 
-    def __init__(self, content_type_params: Optional[Mapping[str, Any]],
-                 content_disposition: Optional[ContentDispositionHeader],
-                 content_language: Optional[UnstructuredHeader],
-                 content_location: Optional[UnstructuredHeader],
-                 content_id: Optional[UnstructuredHeader],
-                 content_description: Optional[UnstructuredHeader],
-                 content_transfer_encoding: Optional[_CTEHeader],
-                 body_md5: Optional[str],
+    def __init__(self, content_type_params: Mapping[str, Any] | None,
+                 content_disposition: ContentDispositionHeader | None,
+                 content_language: UnstructuredHeader | None,
+                 content_location: UnstructuredHeader | None,
+                 content_id: UnstructuredHeader | None,
+                 content_description: UnstructuredHeader | None,
+                 content_transfer_encoding: _CTEHeader | None,
+                 body_md5: str | None,
                  size: int, lines: int,
                  envelope_structure: EnvelopeStructure,
                  body_structure: BodyStructure) -> None:

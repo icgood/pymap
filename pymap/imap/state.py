@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable, Iterable
-from typing import Optional, Union, NoReturn
+from typing import TypeAlias, NoReturn
 
 from pymap.bytes import MaybeBytes
 from pymap.concurrent import Event
@@ -40,9 +40,9 @@ from pysasl import AuthenticationCredentials
 
 __all__ = ['ConnectionState']
 
-_AuthCommands = Union[AuthenticateCommand, LoginCommand]
-_CommandRet = tuple[CommandResponse, Optional[SelectedMailbox]]
-_CommandFunc = Callable[[Command], Awaitable[_CommandRet]]
+_AuthCommands: TypeAlias = AuthenticateCommand | LoginCommand
+_CommandRet: TypeAlias = tuple[CommandResponse, SelectedMailbox | None]
+_CommandFunc: TypeAlias = Callable[[Command], Awaitable[_CommandRet]]
 
 _flags_attr = FetchAttribute(b'FLAGS')
 _uid_attr = FetchAttribute(b'UID')
@@ -60,8 +60,8 @@ class ConnectionState:
         self.config = config
         self.auth = config.initial_auth
         self.login = login
-        self._session: Optional[SessionInterface] = None
-        self._selected: Optional[SelectedMailbox] = None
+        self._session: SessionInterface | None = None
+        self._selected: SelectedMailbox | None = None
         self._capability = list(config.initial_capability)
 
     @property
@@ -114,7 +114,7 @@ class ConnectionState:
         return resp_cls(b'*', self.config.greeting, self.capability)
 
     async def do_authenticate(self, cmd: _AuthCommands,
-                              creds: Optional[AuthenticationCredentials]) \
+                              creds: AuthenticationCredentials | None) \
             -> CommandResponse:
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')

@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+import re
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence
 from typing import Any, TypeVar, Generic
 
 from .exceptions import NotParseable, UnexpectedType
 from .state import ParsingState
-from ..bytes import rev, Writeable
+from ..bytes import Writeable
 
 __all__ = ['ParseableT', 'Params', 'Parseable', 'ExpectedParseable', 'Space',
            'EndLine']
@@ -98,8 +99,8 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
 
     """
 
-    _whitespace_pattern = rev.compile(br' +')
-    _atom_pattern = rev.compile(
+    _whitespace_pattern = re.compile(br' +')
+    _atom_pattern = re.compile(
         br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5E-\x7A\x7C\x7E]+')
 
     __slots__: list[str] = []
@@ -218,7 +219,7 @@ class EndLine(Parseable[bytes]):
 
     """
 
-    _pattern = rev.compile(br' *(\r?)\n')
+    _pattern = re.compile(br' *(\r?)\n')
 
     __slots__ = ['preceding_spaces', 'carriage_return']
 

@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Sequence
-from typing import Optional
 
 from .interfaces.filter import FilterValueT, FilterCompilerInterface, \
     FilterSetInterface
@@ -27,12 +26,12 @@ class PluginFilterSet(FilterSetInterface[FilterValueT]):
 
     """
 
-    def __init__(self, plugin_name: Optional[str],
+    def __init__(self, plugin_name: str | None,
                  value_type: type[FilterValueT]) -> None:
         super().__init__()
         self._plugin_name = plugin_name
         self._value_type = value_type
-        self._compiler: Optional[FilterCompilerInterface[FilterValueT]] = None
+        self._compiler: FilterCompilerInterface[FilterValueT] | None = None
 
     @property
     def compiler(self) -> FilterCompilerInterface[FilterValueT]:
@@ -91,14 +90,14 @@ class SingleFilterSet(FilterSetInterface[FilterValueT]):
         else:
             raise KeyError(name)
 
-    async def get_all(self) -> tuple[Optional[str], Sequence[str]]:
+    async def get_all(self) -> tuple[str | None, Sequence[str]]:
         value = await self.get_active()
         if value is None:
             return None, []
         else:
             return self.name, [self.name]
 
-    async def replace_active(self, value: Optional[FilterValueT]) -> None:
+    async def replace_active(self, value: FilterValueT | None) -> None:
         """Replace the current active filter value with a new value.
 
         Args:
@@ -108,5 +107,5 @@ class SingleFilterSet(FilterSetInterface[FilterValueT]):
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_active(self) -> Optional[FilterValueT]:
+    async def get_active(self) -> FilterValueT | None:
         ...

@@ -5,7 +5,6 @@ import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from re import Pattern
-from typing import Optional
 
 __all__ = ['ListEntry', 'ListTree']
 
@@ -26,7 +25,7 @@ class ListEntry:
 
     name: str
     exists: bool
-    marked: Optional[bool]
+    marked: bool | None
     has_children: bool
 
     @property
@@ -143,7 +142,7 @@ class ListTree:
         else:
             return child
 
-    def get(self, name: str) -> Optional[ListEntry]:
+    def get(self, name: str) -> ListEntry | None:
         """Return the named entry in the list tree.
 
         Args:

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
+from typing import TypeAlias
 
 from grpclib.server import Stream
 from pymap import __version__ as pymap_version
@@ -16,8 +16,8 @@ from . import BaseHandler
 
 __all__ = ['SystemHandlers']
 
-_LoginStream = Stream[LoginRequest, LoginResponse]
-_PingStream = Stream[PingRequest, PingResponse]
+_LoginStream: TypeAlias = Stream[LoginRequest, LoginResponse]
+_PingStream: TypeAlias = Stream[PingRequest, PingResponse]
 
 
 class SystemHandlers(SystemBase, BaseHandler):
@@ -43,11 +43,11 @@ class SystemHandlers(SystemBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        bearer_token: Optional[str] = None
+        bearer_token: str | None = None
         async with self.catch_errors('Login') as result:
             credentials = AuthenticationCredentials(
                 request.authcid, request.secret, request.authzid)
-            expiration: Optional[datetime] = None
+            expiration: datetime | None = None
             if request.HasField('token_expiration'):
                 expiration = datetime.fromtimestamp(request.token_expiration)
             identity = await self.login.authenticate(credentials)

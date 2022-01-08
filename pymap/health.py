@@ -4,15 +4,15 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from types import MethodType
-from typing import Any, Optional
+from typing import TypeAlias, Any
 from weakref import finalize, ref, WeakMethod, WeakSet
 
 __all__ = ['HealthStatus']
 
 _log = logging.getLogger(__name__)
 
-_Callback = Callable[[bool], Any]
-_WeakCallback = Callable[[], Optional[_Callback]]
+_Callback: TypeAlias = Callable[[bool], Any]
+_WeakCallback: TypeAlias = Callable[[], _Callback | None]
 
 
 class HealthStatus:

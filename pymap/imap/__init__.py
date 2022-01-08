@@ -13,7 +13,7 @@ from base64 import b64encode, b64decode
 from collections.abc import Awaitable, Iterable
 from contextlib import closing, AsyncExitStack
 from ssl import SSLError
-from typing import TypeVar, Union, Optional
+from typing import TypeVar
 from uuid import uuid4
 
 from proxyprotocol import ProxyProtocolResult
@@ -148,7 +148,7 @@ class IMAPConnection:
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
         self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
-        self.pp_result: Optional[ProxyProtocolResult] = None
+        self.pp_result: ProxyProtocolResult | None = None
         self._reset_streams(reader, writer)
 
     def _reset_streams(self, reader: StreamReader,
@@ -166,7 +166,7 @@ class IMAPConnection:
         self.writer.close()
 
     @classmethod
-    def _print(cls, log_format: str, output: Union[str, bytes]) -> None:
+    def _print(cls, log_format: str, output: str | bytes) -> None:
         if _log.isEnabledFor(logging.DEBUG):
             uid = socket_info.get().unique_id.hex()
             if not isinstance(output, str):
@@ -205,7 +205,7 @@ class IMAPConnection:
         return memoryview(extra)
 
     async def authenticate(self, state: ConnectionState, mech_name: bytes) \
-            -> Optional[AuthenticationCredentials]:
+            -> AuthenticationCredentials | None:
         mech = state.auth.get_server(mech_name)
         if not mech:
             return None
@@ -318,8 +318,8 @@ class IMAPConnection:
         updates_task = asyncio.create_task(
             self.handle_updates(state, done, cmd))
         done_task = asyncio.create_task(self.read_idle_done(cmd))
-        updates_exc: Optional[Exception] = None
-        done_exc: Optional[Exception] = None
+        updates_exc: Exception | None = None
+        done_exc: Exception | None = None
         try:
             ok = await done_task
         except Exception as exc:

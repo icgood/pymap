@@ -7,11 +7,11 @@ import os.path
 from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Sequence
 from mailbox import Maildir, NoSuchMailboxError
-from typing import TypeVar, Protocol
+from typing import TypeAlias, TypeVar, Protocol
 
 __all__ = ['MaildirLayout', 'DefaultLayout', 'FilesystemLayout']
 
-_Parts = Sequence[str]
+_Parts: TypeAlias = Sequence[str]
 _MaildirT = TypeVar('_MaildirT', bound=Maildir)
 
 

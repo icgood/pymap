@@ -1,18 +1,18 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable, Iterator, Sequence
 from itertools import chain
-from typing import Union, Optional
+from typing import TypeAlias, Union
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
-from ...bytes import rev
 
 __all__ = ['MaxValue', 'SequenceSet']
 
-_SeqIdx = Union['MaxValue', int]
-_SeqElem = Union[_SeqIdx, tuple[_SeqIdx, _SeqIdx]]
+_SeqIdx: TypeAlias = Union['MaxValue', int]
+_SeqElem: TypeAlias = Union[_SeqIdx, tuple[_SeqIdx, _SeqIdx]]
 
 
 class MaxValue:
@@ -39,7 +39,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
     """
 
-    _num_pattern = rev.compile(br'[1-9]\d*')
+    _num_pattern = re.compile(br'[1-9]\d*')
     _max = MaxValue()
 
     def __init__(self, sequences: Sequence[_SeqElem],
@@ -47,7 +47,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         super().__init__()
         self.sequences = sequences
         self.uid = uid
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     @classmethod
     def all(cls, uid: bool = False) -> SequenceSet:
@@ -182,8 +182,8 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
         """
         seqs_list = sorted(set(seqs))
-        groups: list[Union[int, tuple[int, int]]] = []
-        group: Union[int, tuple[int, int]] = seqs_list[0]
+        groups: list[int | tuple[int, int]] = []
+        group: int | tuple[int, int] = seqs_list[0]
         for i in range(1, len(seqs_list)):
             group_i = seqs_list[i]
             if isinstance(group, int):

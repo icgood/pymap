@@ -4,7 +4,7 @@ from __future__ import annotations
 from bisect import bisect_right
 from collections.abc import Iterable, MutableSet, Sequence, Set
 from itertools import chain, groupby, islice
-from typing import Any, Optional
+from typing import Any
 from weakref import WeakSet
 
 from .flags import FlagOp, PermanentFlags, SessionFlags
@@ -52,7 +52,7 @@ class SelectedSet:
         self._set.add(selected)
 
     @property
-    def any_selected(self) -> Optional[SelectedMailbox]:
+    def any_selected(self) -> SelectedMailbox | None:
         """A single, random object in the set of selected mailbox objects.
         Selected mailbox object's marked :attr:`~SelectedMailbox.readonly`
         will not be chosen.
@@ -105,7 +105,7 @@ class SynchronizedMessages:
             return 0
 
     def _update(self, messages: Iterable[CachedMessage]) -> None:
-        lowest_idx: Optional[int] = None
+        lowest_idx: int | None = None
         for msg in messages:
             msg_uid = msg.uid
             if msg_uid not in self._uids:
@@ -148,7 +148,7 @@ class SynchronizedMessages:
                 self._seqs_cache = {uid: seq for seq, uid in
                                     enumerate(sorted_uids, 1)}
 
-    def get(self, uid: int) -> Optional[CachedMessage]:
+    def get(self, uid: int) -> CachedMessage | None:
         """Return the given cached message.
 
         Args:
@@ -238,7 +238,7 @@ class SelectedMailbox:
         self._hide_expunged = False
         self._silenced_flags: set[tuple[int, frozenset[Flag]]] = set()
         self._silenced_sflags: set[tuple[int, frozenset[Flag]]] = set()
-        self._prev: Optional[_Frozen] = kwargs.get('_prev')
+        self._prev: _Frozen | None = kwargs.get('_prev')
         try:
             self._messages: SynchronizedMessages = kwargs['_messages']
         except KeyError:

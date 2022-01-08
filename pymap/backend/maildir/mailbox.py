@@ -7,7 +7,7 @@ import os.path
 from collections.abc import Iterable, AsyncIterable
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage
-from typing import Optional, Union, Final, Literal
+from typing import Final, Literal
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.context import subsystem
@@ -48,7 +48,7 @@ class Maildir(_Maildir):
         return os.path.join(base_path, subpath)
 
     def _split(self, subpath: str) \
-            -> tuple[Union[Literal['new'], Literal['cur']], str]:
+            -> tuple[Literal['new', 'cur'], str]:
         subdir, name = os.path.split(subpath)
         if subdir == 'new':
             return 'new', name
@@ -172,8 +172,8 @@ class Message(BaseMessage):
     @classmethod
     def from_maildir(cls, uid: int, maildir_msg: MaildirMessage,
                      maildir: Maildir, key: str,
-                     email_id: Optional[ObjectId],
-                     thread_id: Optional[ObjectId],
+                     email_id: ObjectId | None,
+                     thread_id: ObjectId | None,
                      maildir_flags: MaildirFlags) -> Message:
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         recent = maildir_msg.get_subdir() == 'new'
@@ -197,12 +197,12 @@ class MailboxData(MailboxDataInterface[Message]):
         self._path = path
         self._uid_validity = 0
         self._next_uid = 0
-        self._flags: Optional[MaildirFlags] = None
+        self._flags: MaildirFlags | None = None
         self._messages_lock = subsystem.get().new_rwlock()
         self._selected_set = SelectedSet()
 
     @classmethod
-    def _get_object_id(cls, rec: Record, field: str) -> Optional[ObjectId]:
+    def _get_object_id(cls, rec: Record, field: str) -> ObjectId | None:
         return ObjectId.maybe(rec.fields.get(field))
 
     @property
@@ -274,7 +274,7 @@ class MailboxData(MailboxDataInterface[Message]):
             self.maildir_flags)
 
     async def copy(self, uid: int, destination: MailboxData, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         dest_maildir = destination._maildir
         try:
             record, maildir_msg = await self._get_maildir_msg(uid)
@@ -292,7 +292,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return new_rec.uid
 
     async def move(self, uid: int, destination: MailboxData, *,
-                   recent: bool = False) -> Optional[int]:
+                   recent: bool = False) -> int | None:
         maildir = self._maildir
         dest_maildir = destination._maildir
         async with UidList.with_read(self._path) as uidl:
@@ -301,8 +301,8 @@ class MailboxData(MailboxDataInterface[Message]):
             except KeyError:
                 return None
         dest_subdir = 'new' if recent else 'cur'
-        async with destination.messages_lock.write_lock(), \
-                self.messages_lock.write_lock():
+        async with (destination.messages_lock.write_lock(),
+                    self.messages_lock.write_lock()):
             try:
                 new_filename = maildir.move_message(
                     rec.key, dest_maildir, dest_subdir)
@@ -427,7 +427,7 @@ class MailboxData(MailboxDataInterface[Message]):
         exists = 0
         recent = 0
         unseen = 0
-        first_unseen: Optional[int] = None
+        first_unseen: int | None = None
         next_uid = self._next_uid
         async for msg in self.messages():
             exists += 1

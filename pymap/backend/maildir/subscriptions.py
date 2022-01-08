@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TypeVar, IO, Optional
+from typing import TypeVar, IO
 
 from .io import FileWriteable
 
@@ -52,7 +52,7 @@ class Subscriptions(FileWriteable):
         return 'subscriptions'
 
     @classmethod
-    def get_lock(cls) -> Optional[str]:
+    def get_lock(cls) -> str | None:
         return 'subscriptions.lock'
 
     @classmethod

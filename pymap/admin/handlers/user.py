@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import TypeAlias
 
 from grpclib.server import Stream
 from pymap.user import UserMetadata
@@ -13,9 +13,9 @@ from . import BaseHandler
 
 __all__ = ['UserHandlers']
 
-_GetUserStream = Stream[GetUserRequest, UserResponse]
-_SetUserStream = Stream[SetUserRequest, UserResponse]
-_DeleteUserStream = Stream[DeleteUserRequest, UserResponse]
+_GetUserStream: TypeAlias = Stream[GetUserRequest, UserResponse]
+_SetUserStream: TypeAlias = Stream[SetUserRequest, UserResponse]
+_DeleteUserStream: TypeAlias = Stream[DeleteUserRequest, UserResponse]
 
 
 class UserHandlers(UserBase, BaseHandler):
@@ -39,10 +39,10 @@ class UserHandlers(UserBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        username: Optional[str] = None
-        user_data: Optional[UserData] = None
-        async with self.catch_errors('GetUser') as result, \
-                self.login_as(stream.metadata, request.user) as identity:
+        username: str | None = None
+        user_data: UserData | None = None
+        async with (self.catch_errors('GetUser') as result,
+                    self.login_as(stream.metadata, request.user) as identity):
             username = identity.name
             metadata = await identity.get()
             user_data = UserData(params=metadata.params)
@@ -64,8 +64,8 @@ class UserHandlers(UserBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        async with self.catch_errors('SetUser') as result, \
-                self.login_as(stream.metadata, request.user) as identity:
+        async with (self.catch_errors('SetUser') as result,
+                    self.login_as(stream.metadata, request.user) as identity):
             user_data = request.data
             password = self.config.hash_context.hash(user_data.password) \
                 if user_data.HasField('password') else None
@@ -87,8 +87,8 @@ class UserHandlers(UserBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        async with self.catch_errors('DeleteUser') as result, \
-                self.login_as(stream.metadata, request.user) as identity:
+        async with (self.catch_errors('DeleteUser') as result,
+                    self.login_as(stream.metadata, request.user) as identity):
             await identity.delete()
         resp = UserResponse(result=result, username=request.user)
         await stream.send_message(resp)

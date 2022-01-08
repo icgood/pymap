@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import enum
 from collections.abc import Sequence
-from typing import Union, Optional
 
 __all__ = ['AddressPart', 'MatchType', 'SizeComparator', 'str_list', 'unquote']
 
@@ -14,7 +13,7 @@ class AddressPart(enum.Enum):
     ALL = enum.auto()
 
     @classmethod
-    def of(cls, flag: Optional[str]) -> AddressPart:
+    def of(cls, flag: str | None) -> AddressPart:
         if not flag:
             return cls.ALL
         elif flag == ':localpart':
@@ -33,7 +32,7 @@ class MatchType(enum.Enum):
     MATCHES = enum.auto()
 
     @classmethod
-    def of(cls, flag: Optional[str]) -> MatchType:
+    def of(cls, flag: str | None) -> MatchType:
         if not flag:
             return cls.IS
         elif flag == ':is':
@@ -60,7 +59,7 @@ class SizeComparator(enum.Enum):
             raise NotImplementedError(flag)
 
 
-def str_list(value: Union[str, Sequence[str]]) -> Sequence[str]:
+def str_list(value: str | Sequence[str]) -> Sequence[str]:
     if isinstance(value, str):
         return [unquote(value)]
     else:

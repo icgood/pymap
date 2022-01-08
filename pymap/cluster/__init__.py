@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Collection, Iterator, Mapping, MutableMapping, \
     MutableSet, Set
-from typing import TypeVar, Protocol, Any
+from typing import TypeAlias, TypeVar, Protocol, Any
 from weakref import WeakKeyDictionary, WeakSet, WeakValueDictionary
 
 __all__ = ['MemberInterface', 'ListenCallback', 'ClusterMetadata']
@@ -33,9 +33,9 @@ class MemberInterface(Protocol):
         ...
 
 
-_Metadata = Mapping[str, bytes]
-_MemberValues = WeakKeyDictionary[MemberInterface, bytes]
-_MemberValuesView = Mapping[MemberInterface, bytes]
+_Metadata: TypeAlias = Mapping[str, bytes]
+_MemberValues: TypeAlias = WeakKeyDictionary[MemberInterface, bytes]
+_MemberValuesView: TypeAlias = Mapping[MemberInterface, bytes]
 
 
 class ListenCallback(Protocol[ArgT_contra]):

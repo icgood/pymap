@@ -2,16 +2,17 @@
 from __future__ import annotations
 
 import enum
+import re
 from abc import ABCMeta
 from collections.abc import Iterable, Sequence
 from functools import total_ordering, reduce
-from typing import Optional, Final
+from typing import Final
 
 from . import AString
 from .. import Params, Parseable
 from ..exceptions import NotParseable
 from ..primitives import Atom, List
-from ...bytes import rev, BytesFormat, MaybeBytes, Writeable
+from ...bytes import BytesFormat, MaybeBytes, Writeable
 
 __all__ = ['FetchRequirement', 'FetchAttribute', 'FetchValue']
 
@@ -111,22 +112,22 @@ class FetchAttribute(Parseable[bytes]):
         def __hash__(self) -> int:
             return hash((tuple(self.parts), self.specifier, self.headers))
 
-    _attrname_pattern = rev.compile(br' *([^\s\[<()]+)')
-    _section_start_pattern = rev.compile(br' *\[ *')
-    _section_end_pattern = rev.compile(br' *\]')
-    _partial_pattern = rev.compile(br'< *(\d+) *\. *(\d+) *>')
+    _attrname_pattern = re.compile(br' *([^\s\[<()]+)')
+    _section_start_pattern = re.compile(br' *\[ *')
+    _section_end_pattern = re.compile(br' *\]')
+    _partial_pattern = re.compile(br'< *(\d+) *\. *(\d+) *>')
 
-    _sec_part_pattern = rev.compile(br'([1-9]\d* *(?:\. *[1-9]\d*)*) *(\.)? *')
+    _sec_part_pattern = re.compile(br'([1-9]\d* *(?:\. *[1-9]\d*)*) *(\.)? *')
 
     def __init__(self, attribute: bytes,
                  section: FetchAttribute.Section = None,
-                 partial: tuple[int, Optional[int]] = None) -> None:
+                 partial: tuple[int, int | None] = None) -> None:
         super().__init__()
         self.attribute = attribute.upper()
         self.section = section
         self.partial = partial
-        self._raw: Optional[bytes] = None
-        self._for_response: Optional[FetchAttribute] = None
+        self._raw: bytes | None = None
+        self._for_response: FetchAttribute | None = None
 
     @property
     def value(self) -> bytes:

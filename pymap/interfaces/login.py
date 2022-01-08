@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from contextlib import AbstractAsyncContextManager
 from datetime import datetime
-from typing import Optional, Protocol
+from typing import Protocol
 
 from pysasl import AuthenticationCredentials
 
@@ -63,7 +63,7 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    async def new_token(self, *, expiration: datetime = None) -> Optional[str]:
+    async def new_token(self, *, expiration: datetime = None) -> str | None:
         """Authenticate and authorize the credentials, returning a bearer token
         that may be used in future authentication attempts.
 

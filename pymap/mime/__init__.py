@@ -6,7 +6,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from email.headerregistry import ContentTypeHeader
 from email.policy import SMTP
 from itertools import chain, islice
-from typing import Any, Optional, Final
+from typing import TypeAlias, Any, Final
 
 from .parsed import ParsedHeaders
 from ._util import whitespace, find_any, get_raw
@@ -16,9 +16,9 @@ __all__ = ['MessageContent', 'MessageHeader', 'MessageBody']
 
 _default_type: Final = 'text/plain'
 
-_Line = tuple[int, int, int]
-_Lines = Sequence[_Line]
-_Folded = Sequence[tuple[str, _Lines]]
+_Line: TypeAlias = tuple[int, int, int]
+_Lines: TypeAlias = Sequence[_Line]
+_Folded: TypeAlias = Sequence[tuple[str, _Lines]]
 
 
 class MessageContent(Writeable):
@@ -361,7 +361,7 @@ class MessageBody(Writeable):
 
     @classmethod
     def _parse(cls, data: bytes, view: memoryview, lines: _Lines,
-               content_type: Optional[ContentTypeHeader]) -> MessageBody:
+               content_type: ContentTypeHeader | None) -> MessageBody:
         if content_type is None:
             content_type = cls._parse_content_type(_default_type)
         maintype = content_type.maintype
@@ -381,7 +381,7 @@ class MessageBody(Writeable):
         return val
 
     @classmethod
-    def _get_boundary(cls, content_type: ContentTypeHeader) -> Optional[bytes]:
+    def _get_boundary(cls, content_type: ContentTypeHeader) -> bytes | None:
         try:
             boundary = content_type.params['boundary']
         except KeyError:

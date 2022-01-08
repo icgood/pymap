@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from contextlib import AbstractAsyncContextManager
 from itertools import chain
-from typing import Optional, ClassVar
+from typing import ClassVar
 
 from . import UntaggedResponse
 from ..modutf7 import modutf7_encode
@@ -180,7 +180,7 @@ class ESearchResponse(UntaggedResponse):
 
     """
 
-    def __init__(self, issuer_tag: Optional[bytes], uid: bool,
+    def __init__(self, issuer_tag: bytes | None, uid: bool,
                  data: Mapping[bytes, MaybeBytes]) -> None:
         super().__init__()
         self.issuer_tag = issuer_tag
@@ -233,7 +233,7 @@ class ListResponse(UntaggedResponse):
 
     _name: ClassVar[bytes] = b'LIST'
 
-    def __init__(self, mailbox: str, sep: Optional[str],
+    def __init__(self, mailbox: str, sep: str | None,
                  attrs: Iterable[bytes]) -> None:
         super().__init__()
         self.mailbox = mailbox

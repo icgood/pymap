@@ -3,13 +3,12 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable, Mapping
-from typing import Optional
 
 from . import AString, SequenceSet
 from .. import Params, Parseable
 from ..exceptions import NotParseable
 from ..primitives import Number, List
-from ...bytes import BytesFormat, rev
+from ...bytes import BytesFormat
 
 __all__ = ['ExtensionOption', 'ExtensionOptions']
 
@@ -27,13 +26,13 @@ class ExtensionOption(Parseable[bytes]):
 
     """
 
-    _opt_pattern = rev.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
+    _opt_pattern = re.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
 
     def __init__(self, option: bytes, arg: List) -> None:
         super().__init__()
         self.option = option
         self.arg = arg
-        self._raw_arg: Optional[bytes] = None
+        self._raw_arg: bytes | None = None
 
     @property
     def value(self) -> bytes:
@@ -111,13 +110,13 @@ class ExtensionOptions(Parseable[Mapping[bytes, List]]):
     """
 
     _opt_pattern = re.compile(br'[a-zA-Z_.-][a-zA-Z0-9_.:-]*')
-    _empty: Optional[ExtensionOptions] = None
+    _empty: ExtensionOptions | None = None
 
     def __init__(self, options: Iterable[ExtensionOption]) -> None:
         super().__init__()
         self.options: Mapping[bytes, List] = \
             {opt.option: opt.arg for opt in options}
-        self._raw: Optional[bytes] = None
+        self._raw: bytes | None = None
 
     @classmethod
     def empty(cls) -> ExtensionOptions:
@@ -133,7 +132,7 @@ class ExtensionOptions(Parseable[Mapping[bytes, List]]):
     def has(self, option: bytes) -> bool:
         return option in self.options
 
-    def get(self, option: bytes) -> Optional[List]:
+    def get(self, option: bytes) -> List | None:
         return self.options.get(option, None)
 
     def __bool__(self) -> bool:

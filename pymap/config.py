@@ -9,7 +9,7 @@ from argparse import Namespace
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from ssl import SSLContext
-from typing import Any, Final, TypeVar, Union, Optional
+from typing import Any, Final, TypeVar
 
 from proxyprotocol import ProxyProtocol
 from proxyprotocol.version import ProxyProtocolVersion
@@ -116,8 +116,8 @@ class IMAPConfig(metaclass=ABCMeta):
     """
 
     def __init__(self, args: Namespace, *,
-                 host: Optional[str],
-                 port: Union[str, int],
+                 host: str | None,
+                 port: str | int,
                  debug: bool = False,
                  subsystem: Subsystem = None,
                  ssl_context: SSLContext = None,
@@ -129,8 +129,8 @@ class IMAPConfig(metaclass=ABCMeta):
                  admin_key: bytes = None,
                  hash_context: HashInterface = None,
                  cpu_subsystem: Subsystem = None,
-                 max_append_len: Optional[int] = 1000000000,
-                 bad_command_limit: Optional[int] = 5,
+                 max_append_len: int | None = 1000000000,
+                 bad_command_limit: int | None = 5,
                  disable_search_keys: Iterable[bytes] = None,
                  disable_idle: bool = False,
                  **extra: Any) -> None:
@@ -210,11 +210,11 @@ class IMAPConfig(metaclass=ABCMeta):
     @classmethod
     def _load_certs(cls, extra: Mapping[str, Any]) -> SSLContext:
         try:
-            cert_file: Optional[str] = os.environ['CERT_FILE']
+            cert_file: str | None = os.environ['CERT_FILE']
         except KeyError:
             cert_file = extra.get('cert_file')
         try:
-            key_file: Optional[str] = os.environ['KEY_FILE']
+            key_file: str | None = os.environ['KEY_FILE']
         except KeyError:
             key_file = extra.get('key_file')
         ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
@@ -242,7 +242,7 @@ class IMAPConfig(metaclass=ABCMeta):
         return SASLAuth.defaults()
 
     @property
-    def preauth_credentials(self) -> Optional[AuthenticationCredentials]:
+    def preauth_credentials(self) -> AuthenticationCredentials | None:
         return self._preauth_credentials
 
     @property
@@ -277,5 +277,5 @@ class IMAPConfig(metaclass=ABCMeta):
         return ret
 
     @property
-    def max_filter_len(self) -> Optional[int]:
+    def max_filter_len(self) -> int | None:
         return self._max_append_len

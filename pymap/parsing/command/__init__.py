@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
-from typing import Optional, ClassVar
+from typing import ClassVar
 
 from .. import Params, Parseable, EndLine
 
@@ -22,7 +22,7 @@ class Command(Parseable[bytes], metaclass=ABCMeta):
     command: ClassVar[bytes] = b''
 
     #: If given, execution of this command is handled by the delegate command.
-    delegate: ClassVar[Optional[type[Command]]] = None
+    delegate: ClassVar[type[Command] | None] = None
 
     #: True if the command is part of a compound command.
     compound: ClassVar[bool] = False
