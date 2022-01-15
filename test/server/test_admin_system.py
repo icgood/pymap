@@ -1,5 +1,4 @@
 
-import pytest
 from grpclib.testing import ChannelFor
 from pymapadmin.grpc.admin_grpc import SystemStub
 from pymapadmin.grpc.admin_pb2 import SUCCESS, FAILURE, \
@@ -10,8 +9,6 @@ from pymapadmin import __version__ as pymap_admin_version
 from pymap.admin.handlers.system import SystemHandlers
 
 from .base import TestBase
-
-pytestmark = pytest.mark.asyncio
 
 
 class TestSystemHandlers(TestBase):

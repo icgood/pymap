@@ -1,9 +1,5 @@
 
-import pytest
-
 from .base import TestBase
-
-pytestmark = pytest.mark.asyncio
 
 
 class TestExpunge(TestBase):

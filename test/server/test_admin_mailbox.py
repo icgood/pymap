@@ -8,8 +8,6 @@ from pymap.admin.handlers.mailbox import MailboxHandlers
 
 from .base import TestBase
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestMailboxHandlers(TestBase):
 

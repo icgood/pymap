@@ -1,11 +1,7 @@
 
 import base64
 
-import pytest
-
 from .base import TestBase
-
-pytestmark = pytest.mark.asyncio
 
 
 class TestSession(TestBase):
