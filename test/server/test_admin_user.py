@@ -9,8 +9,6 @@ from pymap.admin.handlers.user import UserHandlers
 
 from .base import TestBase
 
-pytestmark = pytest.mark.asyncio
-
 
 class TestMailboxHandlers(TestBase):
 
