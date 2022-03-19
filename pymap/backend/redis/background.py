@@ -9,7 +9,7 @@ from asyncio import Task, CancelledError
 from contextlib import AsyncExitStack
 from typing import ClassVar, Protocol
 
-from aioredis import Redis, ConnectionError
+from aioredis import Redis
 from pymap.context import connection_exit
 from pymap.health import HealthStatus
 
@@ -72,7 +72,7 @@ class BackgroundTask:
                         self._redis.client())
                     self._status.set_healthy()
                     await self._action(conn, self.reconnect_duration)
-            except (ConnectionError, OSError):
+            except OSError:
                 self._status.set_unhealthy()
             except CancelledError:
                 break

@@ -31,7 +31,7 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
 
     """
 
-    def __init__(self, group: str, *, default: str = None) -> None:
+    def __init__(self, group: str, *, default: str | None = None) -> None:
         super().__init__()
         self.group: Final = group
         self._default = default

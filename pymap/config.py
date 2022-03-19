@@ -13,7 +13,8 @@ from typing import Any, Final, TypeVar
 
 from proxyprotocol import ProxyProtocol
 from proxyprotocol.version import ProxyProtocolVersion
-from pysasl import SASLAuth, AuthenticationCredentials
+from pysasl import SASLAuth
+from pysasl.creds import AuthenticationCredentials
 from pysasl.hashing import HashInterface, get_hash
 
 from .concurrent import Subsystem
@@ -48,7 +49,7 @@ class BackendCapability(Iterable[bytes]):
                  idle: bool,
                  object_id: bool,
                  multi_append: bool,
-                 custom: Sequence[bytes] = None) -> None:
+                 custom: Sequence[bytes] | None = None) -> None:
         super().__init__()
         capability: dict[bytes, bool] = {}
         if idle:
@@ -65,7 +66,7 @@ class BackendCapability(Iterable[bytes]):
     def __iter__(self) -> Iterator[bytes]:
         return iter(self._capability)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, BackendCapability):
             return self._capability == other._capability
         if isinstance(other, tuple):
@@ -94,7 +95,7 @@ class IMAPConfig(metaclass=ABCMeta):
         ssl_context: SSL context that will be used for opportunistic TLS.
             Alternatively, you can pass extra arguments ``cert_file`` and
             ``key_file`` and an SSL context will be created.
-        starttls_enabled: True if opportunistic TLS should be supported.
+        tls_enabled: True if opportunistic TLS should be supported.
         admin_key: The private admin key for unrestricted access by token.
         hash_context: The hash to use for passwords.
         cpu_subsystem: The subsystem to use for CPU-heavy operations,
@@ -119,19 +120,19 @@ class IMAPConfig(metaclass=ABCMeta):
                  host: str | None,
                  port: str | int,
                  debug: bool = False,
-                 subsystem: Subsystem = None,
-                 ssl_context: SSLContext = None,
+                 subsystem: Subsystem | None = None,
+                 ssl_context: SSLContext | None = None,
                  tls_enabled: bool = True,
                  secure_auth: bool = True,
-                 preauth_credentials: AuthenticationCredentials = None,
-                 proxy_protocol: ProxyProtocol = None,
+                 preauth_credentials: AuthenticationCredentials | None = None,
+                 proxy_protocol: ProxyProtocol | None = None,
                  reject_dnsbl: bool = True,
-                 admin_key: bytes = None,
-                 hash_context: HashInterface = None,
-                 cpu_subsystem: Subsystem = None,
+                 admin_key: bytes | None = None,
+                 hash_context: HashInterface | None = None,
+                 cpu_subsystem: Subsystem | None = None,
                  max_append_len: int | None = 1000000000,
                  bad_command_limit: int | None = 5,
-                 disable_search_keys: Iterable[bytes] = None,
+                 disable_search_keys: Iterable[bytes] | None = None,
                  disable_idle: bool = False,
                  **extra: Any) -> None:
         super().__init__()

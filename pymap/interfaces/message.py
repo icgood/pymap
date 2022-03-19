@@ -214,8 +214,8 @@ class LoadedMessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_message_headers(self, section: Sequence[int] = None,
-                            subset: Collection[bytes] = None,
+    def get_message_headers(self, section: Sequence[int] | None = None,
+                            subset: Collection[bytes] | None = None,
                             inverse: bool = False) -> Writeable:
         """Get the headers from the message or a ``message/rfc822`` sub-part of
         the message..
@@ -234,7 +234,8 @@ class LoadedMessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_message_text(self, section: Sequence[int] = None) -> Writeable:
+    def get_message_text(self, section: Sequence[int] | None = None) \
+            -> Writeable:
         """Get the text of the message part, not including headers.
 
         The ``section`` argument can index a nested sub-part of the message.
@@ -248,7 +249,7 @@ class LoadedMessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_body(self, section: Sequence[int] = None,
+    def get_body(self, section: Sequence[int] | None = None,
                  binary: bool = False) -> Writeable:
         """Get the full body of the message part, including headers.
 
@@ -265,7 +266,7 @@ class LoadedMessageInterface(Protocol):
         ...
 
     @abstractmethod
-    def get_size(self, section: Sequence[int] = None) -> int:
+    def get_size(self, section: Sequence[int] | None = None) -> int:
         """Return the size of the message, in octets.
 
         Args:

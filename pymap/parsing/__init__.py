@@ -5,18 +5,21 @@ from __future__ import annotations
 import re
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence
-from typing import Any, TypeVar, Generic
+from typing import Any, TypeVar, Generic, TypeAlias
 
 from .exceptions import NotParseable, UnexpectedType
 from .state import ParsingState
 from ..bytes import Writeable
 
-__all__ = ['ParseableT', 'Params', 'Parseable', 'ExpectedParseable', 'Space',
-           'EndLine']
+__all__ = ['ParseableT', 'AnyParseable', 'Params', 'Parseable',
+           'ExpectedParseable', 'Space', 'EndLine']
 
 #: Type variable used for specifying the parseable type of a :class:`Parseable`
 #: sub-class.
 ParseableT = TypeVar('ParseableT')
+
+#: Type alias for an unspecified parseable object.
+AnyParseable: TypeAlias = 'Parseable[Any]'
 
 
 class Params:
@@ -41,14 +44,14 @@ class Params:
     __slots__ = ['state', 'expected', 'list_expected', 'command_name', 'uid',
                  'charset', 'tag', 'max_append_len', 'allow_continuations']
 
-    def __init__(self, state: ParsingState = None, *,
-                 expected: Sequence[type[Parseable]] = None,
-                 list_expected: Sequence[type[Parseable]] = None,
-                 command_name: bytes = None,
+    def __init__(self, state: ParsingState | None = None, *,
+                 expected: Sequence[type[AnyParseable]] | None = None,
+                 list_expected: Sequence[type[AnyParseable]] | None = None,
+                 command_name: bytes | None = None,
                  uid: bool = False,
-                 charset: str = None,
-                 tag: bytes = None,
-                 max_append_len: int = None,
+                 charset: str | None = None,
+                 tag: bytes | None = None,
+                 max_append_len: int | None = None,
                  allow_continuations: bool = True) -> None:
         super().__init__()
         self.state = state or ParsingState()
@@ -61,21 +64,22 @@ class Params:
         self.max_append_len = max_append_len
         self.allow_continuations = allow_continuations
 
-    def _set_if_none(self, kwargs: dict[str, Any], attr: str, value) -> None:
+    def _set_if_none(self, kwargs: dict[str, Any],
+                     attr: str, value: Any) -> None:
         if value is not None:
             kwargs[attr] = value
         else:
             kwargs[attr] = getattr(self, attr)
 
-    def copy(self, state: ParsingState = None, *,
-             expected: Sequence[type[Parseable]] = None,
-             list_expected: Sequence[type[Parseable]] = None,
-             command_name: bytes = None,
-             uid: bool = None,
-             charset: str = None,
-             tag: bytes = None,
-             max_append_len: int = None,
-             allow_continuations: bool = None) -> Params:
+    def copy(self, state: ParsingState | None = None, *,
+             expected: Sequence[type[AnyParseable]] | None = None,
+             list_expected: Sequence[type[AnyParseable]] | None = None,
+             command_name: bytes | None = None,
+             uid: bool | None = None,
+             charset: str | None = None,
+             tag: bytes | None = None,
+             max_append_len: int | None = None,
+             allow_continuations: bool | None = None) -> Params:
         """Copy the parameters, possibly replacing a subset."""
         kwargs: dict[str, Any] = {}
         self._set_if_none(kwargs, 'state', state)
@@ -118,15 +122,16 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
             return match.end(0) - start
         return 0
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, (bytes, memoryview)):
             return bytes(self) == other
         return NotImplemented
 
     @classmethod
     @abstractmethod
-    def parse(cls, buf: memoryview, params: Params) \
-            -> tuple[Parseable, memoryview]:
+    def parse(cls: type[Parseable[ParseableT]], buf: memoryview,
+              params: Params) \
+            -> tuple[Parseable[ParseableT], memoryview]:
         """Implemented by sub-classes to define how to parse the given buffer.
 
         Args:
@@ -156,7 +161,7 @@ class ExpectedParseable(Parseable[None]):
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
-            -> tuple[Parseable, memoryview]:
+            -> tuple[AnyParseable, memoryview]:
         """Parses the given buffer by attempting to parse the list of
         :attr:`~Params.expected` types until one of them succeeds,
         then returns the parsed object.

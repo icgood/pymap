@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABCMeta
 from collections.abc import Iterator, Mapping, Sequence, AsyncIterator
 from contextlib import contextmanager, asynccontextmanager
-from typing import TypeAlias, ClassVar, Final, Protocol, Union
+from typing import TypeAlias, ClassVar, Final, Protocol, Any, Union
 
 from .bytes import BytesFormat, MaybeBytes, Writeable
 from .interfaces.message import MessageInterface, LoadedMessageInterface
@@ -29,6 +29,7 @@ class LoadedMessageProvider(Protocol):
     @abstractmethod
     def loaded_msg(self) -> LoadedMessageInterface | None:
         """The loaded message, if available."""
+        ...
 
 
 class DynamicFetchValue(FetchValue, metaclass=ABCMeta):
@@ -319,7 +320,7 @@ class MessageAttributes(Sequence[FetchValue]):
     def __iter__(self) -> Iterator[FetchValue]:
         return iter(self._get_values())
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: Any) -> Any:
         values = self._get_values()
         return values[index]
 

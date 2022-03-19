@@ -16,6 +16,7 @@ __all__ = ['ResponseCode', 'Response', 'CommandResponse', 'UntaggedResponse',
 ResponseT = TypeVar('ResponseT', bound='Response')
 
 _Mergeable: TypeAlias = dict[tuple[type['Response'], Hashable], int]
+_WritingHook: TypeAlias = AbstractAsyncContextManager[None]
 
 
 class ResponseCode:
@@ -71,8 +72,8 @@ class Response(Writeable, metaclass=ABCMeta):
     #: The condition bytestring, e.g. ``OK``.
     condition: bytes | None = None
 
-    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
-                 code: ResponseCode = None) -> None:
+    def __init__(self, tag: MaybeBytes, text: MaybeBytes | None = None,
+                 code: ResponseCode | None = None) -> None:
         super().__init__()
         self.tag = bytes(tag)
         self._code = code
@@ -146,8 +147,8 @@ class CommandResponse(Response):
 
     """
 
-    def __init__(self, tag: MaybeBytes, text: MaybeBytes = None,
-                 code: ResponseCode = None) -> None:
+    def __init__(self, tag: MaybeBytes, text: MaybeBytes | None = None,
+                 code: ResponseCode | None = None) -> None:
         super().__init__(tag, text, code)
         self._untagged: list[UntaggedResponse] = []
         self._mergeable: _Mergeable = {}
@@ -224,9 +225,10 @@ class UntaggedResponse(Response):
 
     """
 
-    def __init__(self, text: MaybeBytes = None, code: ResponseCode = None, *,
-                 condition: bytes = None,
-                 writing_hook: AbstractAsyncContextManager[None] = None) \
+    def __init__(self, text: MaybeBytes | None = None,
+                 code: ResponseCode | None = None, *,
+                 condition: bytes | None = None,
+                 writing_hook: _WritingHook | None = None) \
             -> None:
         super().__init__(b'*', text, code)
         if condition is not None:

@@ -43,7 +43,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'sphinx.ext.githubpages',
-    'sphinx_autodoc_typehints',
+    'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -70,10 +70,23 @@ html_theme_path = [csp.get_theme_dir()]
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# Theme options are theme-specific and customize the look and feel of a theme
+# further.  For a list of options available for each theme, see the
+# documentation.
+#
+if csp.is_cloud_theme(html_theme):
+    html_theme_options = {
+        'borderless_decor': True,
+        'sidebarwidth': '3in',
+        'hyphenation_language': 'en',
+    }
+
 # -- Extension configuration -------------------------------------------------
 
 autodoc_member_order = 'bysource'
 autodoc_default_flags = ['show-inheritance']
+autodoc_typehints = 'description'
+autodoc_typehints_format = 'short'
 napoleon_numpy_docstring = False
 
 # -- Options for intersphinx extension ---------------------------------------

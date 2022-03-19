@@ -231,7 +231,7 @@ class Event(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def wait(self, *, timeout: float = None) -> None:
+    async def wait(self, *, timeout: float | None = None) -> None:
         """Wait until another thread signals the event.
 
         Args:
@@ -445,7 +445,7 @@ class _AsyncioEvent(Event):
     def clear(self) -> None:
         self._event.clear()
 
-    async def wait(self, *, timeout: float = None) -> None:
+    async def wait(self, *, timeout: float | None = None) -> None:
         task = asyncio.create_task(self._event.wait())
         try:
             await asyncio.wait_for(task, timeout)
@@ -482,5 +482,5 @@ class _ThreadingEvent(Event):  # pragma: no cover
     def clear(self) -> None:
         self._event.clear()
 
-    async def wait(self, *, timeout: float = None) -> None:
+    async def wait(self, *, timeout: float | None = None) -> None:
         self._event.wait(timeout=timeout)

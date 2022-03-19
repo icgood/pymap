@@ -34,7 +34,7 @@ class SearchParams:
     __slots__ = ['selected', 'disabled', 'max_seq', 'max_uid', 'session_flags']
 
     def __init__(self, selected: SelectedMailbox, *,
-                 disabled: Iterable[bytes] = None) -> None:
+                 disabled: Iterable[bytes] | None = None) -> None:
         self.selected: Final = selected
         self.disabled: Final = frozenset(disabled or [])
         self.max_seq: Final = selected.messages.exists

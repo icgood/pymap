@@ -1,0 +1,63 @@
+[build-system]
+requires = ['setuptools', 'wheel']
+
+[tool.mypy]
+files = ['pymap', 'test']
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = 'pymap.*' 
+# use strict = true once it works in module overrides
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_unused_ignores = true
+warn_return_any = true
+no_implicit_reexport = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = 'msgpack.*'
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = 'google.rpc.*'
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = 'pymacaroons.*'
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = 'sievelib.*'
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = 'systemd.*'
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = 'pid.*'
+ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = 'passlib.*'
+ignore_missing_imports = true
+
+[tool.bandit]
+skips = ['B101']
+
+[tool.pytest.ini_options]
+testpaths = 'test'
+asyncio_mode = 'auto'
+norecursedirs = 'doc'
+
+[tool.coverage.report]
+fail_under = 80
+omit = ['*/maildir/*', '*/redis/*', '*/main.py']
+exclude_lines = [
+    'pragma: no cover',
+    'NotImplemented',
+    '^\s*...\s*$',
+    'def __repr__',
+]

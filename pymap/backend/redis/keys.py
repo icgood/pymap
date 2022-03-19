@@ -36,7 +36,7 @@ class RedisKey:
         self.segments: Final = segments
         self.named: Final = named
 
-    def fork(self, segment: _Value, *, name: str = None) -> RedisKey:
+    def fork(self, segment: _Value, *, name: str | None = None) -> RedisKey:
         """Fork a new redis key adding a new segment.
 
         Args:

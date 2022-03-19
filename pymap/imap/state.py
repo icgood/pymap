@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable, Iterable
+from contextlib import suppress
 from typing import TypeAlias, NoReturn
 
 from pymap.bytes import MaybeBytes
@@ -36,7 +37,7 @@ from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     SearchResponse, StatusResponse
 from pymap.parsing.specials import StatusAttribute, FetchAttribute, FetchValue
 from pymap.selected import SelectedMailbox
-from pysasl import AuthenticationCredentials
+from pysasl.creds import AuthenticationCredentials
 
 __all__ = ['ConnectionState']
 
@@ -90,10 +91,8 @@ class ConnectionState:
                                self.auth.server_mechanisms])
 
     async def do_cleanup(self) -> None:
-        try:
+        with suppress(Exception):
             await self.session.cleanup()
-        except Exception:
-            pass
 
     async def _login(self, creds: AuthenticationCredentials) \
             -> SessionInterface:
@@ -110,7 +109,11 @@ class ConnectionState:
             self._session = await self._login(preauth_creds)
         elif sock_info.from_localhost:
             self.auth = self.config.tls_auth
-        resp_cls = ResponsePreAuth if preauth_creds else ResponseOk
+        resp_cls: type[CommandResponse]
+        if preauth_creds:
+            resp_cls = ResponsePreAuth
+        else:
+            resp_cls = ResponseOk
         return resp_cls(b'*', self.config.greeting, self.capability)
 
     async def do_authenticate(self, cmd: _AuthCommands,

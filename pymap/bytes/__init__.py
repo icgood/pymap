@@ -58,7 +58,7 @@ class HashStream(WriteStream):
     def write(self, data: bytes) -> None:
         self._digest = zlib.adler32(data, self._digest)
 
-    def digest(self, data: Writeable = None) -> bytes:
+    def digest(self, data: Writeable | None = None) -> bytes:
         """Return the digest of the data written to the hash stream.
 
         Args:

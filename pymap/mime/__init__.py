@@ -383,15 +383,17 @@ class MessageBody(Writeable):
     @classmethod
     def _get_boundary(cls, content_type: ContentTypeHeader) -> bytes | None:
         try:
-            boundary = content_type.params['boundary']
+            boundary: str | bytes | None = content_type.params['boundary']
         except KeyError:
             pass
         else:
-            if boundary:
+            if isinstance(boundary, str):
                 try:
                     return boundary.encode('ascii')
                 except UnicodeError:
                     pass
+            else:
+                return boundary
         return None
 
     @classmethod

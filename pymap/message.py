@@ -49,7 +49,8 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *,
-                 email_id: ObjectId = None, thread_id: ObjectId = None,
+                 email_id: ObjectId | None = None,
+                 thread_id: ObjectId | None = None,
                  expunged: bool = False) -> None:
         super().__init__()
         self.uid: Final = uid
@@ -131,7 +132,7 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
     def __bytes__(self) -> bytes:
         return bytes(self.content)
 
-    def _get_subpart(self, section) -> MessageContent:
+    def _get_subpart(self, section: Sequence[int] | None) -> MessageContent:
         if section:
             subpart = self.content
             for i in section:
@@ -159,7 +160,7 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
         else:
             return msg.header
 
-    def get_body(self, section: Sequence[int] = None,
+    def get_body(self, section: Sequence[int] | None = None,
                  binary: bool = False) -> Writeable:
         try:
             msg = self._get_subpart(section)
@@ -177,8 +178,8 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
             else:
                 return msg.body
 
-    def get_message_headers(self, section: Sequence[int] = None,
-                            subset: Collection[bytes] = None,
+    def get_message_headers(self, section: Sequence[int] | None = None,
+                            subset: Collection[bytes] | None = None,
                             inverse: bool = False) -> Writeable:
         try:
             msg = self._get_subpart(section)
@@ -195,7 +196,8 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
                                    if inverse != (key.upper() in subset))
         return Writeable.concat((headers, Writeable.wrap(b'\r\n')))
 
-    def get_message_text(self, section: Sequence[int] = None) -> Writeable:
+    def get_message_text(self, section: Sequence[int] | None = None) \
+            -> Writeable:
         try:
             msg = self._get_subpart(section)
         except (IndexError, _NoContent):
@@ -211,7 +213,7 @@ class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
     def _get_size_with_lines(cls, msg: MessageContent) -> tuple[int, int]:
         return len(msg), msg.lines
 
-    def get_size(self, section: Sequence[int] = None) -> int:
+    def get_size(self, section: Sequence[int] | None = None) -> int:
         try:
             msg = self._get_subpart(section)
         except (IndexError, _NoContent):

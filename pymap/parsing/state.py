@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence
-from typing import TypeVar, Generic, Final
+from typing import TypeVar, Generic, Final, Any
 
 __all__ = ['ParsingExpectedT', 'ParsingState', 'ParsingInterrupt',
            'ParsingExpectation']
@@ -31,7 +31,7 @@ class ParsingState:
 
     __slots__ = ['continuations']
 
-    def __init__(self, *, continuations: Sequence[memoryview] = None) -> None:
+    def __init__(self, *, continuations: Sequence[memoryview] = ()) -> None:
         super().__init__()
         self.continuations: Final = iter(continuations or ())
 
@@ -48,7 +48,7 @@ class ParsingInterrupt(Exception):
 
     __slots__ = ['expected']
 
-    def __init__(self, expected: ParsingExpectation) -> None:
+    def __init__(self, expected: ParsingExpectation[Any]) -> None:
         super().__init__()
         self.expected: Final = expected
 

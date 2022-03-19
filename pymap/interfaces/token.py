@@ -16,8 +16,10 @@ class TokensInterface(Protocol):
 
     @abstractmethod
     def get_login_token(self, identifier: str, key: bytes, *,
-                        authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> str | None:
+                        authzid: str | None = None,
+                        location: str | None = None,
+                        expiration: datetime | None = None) \
+            -> str | None:
         """Returns a new token string that encapsulates the provided login
         data, or ``None`` if tokens are not supported.
 
@@ -33,8 +35,10 @@ class TokensInterface(Protocol):
 
     @abstractmethod
     def get_admin_token(self, admin_key: bytes | None, *,
-                        authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> str | None:
+                        authzid: str | None = None,
+                        location: str | None = None,
+                        expiration: datetime | None = None) \
+            -> str | None:
         """Returns a new token string that encapsulates the provided login
         data, or ``None`` if tokens are not supported. This token uses a
         special private admin key that grants unrestricted access.

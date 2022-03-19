@@ -13,6 +13,7 @@ from asyncio import CancelledError
 from collections.abc import Sequence
 from contextlib import nullcontext, suppress, AsyncExitStack
 from string import Template
+from typing import Any
 
 from . import __version__
 from .backend import backends
@@ -31,7 +32,7 @@ else:
 try:
     from pid import PidFile
 except ImportError:
-    def PidFile(*args, **kwargs):
+    def PidFile(*args: Any, **kwargs: Any) -> Any:
         return nullcontext()
 
 try:
@@ -150,7 +151,7 @@ def _drop_privileges(args: Namespace) -> None:
 
 class _PymapArgumentParser(ArgumentParser):
 
-    def __init__(self, **extra) -> None:
+    def __init__(self, **extra: Any) -> None:
         formatter_class = argparse.ArgumentDefaultsHelpFormatter
         super().__init__(fromfile_prefix_chars='@',
                          formatter_class=formatter_class,

@@ -1,6 +1,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable, InvalidContent
 from ..primitives import Atom
@@ -48,7 +50,7 @@ class StatusAttribute(Parseable[bytes]):
     def __hash__(self) -> int:
         return hash(self.value)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, StatusAttribute):
             return self.value == other.value
         return super().__eq__(other)

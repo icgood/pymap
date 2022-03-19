@@ -1,8 +1,9 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence
+from typing import Any
 
 from .interfaces.filter import FilterValueT, FilterCompilerInterface, \
     FilterSetInterface
@@ -11,11 +12,11 @@ from .plugin import Plugin
 __all__ = ['filters', 'PluginFilterSet', 'SingleFilterSet']
 
 #: Registers filter compiler plugins.
-filters: Plugin[type[FilterCompilerInterface]] = Plugin(
+filters: Plugin[type[FilterCompilerInterface[Any]]] = Plugin(
     'pymap.filter', default='sieve')
 
 
-class PluginFilterSet(FilterSetInterface[FilterValueT]):
+class PluginFilterSet(FilterSetInterface[FilterValueT], metaclass=ABCMeta):
     """Base class for filter set implementations that use a filter compiler
     declared in the ``pymap.filter`` entry point. The declared entry points
     must sub-class :class:`FilterCompiler`.
@@ -49,7 +50,7 @@ class PluginFilterSet(FilterSetInterface[FilterValueT]):
         return self._compiler
 
 
-class SingleFilterSet(FilterSetInterface[FilterValueT]):
+class SingleFilterSet(FilterSetInterface[FilterValueT], metaclass=ABCMeta):
     """Base class for a filter set that does not use named filter
     implementations, it contains only a single active filter implementation.
 

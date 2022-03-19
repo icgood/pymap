@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from contextlib import AbstractAsyncContextManager
 from itertools import chain
-from typing import ClassVar
+from typing import TypeAlias, ClassVar
 
 from . import UntaggedResponse
 from ..modutf7 import modutf7_encode
@@ -16,6 +16,8 @@ __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
            'ESearchResponse', 'StatusResponse', 'ListResponse',
            'LSubResponse']
+
+_WritingHook: TypeAlias = AbstractAsyncContextManager[None]
 
 
 class FlagsResponse(UntaggedResponse):
@@ -103,7 +105,7 @@ class FetchResponse(UntaggedResponse):
     """
 
     def __init__(self, seq: int, data: Iterable[FetchValue], *,
-                 writing_hook: AbstractAsyncContextManager[None] = None) \
+                 writing_hook: _WritingHook | None = None) \
             -> None:
         super().__init__(writing_hook=writing_hook)
         self.seq = seq

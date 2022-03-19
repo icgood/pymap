@@ -37,7 +37,7 @@ class SelectedSet:
         self._set: MutableSet[SelectedMailbox] = WeakSet()
 
     def add(self, selected: SelectedMailbox, *,
-            replace: SelectedMailbox = None) -> None:
+            replace: SelectedMailbox | None = None) -> None:
         """Add a new selected mailbox object to the set, which may then be
         returned by :meth:`.any_selected`.
 
@@ -223,7 +223,7 @@ class SelectedMailbox:
     def __init__(self, mailbox_id: ObjectId, readonly: bool,
                  permanent_flags: PermanentFlags,
                  session_flags: SessionFlags,
-                 selected_set: SelectedSet = None,
+                 selected_set: SelectedSet | None = None,
                  lookup: Any = None, **kwargs: Any) -> None:
         super().__init__()
         self._mailbox_id = mailbox_id
@@ -377,7 +377,7 @@ class SelectedMailbox:
         session_flags = self.session_flags
         permanent_flag_set = self.permanent_flags & flag_set
         session_flag_set = session_flags & flag_set
-        for seq, msg in self._messages.get_all(seq_set):
+        for _, msg in self._messages.get_all(seq_set):
             msg_flags = msg.permanent_flags
             msg_sflags = session_flags.get(msg.uid)
             updated_flags = flag_op.apply(msg_flags, permanent_flag_set)

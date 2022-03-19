@@ -60,7 +60,7 @@ class ExpungeCommand(CommandSelect):
     command = b'EXPUNGE'
     uid: ClassVar[bool] = False
 
-    def __init__(self, tag: bytes, uid_set: SequenceSet = None) -> None:
+    def __init__(self, tag: bytes, uid_set: SequenceSet | None = None) -> None:
         super().__init__(tag)
         self.uid_set = uid_set
 
@@ -171,7 +171,7 @@ class FetchCommand(CommandSelect):
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
                  attr_list: Sequence[FetchAttribute],
-                 options: ExtensionOptions = None) -> None:
+                 options: ExtensionOptions | None = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.attributes = attr_list
@@ -252,7 +252,8 @@ class StoreCommand(CommandSelect):
 
     def __init__(self, tag: bytes, seq_set: SequenceSet,
                  flags: Iterable[Flag], mode: FlagOp,
-                 silent: bool, options: ExtensionOptions = None) -> None:
+                 silent: bool,
+                 options: ExtensionOptions | None = None) -> None:
         super().__init__(tag)
         self.sequence_set = seq_set
         self.flag_set = frozenset(flags)
@@ -323,7 +324,7 @@ class SearchCommand(CommandSelect):
 
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
                  charset: str | None,
-                 options: ExtensionOptions = None) -> None:
+                 options: ExtensionOptions | None = None) -> None:
         super().__init__(tag)
         self.keys = frozenset(keys)
         self.charset = charset

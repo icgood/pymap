@@ -20,7 +20,7 @@ __all__ = ['SearchKey']
 _FilterType: TypeAlias = Union[
     tuple['SearchKey', 'SearchKey'], tuple[str, str],
     Sequence['SearchKey'], SequenceSet, Flag, ObjectId,
-    datetime, int, str]
+    datetime, int, str, frozenset['SearchKey']]
 _FilterT = TypeVar('_FilterT', bound=_FilterType)
 
 
@@ -41,7 +41,7 @@ class SearchKey(Parseable[bytes]):
     _not_pattern = re.compile(br'NOT +', re.I)
 
     def __init__(self, key: bytes,
-                 filter_: _FilterType = None,
+                 filter_: _FilterType | None = None,
                  inverse: bool = False) -> None:
         super().__init__()
         self.key = key
@@ -84,7 +84,7 @@ class SearchKey(Parseable[bytes]):
         """Return a copy of the search key with :attr:`.inverse` flipped."""
         return SearchKey(self.value, self.filter, not self.inverse)
 
-    def _get_filter(self, cls) -> Any:
+    def _get_filter(self, cls: type[_FilterT]) -> _FilterT:
         if not isinstance(self.filter, cls):
             raise TypeError(self.filter)
         return self.filter
@@ -99,7 +99,7 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_key_or(self) -> tuple[SearchKey, SearchKey]:
-        return self._get_filter(tuple)
+        return self._get_filter(tuple)  # type: ignore
 
     @property
     def filter_flag(self) -> Flag:
@@ -119,7 +119,7 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_header(self) -> tuple[str, str]:
-        return self._get_filter(tuple)
+        return self._get_filter(tuple)  # type: ignore
 
     @property
     def filter_object_id(self) -> ObjectId:
@@ -131,12 +131,12 @@ class SearchKey(Parseable[bytes]):
     def __hash__(self) -> int:
         return hash((self.value, self.filter, self.inverse))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, SearchKey):
             return hash(self) == hash(other)
         return super().__eq__(other)
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         if isinstance(other, SearchKey):
             return hash(self) != hash(other)
         return super().__ne__(other)

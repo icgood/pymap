@@ -61,9 +61,9 @@ class MailboxSnapshot(MailboxInterface):
         two bytes are time-based and the second two bytes are random.
 
         """
-        time_part = int(time.time()) % 4096
-        rand_part = random.randint(0, 1048576)
-        return (time_part << 20) + rand_part
+        time_part = int(time.time()) % 65535
+        rand_part = random.randint(0, 65535)  # nosec
+        return (time_part << 16) + rand_part
 
     @property
     def flags(self) -> frozenset[Flag]:

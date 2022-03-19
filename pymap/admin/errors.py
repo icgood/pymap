@@ -8,7 +8,7 @@ from google.rpc.error_details_pb2 import ErrorInfo
 __all__ = ['get_unimplemented_error', 'get_incompatible_version_error']
 
 
-def get_unimplemented_error(*, domain: str = None, **metadata: str) \
+def get_unimplemented_error(*, domain: str | None = None, **metadata: str) \
         -> GRPCError:
     """Build a :exc:`~grpclib.exceptions.GRPCError` exception for an
     operation that is not implemented by the server.
@@ -23,8 +23,8 @@ def get_unimplemented_error(*, domain: str = None, **metadata: str) \
 
 
 def get_incompatible_version_error(client_version: str, server_version: str, *,
-                                   domain: str = None, **metadata: str) \
-        -> GRPCError:
+                                   domain: str | None = None,
+                                   **metadata: str) -> GRPCError:
     """Build a :exc:`~grpclib.exceptions.GRPCError` exception for an
     incompatible version error.
 
