@@ -59,7 +59,8 @@ class MaildirBackend(BackendInterface):
 
     @classmethod
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
-        parser = subparsers.add_parser(name, help='on-disk backend')
+        parser: ArgumentParser = subparsers.add_parser(
+            name, help='on-disk backend')
         parser.add_argument('users_file', help='path the the users file')
         parser.add_argument('--base-dir', metavar='DIR',
                             help='base directory for mailbox relative paths')
@@ -273,7 +274,7 @@ class Identity(IdentityInterface):
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime = None) -> None:
+    async def new_token(self, *, expiration: datetime | None = None) -> None:
         return None
 
     @asynccontextmanager
@@ -284,7 +285,7 @@ class Identity(IdentityInterface):
         filter_set = FilterSet(layout.path)
         yield Session(self.name, config, mailbox_set, filter_set)
 
-    def _load_maildir(self) -> tuple[Maildir, MaildirLayout]:
+    def _load_maildir(self) -> tuple[Maildir, MaildirLayout[Any]]:
         full_path = os.path.join(self.config.base_dir, self.mailbox_path)
         layout = MaildirLayout.get(full_path, self.config.layout, Maildir)
         create = not os.path.exists(full_path)

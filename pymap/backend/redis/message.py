@@ -22,8 +22,10 @@ class Message(BaseMessage):
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *, expunged: bool = False,
-                 email_id: ObjectId = None, thread_id: ObjectId = None,
-                 redis: Redis = None, ns_keys: NamespaceKeys = None) -> None:
+                 email_id: ObjectId | None = None,
+                 thread_id: ObjectId | None = None,
+                 redis: Redis | None = None,
+                 ns_keys: NamespaceKeys | None = None) -> None:
         super().__init__(uid, internal_date, permanent_flags,
                          expunged=expunged, email_id=email_id,
                          thread_id=thread_id)

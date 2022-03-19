@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Iterator, Sequence
 from itertools import chain
-from typing import TypeAlias, Union
+from typing import Any, TypeAlias, Union
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
@@ -18,7 +18,7 @@ _SeqElem: TypeAlias = Union[_SeqIdx, tuple[_SeqIdx, _SeqIdx]]
 class MaxValue:
     """The type used as a placeholder for the maximum value."""
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, MaxValue):
             return True
         return NotImplemented
@@ -135,7 +135,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
         self._raw = raw = b','.join(parts)
         return raw
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, SequenceSet):
             return self.uid == other.uid \
                 and self.sequences == other.sequences

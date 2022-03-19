@@ -82,7 +82,7 @@ class MailboxData(MailboxDataInterface[Message]):
                        redis=self._redis, ns_keys=self._ns_keys)
 
     async def update_selected(self, selected: SelectedMailbox, *,
-                              wait_on: Event = None) -> SelectedMailbox:
+                              wait_on: Event | None = None) -> SelectedMailbox:
         last_mod_seq = selected.mod_sequence
         if wait_on is not None:
             await self._wait_updates(selected, last_mod_seq)
@@ -338,7 +338,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         redis = self._redis
         async with redis.pipeline() as pipe:
             await pipe.watch(self._keys.mailboxes)
-            pipe.multi()
+            pipe.multi()  # type: ignore
             pipe.hgetall(self._keys.mailboxes)
             all_keys, = await pipe.execute()
         all_mbx = {modutf7_decode(key): ns for key, ns in all_keys.items()}

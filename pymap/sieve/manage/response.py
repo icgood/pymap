@@ -26,8 +26,9 @@ class Condition(enum.Enum):
 
 class Response(Writeable):
 
-    def __init__(self, condition: Condition, *, code: MaybeBytes = None,
-                 text: str = None) -> None:
+    def __init__(self, condition: Condition, *,
+                 code: MaybeBytes | None = None,
+                 text: str | None = None) -> None:
         super().__init__()
         self.condition = condition
         self.code = code
@@ -78,7 +79,7 @@ class NoOpResponse(Response):
 class CapabilitiesResponse(Response):
 
     def __init__(self, capabilities: _Capabilities, *,
-                 code: MaybeBytes = None) -> None:
+                 code: MaybeBytes | None = None) -> None:
         super().__init__(Condition.OK, code=code)
         self.capabilities = capabilities
 

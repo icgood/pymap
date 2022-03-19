@@ -25,8 +25,10 @@ class AllTokens(TokensInterface):
     """
 
     def get_login_token(self, identifier: str, key: bytes, *,
-                        authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> str | None:
+                        authzid: str | None = None,
+                        location: str | None = None,
+                        expiration: datetime | None = None) \
+            -> str | None:
         try:
             token_type = tokens.default
         except KeyError:
@@ -36,8 +38,10 @@ class AllTokens(TokensInterface):
             expiration=expiration)
 
     def get_admin_token(self, admin_key: bytes | None, *,
-                        authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> str | None:
+                        authzid: str | None = None,
+                        location: str | None = None,
+                        expiration: datetime | None = None) \
+            -> str | None:
         try:
             token_type = tokens.default
         except KeyError:

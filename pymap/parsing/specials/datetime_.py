@@ -20,7 +20,7 @@ class DateTime(Parseable[datetime]):
 
     """
 
-    def __init__(self, when: datetime, raw: bytes = None) -> None:
+    def __init__(self, when: datetime, raw: bytes | None = None) -> None:
         super().__init__()
         if when.tzinfo is None:
             when = when.replace(tzinfo=self.get_local_tzinfo())
@@ -44,7 +44,7 @@ class DateTime(Parseable[datetime]):
         try:
             when_str = str(string.value, 'ascii')
             when = datetime.strptime(when_str, '%d-%b-%Y %X %z')
-        except (UnicodeDecodeError, ValueError):
+        except ValueError:
             raise InvalidContent(buf)
         return cls(when, string.value), after
 

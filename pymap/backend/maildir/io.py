@@ -7,7 +7,7 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from tempfile import NamedTemporaryFile
-from typing import TypeVar, Generic, IO
+from typing import TypeVar, Generic, Any, IO
 
 from pymap.concurrent import FileLock
 
@@ -152,7 +152,8 @@ class _FileReadWith(Generic[_RT]):
             self._obj = obj = func(base_dir)
         return obj
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:
+    async def __aexit__(self, exc_type: Any, exc_val: Any,
+                        exc_tb: Any) -> bool:
         return False
 
 
@@ -190,7 +191,8 @@ class _FileWriteWith(Generic[_WT]):
             raise RuntimeError()  # Context manager not entered.
         obj.file_write()
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:
+    async def __aexit__(self, exc_type: Any, exc_val: Any,
+                        exc_tb: Any) -> bool:
         try:
             if exc_type:
                 if issubclass(exc_type, NoChanges):

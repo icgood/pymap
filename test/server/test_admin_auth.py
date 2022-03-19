@@ -84,7 +84,7 @@ class TestAdminAuth(TestBase):
             assert failure_key == response.result.key
 
     async def _set_user(self, backend, token: str, user: str, password: str, *,
-                        params: Mapping[str, str] = {},
+                        params: Mapping[str, str] = None,
                         failure_key: str = None) -> None:
         handlers = UserHandlers(backend)
         data = UserData(password=password, params=params)

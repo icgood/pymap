@@ -33,8 +33,10 @@ class Message(BaseMessage):
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *, expunged: bool = False,
-                 email_id: ObjectId = None, thread_id: ObjectId = None,
-                 recent: bool = False, content: MessageContent = None) -> None:
+                 email_id: ObjectId | None = None,
+                 thread_id: ObjectId | None = None,
+                 recent: bool = False,
+                 content: MessageContent | None = None) -> None:
         super().__init__(uid, internal_date, permanent_flags,
                          expunged=expunged, email_id=email_id,
                          thread_id=thread_id)
@@ -42,8 +44,8 @@ class Message(BaseMessage):
         self._content = content
 
     @classmethod
-    def copy(cls, msg: Message, *, uid: int = None, recent: bool = False,
-             expunged: bool = False) -> Message:
+    def copy(cls, msg: Message, *, uid: int | None = None,
+             recent: bool = False, expunged: bool = False) -> Message:
         if uid is None:
             uid = msg.uid
         return cls(uid, msg.internal_date, msg.permanent_flags,
@@ -220,7 +222,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return self._selected_set
 
     async def update_selected(self, selected: SelectedMailbox, *,
-                              wait_on: Event = None) -> SelectedMailbox:
+                              wait_on: Event | None = None) -> SelectedMailbox:
         if wait_on is not None:
             either_event = wait_on.or_event(self._updated)
             await either_event.wait()

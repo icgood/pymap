@@ -58,7 +58,8 @@ class DictBackend(BackendInterface):
 
     @classmethod
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
-        parser = subparsers.add_parser(name, help='in-memory backend')
+        parser: ArgumentParser = subparsers.add_parser(
+            name, help='in-memory backend')
         parser.add_argument('--demo-data', action='store_true',
                             help='load initial demo data')
         parser.add_argument('--demo-user', default='demouser',
@@ -84,7 +85,7 @@ class Config(IMAPConfig):
     def __init__(self, args: Namespace, *, demo_data: bool,
                  demo_user: str, demo_password: str,
                  demo_data_resource: str = __name__,
-                 admin_key: bytes = None, **extra: Any) -> None:
+                 admin_key: bytes | None = None, **extra: Any) -> None:
         admin_key = admin_key or token_bytes()
         super().__init__(args, hash_context=Cleartext(), admin_key=admin_key,
                          **extra)
@@ -206,7 +207,8 @@ class Identity(IdentityInterface):
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime = None) -> str | None:
+    async def new_token(self, *, expiration: datetime | None = None) \
+            -> str | None:
         token_id = uuid.uuid4().hex
         token_key = token_bytes()
         self.login.tokens_dict[token_id] = (self.name, token_key)

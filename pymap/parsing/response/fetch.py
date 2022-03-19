@@ -39,7 +39,7 @@ class _AddressList(Writeable):
         self.headers: Sequence[AddressHeader] = headers or []
 
     @classmethod
-    def _parse(cls, address: Address):
+    def _parse(cls, address: Address) -> List:
         realname = String.build(address.display_name)
         localpart = String.build(address.username)
         domain = String.build(address.domain)

@@ -130,7 +130,8 @@ class AuthenticateCommand(Command):
 
     command = b'AUTHENTICATE'
 
-    def __init__(self, mech_name: bytes, initial_data: bytes = None) -> None:
+    def __init__(self, mech_name: bytes,
+                 initial_data: bytes | None = None) -> None:
         super().__init__()
         self.mech_name: Final = mech_name
         self.initial_data: Final = initial_data

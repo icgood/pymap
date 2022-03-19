@@ -46,7 +46,7 @@ class MockTransport:
 
     @classmethod
     def _fail(cls, msg):
-        assert False, msg
+        raise AssertionError(msg)
 
     def push_readline(self, data: bytes, wait=None, set=None) -> None:
         where = self._caller(inspect.currentframe())
@@ -137,11 +137,12 @@ class MockTransport:
             try:
                 type_, where, data, wait, set = self.queue.popleft()
             except IndexError:
-                assert False, '\nExpected: <end>' + \
-                              '\nGot:      ' + got.value
-            assert type_ == got, '\nExpected: ' + type_.value + \
-                                 '\nGot:      ' + got.value + \
-                                 '\nWhere:    ' + where
+                raise AssertionError('\nExpected: <end>'
+                                     '\nGot:      ' + got.value)
+            if type_ != got:
+                raise AssertionError('\nExpected: ' + type_.value +
+                                     '\nGot:      ' + got.value +
+                                     '\nWhere:    ' + where)
         except AssertionError:
             traceback.print_exc()
             raise
@@ -189,7 +190,9 @@ class MockTransport:
         self._match_write_expected(expected, re_parts)
         full_regex = b'^' + b''.join(re_parts) + b'$'
         match = re.search(full_regex, data)
-        assert match, self._match_write_msg(expected, data, full_regex, where)
+        if not match:
+            raise AssertionError(
+                self._match_write_msg(expected, data, full_regex, where))
         self.matches.update(match.groupdict())
 
     def get_extra_info(self, name: str, default=None):
@@ -215,9 +218,10 @@ class MockTransport:
 
     async def readexactly(self, size: int) -> bytes:
         where, data, wait, set = self._pop_expected(_Type.READEXACTLY)
-        assert size == len(data), '\nExpected: ' + repr(len(data)) + \
-                                  '\nGot:      ' + repr(size) + \
-                                  '\nWhere:    ' + where
+        if size != len(data):
+            raise AssertionError('\nExpected: ' + repr(len(data)) +
+                                 '\nGot:      ' + repr(size) +
+                                 '\nWhere:    ' + where)
         if set:
             set.set()
         if wait:

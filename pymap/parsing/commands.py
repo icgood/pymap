@@ -101,7 +101,7 @@ class Commands:
         self.commands: dict[bytes, type[Command]] = {}
         self._load_commands()
 
-    def _load_commands(self):
+    def _load_commands(self) -> None:
         for cmd in builtin_commands:
             self.register(cmd)
 

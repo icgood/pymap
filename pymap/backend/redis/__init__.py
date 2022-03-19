@@ -12,7 +12,7 @@ from datetime import datetime
 from secrets import token_bytes
 from typing import TypeAlias, Any, Final
 
-from aioredis import Redis, ConnectionError
+from aioredis import Redis
 from pysasl.creds import AuthenticationCredentials
 
 from pymap.bytes import BytesFormat
@@ -68,7 +68,8 @@ class RedisBackend(BackendInterface):
 
     @classmethod
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
-        parser = subparsers.add_parser(name, help='redis backend')
+        parser: ArgumentParser = subparsers.add_parser(
+            name, help='redis backend')
         parser.add_argument('--address', metavar='URL',
                             default='redis://localhost',
                             help='the redis server address')
@@ -259,7 +260,7 @@ class Login(LoginInterface):
                        redis: Redis, status: HealthStatus) -> Redis:
         try:
             conn = await stack.enter_async_context(redis.client())
-        except (ConnectionError, OSError) as exc:
+        except OSError as exc:
             is_debug = _log.isEnabledFor(logging.DEBUG)
             _log.warn('%s: %s', type(exc).__name__, exc, exc_info=is_debug)
             status.set_unhealthy()
@@ -327,7 +328,7 @@ class Identity(IdentityInterface):
 
     def __init__(self, config: Config, tokens: TokensInterface,
                  user_connect: _Connect, mail_connect: _Connect,
-                 name: str, role: str = None) -> None:
+                 name: str, role: str | None = None) -> None:
         super().__init__()
         self.config: Final = config
         self.tokens: Final = tokens
@@ -340,7 +341,8 @@ class Identity(IdentityInterface):
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime = None) -> str | None:
+    async def new_token(self, *, expiration: datetime | None = None) \
+            -> str | None:
         metadata = await self.get()
         if 'key' not in metadata.params:
             return None

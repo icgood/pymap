@@ -4,7 +4,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from asyncio import shield
 from collections.abc import Iterable, Sequence
-from typing import Generic
+from typing import Generic, Any
 
 from pymap.concurrent import Event
 from pymap.config import IMAPConfig
@@ -57,7 +57,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         ...
 
     @property
-    def filter_set(self) -> FilterSetInterface | None:
+    def filter_set(self) -> FilterSetInterface[Any] | None:
         return None
 
     def close(self) -> None:
@@ -100,7 +100,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
 
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> tuple[Iterable[tuple[str, str | None, Sequence[bytes]]],
                      SelectedMailbox | None]:
         delimiter = self.mailbox_set.delimiter
@@ -115,7 +115,8 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             ret = [("", delimiter, [b'Noselect'])]
         return ret, await self._load_updates(selected, None)
 
-    async def get_mailbox(self, name: str, selected: SelectedMailbox = None) \
+    async def get_mailbox(self, name: str,
+                          selected: SelectedMailbox | None = None) \
             -> tuple[MailboxSnapshot, SelectedMailbox | None]:
         try:
             mbx = await self.mailbox_set.get_mailbox(name)
@@ -125,7 +126,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         return snapshot, await self._load_updates(selected, mbx)
 
     async def create_mailbox(self, name: str,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> tuple[ObjectId, SelectedMailbox | None]:
         try:
             mailbox_id = await self.mailbox_set.add_mailbox(name)
@@ -134,7 +135,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         return mailbox_id, await self._load_updates(selected, None)
 
     async def delete_mailbox(self, name: str,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         try:
             await self.mailbox_set.delete_mailbox(name)
@@ -143,7 +144,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         return await self._load_updates(selected, None)
 
     async def rename_mailbox(self, before_name: str, after_name: str,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         try:
             await self.mailbox_set.rename_mailbox(before_name, after_name)
@@ -153,19 +154,21 @@ class BaseSession(SessionInterface, Generic[MessageT]):
             raise MailboxConflict(after_name) from exc
         return await self._load_updates(selected, None)
 
-    async def subscribe(self, name: str, selected: SelectedMailbox = None) \
+    async def subscribe(self, name: str,
+                        selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         await self.mailbox_set.set_subscribed(name, True)
         return await self._load_updates(selected, None)
 
-    async def unsubscribe(self, name: str, selected: SelectedMailbox = None) \
+    async def unsubscribe(self, name: str,
+                          selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         await self.mailbox_set.set_subscribed(name, False)
         return await self._load_updates(selected, None)
 
     async def append_messages(self, name: str,
                               messages: Sequence[AppendMessage],
-                              selected: SelectedMailbox = None) \
+                              selected: SelectedMailbox | None = None) \
             -> tuple[AppendUid, SelectedMailbox | None]:
         mbx = await self._get_mailbox(name, try_create=True)
         if mbx.readonly:
@@ -194,7 +197,7 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         return snapshot, await mbx.update_selected(selected)
 
     async def check_mailbox(self, selected: SelectedMailbox, *,
-                            wait_on: Event = None,
+                            wait_on: Event | None = None,
                             housekeeping: bool = False) -> SelectedMailbox:
         mbx = await self._get_selected(selected)
         if housekeeping:
@@ -232,7 +235,8 @@ class BaseSession(SessionInterface, Generic[MessageT]):
         return ret, await mbx.update_selected(selected)
 
     async def expunge_mailbox(self, selected: SelectedMailbox,
-                              uid_set: SequenceSet = None) -> SelectedMailbox:
+                              uid_set: SequenceSet | None = None) \
+            -> SelectedMailbox:
         if selected.readonly:
             raise MailboxReadOnly()
         mbx = await self._get_selected(selected)

@@ -7,7 +7,7 @@ import os.path
 from collections.abc import Iterable, AsyncIterable
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage
-from typing import Final, Literal
+from typing import Final, Any, Literal
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.context import subsystem
@@ -129,9 +129,11 @@ class Message(BaseMessage):
 
     def __init__(self, uid: int, internal_date: datetime,
                  permanent_flags: Iterable[Flag], *, expunged: bool = False,
-                 email_id: ObjectId = None, thread_id: ObjectId = None,
-                 recent: bool = False, maildir: Maildir = None,
-                 key: str = None) -> None:
+                 email_id: ObjectId | None = None,
+                 thread_id: ObjectId | None = None,
+                 recent: bool = False,
+                 maildir: Maildir | None = None,
+                 key: str | None = None) -> None:
         super().__init__(uid, internal_date, permanent_flags,
                          expunged=expunged, email_id=email_id,
                          thread_id=thread_id)
@@ -247,7 +249,7 @@ class MailboxData(MailboxDataInterface[Message]):
         return record, maildir_msg
 
     async def update_selected(self, selected: SelectedMailbox, *,
-                              wait_on: Event = None) -> SelectedMailbox:
+                              wait_on: Event | None = None) -> SelectedMailbox:
         if wait_on is not None:
             await wait_on.wait(timeout=1.0)
         all_messages = [msg async for msg in self.messages()]
@@ -360,7 +362,7 @@ class MailboxData(MailboxDataInterface[Message]):
         async with UidList.with_read(self._path) as uidl:
             records = uidl.get_all(uids)
         async with self.messages_lock.write_lock():
-            for uid, rec in records.items():
+            for rec in records.values():
                 try:
                     self._maildir.remove(rec.key)
                 except (KeyError, FileNotFoundError):
@@ -457,7 +459,8 @@ class MailboxData(MailboxDataInterface[Message]):
 
 class MailboxSet(MailboxSetInterface[MailboxData]):
 
-    def __init__(self, maildir: Maildir, layout: MaildirLayout) -> None:
+    def __init__(self, maildir: Maildir,
+                 layout: MaildirLayout[Any]) -> None:
         super().__init__()
         self._layout = layout
         self._inbox_maildir = maildir

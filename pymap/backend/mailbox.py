@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Iterable, Sequence, AsyncIterable
-from typing import TypeVar, Protocol
+from typing import TypeVar, Protocol, Any
 
 from pymap.concurrent import Event
 from pymap.flags import FlagOp
@@ -19,11 +19,11 @@ __all__ = ['MailboxDataT', 'MailboxDataT_co',
            'MailboxDataInterface', 'MailboxSetInterface']
 
 #: Type variable with an upper bound of :class:`MailboxDataInterface`.
-MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface')
+MailboxDataT = TypeVar('MailboxDataT', bound='MailboxDataInterface[Any]')
 
 #: Covariant type variable with an upper bound of
 #: :class:`MailboxDataInterface`.
-MailboxDataT_co = TypeVar('MailboxDataT_co', bound='MailboxDataInterface',
+MailboxDataT_co = TypeVar('MailboxDataT_co', bound='MailboxDataInterface[Any]',
                           covariant=True)
 
 
@@ -71,7 +71,7 @@ class MailboxDataInterface(Protocol[MessageT_co]):
 
     @abstractmethod
     async def update_selected(self, selected: SelectedMailbox, *,
-                              wait_on: Event = None) -> SelectedMailbox:
+                              wait_on: Event | None = None) -> SelectedMailbox:
         """Populates and returns the selected mailbox object with the state
         needed to discover updates.
 

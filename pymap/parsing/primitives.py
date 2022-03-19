@@ -7,9 +7,9 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Iterator, Sequence
 from functools import total_ordering
 from re import Match
-from typing import cast, SupportsBytes
+from typing import cast, Any, SupportsBytes
 
-from . import Parseable, ExpectedParseable, Params
+from . import AnyParseable, Parseable, ExpectedParseable, Params
 from .exceptions import NotParseable
 from .state import ExpectContinuation
 from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
@@ -40,7 +40,7 @@ class Nil(Parseable[None]):
     def __hash__(self) -> int:
         return hash(Nil)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, Nil):
             return True
         return super().__eq__(other)
@@ -99,14 +99,14 @@ class Number(Parseable[int]):
     def __hash__(self) -> int:
         return hash((Number, self.value))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, Number):
             return self.value == other.value
         elif isinstance(other, int):
             return self.value == other
         return super().__eq__(other)
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Any) -> bool:
         if isinstance(other, Number):
             return self.value < other.value
         elif isinstance(other, int):
@@ -149,7 +149,7 @@ class Atom(Parseable[bytes]):
     def __hash__(self) -> int:
         return hash((Atom, self.value))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, Atom):
             return self.value == other.value
         return super().__eq__(other)
@@ -234,7 +234,7 @@ class String(Parseable[bytes], metaclass=ABCMeta):
     def __hash__(self) -> int:
         return hash((String, self.value))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, String):
             return self.value == other.value
         return super().__eq__(other)
@@ -254,7 +254,7 @@ class QuotedString(String):
 
     __slots__ = ['_string', '_raw']
 
-    def __init__(self, string: bytes, raw: bytes = None) -> None:
+    def __init__(self, string: bytes, raw: bytes | None = None) -> None:
         super().__init__()
         self._string = string
         self._raw = raw
@@ -299,7 +299,7 @@ class QuotedString(String):
         raise NotParseable(buf)
 
     @classmethod
-    def _escape_quoted_specials(cls, match: Match) -> bytes:
+    def _escape_quoted_specials(cls, match: Match[bytes]) -> bytes:
         return b'\\' + match.group(0)
 
     def __bytes__(self) -> bytes:
@@ -444,7 +444,7 @@ class List(Parseable[Sequence[MaybeBytes]]):
         start = cls._whitespace_length(buf)
         if buf[start:start + 1] != b'(':
             raise NotParseable(buf)
-        items: list[Parseable] = []
+        items: list[AnyParseable] = []
         buf = buf[start + 1:]
         while True:
             match = cls._end_pattern.match(buf)
@@ -459,7 +459,7 @@ class List(Parseable[Sequence[MaybeBytes]]):
     def write(self, writer: WriteStream) -> None:
         writer.write(b'(')
         is_first = True
-        for i, item in enumerate(self.items):
+        for item in self.items:
             if is_first:
                 is_first = False
             else:
@@ -477,7 +477,7 @@ class List(Parseable[Sequence[MaybeBytes]]):
     def __hash__(self) -> int:
         return hash((List, self.value))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, List):
             return self.__eq__(other.value)
         elif isinstance(other, Sequence):

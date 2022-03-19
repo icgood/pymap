@@ -5,7 +5,7 @@ import hashlib
 import os.path
 from collections.abc import Sequence
 from contextlib import closing
-from typing import Generic, TypeAlias, TypeVar, Any
+from typing import final, Generic, TypeAlias, TypeVar, Any
 
 import msgpack
 from aioredis import Redis
@@ -37,13 +37,17 @@ class ScriptBase(Generic[_RetT]):
         fname = os.path.join('lua', f'{self._name}.lua')
         with closing(resource_stream(__name__, fname)) as script:
             data = script.read()
-        return hashlib.sha1(data).hexdigest(), data
+        # Redis docs specify using SHA1 here:
+        return hashlib.sha1(data).hexdigest(), data  # nosec
 
     def _convert(self, ret: Any) -> _RetT:
-        return ret
+        converted: _RetT = ret
+        return converted
 
+    @final
     def _pack(self, val: Any) -> bytes:
-        return msgpack.packb(val)
+        packed: bytes = msgpack.packb(val)
+        return packed
 
     def _maybe_int(self, val: bytes) -> int | None:
         if val == b'':

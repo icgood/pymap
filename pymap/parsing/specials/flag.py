@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from functools import total_ordering
+from typing import Any
 
 from .. import Params, Parseable, Space
 from ..exceptions import NotParseable
@@ -45,14 +46,14 @@ class Flag(Parseable[bytes]):
             return b'\\' + value[1:].capitalize()
         return value
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, Flag):
             return self._value == other._value
         elif isinstance(other, bytes):
             return self._value == self._capitalize(other)
         return super().__eq__(other)
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Any) -> bool:
         if isinstance(other, Flag):
             other_bytes = bytes(other)
         elif isinstance(other, bytes):

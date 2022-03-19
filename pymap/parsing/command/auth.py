@@ -59,7 +59,8 @@ class AppendCommand(CommandAuth):
 
     def __init__(self, tag: bytes, mailbox: Mailbox,
                  messages: Iterable[AppendMessage],
-                 cancelled: bool = False, error: Exception = None) -> None:
+                 cancelled: bool = False,
+                 error: Exception | None = None) -> None:
         super().__init__(tag)
         self.mailbox_obj = mailbox
         self.messages: Sequence[AppendMessage] = list(messages)

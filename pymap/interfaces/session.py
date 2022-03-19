@@ -54,7 +54,7 @@ class SessionInterface(Protocol):
     @abstractmethod
     async def list_mailboxes(self, ref_name: str, filter_: str,
                              subscribed: bool = False,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> tuple[Iterable[tuple[str, str | None, Sequence[bytes]]],
                      SelectedMailbox | None]:
         """List the mailboxes owned by the user.
@@ -75,7 +75,8 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
-    async def get_mailbox(self, name: str, selected: SelectedMailbox = None) \
+    async def get_mailbox(self, name: str,
+                          selected: SelectedMailbox | None = None) \
             -> tuple[MailboxInterface, SelectedMailbox | None]:
         """Retrieves a :class:`~pymap.interfaces.mailbox.MailboxInterface`
         object corresponding to an existing mailbox owned by the user. Raises
@@ -93,7 +94,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def create_mailbox(self, name: str,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> tuple[ObjectId, SelectedMailbox | None]:
         """Creates a new mailbox owned by the user.
 
@@ -113,7 +114,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def delete_mailbox(self, name: str,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         """Deletes the mailbox owned by the user.
 
@@ -134,7 +135,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def rename_mailbox(self, before_name: str, after_name: str,
-                             selected: SelectedMailbox = None) \
+                             selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         """Renames the mailbox owned by the user.
 
@@ -155,7 +156,8 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
-    async def subscribe(self, name: str, selected: SelectedMailbox = None) \
+    async def subscribe(self, name: str,
+                        selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         """Mark the given folder name as subscribed, whether or not the given
         folder name currently exists.
@@ -175,7 +177,8 @@ class SessionInterface(Protocol):
         ...
 
     @abstractmethod
-    async def unsubscribe(self, name: str, selected: SelectedMailbox = None) \
+    async def unsubscribe(self, name: str,
+                          selected: SelectedMailbox | None = None) \
             -> SelectedMailbox | None:
         """Remove the given folder name from the subscription list, whether or
         not the given folder name currently exists.
@@ -197,7 +200,7 @@ class SessionInterface(Protocol):
     @abstractmethod
     async def append_messages(self, name: str,
                               messages: Sequence[AppendMessage],
-                              selected: SelectedMailbox = None) \
+                              selected: SelectedMailbox | None = None) \
             -> tuple[AppendUid, SelectedMailbox | None]:
         """Appends a message to the end of the mailbox.
 
@@ -242,7 +245,7 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def check_mailbox(self, selected: SelectedMailbox, *,
-                            wait_on: Event = None,
+                            wait_on: Event | None = None,
                             housekeeping: bool = False) -> SelectedMailbox:
         """Checks for any updates in the mailbox.
 
@@ -313,7 +316,8 @@ class SessionInterface(Protocol):
 
     @abstractmethod
     async def expunge_mailbox(self, selected: SelectedMailbox,
-                              uid_set: SequenceSet = None) -> SelectedMailbox:
+                              uid_set: SequenceSet | None = None) \
+            -> SelectedMailbox:
         """All messages that are marked as deleted are immediately expunged
         from the mailbox.
 

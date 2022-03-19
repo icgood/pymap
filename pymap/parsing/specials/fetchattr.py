@@ -6,7 +6,7 @@ import re
 from abc import ABCMeta
 from collections.abc import Iterable, Sequence
 from functools import total_ordering, reduce
-from typing import Final
+from typing import Final, Any
 
 from . import AString
 from .. import Params, Parseable
@@ -102,8 +102,8 @@ class FetchAttribute(Parseable[bytes]):
         """
 
         def __init__(self, parts: Sequence[int],
-                     specifier: bytes = None,
-                     headers: frozenset[bytes] = None) -> None:
+                     specifier: bytes | None = None,
+                     headers: frozenset[bytes] | None = None) -> None:
             self.parts = parts
             self.specifier = specifier
             self.headers = frozenset(hdr.upper() for hdr in headers) \
@@ -120,8 +120,8 @@ class FetchAttribute(Parseable[bytes]):
     _sec_part_pattern = re.compile(br'([1-9]\d* *(?:\. *[1-9]\d*)*) *(\.)? *')
 
     def __init__(self, attribute: bytes,
-                 section: FetchAttribute.Section = None,
-                 partial: tuple[int, int | None] = None) -> None:
+                 section: FetchAttribute.Section | None = None,
+                 partial: tuple[int, int | None] | None = None) -> None:
         super().__init__()
         self.attribute = attribute.upper()
         self.section = section
@@ -208,23 +208,24 @@ class FetchAttribute(Parseable[bytes]):
     def __hash__(self) -> int:
         return hash((self.value, self.section, self.partial))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, FetchAttribute):
             return hash(self) == hash(other)
         return super().__eq__(other)
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         if isinstance(other, FetchAttribute):
             return hash(self) != hash(other)
         return super().__ne__(other)
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Any) -> bool:
         if not isinstance(other, FetchAttribute):
             return NotImplemented
         return bytes(self.for_response) < bytes(self.for_response)
 
     @classmethod
-    def _parse_section(cls, buf: memoryview, params: Params):
+    def _parse_section(cls, buf: memoryview, params: Params) \
+            -> tuple[Section, memoryview]:
         match = cls._sec_part_pattern.match(buf)
         if match:
             section_parts = [int(num) for num in match.group(1).split(b'.')]

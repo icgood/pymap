@@ -105,7 +105,7 @@ class Unseen(ResponseCode):
         super().__init__()
         self._raw = b'[UNSEEN %i]' % next_
 
-    def __bytes__(self):
+    def __bytes__(self) -> bytes:
         return self._raw
 
 

@@ -55,7 +55,7 @@ class _TreeNode:
 
     __slots__ = ['parent', 'name', 'exists', 'children']
 
-    def __init__(self, name: str, parent: _TreeNode = None) -> None:
+    def __init__(self, name: str, parent: _TreeNode | None = None) -> None:
         super().__init__()
         self.parent = parent
         self.name = name
@@ -191,7 +191,7 @@ class ListTree:
         for entry in self._iter(self._root, ''):
             yield entry
 
-    def _get_pattern(self, query: str) -> tuple[Pattern, Pattern]:
+    def _get_pattern(self, query: str) -> tuple[Pattern[str], Pattern[str]]:
         pattern_parts: list[str] = []
         for part in self._wildcards.split(query):
             if part == '*':

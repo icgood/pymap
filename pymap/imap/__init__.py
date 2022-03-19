@@ -37,8 +37,8 @@ from pymap.parsing.response import ResponseContinuation, Response, \
 from pymap.parsing.state import ParsingState, ParsingInterrupt, \
     ExpectContinuation
 from pymap.sockets import InheritedSockets
-from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError, \
-    AuthenticationCredentials
+from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError
+from pysasl.creds import AuthenticationCredentials
 
 from .state import ConnectionState
 
@@ -299,7 +299,7 @@ class IMAPConnection:
             pass
 
     async def write_updates(self, untagged: Iterable[Response]) -> None:
-        for i, resp in enumerate(untagged):
+        for resp in untagged:
             await self.write_response(resp)
 
     async def handle_updates(self, state: ConnectionState, done: Event,

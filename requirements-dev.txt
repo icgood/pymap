@@ -1,6 +1,9 @@
+invoke
 mypy
 flake8
+flake8-bugbear
 autopep8
+bandit[toml]
 pytest
 pytest-asyncio
 pytest-cov

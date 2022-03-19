@@ -145,9 +145,9 @@ class MatchTest(SieveTest):
 
     @classmethod
     def _compile(cls, key_list: Sequence[str], match_type: MatchType,
-                 case_sensitive: bool) -> Sequence[Pattern]:
+                 case_sensitive: bool) -> Sequence[Pattern[str]]:
         flags = 0 if case_sensitive else re.I
-        ret: list[Pattern] = []
+        ret: list[Pattern[str]] = []
         for key in key_list:
             if match_type == MatchType.MATCHES:
                 pattern_parts: list[str] = []

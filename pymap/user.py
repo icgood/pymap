@@ -22,7 +22,7 @@ class UserMetadata:
 
     """
 
-    def __init__(self, config: IMAPConfig, *, password: str = None,
+    def __init__(self, config: IMAPConfig, *, password: str | None = None,
                  **params: str | None) -> None:
         super().__init__()
         self.config: Final = config
@@ -49,7 +49,7 @@ class UserMetadata:
         return ret
 
     async def check_password(self, creds: AuthenticationCredentials, *,
-                             token_key: bytes = None) -> None:
+                             token_key: bytes | None = None) -> None:
         """Check the given credentials against the known password comparison
         data. If the known data used a hash, then the equivalent hash of the
         provided secret is compared.

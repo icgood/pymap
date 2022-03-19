@@ -133,13 +133,15 @@ class ClusterMetadata(MutableSet[MemberInterface]):
 
     """
 
-    def __init__(self, init: Collection[MemberInterface] = [], /) -> None:
+    def __init__(self, init: Collection[MemberInterface] | None = None, /) \
+            -> None:
         super().__init__()
         self._members: WeakSet[MemberInterface] = WeakSet()
         self._local = _LocalMetadata()
         self._remote = _RemoteMetadata()
-        for member in init:
-            self.add(member)
+        if init is not None:
+            for member in init:
+                self.add(member)
 
     def __contains__(self, member: object) -> bool:
         return member in self._members

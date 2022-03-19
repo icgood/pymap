@@ -54,7 +54,7 @@ class UidList(FileWriteable):
     LOCK_FILE: ClassVar[str] = 'dovecot-uidlist.lock'
 
     def __init__(self, base_dir: str, uid_validity: int,
-                 next_uid: int, global_uid: bytes = None) -> None:
+                 next_uid: int, global_uid: bytes | None = None) -> None:
         super().__init__()
         self._base_dir = base_dir
         self.uid_validity = uid_validity

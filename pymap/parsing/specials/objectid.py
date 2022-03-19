@@ -4,7 +4,7 @@ from __future__ import annotations
 import binascii
 import random as _random
 import re
-from typing import AnyStr
+from typing import Any, AnyStr
 
 from .. import Params, Parseable
 from ..exceptions import NotParseable
@@ -28,7 +28,7 @@ class ObjectId(Parseable[bytes]):
 
     _pattern = re.compile(br'[a-zA-Z0-9_-]{1,255}')
 
-    def __init__(self, object_id: bytes = None) -> None:
+    def __init__(self, object_id: bytes | None = None) -> None:
         super().__init__()
         if object_id == b'':
             raise ValueError(object_id)
@@ -138,7 +138,7 @@ class ObjectId(Parseable[bytes]):
         else:
             return cls(value)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, ObjectId):
             return self.object_id == other.object_id
         elif isinstance(other, bytes):

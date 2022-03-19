@@ -355,7 +355,7 @@ class TestMailbox(TestBase):
                            """).encode('ascii')]
         transport = self.new_transport(imap_server)
         transport.push_login()
-        for i, message in enumerate(messages):
+        for message in messages:
             transport.push_readline(
                 b'append1 APPEND INBOX {%i+}\r\n' % len(message))
             transport.push_readexactly(message)

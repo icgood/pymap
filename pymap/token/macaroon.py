@@ -20,19 +20,23 @@ class MacaroonTokens(TokensInterface):
     """Creates and parses :class:`~pymacaroons.Macaroon` tokens."""
 
     def get_login_token(self, identifier: str, key: bytes, *,
-                        authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> str:
+                        authzid: str | None = None,
+                        location: str | None = None,
+                        expiration: datetime | None = None) -> str:
         macaroon = Macaroon(location=location, identifier=identifier, key=key)
         macaroon.add_first_party_caveat('type = login')
         if authzid is not None:
             macaroon.add_first_party_caveat(f'authzid = {authzid}')
         if expiration is not None:
             macaroon.add_first_party_caveat(f'time < {expiration.isoformat()}')
-        return macaroon.serialize()
+        serialized: str = macaroon.serialize()
+        return serialized
 
     def get_admin_token(self, admin_key: bytes | None, *,
-                        authzid: str = None, location: str = None,
-                        expiration: datetime = None) -> str | None:
+                        authzid: str | None = None,
+                        location: str | None = None,
+                        expiration: datetime | None = None) \
+            -> str | None:
         if admin_key is None:
             return None
         macaroon = Macaroon(location=location, identifier='', key=admin_key)
@@ -41,7 +45,8 @@ class MacaroonTokens(TokensInterface):
             macaroon.add_first_party_caveat(f'authzid = {authzid}')
         if expiration is not None:
             macaroon.add_first_party_caveat(f'time < {expiration.isoformat()}')
-        return macaroon.serialize()
+        serialized: str = macaroon.serialize()
+        return serialized
 
     def parse(self, authzid: str, token: str, *,
               admin_keys: Set[bytes] = frozenset()) -> MacaroonCredentials:
@@ -117,9 +122,11 @@ class MacaroonCredentials(AuthenticationCredentials):
 
     def _verify(self, verifier: Verifier, key: bytes) -> bool:
         try:
-            return verifier.verify(self.macaroon, key)
+            verified: bool = verifier.verify(self.macaroon, key)
         except MacaroonInvalidSignatureException:
             return False
+        else:
+            return verified
 
     def _get_login_verifier(self) -> Verifier:
         verifier = Verifier()
@@ -134,7 +141,7 @@ class MacaroonCredentials(AuthenticationCredentials):
         return verifier
 
     def check_secret(self, secret: StoredSecret | None, *,
-                     key: bytes = None, **other: Any) -> bool:
+                     key: bytes | None = None, **other: Any) -> bool:
         if key is not None:
             verifier = self._get_login_verifier()
             if self._verify(verifier, key):

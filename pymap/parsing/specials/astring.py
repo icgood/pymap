@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from .. import Params, Parseable
 from ..primitives import String, QuotedString
@@ -26,7 +27,7 @@ class AString(Parseable[bytes]):
     _pattern = re.compile(
         br'[\x21\x23\x24\x26\x27\x2B-\x5B\x5D\x5E-\x7A\x7C\x7E]+')
 
-    def __init__(self, string: bytes, raw: bytes = None) -> None:
+    def __init__(self, string: bytes, raw: bytes | None = None) -> None:
         super().__init__()
         self.string = string
         self._raw = raw
@@ -47,7 +48,7 @@ class AString(Parseable[bytes]):
         string, buf = String.parse(buf, params)
         return cls(string.value, bytes(string)), buf
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, AString):
             return self.string == other.string
         return super().__eq__(other)

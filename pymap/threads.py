@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Iterator, Sequence
 from re import Match, Pattern
-from typing import Final
+from typing import Final, Any
 
 from .mime import MessageHeader
 
@@ -39,7 +39,7 @@ class ThreadKey(Iterable[str]):
         super().__init__()
         self._pair: Final = (msg_id, subject)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, ThreadKey):
             return self._pair == other._pair
         return super().__eq__(other)
