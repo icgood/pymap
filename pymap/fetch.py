@@ -4,19 +4,18 @@ from __future__ import annotations
 from abc import abstractmethod, ABCMeta
 from collections.abc import Iterator, Mapping, Sequence, AsyncIterator
 from contextlib import contextmanager, asynccontextmanager
-from typing import TypeAlias, ClassVar, Final, Protocol, Any, Union
+from typing import ClassVar, Final, Protocol, Any
 
 from .bytes import BytesFormat, MaybeBytes, Writeable
 from .interfaces.message import MessageInterface, LoadedMessageInterface
 from .parsing.primitives import Nil, Number, List, LiteralString
-from .parsing.specials import DateTime, FetchRequirement, FetchAttribute, \
-    FetchValue
+from .parsing.specials import DateTime
+from .parsing.specials.fetchattr import FetchPartial, FetchRequirement, \
+    FetchAttribute, FetchValue
 from .selected import SelectedMailbox
 
 __all__ = ['LoadedMessageProvider', 'DynamicFetchValue',
            'DynamicLoadedFetchValue', 'MessageAttributes']
-
-_Partial: TypeAlias = Union[tuple[int, int | None], None]
 
 
 class LoadedMessageProvider(Protocol):
@@ -101,7 +100,8 @@ class DynamicLoadedFetchValue(FetchValue, metaclass=ABCMeta):
             self.attribute.for_response, value)
 
     @classmethod
-    def _get_data(cls, section: FetchAttribute.Section, partial: _Partial,
+    def _get_data(cls, section: FetchAttribute.Section,
+                  partial: FetchPartial | None,
                   loaded_msg: LoadedMessageInterface, *,
                   binary: bool = False) -> Writeable:
         specifier = section.specifier
@@ -124,13 +124,16 @@ class DynamicLoadedFetchValue(FetchValue, metaclass=ABCMeta):
         return cls._get_partial(data, partial)
 
     @classmethod
-    def _get_partial(cls, data: Writeable, partial: _Partial) -> Writeable:
+    def _get_partial(cls, data: Writeable,
+                     partial: FetchPartial | None) -> Writeable:
         if partial is None:
             return data
         full = bytes(data)
-        start, end = partial
-        if end is None:
+        start, length = (partial.start, partial.length)
+        if length is None:
             end = len(full)
+        else:
+            end = start + length
         return Writeable.wrap(full[start:end])
 
 

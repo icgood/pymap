@@ -6,9 +6,9 @@ from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
     InvalidContent
 from pymap.parsing.specials import AString, Tag, Mailbox, DateTime, Flag, \
-    StatusAttribute, SequenceSet, FetchAttribute, SearchKey, ObjectId, \
-    ExtensionOptions
+    StatusAttribute, SequenceSet, SearchKey, ObjectId, ExtensionOptions
 from pymap.parsing.state import ParsingState
+from pymap.parsing.specials.fetchattr import FetchPartial, FetchAttribute
 from pymap.parsing.specials.sequenceset import MaxValue
 
 
@@ -223,12 +223,12 @@ class TestFetchAttribute(unittest.TestCase):
 
     def test_parse(self):
         ret, buf = FetchAttribute.parse(
-            b'body.peek[1.2.HEADER.FIELDS (A B)]<4.5>  ', Params())
+            b'body.peek[1.2.HEADER.FIELDS (A B)]<4.2>  ', Params())
         self.assertEqual(b'BODY.PEEK', ret.value)
         self.assertEqual([1, 2], ret.section.parts)
         self.assertEqual(b'HEADER.FIELDS', ret.section.specifier)
         self.assertEqual({b'A', b'B'}, ret.section.headers)
-        self.assertEqual((4, 5), ret.partial)
+        self.assertEqual(FetchPartial(4, 2), ret.partial)
         self.assertEqual(b'  ', buf)
 
     def test_parse_simple(self):
@@ -283,8 +283,8 @@ class TestFetchAttribute(unittest.TestCase):
         self.assertEqual(b'ENVELOPE', bytes(attr1))
         section = FetchAttribute.Section((1, 2), b'STUFF',
                                          frozenset({b'A', b'B'}))
-        attr2 = FetchAttribute(b'BODY', section, (4, 5))
-        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4.5>', bytes(attr2))
+        attr2 = FetchAttribute(b'BODY', section, FetchPartial(4, 2))
+        self.assertEqual(b'BODY[1.2.STUFF (A B)]<4.2>', bytes(attr2))
         self.assertEqual(b'BODY[1.2.STUFF (A B)]<4>',
                          bytes(attr2.for_response))
 

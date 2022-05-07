@@ -7,8 +7,8 @@ import logging
 import re
 import sys
 from argparse import ArgumentParser
-from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
-    CancelledError, TimeoutError
+from asyncio import shield, StreamReader, StreamWriter, WriteTransport, \
+    AbstractServer, CancelledError, TimeoutError
 from base64 import b64encode, b64decode
 from collections.abc import Awaitable, Iterable
 from contextlib import closing, AsyncExitStack
@@ -279,6 +279,7 @@ class IMAPConnection:
         ssl_context = self.config.ssl_context
         new_transport = await loop.start_tls(
             transport, protocol, ssl_context, server_side=True)
+        assert isinstance(new_transport, WriteTransport)
         new_protocol = new_transport.get_protocol()
         new_writer = StreamWriter(new_transport, new_protocol,
                                   self.reader, loop)

@@ -5,6 +5,7 @@ import enum
 import re
 from abc import ABCMeta
 from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 from functools import total_ordering, reduce
 from typing import Final, Any
 
@@ -14,7 +15,22 @@ from ..exceptions import NotParseable
 from ..primitives import Atom, List
 from ...bytes import BytesFormat, MaybeBytes, Writeable
 
-__all__ = ['FetchRequirement', 'FetchAttribute', 'FetchValue']
+__all__ = ['FetchPartial', 'FetchRequirement', 'FetchAttribute', 'FetchValue']
+
+
+@dataclass(frozen=True)
+class FetchPartial:
+    """Used to indicate that only a substring of the desired fetch is being
+    requested.
+
+    Args:
+        start: The first octet of the requested substring.
+        length: The maximum length of the requested substring, or ``None``.
+
+    """
+
+    start: int
+    length: int | None = None
 
 
 class FetchRequirement(enum.Flag):
@@ -121,7 +137,7 @@ class FetchAttribute(Parseable[bytes]):
 
     def __init__(self, attribute: bytes,
                  section: FetchAttribute.Section | None = None,
-                 partial: tuple[int, int | None] | None = None) -> None:
+                 partial: FetchPartial | None = None) -> None:
         super().__init__()
         self.attribute = attribute.upper()
         self.section = section
@@ -137,11 +153,12 @@ class FetchAttribute(Parseable[bytes]):
     @property
     def for_response(self) -> FetchAttribute:
         if self._for_response is None:
-            if self.partial is None or len(self.partial) < 2:
+            if self.partial is None or self.partial.length is None:
                 self._for_response = self
             else:
+                new_partial = FetchPartial(self.partial.start, None)
                 self._for_response = FetchAttribute(
-                    self.value, self.section, (self.partial[0], None))
+                    self.value, self.section, new_partial)
         return self._for_response
 
     @property
@@ -199,9 +216,11 @@ class FetchAttribute(Parseable[bytes]):
                     parts.append(bytes(List(headers, sort=True)))
             parts.append(b']')
         if self.partial:
-            partial = BytesFormat(b'.').join(
-                [b'%i' % num for num in self.partial if num is not None])
-            parts += [b'<', partial, b'>']
+            start, length = (self.partial.start, self.partial.length)
+            if length is None:
+                parts.append(b'<%i>' % start)
+            else:
+                parts.append(b'<%i.%i>' % (start, length))
         self._raw = raw = b''.join(parts)
         return raw
 
@@ -294,10 +313,11 @@ class FetchAttribute(Parseable[bytes]):
         if match:
             if attr == b'BINARY.SIZE':
                 raise NotParseable(buf)
-            from_, to = int(match.group(1)), int(match.group(2))
-            if from_ < 0 or to <= 0 or from_ > to:
+            start, length = int(match.group(1)), int(match.group(2))
+            if start < 0 or length <= 0:
                 raise NotParseable(buf)
-            return cls(attr, section, (from_, to)), buf[match.end(0):]
+            partial = FetchPartial(start, length)
+            return cls(attr, section, partial), buf[match.end(0):]
         return cls(attr, section), buf
 
     def __bytes__(self) -> bytes:

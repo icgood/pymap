@@ -16,8 +16,9 @@ from collections.abc import Awaitable, MutableSet, Sequence, AsyncIterator
 from concurrent.futures import Executor, ThreadPoolExecutor
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from contextvars import copy_context, Context
+from functools import partial
 from threading import local, Event as _threading_Event, Lock as _threading_Lock
-from typing import cast, TypeVar, TypeAlias
+from typing import TypeVar, TypeAlias
 from weakref import WeakSet
 
 __all__ = ['Subsystem', 'Event', 'ReadWriteLock', 'FileLock', 'EventT', 'RetT']
@@ -135,8 +136,8 @@ class _ThreadingSubsystem(Subsystem):  # pragma: no cover
 
     def _run_in_thread(self, future: Awaitable[RetT], ctx: Context) -> RetT:
         loop = self._local.event_loop
-        ret = ctx.run(loop.run_until_complete, future)
-        return cast(RetT, ret)
+        foo: partial[RetT] = partial(loop.run_until_complete, future)
+        return ctx.run(foo)
 
     def new_rwlock(self) -> _ThreadingReadWriteLock:
         return _ThreadingReadWriteLock()
