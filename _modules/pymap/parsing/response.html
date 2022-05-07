@@ -1,0 +1,509 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.parsing.response &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.response</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.parsing.response</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">AsyncIterator</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">asynccontextmanager</span><span class="p">,</span> <span class="n">AbstractAsyncContextManager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Final</span>
+
+<span class="kn">from</span> <span class="nn">...bytes</span> <span class="kn">import</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">BytesFormat</span><span class="p">,</span> <span class="n">WriteStream</span><span class="p">,</span> <span class="n">Writeable</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ResponseCode&#39;</span><span class="p">,</span> <span class="s1">&#39;Response&#39;</span><span class="p">,</span> <span class="s1">&#39;CommandResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;UntaggedResponse&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;ResponseContinuation&#39;</span><span class="p">,</span> <span class="s1">&#39;ResponseBad&#39;</span><span class="p">,</span> <span class="s1">&#39;ResponseNo&#39;</span><span class="p">,</span> <span class="s1">&#39;ResponseOk&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;ResponseBye&#39;</span><span class="p">,</span> <span class="s1">&#39;ResponsePreAuth&#39;</span><span class="p">,</span> <span class="s1">&#39;ResponseT&#39;</span><span class="p">]</span>
+
+<span class="c1">#: Type variable with an upper bound of :class:`Response`.</span>
+<span class="n">ResponseT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ResponseT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Response&#39;</span><span class="p">)</span>
+
+<span class="n">_Mergeable</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="s1">&#39;Response&#39;</span><span class="p">],</span> <span class="n">Hashable</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
+<span class="n">_WritingHook</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ResponseCode"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseCode">[docs]</a><span class="k">class</span> <span class="nc">ResponseCode</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Base class for response codes that may be returned along with IMAP</span>
+<span class="sd">    server responses.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="ResponseCode.of"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseCode.of">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="n">MaybeBytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Build and return an anonymous response code object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            code: The code string, without square brackets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_AnonymousResponseCode</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_AnonymousResponseCode</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;[%b]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span>
+
+
+<div class="viewcode-block" id="Response"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.Response">[docs]</a><span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="n">Writeable</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all responses sent from the server to the client. These</span>
+<span class="sd">    responses may be sent unsolicited (e.g. idle timeouts) or in response to a</span>
+<span class="sd">    tagged command from the client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tag: The tag bytestring of the associated command, a plus (``+``) to</span>
+<span class="sd">            indicate a continuation requirement, or an asterisk (``*``) to</span>
+<span class="sd">            indicate an untagged response.</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        tag: The tag bytestring.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: The condition bytestring, e.g. ``OK``.</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">text</span> <span class="ow">or</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The response text.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b %b&#39;</span><span class="p">)</span> \
+                    <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condition</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">code</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Optional response code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_code</span>
+
+    <span class="nd">@code</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;True if the response contained an untagged ``BYE`` response</span>
+<span class="sd">        indicating that the session should be terminated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_bad</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;True if the response indicates an error in the command received from</span>
+<span class="sd">        the client.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Response.async_write"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.Response.async_write">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">async_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Like :meth:`~pymap.bytes.Writeable.write`, but allows for</span>
+<span class="sd">        asynchronous processing that might be necessary for some responses.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            writer: The output stream.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Response.write"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.Response.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CommandResponse"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.CommandResponse">[docs]</a><span class="k">class</span> <span class="nc">CommandResponse</span><span class="p">(</span><span class="n">Response</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A response sent to finish the response to a command. The *tag* must</span>
+<span class="sd">    correspond to the tag given in the command. Untagged responses may precede</span>
+<span class="sd">    the command response, according to the rules of the command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tag: The tag bytestring of the associated command.</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">UntaggedResponse</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mergeable</span><span class="p">:</span> <span class="n">_Mergeable</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="CommandResponse.add_untagged"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.CommandResponse.add_untagged">[docs]</a>    <span class="k">def</span> <span class="nf">add_untagged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">responses</span><span class="p">:</span> <span class="n">UntaggedResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add an untagged response. These responses are shown before the</span>
+<span class="sd">        command response.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            responses: The untagged responses to add.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">resp</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">merge_key</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">merge_key</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">resp</span><span class="p">),</span> <span class="n">merge_key</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">untagged_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergeable</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">untagged_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_mergeable</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">untagged_idx</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">merged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">[</span><span class="n">untagged_idx</span><span class="p">]</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">[</span><span class="n">untagged_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="CommandResponse.add_untagged_ok"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.CommandResponse.add_untagged_ok">[docs]</a>    <span class="k">def</span> <span class="nf">add_untagged_ok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span>
+                        <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add an untagged ``OK`` response.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :meth:`.add_untagged`, :class:`ResponseOk`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: The response text.</span>
+<span class="sd">            code: Optional response code.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">UntaggedResponse</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;OK&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">response</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">resp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_terminal</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_terminal</span>
+
+<div class="viewcode-block" id="CommandResponse.async_write"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.CommandResponse.async_write">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">async_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">untagged</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">untagged</span><span class="o">.</span><span class="n">async_write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CommandResponse.write"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.CommandResponse.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">untagged</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_untagged</span><span class="p">:</span>
+            <span class="n">untagged</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UntaggedResponse"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.UntaggedResponse">[docs]</a><span class="k">class</span> <span class="nc">UntaggedResponse</span><span class="p">(</span><span class="n">Response</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A response issued prior to a :class:`CommandResponse`, which may include</span>
+<span class="sd">    details results from the command or updated mailbox state.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+<span class="sd">        condition: A condition string, e.g. ``OK``.</span>
+<span class="sd">        writing_hook: An async context manager to enter while the untagged</span>
+<span class="sd">            response is being written.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">condition</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">writing_hook</span><span class="p">:</span> <span class="n">_WritingHook</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">condition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writing_hook</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">writing_hook</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@asynccontextmanager</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_noop_cm</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+        <span class="k">yield</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">merge_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Hashable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns a hashable value which can be compared to other</span>
+<span class="sd">        :attr:`.merge_key` values of the same response type to see if the</span>
+<span class="sd">        two responses can be merged.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: This response type may not be merged.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UntaggedResponse.merge"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.UntaggedResponse.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ResponseT</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ResponseT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseT</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a copy of this response with the other response merged in.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other: The other response to merge.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: This response type may not be merged.</span>
+<span class="sd">            ValueError: The two responses are not mergeable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UntaggedResponse.async_write"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.UntaggedResponse.async_write">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">async_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">writing_hook</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writing_hook</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_noop_cm</span><span class="p">()</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">writing_hook</span><span class="p">:</span>
+            <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">async_write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ResponseContinuation"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseContinuation">[docs]</a><span class="k">class</span> <span class="nc">ResponseContinuation</span><span class="p">(</span><span class="n">Response</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class used for server responses that indicate a continuation</span>
+<span class="sd">    requirement. This is when the server needs more data from the client to</span>
+<span class="sd">    finish handling the command. The ``AUTHENTICATE`` command and any command</span>
+<span class="sd">    that uses a literal string argument will send this response as needed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The continuation text.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResponseBad"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseBad">[docs]</a><span class="k">class</span> <span class="nc">ResponseBad</span><span class="p">(</span><span class="n">CommandResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;``BAD`` response indicating the server encountered a protocol-related</span>
+<span class="sd">    error in responding to the command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tag: The tag bytestring to associate the response to a command.</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">condition</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;BAD&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_bad</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ResponseNo"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseNo">[docs]</a><span class="k">class</span> <span class="nc">ResponseNo</span><span class="p">(</span><span class="n">CommandResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;``NO`` response indicating the server successfully parsed the command</span>
+<span class="sd">    but failed to execute it successfully.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tag: The tag bytestring to associate the response to a command.</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">condition</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;NO&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResponseOk"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseOk">[docs]</a><span class="k">class</span> <span class="nc">ResponseOk</span><span class="p">(</span><span class="n">CommandResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;``OK`` response indicating the server successfully parsed and executed</span>
+<span class="sd">    the command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tag: The tag bytestring to associate the response to a command.</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">condition</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;OK&#39;</span></div>
+
+
+<div class="viewcode-block" id="ResponseBye"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponseBye">[docs]</a><span class="k">class</span> <span class="nc">ResponseBye</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;``BYE`` response indicating that the server will be closing the</span>
+<span class="sd">    connection immediately after sending the response is sent. This may be sent</span>
+<span class="sd">    in response to a command (e.g. ``LOGOUT``) or unsolicited.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text: The reason for disconnection.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">condition</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;BYE&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;This response is always terminal.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ResponsePreAuth"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.response.ResponsePreAuth">[docs]</a><span class="k">class</span> <span class="nc">ResponsePreAuth</span><span class="p">(</span><span class="n">CommandResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;``PREAUTH`` response during server greeting to indicate the client is</span>
+<span class="sd">    already logged in.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tag: The tag bytestring to associate the response to a command.</span>
+<span class="sd">        text: The response text.</span>
+<span class="sd">        code: Optional response code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">condition</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;PREAUTH&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">,</span>
+                 <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../parsing.html" >pymap.parsing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.response</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

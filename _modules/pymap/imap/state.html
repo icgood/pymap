@@ -1,0 +1,526 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.imap.state &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../imap.html" accesskey="U">pymap.imap</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.imap.state</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.imap.state</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">NoReturn</span>
+
+<span class="kn">from</span> <span class="nn">pymap.bytes</span> <span class="kn">import</span> <span class="n">MaybeBytes</span>
+<span class="kn">from</span> <span class="nn">pymap.concurrent</span> <span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">pymap.config</span> <span class="kn">import</span> <span class="n">IMAPConfig</span>
+<span class="kn">from</span> <span class="nn">pymap.context</span> <span class="kn">import</span> <span class="n">socket_info</span><span class="p">,</span> <span class="n">connection_exit</span>
+<span class="kn">from</span> <span class="nn">pymap.exceptions</span> <span class="kn">import</span> <span class="n">NotAllowedError</span><span class="p">,</span> <span class="n">NotSupportedError</span><span class="p">,</span> \
+    <span class="n">CloseConnection</span>
+<span class="kn">from</span> <span class="nn">pymap.fetch</span> <span class="kn">import</span> <span class="n">MessageAttributes</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.login</span> <span class="kn">import</span> <span class="n">LoginInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.session</span> <span class="kn">import</span> <span class="n">SessionInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.command</span> <span class="kn">import</span> <span class="n">CommandAuth</span><span class="p">,</span> <span class="n">CommandNonAuth</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">,</span> \
+    <span class="n">Command</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.command.any</span> <span class="kn">import</span> <span class="n">CapabilityCommand</span><span class="p">,</span> <span class="n">LogoutCommand</span><span class="p">,</span> \
+    <span class="n">NoOpCommand</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.command.nonauth</span> <span class="kn">import</span> <span class="n">AuthenticateCommand</span><span class="p">,</span> <span class="n">LoginCommand</span><span class="p">,</span> \
+    <span class="n">StartTLSCommand</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.command.auth</span> <span class="kn">import</span> <span class="n">AppendCommand</span><span class="p">,</span> <span class="n">CreateCommand</span><span class="p">,</span> \
+    <span class="n">DeleteCommand</span><span class="p">,</span> <span class="n">ListCommand</span><span class="p">,</span> <span class="n">RenameCommand</span><span class="p">,</span> <span class="n">SelectCommand</span><span class="p">,</span> <span class="n">StatusCommand</span><span class="p">,</span> \
+    <span class="n">SubscribeCommand</span><span class="p">,</span> <span class="n">UnsubscribeCommand</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.command.select</span> <span class="kn">import</span> <span class="n">CheckCommand</span><span class="p">,</span> <span class="n">CloseCommand</span><span class="p">,</span> \
+    <span class="n">IdleCommand</span><span class="p">,</span> <span class="n">ExpungeCommand</span><span class="p">,</span> <span class="n">CopyCommand</span><span class="p">,</span> <span class="n">MoveCommand</span><span class="p">,</span> <span class="n">FetchCommand</span><span class="p">,</span> \
+    <span class="n">StoreCommand</span><span class="p">,</span> <span class="n">SearchCommand</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.commands</span> <span class="kn">import</span> <span class="n">InvalidCommand</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.primitives</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Number</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.response</span> <span class="kn">import</span> <span class="n">ResponseOk</span><span class="p">,</span> <span class="n">ResponseNo</span><span class="p">,</span> <span class="n">ResponseBad</span><span class="p">,</span> \
+    <span class="n">ResponseCode</span><span class="p">,</span> <span class="n">ResponsePreAuth</span><span class="p">,</span> <span class="n">CommandResponse</span><span class="p">,</span> <span class="n">UntaggedResponse</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.response.code</span> <span class="kn">import</span> <span class="n">Capability</span><span class="p">,</span> <span class="n">PermanentFlags</span><span class="p">,</span> <span class="n">UidNext</span><span class="p">,</span> \
+    <span class="n">UidValidity</span><span class="p">,</span> <span class="n">Unseen</span><span class="p">,</span> <span class="n">MailboxId</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.response.specials</span> <span class="kn">import</span> <span class="n">FlagsResponse</span><span class="p">,</span> <span class="n">ExistsResponse</span><span class="p">,</span> \
+    <span class="n">RecentResponse</span><span class="p">,</span> <span class="n">FetchResponse</span><span class="p">,</span> <span class="n">ListResponse</span><span class="p">,</span> <span class="n">LSubResponse</span><span class="p">,</span> \
+    <span class="n">SearchResponse</span><span class="p">,</span> <span class="n">StatusResponse</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.specials</span> <span class="kn">import</span> <span class="n">StatusAttribute</span><span class="p">,</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">FetchValue</span>
+<span class="kn">from</span> <span class="nn">pymap.selected</span> <span class="kn">import</span> <span class="n">SelectedMailbox</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds</span> <span class="kn">import</span> <span class="n">AuthenticationCredentials</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ConnectionState&#39;</span><span class="p">]</span>
+
+<span class="n">_AuthCommands</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">AuthenticateCommand</span> <span class="o">|</span> <span class="n">LoginCommand</span>
+<span class="n">_CommandRet</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CommandResponse</span><span class="p">,</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">_CommandFunc</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Command</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">_CommandRet</span><span class="p">]]</span>
+
+<span class="n">_flags_attr</span> <span class="o">=</span> <span class="n">FetchAttribute</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;FLAGS&#39;</span><span class="p">)</span>
+<span class="n">_uid_attr</span> <span class="o">=</span> <span class="n">FetchAttribute</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;UID&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ConnectionState"><a class="viewcode-back" href="../../../pymap.imap.html#pymap.imap.state.ConnectionState">[docs]</a><span class="k">class</span> <span class="nc">ConnectionState</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Defines the state flow of the IMAP connection. Determines if a command</span>
+<span class="sd">    can be processed at that point in the connection, and interacts with the</span>
+<span class="sd">    backend plugin.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">LoginInterface</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">initial_auth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span> <span class="n">SessionInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">initial_capability</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SessionInterface</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>  <span class="c1"># State checking should prevent this.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">selected</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>  <span class="c1"># State checking should prevent this.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">capability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Capability</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Capability</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">get_server</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;PLAIN&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logindisabled</span> <span class="o">=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;LOGINDISABLED&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logindisabled</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">Capability</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_capability</span> <span class="o">+</span> <span class="n">logindisabled</span> <span class="o">+</span>
+                              <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;AUTH=%b&#39;</span> <span class="o">%</span> <span class="n">mech</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">mech</span> <span class="ow">in</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">server_mechanisms</span><span class="p">])</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SessionInterface</span><span class="p">:</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">connection_exit</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">identity</span><span class="o">.</span><span class="n">new_session</span><span class="p">())</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_greeting</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CommandResponse</span><span class="p">:</span>
+        <span class="n">sock_info</span> <span class="o">=</span> <span class="n">socket_info</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">reject_dnsbl</span> <span class="ow">and</span> <span class="n">sock_info</span><span class="o">.</span><span class="n">dnsbl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotAllowedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Connection rejected: </span><span class="si">{</span><span class="n">sock_info</span><span class="o">.</span><span class="n">dnsbl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">preauth_creds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">preauth_credentials</span>
+        <span class="k">if</span> <span class="n">preauth_creds</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">(</span><span class="n">preauth_creds</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sock_info</span><span class="o">.</span><span class="n">from_localhost</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_auth</span>
+        <span class="n">resp_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">CommandResponse</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">preauth_creds</span><span class="p">:</span>
+            <span class="n">resp_cls</span> <span class="o">=</span> <span class="n">ResponsePreAuth</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resp_cls</span> <span class="o">=</span> <span class="n">ResponseOk</span>
+        <span class="k">return</span> <span class="n">resp_cls</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">greeting</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">_AuthCommands</span><span class="p">,</span>
+                              <span class="n">creds</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">CommandResponse</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">creds</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Invalid authentication mechanism.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">login_capability</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Authentication successful.&#39;</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">LoginCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="sa">b</span><span class="s1">&#39;LOGINDISABLED&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;LOGIN is disabled.&#39;</span><span class="p">)</span>
+        <span class="n">creds</span> <span class="o">=</span> <span class="n">AuthenticationCredentials</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">userid</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;surrogateescape&#39;</span><span class="p">),</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;surrogateescape&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_authenticate</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">creds</span><span class="p">),</span> <span class="kc">None</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_starttls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">StartTLSCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;STARTTLS&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;STARTTLS not available.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_auth</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Ready to handshake.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_capability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">CapabilityCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Capabilities listed.&#39;</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="o">.</span><span class="n">string</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_noop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">NoOpCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">:</span>
+            <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">check_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">SelectCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">mailbox</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">select_mailbox</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">readonly</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">updates</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="n">num_recent</span> <span class="o">=</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">recent</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Selected mailbox.&#39;</span><span class="p">,</span>
+                              <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;READ-ONLY&#39;</span><span class="p">))</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Read-only mailbox.&#39;</span><span class="p">,</span> <span class="n">PermanentFlags</span><span class="p">([]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_recent</span> <span class="o">=</span> <span class="n">updates</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">recent</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Selected mailbox.&#39;</span><span class="p">,</span>
+                              <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;READ-WRITE&#39;</span><span class="p">))</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Flags permitted.&#39;</span><span class="p">,</span>
+                                 <span class="n">PermanentFlags</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">permanent_flags</span><span class="p">))</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="n">updates</span><span class="o">.</span><span class="n">messages</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">FlagsResponse</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">flags</span><span class="p">))</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">ExistsResponse</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">exists</span><span class="p">))</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">RecentResponse</span><span class="p">(</span><span class="n">num_recent</span><span class="p">))</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Predicted next UID.&#39;</span><span class="p">,</span>
+                             <span class="n">UidNext</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">next_uid</span><span class="p">))</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;UIDs valid.&#39;</span><span class="p">,</span>
+                             <span class="n">UidValidity</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">uid_validity</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">first_unseen</span><span class="p">:</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;First unseen message.&#39;</span><span class="p">,</span>
+                                 <span class="n">Unseen</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">first_unseen</span><span class="p">))</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Object ID.&#39;</span><span class="p">,</span> <span class="n">MailboxId</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">mailbox_id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">CreateCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span> <span class="o">==</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Cannot create INBOX.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="n">mailbox_id</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">create_mailbox</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">,</span>
+                          <span class="n">MailboxId</span><span class="p">(</span><span class="n">mailbox_id</span><span class="p">)),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">DeleteCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span> <span class="o">==</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Cannot delete INBOX.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete_mailbox</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">RenameCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">to_mailbox</span> <span class="o">==</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Cannot rename to INBOX.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rename_mailbox</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">from_mailbox</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">to_mailbox</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">StatusCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">mailbox</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">StatusAttribute</span><span class="p">,</span> <span class="n">MaybeBytes</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">cmd</span><span class="o">.</span><span class="n">status_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;MESSAGES&#39;</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">exists</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;RECENT&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">updates</span> <span class="ow">and</span> <span class="n">updates</span><span class="o">.</span><span class="n">mailbox_id</span> <span class="o">==</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">mailbox_id</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="n">updates</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">recent</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">recent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;UNSEEN&#39;</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">unseen</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;UIDNEXT&#39;</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">next_uid</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;UIDVALIDITY&#39;</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span><span class="p">(</span><span class="n">mailbox</span><span class="o">.</span><span class="n">uid_validity</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;MAILBOXID&#39;</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">mailbox_id</span><span class="o">.</span><span class="n">parens</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">StatusResponse</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">AppendCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="sa">b</span><span class="s1">&#39;MULTIAPPEND&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;MULTIAPPEND is disabled.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">cancelled</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;APPEND cancelled.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">cmd</span><span class="o">.</span><span class="n">error</span>
+        <span class="n">append_uid</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">append_messages</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">,</span> <span class="n">append_uid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">SubscribeCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">UnsubscribeCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">ListCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">mailboxes</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">list_mailboxes</span><span class="p">(</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="n">subscribed</span><span class="o">=</span><span class="n">cmd</span><span class="o">.</span><span class="n">only_subscribed</span><span class="p">,</span>
+            <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="n">resp_type</span> <span class="o">=</span> <span class="n">LSubResponse</span> <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">only_subscribed</span> <span class="k">else</span> <span class="n">ListResponse</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">attrs</span> <span class="ow">in</span> <span class="n">mailboxes</span><span class="p">:</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">resp_type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">attrs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">CheckCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">check_mailbox</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">housekeeping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">CloseCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">expunge_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_expunge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">ExpungeCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">expunge_mailbox</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">uid_set</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">CopyCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">copy_uid</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">copy_messages</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">sequence_set</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">,</span> <span class="n">copy_uid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">MoveCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="n">copy_uid</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">move_messages</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">sequence_set</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">mailbox</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged_ok</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Moved.&#39;</span><span class="p">,</span> <span class="n">copy_uid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">FetchCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">hide_expunged</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">set_seen</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">readonly</span> <span class="ow">and</span> \
+            <span class="nb">any</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">set_seen</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">cmd</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">messages</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">fetch_messages</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">sequence_set</span><span class="p">,</span> <span class="n">set_seen</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">expunged</span><span class="p">:</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;EXPUNGEISSUED&#39;</span><span class="p">)</span>
+            <span class="n">msg_attrs</span> <span class="o">=</span> <span class="n">MessageAttributes</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="n">fetch_resp</span> <span class="o">=</span> <span class="n">FetchResponse</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg_attrs</span><span class="p">,</span>
+                                       <span class="n">writing_hook</span><span class="o">=</span><span class="n">msg_attrs</span><span class="o">.</span><span class="n">load_hook</span><span class="p">())</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">fetch_resp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">SearchCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">hide_expunged</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">messages</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">search_mailbox</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="n">msg_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">expunged</span><span class="p">:</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;EXPUNGEISSUED&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="n">msg_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">SearchResponse</span><span class="p">(</span><span class="n">msg_ids</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">StoreCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cmd</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">hide_expunged</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">silence</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">sequence_set</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">flag_set</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="n">messages</span><span class="p">,</span> <span class="n">updates</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">update_flags</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">sequence_set</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">flag_set</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">)</span>
+        <span class="n">session_flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">session_flags</span>
+        <span class="k">for</span> <span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">expunged</span><span class="p">:</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;EXPUNGEISSUED&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">cmd</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">flags</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_flags</span><span class="p">(</span><span class="n">session_flags</span><span class="p">)</span>
+            <span class="n">fetch_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FetchValue</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">FetchValue</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">_flags_attr</span><span class="p">,</span> <span class="n">List</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">))]</span>
+            <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+                <span class="n">fetch_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">FetchValue</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">_uid_attr</span><span class="p">,</span> <span class="n">Number</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">uid</span><span class="p">)))</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="n">FetchResponse</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">fetch_data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">updates</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_idle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">IdleCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
+        <span class="k">if</span> <span class="sa">b</span><span class="s1">&#39;IDLE&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;IDLE is disabled.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39; completed.&#39;</span><span class="p">),</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_logout</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">LogoutCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CloseConnection</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">receive_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">IdleCommand</span><span class="p">,</span> <span class="n">done</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">UntaggedResponse</span><span class="p">]:</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">check_mailbox</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">,</span> <span class="n">wait_on</span><span class="o">=</span><span class="n">done</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">,</span> <span class="n">untagged</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">fork</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">untagged</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_func_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">Command</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">cmd_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">cmd_type</span><span class="o">.</span><span class="n">delegate</span><span class="p">:</span>
+            <span class="n">cmd_type</span> <span class="o">=</span> <span class="n">cmd_type</span><span class="o">.</span><span class="n">delegate</span>
+        <span class="n">cmd_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cmd_type</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="s1">&#39;ascii&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;do_&#39;</span> <span class="o">+</span> <span class="n">cmd_str</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">Command</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CommandResponse</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">InvalidCommand</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ResponseBad</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">CommandNonAuth</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;: Already authenticated.&#39;</span>
+            <span class="k">return</span> <span class="n">ResponseBad</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">CommandAuth</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;: Must authenticate first.&#39;</span>
+            <span class="k">return</span> <span class="n">ResponseBad</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;: Must select a mailbox first.&#39;</span>
+            <span class="k">return</span> <span class="n">ResponseBad</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_func_name</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">:</span> <span class="n">_CommandFunc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">cmd</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;: Not Implemented&#39;</span><span class="p">)</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">selected</span> <span class="o">=</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_selected</span><span class="p">,</span> <span class="n">untagged</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">fork</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">add_untagged</span><span class="p">(</span><span class="o">*</span><span class="n">untagged</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../imap.html" >pymap.imap</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.imap.state</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

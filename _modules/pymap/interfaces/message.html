@@ -1,0 +1,439 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.interfaces.message &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.interfaces.message</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.interfaces.message</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Protocol</span>
+
+<span class="kn">from</span> <span class="nn">..bytes</span> <span class="kn">import</span> <span class="n">Writeable</span>
+<span class="kn">from</span> <span class="nn">..flags</span> <span class="kn">import</span> <span class="n">SessionFlags</span>
+<span class="kn">from</span> <span class="nn">..parsing.response.fetch</span> <span class="kn">import</span> <span class="n">EnvelopeStructure</span><span class="p">,</span> <span class="n">BodyStructure</span>
+<span class="kn">from</span> <span class="nn">..parsing.specials</span> <span class="kn">import</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">ObjectId</span><span class="p">,</span> <span class="n">FetchRequirement</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MessageT&#39;</span><span class="p">,</span> <span class="s1">&#39;MessageT_co&#39;</span><span class="p">,</span> <span class="s1">&#39;FlagsKey&#39;</span><span class="p">,</span> <span class="s1">&#39;CachedMessage&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;MessageInterface&#39;</span><span class="p">,</span> <span class="s1">&#39;LoadedMessageInterface&#39;</span><span class="p">]</span>
+
+<span class="c1">#: Type variable with an upper bound of :class:`MessageInterface`.</span>
+<span class="n">MessageT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;MessageT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;MessageInterface&#39;</span><span class="p">)</span>
+
+<span class="c1">#: Covariant type variable with an upper bound of :class:`MessageInterface`.</span>
+<span class="n">MessageT_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;MessageT_co&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;MessageInterface&#39;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">#: Type alias for the value used as a key in set comparisons detecting flag</span>
+<span class="c1">#: updates.</span>
+<span class="n">FlagsKey</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="CachedMessage"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.CachedMessage">[docs]</a><span class="k">class</span> <span class="nc">CachedMessage</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cached message metadata used to track state changes. Used to produce</span>
+<span class="sd">    untagged FETCH responses when a message&#39;s flags have changed, or when a</span>
+<span class="sd">    FETCH command requests metadata of an expunged message before its untagged</span>
+<span class="sd">    EXPUNGE response has been sent.</span>
+
+<span class="sd">    This is intended to be compatible with :class:`MessageInterface`, and</span>
+<span class="sd">    should be implemented by the same classes in most cases.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">uid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s unique identifier in the mailbox.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">internal_date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s internal date.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">permanent_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;The permanent flags for the message.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">email_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s email object ID.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">thread_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s thread object ID.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">flags_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlagsKey</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Hashable value that represents the current flags of this</span>
+<span class="sd">        message, used for detecting mailbox updates.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="CachedMessage.get_flags"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.CachedMessage.get_flags">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_flags</span><span class="p">:</span> <span class="n">SessionFlags</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the full set of permanent and session flags for the message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            session_flags: The current session flags.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div></div>
+
+
+<div class="viewcode-block" id="MessageInterface"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface">[docs]</a><span class="k">class</span> <span class="nc">MessageInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Message data such as UID, permanent flags, and when the message was</span>
+<span class="sd">    added to the system.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">uid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s unique identifier in the mailbox.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">expunged</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;True if this message has been expunged from the mailbox.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">internal_date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s internal date.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">permanent_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;The permanent flags for the message.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">email_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s email object ID, which can identify its content.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            `RFC 8474 5.1. &lt;https://tools.ietf.org/html/rfc8474#section-5.1&gt;`_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">thread_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The message&#39;s thread object ID, which groups messages together.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            `RFC 8474 5.2. &lt;https://tools.ietf.org/html/rfc8474#section-5.2&gt;`_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="MessageInterface.get_flags"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface.get_flags">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_flags</span><span class="p">:</span> <span class="n">SessionFlags</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the full set of permanent and session flags for the message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            session_flags: The current session flags.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="MessageInterface.load_content"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">load_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">LoadedMessageInterface</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Loads the content of the message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            requirement: The data required from the message content.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div></div>
+
+
+<div class="viewcode-block" id="LoadedMessageInterface"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface">[docs]</a><span class="k">class</span> <span class="nc">LoadedMessageInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The loaded message content, which may include the header, the body,</span>
+<span class="sd">    both, or neither, depending on the requirements.</span>
+
+<span class="sd">    It is assumed that this object contains the entire content in-memory. As</span>
+<span class="sd">    such, when multiple :class:`MessageInterface` objects are being processed,</span>
+<span class="sd">    only one :class:`LoadedMessageInterface` should be in scope at a time.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchRequirement</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The :class:`~pymap.parsing.specials.FetchRequirement` used to load</span>
+<span class="sd">        the message content.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_header"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_header">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get the values of a header from the message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: The name of the header.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_headers"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_headers">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the headers from the message part.</span>
+
+<span class="sd">        The ``section`` argument indexes a nested sub-part of the message. For</span>
+<span class="sd">        example, ``[2, 3]`` would get the 2nd sub-part of the message and then</span>
+<span class="sd">        index it for its 3rd sub-part.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            section: Nested list of sub-part indexes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_message_headers"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_headers">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_message_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">subset</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">inverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the headers from the message or a ``message/rfc822`` sub-part of</span>
+<span class="sd">        the message..</span>
+
+<span class="sd">        The ``section`` argument can index a nested sub-part of the message.</span>
+<span class="sd">        For example, ``[2, 3]`` would get the 2nd sub-part of the message and</span>
+<span class="sd">        then index it for its 3rd sub-part.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            section: Optional nested list of sub-part indexes.</span>
+<span class="sd">            subset: Subset of headers to get.</span>
+<span class="sd">            inverse: If ``subset`` is given, this flag will invert it so that</span>
+<span class="sd">                the headers *not* in ``subset`` are returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_message_text"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_text">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_message_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the text of the message part, not including headers.</span>
+
+<span class="sd">        The ``section`` argument can index a nested sub-part of the message.</span>
+<span class="sd">        For example, ``[2, 3]`` would get the 2nd sub-part of the message and</span>
+<span class="sd">        then index it for its 3rd sub-part.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            section: Optional nested list of sub-part indexes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_body"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_body">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_body</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get the full body of the message part, including headers.</span>
+
+<span class="sd">        The ``section`` argument can index a nested sub-part of the message.</span>
+<span class="sd">        For example, ``[2, 3]`` would get the 2nd sub-part of the message and</span>
+<span class="sd">        then index it for its 3rd sub-part.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            section: Optional nested list of sub-part indexes.</span>
+<span class="sd">            binary: True if the result has decoded any</span>
+<span class="sd">                Content-Transfer-Encoding.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_size"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_size">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the size of the message, in octets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            section: Optional nested list of sub-part indexes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_envelope_structure"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_envelope_structure">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_envelope_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvelopeStructure</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Build and return the envelope structure.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            `RFC 3501 2.3.5.</span>
+<span class="sd">            &lt;https://tools.ietf.org/html/rfc3501#section-2.3.5&gt;`_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_body_structure"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_body_structure">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_body_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BodyStructure</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Build and return the body structure.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            `RFC 3501 2.3.6</span>
+<span class="sd">            &lt;https://tools.ietf.org/html/rfc3501#section-2.3.6&gt;`_</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoadedMessageInterface.contains"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.contains">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check the body of the message for a sub-string. This may be</span>
+<span class="sd">        optimized to only search headers and ``text/*`` MIME parts.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value: The sub-string to find.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.interfaces.message</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

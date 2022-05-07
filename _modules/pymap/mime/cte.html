@@ -1,0 +1,231 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.mime.cte &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../mime.html" accesskey="U">pymap.mime</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.mime.cte</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.mime.cte</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">quopri</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">email.headerregistry</span> <span class="kn">import</span> <span class="n">ContentTransferEncodingHeader</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">MessageHeader</span><span class="p">,</span> <span class="n">MessageBody</span>
+<span class="kn">from</span> <span class="nn">..bytes</span> <span class="kn">import</span> <span class="n">Writeable</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MessageDecoder&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MessageDecoder"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder">[docs]</a><span class="k">class</span> <span class="nc">MessageDecoder</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decodes a :class:`~pymap.mime.MessageBody` as decided by its</span>
+<span class="sd">    ``Content-Transfer-Encoding`` header.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        registry (Dict[str, :class:`MessageDecoder`]): Registry of custom</span>
+<span class="sd">            decoders. Keys should be lower-case.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MessageDecoder</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="MessageDecoder.of"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.of">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg_header</span><span class="p">:</span> <span class="n">MessageHeader</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageDecoder</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a decoder from the message header object.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :meth:`.of_cte`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            msg_header: The message header object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cte_hdr</span> <span class="o">=</span> <span class="n">msg_header</span><span class="o">.</span><span class="n">parsed</span><span class="o">.</span><span class="n">content_transfer_encoding</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">of_cte</span><span class="p">(</span><span class="n">cte_hdr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageDecoder.of_cte"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.of_cte">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">of_cte</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">ContentTransferEncodingHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">MessageDecoder</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a decoder from the CTE header value.</span>
+
+<span class="sd">        There is built-in support for ``7bit``, ``8bit``, ``quoted-printable``,</span>
+<span class="sd">        and ``base64`` CTE header values. Decoders can be added or overridden</span>
+<span class="sd">        with the :attr:`.registry` dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            header: The CTE header value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_NoopDecoder</span><span class="p">()</span>
+        <span class="n">hdr_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">custom</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hdr_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">custom</span>
+        <span class="k">elif</span> <span class="n">hdr_str</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;7bit&#39;</span><span class="p">,</span> <span class="s1">&#39;8bit&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_NoopDecoder</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">hdr_str</span> <span class="o">==</span> <span class="s1">&#39;quoted-printable&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_QuotedPrintableDecoder</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">hdr_str</span> <span class="o">==</span> <span class="s1">&#39;base64&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_Base64Decoder</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">hdr_str</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MessageDecoder.decode"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.decode">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">MessageBody</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Decode and return the decoded body of the message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            body: The message body.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_NoopDecoder</span><span class="p">(</span><span class="n">MessageDecoder</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">MessageBody</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">body</span>
+
+
+<span class="k">class</span> <span class="nc">_QuotedPrintableDecoder</span><span class="p">(</span><span class="n">MessageDecoder</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">MessageBody</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">quopri</span><span class="o">.</span><span class="n">decodestring</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_Base64Decoder</span><span class="p">(</span><span class="n">MessageDecoder</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">MessageBody</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../mime.html" >pymap.mime</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.mime.cte</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

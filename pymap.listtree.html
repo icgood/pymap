@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>pymap.listtree &#8212; pymap 0.26.1 documentation</title>
+    <title>pymap.listtree &#8212; pymap 0.27.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.flags.html" title="pymap.flags"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code></a></li> 
       </ul>
@@ -74,18 +74,21 @@
 <span id="pymap-listtree"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code><a class="headerlink" href="#module-pymap.listtree" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.listtree.ListEntry">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.listtree.</span></span><span class="sig-name descname"><span class="pre">ListEntry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_children</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListEntry" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.listtree.</span></span><span class="sig-name descname"><span class="pre">ListEntry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_children</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListEntry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListEntry" title="Permalink to this definition">¶</a></dt>
 <dd><p>An entry in the list results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>exists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – False if the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\Noselect</span></code>.</p></li>
-<li><p><strong>marked</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – True, False, or None if the mailbox should be marked with
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The name of the mailbox.</p></li>
+<li><p><strong>exists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – False if the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\Noselect</span></code>.</p></li>
+<li><p><strong>marked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em> | </em><em>None</em>) – True, False, or None if the mailbox should be marked with
 <code class="docutils literal notranslate"><span class="pre">\Marked</span></code>, <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> , or neither, respectively.</p></li>
-<li><p><strong>has_children</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\HasChildren</span></code> or
+<li><p><strong>has_children</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Whether the mailbox should be marked <code class="docutils literal notranslate"><span class="pre">\HasChildren</span></code> or
 <code class="docutils literal notranslate"><span class="pre">\HasNoChildren</span></code>.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py property">
@@ -97,76 +100,74 @@ in a <code class="docutils literal notranslate"><span class="pre">LIST</span></c
 <p class="admonition-title">See also</p>
 <p><a class="reference external" href="https://tools.ietf.org/html/rfc3348">RFC 3348</a></p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>]</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.listtree.</span></span><span class="sig-name descname"><span class="pre">ListTree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delimiter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.listtree.</span></span><span class="sig-name descname"><span class="pre">ListTree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delimiter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a tree of hierarchical mailbox names. If a mailbox name
 has superior names in the heirarchy that do not exist, they are added as
 “unreferenced”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The string delimiter for nested mailbox parts.</p>
+<dd class="field-odd"><p><strong>delimiter</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The string delimiter for nested mailbox parts.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.update" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add all the mailbox names to the tree, filling in any missing nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The names of the mailboxes.</p>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The names of the mailboxes.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#pymap.listtree.ListTree" title="pymap.listtree.ListTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListTree</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.listtree.ListTree" title="pymap.listtree.ListTree"><em>ListTree</em></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree.set_marked">
-<span class="sig-name descname"><span class="pre">set_marked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unmarked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.set_marked" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_marked</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unmarked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree.set_marked"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree.set_marked" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add or remove the <code class="docutils literal notranslate"><span class="pre">\Marked</span></code> and <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> mailbox
 attributes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p></li>
-<li><p><strong>marked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the <code class="docutils literal notranslate"><span class="pre">\Marked</span></code> attribute should be added.</p></li>
-<li><p><strong>unmarked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if the <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> attribute should be added.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The name of the mailbox.</p></li>
+<li><p><strong>marked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – True if the <code class="docutils literal notranslate"><span class="pre">\Marked</span></code> attribute should be added.</p></li>
+<li><p><strong>unmarked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – True if the <code class="docutils literal notranslate"><span class="pre">\Unmarked</span></code> attribute should be added.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.get" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the named entry in the list tree.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The entry name.</p>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The entry name.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListEntry</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry">pymap.listtree.ListEntry</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree.get_renames">
-<span class="sig-name descname"><span class="pre">get_renames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.get_renames" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_renames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree.get_renames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree.get_renames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of tuples for all mailboxes that must be renamed, for
 the given rename operation. This should include
 <code class="docutils literal notranslate"><span class="pre">(from_name,</span> <span class="pre">to_name)</span></code> as well as all inferior names in the heirarchy
@@ -179,40 +180,41 @@ list is returned.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>from_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The original name of the mailbox.</p></li>
-<li><p><strong>to_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The intended new name of the mailbox.</p></li>
+<li><p><strong>from_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The original name of the mailbox.</p></li>
+<li><p><strong>to_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The intended new name of the mailbox.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>]]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.list" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all the entries in the list tree.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListEntry</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.10)"><em>Iterable</em></a>[<a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry"><em>ListEntry</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.listtree.ListTree.list_matching">
-<span class="sig-name descname"><span class="pre">list_matching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.listtree.ListTree.list_matching" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">list_matching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/listtree.html#ListTree.list_matching"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.listtree.ListTree.list_matching" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all the entries in the list tree that match the given query.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Mailbox reference name.</p></li>
+<li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Mailbox reference name.</p></li>
 <li><p><strong>filter</strong> – Mailbox name with possible wildcards.</p></li>
+<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListEntry</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.10)"><em>Iterable</em></a>[<a class="reference internal" href="#pymap.listtree.ListEntry" title="pymap.listtree.ListEntry"><em>ListEntry</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -293,7 +295,7 @@ list is returned.</p>
         <li class="right" >
           <a href="pymap.flags.html" title="pymap.flags"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code></a></li> 
       </ul>
@@ -302,7 +304,7 @@ list is returned.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

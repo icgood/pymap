@@ -1,0 +1,313 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.parsing.response.code &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../response.html" accesskey="U">pymap.parsing.response</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.response.code</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.parsing.response.code</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ResponseCode</span>
+<span class="kn">from</span> <span class="nn">..primitives</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">..specials</span> <span class="kn">import</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">ObjectId</span>
+<span class="kn">from</span> <span class="nn">...bytes</span> <span class="kn">import</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">BytesFormat</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Capability&#39;</span><span class="p">,</span> <span class="s1">&#39;PermanentFlags&#39;</span><span class="p">,</span> <span class="s1">&#39;UidNext&#39;</span><span class="p">,</span> <span class="s1">&#39;UidValidity&#39;</span><span class="p">,</span> <span class="s1">&#39;Unseen&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;AppendUid&#39;</span><span class="p">,</span> <span class="s1">&#39;CopyUid&#39;</span><span class="p">,</span> <span class="s1">&#39;MailboxId&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Capability"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.Capability">[docs]</a><span class="k">class</span> <span class="nc">Capability</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Lists the capabilities the server advertises to the client.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        server_capabilities: The list of capabilities to advertise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server_capabilities</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="nb">bytes</span><span class="p">(</span><span class="n">cap</span><span class="p">)</span> <span class="k">for</span> <span class="n">cap</span> <span class="ow">in</span> <span class="n">server_capabilities</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capability</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">capability</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">capabilities</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The capabilities string without the enclosing square brackets.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">raw</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;CAPABILITY&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;IMAP4rev1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raw</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;[%b]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span></div>
+
+
+<div class="viewcode-block" id="PermanentFlags"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.PermanentFlags">[docs]</a><span class="k">class</span> <span class="nc">PermanentFlags</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the permanent flags available in a mailbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        flags: The flags to return.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;[PERMANENTFLAGS %b]&#39;</span><span class="p">)</span> \
+            <span class="o">%</span> <span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+
+
+<div class="viewcode-block" id="UidNext"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.UidNext">[docs]</a><span class="k">class</span> <span class="nc">UidNext</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the next unique identifier value of the mailbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        next_: The next available message UID.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;[UIDNEXT </span><span class="si">%i</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">next_</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+
+
+<div class="viewcode-block" id="UidValidity"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.UidValidity">[docs]</a><span class="k">class</span> <span class="nc">UidValidity</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the mailbox unique identifier validity value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        validity: The UID validity value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validity</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validity</span> <span class="o">=</span> <span class="n">validity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;[UIDVALIDITY </span><span class="si">%i</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">validity</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+
+
+<div class="viewcode-block" id="Unseen"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.Unseen">[docs]</a><span class="k">class</span> <span class="nc">Unseen</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the message sequence ID of the first message without the</span>
+<span class="sd">    ``\\Seen`` flag.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        next_: The sequence ID of the message.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">next_</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;[UNSEEN </span><span class="si">%i</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">next_</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+
+
+<div class="viewcode-block" id="AppendUid"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.AppendUid">[docs]</a><span class="k">class</span> <span class="nc">AppendUid</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the newly assigned UIDs and UIDVALIDITY of messages appended</span>
+<span class="sd">    to a mailbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        validity: The UID validity value.</span>
+<span class="sd">        uids: The UIDs of the appended messages.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        `RFC 4315 3. &lt;https://tools.ietf.org/html/rfc4315#section-3&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validity</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validity</span> <span class="o">=</span> <span class="n">validity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uids</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;[APPENDUID </span><span class="si">%i</span><span class="s1"> %b]&#39;</span><span class="p">)</span> \
+            <span class="o">%</span> <span class="p">(</span><span class="n">validity</span><span class="p">,</span> <span class="n">SequenceSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uids</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+
+
+<div class="viewcode-block" id="CopyUid"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.CopyUid">[docs]</a><span class="k">class</span> <span class="nc">CopyUid</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the original and newly assigned UIDs and UIDVALIDITY of</span>
+<span class="sd">    messages appended to the mailbox.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        validity: The UID validity value.</span>
+<span class="sd">        uids: The pairs of source UID mapped to destination UID.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        `RFC 4315 3. &lt;https://tools.ietf.org/html/rfc4315#section-3&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validity</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">source_uids</span><span class="p">,</span> <span class="n">dest_uids</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">uids</span><span class="p">)</span>
+        <span class="n">source_uid_set</span> <span class="o">=</span> <span class="n">SequenceSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">source_uids</span><span class="p">)</span>
+        <span class="n">dest_uid_set</span> <span class="o">=</span> <span class="n">SequenceSet</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">dest_uids</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;[COPYUID </span><span class="si">%i</span><span class="s1"> %b %b]&#39;</span> \
+            <span class="o">%</span> <span class="p">(</span><span class="n">validity</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">source_uid_set</span><span class="p">),</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">dest_uid_set</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+
+
+<div class="viewcode-block" id="MailboxId"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.MailboxId">[docs]</a><span class="k">class</span> <span class="nc">MailboxId</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the mailbox ID, which can be used to correlate mailboxes</span>
+<span class="sd">    between renames.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        object_id: The mailbox ID bytestring.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        `RFC 8474 4.1. &lt;https://tools.ietf.org/html/rfc8474#section-4.1&gt;`_,</span>
+<span class="sd">        `RFC 8474 4.2. &lt;https://tools.ietf.org/html/rfc8474#section-4.2&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_id</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;[MAILBOXID %b]&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">object_id</span><span class="o">.</span><span class="n">parens</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../response.html" >pymap.parsing.response</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.response.code</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

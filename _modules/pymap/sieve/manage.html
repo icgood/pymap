@@ -1,0 +1,471 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.sieve.manage &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sieve.html" accesskey="U">pymap.sieve</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.sieve.manage</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.sieve.manage</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
+<span class="kn">from</span> <span class="nn">asyncio</span> <span class="kn">import</span> <span class="n">StreamReader</span><span class="p">,</span> <span class="n">StreamWriter</span><span class="p">,</span> <span class="n">WriteTransport</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64encode</span><span class="p">,</span> <span class="n">b64decode</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span><span class="p">,</span> <span class="n">AsyncExitStack</span>
+
+<span class="kn">from</span> <span class="nn">proxyprotocol</span> <span class="kn">import</span> <span class="n">ProxyProtocolResult</span>
+<span class="kn">from</span> <span class="nn">proxyprotocol.reader</span> <span class="kn">import</span> <span class="n">ProxyProtocolReader</span>
+<span class="kn">from</span> <span class="nn">proxyprotocol.sock</span> <span class="kn">import</span> <span class="n">SocketInfo</span>
+<span class="kn">from</span> <span class="nn">pymap</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">pymap.bytes</span> <span class="kn">import</span> <span class="n">BytesFormat</span>
+<span class="kn">from</span> <span class="nn">pymap.config</span> <span class="kn">import</span> <span class="n">IMAPConfig</span>
+<span class="kn">from</span> <span class="nn">pymap.context</span> <span class="kn">import</span> <span class="n">socket_info</span><span class="p">,</span> <span class="n">language_code</span><span class="p">,</span> <span class="n">connection_exit</span>
+<span class="kn">from</span> <span class="nn">pymap.exceptions</span> <span class="kn">import</span> <span class="n">InvalidAuth</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.backend</span> <span class="kn">import</span> <span class="n">ServiceInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.login</span> <span class="kn">import</span> <span class="n">LoginInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.session</span> <span class="kn">import</span> <span class="n">SessionInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.exceptions</span> <span class="kn">import</span> <span class="n">NotParseable</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.primitives</span> <span class="kn">import</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">pysasl</span> <span class="kn">import</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ChallengeResponse</span><span class="p">,</span> <span class="n">AuthenticationError</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds</span> <span class="kn">import</span> <span class="n">AuthenticationCredentials</span>
+
+<span class="kn">from</span> <span class="nn">.command</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">NoOpCommand</span><span class="p">,</span> <span class="n">LogoutCommand</span><span class="p">,</span> <span class="n">CapabilityCommand</span><span class="p">,</span> \
+    <span class="n">AuthenticateCommand</span><span class="p">,</span> <span class="n">UnauthenticateCommand</span><span class="p">,</span> <span class="n">StartTLSCommand</span>
+<span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">BadCommandResponse</span><span class="p">,</span> <span class="n">NoOpResponse</span><span class="p">,</span> \
+    <span class="n">CapabilitiesResponse</span>
+<span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">FilterState</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">SieveCompiler</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ManageSieveService&#39;</span><span class="p">,</span> <span class="s1">&#39;ManageSieveServer&#39;</span><span class="p">,</span> <span class="s1">&#39;ManageSieveConnection&#39;</span><span class="p">]</span>
+
+<span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ManageSieveService"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.manage.ManageSieveService">[docs]</a><span class="k">class</span> <span class="nc">ManageSieveService</span><span class="p">(</span><span class="n">ServiceInterface</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;A pymap service that implements a ManageSieve server to control the</span>
+<span class="sd">    sieve scripts associated with a login.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        `RFC 5804 &lt;https://tools.ietf.org/html/rfc5804&gt;`_,</span>
+<span class="sd">        :class:`~pymap.interfaces.filter.FilterSetInterface`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ManageSieveService.add_arguments"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.manage.ManageSieveService.add_arguments">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_arguments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;managesieve service&#39;</span><span class="p">)</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--sieve-host&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;IFACE&#39;</span><span class="p">,</span>
+                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the network interface to listen on&#39;</span><span class="p">)</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--sieve-port&#39;</span><span class="p">,</span>  <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;NUM&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;4190&#39;</span><span class="p">,</span>
+                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the port or service name to listen on&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ManageSieveService.start"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.manage.ManageSieveService.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+        <span class="n">managesieve_server</span> <span class="o">=</span> <span class="n">ManageSieveServer</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">sieve_host</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">sieve_port</span>
+        <span class="n">server</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">start_server</span><span class="p">(</span>
+            <span class="n">managesieve_server</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">())</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ManageSieveServer"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.manage.ManageSieveServer">[docs]</a><span class="k">class</span> <span class="nc">ManageSieveServer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Callable object that creates and runs :class:`ManageSieveConnection`</span>
+<span class="sd">    objects when :func:`asyncio.start_server` receives a new connection.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        login: Login callback that takes authentication credentials and returns</span>
+<span class="sd">            a :class:`~pymap.interfaces.session.SessionInterface` object.</span>
+<span class="sd">        config: Settings to use for the sieve server.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">LoginInterface</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_login</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span>
+                       <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">ManageSieveConnection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">connection_exit</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">closing</span><span class="p">(</span><span class="n">writer</span><span class="p">))</span>
+            <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ManageSieveConnection"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.manage.ManageSieveConnection">[docs]</a><span class="k">class</span> <span class="nc">ManageSieveConnection</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Runs a single ManageSieve connection from start to finish.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        login: Login callback that takes authentication credentials and returns</span>
+<span class="sd">            a :class:`~pymap.interfaces.session.SessionInterface` object.</span>
+<span class="sd">        config: Settings to use for the sieve server.</span>
+<span class="sd">        reader: The input stream for the socket.</span>
+<span class="sd">        writer: The output stream for the socket.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_lines</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\r?\n&#39;</span><span class="p">)</span>
+    <span class="n">_literal_plus</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39;{(\d+)\+}\r?\n$&#39;</span><span class="p">)</span>
+    <span class="n">_impl</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;pymap managesieve &#39;</span> <span class="o">+</span> <span class="n">__version__</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">LoginInterface</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span>
+                 <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">initial_auth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">parsing_params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">allow_continuations</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pp_reader</span> <span class="o">=</span> <span class="n">ProxyProtocolReader</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">proxy_protocol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">:</span> <span class="n">ProxyProtocolResult</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offer_starttls</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;STARTTLS&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">initial_capability</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">:</span> <span class="n">FilterState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span>
+                       <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">writer</span>
+        <span class="n">socket_info</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">SocketInfo</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">))</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_read_proxy_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">SessionInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilterState</span><span class="p">:</span>
+        <span class="n">owner</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">session</span><span class="o">.</span><span class="n">filter_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Filters not supported.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FilterState</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">filter_set</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">capabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">ret</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;IMPLEMENTATION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_impl</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;SASL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">mech</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">mech</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">server_mechanisms</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;SIEVE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SieveCompiler</span><span class="o">.</span><span class="n">extensions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offer_starttls</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;STARTTLS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;LANGUAGE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">language_code</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;OWNER&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">owner</span>
+        <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;UNAUTHENTICATE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">ret</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;VERSION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;1.0&#39;</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_print</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">log_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_log</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">):</span>
+            <span class="n">fd</span> <span class="o">=</span> <span class="n">socket_info</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">socket</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_lines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">log_format</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">memoryview</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">EOFError</span><span class="p">()</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_literal_plus</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">literal_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">readexactly</span><span class="p">(</span><span class="n">literal_length</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> --&gt;| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_read_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Command</span><span class="p">:</span>
+        <span class="n">cmd_buf</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_data</span><span class="p">()</span>
+        <span class="n">cmd</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Command</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">cmd_buf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cmd</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_write_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resp</span><span class="p">:</span> <span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> &lt;--| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">resp</span><span class="p">))</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SessionInterface</span><span class="p">:</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">connection_exit</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">identity</span><span class="o">.</span><span class="n">new_session</span><span class="p">())</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_do_greeting</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+        <span class="n">sock_info</span> <span class="o">=</span> <span class="n">socket_info</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">reject_dnsbl</span> <span class="ow">and</span> <span class="n">sock_info</span><span class="o">.</span><span class="n">dnsbl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">BYE</span><span class="p">,</span>
+                            <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Connection rejected: </span><span class="si">{</span><span class="n">sock_info</span><span class="o">.</span><span class="n">dnsbl</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">preauth_creds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">preauth_credentials</span>
+        <span class="k">if</span> <span class="n">preauth_creds</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">(</span><span class="n">preauth_creds</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_state</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">CapabilitiesResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_do_authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">AuthenticateCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+        <span class="n">mech</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">get_server</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">mech_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mech</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Invalid SASL mechanism.&#39;</span><span class="p">)</span>
+        <span class="n">responses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChallengeResponse</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">initial_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">resp_dec</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">initial_data</span><span class="p">)</span>
+            <span class="n">responses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChallengeResponse</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">resp_dec</span><span class="p">))</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">creds</span><span class="p">,</span> <span class="n">final</span> <span class="o">=</span> <span class="n">mech</span><span class="o">.</span><span class="n">server_attempt</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">ServerChallenge</span> <span class="k">as</span> <span class="n">chal</span><span class="p">:</span>
+                <span class="n">chal_bytes</span> <span class="o">=</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">chal</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">chal_str</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">chal_bytes</span><span class="p">)</span>
+                <span class="n">chal_str</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span>
+                <span class="n">resp_bytes</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_data</span><span class="p">()</span>
+                <span class="n">resp_str</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">resp_bytes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">resp_str</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;*&#39;</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">AuthenticationError</span><span class="p">(</span><span class="s1">&#39;Authentication cancelled.&#39;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">resp_dec</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">resp_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">AuthenticationError</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">exc</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">responses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChallengeResponse</span><span class="p">(</span><span class="n">chal</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">resp_dec</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">AuthenticationError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">final</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">code</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;SASL %b&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">final</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">InvalidAuth</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_state</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">OK</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_do_unauthenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Not authenticated.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_do_starttls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+        <span class="n">ssl_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ssl_context</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offer_starttls</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Bad command.&#39;</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_response</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="n">transport</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">transport</span>
+        <span class="n">protocol</span> <span class="o">=</span> <span class="n">transport</span><span class="o">.</span><span class="n">get_protocol</span><span class="p">()</span>
+        <span class="n">new_transport</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">start_tls</span><span class="p">(</span>
+            <span class="n">transport</span><span class="p">,</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">ssl_context</span><span class="p">,</span> <span class="n">server_side</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_transport</span><span class="p">,</span> <span class="n">WriteTransport</span><span class="p">)</span>
+        <span class="n">new_protocol</span> <span class="o">=</span> <span class="n">new_transport</span><span class="o">.</span><span class="n">get_protocol</span><span class="p">()</span>
+        <span class="n">new_writer</span> <span class="o">=</span> <span class="n">StreamWriter</span><span class="p">(</span><span class="n">new_transport</span><span class="p">,</span> <span class="n">new_protocol</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="n">new_writer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> &lt;-&gt;| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&lt;TLS handshake&gt;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offer_starttls</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_auth</span>
+        <span class="k">return</span> <span class="n">CapabilitiesResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ManageSieveConnection.run"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.manage.ManageSieveConnection.run">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Start the socket communication with the server greeting, and then</span>
+<span class="sd">        enter the command/response cycle.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_proxy_protocol</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> +++| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">socket_info</span><span class="o">.</span><span class="n">get</span><span class="p">()))</span>
+        <span class="n">greeting</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_greeting</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_response</span><span class="p">(</span><span class="n">greeting</span><span class="p">)</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="n">greeting</span><span class="o">.</span><span class="n">is_bye</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">resp</span><span class="p">:</span> <span class="n">Response</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_command</span><span class="p">()</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ConnectionError</span><span class="p">,</span> <span class="ne">EOFError</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">except</span> <span class="n">NotParseable</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">BadCommandResponse</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">NoOpCommand</span><span class="p">):</span>
+                        <span class="n">resp</span> <span class="o">=</span> <span class="n">NoOpResponse</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">LogoutCommand</span><span class="p">):</span>
+                        <span class="n">resp</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">BYE</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">CapabilityCommand</span><span class="p">):</span>
+                        <span class="n">resp</span> <span class="o">=</span> <span class="n">CapabilitiesResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capabilities</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">AuthenticateCommand</span><span class="p">):</span>
+                            <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_authenticate</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">StartTLSCommand</span><span class="p">):</span>
+                            <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_starttls</span><span class="p">()</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">resp</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Bad command.&#39;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">UnauthenticateCommand</span><span class="p">):</span>
+                            <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_unauthenticate</span><span class="p">()</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="n">_log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Unhandled exception&#39;</span><span class="p">)</span>
+                    <span class="n">resp</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">NO</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Server error.&#39;</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_response</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_bye</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> ---| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&lt;disconnected&gt;&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../sieve.html" >pymap.sieve</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.sieve.manage</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -1,0 +1,412 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.config &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.config</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.config</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span> <span class="nn">ssl</span> <span class="kn">import</span> <span class="n">SSLContext</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="kn">from</span> <span class="nn">proxyprotocol</span> <span class="kn">import</span> <span class="n">ProxyProtocol</span>
+<span class="kn">from</span> <span class="nn">proxyprotocol.version</span> <span class="kn">import</span> <span class="n">ProxyProtocolVersion</span>
+<span class="kn">from</span> <span class="nn">pysasl</span> <span class="kn">import</span> <span class="n">SASLAuth</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds</span> <span class="kn">import</span> <span class="n">AuthenticationCredentials</span>
+<span class="kn">from</span> <span class="nn">pysasl.hashing</span> <span class="kn">import</span> <span class="n">HashInterface</span><span class="p">,</span> <span class="n">get_hash</span>
+
+<span class="kn">from</span> <span class="nn">.concurrent</span> <span class="kn">import</span> <span class="n">Subsystem</span>
+<span class="kn">from</span> <span class="nn">.context</span> <span class="kn">import</span> <span class="n">subsystem</span>
+<span class="kn">from</span> <span class="nn">.parsing</span> <span class="kn">import</span> <span class="n">Params</span>
+<span class="kn">from</span> <span class="nn">.parsing.commands</span> <span class="kn">import</span> <span class="n">Commands</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ConfigT&#39;</span><span class="p">,</span> <span class="s1">&#39;ConfigT_contra&#39;</span><span class="p">,</span> <span class="s1">&#39;BackendCapability&#39;</span><span class="p">,</span> <span class="s1">&#39;IMAPConfig&#39;</span><span class="p">]</span>
+
+<span class="c1">#: Type variable with an upper bound of :class:`IMAPConfig`.</span>
+<span class="n">ConfigT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ConfigT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;IMAPConfig&#39;</span><span class="p">)</span>
+
+<span class="c1">#: Contravariant type variable with an upper bound of :class:`IMAPConfig`.</span>
+<span class="n">ConfigT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ConfigT_contra&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;IMAPConfig&#39;</span><span class="p">,</span>
+                         <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BackendCapability"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.BackendCapability">[docs]</a><span class="k">class</span> <span class="nc">BackendCapability</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Declares the IMAP capabilities that the backend supports.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        idle: The ``IDLE`` extension is supported.</span>
+<span class="sd">        object_id: The ``OBJECTID`` extension is supported.</span>
+<span class="sd">        multi_append: The ``MULTIAPPEND`` extension is supported.</span>
+<span class="sd">        custom: Optional list of custom capability strings to declare.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_capability&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">idle</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">object_id</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">multi_append</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">custom</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">capability</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">idle</span><span class="p">:</span>
+            <span class="n">capability</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;IDLE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">object_id</span><span class="p">:</span>
+            <span class="n">capability</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;OBJECTID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">multi_append</span><span class="p">:</span>
+            <span class="n">capability</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;MULTIAPPEND&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">custom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">cap</span> <span class="ow">in</span> <span class="n">custom</span><span class="p">:</span>
+                <span class="n">capability</span><span class="p">[</span><span class="n">cap</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">capability</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BackendCapability</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_capability</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span> <span class="o">==</span> <span class="n">other</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">)</span> <span class="o">==</span> <span class="n">other</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">([</span><span class="n">cap</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">cap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="IMAPConfig"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig">[docs]</a><span class="k">class</span> <span class="nc">IMAPConfig</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Configurable settings that control how the IMAP server operates and what</span>
+<span class="sd">    extensions it supports.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args: The command-line arguments.</span>
+<span class="sd">        host: The IMAP server host.</span>
+<span class="sd">        port: The IMAP server port or service name.</span>
+<span class="sd">        debug: If true, prints all socket activity to stdout.</span>
+<span class="sd">        subsystem: The concurrency subsystem in use by the backend.</span>
+<span class="sd">        ssl_context: SSL context that will be used for opportunistic TLS.</span>
+<span class="sd">            Alternatively, you can pass extra arguments ``cert_file`` and</span>
+<span class="sd">            ``key_file`` and an SSL context will be created.</span>
+<span class="sd">        tls_enabled: True if opportunistic TLS should be supported.</span>
+<span class="sd">        admin_key: The private admin key for unrestricted access by token.</span>
+<span class="sd">        hash_context: The hash to use for passwords.</span>
+<span class="sd">        cpu_subsystem: The subsystem to use for CPU-heavy operations,</span>
+<span class="sd">            defaulting to a small thread pool.</span>
+<span class="sd">        preauth_credentials: If given, clients will pre-authenticate on</span>
+<span class="sd">            connection using these credentials.</span>
+<span class="sd">        proxy_protocol: The PROXY protocol implementation to use.</span>
+<span class="sd">        reject_dnsbl: Reject connections with a non-empty DNSBL result.</span>
+<span class="sd">        max_append_len: The maximum allowed length of the message body to an</span>
+<span class="sd">            ``APPEND`` command.</span>
+<span class="sd">        bad_command_limit: The number of consecutive commands received from</span>
+<span class="sd">            the client with parsing errors before the client is disconnected.</span>
+<span class="sd">        disable_idle: Disable the ``IDLE`` capability.</span>
+<span class="sd">        extra: Additional keywords used for special circumstances.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        args: The command-line arguments.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">subsystem</span><span class="p">:</span> <span class="n">Subsystem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ssl_context</span><span class="p">:</span> <span class="n">SSLContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">tls_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">secure_auth</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">preauth_credentials</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">proxy_protocol</span><span class="p">:</span> <span class="n">ProxyProtocol</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">reject_dnsbl</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">admin_key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">hash_context</span><span class="p">:</span> <span class="n">HashInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cpu_subsystem</span><span class="p">:</span> <span class="n">Subsystem</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">max_append_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1000000000</span><span class="p">,</span>
+                 <span class="n">bad_command_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                 <span class="n">disable_search_keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">disable_idle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">extra</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">debug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsystem</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">subsystem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bad_command_limit</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">bad_command_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disable_search_keys</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">disable_search_keys</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">admin_key</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">admin_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash_context</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">hash_context</span> <span class="ow">or</span> \
+            <span class="n">get_hash</span><span class="p">(</span><span class="n">passlib_config</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">passlib_cfg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu_subsystem</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">cpu_subsystem</span> <span class="ow">or</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpu_subsystem</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reject_dnsbl</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">reject_dnsbl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span> <span class="o">=</span> <span class="n">ssl_context</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_certs</span><span class="p">(</span><span class="n">extra</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tls_enabled</span> <span class="o">=</span> <span class="n">tls_enabled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preauth_credentials</span> <span class="o">=</span> <span class="n">preauth_credentials</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_protocol</span> <span class="o">=</span> <span class="n">proxy_protocol</span> <span class="ow">or</span> \
+            <span class="n">ProxyProtocolVersion</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">proxy_protocol</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_append_len</span> <span class="o">=</span> <span class="n">max_append_len</span>
+
+<div class="viewcode-block" id="IMAPConfig.parse_args"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.parse_args">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Given command-line arguments, return a dictionary of keywords that</span>
+<span class="sd">        should be passed in to the :class:`IMAPConfig` (or sub-class)</span>
+<span class="sd">        constructor. Sub-classes should override this method as needed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args: The arguments parsed from the command-line.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="IMAPConfig.from_args"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.from_args">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ConfigT</span><span class="p">],</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
+                  <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigT</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Build and return a new :class:`IMAPConfig` using command-line</span>
+<span class="sd">        arguments.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args: The arguments parsed from the command-line.</span>
+<span class="sd">            overrides: Override keyword arguments to the config constructor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parsed_args</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span>
+                   <span class="n">cert_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="n">key_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+                   <span class="n">tls_enabled</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">tls</span><span class="p">,</span> <span class="o">**</span><span class="n">parsed_args</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="IMAPConfig.apply_context"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.apply_context">[docs]</a>    <span class="k">def</span> <span class="nf">apply_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Apply the configured settings to any :mod:`~pymap.context`</span>
+<span class="sd">        variables.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsystem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">subsystem</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subsystem</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">backend_capability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BackendCapability</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Allows backends to declare support for IMAP extensions and other</span>
+<span class="sd">        capabilities.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_cpu_subsystem</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subsystem</span><span class="p">:</span>
+        <span class="n">cpu_count</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">1</span>
+        <span class="n">cpus_minus_one</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cpu_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">cpus_minus_one</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Subsystem</span><span class="o">.</span><span class="n">for_threading</span><span class="p">(</span><span class="n">executor</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_load_certs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">extra</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SSLContext</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cert_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CERT_FILE&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">cert_file</span> <span class="o">=</span> <span class="n">extra</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cert_file&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">key_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;KEY_FILE&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">key_file</span> <span class="o">=</span> <span class="n">extra</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key_file&#39;</span><span class="p">)</span>
+        <span class="n">ssl_context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">create_default_context</span><span class="p">(</span><span class="n">ssl</span><span class="o">.</span><span class="n">Purpose</span><span class="o">.</span><span class="n">CLIENT_AUTH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cert_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ssl_context</span><span class="o">.</span><span class="n">load_cert_chain</span><span class="p">(</span><span class="n">cert_file</span><span class="p">,</span> <span class="n">key_file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ssl_context</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ssl_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SSLContext</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Commands</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Commands</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SASLAuth</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tls_enabled</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SASLAuth</span><span class="p">([])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tls_auth</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tls_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SASLAuth</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SASLAuth</span><span class="o">.</span><span class="n">defaults</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">preauth_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AuthenticationCredentials</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preauth_credentials</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">proxy_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProxyProtocol</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxy_protocol</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parsing_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Params</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Params</span><span class="p">(</span><span class="n">max_append_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_append_len</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">greeting</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fqdn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;FQDN&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">fqdn</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">getfqdn</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;Server ready &#39;</span> <span class="o">+</span> <span class="n">fqdn</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">login_capability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;BINARY&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;UIDPLUS&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;MOVE&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;CHILDREN&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_append_len</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;APPENDLIMIT=</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_append_len</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backend_capability</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">initial_capability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;LITERAL+&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tls_enabled</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;STARTTLS&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max_filter_len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_append_len</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.config</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

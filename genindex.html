@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pymap 0.26.1 documentation</title>
+    <title>Index &#8212; pymap 0.27.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -156,13 +156,15 @@
 </li>
       <li><a href="pymap.search.html#pymap.search.AllSearchCriteria">AllSearchCriteria (class in pymap.search)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.token.html#pymap.token.AllTokens">AllTokens (class in pymap.token)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Answered">Answered (in module pymap.parsing.specials.flag)</a>
 </li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedSet.any_selected">any_selected (pymap.selected.SelectedSet property)</a>
+</li>
+      <li><a href="pymap.parsing.html#pymap.parsing.AnyParseable">AnyParseable (in module pymap.parsing)</a>
 </li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.mailbox.MailboxHandlers.Append">Append() (pymap.admin.handlers.mailbox.MailboxHandlers method)</a>
 </li>
@@ -342,6 +344,8 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.Response.code">code (pymap.parsing.response.Response property)</a>
 </li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.Config.colon">colon (pymap.backend.maildir.Config property)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.Command">Command (class in pymap.parsing.command)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.Command.command">command (pymap.parsing.command.Command attribute)</a>
@@ -364,11 +368,9 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.CommandSelect">CommandSelect (class in pymap.parsing.command)</a>
 </li>
-      <li><a href="pymap.bytes.html#pymap.bytes.rev.compile">compile() (in module pymap.bytes.rev)</a>
+      <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterCompilerInterface.compile">compile() (pymap.interfaces.filter.FilterCompilerInterface method)</a>
 
       <ul>
-        <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterCompilerInterface.compile">(pymap.interfaces.filter.FilterCompilerInterface method)</a>
-</li>
         <li><a href="pymap.sieve.html#pymap.sieve.SieveCompiler.compile">(pymap.sieve.SieveCompiler method)</a>
 </li>
       </ul></li>
@@ -674,6 +676,8 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.select.FetchCommand">FetchCommand (class in pymap.parsing.command.select)</a>
 </li>
+      <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchPartial">FetchPartial (class in pymap.parsing.specials.fetchattr)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement">FetchRequirement (class in pymap.parsing.specials.fetchattr)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.specials.FetchResponse">FetchResponse (class in pymap.parsing.response.specials)</a>
@@ -720,10 +724,10 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Flag">Flag (class in pymap.parsing.specials.flag)</a>
 </li>
-      <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Flagged">Flagged (in module pymap.parsing.specials.flag)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Flagged">Flagged (in module pymap.parsing.specials.flag)</a>
+</li>
       <li><a href="pymap.flags.html#pymap.flags.FlagOp">FlagOp (class in pymap.flags)</a>
 </li>
       <li><a href="pymap.flags.html#pymap.flags.SessionFlags.flags">flags (pymap.flags.SessionFlags property)</a>
@@ -1416,8 +1420,6 @@
 </li>
         <li><a href="pymap.bytes.html#module-pymap.bytes">pymap.bytes</a>
 </li>
-        <li><a href="pymap.bytes.html#module-pymap.bytes.rev">pymap.bytes.rev</a>
-</li>
         <li><a href="pymap.cluster.html#module-pymap.cluster">pymap.cluster</a>
 </li>
         <li><a href="pymap.cluster.html#module-pymap.cluster.swim">pymap.cluster.swim</a>
@@ -1984,20 +1986,13 @@
         <li><a href="pymap.backend.html#module-pymap.backend.session">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pymap.bytes
 
       <ul>
         <li><a href="pymap.bytes.html#module-pymap.bytes">module</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    pymap.bytes.rev
-
-      <ul>
-        <li><a href="pymap.bytes.html#module-pymap.bytes.rev">module</a>
 </li>
       </ul></li>
       <li>
@@ -3127,7 +3122,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -3136,7 +3131,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

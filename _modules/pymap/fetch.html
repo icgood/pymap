@@ -1,0 +1,477 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.fetch &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.fetch</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.fetch</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">AsyncIterator</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">asynccontextmanager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">.bytes</span> <span class="kn">import</span> <span class="n">BytesFormat</span><span class="p">,</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">Writeable</span>
+<span class="kn">from</span> <span class="nn">.interfaces.message</span> <span class="kn">import</span> <span class="n">MessageInterface</span><span class="p">,</span> <span class="n">LoadedMessageInterface</span>
+<span class="kn">from</span> <span class="nn">.parsing.primitives</span> <span class="kn">import</span> <span class="n">Nil</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">LiteralString</span>
+<span class="kn">from</span> <span class="nn">.parsing.specials</span> <span class="kn">import</span> <span class="n">DateTime</span>
+<span class="kn">from</span> <span class="nn">.parsing.specials.fetchattr</span> <span class="kn">import</span> <span class="n">FetchPartial</span><span class="p">,</span> <span class="n">FetchRequirement</span><span class="p">,</span> \
+    <span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">FetchValue</span>
+<span class="kn">from</span> <span class="nn">.selected</span> <span class="kn">import</span> <span class="n">SelectedMailbox</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LoadedMessageProvider&#39;</span><span class="p">,</span> <span class="s1">&#39;DynamicFetchValue&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;DynamicLoadedFetchValue&#39;</span><span class="p">,</span> <span class="s1">&#39;MessageAttributes&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="LoadedMessageProvider"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.LoadedMessageProvider">[docs]</a><span class="k">class</span> <span class="nc">LoadedMessageProvider</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generic protocol that provides access to a message&#39;s loaded contents</span>
+<span class="sd">    when they are available.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">loaded_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadedMessageInterface</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The loaded message, if available.&quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="DynamicFetchValue"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.DynamicFetchValue">[docs]</a><span class="k">class</span> <span class="nc">DynamicFetchValue</span><span class="p">(</span><span class="n">FetchValue</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for fetch values that are dynamically read from a message.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        attribute: The fetch attribute.</span>
+<span class="sd">        message: The message object.</span>
+<span class="sd">        selected: The selected mailbox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s1">&#39;selected&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">message</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">selected</span>
+
+<div class="viewcode-block" id="DynamicFetchValue.get_value"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.DynamicFetchValue.get_value">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Computes the value of the fetch attribute for the message.&quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span><span class="o">.</span><span class="n">for_response</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="DynamicLoadedFetchValue"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.DynamicLoadedFetchValue">[docs]</a><span class="k">class</span> <span class="nc">DynamicLoadedFetchValue</span><span class="p">(</span><span class="n">FetchValue</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for fetch values that are dynamically read from a message and</span>
+<span class="sd">    require loading its contents.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        attribute: The fetch attribute.</span>
+<span class="sd">        message: The message object.</span>
+<span class="sd">        selected: The selected mailbox.</span>
+<span class="sd">        get_loaded: The provider of the loaded message contents, if available.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s1">&#39;_get_loaded&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">message</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+                 <span class="n">get_loaded</span><span class="p">:</span> <span class="n">LoadedMessageProvider</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_loaded</span> <span class="o">=</span> <span class="n">get_loaded</span>
+
+<div class="viewcode-block" id="DynamicLoadedFetchValue.get_value"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.DynamicLoadedFetchValue.get_value">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Computes the value of the fetch attribute for the message.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loaded_msg: The loaded message object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">loaded_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_loaded</span><span class="o">.</span><span class="n">loaded_msg</span>
+        <span class="k">if</span> <span class="n">loaded_msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span><span class="p">:</span> <span class="n">MaybeBytes</span> <span class="o">=</span> <span class="n">MessageAttributes</span><span class="o">.</span><span class="n">placeholder</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">loaded_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span><span class="o">.</span><span class="n">for_response</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="o">.</span><span class="n">Section</span><span class="p">,</span>
+                  <span class="n">partial</span><span class="p">:</span> <span class="n">FetchPartial</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                  <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="n">specifier</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">specifier</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">parts</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">section</span><span class="o">.</span><span class="n">headers</span>
+        <span class="k">if</span> <span class="n">specifier</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_body</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="n">binary</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;MIME&#39;</span> <span class="ow">and</span> <span class="n">parts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_headers</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;TEXT&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_message_text</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;HEADER&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_message_headers</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;HEADER.FIELDS&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_message_headers</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;HEADER.FIELDS.NOT&#39;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_message_headers</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>  <span class="c1"># Should not happen.</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_partial</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">partial</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_partial</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Writeable</span><span class="p">,</span>
+                     <span class="n">partial</span><span class="p">:</span> <span class="n">FetchPartial</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">partial</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="n">partial</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">partial</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">length</span>
+        <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">full</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span></div>
+
+
+<span class="k">class</span> <span class="nc">_UidFetchValue</span><span class="p">(</span><span class="n">DynamicFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_FlagsFetchValue</span><span class="p">(</span><span class="n">DynamicFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="n">session_flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="o">.</span><span class="n">session_flags</span>
+        <span class="n">flag_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">get_flags</span><span class="p">(</span><span class="n">session_flags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">List</span><span class="p">(</span><span class="n">flag_set</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_InternalDateFetchValue</span><span class="p">(</span><span class="n">DynamicFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DateTime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">internal_date</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_EmailIdFetchValue</span><span class="p">(</span><span class="n">DynamicFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">email_id</span><span class="o">.</span><span class="n">parens</span>
+
+
+<span class="k">class</span> <span class="nc">_ThreadIdFetchValue</span><span class="p">(</span><span class="n">DynamicFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">thread_id</span><span class="o">.</span><span class="n">parens</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Nil</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_LoadedMessageProvider</span><span class="p">(</span><span class="n">LoadedMessageProvider</span><span class="p">):</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;loaded_msg&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaded_msg</span> <span class="o">=</span> <span class="n">loaded_msg</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">yield</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loaded_msg</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">class</span> <span class="nc">_EnvelopeFetchValue</span><span class="p">(</span><span class="n">DynamicLoadedFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_envelope_structure</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_BodyStructureFetchValue</span><span class="p">(</span><span class="n">DynamicLoadedFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_body_structure</span><span class="p">()</span><span class="o">.</span><span class="n">extended</span>
+
+
+<span class="k">class</span> <span class="nc">_BodyFetchValue</span><span class="p">(</span><span class="n">DynamicLoadedFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">section</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_body_structure</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">LiteralString</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_BodyPeekFetchValue</span><span class="p">(</span><span class="n">_BodyFetchValue</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">_RFC822FetchValue</span><span class="p">(</span><span class="n">_BodyFetchValue</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">_RFC822HeaderFetchValue</span><span class="p">(</span><span class="n">_BodyFetchValue</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">_RFC822TextFetchValue</span><span class="p">(</span><span class="n">_BodyFetchValue</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">_RFC822SizeFetchValue</span><span class="p">(</span><span class="n">DynamicLoadedFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Number</span><span class="p">(</span><span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_size</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">_BinaryFetchValue</span><span class="p">(</span><span class="n">DynamicLoadedFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">section</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>  <span class="c1"># should not happen.</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">,</span>
+                              <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LiteralString</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_BinaryPeekFetchValue</span><span class="p">(</span><span class="n">_BinaryFetchValue</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">_BinarySizeFetchValue</span><span class="p">(</span><span class="n">DynamicLoadedFetchValue</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaybeBytes</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span>
+        <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">section</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">()</span>  <span class="c1"># should not happen.</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">partial</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">,</span>
+                              <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Number</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="MessageAttributes"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.MessageAttributes">[docs]</a><span class="k">class</span> <span class="nc">MessageAttributes</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">FetchValue</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Defines the logic for how fetch attributes are resolved on a message to</span>
+<span class="sd">    produce a fetch value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message: The message object.</span>
+<span class="sd">        selected: The selected mailbox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: Placeholder value for fetch values requiring loaded message contents.</span>
+    <span class="n">placeholder</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;...&#39;</span>
+
+    <span class="n">_simple_attrs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">DynamicFetchValue</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sa">b</span><span class="s1">&#39;UID&#39;</span><span class="p">:</span> <span class="n">_UidFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;FLAGS&#39;</span><span class="p">:</span> <span class="n">_FlagsFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;INTERNALDATE&#39;</span><span class="p">:</span> <span class="n">_InternalDateFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;EMAILID&#39;</span><span class="p">:</span> <span class="n">_EmailIdFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;THREADID&#39;</span><span class="p">:</span> <span class="n">_ThreadIdFetchValue</span><span class="p">}</span>
+
+    <span class="n">_loaded_attrs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">DynamicLoadedFetchValue</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sa">b</span><span class="s1">&#39;ENVELOPE&#39;</span><span class="p">:</span> <span class="n">_EnvelopeFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;BODYSTRUCTURE&#39;</span><span class="p">:</span> <span class="n">_BodyStructureFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;BODY&#39;</span><span class="p">:</span> <span class="n">_BodyFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;BODY.PEEK&#39;</span><span class="p">:</span> <span class="n">_BodyPeekFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;RFC822&#39;</span><span class="p">:</span> <span class="n">_RFC822FetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;RFC822.HEADER&#39;</span><span class="p">:</span> <span class="n">_RFC822HeaderFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;RFC822.TEXT&#39;</span><span class="p">:</span> <span class="n">_RFC822TextFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;RFC822.SIZE&#39;</span><span class="p">:</span> <span class="n">_RFC822SizeFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;BINARY&#39;</span><span class="p">:</span> <span class="n">_BinaryFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;BINARY.PEEK&#39;</span><span class="p">:</span> <span class="n">_BinaryPeekFetchValue</span><span class="p">,</span>
+        <span class="sa">b</span><span class="s1">&#39;BINARY.SIZE&#39;</span><span class="p">:</span> <span class="n">_BinarySizeFetchValue</span><span class="p">}</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="s1">&#39;attributes&#39;</span><span class="p">,</span> <span class="s1">&#39;requirement&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_get_loaded&#39;</span><span class="p">,</span> <span class="s1">&#39;_values&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+                 <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                 <span class="n">attributes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FetchAttribute</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">selected</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requirement</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+            <span class="n">attr</span><span class="o">.</span><span class="n">requirement</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_loaded</span> <span class="o">=</span> <span class="n">_LoadedMessageProvider</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FetchValue</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MessageAttributes.load_hook"><a class="viewcode-back" href="../../pymap.fetch.html#pymap.fetch.MessageAttributes.load_hook">[docs]</a>    <span class="nd">@asynccontextmanager</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">load_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;An async context manager that loads the message content on entry,</span>
+<span class="sd">        and releases it on exit. Fetch values that require loaded message</span>
+<span class="sd">        content will write :attr:`.placeholder` if written outside of this</span>
+<span class="sd">        context manager, for console or log output.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loaded_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">load_content</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">requirement</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_loaded</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">loaded_msg</span><span class="p">):</span>
+            <span class="k">yield</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">FetchValue</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_values</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FetchValue</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span>
+
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchValue</span><span class="p">:</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">simple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simple_attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">simple</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">simple</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">loaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaded_attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">loaded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">loaded</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+                          <span class="n">get_loaded</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_loaded</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.fetch</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

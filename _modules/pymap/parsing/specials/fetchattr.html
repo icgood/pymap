@@ -1,0 +1,489 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.parsing.specials.fetchattr &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.specials.fetchattr</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.parsing.specials.fetchattr</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">total_ordering</span><span class="p">,</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">AString</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">Params</span><span class="p">,</span> <span class="n">Parseable</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">NotParseable</span>
+<span class="kn">from</span> <span class="nn">..primitives</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">...bytes</span> <span class="kn">import</span> <span class="n">BytesFormat</span><span class="p">,</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">Writeable</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FetchPartial&#39;</span><span class="p">,</span> <span class="s1">&#39;FetchRequirement&#39;</span><span class="p">,</span> <span class="s1">&#39;FetchAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;FetchValue&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="FetchPartial"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchPartial">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">FetchPartial</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Used to indicate that only a substring of the desired fetch is being</span>
+<span class="sd">    requested.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start: The first octet of the requested substring.</span>
+<span class="sd">        length: The maximum length of the requested substring, or ``None``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FetchRequirement"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement">[docs]</a><span class="k">class</span> <span class="nc">FetchRequirement</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Flag</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates the data required to fulfill a message fetch.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        NONE: No data is required.</span>
+<span class="sd">        METADATA: The IMAP metadata is required.</span>
+<span class="sd">        HEADER: The message header is required.</span>
+<span class="sd">        BODY: The parsed MIME message body is required.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">METADATA</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">HEADER</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">BODY</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">CONTENT</span> <span class="o">=</span> <span class="n">HEADER</span> <span class="o">|</span> <span class="n">BODY</span>
+
+<div class="viewcode-block" id="FetchRequirement.has_all"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.has_all">[docs]</a>    <span class="k">def</span> <span class="nf">has_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns true if all of the expected fetch requirements are met by</span>
+<span class="sd">        this fetch requirement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expected: The expected fetch requirements.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&amp;</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+<div class="viewcode-block" id="FetchRequirement.has_none"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.has_none">[docs]</a>    <span class="k">def</span> <span class="nf">has_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns true if none of the expected fetch requirements are met by</span>
+<span class="sd">        this fetch requirement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            expected: The expected fetch requirements.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">&amp;</span> <span class="n">expected</span> <span class="o">==</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">NONE</span></div>
+
+<div class="viewcode-block" id="FetchRequirement.get_all"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.get_all">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchRequirement</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return all possible fetch requirements reduced into a single</span>
+<span class="sd">        requirement.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">FetchRequirement</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FetchRequirement.reduce"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.reduce">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">reduce</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">requirements</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FetchRequirement</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="n">FetchRequirement</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reduce a set of fetch requirements into a single requirement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            requirements: The set of fetch requirements.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">|</span> <span class="n">y</span><span class="p">,</span> <span class="n">requirements</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="FetchAttribute"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute">[docs]</a><span class="nd">@total_ordering</span>
+<span class="k">class</span> <span class="nc">FetchAttribute</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Represents an attribute that should be fetched for each message in the</span>
+<span class="sd">    sequence set of a FETCH command on an IMAP stream.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        attribute: The attribute name.</span>
+<span class="sd">        section: The attribute section.</span>
+<span class="sd">        partial: The attribute partial range.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        section: The attribute section.</span>
+<span class="sd">        partial: The attribute partial range.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FetchAttribute.Section"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute.Section">[docs]</a>    <span class="k">class</span> <span class="nc">Section</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Represents a fetch attribute section, which typically comes after</span>
+<span class="sd">        the attribute name within square brackets, e.g. ``BODY[1.TEXT]``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parts: The nested MIME part identifiers.</span>
+<span class="sd">            specifier: The MIME part specifier.</span>
+<span class="sd">            headers: The MIME part specifier headers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                     <span class="n">specifier</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">headers</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parts</span> <span class="o">=</span> <span class="n">parts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specifier</span> <span class="o">=</span> <span class="n">specifier</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">hdr</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">hdr</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="n">headers</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">specifier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">))</span></div>
+
+    <span class="n">_attrname_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39; *([^\s\[&lt;()]+)&#39;</span><span class="p">)</span>
+    <span class="n">_section_start_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39; *\[ *&#39;</span><span class="p">)</span>
+    <span class="n">_section_end_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39; *\]&#39;</span><span class="p">)</span>
+    <span class="n">_partial_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39;&lt; *(\d+) *\. *(\d+) *&gt;&#39;</span><span class="p">)</span>
+
+    <span class="n">_sec_part_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39;([1-9]\d* *(?:\. *[1-9]\d*)*) *(\.)? *&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+                 <span class="n">section</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="o">.</span><span class="n">Section</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">partial</span><span class="p">:</span> <span class="n">FetchPartial</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="n">attribute</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">section</span> <span class="o">=</span> <span class="n">section</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partial</span> <span class="o">=</span> <span class="n">partial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_for_response</span><span class="p">:</span> <span class="n">FetchAttribute</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The attribute name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">for_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchAttribute</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_for_response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial</span><span class="o">.</span><span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_for_response</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_partial</span> <span class="o">=</span> <span class="n">FetchPartial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partial</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_for_response</span> <span class="o">=</span> <span class="n">FetchAttribute</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="n">new_partial</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_for_response</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">set_seen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BODY&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BINARY&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;RFC822&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;RFC822.TEXT&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchRequirement</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Indicates the data required to fulfill this fetch attribute.&quot;&quot;&quot;</span>
+        <span class="n">attr_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span>
+        <span class="k">if</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;UID&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;FLAGS&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;INTERNALDATE&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">METADATA</span>
+        <span class="k">elif</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ENVELOPE&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;RFC822.HEADER&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">HEADER</span>
+        <span class="k">elif</span> <span class="n">attr_name</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BODY&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_body_requirement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">CONTENT</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_body_requirement</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="o">.</span><span class="n">Section</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">FetchRequirement</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">section</span><span class="o">.</span><span class="n">parts</span> <span class="ow">and</span> <span class="n">section</span><span class="o">.</span><span class="n">specifier</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="sa">b</span><span class="s1">&#39;HEADER&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;HEADER.FIELDS&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;HEADER.FIELDS.NOT&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">HEADER</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">CONTENT</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BODY.PEEK&#39;</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;BODY&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;RFC822&#39;</span><span class="p">):</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;[&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="n">part_raw</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">parts</span><span class="p">])</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part_raw</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">specifier</span><span class="p">:</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">specifier</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">specifier</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+                    <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">headers</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">List</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;]&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial</span><span class="p">:</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partial</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&lt;</span><span class="si">%i</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">start</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&lt;</span><span class="si">%i</span><span class="s1">.</span><span class="si">%i</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">raw</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raw</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">section</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">FetchAttribute</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">FetchAttribute</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__ne__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">FetchAttribute</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">for_response</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">for_response</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_section</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Section</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_sec_part_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">section_parts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">section_parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">atom</span><span class="p">,</span> <span class="n">after</span> <span class="o">=</span> <span class="n">Atom</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NotParseable</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">section_parts</span><span class="p">),</span> <span class="n">buf</span>
+        <span class="n">specifier</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">section_parts</span> <span class="ow">and</span> <span class="n">specifier</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;MIME&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">section_parts</span><span class="p">,</span> <span class="n">specifier</span><span class="p">),</span> <span class="n">after</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;HEADER&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;TEXT&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">section_parts</span><span class="p">,</span> <span class="n">specifier</span><span class="p">),</span> <span class="n">after</span>
+        <span class="k">elif</span> <span class="n">specifier</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;HEADER.FIELDS&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;HEADER.FIELDS.NOT&#39;</span><span class="p">):</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">list_expected</span><span class="o">=</span><span class="p">[</span><span class="n">AString</span><span class="p">])</span>
+            <span class="n">header_list_p</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="n">header_list</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="nb">bytes</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+                                     <span class="k">for</span> <span class="n">hdr</span> <span class="ow">in</span> <span class="n">header_list_p</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">header_list</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">section_parts</span><span class="p">,</span> <span class="n">specifier</span><span class="p">,</span> <span class="n">header_list</span><span class="p">),</span> <span class="n">buf</span>
+        <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FetchAttribute.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute.parse">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FetchAttribute</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_attrname_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">after</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ENVELOPE&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;FLAGS&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;INTERNALDATE&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;UID&#39;</span><span class="p">,</span>
+                    <span class="sa">b</span><span class="s1">&#39;RFC822.SIZE&#39;</span><span class="p">,</span>  <span class="sa">b</span><span class="s1">&#39;BODYSTRUCTURE&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;EMAILID&#39;</span><span class="p">,</span>
+                    <span class="sa">b</span><span class="s1">&#39;THREADID&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="n">after</span>
+        <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;RFC822&#39;</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">([])</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">section</span><span class="p">),</span> <span class="n">after</span>
+        <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;RFC822.HEADER&#39;</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">([],</span> <span class="sa">b</span><span class="s1">&#39;HEADER&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">section</span><span class="p">),</span> <span class="n">after</span>
+        <span class="k">elif</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;RFC822.TEXT&#39;</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Section</span><span class="p">([],</span> <span class="sa">b</span><span class="s1">&#39;TEXT&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">section</span><span class="p">),</span> <span class="n">after</span>
+        <span class="k">elif</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;BODY&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;BODY.PEEK&#39;</span><span class="p">,</span>
+                          <span class="sa">b</span><span class="s1">&#39;BINARY&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;BINARY.PEEK&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;BINARY.SIZE&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">after</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_section_start_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BODY&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="n">buf</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
+        <span class="n">section</span><span class="p">,</span> <span class="n">buf_s</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_section</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">section</span><span class="o">.</span><span class="n">specifier</span> <span class="ow">and</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;BINARY&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_section_end_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">buf_s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf_s</span><span class="p">)</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">buf_s</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_partial_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BINARY.SIZE&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
+            <span class="n">partial</span> <span class="o">=</span> <span class="n">FetchPartial</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">partial</span><span class="p">),</span> <span class="n">buf</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">section</span><span class="p">),</span> <span class="n">buf</span></div>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span></div>
+
+
+<div class="viewcode-block" id="FetchValue"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchValue">[docs]</a><span class="k">class</span> <span class="nc">FetchValue</span><span class="p">(</span><span class="n">Writeable</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A value fetched from a message for a single fetch attribute.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        attribute: The fetch attribute.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;attribute&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">attribute</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">FetchValue</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_StaticFetchValue</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">_StaticFetchValue</span><span class="p">(</span><span class="n">FetchValue</span><span class="p">):</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_value&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span><span class="o">.</span><span class="n">for_response</span>
+        <span class="k">return</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.specials.fetchattr</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

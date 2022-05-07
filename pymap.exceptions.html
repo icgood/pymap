@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>pymap.exceptions &#8212; pymap 0.26.1 documentation</title>
+    <title>pymap.exceptions &#8212; pymap 0.27.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
@@ -75,19 +75,19 @@
 <p>Module containing the general exceptions that may be used by pymap.</p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.ResponseError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">ResponseError</span></span><a class="headerlink" href="#pymap.exceptions.ResponseError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">ResponseError</span></span><a class="reference internal" href="_modules/pymap/exceptions.html#ResponseError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.ResponseError" title="Permalink to this definition">¶</a></dt>
 <dd><p>The base exception for all custom errors that are used to generate a
 response to an IMAP command.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.ResponseError.get_response">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.ResponseError.get_response" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#ResponseError.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.ResponseError.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.Response" title="pymap.parsing.response.Response"><em>Response</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -96,19 +96,19 @@ response to an IMAP command.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.CloseConnection">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">CloseConnection</span></span><a class="headerlink" href="#pymap.exceptions.CloseConnection" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">CloseConnection</span></span><a class="reference internal" href="_modules/pymap/exceptions.html#CloseConnection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.CloseConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised when the connection should be closed immediately after sending
 the provided response.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.CloseConnection.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.CloseConnection.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#CloseConnection.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.CloseConnection.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseOk" title="pymap.parsing.response.ResponseOk"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseOk</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseOk" title="pymap.parsing.response.ResponseOk"><em>ResponseOk</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -117,19 +117,27 @@ the provided response.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.NotSupportedError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotSupportedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Operation</span> <span class="pre">not</span> <span class="pre">supported.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotSupportedError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotSupportedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Operation</span> <span class="pre">not</span> <span class="pre">supported.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#NotSupportedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.NotSupportedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raised when an action is taken that might be syntactically valid, but is
 not supported by the server or backend.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.NotSupportedError.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotSupportedError.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#NotSupportedError.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.NotSupportedError.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -138,19 +146,27 @@ not supported by the server or backend.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.TemporaryFailure">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">TemporaryFailure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">TemporaryFailure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#TemporaryFailure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.TemporaryFailure" title="Permalink to this definition">¶</a></dt>
 <dd><p>The operation failed, but may succeed if tried again. The <code class="docutils literal notranslate"><span class="pre">[INUSE]</span></code>
 response code is added to the response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.TemporaryFailure.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.TemporaryFailure.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#TemporaryFailure.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.TemporaryFailure.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -159,31 +175,42 @@ response code is added to the response.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.SearchNotAllowed">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">SearchNotAllowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.SearchNotAllowed" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">SearchNotAllowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#SearchNotAllowed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.SearchNotAllowed" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">SEARCH</span></code> command contained a search key that could not be
 executed by the mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">SearchKey</span></code></a>) – The search key that failed.</p>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><em>SearchKey</em></a>) – The search key that failed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.InvalidAuth">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidAuth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Invalid</span> <span class="pre">authentication</span> <span class="pre">credentials.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidAuth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Invalid</span> <span class="pre">authentication</span> <span class="pre">credentials.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#InvalidAuth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.InvalidAuth" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> commands received credentials that the
 IMAP backend has rejected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.InvalidAuth.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.InvalidAuth.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#InvalidAuth.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.InvalidAuth.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -192,19 +219,27 @@ IMAP backend has rejected.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.AuthorizationFailure">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">AuthorizationFailure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Authorization</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.AuthorizationFailure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">AuthorizationFailure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Authorization</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#AuthorizationFailure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.AuthorizationFailure" title="Permalink to this definition">¶</a></dt>
 <dd><p>The credentials in <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> were authenticated but
 failed to authorize as the requested identity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.AuthorizationFailure.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.AuthorizationFailure.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#AuthorizationFailure.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.AuthorizationFailure.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -213,18 +248,26 @@ failed to authorize as the requested identity.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.NotAllowedError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotAllowedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Operation</span> <span class="pre">not</span> <span class="pre">allowed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotAllowedError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotAllowedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Operation</span> <span class="pre">not</span> <span class="pre">allowed.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#NotAllowedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.NotAllowedError" title="Permalink to this definition">¶</a></dt>
 <dd><p>The operation is not allowed due to access controls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.NotAllowedError.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.NotAllowedError.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#NotAllowedError.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.NotAllowedError.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -233,34 +276,45 @@ failed to authorize as the requested identity.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.IncompatibleData">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">IncompatibleData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Incompatible</span> <span class="pre">mailbox</span> <span class="pre">data.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.IncompatibleData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">IncompatibleData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Incompatible</span> <span class="pre">mailbox</span> <span class="pre">data.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#IncompatibleData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.IncompatibleData" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="docutils literal notranslate"><span class="pre">LOGIN</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHENTICATE</span></code> command could not succeed because the
 detected mailbox data was not in a compatible format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.MailboxError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#MailboxError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.MailboxError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parent exception for errors related to a mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – The name of the mailbox.</p></li>
-<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The response message for the error.</p></li>
-<li><p><strong>code</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseCode</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – Optional response code for the error.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – The name of the mailbox.</p></li>
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The response message for the error.</p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><em>ResponseCode</em></a><em> | </em><em>None</em>) – Optional response code for the error.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.MailboxError.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxError.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#MailboxError.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.MailboxError.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -269,74 +323,98 @@ detected mailbox data was not in a compatible format.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.MailboxNotFound">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxNotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_create</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxNotFound" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxNotFound</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_create</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#MailboxNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.MailboxNotFound" title="Permalink to this definition">¶</a></dt>
 <dd><p>The requested mailbox was not found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox</p></li>
-<li><p><strong>try_create</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – True if creating the mailbox first may help.</p></li>
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The name of the mailbox</p></li>
+<li><p><strong>try_create</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – True if creating the mailbox first may help.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.MailboxConflict">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxConflict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxConflict" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxConflict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#MailboxConflict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.MailboxConflict" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mailbox cannot be created or renamed because of a naming conflict
 with another mailbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The name of the mailbox.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.MailboxHasChildren">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxHasChildren</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxHasChildren" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxHasChildren</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#MailboxHasChildren"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.MailboxHasChildren" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mailbox cannot be deleted because there are other inferior
 hierarchical mailboxes below it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The name of the mailbox.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.MailboxReadOnly">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxReadOnly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.MailboxReadOnly" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">MailboxReadOnly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#MailboxReadOnly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.MailboxReadOnly" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mailbox is opened read-only and the requested operation is not
 allowed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – The name of the mailbox.</p>
+<dd class="field-odd"><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – The name of the mailbox.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.AppendFailure">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">AppendFailure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.AppendFailure" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">AppendFailure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#AppendFailure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.AppendFailure" title="Permalink to this definition">¶</a></dt>
 <dd><p>The mailbox append operation failed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mailbox</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – </p></li>
+<li><p><strong>code</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseCode" title="pymap.parsing.response.ResponseCode"><em>ResponseCode</em></a><em> | </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.exceptions.UserNotFound">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserNotFound</span></span><a class="headerlink" href="#pymap.exceptions.UserNotFound" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.exceptions.</span></span><span class="sig-name descname"><span class="pre">UserNotFound</span></span><a class="reference internal" href="_modules/pymap/exceptions.html#UserNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.UserNotFound" title="Permalink to this definition">¶</a></dt>
 <dd><p>The requested user was not found.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.exceptions.UserNotFound.get_response">
-<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.exceptions.UserNotFound.get_response" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/exceptions.html#UserNotFound.get_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.exceptions.UserNotFound.get_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an IMAP response for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) – The command tag that generated the error.</p>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The command tag that generated the error.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseNo</span></code></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.ResponseNo" title="pymap.parsing.response.ResponseNo"><em>ResponseNo</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -417,7 +495,7 @@ allowed.</p>
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
@@ -426,7 +504,7 @@ allowed.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

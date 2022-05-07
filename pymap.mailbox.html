@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>pymap.mailbox &#8212; pymap 0.26.1 documentation</title>
+    <title>pymap.mailbox &#8212; pymap 0.27.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -57,7 +57,7 @@
         <li class="right" >
           <a href="pymap.listtree.html" title="pymap.listtree"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mailbox</span></code></a></li> 
       </ul>
@@ -75,7 +75,7 @@
 <p>Base implementation of the <a class="reference internal" href="pymap.interfaces.html#module-pymap.interfaces.mailbox" title="pymap.interfaces.mailbox"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pymap.interfaces.mailbox</span></code></a> interfaces.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.mailbox.MailboxSnapshot">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxSnapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid_validity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unseen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_unseen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_uid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxSnapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid_validity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exists</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unseen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_unseen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/mailbox.html#MailboxSnapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implements the full functionality of a mailbox using entirely static
 arguments to the constructor. Backends can create and return a new
 mailbox snapshot every time a
@@ -83,27 +83,30 @@ mailbox snapshot every time a
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mailbox_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObjectId</span></code></a>) – The mailbox ID.</p></li>
-<li><p><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the mailbox is read-only.</p></li>
-<li><p><strong>uid_validity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The UID validity value for mailbox consistency.</p></li>
-<li><p><strong>permanent_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The permanent flags defined in the mailbox.</p></li>
-<li><p><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">frozenset</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]) – The session flags defined in the mailbox.</p></li>
-<li><p><strong>exists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of total messages in the mailbox.</p></li>
-<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of recent messages in the mailbox.</p></li>
-<li><p><strong>unseen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Number of unseen messages in the mailbox.</p></li>
-<li><p><strong>first_unseen</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – The sequence number of the first unseen message.</p></li>
-<li><p><strong>next_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – The predicted next message UID.</p></li>
+<li><p><strong>mailbox_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a>) – The mailbox ID.</p></li>
+<li><p><strong>readonly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the mailbox is read-only.</p></li>
+<li><p><strong>uid_validity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The UID validity value for mailbox consistency.</p></li>
+<li><p><strong>permanent_flags</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><em>Flag</em></a><em>]</em>) – The permanent flags defined in the mailbox.</p></li>
+<li><p><strong>session_flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.10)"><em>frozenset</em></a><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><em>Flag</em></a><em>]</em>) – The session flags defined in the mailbox.</p></li>
+<li><p><strong>exists</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of total messages in the mailbox.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of recent messages in the mailbox.</p></li>
+<li><p><strong>unseen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Number of unseen messages in the mailbox.</p></li>
+<li><p><strong>first_unseen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – The sequence number of the first unseen message.</p></li>
+<li><p><strong>next_uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The predicted next message UID.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.mailbox.MailboxSnapshot.new_uid_validity">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_uid_validity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.new_uid_validity" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_uid_validity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/mailbox.html#MailboxSnapshot.new_uid_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.new_uid_validity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a new UID validity value for a mailbox, where the first
 two bytes are time-based and the second two bytes are random.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -112,11 +115,6 @@ two bytes are time-based and the second two bytes are random.</p>
 <dt class="sig sig-object py" id="pymap.mailbox.MailboxSnapshot.flags">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.10)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><span class="pre">pymap.parsing.specials.flag.Flag</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.mailbox.MailboxSnapshot.flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of all permanent and session flags available on the mailbox.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">frozenset</span></code></a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>]</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -195,7 +193,7 @@ two bytes are time-based and the second two bytes are random.</p>
         <li class="right" >
           <a href="pymap.listtree.html" title="pymap.listtree"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.26.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mailbox</span></code></a></li> 
       </ul>
@@ -204,7 +202,7 @@ two bytes are time-based and the second two bytes are random.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

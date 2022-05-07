@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.message &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.message</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.message</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Base implementations of the :mod:`pymap.interfaces.message` interfaces.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span>
+
+<span class="kn">from</span> <span class="nn">.bytes</span> <span class="kn">import</span> <span class="n">Writeable</span>
+<span class="kn">from</span> <span class="nn">.flags</span> <span class="kn">import</span> <span class="n">SessionFlags</span>
+<span class="kn">from</span> <span class="nn">.interfaces.message</span> <span class="kn">import</span> <span class="n">FlagsKey</span><span class="p">,</span> <span class="n">CachedMessage</span><span class="p">,</span> <span class="n">MessageInterface</span><span class="p">,</span> \
+    <span class="n">LoadedMessageInterface</span>
+<span class="kn">from</span> <span class="nn">.mime</span> <span class="kn">import</span> <span class="n">MessageContent</span>
+<span class="kn">from</span> <span class="nn">.mime.cte</span> <span class="kn">import</span> <span class="n">MessageDecoder</span>
+<span class="kn">from</span> <span class="nn">.parsing.response.fetch</span> <span class="kn">import</span> <span class="n">EnvelopeStructure</span><span class="p">,</span> <span class="n">BodyStructure</span><span class="p">,</span> \
+    <span class="n">MultipartBodyStructure</span><span class="p">,</span> <span class="n">ContentBodyStructure</span><span class="p">,</span> <span class="n">TextBodyStructure</span><span class="p">,</span> \
+    <span class="n">MessageBodyStructure</span>
+<span class="kn">from</span> <span class="nn">.parsing.specials</span> <span class="kn">import</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">ObjectId</span><span class="p">,</span> <span class="n">FetchRequirement</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BaseMessage&#39;</span><span class="p">,</span> <span class="s1">&#39;BaseLoadedMessage&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">_NoContent</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="c1"># Thrown when message contents were requested, but the backend did not or</span>
+    <span class="c1"># could not load them.</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;Message content not available.&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseMessage</span><span class="p">(</span><span class="n">MessageInterface</span><span class="p">,</span> <span class="n">CachedMessage</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Message metadata such as UID, permanent flags, and when the message</span>
+<span class="sd">    was added to the system.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        uid: The UID of the message.</span>
+<span class="sd">        internal_date: The internal date of the message.</span>
+<span class="sd">        permanent_flags: Permanent flags for the message.</span>
+<span class="sd">        email_id: The message content identifier for the message.</span>
+<span class="sd">        thread_id: The thread identifier for the message.</span>
+<span class="sd">        expunged: True if this message has been expunged from the mailbox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;uid&#39;</span><span class="p">,</span> <span class="s1">&#39;internal_date&#39;</span><span class="p">,</span> <span class="s1">&#39;expunged&#39;</span><span class="p">,</span> <span class="s1">&#39;_permanent_flags&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_email_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_thread_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_flags_key&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">internal_date</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+                 <span class="n">permanent_flags</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">email_id</span><span class="p">:</span> <span class="n">ObjectId</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">thread_id</span><span class="p">:</span> <span class="n">ObjectId</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">expunged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">uid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_date</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">internal_date</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expunged</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">expunged</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_email_id</span> <span class="o">=</span> <span class="n">email_id</span> <span class="ow">or</span> <span class="n">ObjectId</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_id</span> <span class="o">=</span> <span class="n">thread_id</span> <span class="ow">or</span> <span class="n">ObjectId</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_permanent_flags</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">permanent_flags</span> <span class="ow">or</span> <span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flags_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permanent_flags</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">email_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_email_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">thread_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">permanent_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permanent_flags</span>
+
+    <span class="nd">@permanent_flags</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">permanent_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permanent_flags</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_permanent_flags</span> <span class="o">=</span> <span class="n">permanent_flags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flags_key</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">permanent_flags</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseMessage.get_flags"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseMessage.get_flags">[docs]</a>    <span class="k">def</span> <span class="nf">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_flags</span><span class="p">:</span> <span class="n">SessionFlags</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
+        <span class="n">msg_sflags</span> <span class="o">=</span> <span class="n">session_flags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">msg_sflags</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permanent_flags</span> <span class="o">|</span> <span class="n">msg_sflags</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permanent_flags</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flags_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlagsKey</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags_key</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">type_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">type_name</span><span class="si">}</span><span class="s1"> uid=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="si">}</span><span class="s1"> flags=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">permanent_flags</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+
+
+<div class="viewcode-block" id="BaseLoadedMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseLoadedMessage</span><span class="p">(</span><span class="n">LoadedMessageInterface</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The loaded message content, implemented using an instance of</span>
+<span class="sd">    :class:`~pymap.mime.MessageContent`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        message: The message object.</span>
+<span class="sd">        requirement: The fetch requirement of the loaded content.</span>
+<span class="sd">        content: The MIME-parsed message content, if available.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_message&#39;</span><span class="p">,</span> <span class="s1">&#39;_requirement&#39;</span><span class="p">,</span> <span class="s1">&#39;_content&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+                 <span class="n">requirement</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">,</span>
+                 <span class="n">content</span><span class="p">:</span> <span class="n">MessageContent</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_requirement</span> <span class="o">=</span> <span class="n">requirement</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="n">content</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageInterface</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchRequirement</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_requirement</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">content</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageContent</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">_NoContent</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_content</span>
+
+    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_subpart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageContent</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">section</span><span class="p">:</span>
+            <span class="n">subpart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">section</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subpart</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">has_nested</span><span class="p">:</span>
+                    <span class="n">subpart</span> <span class="o">=</span> <span class="n">subpart</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">nested</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">subpart</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_header"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_header">[docs]</a>    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">parsed</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="n">_NoContent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_headers"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_headers">[docs]</a>    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subpart</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="n">_NoContent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">header</span></div>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_body"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_body">[docs]</a>    <span class="k">def</span> <span class="nf">get_body</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subpart</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="n">_NoContent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="p">:</span>
+            <span class="n">decoded</span> <span class="o">=</span> <span class="n">MessageDecoder</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">header</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">section</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">msg</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="n">decoded</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">decoded</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">section</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">msg</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span></div>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_message_headers"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_message_headers">[docs]</a>    <span class="k">def</span> <span class="nf">get_message_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">subset</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">inverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subpart</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="n">_NoContent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">section</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_rfc822</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">nested</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">header</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">folded</span>
+                                   <span class="k">if</span> <span class="n">inverse</span> <span class="o">!=</span> <span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">headers</span><span class="p">,</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_message_text"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_message_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_message_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subpart</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="n">_NoContent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">section</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">is_rfc822</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">nested</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Writeable</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_size_with_lines</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">msg</span><span class="o">.</span><span class="n">lines</span>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_size"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subpart</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="n">_NoContent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_envelope_structure"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_envelope_structure">[docs]</a>    <span class="k">def</span> <span class="nf">get_envelope_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvelopeStructure</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_envelope_structure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">_NoContent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">EnvelopeStructure</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseLoadedMessage.get_body_structure"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.get_body_structure">[docs]</a>    <span class="k">def</span> <span class="nf">get_body_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BodyStructure</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_body_structure</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">_NoContent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BodyStructure</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_envelope_structure</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvelopeStructure</span><span class="p">:</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">parsed</span>
+        <span class="k">return</span> <span class="n">EnvelopeStructure</span><span class="p">(</span>
+            <span class="n">parsed</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">from_</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">sender</span><span class="p">,</span>
+            <span class="n">parsed</span><span class="o">.</span><span class="n">reply_to</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">to</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">cc</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">bcc</span><span class="p">,</span>
+            <span class="n">parsed</span><span class="o">.</span><span class="n">in_reply_to</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">message_id</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">params</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_body_structure</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BodyStructure</span><span class="p">:</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">parsed</span>
+        <span class="n">maintype</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">maintype</span>
+        <span class="n">subtype</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">subtype</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_params</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">disposition</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">content_disposition</span>
+        <span class="n">language</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">content_language</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">content_location</span>
+        <span class="k">if</span> <span class="n">maintype</span> <span class="o">==</span> <span class="s1">&#39;multipart&#39;</span><span class="p">:</span>
+            <span class="n">sub_body_structs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_body_structure</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">nested</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">MultipartBodyStructure</span><span class="p">(</span>
+                <span class="n">subtype</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">disposition</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span>
+                <span class="n">sub_body_structs</span><span class="p">)</span>
+        <span class="n">content_id</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">content_id</span>
+        <span class="n">content_desc</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">content_description</span>
+        <span class="n">content_encoding</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">content_transfer_encoding</span>
+        <span class="k">if</span> <span class="n">maintype</span> <span class="o">==</span> <span class="s1">&#39;message&#39;</span> <span class="ow">and</span> <span class="n">subtype</span> <span class="o">==</span> <span class="s1">&#39;rfc822&#39;</span><span class="p">:</span>
+            <span class="n">sub_msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">nested</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sub_env_struct</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_envelope_structure</span><span class="p">(</span><span class="n">sub_msg</span><span class="p">)</span>
+            <span class="n">sub_body_struct</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_body_structure</span><span class="p">(</span><span class="n">sub_msg</span><span class="p">)</span>
+            <span class="n">size</span><span class="p">,</span> <span class="n">lines</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_size_with_lines</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">MessageBodyStructure</span><span class="p">(</span>
+                <span class="n">params</span><span class="p">,</span> <span class="n">disposition</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">content_id</span><span class="p">,</span>
+                <span class="n">content_desc</span><span class="p">,</span> <span class="n">content_encoding</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span>
+                <span class="n">sub_env_struct</span><span class="p">,</span> <span class="n">sub_body_struct</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">maintype</span> <span class="o">==</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span>
+            <span class="n">size</span><span class="p">,</span> <span class="n">lines</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_size_with_lines</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">TextBodyStructure</span><span class="p">(</span>
+                <span class="n">subtype</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">disposition</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span>
+                <span class="n">content_id</span><span class="p">,</span> <span class="n">content_desc</span><span class="p">,</span> <span class="n">content_encoding</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ContentBodyStructure</span><span class="p">(</span>
+            <span class="n">maintype</span><span class="p">,</span> <span class="n">subtype</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">disposition</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span>
+            <span class="n">content_id</span><span class="p">,</span> <span class="n">content_desc</span><span class="p">,</span> <span class="n">content_encoding</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseLoadedMessage.contains"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage.contains">[docs]</a>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">except</span> <span class="n">_NoContent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">walk</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">header</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">content_type</span><span class="o">.</span><span class="n">maintype</span> <span class="o">==</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">body</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.message</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

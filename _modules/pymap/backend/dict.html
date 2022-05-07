@@ -1,0 +1,428 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.backend.dict &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.backend.dict</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.backend.dict</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">AsyncIterator</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span><span class="p">,</span> <span class="n">asynccontextmanager</span><span class="p">,</span> <span class="n">AsyncExitStack</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_bytes</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span>
+
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_listdir</span><span class="p">,</span> <span class="n">resource_stream</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds</span> <span class="kn">import</span> <span class="n">AuthenticationCredentials</span>
+<span class="kn">from</span> <span class="nn">pysasl.hashing</span> <span class="kn">import</span> <span class="n">Cleartext</span>
+
+<span class="kn">from</span> <span class="nn">pymap.config</span> <span class="kn">import</span> <span class="n">BackendCapability</span><span class="p">,</span> <span class="n">IMAPConfig</span>
+<span class="kn">from</span> <span class="nn">pymap.exceptions</span> <span class="kn">import</span> <span class="n">AuthorizationFailure</span><span class="p">,</span> <span class="n">NotAllowedError</span><span class="p">,</span> \
+    <span class="n">UserNotFound</span>
+<span class="kn">from</span> <span class="nn">pymap.health</span> <span class="kn">import</span> <span class="n">HealthStatus</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.backend</span> <span class="kn">import</span> <span class="n">BackendInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.login</span> <span class="kn">import</span> <span class="n">LoginInterface</span><span class="p">,</span> <span class="n">IdentityInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.message</span> <span class="kn">import</span> <span class="n">AppendMessage</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.specials.flag</span> <span class="kn">import</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">Recent</span>
+<span class="kn">from</span> <span class="nn">pymap.token</span> <span class="kn">import</span> <span class="n">AllTokens</span>
+<span class="kn">from</span> <span class="nn">pymap.user</span> <span class="kn">import</span> <span class="n">UserMetadata</span>
+
+<span class="kn">from</span> <span class="nn">.filter</span> <span class="kn">import</span> <span class="n">FilterSet</span>
+<span class="kn">from</span> <span class="nn">.mailbox</span> <span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">MailboxData</span><span class="p">,</span> <span class="n">MailboxSet</span>
+<span class="kn">from</span> <span class="nn">..session</span> <span class="kn">import</span> <span class="n">BaseSession</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DictBackend&#39;</span><span class="p">,</span> <span class="s1">&#39;Config&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="DictBackend"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend">[docs]</a><span class="k">class</span> <span class="nc">DictBackend</span><span class="p">(</span><span class="n">BackendInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Defines a backend that uses an in-memory dictionary for example usage</span>
+<span class="sd">    and integration testing.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">Login</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_login</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">HealthStatus</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Login</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_login</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Config</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HealthStatus</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span>
+
+<div class="viewcode-block" id="DictBackend.add_subparser"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.add_subparser">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_subparser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subparsers</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+        <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;in-memory backend&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--demo-data&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;load initial demo data&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--demo-user&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;demouser&#39;</span><span class="p">,</span>
+                            <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;demo user ID&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--demo-password&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;demopass&#39;</span><span class="p">,</span>
+                            <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;demo user password&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parser</span></div>
+
+<div class="viewcode-block" id="DictBackend.init"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.init">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DictBackend</span><span class="p">,</span> <span class="n">Config</span><span class="p">]:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">from_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="n">Login</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">login</span><span class="p">,</span> <span class="n">config</span><span class="p">),</span> <span class="n">config</span></div>
+
+<div class="viewcode-block" id="DictBackend.start"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">IMAPConfig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The config implementation for the dict backend.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">demo_data</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">demo_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">demo_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">demo_data_resource</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="vm">__name__</span><span class="p">,</span>
+                 <span class="n">admin_key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">extra</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">admin_key</span> <span class="o">=</span> <span class="n">admin_key</span> <span class="ow">or</span> <span class="n">token_bytes</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">hash_context</span><span class="o">=</span><span class="n">Cleartext</span><span class="p">(),</span> <span class="n">admin_key</span><span class="o">=</span><span class="n">admin_key</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">extra</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_demo_data</span> <span class="o">=</span> <span class="n">demo_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_demo_user</span> <span class="o">=</span> <span class="n">demo_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_demo_password</span> <span class="o">=</span> <span class="n">demo_password</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_demo_data_resource</span> <span class="o">=</span> <span class="n">demo_data_resource</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MailboxSet</span><span class="p">,</span> <span class="n">FilterSet</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">backend_capability</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BackendCapability</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">BackendCapability</span><span class="p">(</span><span class="n">idle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multi_append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">demo_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;True if demo data should be loaded at startup.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">demo_data_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Resource path of demo data files.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_data_resource</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">demo_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;A login name that is valid at startup, which defaults to</span>
+<span class="sd">        ``demouser``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_user</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">demo_password</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The password for the :attr:`.demo_user` login name, which defaults</span>
+<span class="sd">        to ``demopass``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_password</span>
+
+<div class="viewcode-block" id="Config.parse_args"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config.parse_args">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
+                <span class="s1">&#39;demo_data&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_data</span><span class="p">,</span>
+                <span class="s1">&#39;demo_user&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_user</span><span class="p">,</span>
+                <span class="s1">&#39;demo_password&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_password</span><span class="p">}</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">BaseSession</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;The session implementation for the dict backend.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">mailbox_set</span><span class="p">:</span> <span class="n">MailboxSet</span><span class="p">,</span>
+                 <span class="n">filter_set</span><span class="p">:</span> <span class="n">FilterSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">owner</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mailbox_set</span> <span class="o">=</span> <span class="n">mailbox_set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter_set</span> <span class="o">=</span> <span class="n">filter_set</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Config</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mailbox_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxSet</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mailbox_set</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filter_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilterSet</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_set</span>
+
+
+<span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">LoginInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The login implementation for the dict backend.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">users_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">config</span><span class="o">.</span><span class="n">demo_user</span><span class="p">:</span> <span class="n">UserMetadata</span><span class="p">(</span>
+            <span class="n">config</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">demo_password</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokens_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span> <span class="o">=</span> <span class="n">AllTokens</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AllTokens</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">credentials</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">Identity</span><span class="p">:</span>
+        <span class="n">authcid</span> <span class="o">=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">authcid</span>
+        <span class="n">token_key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">credentials</span><span class="o">.</span><span class="n">authcid_type</span> <span class="o">==</span> <span class="s1">&#39;login-token&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">authcid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens_dict</span><span class="p">:</span>
+                <span class="n">authcid</span><span class="p">,</span> <span class="n">token_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens_dict</span><span class="p">[</span><span class="n">authcid</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">credentials</span><span class="o">.</span><span class="n">authcid_type</span> <span class="o">==</span> <span class="s1">&#39;admin-token&#39;</span><span class="p">:</span>
+            <span class="n">authcid</span> <span class="o">=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">identity</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="s1">&#39;admin&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Identity</span><span class="p">(</span><span class="n">authcid</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">UserNotFound</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">UserMetadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">metadata</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">token_key</span><span class="o">=</span><span class="n">token_key</span><span class="p">)</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="n">role</span> <span class="ow">or</span> <span class="n">metadata</span><span class="o">.</span><span class="n">role</span>
+        <span class="k">if</span> <span class="n">role</span> <span class="o">!=</span> <span class="s1">&#39;admin&#39;</span> <span class="ow">and</span> <span class="n">authcid</span> <span class="o">!=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">identity</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuthorizationFailure</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Identity</span><span class="p">(</span><span class="n">credentials</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Identity</span><span class="p">(</span><span class="n">IdentityInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The identity implementation for the dict backend.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">Login</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">login</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">login</span><span class="o">.</span><span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_role</span> <span class="o">=</span> <span class="n">role</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">new_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">expiration</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">token_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+        <span class="n">token_key</span> <span class="o">=</span> <span class="n">token_bytes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">tokens_dict</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">token_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">get_login_token</span><span class="p">(</span>
+            <span class="n">token_id</span><span class="p">,</span> <span class="n">token_key</span><span class="p">,</span> <span class="n">expiration</span><span class="o">=</span><span class="n">expiration</span><span class="p">)</span>
+
+    <span class="nd">@asynccontextmanager</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">new_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Session</span><span class="p">]:</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">mailbox_set</span><span class="p">,</span> <span class="n">filter_set</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">set_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mailbox_set</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filter_set</span><span class="p">:</span>
+            <span class="n">mailbox_set</span> <span class="o">=</span> <span class="n">MailboxSet</span><span class="p">()</span>
+            <span class="n">filter_set</span> <span class="o">=</span> <span class="n">FilterSet</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">demo_data</span> <span class="ow">and</span> <span class="n">identity</span> <span class="o">==</span> <span class="n">config</span><span class="o">.</span><span class="n">demo_user</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">demo_data_resource</span><span class="p">,</span>
+                                      <span class="n">mailbox_set</span><span class="p">,</span> <span class="n">filter_set</span><span class="p">)</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">set_cache</span><span class="p">[</span><span class="n">identity</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mailbox_set</span><span class="p">,</span> <span class="n">filter_set</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">Session</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">mailbox_set</span><span class="p">,</span> <span class="n">filter_set</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_demo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mailbox_set</span><span class="p">:</span> <span class="n">MailboxSet</span><span class="p">,</span>
+                         <span class="n">filter_set</span><span class="p">:</span> <span class="n">FilterSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inbox</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mailbox_set</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_mailbox</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">,</span> <span class="n">inbox</span><span class="p">)</span>
+        <span class="n">mbx_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">resource_listdir</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="s1">&#39;demo&#39;</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mbx_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;sieve&#39;</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_sieve</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filter_set</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">mailbox_set</span><span class="o">.</span><span class="n">add_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mailbox_set</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_mailbox</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mbx</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_demo_sieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                               <span class="n">filter_set</span><span class="p">:</span> <span class="n">FilterSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">resource_stream</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">sieve_stream</span><span class="p">:</span>
+            <span class="n">sieve</span> <span class="o">=</span> <span class="n">sieve_stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">await</span> <span class="n">filter_set</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">sieve</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">filter_set</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_demo_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">mbx</span><span class="p">:</span> <span class="n">MailboxData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">msg_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">resource_listdir</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">msg_name</span> <span class="ow">in</span> <span class="n">msg_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msg_name</span> <span class="o">==</span> <span class="s1">&#39;.readonly&#39;</span><span class="p">:</span>
+                <span class="n">mbx</span><span class="o">.</span><span class="n">_readonly</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">msg_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">msg_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">msg_name</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">resource_stream</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">msg_path</span><span class="p">))</span> <span class="k">as</span> <span class="n">msg_stream</span><span class="p">:</span>
+                <span class="n">flags_line</span> <span class="o">=</span> <span class="n">msg_stream</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="n">msg_timestamp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">msg_stream</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
+                <span class="n">msg_data</span> <span class="o">=</span> <span class="n">msg_stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">msg_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">msg_timestamp</span><span class="p">,</span> <span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+            <span class="n">msg_flags</span> <span class="o">=</span> <span class="p">{</span><span class="n">Flag</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="k">for</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">flags_line</span><span class="o">.</span><span class="n">split</span><span class="p">()}</span>
+            <span class="k">if</span> <span class="n">Recent</span> <span class="ow">in</span> <span class="n">msg_flags</span><span class="p">:</span>
+                <span class="n">msg_flags</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">Recent</span><span class="p">)</span>
+                <span class="n">msg_recent</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg_recent</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">append_msg</span> <span class="o">=</span> <span class="n">AppendMessage</span><span class="p">(</span><span class="n">msg_data</span><span class="p">,</span> <span class="n">msg_dt</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">msg_flags</span><span class="p">))</span>
+            <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">append_msg</span><span class="p">,</span> <span class="n">recent</span><span class="o">=</span><span class="n">msg_recent</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserMetadata</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">users_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UserNotFound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">UserMetadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_role</span> <span class="o">!=</span> <span class="s1">&#39;admin&#39;</span> <span class="ow">and</span> <span class="n">data</span><span class="o">.</span><span class="n">role</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotAllowedError</span><span class="p">(</span><span class="s1">&#39;Cannot assign role.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">users_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">users_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UserNotFound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">set_cache</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">token_id</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">tokens_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">tokens_dict</span><span class="p">[</span><span class="n">token_id</span><span class="p">]</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.backend.dict</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

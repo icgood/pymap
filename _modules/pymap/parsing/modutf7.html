@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.parsing.modutf7 &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.modutf7</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.parsing.modutf7</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implements the modified UTF-7 specification used for encoding and decoding</span>
+<span class="sd">mailbox names in IMAP.</span>
+
+<span class="sd">See Also:</span>
+<span class="sd">    `RFC 3501 5.1.3 &lt;https://tools.ietf.org/html/rfc3501#section-5.1.3&gt;`_</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;modutf7_encode&#39;</span><span class="p">,</span> <span class="s1">&#39;modutf7_decode&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_modified_b64encode</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="c1"># Inspired by Twisted Python&#39;s implementation:</span>
+    <span class="c1">#   https://twistedmatrix.com/trac/browser/trunk/LICENSE</span>
+    <span class="n">src_utf7</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-7&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">src_utf7</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_modified_b64decode</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># Inspired by Twisted Python&#39;s implementation:</span>
+    <span class="c1">#   https://twistedmatrix.com/trac/browser/trunk/LICENSE</span>
+    <span class="n">src_utf7</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;+%b-&#39;</span> <span class="o">%</span> <span class="n">src</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">src_utf7</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-7&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="modutf7_encode"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.modutf7.modutf7_encode">[docs]</a><span class="k">def</span> <span class="nf">modutf7_encode</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Encode the string using modified UTF-7.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: The input string to encode.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+    <span class="n">is_usascii</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">encode_start</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">charpoint</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_usascii</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">charpoint</span> <span class="o">==</span> <span class="mh">0x26</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&amp;-&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="mh">0x20</span> <span class="o">&lt;=</span> <span class="n">charpoint</span> <span class="o">&lt;=</span> <span class="mh">0x7e</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">charpoint</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">encode_start</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">is_usascii</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="mh">0x20</span> <span class="o">&lt;=</span> <span class="n">charpoint</span> <span class="o">&lt;=</span> <span class="mh">0x7e</span><span class="p">:</span>
+                <span class="n">to_encode</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">encode_start</span><span class="p">:</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">encoded</span> <span class="o">=</span> <span class="n">_modified_b64encode</span><span class="p">(</span><span class="n">to_encode</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x26</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="mh">0x2d</span><span class="p">,</span> <span class="n">charpoint</span><span class="p">))</span>
+                <span class="n">is_usascii</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_usascii</span><span class="p">:</span>
+        <span class="n">to_encode</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">encode_start</span><span class="p">:]</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="n">_modified_b64encode</span><span class="p">(</span><span class="n">to_encode</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x26</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x2d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="modutf7_decode"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.modutf7.modutf7_decode">[docs]</a><span class="k">def</span> <span class="nf">modutf7_decode</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Decode the bytestring using modified UTF-7.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: The encoded bytestring to decode.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">is_usascii</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">buf</span><span class="p">:</span>
+        <span class="n">byte</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">is_usascii</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;&amp;-&#39;</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">)</span>
+                <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="k">elif</span> <span class="n">byte</span> <span class="o">==</span> <span class="mh">0x26</span><span class="p">:</span>
+                <span class="n">is_usascii</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">byte</span><span class="p">))</span>
+                <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">byte</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buf</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">byte</span> <span class="o">==</span> <span class="mh">0x2d</span><span class="p">:</span>
+                    <span class="n">to_decode</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+                    <span class="n">decoded</span> <span class="o">=</span> <span class="n">_modified_b64decode</span><span class="p">(</span><span class="n">to_decode</span><span class="p">)</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+                    <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">is_usascii</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_usascii</span><span class="p">:</span>
+        <span class="n">to_decode</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="n">decoded</span> <span class="o">=</span> <span class="n">_modified_b64decode</span><span class="p">(</span><span class="n">to_decode</span><span class="p">)</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">decoded</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../parsing.html" >pymap.parsing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.modutf7</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

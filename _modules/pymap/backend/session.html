@@ -1,0 +1,441 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.backend.session &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.backend.session</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.backend.session</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">asyncio</span> <span class="kn">import</span> <span class="n">shield</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">pymap.concurrent</span> <span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span> <span class="nn">pymap.config</span> <span class="kn">import</span> <span class="n">IMAPConfig</span>
+<span class="kn">from</span> <span class="nn">pymap.exceptions</span> <span class="kn">import</span> <span class="n">MailboxNotFound</span><span class="p">,</span> <span class="n">MailboxConflict</span><span class="p">,</span> <span class="n">MailboxReadOnly</span>
+<span class="kn">from</span> <span class="nn">pymap.flags</span> <span class="kn">import</span> <span class="n">FlagOp</span><span class="p">,</span> <span class="n">SessionFlags</span><span class="p">,</span> <span class="n">PermanentFlags</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.filter</span> <span class="kn">import</span> <span class="n">FilterSetInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.message</span> <span class="kn">import</span> <span class="n">MessageT</span>
+<span class="kn">from</span> <span class="nn">pymap.interfaces.session</span> <span class="kn">import</span> <span class="n">SessionInterface</span>
+<span class="kn">from</span> <span class="nn">pymap.mailbox</span> <span class="kn">import</span> <span class="n">MailboxSnapshot</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.message</span> <span class="kn">import</span> <span class="n">AppendMessage</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.specials</span> <span class="kn">import</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">SearchKey</span><span class="p">,</span> <span class="n">ObjectId</span><span class="p">,</span> \
+    <span class="n">FetchRequirement</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.specials.flag</span> <span class="kn">import</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">Seen</span>
+<span class="kn">from</span> <span class="nn">pymap.parsing.response.code</span> <span class="kn">import</span> <span class="n">AppendUid</span><span class="p">,</span> <span class="n">CopyUid</span>
+<span class="kn">from</span> <span class="nn">pymap.search</span> <span class="kn">import</span> <span class="n">SearchParams</span><span class="p">,</span> <span class="n">SearchCriteriaSet</span>
+<span class="kn">from</span> <span class="nn">pymap.selected</span> <span class="kn">import</span> <span class="n">SelectedMailbox</span>
+
+<span class="kn">from</span> <span class="nn">.mailbox</span> <span class="kn">import</span> <span class="n">MailboxDataInterface</span><span class="p">,</span> <span class="n">MailboxSetInterface</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BaseSession&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="BaseSession"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession">[docs]</a><span class="k">class</span> <span class="nc">BaseSession</span><span class="p">(</span><span class="n">SessionInterface</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">MessageT</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;Base implementation of</span>
+<span class="sd">    :class:`~pymap.interfaces.session.SessionInterface` intended for use by</span>
+<span class="sd">    most backends.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        owner: The logged-in user name.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">=</span> <span class="n">owner</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">owner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IMAPConfig</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">mailbox_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">MailboxSetInterface</span><span class="p">[</span><span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">MessageT</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filter_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilterSetInterface</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="BaseSession.close"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BaseSession.cleanup"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.cleanup">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">mbx</span><span class="p">:</span> <span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">MessageT</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">selected</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">mbx</span> <span class="ow">or</span> <span class="n">selected</span><span class="o">.</span><span class="n">mailbox_id</span> <span class="o">!=</span> <span class="n">mbx</span><span class="o">.</span><span class="n">mailbox_id</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">MailboxNotFound</span><span class="p">:</span>
+                    <span class="n">selected</span><span class="o">.</span><span class="n">set_deleted</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="n">selected</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">selected</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_pick_selected</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="n">mbx</span><span class="p">:</span> <span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">MessageT</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">selected</span> <span class="ow">and</span> <span class="n">selected</span><span class="o">.</span><span class="n">mailbox_id</span> <span class="o">==</span> <span class="n">mbx</span><span class="o">.</span><span class="n">mailbox_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">selected</span>
+        <span class="k">return</span> <span class="n">mbx</span><span class="o">.</span><span class="n">selected_set</span><span class="o">.</span><span class="n">any_selected</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">try_create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">MessageT</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxNotFound</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">try_create</span><span class="o">=</span><span class="n">try_create</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">MessageT</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mailbox</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">lookup</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseSession.list_mailboxes"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.list_mailboxes">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_mailboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">subscribed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                             <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]]],</span>
+                     <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">delimiter</span>
+        <span class="k">if</span> <span class="n">filter_</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">subscribed</span><span class="p">:</span>
+                <span class="n">list_tree</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">list_subscribed</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">list_tree</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">list_mailboxes</span><span class="p">()</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">list_tree</span><span class="o">.</span><span class="n">list_matching</span><span class="p">(</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">filter_</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;Noselect&#39;</span><span class="p">])]</span>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.get_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.get_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MailboxSnapshot</span><span class="p">,</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxNotFound</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">snapshot</span><span class="p">,</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">mbx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.create_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.create_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObjectId</span><span class="p">,</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mailbox_id</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">add_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxConflict</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">return</span> <span class="n">mailbox_id</span><span class="p">,</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.delete_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.delete_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">delete_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxNotFound</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.rename_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.rename_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">rename_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">after_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                             <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">rename_mailbox</span><span class="p">(</span><span class="n">before_name</span><span class="p">,</span> <span class="n">after_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxNotFound</span><span class="p">(</span><span class="n">before_name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxConflict</span><span class="p">(</span><span class="n">after_name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.subscribe"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.subscribe">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">set_subscribed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.unsubscribe"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.unsubscribe">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox_set</span><span class="o">.</span><span class="n">set_subscribed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.append_messages"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.append_messages">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">append_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                              <span class="n">messages</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AppendMessage</span><span class="p">],</span>
+                              <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AppendUid</span><span class="p">,</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">try_create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mbx</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxReadOnly</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">dest_selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pick_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">mbx</span><span class="p">)</span>
+        <span class="n">uids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">append_msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">append_msg</span><span class="p">,</span> <span class="n">recent</span><span class="o">=</span><span class="ow">not</span> <span class="n">dest_selected</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dest_selected</span><span class="p">:</span>
+                <span class="n">dest_selected</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">add_recent</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+            <span class="n">uids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">AppendUid</span><span class="p">(</span><span class="n">mbx</span><span class="o">.</span><span class="n">uid_validity</span><span class="p">,</span> <span class="n">uids</span><span class="p">),</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_updates</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">mbx</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseSession.select_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.select_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">select_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">readonly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MailboxSnapshot</span><span class="p">,</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">SelectedMailbox</span><span class="p">(</span><span class="n">mbx</span><span class="o">.</span><span class="n">mailbox_id</span><span class="p">,</span> <span class="n">readonly</span> <span class="ow">or</span> <span class="n">mbx</span><span class="o">.</span><span class="n">readonly</span><span class="p">,</span>
+                                   <span class="n">PermanentFlags</span><span class="p">(</span><span class="n">mbx</span><span class="o">.</span><span class="n">permanent_flags</span><span class="p">),</span>
+                                   <span class="n">SessionFlags</span><span class="p">(</span><span class="n">mbx</span><span class="o">.</span><span class="n">session_flags</span><span class="p">),</span>
+                                   <span class="n">selected_set</span><span class="o">=</span><span class="n">mbx</span><span class="o">.</span><span class="n">selected_set</span><span class="p">,</span>
+                                   <span class="n">lookup</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">selected</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">claim_recent</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">snapshot</span><span class="p">,</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.check_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.check_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">check_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                            <span class="n">wait_on</span><span class="p">:</span> <span class="n">Event</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="n">housekeeping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">housekeeping</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">shield</span><span class="p">(</span><span class="n">mbx</span><span class="o">.</span><span class="n">cleanup</span><span class="p">())</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">wait_on</span><span class="o">=</span><span class="n">wait_on</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.fetch_messages"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.fetch_messages">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                             <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">set_seen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT</span><span class="p">]],</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">cached_msg</span> <span class="ow">in</span> <span class="n">selected</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">sequence_set</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">set_seen</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cached_msg</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">,</span>
+                                       <span class="nb">frozenset</span><span class="p">({</span><span class="n">Seen</span><span class="p">}),</span> <span class="n">FlagOp</span><span class="o">.</span><span class="n">ADD</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cached_msg</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.search_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.search_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">search_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                             <span class="n">keys</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">SearchKey</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT</span><span class="p">]],</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">FetchRequirement</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">requirement</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">SearchParams</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span>
+                              <span class="n">disabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">disable_search_keys</span><span class="p">)</span>
+        <span class="n">search</span> <span class="o">=</span> <span class="n">SearchCriteriaSet</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">async</span> <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">mbx</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">search</span><span class="o">.</span><span class="n">sequence_set</span><span class="p">,</span> <span class="n">selected</span><span class="p">):</span>
+            <span class="n">msg_content</span> <span class="o">=</span> <span class="k">await</span> <span class="n">msg</span><span class="o">.</span><span class="n">load_content</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">search</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">msg_content</span><span class="p">):</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.expunge_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.expunge_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">expunge_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                              <span class="n">uid_set</span><span class="p">:</span> <span class="n">SequenceSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxReadOnly</span><span class="p">()</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">uid_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">uid_set</span> <span class="o">=</span> <span class="n">SequenceSet</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">expunge_uids</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">find_deleted</span><span class="p">(</span><span class="n">uid_set</span><span class="p">,</span> <span class="n">selected</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">expunge_uids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseSession.copy_messages"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.copy_messages">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">copy_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                            <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
+                            <span class="n">mailbox</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CopyUid</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mailbox</span><span class="p">(</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">try_create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dest</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxReadOnly</span><span class="p">(</span><span class="n">mailbox</span><span class="p">)</span>
+        <span class="n">dest_selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pick_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+        <span class="n">uids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">source_uid</span> <span class="ow">in</span> <span class="n">selected</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">get_uids</span><span class="p">(</span><span class="n">sequence_set</span><span class="p">):</span>
+            <span class="n">dest_uid</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">source_uid</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span>
+                                      <span class="n">recent</span><span class="o">=</span><span class="ow">not</span> <span class="n">dest_selected</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dest_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dest_selected</span><span class="p">:</span>
+                    <span class="n">dest_selected</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">add_recent</span><span class="p">(</span><span class="n">dest_uid</span><span class="p">)</span>
+                <span class="n">uids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source_uid</span><span class="p">,</span> <span class="n">dest_uid</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">uids</span><span class="p">:</span>
+            <span class="n">copy_uid</span><span class="p">:</span> <span class="n">CopyUid</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">copy_uid</span> <span class="o">=</span> <span class="n">CopyUid</span><span class="p">(</span><span class="n">dest</span><span class="o">.</span><span class="n">uid_validity</span><span class="p">,</span> <span class="n">uids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">copy_uid</span><span class="p">,</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseSession.move_messages"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.move_messages">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">move_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                            <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
+                            <span class="n">mailbox</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CopyUid</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mailbox</span><span class="p">(</span><span class="n">mailbox</span><span class="p">,</span> <span class="n">try_create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dest</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxReadOnly</span><span class="p">(</span><span class="n">mailbox</span><span class="p">)</span>
+        <span class="n">dest_selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pick_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+        <span class="n">uids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">source_uid</span> <span class="ow">in</span> <span class="n">selected</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">get_uids</span><span class="p">(</span><span class="n">sequence_set</span><span class="p">):</span>
+            <span class="n">dest_uid</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">source_uid</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span>
+                                      <span class="n">recent</span><span class="o">=</span><span class="ow">not</span> <span class="n">dest_selected</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dest_uid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dest_selected</span><span class="p">:</span>
+                    <span class="n">dest_selected</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">add_recent</span><span class="p">(</span><span class="n">dest_uid</span><span class="p">)</span>
+                <span class="n">uids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source_uid</span><span class="p">,</span> <span class="n">dest_uid</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">uids</span><span class="p">:</span>
+            <span class="n">copy_uid</span><span class="p">:</span> <span class="n">CopyUid</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">copy_uid</span> <span class="o">=</span> <span class="n">CopyUid</span><span class="p">(</span><span class="n">dest</span><span class="o">.</span><span class="n">uid_validity</span><span class="p">,</span> <span class="n">uids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">copy_uid</span><span class="p">,</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BaseSession.update_flags"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.session.BaseSession.update_flags">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">update_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
+                           <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
+                           <span class="n">flag_set</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span>
+                           <span class="n">mode</span><span class="p">:</span> <span class="n">FlagOp</span> <span class="o">=</span> <span class="n">FlagOp</span><span class="o">.</span><span class="n">REPLACE</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT</span><span class="p">]],</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">readonly</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MailboxReadOnly</span><span class="p">()</span>
+        <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span>
+        <span class="n">permanent_flags</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">permanent_flags</span> <span class="o">&amp;</span> <span class="n">flag_set</span>
+        <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">cached_msg</span> <span class="ow">in</span> <span class="n">selected</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">sequence_set</span><span class="p">):</span>
+            <span class="n">uid</span> <span class="o">=</span> <span class="n">cached_msg</span><span class="o">.</span><span class="n">uid</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">,</span> <span class="n">permanent_flags</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="o">.</span><span class="n">expunged</span><span class="p">:</span>
+                <span class="n">selected</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">flag_set</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">messages</span><span class="p">,</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">update_selected</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.backend.session</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

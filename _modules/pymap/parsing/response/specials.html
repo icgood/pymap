@@ -1,0 +1,393 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pymap.parsing.response.specials &#8212; pymap 0.27.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+
+    
+    
+     
+        <script src="../../../../_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="../../../../_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="../../../../_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../response.html" accesskey="U">pymap.parsing.response</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.response.specials</a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pymap.parsing.response.specials</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">AbstractAsyncContextManager</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">UntaggedResponse</span>
+<span class="kn">from</span> <span class="nn">..modutf7</span> <span class="kn">import</span> <span class="n">modutf7_encode</span>
+<span class="kn">from</span> <span class="nn">..primitives</span> <span class="kn">import</span> <span class="n">Nil</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">QuotedString</span>
+<span class="kn">from</span> <span class="nn">..specials</span> <span class="kn">import</span> <span class="n">Mailbox</span><span class="p">,</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">FetchValue</span><span class="p">,</span> <span class="n">StatusAttribute</span>
+<span class="kn">from</span> <span class="nn">...bytes</span> <span class="kn">import</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">BytesFormat</span><span class="p">,</span> <span class="n">WriteStream</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FlagsResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;ExistsResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;RecentResponse&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;ExpungeResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;FetchResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;SearchResponse&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;ESearchResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;StatusResponse&#39;</span><span class="p">,</span> <span class="s1">&#39;ListResponse&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;LSubResponse&#39;</span><span class="p">]</span>
+
+<span class="n">_WritingHook</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="FlagsResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FlagsResponse">[docs]</a><span class="k">class</span> <span class="nc">FlagsResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special FLAGS response used by the SELECT and EXAMINE</span>
+<span class="sd">    commands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        flags: Flags in the response.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;FLAGS %b&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="ExistsResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ExistsResponse">[docs]</a><span class="k">class</span> <span class="nc">ExistsResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special EXISTS response used by the SELECT and EXAMINE</span>
+<span class="sd">    commands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The number of messages existing in the mailbox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1"> EXISTS&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span></div>
+
+
+<div class="viewcode-block" id="RecentResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.RecentResponse">[docs]</a><span class="k">class</span> <span class="nc">RecentResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special RECENT response used by the SELECT and EXAMINE</span>
+<span class="sd">    commands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num: The number of recent messages in the mailbox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1"> RECENT&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span></div>
+
+
+<div class="viewcode-block" id="ExpungeResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ExpungeResponse">[docs]</a><span class="k">class</span> <span class="nc">ExpungeResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special EXPUNGE response used by the EXPUNGE command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seq: The message sequence number.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1"> EXPUNGE&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span></div>
+
+
+<div class="viewcode-block" id="FetchResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FetchResponse">[docs]</a><span class="k">class</span> <span class="nc">FetchResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special FETCH response used by the STORE and FETCH</span>
+<span class="sd">    commands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seq: The message sequence number.</span>
+<span class="sd">        data: Fetch attributes and values for the message.</span>
+<span class="sd">        writing_hook: An async context manager to enter while the untagged</span>
+<span class="sd">            response is being written.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FetchValue</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">writing_hook</span><span class="p">:</span> <span class="n">_WritingHook</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">writing_hook</span><span class="o">=</span><span class="n">writing_hook</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">FetchValue</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">attr</span><span class="o">.</span><span class="n">attribute</span><span class="p">:</span> <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">merge_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span>
+
+<div class="viewcode-block" id="FetchResponse.merge"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FetchResponse.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">FetchResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchResponse</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Merge the other FETCH response, adding any fetch attributes that do</span>
+<span class="sd">        not already exist in this FETCH response. For example::</span>
+
+<span class="sd">            * 3 FETCH (UID 119)</span>
+<span class="sd">            * 3 FETCH (FLAGS (\\Seen))</span>
+
+<span class="sd">        Would merge into::</span>
+
+<span class="sd">            * 3 FETCH (UID 119 FLAGS (\\Seen))</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other: The other response to merge.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">seq</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">writing_hook</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">writing_hook</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">writing_hook</span>
+        <span class="k">return</span> <span class="n">FetchResponse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="n">new_data</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                             <span class="n">writing_hook</span><span class="o">=</span><span class="n">writing_hook</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1"> FETCH&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">,</span> <span class="p">)</span>
+
+<div class="viewcode-block" id="FetchResponse.write"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FetchResponse.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;%b %b &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SearchResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.SearchResponse">[docs]</a><span class="k">class</span> <span class="nc">SearchResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special SEARCH response used by the SEARCH command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seqs: List of message sequence integers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span> <span class="o">=</span> <span class="n">seqs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;SEARCH&#39;</span><span class="p">],</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">seq</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="ESearchResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ESearchResponse">[docs]</a><span class="k">class</span> <span class="nc">ESearchResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special ESEARCH response used by extended SEARCH</span>
+<span class="sd">    commands. This response should be mutually exclusive with SEARCH responses.</span>
+
+<span class="sd">    See Also:</span>
+<span class="sd">        `RFC 4466 2.6.2. &lt;https://tools.ietf.org/html/rfc4466#section-2.6.2&gt;`_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        issuer_tag: The command tag, if issued in response to a command.</span>
+<span class="sd">        uid: True if the response refers to message UIDs.</span>
+<span class="sd">        data: The returned search data pairs.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">issuer_tag</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">MaybeBytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">issuer_tag</span> <span class="o">=</span> <span class="n">issuer_tag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">prefixes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">issuer_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefixes</span> <span class="o">+=</span> <span class="p">[</span><span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;(TAG &quot;%b&quot;)&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">issuer_tag</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
+            <span class="n">prefixes</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;UID&#39;</span><span class="p">]</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">item</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">())]</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="o">*</span><span class="n">parts</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StatusResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.StatusResponse">[docs]</a><span class="k">class</span> <span class="nc">StatusResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special STATUS response used by the STATUS command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name: The name of the mailbox.</span>
+<span class="sd">        data: Dictionary mapping status attributes to their values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">StatusAttribute</span><span class="p">,</span> <span class="n">MaybeBytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">b</span><span class="s1">&#39;STATUS&#39;</span><span class="p">,</span> <span class="n">Mailbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">data_list</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ListResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ListResponse">[docs]</a><span class="k">class</span> <span class="nc">ListResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special LIST response used by the LIST command.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mailbox: The mailbox name.</span>
+<span class="sd">        sep: The heirarchy separation character.</span>
+<span class="sd">        attrs: The attribute flags associated with the mailbox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_name</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;LIST&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">attrs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mailbox</span> <span class="o">=</span> <span class="n">mailbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">:</span>
+            <span class="n">sep_obj</span><span class="p">:</span> <span class="n">MaybeBytes</span> <span class="o">=</span> <span class="n">QuotedString</span><span class="p">(</span><span class="n">modutf7_encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sep_obj</span> <span class="o">=</span> <span class="n">Nil</span><span class="p">()</span>
+        <span class="n">attrs_obj</span> <span class="o">=</span> <span class="n">List</span><span class="p">([</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">text</span> <span class="o">+</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">attrs_obj</span><span class="p">,</span> <span class="n">sep_obj</span><span class="p">,</span> <span class="n">Mailbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mailbox</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="LSubResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.LSubResponse">[docs]</a><span class="k">class</span> <span class="nc">LSubResponse</span><span class="p">(</span><span class="n">ListResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the special LSUB response used by the LSUB command.&quot;&quot;&quot;</span>
+
+    <span class="n">_name</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;LSUB&#39;</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../response.html" >pymap.parsing.response</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pymap.parsing.response.specials</a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
