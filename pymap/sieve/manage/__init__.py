@@ -6,7 +6,7 @@ import binascii
 import logging
 import re
 from argparse import ArgumentParser
-from asyncio import StreamReader, StreamWriter
+from asyncio import StreamReader, StreamWriter, WriteTransport
 from base64 import b64encode, b64decode
 from collections.abc import Mapping
 from contextlib import closing, AsyncExitStack
@@ -283,6 +283,7 @@ class ManageSieveConnection:
         protocol = transport.get_protocol()
         new_transport = await loop.start_tls(
             transport, protocol, ssl_context, server_side=True)
+        assert isinstance(new_transport, WriteTransport)
         new_protocol = new_transport.get_protocol()
         new_writer = StreamWriter(new_transport, new_protocol,
                                   self.reader, loop)

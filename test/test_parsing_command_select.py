@@ -81,6 +81,12 @@ class TestFetchCommand(unittest.TestCase):
                               FetchAttribute(b'ENVELOPE')], ret.attributes)
         self.assertEqual(b'  ', buf)
 
+    def test_parse_uid_list(self):
+        ret, buf = UidFetchCommand.parse(b' 265 (BODY.PEEK[1]<208.78> '
+                                         b'BODY.PEEK[2]<2027.77>)\n  ',
+                                         Params())
+        self.assertEqual(b'  ', buf)
+
     def test_parse_macro_all(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 ALL\n  ', Params())
         self.assertEqual([1, 2, 3], ret.sequence_set.value)

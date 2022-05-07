@@ -231,7 +231,7 @@ class TestFetch(TestBase):
         transport.push_login()
         transport.push_select(b'Sent')
         transport.push_readline(
-            b'fetch1 FETCH 2 (BINARY[1]<5.22>)\r\n')
+            b'fetch1 FETCH 2 (BINARY[1]<5.17>)\r\n')
         transport.push_write(
             b'* 2 FETCH (BINARY[1]<5> ~{17}\r\n'
             + 'ⅬⅬՕ ᎳоᏒ'.encode('utf-8') +
