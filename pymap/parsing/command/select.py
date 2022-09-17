@@ -345,8 +345,8 @@ class SearchCommand(CommandSelect):
                 charset = str(string.value, 'ascii')
                 try:
                     b' '.decode(charset)
-                except LookupError:
-                    raise NotParseable(buf, b'BADCHARSET')
+                except LookupError as exc:
+                    raise NotParseable(buf, b'BADCHARSET') from exc
                 return charset, after
         return None, buf
 

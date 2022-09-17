@@ -10,7 +10,7 @@ from pymapadmin import __version__ as pymap_admin_version
 from pymapadmin.grpc.admin_grpc import SystemBase
 from pymapadmin.grpc.admin_pb2 import LoginRequest, LoginResponse, \
     PingRequest, PingResponse
-from pysasl.creds import AuthenticationCredentials
+from pysasl.creds.plain import PlainCredentials
 
 from . import BaseHandler
 
@@ -45,7 +45,7 @@ class SystemHandlers(SystemBase, BaseHandler):
         assert request is not None
         bearer_token: str | None = None
         async with self.catch_errors('Login') as result:
-            credentials = AuthenticationCredentials(
+            credentials = PlainCredentials(
                 request.authcid, request.secret, request.authzid)
             expiration: datetime | None = None
             if request.HasField('token_expiration'):

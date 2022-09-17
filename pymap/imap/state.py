@@ -37,7 +37,8 @@ from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     SearchResponse, StatusResponse
 from pymap.parsing.specials import StatusAttribute, FetchAttribute, FetchValue
 from pymap.selected import SelectedMailbox
-from pysasl.creds import AuthenticationCredentials
+from pysasl.creds.plain import PlainCredentials
+from pysasl.creds.server import ServerCredentials
 
 __all__ = ['ConnectionState']
 
@@ -94,7 +95,7 @@ class ConnectionState:
         with suppress(Exception):
             await self.session.cleanup()
 
-    async def _login(self, creds: AuthenticationCredentials) \
+    async def _login(self, creds: ServerCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
         identity = await self.login.authenticate(creds)
@@ -117,7 +118,7 @@ class ConnectionState:
         return resp_cls(b'*', self.config.greeting, self.capability)
 
     async def do_authenticate(self, cmd: _AuthCommands,
-                              creds: AuthenticationCredentials | None) \
+                              creds: ServerCredentials | None) \
             -> CommandResponse:
         if not creds:
             return ResponseNo(cmd.tag, b'Invalid authentication mechanism.')
@@ -129,7 +130,7 @@ class ConnectionState:
     async def do_login(self, cmd: LoginCommand) -> _CommandRet:
         if b'LOGINDISABLED' in self.capability:
             raise NotSupportedError('LOGIN is disabled.')
-        creds = AuthenticationCredentials(
+        creds = PlainCredentials(
             cmd.userid.decode('utf-8', 'surrogateescape'),
             cmd.password.decode('utf-8', 'surrogateescape'))
         return await self.do_authenticate(cmd, creds), None
@@ -138,7 +139,7 @@ class ConnectionState:
         try:
             self._capability.remove(b'STARTTLS')
         except ValueError:
-            raise NotSupportedError('STARTTLS not available.')
+            raise NotSupportedError('STARTTLS not available.') from None
         self.auth = self.config.tls_auth
         return ResponseOk(cmd.tag, b'Ready to handshake.'), None
 

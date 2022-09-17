@@ -10,6 +10,7 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import MessageT_co, CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
+from pymap.message import ExpungedMessage
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import ObjectId, SequenceSet
 from pymap.parsing.specials.flag import get_system_flags, Flag, Deleted, Recent
@@ -125,7 +126,8 @@ class MailboxDataInterface(Protocol[MessageT_co]):
         ...
 
     @abstractmethod
-    async def get(self, uid: int, cached_msg: CachedMessage) -> MessageT_co:
+    async def get(self, uid: int, cached_msg: CachedMessage) \
+            -> MessageT_co | ExpungedMessage:
         """Return the message with the given UID.
 
         Args:
@@ -137,7 +139,8 @@ class MailboxDataInterface(Protocol[MessageT_co]):
 
     @abstractmethod
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: frozenset[Flag], mode: FlagOp) -> MessageT_co:
+                     flag_set: frozenset[Flag], mode: FlagOp) \
+            -> MessageT_co | ExpungedMessage:
         """Update the permanent flags of the message.
 
         Args:
@@ -187,7 +190,7 @@ class MailboxDataInterface(Protocol[MessageT_co]):
         ...
 
     async def find(self, seq_set: SequenceSet, selected: SelectedMailbox) \
-            -> AsyncIterable[tuple[int, MessageT_co]]:
+            -> AsyncIterable[tuple[int, MessageT_co | ExpungedMessage]]:
         """Find the active message UID and message pairs in the mailbox that
         are contained in the given sequences set. Message sequence numbers
         are resolved by the selected mailbox session.

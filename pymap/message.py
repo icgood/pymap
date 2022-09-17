@@ -19,7 +19,7 @@ from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MessageBodyStructure
 from .parsing.specials import Flag, ObjectId, FetchRequirement
 
-__all__ = ['BaseMessage', 'BaseLoadedMessage']
+__all__ = ['BaseMessage', 'ExpungedMessage', 'BaseLoadedMessage']
 
 
 class _NoContent(ValueError):
@@ -92,6 +92,26 @@ class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
     def __repr__(self) -> str:
         type_name = type(self).__name__
         return f'<{type_name} uid={self.uid} flags={self.permanent_flags}>'
+
+
+class ExpungedMessage(BaseMessage):
+    """Represents a message that has been expunged from the mailbox.
+
+    Args:
+        cached_msg: A cached copy of the message metadata.
+
+    """
+
+    def __init__(self, cached_msg: CachedMessage):
+        super().__init__(cached_msg.uid, cached_msg.internal_date,
+                         cached_msg.permanent_flags,
+                         email_id=cached_msg.email_id,
+                         thread_id=cached_msg.thread_id,
+                         expunged=True)
+
+    async def load_content(self, requirement: FetchRequirement) \
+            -> LoadedMessageInterface:
+        return BaseLoadedMessage(self, requirement, None)
 
 
 class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):

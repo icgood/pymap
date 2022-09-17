@@ -7,19 +7,31 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Sequence
 from io import BytesIO
 from itertools import chain
-from typing import cast, final, Any, Final, TypeAlias, TypeVar, \
-    SupportsBytes, Protocol
+from numbers import Number
+from typing import final, Any, Final, TypeAlias, TypeVar, TypeGuard, \
+    SupportsBytes, SupportsIndex, Protocol
 
-__all__ = ['MaybeBytes', 'MaybeBytesT', 'WriteStream', 'Writeable',
-           'BytesFormat']
+__all__ = ['MaybeBytes', 'MaybeBytesT', 'has_bytes', 'WriteStream',
+           'Writeable', 'BytesFormat']
 
-#: A bytes object, memoryview,  or an object with a ``__bytes__`` method.
-MaybeBytes: TypeAlias = bytes | bytearray | memoryview | SupportsBytes
+#: An object that can be converted to a bytestring.
+MaybeBytes: TypeAlias = bytes | SupportsBytes
 
 #: A type variable bound to :class:`MaybeBytes`.
 MaybeBytesT = TypeVar('MaybeBytesT', bound=MaybeBytes)
 
-_FormatArg: TypeAlias = int | MaybeBytes
+_FormatArg: TypeAlias = SupportsIndex | MaybeBytes
+
+
+def has_bytes(value: object) -> TypeGuard[MaybeBytes]:
+    """Checks if the *value* is :class:`bytes` or implements the ``__bytes__``
+    method to be converted to bytes.
+
+    Args:
+        value: The value to check.
+
+    """
+    return isinstance(value, bytes) or isinstance(value, SupportsBytes)
 
 
 class WriteStream(Protocol):
@@ -130,6 +142,9 @@ class Writeable(metaclass=ABCMeta):
     def __bytes__(self) -> bytes:
         ...
 
+    def __str__(self) -> str:
+        return str(bytes(self), 'utf-8', 'replace')
+
 
 class _EmptyWriteable(Writeable):
 
@@ -150,16 +165,13 @@ class _WrappedWriteable(Writeable):
     __slots__ = ['data']
 
     def __init__(self, data: MaybeBytes) -> None:
-        if isinstance(data, bytes):
-            self.data = data
-        else:
-            self.data = bytes(data)
+        self.data = bytes(data)
 
     def __bytes__(self) -> bytes:
         return self.data
 
     def __repr__(self) -> str:
-        return f'<Writeable {repr(self.data)}>'
+        return f'<Writeable {self.data!r}>'
 
 
 class _ConcatWriteable(Writeable):
@@ -167,20 +179,27 @@ class _ConcatWriteable(Writeable):
     __slots__ = ['data']
 
     def __init__(self, data: Iterable[MaybeBytes]) -> None:
-        self.data = list(data)
+        self.data = [self._wrap(val) for val in data]
+
+    @classmethod
+    def _wrap(cls, val: MaybeBytes) -> Writeable:
+        if isinstance(val, Writeable):
+            return val
+        else:
+            return _WrappedWriteable(val)
 
     def write(self, writer: WriteStream) -> None:
         for item in self.data:
-            if isinstance(item, Writeable):
-                item.write(writer)
-            else:
-                writer.write(bytes(item))
+            item.write(writer)
 
     def __bytes__(self) -> bytes:
         return BytesFormat(b'').join(self.data)
 
+    def __str__(self) -> str:
+        return ''.join(str(d) for d in self.data)
+
     def __repr__(self) -> str:
-        return f'<Writeable {repr(self.data)}>'
+        return f'<Writeable {self.data!r}>'
 
 
 class BytesFormat:
@@ -206,19 +225,20 @@ class BytesFormat:
             other: The data interpolated into the format string.
 
         """
-        if isinstance(other, bytes):
+        if isinstance(other, SupportsIndex) or has_bytes(other):
             return self.format([other])
-        elif hasattr(other, '__bytes__'):
-            supports_bytes = cast(SupportsBytes, other)
-            return self.format([bytes(supports_bytes)])
-        elif hasattr(other, '__iter__'):
-            items = cast(Iterable[_FormatArg], other)
-            return self.format(items)
-        return NotImplemented
+        elif self._iter_guard(other):
+            return self.format(other)
+        raise NotImplementedError()
 
     @classmethod
-    def _fix_format_arg(cls, data: _FormatArg) -> Any:
-        if isinstance(data, int):
+    def _iter_guard(cls, other: _FormatArg | Iterable[_FormatArg]) \
+            -> TypeGuard[Iterable[_FormatArg]]:
+        return isinstance(other, Iterable)
+
+    @classmethod
+    def _fix_format_arg(cls, data: _FormatArg) -> _FormatArg:
+        if isinstance(data, Number):
             return data
         else:
             return bytes(data)
@@ -240,9 +260,9 @@ class BytesFormat:
         return self.how % tuple(fix_arg(item) for item in data)
 
     @classmethod
-    def _fix_join_arg(cls, data: _FormatArg) -> Any:
-        if isinstance(data, int):
-            return b'%d' % data
+    def _fix_join_arg(cls, data: _FormatArg) -> bytes:
+        if isinstance(data, Number):
+            return str(data).encode('ascii')
         else:
             return bytes(data)
 

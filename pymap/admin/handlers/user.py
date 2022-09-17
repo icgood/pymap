@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import TypeAlias
 
 from grpclib.server import Stream
@@ -69,8 +70,9 @@ class UserHandlers(UserBase, BaseHandler):
             user_data = request.data
             password = self.config.hash_context.hash(user_data.password) \
                 if user_data.HasField('password') else None
-            metadata = UserMetadata(self.config, password=password,
-                                    **user_data.params)
+            params: Mapping[str, str] = user_data.params
+            metadata = UserMetadata(self.config, request.user,
+                                    password=password, **params)
             await identity.set(metadata)
         resp = UserResponse(result=result, username=request.user)
         await stream.send_message(resp)

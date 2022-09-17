@@ -11,9 +11,9 @@ from .base import TestBase
 
 class TestMailboxHandlers(TestBase):
 
-    admin_token = 'MDAwZWxvY2F0aW9uIAowMDEwaWRlbnRpZmllciAKMDAxNWNpZCB0eXBl' \
-        'ID0gYWRtaW4KMDAyZnNpZ25hdHVyZSBTApt6-KNq85_1TeSmQyqTZjWPfHCYPY8EIG' \
-        'q6NMqv4go'
+    admin_token = 'MDAwZWxvY2F0aW9uIAowMDEwaWRlbnRpZmllciAKMDAxNWNpZCByb2xlI' \
+        'D0gYWRtaW4KMDAyZnNpZ25hdHVyZSDND4TS4f6mH9ty0DHCwqB0IIuk_IqIUFgse0OV' \
+        'eHT7cAo'
     metadata = {'auth-token': admin_token}
 
     @pytest.fixture

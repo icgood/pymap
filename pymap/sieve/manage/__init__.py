@@ -24,8 +24,9 @@ from pymap.interfaces.login import LoginInterface
 from pymap.interfaces.session import SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
-from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError
-from pysasl.creds import AuthenticationCredentials
+from pysasl import ServerChallenge, ChallengeResponse
+from pysasl.creds.server import ServerCredentials
+from pysasl.exception import AuthenticationError
 
 from .command import Command, NoOpCommand, LogoutCommand, CapabilityCommand, \
     AuthenticateCommand, UnauthenticateCommand, StartTLSCommand
@@ -200,7 +201,7 @@ class ManageSieveConnection:
         else:
             self._print('%d <--| %s', bytes(resp))
 
-    async def _login(self, creds: AuthenticationCredentials) \
+    async def _login(self, creds: ServerCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
         identity = await self.login.authenticate(creds)
@@ -240,7 +241,8 @@ class ManageSieveConnection:
                 resp_bytes = await self._read_data()
                 resp_str, _ = String.parse(resp_bytes, self.params)
                 if resp_str.value == b'*':
-                    raise AuthenticationError('Authentication cancelled.')
+                    raise AuthenticationError('Authentication cancelled.') \
+                        from None
                 try:
                     resp_dec = b64decode(resp_str.value)
                 except binascii.Error as exc:

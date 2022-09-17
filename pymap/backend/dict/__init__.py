@@ -4,14 +4,14 @@ from __future__ import annotations
 import os.path
 import uuid
 from argparse import ArgumentParser, Namespace
-from collections.abc import Mapping, AsyncIterator
+from collections.abc import Set, Mapping, AsyncIterator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
 from datetime import datetime, timezone
 from secrets import token_bytes
 from typing import Any, Final
 
 from pkg_resources import resource_listdir, resource_stream
-from pysasl.creds import AuthenticationCredentials
+from pysasl.creds.server import ServerCredentials
 from pysasl.hashing import Cleartext
 
 from pymap.config import BackendCapability, IMAPConfig
@@ -19,11 +19,13 @@ from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
     UserNotFound
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.login import LoginInterface, IdentityInterface
+from pymap.interfaces.login import LoginInterface, IdentityInterface, \
+    UserInterface
+from pymap.interfaces.token import TokenCredentials
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
 from pymap.token import AllTokens
-from pymap.user import UserMetadata
+from pymap.user import UserRoles, UserMetadata
 
 from .filter import FilterSet
 from .mailbox import Message, MailboxData, MailboxSet
@@ -162,8 +164,9 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
-        self.users_dict = {config.demo_user: UserMetadata(
-            config, password=config.demo_password)}
+        self.users_dict: dict[str, UserInterface] = {
+            config.demo_user: User(
+                self, config.demo_user, password=config.demo_password)}
         self.tokens_dict: dict[str, tuple[str, bytes]] = {}
         self._tokens = AllTokens()
 
@@ -171,37 +174,35 @@ class Login(LoginInterface):
     def tokens(self) -> AllTokens:
         return self._tokens
 
-    async def authenticate(self, credentials: AuthenticationCredentials) \
-            -> Identity:
+    async def authenticate(self, credentials: ServerCredentials) -> Identity:
         authcid = credentials.authcid
-        token_key: bytes | None = None
-        role: str | None = None
-        if credentials.authcid_type == 'login-token':
-            if authcid in self.tokens_dict:
-                authcid, token_key = self.tokens_dict[authcid]
-        elif credentials.authcid_type == 'admin-token':
-            authcid = credentials.identity
-            role = 'admin'
+        authzid = credentials.authzid
+        roles = UserRoles()
+        if isinstance(credentials, TokenCredentials):
+            identifier = credentials.identifier
+            if identifier in self.tokens_dict:
+                authcid, _ = self.tokens_dict[identifier]
+            roles.add(credentials.role)
         try:
-            metadata = await Identity(authcid, self, None).get()
+            metadata = await Identity(authcid, self, roles).get()
         except UserNotFound:
-            metadata = UserMetadata(self.config)
-        await metadata.check_password(credentials, token_key=token_key)
-        role = role or metadata.role
-        if role != 'admin' and authcid != credentials.identity:
+            metadata = User(self, authcid)
+        await metadata.check_password(credentials)
+        roles |= metadata.roles
+        if authcid != authzid and 'admin' not in roles:
             raise AuthorizationFailure()
-        return Identity(credentials.identity, self, role)
+        return Identity(authzid, self, roles)
 
 
 class Identity(IdentityInterface):
     """The identity implementation for the dict backend."""
 
-    def __init__(self, name: str, login: Login, role: str | None) -> None:
+    def __init__(self, name: str, login: Login, roles: Set[str]) -> None:
         super().__init__()
         self.login: Final = login
         self.config: Final = login.config
         self._name = name
-        self._role = role
+        self._roles = frozenset(roles)
 
     @property
     def name(self) -> str:
@@ -213,7 +214,7 @@ class Identity(IdentityInterface):
         token_key = token_bytes()
         self.login.tokens_dict[token_id] = (self.name, token_key)
         return self.login.tokens.get_login_token(
-            token_id, token_key, expiration=expiration)
+            token_id, self.name, token_key, expiration=expiration)
 
     @asynccontextmanager
     async def new_session(self) -> AsyncIterator[Session]:
@@ -276,16 +277,16 @@ class Identity(IdentityInterface):
             append_msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags))
             await mbx.append(append_msg, recent=msg_recent)
 
-    async def get(self) -> UserMetadata:
+    async def get(self) -> UserInterface:
         data = self.login.users_dict.get(self.name)
         if data is None:
             raise UserNotFound(self.name)
         return data
 
-    async def set(self, data: UserMetadata) -> None:
-        if self._role != 'admin' and data.role:
-            raise NotAllowedError('Cannot assign role.')
-        self.login.users_dict[self.name] = data
+    async def set(self, data: UserInterface) -> None:
+        if 'admin' not in self._roles and data.roles:
+            raise NotAllowedError('Cannot assign roles.')
+        self.login.users_dict[self.name] = User.copy(self.login, data)
 
     async def delete(self) -> None:
         try:
@@ -296,3 +297,23 @@ class Identity(IdentityInterface):
         for token_id, (name, _) in list(self.login.tokens_dict.items()):
             if name == self.name:
                 del self.login.tokens_dict[token_id]
+
+
+class User(UserMetadata):
+
+    def __init__(self, login: Login, authcid: str, *,
+                 password: str | None = None,
+                 **params: str | None) -> None:
+        super().__init__(login.config, authcid, password=password, **params)
+        self._login = login
+
+    @classmethod
+    def copy(cls, login: Login, copy: UserInterface) -> User:
+        return User(login, copy.authcid, password=copy.password, **copy.params)
+
+    def get_key(self, identifier: str) -> bytes | None:
+        if identifier in self._login.tokens_dict:
+            authcid, key = self._login.tokens_dict[identifier]
+            if authcid == self.authcid:
+                return key
+        return None

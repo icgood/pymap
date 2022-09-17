@@ -53,7 +53,7 @@ class Command(Parseable[bytes]):
         return cls._commands
 
     @classmethod
-    def _parse_script_name(self, buf: memoryview, params: Params,
+    def _parse_script_name(cls, buf: memoryview, params: Params,
                            allow_empty: bool = False) \
             -> tuple[str, memoryview]:
         name_obj, after = String.parse(buf, params)
@@ -71,8 +71,8 @@ class Command(Parseable[bytes]):
         cmd_name, after = Atom.parse(buf, params)
         try:
             cmd_type = commands[cmd_name.value.upper()]
-        except KeyError:
-            raise NotParseable(buf)
+        except KeyError as exc:
+            raise NotParseable(buf) from exc
         else:
             buf = after
         cmd, buf = cmd_type.parse(buf, params)

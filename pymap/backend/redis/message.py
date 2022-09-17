@@ -66,13 +66,6 @@ class Message(BaseMessage):
             content = await self._load_header(redis, ct_keys)
         return LoadedMessage(self, requirement, content)
 
-    @classmethod
-    def copy_expunged(cls, msg: Message) -> Message:
-        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
-                   expunged=True, email_id=msg.email_id,
-                   thread_id=msg.thread_id, redis=msg._redis,
-                   ns_keys=msg._ns_keys)
-
 
 class LoadedMessage(BaseLoadedMessage):
     pass

@@ -193,8 +193,8 @@ class _BaseLayout(MaildirLayout[_MaildirT], metaclass=ABCMeta):
         path = self.get_path(name, delimiter)
         try:
             return self._maildir(path, create=False)
-        except NoSuchMailboxError:
-            raise FileNotFoundError(path)
+        except NoSuchMailboxError as exc:
+            raise FileNotFoundError(path) from exc
 
     def add_folder(self, name: str, delimiter: str) -> None:
         parts = self._split(name, delimiter)

@@ -4,9 +4,7 @@ from __future__ import annotations
 from collections.abc import Set
 from datetime import datetime
 
-from pysasl.creds import AuthenticationCredentials
-
-from ..interfaces.token import TokensInterface
+from ..interfaces.token import TokenCredentials, TokensInterface
 from ..plugin import Plugin
 
 __all__ = ['tokens', 'AllTokens']
@@ -24,7 +22,7 @@ class AllTokens(TokensInterface):
 
     """
 
-    def get_login_token(self, identifier: str, key: bytes, *,
+    def get_login_token(self, identifier: str, authcid: str, key: bytes, *,
                         authzid: str | None = None,
                         location: str | None = None,
                         expiration: datetime | None = None) \
@@ -34,7 +32,7 @@ class AllTokens(TokensInterface):
         except KeyError:
             return None
         return token_type().get_login_token(
-            identifier, key, authzid=authzid, location=location,
+            identifier, authcid, key, authzid=authzid, location=location,
             expiration=expiration)
 
     def get_admin_token(self, admin_key: bytes | None, *,
@@ -52,7 +50,7 @@ class AllTokens(TokensInterface):
 
     def parse(self, authzid: str, token: str, *,
               admin_keys: Set[bytes] = frozenset()) \
-            -> AuthenticationCredentials:
+            -> TokenCredentials:
         for _, token_type in tokens.registered.items():
             try:
                 return token_type().parse(authzid, token,

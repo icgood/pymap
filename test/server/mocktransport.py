@@ -136,9 +136,9 @@ class MockTransport:
         try:
             try:
                 type_, where, data, wait, set = self.queue.popleft()
-            except IndexError:
+            except IndexError as exc:
                 raise AssertionError('\nExpected: <end>'
-                                     '\nGot:      ' + got.value)
+                                     '\nGot:      ' + got.value) from exc
             if type_ != got:
                 raise AssertionError('\nExpected: ' + type_.value +
                                      '\nGot:      ' + got.value +

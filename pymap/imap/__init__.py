@@ -37,8 +37,9 @@ from pymap.parsing.response import ResponseContinuation, Response, \
 from pymap.parsing.state import ParsingState, ParsingInterrupt, \
     ExpectContinuation
 from pymap.sockets import InheritedSockets
-from pysasl import ServerChallenge, ChallengeResponse, AuthenticationError
-from pysasl.creds import AuthenticationCredentials
+from pysasl import ServerChallenge, ChallengeResponse
+from pysasl.creds.server import ServerCredentials
+from pysasl.exception import AuthenticationError
 
 from .state import ConnectionState
 
@@ -205,7 +206,7 @@ class IMAPConnection:
         return memoryview(extra)
 
     async def authenticate(self, state: ConnectionState, mech_name: bytes) \
-            -> AuthenticationCredentials | None:
+            -> ServerCredentials | None:
         mech = state.auth.get_server(mech_name)
         if not mech:
             return None
@@ -219,7 +220,8 @@ class IMAPConnection:
                 await self.write_response(cont)
                 resp_bytes = bytes(await self.read_continuation(0))
                 if resp_bytes.rstrip(b'\r\n') == b'*':
-                    raise AuthenticationError('Authentication canceled.')
+                    raise AuthenticationError('Authentication canceled.') \
+                        from None
                 try:
                     resp_dec = b64decode(resp_bytes)
                 except binascii.Error as exc:
