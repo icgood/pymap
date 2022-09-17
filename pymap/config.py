@@ -14,7 +14,7 @@ from typing import Any, Final, TypeVar
 from proxyprotocol import ProxyProtocol
 from proxyprotocol.version import ProxyProtocolVersion
 from pysasl import SASLAuth
-from pysasl.creds import AuthenticationCredentials
+from pysasl.creds.server import ServerCredentials
 from pysasl.hashing import HashInterface, get_hash
 
 from .concurrent import Subsystem
@@ -124,7 +124,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  ssl_context: SSLContext | None = None,
                  tls_enabled: bool = True,
                  secure_auth: bool = True,
-                 preauth_credentials: AuthenticationCredentials | None = None,
+                 preauth_credentials: ServerCredentials | None = None,
                  proxy_protocol: ProxyProtocol | None = None,
                  reject_dnsbl: bool = True,
                  admin_key: bytes | None = None,
@@ -243,7 +243,7 @@ class IMAPConfig(metaclass=ABCMeta):
         return SASLAuth.defaults()
 
     @property
-    def preauth_credentials(self) -> AuthenticationCredentials | None:
+    def preauth_credentials(self) -> ServerCredentials | None:
         return self._preauth_credentials
 
     @property

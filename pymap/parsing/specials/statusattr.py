@@ -44,8 +44,8 @@ class StatusAttribute(Parseable[bytes]):
         atom, after = Atom.parse(buf, params)
         try:
             return cls(atom.value), after
-        except ValueError:
-            raise InvalidContent(buf)
+        except ValueError as exc:
+            raise InvalidContent(buf) from exc
 
     def __hash__(self) -> int:
         return hash(self.value)

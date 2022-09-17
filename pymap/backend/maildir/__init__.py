@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager, AsyncExitStack
 from datetime import datetime
 from typing import Any, Final
 
-from pysasl.creds import AuthenticationCredentials
+from pysasl.creds.server import ServerCredentials
 
 from pymap.concurrent import Subsystem
 from pymap.config import BackendCapability, IMAPConfig
@@ -17,7 +17,8 @@ from pymap.exceptions import AuthorizationFailure, NotSupportedError
 from pymap.filter import PluginFilterSet, SingleFilterSet
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.login import LoginInterface, IdentityInterface
+from pymap.interfaces.login import LoginInterface, IdentityInterface, \
+    UserInterface
 from pymap.token import AllTokens
 from pymap.user import UserMetadata
 
@@ -239,10 +240,10 @@ class Login(LoginInterface):
     def tokens(self) -> AllTokens:
         return self._tokens
 
-    async def authenticate(self, credentials: AuthenticationCredentials) \
+    async def authenticate(self, credentials: ServerCredentials) \
             -> Identity:
         authcid = credentials.authcid
-        identity = credentials.identity
+        authzid = credentials.authzid
         password: str | None = None
         mailbox_path: str | None = None
         with open(self.config.users_file, 'r') as users_file:
@@ -250,13 +251,13 @@ class Login(LoginInterface):
                 this_user, this_user_dir, this_password = line.split(':', 2)
                 if authcid == this_user:
                     password = this_password.rstrip('\r\n')
-                if identity == this_user:
+                if authzid == this_user:
                     mailbox_path = this_user_dir or this_user
-        data = UserMetadata(self.config, password=password)
+        data = UserMetadata(self.config, authcid, password=password)
         await data.check_password(credentials)
-        if mailbox_path is None or authcid != identity:
+        if mailbox_path is None or authcid != authzid:
             raise AuthorizationFailure()
-        return Identity(self.config, identity, data, mailbox_path)
+        return Identity(self.config, authzid, data, mailbox_path)
 
 
 class Identity(IdentityInterface):
@@ -295,10 +296,10 @@ class Identity(IdentityInterface):
             maildir.colon = colon
         return maildir, layout
 
-    async def get(self) -> UserMetadata:
+    async def get(self) -> UserInterface:
         return self.metadata
 
-    async def set(self, metadata: UserMetadata) -> None:
+    async def set(self, metadata: UserInterface) -> None:
         raise NotSupportedError()
 
     async def delete(self) -> None:

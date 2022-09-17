@@ -155,8 +155,8 @@ class SearchKey(Parseable[bytes]):
         date_str = str(atom.value, 'ascii', 'ignore')
         try:
             date = datetime.strptime(date_str, '%d-%b-%Y')
-        except ValueError:
-            raise NotParseable(buf)
+        except ValueError as exc:
+            raise NotParseable(buf) from exc
         return date, after
 
     @classmethod

@@ -14,6 +14,7 @@ from pymap.interfaces.filter import FilterSetInterface
 from pymap.interfaces.message import MessageT
 from pymap.interfaces.session import SessionInterface
 from pymap.mailbox import MailboxSnapshot
+from pymap.message import ExpungedMessage
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import SequenceSet, SearchKey, ObjectId, \
     FetchRequirement
@@ -206,9 +207,10 @@ class BaseSession(SessionInterface, Generic[MessageT]):
 
     async def fetch_messages(self, selected: SelectedMailbox,
                              sequence_set: SequenceSet, set_seen: bool) \
-            -> tuple[Iterable[tuple[int, MessageT]], SelectedMailbox]:
+            -> tuple[Iterable[tuple[int, MessageT | ExpungedMessage]],
+                     SelectedMailbox]:
         mbx = await self._get_selected(selected)
-        ret: list[tuple[int, MessageT]] = []
+        ret: list[tuple[int, MessageT | ExpungedMessage]] = []
         for seq, cached_msg in selected.messages.get_all(sequence_set):
             if set_seen:
                 msg = await mbx.update(cached_msg.uid, cached_msg,
@@ -221,10 +223,11 @@ class BaseSession(SessionInterface, Generic[MessageT]):
 
     async def search_mailbox(self, selected: SelectedMailbox,
                              keys: frozenset[SearchKey]) \
-            -> tuple[Iterable[tuple[int, MessageT]], SelectedMailbox]:
+            -> tuple[Iterable[tuple[int, MessageT | ExpungedMessage]],
+                     SelectedMailbox]:
         mbx = await self._get_selected(selected)
         req = FetchRequirement.reduce(key.requirement for key in keys)
-        ret: list[tuple[int, MessageT]] = []
+        ret: list[tuple[int, MessageT | ExpungedMessage]] = []
         params = SearchParams(selected,
                               disabled=self.config.disable_search_keys)
         search = SearchCriteriaSet(keys, params)
@@ -296,12 +299,13 @@ class BaseSession(SessionInterface, Generic[MessageT]):
                            sequence_set: SequenceSet,
                            flag_set: frozenset[Flag],
                            mode: FlagOp = FlagOp.REPLACE) \
-            -> tuple[Iterable[tuple[int, MessageT]], SelectedMailbox]:
+            -> tuple[Iterable[tuple[int, MessageT | ExpungedMessage]],
+                     SelectedMailbox]:
         if selected.readonly:
             raise MailboxReadOnly()
         mbx = await self._get_selected(selected)
         permanent_flags = selected.permanent_flags & flag_set
-        messages: list[tuple[int, MessageT]] = []
+        messages: list[tuple[int, MessageT | ExpungedMessage]] = []
         for seq, cached_msg in selected.messages.get_all(sequence_set):
             uid = cached_msg.uid
             msg = await mbx.update(uid, cached_msg, permanent_flags, mode)

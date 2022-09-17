@@ -15,9 +15,9 @@ from .base import TestBase
 
 class TestAdminAuth(TestBase):
 
-    admin_token = 'MDAwZWxvY2F0aW9uIAowMDEwaWRlbnRpZmllciAKMDAxNWNpZCB0eXBl' \
-        'ID0gYWRtaW4KMDAyZnNpZ25hdHVyZSBTApt6-KNq85_1TeSmQyqTZjWPfHCYPY8EIG' \
-        'q6NMqv4go'
+    admin_token = 'MDAwZWxvY2F0aW9uIAowMDEwaWRlbnRpZmllciAKMDAxNWNpZCByb2xlI' \
+        'D0gYWRtaW4KMDAyZnNpZ25hdHVyZSDND4TS4f6mH9ty0DHCwqB0IIuk_IqIUFgse0OV' \
+        'eHT7cAo'
 
     @pytest.fixture
     def overrides(self):
@@ -27,6 +27,7 @@ class TestAdminAuth(TestBase):
         token = await self._login(backend, 'testuser', 'testpass')
         await self._get_user(backend, token, 'testuser')
         await self._set_user(backend, token, 'testuser', 'newpass')
+        await self._get_user(backend, token, 'testuser')
         await self._delete_user(backend, token, 'testuser')
         await self._get_user(backend, token, 'testuser',
                              failure_key='InvalidAuth')

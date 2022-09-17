@@ -1,18 +1,19 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
+from collections.abc import Mapping, Set
 from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from typing import Protocol
 
-from pysasl.creds import AuthenticationCredentials
+from pysasl.creds.server import ServerCredentials
+from pysasl.identity import Identity
 
 from .session import SessionInterface
 from .token import TokensInterface
-from ..user import UserMetadata
 
-__all__ = ['LoginInterface', 'IdentityInterface']
+__all__ = ['LoginInterface', 'IdentityInterface', 'UserInterface']
 
 
 class LoginInterface(Protocol):
@@ -25,9 +26,12 @@ class LoginInterface(Protocol):
         ...
 
     @abstractmethod
-    async def authenticate(self, credentials: AuthenticationCredentials) \
+    async def authenticate(self, credentials: ServerCredentials) \
             -> IdentityInterface:
         """Authenticate and authorize the credentials.
+
+        Args:
+            credentials: Authentication credentials supplied by the user.
 
         Raises:
             :exc:`~pymap.exceptions.InvalidAuth`
@@ -82,7 +86,7 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    async def get(self) -> UserMetadata:
+    async def get(self) -> UserInterface:
         """Return the metadata associated with the user identity.
 
         Raises:
@@ -92,7 +96,7 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    async def set(self, metadata: UserMetadata) -> None:
+    async def set(self, metadata: UserInterface) -> None:
         """Assign new metadata to the user identity.
 
         Args:
@@ -107,6 +111,58 @@ class IdentityInterface(Protocol):
 
         Raises:
             :exc:`~pymap.exceptions.UserNotFound`
+
+        """
+        ...
+
+
+class UserInterface(Identity, metaclass=ABCMeta):
+    """Contains information about a user."""
+
+    @property
+    @abstractmethod
+    def password(self) -> str | None:
+        """The password string or hash digest."""
+        ...
+
+    @property
+    @abstractmethod
+    def roles(self) -> Set[str]:
+        """A set of role strings given to the user. These strings only have
+        meaning to the backend.
+
+        """
+        ...
+
+    @property
+    @abstractmethod
+    def params(self) -> Mapping[str, str]:
+        """Metadata parameters associated with the user."""
+        ...
+
+    @abstractmethod
+    def get_key(self, identifier: str) -> bytes | None:
+        """Find the token key for the given identifier associated with this
+        user.
+
+        Args:
+            identifier: Any string that can facilitate the lookup of the key.
+
+        """
+        ...
+
+    @abstractmethod
+    async def check_password(self, creds: ServerCredentials) -> None:
+        """Check the given credentials against the known password comparison
+        data. If the known data used a hash, then the equivalent hash of the
+        provided secret is compared.
+
+        Args:
+            creds: The provided authentication credentials.
+            token_key: The token key bytestring.
+
+        Raises:
+            :class:`~pymap.exceptions.InvalidAuth`
 
         """
         ...

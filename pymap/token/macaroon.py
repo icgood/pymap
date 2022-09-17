@@ -4,14 +4,16 @@ from __future__ import annotations
 import re
 from collections.abc import Set
 from datetime import datetime, timezone
-from typing import Any, Final, NoReturn
+from typing import Final
 
 from pymacaroons import Macaroon, Verifier
 from pymacaroons.exceptions import MacaroonDeserializationException, \
     MacaroonInvalidSignatureException
-from pysasl.creds import AuthenticationCredentials, StoredSecret
+from pysasl.identity import Identity
+from pysasl.prep import prepare
 
-from ..interfaces.token import TokensInterface
+from ..interfaces.token import TokenCredentials, TokensInterface
+from ..interfaces.login import UserInterface
 
 __all__ = ['MacaroonTokens', 'MacaroonCredentials']
 
@@ -19,12 +21,12 @@ __all__ = ['MacaroonTokens', 'MacaroonCredentials']
 class MacaroonTokens(TokensInterface):
     """Creates and parses :class:`~pymacaroons.Macaroon` tokens."""
 
-    def get_login_token(self, identifier: str, key: bytes, *,
+    def get_login_token(self, identifier: str, authcid: str, key: bytes, *,
                         authzid: str | None = None,
                         location: str | None = None,
                         expiration: datetime | None = None) -> str:
         macaroon = Macaroon(location=location, identifier=identifier, key=key)
-        macaroon.add_first_party_caveat('type = login')
+        macaroon.add_first_party_caveat(f'authcid = {prepare(authcid)}')
         if authzid is not None:
             macaroon.add_first_party_caveat(f'authzid = {authzid}')
         if expiration is not None:
@@ -40,7 +42,7 @@ class MacaroonTokens(TokensInterface):
         if admin_key is None:
             return None
         macaroon = Macaroon(location=location, identifier='', key=admin_key)
-        macaroon.add_first_party_caveat('type = admin')
+        macaroon.add_first_party_caveat('role = admin')
         if authzid is not None:
             macaroon.add_first_party_caveat(f'authzid = {authzid}')
         if expiration is not None:
@@ -56,7 +58,7 @@ class MacaroonTokens(TokensInterface):
             raise ValueError('invalid macaroon') from exc
 
 
-class MacaroonCredentials(AuthenticationCredentials):
+class MacaroonCredentials(TokenCredentials):
     """Authenticate using a `Macaroon`_ token. Tokens may be created with
     either :meth:`~MacaroonTokens.get_login_token` or
     :meth:`~MacaroonTokens.get_admin_token`.
@@ -78,30 +80,31 @@ class MacaroonCredentials(AuthenticationCredentials):
 
     def __init__(self, identity: str, serialized: str,
                  admin_keys: Set[bytes]) -> None:
-        macaroon = Macaroon.deserialize(serialized)
-        authcid_type = self._find_type(macaroon)
-        super().__init__(macaroon.identifier, '', identity,
-                         authcid_type=authcid_type)
-        self.macaroon: Final = macaroon
+        super().__init__()
+        self.macaroon: Final = Macaroon.deserialize(serialized)
         self.admin_keys: Final = admin_keys
+        self.identity: Final = identity
 
-    @classmethod
-    def _find_type(cls, macaroon: Macaroon) -> str | None:
-        for caveat in macaroon.first_party_caveats():
+    @property
+    def identifier(self) -> str:
+        identifier: str = self.macaroon.identifier
+        return identifier
+
+    @property
+    def role(self) -> str | None:
+        for caveat in self.macaroon.first_party_caveats():
             caveat_id = caveat.caveat_id
-            if caveat_id == 'type = admin':
-                return 'admin-token'
-            elif caveat_id == 'type = login':
-                return 'login-token'
+            if caveat_id == 'role = admin':
+                return 'admin'
         return None
 
     @property
-    def has_secret(self) -> bool:
-        return False
+    def authcid(self) -> str:
+        return ''
 
     @property
-    def secret(self) -> NoReturn:
-        raise AttributeError('secret')
+    def authzid(self) -> str:
+        return self.identity
 
     def _satisfy(self, predicate: str) -> bool:
         match = self._caveat.match(predicate)
@@ -128,26 +131,28 @@ class MacaroonCredentials(AuthenticationCredentials):
         else:
             return verified
 
-    def _get_login_verifier(self) -> Verifier:
+    def _get_login_verifier(self, identity: Identity) -> Verifier:
         verifier = Verifier()
+        verifier.satisfy_exact(f'authcid = {prepare(identity.authcid)}')
         verifier.satisfy_general(self._satisfy)
-        verifier.satisfy_exact('type = login')
         return verifier
 
     def _get_admin_verifier(self) -> Verifier:
         verifier = Verifier()
+        verifier.satisfy_exact('role = admin')
         verifier.satisfy_general(self._satisfy)
-        verifier.satisfy_exact('type = admin')
         return verifier
 
-    def check_secret(self, secret: StoredSecret | None, *,
-                     key: bytes | None = None, **other: Any) -> bool:
-        if key is not None:
-            verifier = self._get_login_verifier()
-            if self._verify(verifier, key):
-                return True
-        for admin_key in self.admin_keys:
-            verifier = self._get_admin_verifier()
-            if self._verify(verifier, admin_key):
-                return True
+    def verify(self, identity: Identity | None) -> bool:
+        if self.role == 'admin':
+            for admin_key in self.admin_keys:
+                verifier = self._get_admin_verifier()
+                if self._verify(verifier, admin_key):
+                    return True
+        if isinstance(identity, UserInterface):
+            key = identity.get_key(self.identifier)
+            if key is not None:
+                verifier = self._get_login_verifier(identity)
+                if self._verify(verifier, key):
+                    return True
         return False

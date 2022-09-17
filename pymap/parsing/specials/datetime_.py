@@ -44,8 +44,8 @@ class DateTime(Parseable[datetime]):
         try:
             when_str = str(string.value, 'ascii')
             when = datetime.strptime(when_str, '%d-%b-%Y %X %z')
-        except ValueError:
-            raise InvalidContent(buf)
+        except ValueError as exc:
+            raise InvalidContent(buf) from exc
         return cls(when, string.value), after
 
     def __bytes__(self) -> bytes:
