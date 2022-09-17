@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.config &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.config &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.config">
-<span id="pymap-config"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code><a class="headerlink" href="#module-pymap.config" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-config"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code><a class="headerlink" href="#module-pymap.config" title="Permalink to this heading">¶</a></h1>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.config.ConfigT">
 <span class="sig-prename descclassname"><span class="pre">pymap.config.</span></span><span class="sig-name descname"><span class="pre">ConfigT</span></span><a class="headerlink" href="#pymap.config.ConfigT" title="Permalink to this definition">¶</a></dt>
@@ -91,16 +92,13 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.config.</span></span><span class="sig-name descname"><span class="pre">BackendCapability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_append</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/config.html#BackendCapability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.config.BackendCapability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Declares the IMAP capabilities that the backend supports.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> extension is supported.</p></li>
 <li><p><strong>object_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">OBJECTID</span></code> extension is supported.</p></li>
 <li><p><strong>multi_append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">MULTIAPPEND</span></code> extension is supported.</p></li>
 <li><p><strong>custom</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – Optional list of custom capability strings to declare.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -111,7 +109,7 @@
 <dd><p>Configurable settings that control how the IMAP server operates and what
 extensions it supports.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<em>Namespace</em>) – The command-line arguments.</p></li>
 <li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – The IMAP server host.</p></li>
@@ -126,7 +124,7 @@ Alternatively, you can pass extra arguments <code class="docutils literal notran
 <li><p><strong>hash_context</strong> (<em>HashInterface</em><em> | </em><em>None</em>) – The hash to use for passwords.</p></li>
 <li><p><strong>cpu_subsystem</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a><em> | </em><em>None</em>) – The subsystem to use for CPU-heavy operations,
 defaulting to a small thread pool.</p></li>
-<li><p><strong>preauth_credentials</strong> (<em>AuthenticationCredentials</em><em> | </em><em>None</em>) – If given, clients will pre-authenticate on
+<li><p><strong>preauth_credentials</strong> (<em>ServerCredentials</em><em> | </em><em>None</em>) – If given, clients will pre-authenticate on
 connection using these credentials.</p></li>
 <li><p><strong>proxy_protocol</strong> (<em>ProxyProtocol</em><em> | </em><em>None</em>) – The PROXY protocol implementation to use.</p></li>
 <li><p><strong>reject_dnsbl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Reject connections with a non-empty DNSBL result.</p></li>
@@ -139,9 +137,6 @@ the client with parsing errors before the client is disconnected.</p></li>
 <li><p><strong>secure_auth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – </p></li>
 <li><p><strong>disable_search_keys</strong> (<em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -157,10 +152,10 @@ the client with parsing errors before the client is disconnected.</p></li>
 should be passed in to the <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a> (or sub-class)
 constructor. Sub-classes should override this method as needed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><em>Namespace</em></a>) – The arguments parsed from the command-line.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.10)"><em>Mapping</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><em>Any</em></a>]</p>
 </dd>
 </dl>
@@ -172,13 +167,13 @@ constructor. Sub-classes should override this method as needed.</p>
 <dd><p>Build and return a new <a class="reference internal" href="#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a> using command-line
 arguments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><em>Namespace</em></a>) – The arguments parsed from the command-line.</p></li>
 <li><p><strong>overrides</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><em>Any</em></a>) – Override keyword arguments to the config constructor.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>ConfigT</em></p>
 </dd>
 </dl>
@@ -190,7 +185,7 @@ arguments.</p>
 <dd><p>Apply the configured settings to any <a class="reference internal" href="pymap.context.html#module-pymap.context" title="pymap.context"><code class="xref py py-mod docutils literal notranslate"><span class="pre">context</span></code></a>
 variables.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
@@ -198,7 +193,7 @@ variables.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.config.IMAPConfig.backend_capability">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backend_capability</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><span class="pre">pymap.config.BackendCapability</span></a></em><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backend_capability</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.config.BackendCapability" title="pymap.config.BackendCapability"><span class="pre">BackendCapability</span></a></em><a class="headerlink" href="#pymap.config.IMAPConfig.backend_capability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows backends to declare support for IMAP extensions and other
 capabilities.</p>
 </dd></dl>
@@ -240,7 +235,7 @@ capabilities.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -279,7 +274,7 @@ capabilities.</p>
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li> 
       </ul>
@@ -288,7 +283,7 @@ capabilities.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

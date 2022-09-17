@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.admin &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.admin">
-<span id="pymap-admin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code><a class="headerlink" href="#module-pymap.admin" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-admin"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code><a class="headerlink" href="#module-pymap.admin" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.admin.AdminService">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.admin.</span></span><span class="sig-name descname"><span class="pre">AdminService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin.html#AdminService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.AdminService" title="Permalink to this definition">¶</a></dt>
@@ -87,14 +88,11 @@ another user’s password.</p>
 to interact with the admin service and serves as a reference client
 implementation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -107,10 +105,10 @@ For example:</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.10)"><em>ArgumentParser</em></a>) – The argument parser.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -121,10 +119,10 @@ For example:</p>
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin.html#AdminService.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.AdminService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.10)"><em>AsyncExitStack</em></a>) – An exit stack that should be used for cleanup.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -138,13 +136,13 @@ For example:</p>
 <dd><p>Build a <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">GRPCError</span></code></a> exception for an
 operation that is not implemented by the server.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>]</em>) – The domain string to include in the error.</p></li>
 <li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Additional metadata to include in the error.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><em>GRPCError</em></a></p>
 </dd>
 </dl>
@@ -156,7 +154,7 @@ operation that is not implemented by the server.</p>
 <dd><p>Build a <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">GRPCError</span></code></a> exception for an
 incompatible version error.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>client_version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The client version string.</p></li>
 <li><p><strong>server_version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The server version string.</p></li>
@@ -164,7 +162,7 @@ incompatible version error.</p>
 <li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Additional metadata to include in the error.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><em>GRPCError</em></a></p>
 </dd>
 </dl>
@@ -178,10 +176,10 @@ can be removed if <code class="docutils literal notranslate"><span class="pre">g
 </dd></dl>
 
 <section id="module-pymap.admin.handlers">
-<span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this headline">¶</a></h2>
+<span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this heading">¶</a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.admin.handlers.handlers">
-<span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">pymap.plugin.Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.admin.handlers.BaseHandler" title="pymap.admin.handlers.BaseHandler"><span class="pre">pymap.admin.handlers.BaseHandler</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.admin.handlers.BaseHandler" title="pymap.admin.handlers.BaseHandler"><span class="pre">pymap.admin.handlers.BaseHandler</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers new admin handler plugins.</p>
 </dd></dl>
 
@@ -190,11 +188,8 @@ can be removed if <code class="docutils literal notranslate"><span class="pre">g
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">BaseHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers.html#BaseHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.BaseHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for implementing admin request handlers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – The backend in use by the system.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -204,10 +199,10 @@ can be removed if <code class="docutils literal notranslate"><span class="pre">g
 <a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.ResponseError" title="pymap.exceptions.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseError</span></code></a> exceptions and include them in
 the response.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>command</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The admin command name.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncGenerator" title="(in Python v3.10)"><em>AsyncGenerator</em></a>[<em>Result</em>, None]</p>
 </dd>
 </dl>
@@ -218,17 +213,17 @@ the response.</p>
 <span class="sig-name descname"><span class="pre">login_as</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers.html#BaseHandler.login_as"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.login_as" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager to login and get an identity object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stream</strong> – The grpc request/response stream.</p></li>
 <li><p><strong>user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The user to authorize as.</p></li>
 <li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.10)"><em>collections.abc.Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncGenerator" title="(in Python v3.10)"><em>AsyncGenerator</em></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a>, None]</p>
 </dd>
 </dl>
@@ -239,13 +234,13 @@ the response.</p>
 <span class="sig-name descname"><span class="pre">with_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers.html#BaseHandler.with_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.with_session" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager to create a mail session for the identity.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>identity</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a>) – The authenticated user identity.</p>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncGenerator" title="(in Python v3.10)"><em>AsyncGenerator</em></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><em>SessionInterface</em></a>, None]</p>
 </dd>
 </dl>
@@ -263,11 +258,8 @@ handler should receive a request, take action, and send the response.</p>
 <p><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Server" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">grpclib.server.Server</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -279,11 +271,11 @@ handler should receive a request, take action, and send the response.</p>
 </div>
 <p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">login</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
 request and response.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -298,11 +290,11 @@ request and response.</p>
 </div>
 <p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">ping</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
 request and response.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -320,11 +312,8 @@ handler should receive a request, take action, and send the response.</p>
 <p><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Server" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">grpclib.server.Server</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -342,11 +331,11 @@ specific mailbox.</p>
 </div>
 <p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">append</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
 request and response.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -364,11 +353,8 @@ handler should receive a request, take action, and send the response.</p>
 <p><a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Server" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">grpclib.server.Server</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -376,11 +362,11 @@ handler should receive a request, take action, and send the response.</p>
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GetUser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers/user.html#UserHandlers.GetUser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.GetUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">get-user</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
 request and response.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -391,11 +377,11 @@ request and response.</p>
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SetUser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers/user.html#UserHandlers.SetUser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.SetUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">set-user</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
 request and response.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -406,11 +392,11 @@ request and response.</p>
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DeleteUser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers/user.html#UserHandlers.DeleteUser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.user.UserHandlers.DeleteUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="docutils literal notranslate"><span class="pre">pymap-admin</span> <span class="pre">delete-user</span> <span class="pre">--help</span></code> for more options.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stream</strong> (<a class="reference external" href="https://grpclib.readthedocs.io/en/latest/server.html#grpclib.server.Stream" title="(in grpclib)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>) – The stream for the
 request and response.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -463,7 +449,7 @@ request and response.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -502,7 +488,7 @@ request and response.</p>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -511,7 +497,7 @@ request and response.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

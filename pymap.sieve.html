@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.sieve &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.sieve &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -53,7 +54,7 @@
         <li class="right" >
           <a href="pymap.token.html" title="pymap.token"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></li> 
       </ul>
@@ -67,7 +68,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.sieve">
-<span id="pymap-sieve"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code><a class="headerlink" href="#module-pymap.sieve" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-sieve"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code><a class="headerlink" href="#module-pymap.sieve" title="Permalink to this heading">¶</a></h1>
 <dl class="py exception">
 <dt class="sig sig-object py" id="pymap.sieve.SieveParseError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sieve.</span></span><span class="sig-name descname"><span class="pre">SieveParseError</span></span><a class="reference internal" href="_modules/pymap/sieve.html#SieveParseError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.SieveParseError" title="Permalink to this definition">¶</a></dt>
@@ -79,9 +80,6 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sieve.</span></span><span class="sig-name descname"><span class="pre">SieveCompiler</span></span><a class="reference internal" href="_modules/pymap/sieve.html#SieveCompiler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.SieveCompiler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compiles sieve scripts into <a class="reference internal" href="#pymap.sieve.SieveFilter" title="pymap.sieve.SieveFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">SieveFilter</span></code></a> objects.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>None</p>
-</dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pymap.sieve.SieveCompiler.extensions">
@@ -106,10 +104,10 @@
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sieve.html#SieveCompiler.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.SieveCompiler.compile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compile the filter value and return the resulting implementation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The filter value:</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.sieve.SieveFilter" title="pymap.sieve.SieveFilter"><em>SieveFilter</em></a></p>
 </dd>
 </dl>
@@ -124,11 +122,8 @@
 message. The sieve script applies various conditions and controls to
 ultimately produce a set of actions to apply to the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>runner</strong> (<em>SieveRunner</em>) – The sieve script runner.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -138,7 +133,7 @@ ultimately produce a set of actions to apply to the message.</p>
 or None to discard, and the message to be appended, which is usually
 the same as <code class="docutils literal notranslate"><span class="pre">append_msg</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The envelope sender of the message.</p></li>
 <li><p><strong>recipient</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The envelope recipient of the message.</p></li>
@@ -146,10 +141,10 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 <li><p><strong>append_msg</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><em>AppendMessage</em></a>) – The message to be appended.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises</dt>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AppendFailure" title="pymap.exceptions.AppendFailure"><strong>AppendFailure</strong></a> – </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.10)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a> | None, <a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage">pymap.parsing.message.AppendMessage</a>]</p>
 </dd>
 </dl>
@@ -158,7 +153,7 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 </dd></dl>
 
 <section id="module-pymap.sieve.tests">
-<span id="pymap-sieve-tests"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.tests</span></code><a class="headerlink" href="#module-pymap.sieve.tests" title="Permalink to this headline">¶</a></h2>
+<span id="pymap-sieve-tests"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.tests</span></code><a class="headerlink" href="#module-pymap.sieve.tests" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.sieve.tests.SieveTest">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sieve.tests.</span></span><span class="sig-name descname"><span class="pre">SieveTest</span></span><a class="reference internal" href="_modules/pymap/sieve/tests.html#SieveTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.tests.SieveTest" title="Permalink to this definition">¶</a></dt>
@@ -173,10 +168,10 @@ the same as <code class="docutils literal notranslate"><span class="pre">append_
 <dd><p>Given a test command, determine the implementation sub-class and
 return an instance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>cmd</strong> (<em>Command</em>) – The test command.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.sieve.tests.SieveTest" title="pymap.sieve.tests.SieveTest"><em>SieveTest</em></a></p>
 </dd>
 </dl>
@@ -188,7 +183,7 @@ return an instance.</p>
 <dd><p>Run the test implementation on the appended message data, returning
 True if the test matched the data. Must be overridden by sub-classes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sender</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The envelope sender of the message.</p></li>
 <li><p><strong>recipient</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The envelope recipient of the message.</p></li>
@@ -196,7 +191,7 @@ True if the test matched the data. Must be overridden by sub-classes.</p>
 <li><p><strong>content</strong> (<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><em>MessageContent</em></a>) – The parsed message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -206,7 +201,7 @@ True if the test matched the data. Must be overridden by sub-classes.</p>
 
 </section>
 <section id="module-pymap.sieve.manage">
-<span id="pymap-sieve-manage"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.manage</span></code><a class="headerlink" href="#module-pymap.sieve.manage" title="Permalink to this headline">¶</a></h2>
+<span id="pymap-sieve-manage"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.sieve.manage</span></code><a class="headerlink" href="#module-pymap.sieve.manage" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.sieve.manage.ManageSieveService">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sieve.manage.</span></span><span class="sig-name descname"><span class="pre">ManageSieveService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sieve/manage.html#ManageSieveService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService" title="Permalink to this definition">¶</a></dt>
@@ -218,14 +213,11 @@ sieve scripts associated with a login.</p>
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -238,10 +230,10 @@ For example:</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.10)"><em>ArgumentParser</em></a>) – The argument parser.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -252,10 +244,10 @@ For example:</p>
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sieve/manage.html#ManageSieveService.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.manage.ManageSieveService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.10)"><em>AsyncExitStack</em></a>) – An exit stack that should be used for cleanup.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -269,15 +261,12 @@ For example:</p>
 <dd><p>Callable object that creates and runs <a class="reference internal" href="#pymap.sieve.manage.ManageSieveConnection" title="pymap.sieve.manage.ManageSieveConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ManageSieveConnection</span></code></a>
 objects when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><em>LoginInterface</em></a>) – Login callback that takes authentication credentials and returns
 a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – Settings to use for the sieve server.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -287,7 +276,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sieve.manage.</span></span><span class="sig-name descname"><span class="pre">ManageSieveConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sieve/manage.html#ManageSieveConnection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sieve.manage.ManageSieveConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a single ManageSieve connection from start to finish.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><em>LoginInterface</em></a>) – Login callback that takes authentication credentials and returns
 a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
@@ -296,9 +285,6 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <li><p><strong>writer</strong> (<em>StreamWriter</em>) – The output stream for the socket.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.sieve.manage.ManageSieveConnection.run">
@@ -306,7 +292,7 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <dd><p>Start the socket communication with the server greeting, and then
 enter the command/response cycle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
@@ -355,7 +341,7 @@ enter the command/response cycle.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -391,7 +377,7 @@ enter the command/response cycle.</p>
         <li class="right" >
           <a href="pymap.token.html" title="pymap.token"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></li> 
       </ul>
@@ -400,7 +386,7 @@ enter the command/response cycle.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

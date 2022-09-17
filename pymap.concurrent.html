@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.concurrent &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.concurrent &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.concurrent">
-<span id="pymap-concurrent"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code><a class="headerlink" href="#module-pymap.concurrent" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-concurrent"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code><a class="headerlink" href="#module-pymap.concurrent" title="Permalink to this heading">¶</a></h1>
 <p>Implements some concurrency utilities used by pymap. Each has
 an implementation using <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a> concurrency
 primitives.</p>
@@ -87,10 +88,10 @@ primitives.</p>
 None, use <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>. If <code class="docutils literal notranslate"><span class="pre">executor</span></code> is a
 <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a>, use <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>executor</strong> (<em>concurrent.futures._base.Executor</em><em> | </em><em>None</em>) – The executor in use, if any.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a></p>
 </dd>
 </dl>
@@ -101,7 +102,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_asyncio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Subsystem.for_asyncio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Subsystem.for_asyncio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asyncio</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a></p>
 </dd>
 </dl>
@@ -112,10 +113,10 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_threading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">executor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Subsystem.for_threading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Subsystem.for_threading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subsystem for <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>executor</strong> (<em>ThreadPoolExecutor</em>) – </p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a></p>
 </dd>
 </dl>
@@ -136,10 +137,10 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">run_in_executor()</span></code> to run the future in
 another thread.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.10)"><em>Awaitable</em></a><em>[</em><em>RetT</em><em>]</em>) – An awaitable result to execute by the subsystem.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.10)"><em>Awaitable</em></a>[<em>RetT</em>]</p>
 </dd>
 </dl>
@@ -150,7 +151,7 @@ another thread.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_rwlock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Subsystem.new_rwlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Subsystem.new_rwlock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new read-write lock.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.ReadWriteLock" title="pymap.concurrent.ReadWriteLock"><em>ReadWriteLock</em></a></p>
 </dd>
 </dl>
@@ -161,7 +162,7 @@ another thread.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_event</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Subsystem.new_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Subsystem.new_event" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new concurrent event.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>Event</em></a></p>
 </dd>
 </dl>
@@ -178,7 +179,7 @@ another thread.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_asyncio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Event.for_asyncio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Event.for_asyncio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an event for asyncio.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>Event</em></a></p>
 </dd>
 </dl>
@@ -189,7 +190,7 @@ another thread.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_threading</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Event.for_threading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Event.for_threading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an event for threading.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>Event</em></a></p>
 </dd>
 </dl>
@@ -208,13 +209,13 @@ another thread.</p>
 <dd><p>Return a new event that is signalled when either the current event
 or any of the provided events are signalled.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>self</strong> (<em>EventT</em>) – </p></li>
 <li><p><strong>events</strong> (<em>EventT</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>EventT</em></p>
 </dd>
 </dl>
@@ -225,7 +226,7 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Event.is_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Event.is_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if the event is set.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -236,7 +237,7 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Event.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Event.set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signal the waiting threads to release.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
@@ -247,7 +248,7 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Event.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Event.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the signal, allowing threads to wait again.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
@@ -258,10 +259,10 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#Event.wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.Event.wait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait until another thread signals the event.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>timeout</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>]</em>) – Maximum time to wait, in seconds.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -278,7 +279,7 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_asyncio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#ReadWriteLock.for_asyncio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.for_asyncio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a read-write lock for asyncio.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.ReadWriteLock" title="pymap.concurrent.ReadWriteLock"><em>ReadWriteLock</em></a></p>
 </dd>
 </dl>
@@ -289,7 +290,7 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_threading</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#ReadWriteLock.for_threading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.for_threading" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a read-write lock for threading.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#pymap.concurrent.ReadWriteLock" title="pymap.concurrent.ReadWriteLock"><em>ReadWriteLock</em></a></p>
 </dd>
 </dl>
@@ -307,7 +308,7 @@ or any of the provided events are signalled.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#ReadWriteLock.read_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.ReadWriteLock.read_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acquires a read-lock, blocking until any write-locks are released.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractAsyncContextManager" title="(in Python v3.10)"><em>AbstractAsyncContextManager</em></a>[None]</p>
 </dd>
 </dl>
@@ -319,7 +320,7 @@ or any of the provided events are signalled.</p>
 <dd><p>Acquires a write-lock, blocking until all read- or write-locks are
 released.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractAsyncContextManager" title="(in Python v3.10)"><em>AbstractAsyncContextManager</em></a>[None]</p>
 </dd>
 </dl>
@@ -339,16 +340,13 @@ release.</p>
 successive <a class="reference external" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.sleep" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sleep()</span></code></a> calls. If this sequence is exhausted
 before a lock is established, <a class="reference external" href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeoutError</span></code></a> is thrown.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The path of the lock file.</p></li>
 <li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Lock files older than this age will be deleted.</p></li>
 <li><p><strong>read_retry_delay</strong> (<em>_Delay</em>) – The delay sequence between read-lock attempts.</p></li>
 <li><p><strong>write_retry_delay</strong> (<em>_Delay</em>) – The delay sequence between write-lock attempts.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py property">
@@ -362,7 +360,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 <span class="sig-name descname"><span class="pre">read_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/concurrent.html#FileLock.read_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.concurrent.FileLock.read_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Acquires a read-lock, blocking until any write-locks are released.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.10)"><em>AsyncIterator</em></a>[None]</p>
 </dd>
 </dl>
@@ -374,7 +372,7 @@ before a lock is established, <a class="reference external" href="https://docs.p
 <dd><p>Acquires a write-lock, blocking until all read- or write-locks are
 released.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.10)"><em>AsyncIterator</em></a>[None]</p>
 </dd>
 </dl>
@@ -431,7 +429,7 @@ released.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -470,7 +468,7 @@ released.</p>
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -479,7 +477,7 @@ released.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

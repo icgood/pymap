@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.fetch &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.fetch &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.exceptions.html" title="pymap.exceptions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.fetch">
-<span id="pymap-fetch"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code><a class="headerlink" href="#module-pymap.fetch" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-fetch"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code><a class="headerlink" href="#module-pymap.fetch" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.fetch.LoadedMessageProvider">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.fetch.</span></span><span class="sig-name descname"><span class="pre">LoadedMessageProvider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/fetch.html#LoadedMessageProvider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.fetch.LoadedMessageProvider" title="Permalink to this definition">¶</a></dt>
@@ -90,15 +91,12 @@ when they are available.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.fetch.</span></span><span class="sig-name descname"><span class="pre">DynamicFetchValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/fetch.html#DynamicFetchValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.fetch.DynamicFetchValue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for fetch values that are dynamically read from a message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>attribute</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><em>FetchAttribute</em></a>) – The fetch attribute.</p></li>
 <li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – The selected mailbox.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -106,8 +104,8 @@ when they are available.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/fetch.html#DynamicFetchValue.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.fetch.DynamicFetchValue.get_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the value of the fetch attribute for the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)">bytes</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)">bytearray</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)">memoryview</a> | SupportsBytes</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)">bytes</a> | SupportsBytes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -120,7 +118,7 @@ when they are available.</p>
 <dd><p>Base class for fetch values that are dynamically read from a message and
 require loading its contents.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>attribute</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><em>FetchAttribute</em></a>) – The fetch attribute.</p></li>
 <li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
@@ -128,20 +126,17 @@ require loading its contents.</p>
 <li><p><strong>get_loaded</strong> (<a class="reference internal" href="#pymap.fetch.LoadedMessageProvider" title="pymap.fetch.LoadedMessageProvider"><em>LoadedMessageProvider</em></a>) – The provider of the loaded message contents, if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.fetch.DynamicLoadedFetchValue.get_value">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/fetch.html#DynamicLoadedFetchValue.get_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.fetch.DynamicLoadedFetchValue.get_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the value of the fetch attribute for the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The loaded message object.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)">bytes</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytearray" title="(in Python v3.10)">bytearray</a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#memoryview" title="(in Python v3.10)">memoryview</a> | SupportsBytes</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)">bytes</a> | SupportsBytes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -154,20 +149,17 @@ require loading its contents.</p>
 <dd><p>Defines the logic for how fetch attributes are resolved on a message to
 produce a fetch value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – The selected mailbox.</p></li>
 <li><p><strong>attributes</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute" title="pymap.parsing.specials.fetchattr.FetchAttribute"><em>FetchAttribute</em></a><em>]</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pymap.fetch.MessageAttributes.placeholder">
-<span class="sig-name descname"><span class="pre">placeholder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b'...'</span></em><a class="headerlink" href="#pymap.fetch.MessageAttributes.placeholder" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">placeholder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.10)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b'...'</span></em><a class="headerlink" href="#pymap.fetch.MessageAttributes.placeholder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Placeholder value for fetch values requiring loaded message contents.</p>
 </dd></dl>
 
@@ -179,7 +171,7 @@ and releases it on exit. Fetch values that require loaded message
 content will write <a class="reference internal" href="#pymap.fetch.MessageAttributes.placeholder" title="pymap.fetch.MessageAttributes.placeholder"><code class="xref py py-attr docutils literal notranslate"><span class="pre">placeholder</span></code></a> if written outside of this
 context manager, for console or log output.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator" title="(in Python v3.10)"><em>AsyncIterator</em></a>[None]</p>
 </dd>
 </dl>
@@ -222,7 +214,7 @@ context manager, for console or log output.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -261,7 +253,7 @@ context manager, for console or log output.</p>
         <li class="right" >
           <a href="pymap.exceptions.html" title="pymap.exceptions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a></li> 
       </ul>
@@ -270,7 +262,7 @@ context manager, for console or log output.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

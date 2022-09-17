@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.imap &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li> 
       </ul>
@@ -71,20 +72,17 @@
           <div class="body" role="main">
             
   <section id="module-pymap.imap">
-<span id="pymap-imap"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code><a class="headerlink" href="#module-pymap.imap" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-imap"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code><a class="headerlink" href="#module-pymap.imap" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.imap.IMAPService">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.imap.</span></span><span class="sig-name descname"><span class="pre">IMAPService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/imap.html#IMAPService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.imap.IMAPService" title="Permalink to this definition">¶</a></dt>
 <dd><p>A pymap service implementing an IMAP server.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -97,10 +95,10 @@ For example:</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.10)"><em>ArgumentParser</em></a>) – The argument parser.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -111,10 +109,10 @@ For example:</p>
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/imap.html#IMAPService.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.imap.IMAPService.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the service.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.10)"><em>AsyncExitStack</em></a>) – An exit stack that should be used for cleanup.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -128,15 +126,12 @@ For example:</p>
 <dd><p>Callable object that creates and runs <a class="reference internal" href="#pymap.imap.IMAPConnection" title="pymap.imap.IMAPConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">IMAPConnection</span></code></a> objects
 when <a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.start_server" title="(in Python v3.10)"><code class="xref py py-func docutils literal notranslate"><span class="pre">asyncio.start_server()</span></code></a> receives a new connection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><em>LoginInterface</em></a>) – Login callback that takes authentication credentials and returns
 a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionInterface</span></code></a> object.</p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – Settings to use for the IMAP server.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -146,16 +141,13 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.imap.</span></span><span class="sig-name descname"><span class="pre">IMAPConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/imap.html#IMAPConnection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.imap.IMAPConnection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a single IMAP connection from start to finish.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>commands</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.commands.Commands" title="pymap.parsing.commands.Commands"><em>Commands</em></a>) – Defines the IMAP commands available to the connection.</p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – Settings to use for the IMAP connection.</p></li>
 <li><p><strong>reader</strong> (<em>StreamReader</em>) – The input stream for the socket.</p></li>
 <li><p><strong>writer</strong> (<em>StreamWriter</em>) – The output stream for the socket.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -164,10 +156,10 @@ a <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.ses
 <dd><p>Start the socket communication with the IMAP greeting, and then
 enter the command/response cycle.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#pymap.imap.state.ConnectionState" title="pymap.imap.state.ConnectionState"><em>ConnectionState</em></a>) – Defines the interaction with the backend plugin.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 </dl>
@@ -182,14 +174,11 @@ enter the command/response cycle.</p>
 can be processed at that point in the connection, and interacts with the
 backend plugin.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>login</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface" title="pymap.interfaces.login.LoginInterface"><em>LoginInterface</em></a>) – </p></li>
 <li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,7 +218,7 @@ backend plugin.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -268,7 +257,7 @@ backend plugin.</p>
         <li class="right" >
           <a href="pymap.backend.redis.html" title="pymap.backend.redis"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li> 
       </ul>
@@ -277,7 +266,7 @@ backend plugin.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

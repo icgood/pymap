@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.message &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.message &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.message">
-<span id="pymap-message"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code><a class="headerlink" href="#module-pymap.message" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-message"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code><a class="headerlink" href="#module-pymap.message" title="Permalink to this heading">¶</a></h1>
 <p>Base implementations of the <a class="reference internal" href="pymap.interfaces.html#module-pymap.interfaces.message" title="pymap.interfaces.message"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code></a> interfaces.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.message.BaseMessage">
@@ -79,7 +80,7 @@
 <dd><p>Message metadata such as UID, permanent flags, and when the message
 was added to the system.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The UID of the message.</p></li>
 <li><p><strong>internal_date</strong> (<em>datetime</em>) – The internal date of the message.</p></li>
@@ -89,13 +90,10 @@ was added to the system.</p>
 <li><p><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – True if this message has been expunged from the mailbox.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.message.BaseMessage.email_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">email_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><span class="pre">pymap.parsing.specials.objectid.ObjectId</span></a></em><a class="headerlink" href="#pymap.message.BaseMessage.email_id" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">email_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><span class="pre">ObjectId</span></a></em><a class="headerlink" href="#pymap.message.BaseMessage.email_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message’s email object ID, which can identify its content.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -105,7 +103,7 @@ was added to the system.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.message.BaseMessage.thread_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thread_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><span class="pre">pymap.parsing.specials.objectid.ObjectId</span></a></em><a class="headerlink" href="#pymap.message.BaseMessage.thread_id" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">thread_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><span class="pre">ObjectId</span></a></em><a class="headerlink" href="#pymap.message.BaseMessage.thread_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message’s thread object ID, which groups messages together.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -124,10 +122,10 @@ was added to the system.</p>
 <span class="sig-name descname"><span class="pre">get_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_flags</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#BaseMessage.get_flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.BaseMessage.get_flags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the full set of permanent and session flags for the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>session_flags</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags" title="pymap.flags.SessionFlags"><em>SessionFlags</em></a>) – The current session flags.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.10)">frozenset</a>[<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag">pymap.parsing.specials.flag.Flag</a>]</p>
 </dd>
 </dl>
@@ -143,25 +141,47 @@ message, used for detecting mailbox updates.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pymap.message.ExpungedMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.message.</span></span><span class="sig-name descname"><span class="pre">ExpungedMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cached_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#ExpungedMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.ExpungedMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a message that has been expunged from the mailbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><em>CachedMessage</em></a>) – A cached copy of the message metadata.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.message.ExpungedMessage.load_content">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requirement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#ExpungedMessage.load_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.ExpungedMessage.load_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the content of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><em>FetchRequirement</em></a>) – The data required from the message content.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.message.</span></span><span class="sig-name descname"><span class="pre">BaseLoadedMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requirement</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#BaseLoadedMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.BaseLoadedMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>The loaded message content, implemented using an instance of
 <a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><code class="xref py py-class docutils literal notranslate"><span class="pre">MessageContent</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>message</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><em>FetchRequirement</em></a>) – The fetch requirement of the loaded content.</p></li>
 <li><p><strong>content</strong> (<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent" title="pymap.mime.MessageContent"><em>MessageContent</em></a><em> | </em><em>None</em>) – The MIME-parsed message content, if available.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.message.BaseLoadedMessage.requirement">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">requirement</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><span class="pre">pymap.parsing.specials.fetchattr.FetchRequirement</span></a></em><a class="headerlink" href="#pymap.message.BaseLoadedMessage.requirement" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">requirement</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><span class="pre">FetchRequirement</span></a></em><a class="headerlink" href="#pymap.message.BaseLoadedMessage.requirement" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">FetchRequirement</span></code> used to load
 the message content.</p>
 </dd></dl>
@@ -171,10 +191,10 @@ the message content.</p>
 <span class="sig-name descname"><span class="pre">get_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#BaseLoadedMessage.get_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_header" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the values of a header from the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The name of the header.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>]</p>
 </dd>
 </dl>
@@ -188,10 +208,10 @@ the message content.</p>
 example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and then
 index it for its 3rd sub-part.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em>) – Nested list of sub-part indexes.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.bytes.html#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
 </dd>
 </dl>
@@ -205,14 +225,14 @@ index it for its 3rd sub-part.</p>
 For example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and
 then index it for its 3rd sub-part.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em><em>]</em>) – Optional nested list of sub-part indexes.</p></li>
 <li><p><strong>binary</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – True if the result has decoded any
 Content-Transfer-Encoding.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.bytes.html#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
 </dd>
 </dl>
@@ -227,7 +247,7 @@ the message..</p>
 For example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and
 then index it for its 3rd sub-part.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em><em>]</em>) – Optional nested list of sub-part indexes.</p></li>
 <li><p><strong>subset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Collection" title="(in Python v3.10)"><em>Collection</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>]</em><em>]</em>) – Subset of headers to get.</p></li>
@@ -235,7 +255,7 @@ then index it for its 3rd sub-part.</p>
 the headers <em>not</em> in <code class="docutils literal notranslate"><span class="pre">subset</span></code> are returned.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.bytes.html#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
 </dd>
 </dl>
@@ -249,10 +269,10 @@ the headers <em>not</em> in <code class="docutils literal notranslate"><span cla
 For example, <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">3]</span></code> would get the 2nd sub-part of the message and
 then index it for its 3rd sub-part.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em><em>]</em>) – Optional nested list of sub-part indexes.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.bytes.html#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
 </dd>
 </dl>
@@ -263,10 +283,10 @@ then index it for its 3rd sub-part.</p>
 <span class="sig-name descname"><span class="pre">get_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#BaseLoadedMessage.get_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.BaseLoadedMessage.get_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the size of the message, in octets.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>section</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><em>Optional</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em>]</em><em>]</em>) – Optional nested list of sub-part indexes.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
 </dd>
 </dl>
@@ -281,7 +301,7 @@ then index it for its 3rd sub-part.</p>
 <p><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-2.3.5">RFC 3501 2.3.5.</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure" title="pymap.parsing.response.fetch.EnvelopeStructure"><em>EnvelopeStructure</em></a></p>
 </dd>
 </dl>
@@ -296,7 +316,7 @@ then index it for its 3rd sub-part.</p>
 <p><a class="reference external" href="https://tools.ietf.org/html/rfc3501#section-2.3.6">RFC 3501 2.3.6</a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure" title="pymap.parsing.response.fetch.BodyStructure"><em>BodyStructure</em></a></p>
 </dd>
 </dl>
@@ -308,10 +328,10 @@ then index it for its 3rd sub-part.</p>
 <dd><p>Check the body of the message for a sub-string. This may be
 optimized to only search headers and <code class="docutils literal notranslate"><span class="pre">text/*</span></code> MIME parts.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – The sub-string to find.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -354,7 +374,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -393,7 +413,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -402,7 +422,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

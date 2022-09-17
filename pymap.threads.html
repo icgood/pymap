@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.threads &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.threads &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.mime.html" title="pymap.mime"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.threads">
-<span id="pymap-threads"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code><a class="headerlink" href="#module-pymap.threads" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-threads"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code><a class="headerlink" href="#module-pymap.threads" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.threads.ThreadKey">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.threads.</span></span><span class="sig-name descname"><span class="pre">ThreadKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/threads.html#ThreadKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.threads.ThreadKey" title="Permalink to this definition">¶</a></dt>
@@ -83,14 +84,11 @@ of the <code class="docutils literal notranslate"><span class="pre">Subject</spa
 should be assigned the same
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.thread_id" title="pymap.interfaces.message.MessageInterface.thread_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thread_id</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The message ID bytestring.</p></li>
 <li><p><strong>subject</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The normalized subject bytestring.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -98,10 +96,10 @@ should be assigned the same
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/threads.html#ThreadKey.get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.threads.ThreadKey.get_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all the thread keys from the message headers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>header</strong> (<a class="reference internal" href="pymap.mime.html#pymap.mime.MessageHeader" title="pymap.mime.MessageHeader"><em>MessageHeader</em></a>) – The message header.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.10)"><em>Sequence</em></a>[<a class="reference internal" href="#pymap.threads.ThreadKey" title="pymap.threads.ThreadKey"><em>ThreadKey</em></a>]</p>
 </dd>
 </dl>
@@ -144,7 +142,7 @@ should be assigned the same
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -183,7 +181,7 @@ should be assigned the same
         <li class="right" >
           <a href="pymap.mime.html" title="pymap.mime"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code></a></li> 
       </ul>
@@ -192,7 +190,7 @@ should be assigned the same
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

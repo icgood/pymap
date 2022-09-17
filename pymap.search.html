@@ -3,12 +3,12 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.search &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.search &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -16,6 +16,7 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
 
     
@@ -57,7 +58,7 @@
         <li class="right" >
           <a href="pymap.message.html" title="pymap.message"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li> 
       </ul>
@@ -71,7 +72,7 @@
           <div class="body" role="main">
             
   <section id="module-pymap.search">
-<span id="pymap-search"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code><a class="headerlink" href="#module-pymap.search" title="Permalink to this headline">¶</a></h1>
+<span id="pymap-search"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code><a class="headerlink" href="#module-pymap.search" title="Permalink to this heading">¶</a></h1>
 <p>Utilities for managing IMAP searches.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.search.SearchParams">
@@ -80,16 +81,13 @@
 kind of search criteria. If a parameter is not supplied, or a method not
 implemented, any search keys that require it will fail.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – The active mailbox session.</p></li>
 <li><p><strong>max_seq</strong> – The highest message sequence ID in the mailbox.</p></li>
 <li><p><strong>max_uid</strong> – The highest message UID in the mailbox.</p></li>
 <li><p><strong>disabled</strong> (<em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – Search keys that should be disabled.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -99,11 +97,8 @@ implemented, any search keys that require it will fail.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">SearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for different types of search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – The parameters that may be used by some searches.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -111,14 +106,14 @@ implemented, any search keys that require it will fail.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -130,13 +125,13 @@ implemented, any search keys that require it will fail.</p>
 <dd><p>Factory method for producing a search criteria sub-class from a
 search key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><em>SearchKey</em></a>) – The search key defining the criteria.</p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – The parameters that may be used by some searches.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.search.SearchCriteria" title="pymap.search.SearchCriteria"><em>SearchCriteria</em></a></p>
 </dd>
 </dl>
@@ -150,19 +145,16 @@ search key.</p>
 <dd><p>Search criteria composed of a set of search criteria that must all
 match. If the set is empty, nothing will match.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.10)"><em>frozenset</em></a><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><em>SearchKey</em></a><em>]</em>) – The set of search keys that must match.</p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – The parameters that may be used by some searches.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
-</dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.search.SearchCriteriaSet.sequence_set">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sequence_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><span class="pre">pymap.parsing.specials.sequenceset.SequenceSet</span></a></em><a class="headerlink" href="#pymap.search.SearchCriteriaSet.sequence_set" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sequence_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><span class="pre">SequenceSet</span></a></em><a class="headerlink" href="#pymap.search.SearchCriteriaSet.sequence_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>The sequence set to use when finding the messages to match against.
 This will default to all messages unless the search criteria set
 contains a sequence set.</p>
@@ -173,14 +165,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SearchCriteriaSet.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SearchCriteriaSet.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>The message matches if all the defined search key criteria match.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -193,14 +185,11 @@ contains a sequence set.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">InverseSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#InverseSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.InverseSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches only if the given search criteria does not match.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><em>SearchKey</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -208,14 +197,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#InverseSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.InverseSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -228,11 +217,8 @@ contains a sequence set.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">AllSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#AllSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.AllSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Always matches anything.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -240,14 +226,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#AllSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.AllSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -260,15 +246,12 @@ contains a sequence set.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">OrSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#OrSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.OrSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if either of the search criteria match.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>left</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><em>SearchKey</em></a>) – </p></li>
 <li><p><strong>right</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.searchkey.SearchKey" title="pymap.parsing.specials.searchkey.SearchKey"><em>SearchKey</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -276,14 +259,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#OrSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.OrSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -296,14 +279,11 @@ contains a sequence set.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">SequenceSetSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SequenceSetSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message is contained in the sequence set.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>seq_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><em>SequenceSet</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -311,14 +291,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SequenceSetSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SequenceSetSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -332,14 +312,11 @@ contains a sequence set.</p>
 <dd><p>Matches if the message has the same
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.email_id" title="pymap.interfaces.message.MessageInterface.email_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">email_id</span></code></a> value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>email_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -347,14 +324,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#HasEmailIdSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.HasEmailIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -368,14 +345,11 @@ contains a sequence set.</p>
 <dd><p>Matches if the message has the same
 <a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.thread_id" title="pymap.interfaces.message.MessageInterface.thread_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">thread_id</span></code></a> value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>thread_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -383,14 +357,14 @@ contains a sequence set.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#HasThreadIdSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.HasThreadIdSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -404,15 +378,12 @@ contains a sequence set.</p>
 <dd><p>Matches if the message has the given flag in their permanent or
 session flag sets.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>flag</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><em>Flag</em></a>) – </p></li>
 <li><p><strong>expected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -420,14 +391,14 @@ session flag sets.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#HasFlagSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.HasFlagSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -440,11 +411,8 @@ session flag sets.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">NewSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#NewSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.NewSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message is considered “new”, i.e. recent and unseen.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -452,14 +420,14 @@ session flag sets.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#NewSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.NewSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -472,15 +440,12 @@ session flag sets.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">DateSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">when</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#DateSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.DateSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by comparing against the internal date of the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>when</strong> (<em>datetime</em>) – </p></li>
 <li><p><strong>op</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -488,14 +453,14 @@ session flag sets.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#DateSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.DateSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -508,15 +473,12 @@ session flag sets.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">HeaderDateSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">when</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#HeaderDateSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.HeaderDateSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by comparing against the <code class="docutils literal notranslate"><span class="pre">Date:</span></code> header of the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>when</strong> (<em>datetime</em>) – </p></li>
 <li><p><strong>op</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -526,15 +488,12 @@ session flag sets.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">SizeSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SizeSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SizeSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches by comparing against the size of the message.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – </p></li>
 <li><p><strong>op</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -542,14 +501,14 @@ session flag sets.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#SizeSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.SizeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -563,15 +522,12 @@ session flag sets.</p>
 <dd><p>Matches by checking for strings within various fields of the envelope
 structure.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a>) – </p></li>
 <li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -579,14 +535,14 @@ structure.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#EnvelopeSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.EnvelopeSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -599,15 +555,12 @@ structure.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">HeaderSearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#HeaderSearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.HeaderSearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message has a header containing a value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -615,14 +568,14 @@ structure.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#HeaderSearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.HeaderSearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -635,14 +588,11 @@ structure.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.search.</span></span><span class="sig-name descname"><span class="pre">BodySearchCriteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#BodySearchCriteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.BodySearchCriteria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matches if the message body contains a value.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – </p></li>
 <li><p><strong>params</strong> (<a class="reference internal" href="#pymap.search.SearchParams" title="pymap.search.SearchParams"><em>SearchParams</em></a>) – </p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -650,14 +600,14 @@ structure.</p>
 <span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaded_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/search.html#BodySearchCriteria.matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.search.BodySearchCriteria.matches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implemented by sub-classes to define the search criteria.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg_seq</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The message sequence ID.</p></li>
 <li><p><strong>msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface" title="pymap.interfaces.message.MessageInterface"><em>MessageInterface</em></a>) – The message object.</p></li>
 <li><p><strong>loaded_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a>) – The message content.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
 </dd>
 </dl>
@@ -700,7 +650,7 @@ structure.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -739,7 +689,7 @@ structure.</p>
         <li class="right" >
           <a href="pymap.message.html" title="pymap.message"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li> 
       </ul>
@@ -748,7 +698,7 @@ structure.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

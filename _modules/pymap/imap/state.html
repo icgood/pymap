@@ -3,11 +3,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap.state &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.imap.state &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
 
     
@@ -48,7 +49,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../imap.html" accesskey="U">pymap.imap</a> &#187;</li>
@@ -103,7 +104,8 @@
     <span class="n">SearchResponse</span><span class="p">,</span> <span class="n">StatusResponse</span>
 <span class="kn">from</span> <span class="nn">pymap.parsing.specials</span> <span class="kn">import</span> <span class="n">StatusAttribute</span><span class="p">,</span> <span class="n">FetchAttribute</span><span class="p">,</span> <span class="n">FetchValue</span>
 <span class="kn">from</span> <span class="nn">pymap.selected</span> <span class="kn">import</span> <span class="n">SelectedMailbox</span>
-<span class="kn">from</span> <span class="nn">pysasl.creds</span> <span class="kn">import</span> <span class="n">AuthenticationCredentials</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds.plain</span> <span class="kn">import</span> <span class="n">PlainCredentials</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds.server</span> <span class="kn">import</span> <span class="n">ServerCredentials</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ConnectionState&#39;</span><span class="p">]</span>
 
@@ -160,7 +162,7 @@
         <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span><span class="p">)</span> \
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">ServerCredentials</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SessionInterface</span><span class="p">:</span>
         <span class="n">stack</span> <span class="o">=</span> <span class="n">connection_exit</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">identity</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
@@ -183,7 +185,7 @@
         <span class="k">return</span> <span class="n">resp_cls</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">greeting</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">do_authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">_AuthCommands</span><span class="p">,</span>
-                              <span class="n">creds</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> \
+                              <span class="n">creds</span><span class="p">:</span> <span class="n">ServerCredentials</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">CommandResponse</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">creds</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Invalid authentication mechanism.&#39;</span><span class="p">)</span>
@@ -195,7 +197,7 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">do_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">LoginCommand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_CommandRet</span><span class="p">:</span>
         <span class="k">if</span> <span class="sa">b</span><span class="s1">&#39;LOGINDISABLED&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">capability</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;LOGIN is disabled.&#39;</span><span class="p">)</span>
-        <span class="n">creds</span> <span class="o">=</span> <span class="n">AuthenticationCredentials</span><span class="p">(</span>
+        <span class="n">creds</span> <span class="o">=</span> <span class="n">PlainCredentials</span><span class="p">(</span>
             <span class="n">cmd</span><span class="o">.</span><span class="n">userid</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;surrogateescape&#39;</span><span class="p">),</span>
             <span class="n">cmd</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;surrogateescape&#39;</span><span class="p">))</span>
         <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_authenticate</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">creds</span><span class="p">),</span> <span class="kc">None</span>
@@ -204,7 +206,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;STARTTLS&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;STARTTLS not available.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">(</span><span class="s1">&#39;STARTTLS not available.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_auth</span>
         <span class="k">return</span> <span class="n">ResponseOk</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Ready to handshake.&#39;</span><span class="p">),</span> <span class="kc">None</span>
 
@@ -475,7 +477,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -508,7 +510,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../imap.html" >pymap.imap</a> &#187;</li>
@@ -519,7 +521,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

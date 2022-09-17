@@ -3,11 +3,11 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.sieve.manage &#8212; pymap 0.27.0 documentation</title>
+    <title>pymap.sieve.manage &#8212; pymap 0.28.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
 
     
@@ -48,7 +49,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sieve.html" accesskey="U">pymap.sieve</a> &#187;</li>
@@ -90,8 +91,9 @@
 <span class="kn">from</span> <span class="nn">pymap.interfaces.session</span> <span class="kn">import</span> <span class="n">SessionInterface</span>
 <span class="kn">from</span> <span class="nn">pymap.parsing.exceptions</span> <span class="kn">import</span> <span class="n">NotParseable</span>
 <span class="kn">from</span> <span class="nn">pymap.parsing.primitives</span> <span class="kn">import</span> <span class="n">String</span>
-<span class="kn">from</span> <span class="nn">pysasl</span> <span class="kn">import</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ChallengeResponse</span><span class="p">,</span> <span class="n">AuthenticationError</span>
-<span class="kn">from</span> <span class="nn">pysasl.creds</span> <span class="kn">import</span> <span class="n">AuthenticationCredentials</span>
+<span class="kn">from</span> <span class="nn">pysasl</span> <span class="kn">import</span> <span class="n">ServerChallenge</span><span class="p">,</span> <span class="n">ChallengeResponse</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds.server</span> <span class="kn">import</span> <span class="n">ServerCredentials</span>
+<span class="kn">from</span> <span class="nn">pysasl.exception</span> <span class="kn">import</span> <span class="n">AuthenticationError</span>
 
 <span class="kn">from</span> <span class="nn">.command</span> <span class="kn">import</span> <span class="n">Command</span><span class="p">,</span> <span class="n">NoOpCommand</span><span class="p">,</span> <span class="n">LogoutCommand</span><span class="p">,</span> <span class="n">CapabilityCommand</span><span class="p">,</span> \
     <span class="n">AuthenticateCommand</span><span class="p">,</span> <span class="n">UnauthenticateCommand</span><span class="p">,</span> <span class="n">StartTLSCommand</span>
@@ -266,7 +268,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> &lt;--| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">resp</span><span class="p">))</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">AuthenticationCredentials</span><span class="p">)</span> \
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">ServerCredentials</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SessionInterface</span><span class="p">:</span>
         <span class="n">stack</span> <span class="o">=</span> <span class="n">connection_exit</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">identity</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
@@ -306,7 +308,8 @@
                 <span class="n">resp_bytes</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_data</span><span class="p">()</span>
                 <span class="n">resp_str</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">resp_bytes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">resp_str</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;*&#39;</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">AuthenticationError</span><span class="p">(</span><span class="s1">&#39;Authentication cancelled.&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">AuthenticationError</span><span class="p">(</span><span class="s1">&#39;Authentication cancelled.&#39;</span><span class="p">)</span> \
+                        <span class="kn">from</span> <span class="bp">None</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">resp_dec</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">resp_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -420,7 +423,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
@@ -453,7 +456,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.27.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sieve.html" >pymap.sieve</a> &#187;</li>
@@ -464,7 +467,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
