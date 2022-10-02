@@ -1,7 +1,6 @@
 
 from __future__ import annotations
 
-from abc import ABCMeta
 from collections.abc import Mapping, Set, AsyncGenerator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
 from typing import TypeAlias, Final
@@ -22,10 +21,10 @@ __all__ = ['handlers', 'BaseHandler', 'LoginHandler']
 _Metadata: TypeAlias = Mapping[str, str | bytes] | None
 
 #: Registers new admin handler plugins.
-handlers: Plugin[type[BaseHandler]] = Plugin('pymap.admin.handlers')
+handlers: Plugin[BaseHandler] = Plugin('pymap.admin.handlers')
 
 
-class BaseHandler(Handler, metaclass=ABCMeta):
+class BaseHandler(Handler):
     """Base class for implementing admin request handlers.
 
     Args:

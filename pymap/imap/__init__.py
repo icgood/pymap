@@ -37,9 +37,9 @@ from pymap.parsing.response import ResponseContinuation, Response, \
 from pymap.parsing.state import ParsingState, ParsingInterrupt, \
     ExpectContinuation
 from pymap.sockets import InheritedSockets
-from pysasl import ServerChallenge, ChallengeResponse
 from pysasl.creds.server import ServerCredentials
 from pysasl.exception import AuthenticationError
+from pysasl.mechanism import ServerChallenge, ChallengeResponse
 
 from .state import ConnectionState
 

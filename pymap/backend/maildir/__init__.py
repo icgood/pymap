@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager, AsyncExitStack
 from datetime import datetime
 from typing import Any, Final
 
+from pysasl.hashing import HashInterface, Cleartext
 from pysasl.creds.server import ServerCredentials
 
 from pymap.concurrent import Subsystem
@@ -17,8 +18,7 @@ from pymap.exceptions import AuthorizationFailure, NotSupportedError
 from pymap.filter import PluginFilterSet, SingleFilterSet
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.login import LoginInterface, IdentityInterface, \
-    UserInterface
+from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.token import AllTokens
 from pymap.user import UserMetadata
 
@@ -93,13 +93,18 @@ class Config(IMAPConfig):
         base_dir: The base directory for all relative mailbox paths.
         layout: The Maildir directory layout.
         colon: The info delimiter in mail filename.
+        hash_interface: The hash algorithm to use for passwords.
 
     """
 
+    _cleartext = Cleartext()
+
     def __init__(self, args: Namespace, *, users_file: str,
                  base_dir: str | None, layout: str,
-                 colon: str | None, **extra: Any) -> None:
-        super().__init__(args, **extra)
+                 colon: str | None,
+                 hash_context: HashInterface = _cleartext,
+                 **extra: Any) -> None:
+        super().__init__(args, hash_context=hash_context, **extra)
         self._users_file = users_file
         self._base_dir = self._get_base_dir(base_dir, users_file)
         self._layout = layout
@@ -234,7 +239,7 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
-        self._tokens = AllTokens()
+        self._tokens = AllTokens(config)
 
     @property
     def tokens(self) -> AllTokens:
@@ -296,10 +301,10 @@ class Identity(IdentityInterface):
             maildir.colon = colon
         return maildir, layout
 
-    async def get(self) -> UserInterface:
+    async def get(self) -> UserMetadata:
         return self.metadata
 
-    async def set(self, metadata: UserInterface) -> None:
+    async def set(self, metadata: UserMetadata) -> None:
         raise NotSupportedError()
 
     async def delete(self) -> None:

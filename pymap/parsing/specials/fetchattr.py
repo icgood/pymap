@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import enum
 import re
-from abc import ABCMeta
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from functools import total_ordering, reduce
@@ -324,7 +323,7 @@ class FetchAttribute(Parseable[bytes]):
         return self.raw
 
 
-class FetchValue(Writeable, metaclass=ABCMeta):
+class FetchValue(Writeable):
     """A value fetched from a message for a single fetch attribute.
 
     Args:

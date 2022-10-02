@@ -7,4 +7,4 @@ from .plugin import Plugin
 __all__ = ['services']
 
 #: Registers new service plugins.
-services: Plugin[type[ServiceInterface]] = Plugin('pymap.service')
+services: Plugin[ServiceInterface] = Plugin('pymap.service')

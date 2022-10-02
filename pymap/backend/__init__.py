@@ -7,4 +7,4 @@ from ..plugin import Plugin
 __all__ = ['backends']
 
 #: Registers new backend plugins.
-backends: Plugin[type[BackendInterface]] = Plugin('pymap.backend')
+backends: Plugin[BackendInterface] = Plugin('pymap.backend')

@@ -12,11 +12,11 @@ from .plugin import Plugin
 __all__ = ['filters', 'PluginFilterSet', 'SingleFilterSet']
 
 #: Registers filter compiler plugins.
-filters: Plugin[type[FilterCompilerInterface[Any]]] = Plugin(
+filters: Plugin[FilterCompilerInterface[Any]] = Plugin(
     'pymap.filter', default='sieve')
 
 
-class PluginFilterSet(FilterSetInterface[FilterValueT], metaclass=ABCMeta):
+class PluginFilterSet(FilterSetInterface[FilterValueT]):
     """Base class for filter set implementations that use a filter compiler
     declared in the ``pymap.filter`` entry point. The declared entry points
     must sub-class :class:`FilterCompiler`.

@@ -68,11 +68,11 @@ class UserHandlers(UserBase, BaseHandler):
         async with (self.catch_errors('SetUser') as result,
                     self.login_as(stream.metadata, request.user) as identity):
             user_data = request.data
-            password = self.config.hash_context.hash(user_data.password) \
+            password = user_data.password \
                 if user_data.HasField('password') else None
             params: Mapping[str, str] = user_data.params
-            metadata = UserMetadata(self.config, request.user,
-                                    password=password, **params)
+            metadata = await UserMetadata.create(
+                self.config, request.user, password=password, params=params)
             await identity.set(metadata)
         resp = UserResponse(result=result, username=request.user)
         await stream.send_message(resp)

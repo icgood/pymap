@@ -3,6 +3,7 @@ import asyncio
 from argparse import Namespace
 
 import pytest
+from pysasl.hashing import BuiltinHash
 
 from pymap.backend.dict import DictBackend
 from pymap.context import subsystem
@@ -29,6 +30,9 @@ class FakeArgs(Namespace):
 
 class TestBase:
 
+    # For speed and determinism.
+    _hash_context = BuiltinHash(hash_name='sha1', salt_len=0, rounds=1)
+
     @classmethod
     @pytest.fixture(autouse=True)
     def init(cls, request, backend):
@@ -54,7 +58,11 @@ class TestBase:
 
     @pytest.fixture
     async def backend(self, args, overrides):
-        backend, config = await DictBackend.init(args, **overrides)
+        backend, config = await DictBackend.init(
+            args,
+            hash_context=self._hash_context,
+            invalid_user_sleep=0.0,
+            **overrides)
         return backend
 
     def _incr_fd(self):

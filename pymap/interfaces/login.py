@@ -1,19 +1,18 @@
 
 from __future__ import annotations
 
-from abc import abstractmethod, ABCMeta
-from collections.abc import Mapping, Set
+from abc import abstractmethod
 from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from typing import Protocol
 
 from pysasl.creds.server import ServerCredentials
-from pysasl.identity import Identity
 
 from .session import SessionInterface
 from .token import TokensInterface
+from ..user import UserMetadata
 
-__all__ = ['LoginInterface', 'IdentityInterface', 'UserInterface']
+__all__ = ['LoginInterface', 'IdentityInterface']
 
 
 class LoginInterface(Protocol):
@@ -86,7 +85,7 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    async def get(self) -> UserInterface:
+    async def get(self) -> UserMetadata:
         """Return the metadata associated with the user identity.
 
         Raises:
@@ -96,7 +95,7 @@ class IdentityInterface(Protocol):
         ...
 
     @abstractmethod
-    async def set(self, metadata: UserInterface) -> None:
+    async def set(self, metadata: UserMetadata) -> None:
         """Assign new metadata to the user identity.
 
         Args:
@@ -111,58 +110,6 @@ class IdentityInterface(Protocol):
 
         Raises:
             :exc:`~pymap.exceptions.UserNotFound`
-
-        """
-        ...
-
-
-class UserInterface(Identity, metaclass=ABCMeta):
-    """Contains information about a user."""
-
-    @property
-    @abstractmethod
-    def password(self) -> str | None:
-        """The password string or hash digest."""
-        ...
-
-    @property
-    @abstractmethod
-    def roles(self) -> Set[str]:
-        """A set of role strings given to the user. These strings only have
-        meaning to the backend.
-
-        """
-        ...
-
-    @property
-    @abstractmethod
-    def params(self) -> Mapping[str, str]:
-        """Metadata parameters associated with the user."""
-        ...
-
-    @abstractmethod
-    def get_key(self, identifier: str) -> bytes | None:
-        """Find the token key for the given identifier associated with this
-        user.
-
-        Args:
-            identifier: Any string that can facilitate the lookup of the key.
-
-        """
-        ...
-
-    @abstractmethod
-    async def check_password(self, creds: ServerCredentials) -> None:
-        """Check the given credentials against the known password comparison
-        data. If the known data used a hash, then the equivalent hash of the
-        provided secret is compared.
-
-        Args:
-            creds: The provided authentication credentials.
-            token_key: The token key bytestring.
-
-        Raises:
-            :class:`~pymap.exceptions.InvalidAuth`
 
         """
         ...

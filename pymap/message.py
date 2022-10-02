@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from abc import ABCMeta
 from collections.abc import Collection, Iterable, Mapping, Sequence
 from datetime import datetime
 from typing import Any, Final
@@ -30,7 +29,7 @@ class _NoContent(ValueError):
         super().__init__('Message content not available.')
 
 
-class BaseMessage(MessageInterface, CachedMessage, metaclass=ABCMeta):
+class BaseMessage(MessageInterface, CachedMessage):
     """Message metadata such as UID, permanent flags, and when the message
     was added to the system.
 
@@ -114,7 +113,7 @@ class ExpungedMessage(BaseMessage):
         return BaseLoadedMessage(self, requirement, None)
 
 
-class BaseLoadedMessage(LoadedMessageInterface, metaclass=ABCMeta):
+class BaseLoadedMessage(LoadedMessageInterface):
     """The loaded message content, implemented using an instance of
     :class:`~pymap.mime.MessageContent`.
 

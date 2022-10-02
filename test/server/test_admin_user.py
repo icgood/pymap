@@ -29,7 +29,8 @@ class TestMailboxHandlers(TestBase):
             response = await stub.GetUser(request, metadata=self.metadata)
         assert SUCCESS == response.result.code
         assert 'testuser' == response.username
-        assert 'testpass' == response.data.password
+        assert '$pbkdf2$1$$FzEpdTtdOaIFkUucxV4PjfW88BE=' \
+            == response.data.password
 
     async def test_get_user_not_found(self, backend) -> None:
         handlers = UserHandlers(backend)

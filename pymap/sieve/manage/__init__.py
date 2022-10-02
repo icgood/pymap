@@ -24,9 +24,9 @@ from pymap.interfaces.login import LoginInterface
 from pymap.interfaces.session import SessionInterface
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import String
-from pysasl import ServerChallenge, ChallengeResponse
 from pysasl.creds.server import ServerCredentials
 from pysasl.exception import AuthenticationError
+from pysasl.mechanism import ServerChallenge, ChallengeResponse
 
 from .command import Command, NoOpCommand, LogoutCommand, CapabilityCommand, \
     AuthenticateCommand, UnauthenticateCommand, StartTLSCommand
