@@ -207,7 +207,8 @@ class SelectedMailbox:
     Args:
         mailbox_id: The globally unique identifier of the selected mailbox.
         readonly: Indicates the mailbox is selected as read-only.
-        permanent_flags: The defined permanent flags for the mailbox.
+        permanent_flags (~pymap.flags.PermanentFlags): The defined permanent
+            flags for the mailbox.
         session_flags: Session-only flags for the mailbox.
         selected_set: The ``self`` object and subsequent forked copies will be
             kept in in this set.
