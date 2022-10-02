@@ -1,7 +1,6 @@
 
 from __future__ import annotations
 
-from abc import ABCMeta
 from collections.abc import Hashable, AsyncIterator
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
 from typing import TypeAlias, TypeVar, Final
@@ -52,7 +51,7 @@ class _AnonymousResponseCode(ResponseCode):
         return BytesFormat(b'[%b]') % self.code
 
 
-class Response(Writeable, metaclass=ABCMeta):
+class Response(Writeable):
     """Base class for all responses sent from the server to the client. These
     responses may be sent unsolicited (e.g. idle timeouts) or in response to a
     tagged command from the client.

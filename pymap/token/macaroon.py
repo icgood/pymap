@@ -10,23 +10,28 @@ from pymacaroons import Macaroon, Verifier
 from pymacaroons.exceptions import MacaroonDeserializationException, \
     MacaroonInvalidSignatureException
 from pysasl.identity import Identity
-from pysasl.prep import prepare
+from pysasl.prep import Preparation
 
-from ..interfaces.token import TokenCredentials, TokensInterface
-from ..interfaces.login import UserInterface
+from . import TokensBase
+from ..interfaces.token import TokenCredentials
+from ..user import UserMetadata
 
 __all__ = ['MacaroonTokens', 'MacaroonCredentials']
 
 
-class MacaroonTokens(TokensInterface):
+class MacaroonTokens(TokensBase):
     """Creates and parses :class:`~pymacaroons.Macaroon` tokens."""
+
+    @property
+    def _prepare(self) -> Preparation:
+        return self.config.password_prep
 
     def get_login_token(self, identifier: str, authcid: str, key: bytes, *,
                         authzid: str | None = None,
                         location: str | None = None,
                         expiration: datetime | None = None) -> str:
         macaroon = Macaroon(location=location, identifier=identifier, key=key)
-        macaroon.add_first_party_caveat(f'authcid = {prepare(authcid)}')
+        macaroon.add_first_party_caveat(f'authcid = {self._prepare(authcid)}')
         if authzid is not None:
             macaroon.add_first_party_caveat(f'authzid = {authzid}')
         if expiration is not None:
@@ -53,7 +58,8 @@ class MacaroonTokens(TokensInterface):
     def parse(self, authzid: str, token: str, *,
               admin_keys: Set[bytes] = frozenset()) -> MacaroonCredentials:
         try:
-            return MacaroonCredentials(authzid, token, admin_keys)
+            return MacaroonCredentials(authzid, token, admin_keys,
+                                       self._prepare)
         except MacaroonDeserializationException as exc:
             raise ValueError('invalid macaroon') from exc
 
@@ -73,17 +79,19 @@ class MacaroonCredentials(TokenCredentials):
         identity: The identity to be authorized.
         serialized: The serialized macaroon string.
         admin_keys: The admin token string.
+        prepare: The preparation algorithm function.
 
     """
 
     _caveat = re.compile(r'^(\w+) ([^\w\s]+) (.*)$', re.ASCII)
 
     def __init__(self, identity: str, serialized: str,
-                 admin_keys: Set[bytes]) -> None:
+                 admin_keys: Set[bytes], prepare: Preparation) -> None:
         super().__init__()
         self.macaroon: Final = Macaroon.deserialize(serialized)
         self.admin_keys: Final = admin_keys
         self.identity: Final = identity
+        self.prepare: Final = prepare
 
     @property
     def identifier(self) -> str:
@@ -133,7 +141,7 @@ class MacaroonCredentials(TokenCredentials):
 
     def _get_login_verifier(self, identity: Identity) -> Verifier:
         verifier = Verifier()
-        verifier.satisfy_exact(f'authcid = {prepare(identity.authcid)}')
+        verifier.satisfy_exact(f'authcid = {self.prepare(identity.authcid)}')
         verifier.satisfy_general(self._satisfy)
         return verifier
 
@@ -149,7 +157,7 @@ class MacaroonCredentials(TokenCredentials):
                 verifier = self._get_admin_verifier()
                 if self._verify(verifier, admin_key):
                     return True
-        if isinstance(identity, UserInterface):
+        if isinstance(identity, UserMetadata):
             key = identity.get_key(self.identifier)
             if key is not None:
                 verifier = self._get_login_verifier(identity)

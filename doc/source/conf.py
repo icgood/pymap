@@ -22,7 +22,7 @@ import cloud_sptheme as csp  # type: ignore
 # -- Project information -----------------------------------------------------
 
 project = 'pymap'
-copyright = '2021, Ian Good'
+copyright = '2022, Ian Good'
 author = 'Ian Good'
 
 # The short X.Y version

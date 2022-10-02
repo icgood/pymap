@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os.path
 import uuid
 from argparse import ArgumentParser, Namespace
@@ -12,15 +13,13 @@ from typing import Any, Final
 
 from pkg_resources import resource_listdir, resource_stream
 from pysasl.creds.server import ServerCredentials
-from pysasl.hashing import Cleartext
 
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
     UserNotFound
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
-from pymap.interfaces.login import LoginInterface, IdentityInterface, \
-    UserInterface
+from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.interfaces.token import TokenCredentials
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials.flag import Flag, Recent
@@ -75,7 +74,14 @@ class DictBackend(BackendInterface):
             -> tuple[DictBackend, Config]:
         config = Config.from_args(args, **overrides)
         login = Login(config)
+        await cls._add_demo_user(config, login)
         return cls(login, config), config
+
+    @classmethod
+    async def _add_demo_user(cls, config: Config, login: Login) -> None:
+        demo_user = await UserMetadata.create(
+            config, config.demo_user, password=config.demo_password)
+        await login.demo_user_identity.set(demo_user)
 
     async def start(self, stack: AsyncExitStack) -> None:
         pass
@@ -89,8 +95,7 @@ class Config(IMAPConfig):
                  demo_data_resource: str = __name__,
                  admin_key: bytes | None = None, **extra: Any) -> None:
         admin_key = admin_key or token_bytes()
-        super().__init__(args, hash_context=Cleartext(), admin_key=admin_key,
-                         **extra)
+        super().__init__(args, admin_key=admin_key, **extra)
         self._demo_data = demo_data
         self._demo_user = demo_user
         self._demo_password = demo_password
@@ -164,15 +169,17 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
-        self.users_dict: dict[str, UserInterface] = {
-            config.demo_user: User(
-                self, config.demo_user, password=config.demo_password)}
+        self.users_dict: dict[str, UserMetadata] = {}
         self.tokens_dict: dict[str, tuple[str, bytes]] = {}
-        self._tokens = AllTokens()
+        self._tokens = AllTokens(config)
 
     @property
     def tokens(self) -> AllTokens:
         return self._tokens
+
+    @property
+    def demo_user_identity(self) -> Identity:
+        return Identity(self.config.demo_user, self, frozenset())
 
     async def authenticate(self, credentials: ServerCredentials) -> Identity:
         authcid = credentials.authcid
@@ -186,7 +193,8 @@ class Login(LoginInterface):
         try:
             metadata = await Identity(authcid, self, roles).get()
         except UserNotFound:
-            metadata = User(self, authcid)
+            await asyncio.sleep(self.config.invalid_user_sleep)
+            metadata = UserMetadata(self.config, authcid)
         await metadata.check_password(credentials)
         roles |= metadata.roles
         if authcid != authzid and 'admin' not in roles:
@@ -277,16 +285,17 @@ class Identity(IdentityInterface):
             append_msg = AppendMessage(msg_data, msg_dt, frozenset(msg_flags))
             await mbx.append(append_msg, recent=msg_recent)
 
-    async def get(self) -> UserInterface:
+    async def get(self) -> UserMetadata:
         data = self.login.users_dict.get(self.name)
         if data is None:
             raise UserNotFound(self.name)
         return data
 
-    async def set(self, data: UserInterface) -> None:
-        if 'admin' not in self._roles and data.roles:
+    async def set(self, data: UserMetadata) -> None:
+        user = User(self.login, data.authcid, data.password, data.params)
+        if 'admin' not in self._roles and user.roles:
             raise NotAllowedError('Cannot assign roles.')
-        self.login.users_dict[self.name] = User.copy(self.login, data)
+        self.login.users_dict[self.name] = user
 
     async def delete(self) -> None:
         try:
@@ -301,15 +310,15 @@ class Identity(IdentityInterface):
 
 class User(UserMetadata):
 
-    def __init__(self, login: Login, authcid: str, *,
-                 password: str | None = None,
-                 **params: str | None) -> None:
-        super().__init__(login.config, authcid, password=password, **params)
+    def __init__(self, login: Login, authcid: str,
+                 password: str | None, params: Mapping[str, str]) -> None:
+        super().__init__(login.config, authcid,
+                         password=password, params=params)
         self._login = login
 
-    @classmethod
-    def copy(cls, login: Login, copy: UserInterface) -> User:
-        return User(login, copy.authcid, password=copy.password, **copy.params)
+    @property
+    def roles(self) -> UserRoles:
+        return UserRoles([self.params.get('role')])
 
     def get_key(self, identifier: str) -> bytes | None:
         if identifier in self._login.tokens_dict:

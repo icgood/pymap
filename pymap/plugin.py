@@ -12,11 +12,11 @@ __all__ = ['PluginT', 'Plugin']
 PluginT = TypeVar('PluginT')
 
 
-class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
+class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
     """Plugin system, typically loaded from :mod:`pkg_resources` `entry points
     <https://packaging.python.org/guides/creating-and-discovering-plugins/#using-package-metadata>`_.
 
-    >>> example: Plugin[type[Example]] = Plugin('plugins.example')
+    >>> example: Plugin[Example] = Plugin('plugins.example')
     >>> example.add('two', ExampleTwo)
     >>> example.registered
     {'one': <class 'examples.ExampleOne'>,
@@ -28,6 +28,7 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
 
     Args:
         group: The entry point group to load.
+        default: The name of the :attr:`.default` plugin.
 
     """
 
@@ -35,27 +36,26 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
         super().__init__()
         self.group: Final = group
         self._default = default
-        self._loaded: dict[str, PluginT] | None = None
-        self._added: dict[str, PluginT] = {}
+        self._loaded: dict[str, type[PluginT]] | None = None
+        self._added: dict[str, type[PluginT]] = {}
 
-    def __iter__(self) -> Iterator[tuple[str, PluginT]]:
+    def __iter__(self) -> Iterator[tuple[str, type[PluginT]]]:
         return iter(self.registered.items())
 
     @property
-    def registered(self) -> Mapping[str, PluginT]:
+    def registered(self) -> Mapping[str, type[PluginT]]:
         """A mapping of the registered plugins, keyed by name."""
         loaded = self._load()
         return {**loaded, **self._added}
 
     @property
-    def default(self) -> PluginT:
+    def default(self) -> type[PluginT]:
         """The default plugin implementation.
 
         This property may also be assigned a new string value to change the
         name of the default plugin.
 
-        >>> example: Plugin[type[Example]] = Plugin('plugins.example',
-        ...                                         default='one')
+        >>> example: Plugin[Example] = Plugin('plugins.example', default='one')
         >>> example.default
         <class 'examples.ExampleOne'>
         >>> example.default = 'two'
@@ -75,13 +75,13 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
     def default(self, default: str | None) -> None:
         self._default = default
 
-    def _load(self) -> Mapping[str, PluginT]:
+    def _load(self) -> Mapping[str, type[PluginT]]:
         loaded = self._loaded
         if loaded is None:
             loaded = {}
             for entry_point in iter_entry_points(self.group):
                 try:
-                    plugin: PluginT = entry_point.load()
+                    plugin: type[PluginT] = entry_point.load()
                 except DistributionNotFound:
                     pass  # optional dependencies not installed
                 else:
@@ -89,7 +89,7 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
             self._loaded = loaded
         return loaded
 
-    def add(self, name: str, plugin: PluginT) -> None:
+    def add(self, name: str, plugin: type[PluginT]) -> None:
         """Add a new plugin by name.
 
         Args:
@@ -99,14 +99,14 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, PluginT]]):
         """
         self._added[name] = plugin
 
-    def register(self, name: str) -> Callable[[PluginT], PluginT]:
+    def register(self, name: str) -> Callable[[type[PluginT]], type[PluginT]]:
         """Decorates a plugin implementation.
 
         Args:
             name: The identifying name of the plugin.
 
         """
-        def deco(plugin: PluginT) -> PluginT:
+        def deco(plugin: type[PluginT]) -> type[PluginT]:
             self.add(name, plugin)
             return plugin
         return deco

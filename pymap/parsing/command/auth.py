@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import re
-from abc import ABCMeta
 from collections.abc import Iterable, Sequence
 from typing import ClassVar
 
@@ -20,7 +19,7 @@ __all__ = ['AppendCommand', 'CreateCommand', 'DeleteCommand', 'ExamineCommand',
            'StatusCommand', 'SubscribeCommand', 'UnsubscribeCommand']
 
 
-class CommandMailboxArg(CommandAuth, metaclass=ABCMeta):
+class CommandMailboxArg(CommandAuth):
 
     def __init__(self, tag: bytes, mailbox: Mailbox) -> None:
         super().__init__(tag)

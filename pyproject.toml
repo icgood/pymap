@@ -53,7 +53,7 @@ asyncio_mode = 'auto'
 norecursedirs = 'doc'
 
 [tool.coverage.report]
-fail_under = 80
+fail_under = 90
 omit = ['*/maildir/*', '*/redis/*', '*/main.py']
 exclude_lines = [
     'pragma: no cover',

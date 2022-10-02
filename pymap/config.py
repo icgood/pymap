@@ -16,6 +16,7 @@ from proxyprotocol.version import ProxyProtocolVersion
 from pysasl import SASLAuth
 from pysasl.creds.server import ServerCredentials
 from pysasl.hashing import HashInterface, get_hash
+from pysasl.prep import Preparation
 
 from .concurrent import Subsystem
 from .context import subsystem
@@ -102,6 +103,8 @@ class IMAPConfig(metaclass=ABCMeta):
             defaulting to a small thread pool.
         preauth_credentials: If given, clients will pre-authenticate on
             connection using these credentials.
+        invalid_user_sleep: Seconds to delay before failing authentication for
+            an unrecognized user.
         proxy_protocol: The PROXY protocol implementation to use.
         reject_dnsbl: Reject connections with a non-empty DNSBL result.
         max_append_len: The maximum allowed length of the message body to an
@@ -125,6 +128,7 @@ class IMAPConfig(metaclass=ABCMeta):
                  tls_enabled: bool = True,
                  secure_auth: bool = True,
                  preauth_credentials: ServerCredentials | None = None,
+                 invalid_user_sleep: float = 0.3,
                  proxy_protocol: ProxyProtocol | None = None,
                  reject_dnsbl: bool = True,
                  admin_key: bytes | None = None,
@@ -148,6 +152,7 @@ class IMAPConfig(metaclass=ABCMeta):
             get_hash(passlib_config=args.passlib_cfg)
         self.cpu_subsystem: Final = cpu_subsystem or \
             self._get_cpu_subsystem()
+        self.invalid_user_sleep: Final = invalid_user_sleep
         self.reject_dnsbl: Final = reject_dnsbl
         self._ssl_context = ssl_context or self._load_certs(extra)
         self._tls_enabled = tls_enabled
@@ -237,6 +242,10 @@ class IMAPConfig(metaclass=ABCMeta):
             return SASLAuth([])
         else:
             return self.tls_auth
+
+    @property
+    def password_prep(self) -> Preparation:
+        return self.tls_auth.prepare
 
     @property
     def tls_auth(self) -> SASLAuth:

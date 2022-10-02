@@ -51,7 +51,7 @@ class Command(Parseable[bytes], metaclass=ABCMeta):
         return '<%s tag=%r>' % (type(self).__name__, self.tag)
 
 
-class CommandNoArgs(Command, metaclass=ABCMeta):
+class CommandNoArgs(Command):
     """Convenience class used to fail parsing when args are given to a command
     that expects nothing.
 
@@ -64,14 +64,14 @@ class CommandNoArgs(Command, metaclass=ABCMeta):
         return cls(params.tag), buf
 
 
-class CommandAny(Command, metaclass=ABCMeta):
+class CommandAny(Command):
     """Represents a command available at any stage of the IMAP session.
 
     """
     pass
 
 
-class CommandAuth(Command, metaclass=ABCMeta):
+class CommandAuth(Command):
     """Represents a command available when the IMAP session has been
     authenticated.
 
@@ -79,7 +79,7 @@ class CommandAuth(Command, metaclass=ABCMeta):
     pass
 
 
-class CommandNonAuth(Command, metaclass=ABCMeta):
+class CommandNonAuth(Command):
     """Represents a command available only when the IMAP session has not yet
     authenticated.
 
@@ -87,7 +87,7 @@ class CommandNonAuth(Command, metaclass=ABCMeta):
     pass
 
 
-class CommandSelect(CommandAuth, metaclass=ABCMeta):
+class CommandSelect(CommandAuth):
     """Represents a command available only when the IMAP session has been
     authenticated and a mailbox has been selected.
 
