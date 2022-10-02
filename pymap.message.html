@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.message &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.message &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -347,7 +348,40 @@ optimized to only search headers and <code class="docutils literal notranslate">
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.message.BaseMessage"><code class="docutils literal notranslate"><span class="pre">BaseMessage</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.message.BaseMessage.email_id"><code class="docutils literal notranslate"><span class="pre">BaseMessage.email_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseMessage.thread_id"><code class="docutils literal notranslate"><span class="pre">BaseMessage.thread_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseMessage.permanent_flags"><code class="docutils literal notranslate"><span class="pre">BaseMessage.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseMessage.get_flags"><code class="docutils literal notranslate"><span class="pre">BaseMessage.get_flags()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseMessage.flags_key"><code class="docutils literal notranslate"><span class="pre">BaseMessage.flags_key</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.message.ExpungedMessage"><code class="docutils literal notranslate"><span class="pre">ExpungedMessage</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.message.ExpungedMessage.load_content"><code class="docutils literal notranslate"><span class="pre">ExpungedMessage.load_content()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.requirement"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.requirement</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_header"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_header()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_headers"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_headers()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_body"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_body()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_message_headers"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_message_headers()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_message_text"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_message_text()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_size"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_size()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_envelope_structure"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_envelope_structure()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_body_structure"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_body_structure()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.contains"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.contains()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="pymap.mailbox.html"
@@ -413,7 +447,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -421,8 +455,8 @@ optimized to only search headers and <code class="docutils literal notranslate">
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

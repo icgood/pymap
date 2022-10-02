@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.message &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.message &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -17,6 +17,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
 
     
     
@@ -49,7 +50,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.message</a></li> 
@@ -69,7 +70,6 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span>
@@ -96,7 +96,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;Message content not available.&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="BaseMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseMessage</span><span class="p">(</span><span class="n">MessageInterface</span><span class="p">,</span> <span class="n">CachedMessage</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseMessage</span><span class="p">(</span><span class="n">MessageInterface</span><span class="p">,</span> <span class="n">CachedMessage</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Message metadata such as UID, permanent flags, and when the message</span>
 <span class="sd">    was added to the system.</span>
 
@@ -180,7 +180,7 @@
         <span class="k">return</span> <span class="n">BaseLoadedMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="BaseLoadedMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseLoadedMessage</span><span class="p">(</span><span class="n">LoadedMessageInterface</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseLoadedMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseLoadedMessage</span><span class="p">(</span><span class="n">LoadedMessageInterface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The loaded message content, implemented using an instance of</span>
 <span class="sd">    :class:`~pymap.mime.MessageContent`.</span>
 
@@ -430,7 +430,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.message</a></li> 
@@ -439,8 +439,8 @@
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

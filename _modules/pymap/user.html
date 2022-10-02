@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.user &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.user &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -17,6 +17,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
 
     
     
@@ -49,7 +50,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.user</a></li> 
@@ -72,10 +73,10 @@
 
 <span class="kn">from</span> <span class="nn">pysasl.creds.server</span> <span class="kn">import</span> <span class="n">ServerCredentials</span>
 <span class="kn">from</span> <span class="nn">pysasl.hashing</span> <span class="kn">import</span> <span class="n">Cleartext</span>
+<span class="kn">from</span> <span class="nn">pysasl.identity</span> <span class="kn">import</span> <span class="n">Identity</span>
 
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">IMAPConfig</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">InvalidAuth</span>
-<span class="kn">from</span> <span class="nn">.interfaces.login</span> <span class="kn">import</span> <span class="n">UserInterface</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;UserRoles&#39;</span><span class="p">,</span> <span class="s1">&#39;UserMetadata&#39;</span><span class="p">]</span>
 
@@ -112,38 +113,56 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_roles</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">role</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="UserMetadata"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata">[docs]</a><span class="k">class</span> <span class="nc">UserMetadata</span><span class="p">(</span><span class="n">UserInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="UserMetadata"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata">[docs]</a><span class="k">class</span> <span class="nc">UserMetadata</span><span class="p">(</span><span class="n">Identity</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Contains user metadata such as the password or hash.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config: The configuration object.</span>
 <span class="sd">        authcid: The authentication identity for the user.</span>
 <span class="sd">        password: The password string or hash digest.</span>
-<span class="sd">        params: Metadata parameters associated with the user.</span>
+<span class="sd">        params: The user metadata parameters.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">_empty_params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span> <span class="n">authcid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_authcid</span> <span class="o">=</span> <span class="n">authcid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="n">password</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">params</span> <span class="ow">or</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="UserMetadata.create"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata.create">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span> <span class="n">authcid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                     <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                     <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserMetadata</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a new :class:`UserMetadata` by hashing the given *password*</span>
+<span class="sd">        using the configured hash algorithm. Uses the</span>
+<span class="sd">        :attr:`~pymap.config.cpu_subsystem` to avoid blocking the main thread.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: The configuration object.</span>
+<span class="sd">            authcid: The authentication identity for the user.</span>
+<span class="sd">            password: The password string or hash digest.</span>
+<span class="sd">            params: The user metadata parameters.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">password</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fut</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="k">await</span> <span class="n">config</span><span class="o">.</span><span class="n">cpu_subsystem</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fut</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">authcid</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">prepped</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">password_prep</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">config</span><span class="o">.</span><span class="n">hash_context</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">prepped</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">authcid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_authcid</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
 
 <div class="viewcode-block" id="UserMetadata.compare_secret"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata.compare_secret">[docs]</a>    <span class="k">def</span> <span class="nf">compare_secret</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span>
@@ -158,15 +177,46 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The password string or hash digest.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserRoles</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">UserRoles</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;role&#39;</span><span class="p">)])</span>
+        <span class="sd">&quot;&quot;&quot;A set of role strings given to the user. These strings only have</span>
+<span class="sd">        meaning to the backend.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">UserRoles</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Additional parameters associated with the user metadata.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
 
 <div class="viewcode-block" id="UserMetadata.get_key"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata.get_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">identifier</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">authcid</span> <span class="ow">and</span> <span class="s1">&#39;key&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">])</span>
+        <span class="sd">&quot;&quot;&quot;Find the token key for the given identifier associated with this</span>
+<span class="sd">        user.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: Any string that can facilitate the lookup of the key.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="UserMetadata.check_password"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata.check_password">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">ServerCredentials</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Check the given credentials against the known password comparison</span>
+<span class="sd">        data. If the known data used a hash, then the equivalent hash of the</span>
+<span class="sd">        provided secret is compared.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            creds: The provided authentication credentials.</span>
+<span class="sd">            token_key: The token key bytestring.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`~pymap.exceptions.InvalidAuth`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cpu_subsystem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">cpu_subsystem</span>
         <span class="n">fut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_secret</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="k">await</span> <span class="n">cpu_subsystem</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fut</span><span class="p">):</span>
@@ -224,7 +274,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.user</a></li> 
@@ -233,8 +283,8 @@
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

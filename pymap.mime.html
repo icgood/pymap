@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.mime &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.mime &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></li> 
       </ul>
@@ -581,8 +582,71 @@ properties for standard headers used in IMAP processing.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.mime.cte"><code class="docutils literal notranslate"><span class="pre">pymap.mime.cte</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.mime.parsed"><code class="docutils literal notranslate"><span class="pre">pymap.mime.parsed</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent"><code class="docutils literal notranslate"><span class="pre">MessageContent</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.lines"><code class="docutils literal notranslate"><span class="pre">MessageContent.lines</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.walk"><code class="docutils literal notranslate"><span class="pre">MessageContent.walk()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.is_rfc822"><code class="docutils literal notranslate"><span class="pre">MessageContent.is_rfc822</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.json"><code class="docutils literal notranslate"><span class="pre">MessageContent.json</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.from_json"><code class="docutils literal notranslate"><span class="pre">MessageContent.from_json()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.parse"><code class="docutils literal notranslate"><span class="pre">MessageContent.parse()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageContent.write"><code class="docutils literal notranslate"><span class="pre">MessageContent.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader"><code class="docutils literal notranslate"><span class="pre">MessageHeader</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.folded"><code class="docutils literal notranslate"><span class="pre">MessageHeader.folded</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.parsed"><code class="docutils literal notranslate"><span class="pre">MessageHeader.parsed</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.lines"><code class="docutils literal notranslate"><span class="pre">MessageHeader.lines</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.json"><code class="docutils literal notranslate"><span class="pre">MessageHeader.json</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.from_json"><code class="docutils literal notranslate"><span class="pre">MessageHeader.from_json()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.empty"><code class="docutils literal notranslate"><span class="pre">MessageHeader.empty()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageHeader.write"><code class="docutils literal notranslate"><span class="pre">MessageHeader.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody"><code class="docutils literal notranslate"><span class="pre">MessageBody</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.content_type"><code class="docutils literal notranslate"><span class="pre">MessageBody.content_type</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.lines"><code class="docutils literal notranslate"><span class="pre">MessageBody.lines</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.has_nested"><code class="docutils literal notranslate"><span class="pre">MessageBody.has_nested</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.nested"><code class="docutils literal notranslate"><span class="pre">MessageBody.nested</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.json"><code class="docutils literal notranslate"><span class="pre">MessageBody.json</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.from_json"><code class="docutils literal notranslate"><span class="pre">MessageBody.from_json()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.empty"><code class="docutils literal notranslate"><span class="pre">MessageBody.empty()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.MessageBody.write"><code class="docutils literal notranslate"><span class="pre">MessageBody.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.mime.cte"><code class="docutils literal notranslate"><span class="pre">pymap.mime.cte</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.cte.MessageDecoder"><code class="docutils literal notranslate"><span class="pre">MessageDecoder</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.cte.MessageDecoder.registry"><code class="docutils literal notranslate"><span class="pre">MessageDecoder.registry</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.cte.MessageDecoder.of"><code class="docutils literal notranslate"><span class="pre">MessageDecoder.of()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.cte.MessageDecoder.of_cte"><code class="docutils literal notranslate"><span class="pre">MessageDecoder.of_cte()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.cte.MessageDecoder.decode"><code class="docutils literal notranslate"><span class="pre">MessageDecoder.decode()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.mime.parsed"><code class="docutils literal notranslate"><span class="pre">pymap.mime.parsed</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_type"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_type</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.date"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.date</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.subject"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.subject</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.from_"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.from_</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.sender"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.sender</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.reply_to"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.reply_to</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.to"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.to</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.cc"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.cc</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.bcc"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.bcc</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.in_reply_to"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.in_reply_to</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.references"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.references</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.message_id"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.message_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_disposition"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_disposition</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_language"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_language</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_location"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_location</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_id"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_description"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_description</span></code></a></li>
+<li><a class="reference internal" href="#pymap.mime.parsed.ParsedHeaders.content_transfer_encoding"><code class="docutils literal notranslate"><span class="pre">ParsedHeaders.content_transfer_encoding</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -653,7 +717,7 @@ properties for standard headers used in IMAP processing.</p>
         <li class="right" >
           <a href="pymap.parsing.html" title="pymap.parsing"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a></li> 
       </ul>
@@ -661,8 +725,8 @@ properties for standard headers used in IMAP processing.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

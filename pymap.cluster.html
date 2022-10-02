@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.cluster &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.cluster &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a></li> 
       </ul>
@@ -281,7 +282,33 @@ For example:</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.cluster.swim"><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.MemberInterface"><code class="docutils literal notranslate"><span class="pre">MemberInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.cluster.MemberInterface.name"><code class="docutils literal notranslate"><span class="pre">MemberInterface.name</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.MemberInterface.metadata"><code class="docutils literal notranslate"><span class="pre">MemberInterface.metadata</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.cluster.ListenCallback"><code class="docutils literal notranslate"><span class="pre">ListenCallback</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.cluster.ListenCallback.__call__"><code class="docutils literal notranslate"><span class="pre">ListenCallback.__call__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.add"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.add()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.discard"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.discard()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.local"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.local</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.remote"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.remote</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.get_all"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.get_all()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.listen"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.listen()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.cluster.swim"><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.cluster.swim.transport_type"><code class="docutils literal notranslate"><span class="pre">transport_type</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.swim.SwimService"><code class="docutils literal notranslate"><span class="pre">SwimService</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.cluster.swim.SwimService.add_arguments"><code class="docutils literal notranslate"><span class="pre">SwimService.add_arguments()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.cluster.swim.SwimService.start"><code class="docutils literal notranslate"><span class="pre">SwimService.start()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -352,7 +379,7 @@ For example:</p>
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a></li> 
       </ul>
@@ -360,8 +387,8 @@ For example:</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

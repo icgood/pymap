@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.interfaces &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
@@ -1187,7 +1188,7 @@ private key.</p>
 <dd class="field-odd"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#pymap.interfaces.login.UserInterface" title="pymap.interfaces.login.UserInterface"><em>UserInterface</em></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.user.html#pymap.user.UserMetadata" title="pymap.user.UserMetadata"><em>UserMetadata</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1198,7 +1199,7 @@ private key.</p>
 <dd><p>Assign new metadata to the user identity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metadata</strong> (<a class="reference internal" href="#pymap.interfaces.login.UserInterface" title="pymap.interfaces.login.UserInterface"><em>UserInterface</em></a>) – New metadata, such as password.</p>
+<dd class="field-odd"><p><strong>metadata</strong> (<a class="reference internal" href="pymap.user.html#pymap.user.UserMetadata" title="pymap.user.UserMetadata"><em>UserMetadata</em></a>) – New metadata, such as password.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -1216,68 +1217,6 @@ private key.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pymap.interfaces.login.UserInterface">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.interfaces.login.</span></span><span class="sig-name descname"><span class="pre">UserInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#UserInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.UserInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains information about a user.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="pymap.interfaces.login.UserInterface.password">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></em><a class="headerlink" href="#pymap.interfaces.login.UserInterface.password" title="Permalink to this definition">¶</a></dt>
-<dd><p>The password string or hash digest.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="pymap.interfaces.login.UserInterface.roles">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">roles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Set" title="(in Python v3.10)"><span class="pre">Set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.interfaces.login.UserInterface.roles" title="Permalink to this definition">¶</a></dt>
-<dd><p>A set of role strings given to the user. These strings only have
-meaning to the backend.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="pymap.interfaces.login.UserInterface.params">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.10)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.interfaces.login.UserInterface.params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Metadata parameters associated with the user.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.interfaces.login.UserInterface.get_key">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#UserInterface.get_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.UserInterface.get_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the token key for the given identifier associated with this
-user.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>identifier</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Any string that can facilitate the lookup of the key.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)">bytes</a> | None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.interfaces.login.UserInterface.check_password">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">creds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#UserInterface.check_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.UserInterface.check_password" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check the given credentials against the known password comparison
-data. If the known data used a hash, then the equivalent hash of the
-provided secret is compared.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>creds</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.creds.html#pysasl.creds.server.ServerCredentials" title="(in pysasl v1.0)"><em>ServerCredentials</em></a>) – The provided authentication credentials.</p></li>
-<li><p><strong>token_key</strong> – The token key bytestring.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1515,12 +1454,149 @@ exists.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.interfaces.backend"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.backend</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.interfaces.message"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.interfaces.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.mailbox</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.interfaces.session"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.session</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.interfaces.login"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.login</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.interfaces.filter"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.filter</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.interfaces.backend"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.backend</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface"><code class="docutils literal notranslate"><span class="pre">BackendInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface.add_subparser"><code class="docutils literal notranslate"><span class="pre">BackendInterface.add_subparser()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface.init"><code class="docutils literal notranslate"><span class="pre">BackendInterface.init()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface.start"><code class="docutils literal notranslate"><span class="pre">BackendInterface.start()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface.login"><code class="docutils literal notranslate"><span class="pre">BackendInterface.login</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface.config"><code class="docutils literal notranslate"><span class="pre">BackendInterface.config</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.BackendInterface.status"><code class="docutils literal notranslate"><span class="pre">BackendInterface.status</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.ServiceInterface"><code class="docutils literal notranslate"><span class="pre">ServiceInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.backend.ServiceInterface.add_arguments"><code class="docutils literal notranslate"><span class="pre">ServiceInterface.add_arguments()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.backend.ServiceInterface.start"><code class="docutils literal notranslate"><span class="pre">ServiceInterface.start()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.interfaces.message"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageT"><code class="docutils literal notranslate"><span class="pre">MessageT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageT_co"><code class="docutils literal notranslate"><span class="pre">MessageT_co</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.FlagsKey"><code class="docutils literal notranslate"><span class="pre">FlagsKey</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage"><code class="docutils literal notranslate"><span class="pre">CachedMessage</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.uid"><code class="docutils literal notranslate"><span class="pre">CachedMessage.uid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.internal_date"><code class="docutils literal notranslate"><span class="pre">CachedMessage.internal_date</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.permanent_flags"><code class="docutils literal notranslate"><span class="pre">CachedMessage.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.email_id"><code class="docutils literal notranslate"><span class="pre">CachedMessage.email_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.thread_id"><code class="docutils literal notranslate"><span class="pre">CachedMessage.thread_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.flags_key"><code class="docutils literal notranslate"><span class="pre">CachedMessage.flags_key</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.CachedMessage.get_flags"><code class="docutils literal notranslate"><span class="pre">CachedMessage.get_flags()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface"><code class="docutils literal notranslate"><span class="pre">MessageInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.uid"><code class="docutils literal notranslate"><span class="pre">MessageInterface.uid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.expunged"><code class="docutils literal notranslate"><span class="pre">MessageInterface.expunged</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.internal_date"><code class="docutils literal notranslate"><span class="pre">MessageInterface.internal_date</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.permanent_flags"><code class="docutils literal notranslate"><span class="pre">MessageInterface.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.email_id"><code class="docutils literal notranslate"><span class="pre">MessageInterface.email_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.thread_id"><code class="docutils literal notranslate"><span class="pre">MessageInterface.thread_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.get_flags"><code class="docutils literal notranslate"><span class="pre">MessageInterface.get_flags()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.MessageInterface.load_content"><code class="docutils literal notranslate"><span class="pre">MessageInterface.load_content()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.requirement"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.requirement</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_header"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_header()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_headers"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_headers()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_message_headers"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_message_headers()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_message_text"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_message_text()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_body"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_body()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_size"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_size()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_envelope_structure"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_envelope_structure()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.get_body_structure"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.get_body_structure()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.message.LoadedMessageInterface.contains"><code class="docutils literal notranslate"><span class="pre">LoadedMessageInterface.contains()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.interfaces.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.mailbox</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface"><code class="docutils literal notranslate"><span class="pre">MailboxInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.mailbox_id"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.mailbox_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.readonly"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.readonly</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.permanent_flags"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.session_flags"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.session_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.flags"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.exists"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.exists</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.recent"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.recent</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.unseen"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.unseen</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.first_unseen"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.first_unseen</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.next_uid"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.next_uid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.mailbox.MailboxInterface.uid_validity"><code class="docutils literal notranslate"><span class="pre">MailboxInterface.uid_validity</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.interfaces.session"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.session</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface"><code class="docutils literal notranslate"><span class="pre">SessionInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.owner"><code class="docutils literal notranslate"><span class="pre">SessionInterface.owner</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.filter_set"><code class="docutils literal notranslate"><span class="pre">SessionInterface.filter_set</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.close"><code class="docutils literal notranslate"><span class="pre">SessionInterface.close()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.cleanup"><code class="docutils literal notranslate"><span class="pre">SessionInterface.cleanup()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.list_mailboxes"><code class="docutils literal notranslate"><span class="pre">SessionInterface.list_mailboxes()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.get_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.get_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.create_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.create_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.delete_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.delete_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.rename_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.rename_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.subscribe"><code class="docutils literal notranslate"><span class="pre">SessionInterface.subscribe()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.unsubscribe"><code class="docutils literal notranslate"><span class="pre">SessionInterface.unsubscribe()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.append_messages"><code class="docutils literal notranslate"><span class="pre">SessionInterface.append_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.select_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.select_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.check_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.check_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.fetch_messages"><code class="docutils literal notranslate"><span class="pre">SessionInterface.fetch_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.search_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.search_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.expunge_mailbox"><code class="docutils literal notranslate"><span class="pre">SessionInterface.expunge_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.copy_messages"><code class="docutils literal notranslate"><span class="pre">SessionInterface.copy_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.move_messages"><code class="docutils literal notranslate"><span class="pre">SessionInterface.move_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.session.SessionInterface.update_flags"><code class="docutils literal notranslate"><span class="pre">SessionInterface.update_flags()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.interfaces.login"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.login</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface"><code class="docutils literal notranslate"><span class="pre">LoginInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface.tokens"><code class="docutils literal notranslate"><span class="pre">LoginInterface.tokens</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface.authenticate"><code class="docutils literal notranslate"><span class="pre">LoginInterface.authenticate()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface"><code class="docutils literal notranslate"><span class="pre">IdentityInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.name"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.name</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.new_session"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.new_session()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.new_token"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.new_token()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.get"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.set"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.set()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.delete"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.delete()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.interfaces.filter"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.filter</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterValueT"><code class="docutils literal notranslate"><span class="pre">FilterValueT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterInterface"><code class="docutils literal notranslate"><span class="pre">FilterInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterInterface.apply"><code class="docutils literal notranslate"><span class="pre">FilterInterface.apply()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterCompilerInterface"><code class="docutils literal notranslate"><span class="pre">FilterCompilerInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterCompilerInterface.value_type"><code class="docutils literal notranslate"><span class="pre">FilterCompilerInterface.value_type</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterCompilerInterface.filter_type"><code class="docutils literal notranslate"><span class="pre">FilterCompilerInterface.filter_type</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterCompilerInterface.compile"><code class="docutils literal notranslate"><span class="pre">FilterCompilerInterface.compile()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.compiler"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.compiler</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.put"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.put()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.delete"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.delete()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.rename"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.rename()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.clear_active"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.clear_active()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.set_active"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.set_active()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.get"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.get_active"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.get_active()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.filter.FilterSetInterface.get_all"><code class="docutils literal notranslate"><span class="pre">FilterSetInterface.get_all()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1591,7 +1667,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
@@ -1599,8 +1675,8 @@ exists.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

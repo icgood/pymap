@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.token &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.token &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -17,6 +17,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
 
     
     
@@ -49,7 +50,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.token</a></li> 
@@ -67,20 +68,35 @@
 <span></span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Set</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span>
 
+<span class="kn">from</span> <span class="nn">..config</span> <span class="kn">import</span> <span class="n">IMAPConfig</span>
 <span class="kn">from</span> <span class="nn">..interfaces.token</span> <span class="kn">import</span> <span class="n">TokenCredentials</span><span class="p">,</span> <span class="n">TokensInterface</span>
 <span class="kn">from</span> <span class="nn">..plugin</span> <span class="kn">import</span> <span class="n">Plugin</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;AllTokens&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;TokensBase&#39;</span><span class="p">,</span> <span class="s1">&#39;AllTokens&#39;</span><span class="p">]</span>
 
 <span class="c1">#: Registers token plugins.</span>
-<span class="n">tokens</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">TokensInterface</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Plugin</span><span class="p">(</span>
-    <span class="s1">&#39;pymap.token&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;macaroon&#39;</span><span class="p">)</span>
+<span class="n">tokens</span><span class="p">:</span> <span class="n">Plugin</span><span class="p">[</span><span class="n">TokensBase</span><span class="p">]</span> <span class="o">=</span> <span class="n">Plugin</span><span class="p">(</span><span class="s1">&#39;pymap.token&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;macaroon&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="AllTokens"><a class="viewcode-back" href="../../pymap.token.html#pymap.token.AllTokens">[docs]</a><span class="k">class</span> <span class="nc">AllTokens</span><span class="p">(</span><span class="n">TokensInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="TokensBase"><a class="viewcode-back" href="../../pymap.token.html#pymap.token.TokensBase">[docs]</a><span class="k">class</span> <span class="nc">TokensBase</span><span class="p">(</span><span class="n">TokensInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for token types registered by :data:`tokens`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config: The IMAP configuration object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="AllTokens"><a class="viewcode-back" href="../../pymap.token.html#pymap.token.AllTokens">[docs]</a><span class="k">class</span> <span class="nc">AllTokens</span><span class="p">(</span><span class="n">TokensBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Uses :data:`tokens` to support all registered token types.</span>
 
 <span class="sd">    For token creation, the :attr:`~pymap.plugin.Plugin.default` token plugin</span>
@@ -88,16 +104,36 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_default_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TokensInterface</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">token_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">token_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TokensInterface</span><span class="p">]:</span>
+        <span class="n">all_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+        <span class="k">for</span> <span class="n">token_type</span> <span class="ow">in</span> <span class="n">tokens</span><span class="o">.</span><span class="n">registered</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">token_type</span> <span class="o">==</span> <span class="n">tokens</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_tokens</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">all_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_tokens</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">all_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token_type</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">all_tokens</span>
+
 <div class="viewcode-block" id="AllTokens.get_login_token"><a class="viewcode-back" href="../../pymap.token.html#pymap.token.AllTokens.get_login_token">[docs]</a>    <span class="k">def</span> <span class="nf">get_login_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">authcid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                         <span class="n">authzid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">expiration</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">token_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">default</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_tokens</span>
+        <span class="k">if</span> <span class="n">tokens</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">token_type</span><span class="p">()</span><span class="o">.</span><span class="n">get_login_token</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_login_token</span><span class="p">(</span>
             <span class="n">identifier</span><span class="p">,</span> <span class="n">authcid</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">authzid</span><span class="o">=</span><span class="n">authzid</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
             <span class="n">expiration</span><span class="o">=</span><span class="n">expiration</span><span class="p">)</span></div>
 
@@ -106,21 +142,19 @@
                         <span class="n">location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">expiration</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">token_type</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">default</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_tokens</span>
+        <span class="k">if</span> <span class="n">tokens</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">token_type</span><span class="p">()</span><span class="o">.</span><span class="n">get_admin_token</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_admin_token</span><span class="p">(</span>
             <span class="n">admin_key</span><span class="p">,</span> <span class="n">authzid</span><span class="o">=</span><span class="n">authzid</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
             <span class="n">expiration</span><span class="o">=</span><span class="n">expiration</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AllTokens.parse"><a class="viewcode-back" href="../../pymap.token.html#pymap.token.AllTokens.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">authzid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
               <span class="n">admin_keys</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">())</span> \
             <span class="o">-&gt;</span> <span class="n">TokenCredentials</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">token_type</span> <span class="ow">in</span> <span class="n">tokens</span><span class="o">.</span><span class="n">registered</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">tokens</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">token_type</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">authzid</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span>
-                                          <span class="n">admin_keys</span><span class="o">=</span><span class="n">admin_keys</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">tokens</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">authzid</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">admin_keys</span><span class="o">=</span><span class="n">admin_keys</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;invalid token&#39;</span><span class="p">)</span></div></div>
@@ -174,7 +208,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.token</a></li> 
@@ -183,8 +217,8 @@
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

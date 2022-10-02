@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.fetch &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.fetch &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.exceptions.html" title="pymap.exceptions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a></li> 
       </ul>
@@ -187,7 +188,32 @@ context manager, for console or log output.</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.fetch.LoadedMessageProvider"><code class="docutils literal notranslate"><span class="pre">LoadedMessageProvider</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.fetch.LoadedMessageProvider.loaded_msg"><code class="docutils literal notranslate"><span class="pre">LoadedMessageProvider.loaded_msg</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.fetch.DynamicFetchValue"><code class="docutils literal notranslate"><span class="pre">DynamicFetchValue</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.fetch.DynamicFetchValue.get_value"><code class="docutils literal notranslate"><span class="pre">DynamicFetchValue.get_value()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.fetch.DynamicLoadedFetchValue"><code class="docutils literal notranslate"><span class="pre">DynamicLoadedFetchValue</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.fetch.DynamicLoadedFetchValue.get_value"><code class="docutils literal notranslate"><span class="pre">DynamicLoadedFetchValue.get_value()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.fetch.MessageAttributes"><code class="docutils literal notranslate"><span class="pre">MessageAttributes</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.fetch.MessageAttributes.placeholder"><code class="docutils literal notranslate"><span class="pre">MessageAttributes.placeholder</span></code></a></li>
+<li><a class="reference internal" href="#pymap.fetch.MessageAttributes.load_hook"><code class="docutils literal notranslate"><span class="pre">MessageAttributes.load_hook()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="pymap.exceptions.html"
@@ -253,7 +279,7 @@ context manager, for console or log output.</p>
         <li class="right" >
           <a href="pymap.exceptions.html" title="pymap.exceptions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a></li> 
       </ul>
@@ -261,8 +287,8 @@ context manager, for console or log output.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.admin &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -179,7 +180,7 @@ can be removed if <code class="docutils literal notranslate"><span class="pre">g
 <span id="pymap-admin-handlers"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code><a class="headerlink" href="#module-pymap.admin.handlers" title="Permalink to this heading">¶</a></h2>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.admin.handlers.handlers">
-<span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.admin.handlers.BaseHandler" title="pymap.admin.handlers.BaseHandler"><span class="pre">pymap.admin.handlers.BaseHandler</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.admin.handlers.</span></span><span class="sig-name descname"><span class="pre">handlers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.admin.handlers.BaseHandler" title="pymap.admin.handlers.BaseHandler"><span class="pre">BaseHandler</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.admin.handlers')</span></em><a class="headerlink" href="#pymap.admin.handlers.handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers new admin handler plugins.</p>
 </dd></dl>
 
@@ -417,7 +418,39 @@ request and response.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.admin.handlers"><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.AdminService"><code class="docutils literal notranslate"><span class="pre">AdminService</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.admin.AdminService.add_arguments"><code class="docutils literal notranslate"><span class="pre">AdminService.add_arguments()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.AdminService.start"><code class="docutils literal notranslate"><span class="pre">AdminService.start()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.admin.errors.get_unimplemented_error"><code class="docutils literal notranslate"><span class="pre">get_unimplemented_error()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.errors.get_incompatible_version_error"><code class="docutils literal notranslate"><span class="pre">get_incompatible_version_error()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.typing.Handler"><code class="docutils literal notranslate"><span class="pre">Handler</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.admin.handlers"><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.admin.handlers.handlers"><code class="docutils literal notranslate"><span class="pre">handlers</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler"><code class="docutils literal notranslate"><span class="pre">BaseHandler</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.catch_errors"><code class="docutils literal notranslate"><span class="pre">BaseHandler.catch_errors()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.login_as"><code class="docutils literal notranslate"><span class="pre">BaseHandler.login_as()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.with_session"><code class="docutils literal notranslate"><span class="pre">BaseHandler.with_session()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.admin.handlers.system.SystemHandlers"><code class="docutils literal notranslate"><span class="pre">SystemHandlers</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.admin.handlers.system.SystemHandlers.Login"><code class="docutils literal notranslate"><span class="pre">SystemHandlers.Login()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.system.SystemHandlers.Ping"><code class="docutils literal notranslate"><span class="pre">SystemHandlers.Ping()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.admin.handlers.mailbox.MailboxHandlers"><code class="docutils literal notranslate"><span class="pre">MailboxHandlers</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.admin.handlers.mailbox.MailboxHandlers.Append"><code class="docutils literal notranslate"><span class="pre">MailboxHandlers.Append()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.admin.handlers.user.UserHandlers"><code class="docutils literal notranslate"><span class="pre">UserHandlers</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.admin.handlers.user.UserHandlers.GetUser"><code class="docutils literal notranslate"><span class="pre">UserHandlers.GetUser()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.user.UserHandlers.SetUser"><code class="docutils literal notranslate"><span class="pre">UserHandlers.SetUser()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.user.UserHandlers.DeleteUser"><code class="docutils literal notranslate"><span class="pre">UserHandlers.DeleteUser()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -488,7 +521,7 @@ request and response.</p>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -496,8 +529,8 @@ request and response.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.parsing &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.parsing &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></li> 
       </ul>
@@ -4263,15 +4264,563 @@ mailbox names in IMAP.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.parsing.exceptions"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.exceptions</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.state"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.state</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.commands"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.command"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.command</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.primitives"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.primitives</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.specials.astring"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.specials</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.response"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.response</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.modutf7"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.modutf7</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.parsing.message"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.message</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.ParseableT"><code class="docutils literal notranslate"><span class="pre">ParseableT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.AnyParseable"><code class="docutils literal notranslate"><span class="pre">AnyParseable</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.Params"><code class="docutils literal notranslate"><span class="pre">Params</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.Params.copy"><code class="docutils literal notranslate"><span class="pre">Params.copy()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.Parseable"><code class="docutils literal notranslate"><span class="pre">Parseable</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.Parseable.value"><code class="docutils literal notranslate"><span class="pre">Parseable.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.Parseable.parse"><code class="docutils literal notranslate"><span class="pre">Parseable.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.ExpectedParseable"><code class="docutils literal notranslate"><span class="pre">ExpectedParseable</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.ExpectedParseable.value"><code class="docutils literal notranslate"><span class="pre">ExpectedParseable.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.ExpectedParseable.parse"><code class="docutils literal notranslate"><span class="pre">ExpectedParseable.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.Space"><code class="docutils literal notranslate"><span class="pre">Space</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.Space.value"><code class="docutils literal notranslate"><span class="pre">Space.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.Space.parse"><code class="docutils literal notranslate"><span class="pre">Space.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.EndLine"><code class="docutils literal notranslate"><span class="pre">EndLine</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.EndLine.preceding_spaces"><code class="docutils literal notranslate"><span class="pre">EndLine.preceding_spaces</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.EndLine.carriage_return"><code class="docutils literal notranslate"><span class="pre">EndLine.carriage_return</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.EndLine.value"><code class="docutils literal notranslate"><span class="pre">EndLine.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.EndLine.parse"><code class="docutils literal notranslate"><span class="pre">EndLine.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.exceptions"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.exceptions</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.exceptions.NotParseable"><code class="docutils literal notranslate"><span class="pre">NotParseable</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.exceptions.InvalidContent"><code class="docutils literal notranslate"><span class="pre">InvalidContent</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.exceptions.UnexpectedType"><code class="docutils literal notranslate"><span class="pre">UnexpectedType</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.state"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.state</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.state.ParsingExpectedT"><code class="docutils literal notranslate"><span class="pre">ParsingExpectedT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.state.ParsingState"><code class="docutils literal notranslate"><span class="pre">ParsingState</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.state.ParsingInterrupt"><code class="docutils literal notranslate"><span class="pre">ParsingInterrupt</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.state.ParsingExpectation"><code class="docutils literal notranslate"><span class="pre">ParsingExpectation</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.state.ParsingExpectation.consume"><code class="docutils literal notranslate"><span class="pre">ParsingExpectation.consume()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.state.ParsingExpectation.expect"><code class="docutils literal notranslate"><span class="pre">ParsingExpectation.expect()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.commands"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.commands.builtin_commands"><code class="docutils literal notranslate"><span class="pre">builtin_commands</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand"><code class="docutils literal notranslate"><span class="pre">InvalidCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.command"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.value"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.message"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.message</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.command_name"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.command_name</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.command_type"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.command_type</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.parse_exc"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.parse_exc</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.InvalidCommand.parse"><code class="docutils literal notranslate"><span class="pre">InvalidCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.commands.Commands"><code class="docutils literal notranslate"><span class="pre">Commands</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.commands.Commands.register"><code class="docutils literal notranslate"><span class="pre">Commands.register()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.Commands.deregister"><code class="docutils literal notranslate"><span class="pre">Commands.deregister()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.commands.Commands.parse"><code class="docutils literal notranslate"><span class="pre">Commands.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.command"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.command</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.Command.command"><code class="docutils literal notranslate"><span class="pre">Command.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.Command.delegate"><code class="docutils literal notranslate"><span class="pre">Command.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.Command.compound"><code class="docutils literal notranslate"><span class="pre">Command.compound</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.Command.tag"><code class="docutils literal notranslate"><span class="pre">Command.tag</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.Command.value"><code class="docutils literal notranslate"><span class="pre">Command.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.Command.parse"><code class="docutils literal notranslate"><span class="pre">Command.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.CommandNoArgs"><code class="docutils literal notranslate"><span class="pre">CommandNoArgs</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.CommandNoArgs.parse"><code class="docutils literal notranslate"><span class="pre">CommandNoArgs.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.CommandAny"><code class="docutils literal notranslate"><span class="pre">CommandAny</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.CommandAuth"><code class="docutils literal notranslate"><span class="pre">CommandAuth</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.CommandNonAuth"><code class="docutils literal notranslate"><span class="pre">CommandNonAuth</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.CommandSelect"><code class="docutils literal notranslate"><span class="pre">CommandSelect</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.any.CapabilityCommand"><code class="docutils literal notranslate"><span class="pre">CapabilityCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.any.CapabilityCommand.command"><code class="docutils literal notranslate"><span class="pre">CapabilityCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.any.LogoutCommand"><code class="docutils literal notranslate"><span class="pre">LogoutCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.any.LogoutCommand.command"><code class="docutils literal notranslate"><span class="pre">LogoutCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.any.NoOpCommand"><code class="docutils literal notranslate"><span class="pre">NoOpCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.any.NoOpCommand.command"><code class="docutils literal notranslate"><span class="pre">NoOpCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.AuthenticateCommand"><code class="docutils literal notranslate"><span class="pre">AuthenticateCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.AuthenticateCommand.command"><code class="docutils literal notranslate"><span class="pre">AuthenticateCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.AuthenticateCommand.parse"><code class="docutils literal notranslate"><span class="pre">AuthenticateCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.LoginCommand"><code class="docutils literal notranslate"><span class="pre">LoginCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.LoginCommand.command"><code class="docutils literal notranslate"><span class="pre">LoginCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.LoginCommand.parse"><code class="docutils literal notranslate"><span class="pre">LoginCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.StartTLSCommand"><code class="docutils literal notranslate"><span class="pre">StartTLSCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.nonauth.StartTLSCommand.command"><code class="docutils literal notranslate"><span class="pre">StartTLSCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.AppendCommand"><code class="docutils literal notranslate"><span class="pre">AppendCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.AppendCommand.command"><code class="docutils literal notranslate"><span class="pre">AppendCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.AppendCommand.parse"><code class="docutils literal notranslate"><span class="pre">AppendCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.CreateCommand"><code class="docutils literal notranslate"><span class="pre">CreateCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.CreateCommand.command"><code class="docutils literal notranslate"><span class="pre">CreateCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.CreateCommand.parse"><code class="docutils literal notranslate"><span class="pre">CreateCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.DeleteCommand"><code class="docutils literal notranslate"><span class="pre">DeleteCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.DeleteCommand.command"><code class="docutils literal notranslate"><span class="pre">DeleteCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ExamineCommand"><code class="docutils literal notranslate"><span class="pre">ExamineCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ExamineCommand.command"><code class="docutils literal notranslate"><span class="pre">ExamineCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ExamineCommand.delegate"><code class="docutils literal notranslate"><span class="pre">ExamineCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ExamineCommand.readonly"><code class="docutils literal notranslate"><span class="pre">ExamineCommand.readonly</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ListCommand"><code class="docutils literal notranslate"><span class="pre">ListCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ListCommand.command"><code class="docutils literal notranslate"><span class="pre">ListCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ListCommand.only_subscribed"><code class="docutils literal notranslate"><span class="pre">ListCommand.only_subscribed</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.ListCommand.parse"><code class="docutils literal notranslate"><span class="pre">ListCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.LSubCommand"><code class="docutils literal notranslate"><span class="pre">LSubCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.LSubCommand.command"><code class="docutils literal notranslate"><span class="pre">LSubCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.LSubCommand.delegate"><code class="docutils literal notranslate"><span class="pre">LSubCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.LSubCommand.only_subscribed"><code class="docutils literal notranslate"><span class="pre">LSubCommand.only_subscribed</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.RenameCommand"><code class="docutils literal notranslate"><span class="pre">RenameCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.RenameCommand.command"><code class="docutils literal notranslate"><span class="pre">RenameCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.RenameCommand.parse"><code class="docutils literal notranslate"><span class="pre">RenameCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand"><code class="docutils literal notranslate"><span class="pre">SelectCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand.command"><code class="docutils literal notranslate"><span class="pre">SelectCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand.readonly"><code class="docutils literal notranslate"><span class="pre">SelectCommand.readonly</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.SelectCommand.parse"><code class="docutils literal notranslate"><span class="pre">SelectCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.StatusCommand"><code class="docutils literal notranslate"><span class="pre">StatusCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.StatusCommand.command"><code class="docutils literal notranslate"><span class="pre">StatusCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.StatusCommand.parse"><code class="docutils literal notranslate"><span class="pre">StatusCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.SubscribeCommand"><code class="docutils literal notranslate"><span class="pre">SubscribeCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.SubscribeCommand.command"><code class="docutils literal notranslate"><span class="pre">SubscribeCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.UnsubscribeCommand"><code class="docutils literal notranslate"><span class="pre">UnsubscribeCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.auth.UnsubscribeCommand.command"><code class="docutils literal notranslate"><span class="pre">UnsubscribeCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CheckCommand"><code class="docutils literal notranslate"><span class="pre">CheckCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CheckCommand.command"><code class="docutils literal notranslate"><span class="pre">CheckCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CloseCommand"><code class="docutils literal notranslate"><span class="pre">CloseCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CloseCommand.command"><code class="docutils literal notranslate"><span class="pre">CloseCommand.command</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand"><code class="docutils literal notranslate"><span class="pre">ExpungeCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand.command"><code class="docutils literal notranslate"><span class="pre">ExpungeCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.ExpungeCommand.parse"><code class="docutils literal notranslate"><span class="pre">ExpungeCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CopyCommand"><code class="docutils literal notranslate"><span class="pre">CopyCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CopyCommand.command"><code class="docutils literal notranslate"><span class="pre">CopyCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.CopyCommand.parse"><code class="docutils literal notranslate"><span class="pre">CopyCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.MoveCommand"><code class="docutils literal notranslate"><span class="pre">MoveCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.MoveCommand.command"><code class="docutils literal notranslate"><span class="pre">MoveCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.MoveCommand.parse"><code class="docutils literal notranslate"><span class="pre">MoveCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.FetchCommand"><code class="docutils literal notranslate"><span class="pre">FetchCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.FetchCommand.command"><code class="docutils literal notranslate"><span class="pre">FetchCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.FetchCommand.parse"><code class="docutils literal notranslate"><span class="pre">FetchCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.StoreCommand"><code class="docutils literal notranslate"><span class="pre">StoreCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.StoreCommand.command"><code class="docutils literal notranslate"><span class="pre">StoreCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.StoreCommand.parse"><code class="docutils literal notranslate"><span class="pre">StoreCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.SearchCommand"><code class="docutils literal notranslate"><span class="pre">SearchCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.SearchCommand.command"><code class="docutils literal notranslate"><span class="pre">SearchCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.SearchCommand.parse"><code class="docutils literal notranslate"><span class="pre">SearchCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCommand"><code class="docutils literal notranslate"><span class="pre">UidCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCommand.command"><code class="docutils literal notranslate"><span class="pre">UidCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCommand.compound"><code class="docutils literal notranslate"><span class="pre">UidCommand.compound</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCopyCommand"><code class="docutils literal notranslate"><span class="pre">UidCopyCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCopyCommand.command"><code class="docutils literal notranslate"><span class="pre">UidCopyCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCopyCommand.delegate"><code class="docutils literal notranslate"><span class="pre">UidCopyCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidCopyCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidCopyCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidMoveCommand"><code class="docutils literal notranslate"><span class="pre">UidMoveCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidMoveCommand.command"><code class="docutils literal notranslate"><span class="pre">UidMoveCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidMoveCommand.delegate"><code class="docutils literal notranslate"><span class="pre">UidMoveCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidMoveCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidMoveCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidExpungeCommand"><code class="docutils literal notranslate"><span class="pre">UidExpungeCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidExpungeCommand.command"><code class="docutils literal notranslate"><span class="pre">UidExpungeCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidExpungeCommand.delegate"><code class="docutils literal notranslate"><span class="pre">UidExpungeCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidExpungeCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidExpungeCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidFetchCommand"><code class="docutils literal notranslate"><span class="pre">UidFetchCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidFetchCommand.command"><code class="docutils literal notranslate"><span class="pre">UidFetchCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidFetchCommand.delegate"><code class="docutils literal notranslate"><span class="pre">UidFetchCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidFetchCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidFetchCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidSearchCommand"><code class="docutils literal notranslate"><span class="pre">UidSearchCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidSearchCommand.command"><code class="docutils literal notranslate"><span class="pre">UidSearchCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidSearchCommand.delegate"><code class="docutils literal notranslate"><span class="pre">UidSearchCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidSearchCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidSearchCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidStoreCommand"><code class="docutils literal notranslate"><span class="pre">UidStoreCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidStoreCommand.command"><code class="docutils literal notranslate"><span class="pre">UidStoreCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidStoreCommand.delegate"><code class="docutils literal notranslate"><span class="pre">UidStoreCommand.delegate</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.UidStoreCommand.parse"><code class="docutils literal notranslate"><span class="pre">UidStoreCommand.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.IdleCommand"><code class="docutils literal notranslate"><span class="pre">IdleCommand</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.command"><code class="docutils literal notranslate"><span class="pre">IdleCommand.command</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.continuation"><code class="docutils literal notranslate"><span class="pre">IdleCommand.continuation</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.parse"><code class="docutils literal notranslate"><span class="pre">IdleCommand.parse()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.command.select.IdleCommand.parse_done"><code class="docutils literal notranslate"><span class="pre">IdleCommand.parse_done()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.primitives"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.primitives</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Nil"><code class="docutils literal notranslate"><span class="pre">Nil</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Nil.value"><code class="docutils literal notranslate"><span class="pre">Nil.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Nil.parse"><code class="docutils literal notranslate"><span class="pre">Nil.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Number"><code class="docutils literal notranslate"><span class="pre">Number</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Number.value"><code class="docutils literal notranslate"><span class="pre">Number.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Number.parse"><code class="docutils literal notranslate"><span class="pre">Number.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Atom"><code class="docutils literal notranslate"><span class="pre">Atom</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Atom.value"><code class="docutils literal notranslate"><span class="pre">Atom.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.Atom.parse"><code class="docutils literal notranslate"><span class="pre">Atom.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.List"><code class="docutils literal notranslate"><span class="pre">List</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.List.value"><code class="docutils literal notranslate"><span class="pre">List.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.List.get_as"><code class="docutils literal notranslate"><span class="pre">List.get_as()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.List.parse"><code class="docutils literal notranslate"><span class="pre">List.parse()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.List.write"><code class="docutils literal notranslate"><span class="pre">List.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.String"><code class="docutils literal notranslate"><span class="pre">String</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.String.binary"><code class="docutils literal notranslate"><span class="pre">String.binary</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.String.length"><code class="docutils literal notranslate"><span class="pre">String.length</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.String.parse"><code class="docutils literal notranslate"><span class="pre">String.parse()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.String.build"><code class="docutils literal notranslate"><span class="pre">String.build()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.QuotedString"><code class="docutils literal notranslate"><span class="pre">QuotedString</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.QuotedString.value"><code class="docutils literal notranslate"><span class="pre">QuotedString.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.QuotedString.binary"><code class="docutils literal notranslate"><span class="pre">QuotedString.binary</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.QuotedString.length"><code class="docutils literal notranslate"><span class="pre">QuotedString.length</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.QuotedString.parse"><code class="docutils literal notranslate"><span class="pre">QuotedString.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.LiteralString"><code class="docutils literal notranslate"><span class="pre">LiteralString</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.primitives.LiteralString.value"><code class="docutils literal notranslate"><span class="pre">LiteralString.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.LiteralString.binary"><code class="docutils literal notranslate"><span class="pre">LiteralString.binary</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.LiteralString.length"><code class="docutils literal notranslate"><span class="pre">LiteralString.length</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.LiteralString.parse"><code class="docutils literal notranslate"><span class="pre">LiteralString.parse()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.primitives.LiteralString.write"><code class="docutils literal notranslate"><span class="pre">LiteralString.write()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.specials.astring"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.specials</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.astring.AString"><code class="docutils literal notranslate"><span class="pre">AString</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.astring.AString.string"><code class="docutils literal notranslate"><span class="pre">AString.string</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.astring.AString.value"><code class="docutils literal notranslate"><span class="pre">AString.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.astring.AString.parse"><code class="docutils literal notranslate"><span class="pre">AString.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.datetime_.DateTime"><code class="docutils literal notranslate"><span class="pre">DateTime</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.datetime_.DateTime.value"><code class="docutils literal notranslate"><span class="pre">DateTime.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.datetime_.DateTime.get_local_tzinfo"><code class="docutils literal notranslate"><span class="pre">DateTime.get_local_tzinfo()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.datetime_.DateTime.parse"><code class="docutils literal notranslate"><span class="pre">DateTime.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchPartial"><code class="docutils literal notranslate"><span class="pre">FetchPartial</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement"><code class="docutils literal notranslate"><span class="pre">FetchRequirement</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.NONE"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.NONE</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.METADATA"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.METADATA</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.HEADER"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.HEADER</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.BODY"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.BODY</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.has_all"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.has_all()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.has_none"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.has_none()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.get_all"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.get_all()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchRequirement.reduce"><code class="docutils literal notranslate"><span class="pre">FetchRequirement.reduce()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute"><code class="docutils literal notranslate"><span class="pre">FetchAttribute</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute.section"><code class="docutils literal notranslate"><span class="pre">FetchAttribute.section</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute.partial"><code class="docutils literal notranslate"><span class="pre">FetchAttribute.partial</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute.Section"><code class="docutils literal notranslate"><span class="pre">FetchAttribute.Section</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute.value"><code class="docutils literal notranslate"><span class="pre">FetchAttribute.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute.requirement"><code class="docutils literal notranslate"><span class="pre">FetchAttribute.requirement</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchAttribute.parse"><code class="docutils literal notranslate"><span class="pre">FetchAttribute.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.fetchattr.FetchValue"><code class="docutils literal notranslate"><span class="pre">FetchValue</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Flag"><code class="docutils literal notranslate"><span class="pre">Flag</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Flag.value"><code class="docutils literal notranslate"><span class="pre">Flag.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Flag.is_system"><code class="docutils literal notranslate"><span class="pre">Flag.is_system</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Flag.parse"><code class="docutils literal notranslate"><span class="pre">Flag.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.get_system_flags"><code class="docutils literal notranslate"><span class="pre">get_system_flags()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Seen"><code class="docutils literal notranslate"><span class="pre">Seen</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Recent"><code class="docutils literal notranslate"><span class="pre">Recent</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Deleted"><code class="docutils literal notranslate"><span class="pre">Deleted</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Flagged"><code class="docutils literal notranslate"><span class="pre">Flagged</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Answered"><code class="docutils literal notranslate"><span class="pre">Answered</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Draft"><code class="docutils literal notranslate"><span class="pre">Draft</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.flag.Wildcard"><code class="docutils literal notranslate"><span class="pre">Wildcard</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.mailbox.Mailbox"><code class="docutils literal notranslate"><span class="pre">Mailbox</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.mailbox.Mailbox.value"><code class="docutils literal notranslate"><span class="pre">Mailbox.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.mailbox.Mailbox.parse"><code class="docutils literal notranslate"><span class="pre">Mailbox.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId"><code class="docutils literal notranslate"><span class="pre">ObjectId</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.value"><code class="docutils literal notranslate"><span class="pre">ObjectId.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.parens"><code class="docutils literal notranslate"><span class="pre">ObjectId.parens</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.parse"><code class="docutils literal notranslate"><span class="pre">ObjectId.parse()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.new"><code class="docutils literal notranslate"><span class="pre">ObjectId.new()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.new_mailbox_id"><code class="docutils literal notranslate"><span class="pre">ObjectId.new_mailbox_id()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.new_email_id"><code class="docutils literal notranslate"><span class="pre">ObjectId.new_email_id()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.new_thread_id"><code class="docutils literal notranslate"><span class="pre">ObjectId.new_thread_id()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.random"><code class="docutils literal notranslate"><span class="pre">ObjectId.random()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.random_mailbox_id"><code class="docutils literal notranslate"><span class="pre">ObjectId.random_mailbox_id()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.random_email_id"><code class="docutils literal notranslate"><span class="pre">ObjectId.random_email_id()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.random_thread_id"><code class="docutils literal notranslate"><span class="pre">ObjectId.random_thread_id()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.objectid.ObjectId.maybe"><code class="docutils literal notranslate"><span class="pre">ObjectId.maybe()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOption"><code class="docutils literal notranslate"><span class="pre">ExtensionOption</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOption.value"><code class="docutils literal notranslate"><span class="pre">ExtensionOption.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOption.parse"><code class="docutils literal notranslate"><span class="pre">ExtensionOption.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions"><code class="docutils literal notranslate"><span class="pre">ExtensionOptions</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions.empty"><code class="docutils literal notranslate"><span class="pre">ExtensionOptions.empty()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions.value"><code class="docutils literal notranslate"><span class="pre">ExtensionOptions.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.options.ExtensionOptions.parse"><code class="docutils literal notranslate"><span class="pre">ExtensionOptions.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey"><code class="docutils literal notranslate"><span class="pre">SearchKey</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey.value"><code class="docutils literal notranslate"><span class="pre">SearchKey.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey.value_str"><code class="docutils literal notranslate"><span class="pre">SearchKey.value_str</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey.requirement"><code class="docutils literal notranslate"><span class="pre">SearchKey.requirement</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey.not_inverse"><code class="docutils literal notranslate"><span class="pre">SearchKey.not_inverse</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.searchkey.SearchKey.parse"><code class="docutils literal notranslate"><span class="pre">SearchKey.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.MaxValue"><code class="docutils literal notranslate"><span class="pre">MaxValue</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet"><code class="docutils literal notranslate"><span class="pre">SequenceSet</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.uid"><code class="docutils literal notranslate"><span class="pre">SequenceSet.uid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.all"><code class="docutils literal notranslate"><span class="pre">SequenceSet.all()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.value"><code class="docutils literal notranslate"><span class="pre">SequenceSet.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.is_all"><code class="docutils literal notranslate"><span class="pre">SequenceSet.is_all</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.flatten"><code class="docutils literal notranslate"><span class="pre">SequenceSet.flatten()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.iter"><code class="docutils literal notranslate"><span class="pre">SequenceSet.iter()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.build"><code class="docutils literal notranslate"><span class="pre">SequenceSet.build()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.sequenceset.SequenceSet.parse"><code class="docutils literal notranslate"><span class="pre">SequenceSet.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.statusattr.StatusAttribute"><code class="docutils literal notranslate"><span class="pre">StatusAttribute</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.statusattr.StatusAttribute.valid_statuses"><code class="docutils literal notranslate"><span class="pre">StatusAttribute.valid_statuses</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.statusattr.StatusAttribute.value"><code class="docutils literal notranslate"><span class="pre">StatusAttribute.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.statusattr.StatusAttribute.parse"><code class="docutils literal notranslate"><span class="pre">StatusAttribute.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.specials.tag.Tag"><code class="docutils literal notranslate"><span class="pre">Tag</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.specials.tag.Tag.value"><code class="docutils literal notranslate"><span class="pre">Tag.value</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.specials.tag.Tag.parse"><code class="docutils literal notranslate"><span class="pre">Tag.parse()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.response"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.response</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseCode"><code class="docutils literal notranslate"><span class="pre">ResponseCode</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseCode.of"><code class="docutils literal notranslate"><span class="pre">ResponseCode.of()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response"><code class="docutils literal notranslate"><span class="pre">Response</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.tag"><code class="docutils literal notranslate"><span class="pre">Response.tag</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.condition"><code class="docutils literal notranslate"><span class="pre">Response.condition</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.text"><code class="docutils literal notranslate"><span class="pre">Response.text</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.code"><code class="docutils literal notranslate"><span class="pre">Response.code</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.is_terminal"><code class="docutils literal notranslate"><span class="pre">Response.is_terminal</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.is_bad"><code class="docutils literal notranslate"><span class="pre">Response.is_bad</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.async_write"><code class="docutils literal notranslate"><span class="pre">Response.async_write()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.Response.write"><code class="docutils literal notranslate"><span class="pre">Response.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.CommandResponse"><code class="docutils literal notranslate"><span class="pre">CommandResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.CommandResponse.add_untagged"><code class="docutils literal notranslate"><span class="pre">CommandResponse.add_untagged()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.CommandResponse.add_untagged_ok"><code class="docutils literal notranslate"><span class="pre">CommandResponse.add_untagged_ok()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.CommandResponse.is_terminal"><code class="docutils literal notranslate"><span class="pre">CommandResponse.is_terminal</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.CommandResponse.async_write"><code class="docutils literal notranslate"><span class="pre">CommandResponse.async_write()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.CommandResponse.write"><code class="docutils literal notranslate"><span class="pre">CommandResponse.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.UntaggedResponse"><code class="docutils literal notranslate"><span class="pre">UntaggedResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.UntaggedResponse.merge_key"><code class="docutils literal notranslate"><span class="pre">UntaggedResponse.merge_key</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.UntaggedResponse.merge"><code class="docutils literal notranslate"><span class="pre">UntaggedResponse.merge()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.UntaggedResponse.async_write"><code class="docutils literal notranslate"><span class="pre">UntaggedResponse.async_write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseContinuation"><code class="docutils literal notranslate"><span class="pre">ResponseContinuation</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseBad"><code class="docutils literal notranslate"><span class="pre">ResponseBad</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseBad.condition"><code class="docutils literal notranslate"><span class="pre">ResponseBad.condition</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseBad.is_bad"><code class="docutils literal notranslate"><span class="pre">ResponseBad.is_bad</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseNo"><code class="docutils literal notranslate"><span class="pre">ResponseNo</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseNo.condition"><code class="docutils literal notranslate"><span class="pre">ResponseNo.condition</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseOk"><code class="docutils literal notranslate"><span class="pre">ResponseOk</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseOk.condition"><code class="docutils literal notranslate"><span class="pre">ResponseOk.condition</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseBye"><code class="docutils literal notranslate"><span class="pre">ResponseBye</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseBye.condition"><code class="docutils literal notranslate"><span class="pre">ResponseBye.condition</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseBye.is_terminal"><code class="docutils literal notranslate"><span class="pre">ResponseBye.is_terminal</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponsePreAuth"><code class="docutils literal notranslate"><span class="pre">ResponsePreAuth</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponsePreAuth.condition"><code class="docutils literal notranslate"><span class="pre">ResponsePreAuth.condition</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.ResponseT"><code class="docutils literal notranslate"><span class="pre">ResponseT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.Capability"><code class="docutils literal notranslate"><span class="pre">Capability</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.code.Capability.string"><code class="docutils literal notranslate"><span class="pre">Capability.string</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.PermanentFlags"><code class="docutils literal notranslate"><span class="pre">PermanentFlags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.UidNext"><code class="docutils literal notranslate"><span class="pre">UidNext</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.UidValidity"><code class="docutils literal notranslate"><span class="pre">UidValidity</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.Unseen"><code class="docutils literal notranslate"><span class="pre">Unseen</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.AppendUid"><code class="docutils literal notranslate"><span class="pre">AppendUid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.CopyUid"><code class="docutils literal notranslate"><span class="pre">CopyUid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.code.MailboxId"><code class="docutils literal notranslate"><span class="pre">MailboxId</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.EnvelopeStructure"><code class="docutils literal notranslate"><span class="pre">EnvelopeStructure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.EnvelopeStructure.empty"><code class="docutils literal notranslate"><span class="pre">EnvelopeStructure.empty()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.EnvelopeStructure.write"><code class="docutils literal notranslate"><span class="pre">EnvelopeStructure.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.BodyStructure"><code class="docutils literal notranslate"><span class="pre">BodyStructure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.BodyStructure.empty"><code class="docutils literal notranslate"><span class="pre">BodyStructure.empty()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.BodyStructure.write"><code class="docutils literal notranslate"><span class="pre">BodyStructure.write()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.BodyStructure.extended"><code class="docutils literal notranslate"><span class="pre">BodyStructure.extended</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.MultipartBodyStructure"><code class="docutils literal notranslate"><span class="pre">MultipartBodyStructure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.MultipartBodyStructure.extended"><code class="docutils literal notranslate"><span class="pre">MultipartBodyStructure.extended</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.ContentBodyStructure"><code class="docutils literal notranslate"><span class="pre">ContentBodyStructure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.ContentBodyStructure.extended"><code class="docutils literal notranslate"><span class="pre">ContentBodyStructure.extended</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.TextBodyStructure"><code class="docutils literal notranslate"><span class="pre">TextBodyStructure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.TextBodyStructure.extended"><code class="docutils literal notranslate"><span class="pre">TextBodyStructure.extended</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.MessageBodyStructure"><code class="docutils literal notranslate"><span class="pre">MessageBodyStructure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.fetch.MessageBodyStructure.extended"><code class="docutils literal notranslate"><span class="pre">MessageBodyStructure.extended</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FlagsResponse"><code class="docutils literal notranslate"><span class="pre">FlagsResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FlagsResponse.text"><code class="docutils literal notranslate"><span class="pre">FlagsResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ExistsResponse"><code class="docutils literal notranslate"><span class="pre">ExistsResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ExistsResponse.text"><code class="docutils literal notranslate"><span class="pre">ExistsResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.RecentResponse"><code class="docutils literal notranslate"><span class="pre">RecentResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.RecentResponse.text"><code class="docutils literal notranslate"><span class="pre">RecentResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ExpungeResponse"><code class="docutils literal notranslate"><span class="pre">ExpungeResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ExpungeResponse.text"><code class="docutils literal notranslate"><span class="pre">ExpungeResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse"><code class="docutils literal notranslate"><span class="pre">FetchResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse.merge_key"><code class="docutils literal notranslate"><span class="pre">FetchResponse.merge_key</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse.merge"><code class="docutils literal notranslate"><span class="pre">FetchResponse.merge()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse.text"><code class="docutils literal notranslate"><span class="pre">FetchResponse.text</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.FetchResponse.write"><code class="docutils literal notranslate"><span class="pre">FetchResponse.write()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.SearchResponse"><code class="docutils literal notranslate"><span class="pre">SearchResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.SearchResponse.text"><code class="docutils literal notranslate"><span class="pre">SearchResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ESearchResponse"><code class="docutils literal notranslate"><span class="pre">ESearchResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ESearchResponse.text"><code class="docutils literal notranslate"><span class="pre">ESearchResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.StatusResponse"><code class="docutils literal notranslate"><span class="pre">StatusResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.StatusResponse.text"><code class="docutils literal notranslate"><span class="pre">StatusResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ListResponse"><code class="docutils literal notranslate"><span class="pre">ListResponse</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.ListResponse.text"><code class="docutils literal notranslate"><span class="pre">ListResponse.text</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.parsing.response.specials.LSubResponse"><code class="docutils literal notranslate"><span class="pre">LSubResponse</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.modutf7"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.modutf7</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.modutf7.modutf7_encode"><code class="docutils literal notranslate"><span class="pre">modutf7_encode()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.parsing.modutf7.modutf7_decode"><code class="docutils literal notranslate"><span class="pre">modutf7_decode()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.parsing.message"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.message</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.parsing.message.AppendMessage"><code class="docutils literal notranslate"><span class="pre">AppendMessage</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -4342,7 +4891,7 @@ mailbox names in IMAP.</p>
         <li class="right" >
           <a href="pymap.interfaces.html" title="pymap.interfaces"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a></li> 
       </ul>
@@ -4350,8 +4899,8 @@ mailbox names in IMAP.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

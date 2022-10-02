@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.backend.maildir &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.backend.maildir &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
@@ -166,7 +167,7 @@ this backend. For example:</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.maildir.Config">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colon</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Cleartext()</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir.html#Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>The config implementation for the maildir backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -176,6 +177,8 @@ this backend. For example:</p>
 <li><p><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – The base directory for all relative mailbox paths.</p></li>
 <li><p><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The Maildir directory layout.</p></li>
 <li><p><strong>colon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – The info delimiter in mail filename.</p></li>
+<li><p><strong>hash_interface</strong> – The hash algorithm to use for passwords.</p></li>
+<li><p><strong>hash_context</strong> (<em>HashInterface</em>) – </p></li>
 <li><p><strong>extra</strong> (<em>Any</em>) – </p></li>
 </ul>
 </dd>
@@ -724,10 +727,78 @@ e.g.:</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.backend.maildir.flags"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.flags</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.backend.maildir.layout"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.backend.maildir.subscriptions"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.subscriptions</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.backend.maildir.uidlist"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend"><code class="docutils literal notranslate"><span class="pre">MaildirBackend</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend.login"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.login</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend.config"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.config</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend.status"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.status</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend.add_subparser"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.add_subparser()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend.init"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.init()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.MaildirBackend.start"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.start()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config.backend_capability"><code class="docutils literal notranslate"><span class="pre">Config.backend_capability</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config.users_file"><code class="docutils literal notranslate"><span class="pre">Config.users_file</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config.base_dir"><code class="docutils literal notranslate"><span class="pre">Config.base_dir</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config.layout"><code class="docutils literal notranslate"><span class="pre">Config.layout</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config.colon"><code class="docutils literal notranslate"><span class="pre">Config.colon</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.Config.parse_args"><code class="docutils literal notranslate"><span class="pre">Config.parse_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.maildir.flags"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.flags</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.flags.MaildirFlags"><code class="docutils literal notranslate"><span class="pre">MaildirFlags</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.flags.MaildirFlags.permanent_flags"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.flags.MaildirFlags.system_flags"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.system_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.flags.MaildirFlags.keywords"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.keywords</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.flags.MaildirFlags.to_maildir"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.to_maildir()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.flags.MaildirFlags.from_maildir"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.from_maildir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.maildir.layout"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout"><code class="docutils literal notranslate"><span class="pre">MaildirLayout</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.get"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.path"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.path</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.get_path"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.get_path()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.list_folders"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.list_folders()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.get_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.get_folder()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.add_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.add_folder()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.remove_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.remove_folder()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout.rename_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.rename_folder()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.DefaultLayout"><code class="docutils literal notranslate"><span class="pre">DefaultLayout</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.layout.FilesystemLayout"><code class="docutils literal notranslate"><span class="pre">FilesystemLayout</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.maildir.subscriptions"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.subscriptions</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.subscriptions.Subscriptions"><code class="docutils literal notranslate"><span class="pre">Subscriptions</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.subscriptions.Subscriptions.subscribed"><code class="docutils literal notranslate"><span class="pre">Subscriptions.subscribed</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.subscriptions.Subscriptions.add"><code class="docutils literal notranslate"><span class="pre">Subscriptions.add()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.subscriptions.Subscriptions.remove"><code class="docutils literal notranslate"><span class="pre">Subscriptions.remove()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.subscriptions.Subscriptions.set"><code class="docutils literal notranslate"><span class="pre">Subscriptions.set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.maildir.uidlist"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.Record"><code class="docutils literal notranslate"><span class="pre">Record</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.Record.key"><code class="docutils literal notranslate"><span class="pre">Record.key</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList"><code class="docutils literal notranslate"><span class="pre">UidList</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.FILE_NAME"><code class="docutils literal notranslate"><span class="pre">UidList.FILE_NAME</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.LOCK_FILE"><code class="docutils literal notranslate"><span class="pre">UidList.LOCK_FILE</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.records"><code class="docutils literal notranslate"><span class="pre">UidList.records</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.get"><code class="docutils literal notranslate"><span class="pre">UidList.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.get_all"><code class="docutils literal notranslate"><span class="pre">UidList.get_all()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.set"><code class="docutils literal notranslate"><span class="pre">UidList.set()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.uidlist.UidList.remove"><code class="docutils literal notranslate"><span class="pre">UidList.remove()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -798,7 +869,7 @@ e.g.:</p>
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
@@ -807,8 +878,8 @@ e.g.:</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.backend &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -76,24 +77,174 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pymap.backend.dict.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.dict</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.backend.dict.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.dict</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend"><code class="docutils literal notranslate"><span class="pre">DictBackend</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.login"><code class="docutils literal notranslate"><span class="pre">DictBackend.login</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.config"><code class="docutils literal notranslate"><span class="pre">DictBackend.config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.status"><code class="docutils literal notranslate"><span class="pre">DictBackend.status</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.add_subparser"><code class="docutils literal notranslate"><span class="pre">DictBackend.add_subparser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.init"><code class="docutils literal notranslate"><span class="pre">DictBackend.init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.start"><code class="docutils literal notranslate"><span class="pre">DictBackend.start()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config.backend_capability"><code class="docutils literal notranslate"><span class="pre">Config.backend_capability</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config.demo_data"><code class="docutils literal notranslate"><span class="pre">Config.demo_data</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config.demo_data_resource"><code class="docutils literal notranslate"><span class="pre">Config.demo_data_resource</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config.demo_user"><code class="docutils literal notranslate"><span class="pre">Config.demo_user</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config.demo_password"><code class="docutils literal notranslate"><span class="pre">Config.demo_password</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.Config.parse_args"><code class="docutils literal notranslate"><span class="pre">Config.parse_args()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.backend.maildir.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.flags"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.flags</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.layout"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.subscriptions"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.subscriptions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.uidlist"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend"><code class="docutils literal notranslate"><span class="pre">MaildirBackend</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.login"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.login</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.config"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.status"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.status</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.add_subparser"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.add_subparser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.init"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend.start"><code class="docutils literal notranslate"><span class="pre">MaildirBackend.start()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.backend_capability"><code class="docutils literal notranslate"><span class="pre">Config.backend_capability</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.users_file"><code class="docutils literal notranslate"><span class="pre">Config.users_file</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.base_dir"><code class="docutils literal notranslate"><span class="pre">Config.base_dir</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.layout"><code class="docutils literal notranslate"><span class="pre">Config.layout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.colon"><code class="docutils literal notranslate"><span class="pre">Config.colon</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.parse_args"><code class="docutils literal notranslate"><span class="pre">Config.parse_args()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.flags"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.flags</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags"><code class="docutils literal notranslate"><span class="pre">MaildirFlags</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.permanent_flags"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.permanent_flags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.system_flags"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.system_flags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.keywords"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.keywords</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.to_maildir"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.to_maildir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.from_maildir"><code class="docutils literal notranslate"><span class="pre">MaildirFlags.from_maildir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.layout"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.layout</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout"><code class="docutils literal notranslate"><span class="pre">MaildirLayout</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.path"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get_path"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.get_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.list_folders"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.list_folders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.get_folder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.add_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.add_folder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.remove_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.remove_folder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.rename_folder"><code class="docutils literal notranslate"><span class="pre">MaildirLayout.rename_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.DefaultLayout"><code class="docutils literal notranslate"><span class="pre">DefaultLayout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.layout.FilesystemLayout"><code class="docutils literal notranslate"><span class="pre">FilesystemLayout</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.subscriptions"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.subscriptions</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions"><code class="docutils literal notranslate"><span class="pre">Subscriptions</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.subscribed"><code class="docutils literal notranslate"><span class="pre">Subscriptions.subscribed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.add"><code class="docutils literal notranslate"><span class="pre">Subscriptions.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.remove"><code class="docutils literal notranslate"><span class="pre">Subscriptions.remove()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.set"><code class="docutils literal notranslate"><span class="pre">Subscriptions.set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#module-pymap.backend.maildir.uidlist"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.uidlist</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.Record"><code class="docutils literal notranslate"><span class="pre">Record</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.Record.key"><code class="docutils literal notranslate"><span class="pre">Record.key</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList"><code class="docutils literal notranslate"><span class="pre">UidList</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.FILE_NAME"><code class="docutils literal notranslate"><span class="pre">UidList.FILE_NAME</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.LOCK_FILE"><code class="docutils literal notranslate"><span class="pre">UidList.LOCK_FILE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.records"><code class="docutils literal notranslate"><span class="pre">UidList.records</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.get"><code class="docutils literal notranslate"><span class="pre">UidList.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.get_all"><code class="docutils literal notranslate"><span class="pre">UidList.get_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.set"><code class="docutils literal notranslate"><span class="pre">UidList.set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.remove"><code class="docutils literal notranslate"><span class="pre">UidList.remove()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.backend.redis.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#module-pymap.backend.redis.keys"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#module-pymap.backend.redis.cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend"><code class="docutils literal notranslate"><span class="pre">RedisBackend</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.login"><code class="docutils literal notranslate"><span class="pre">RedisBackend.login</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.config"><code class="docutils literal notranslate"><span class="pre">RedisBackend.config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.status"><code class="docutils literal notranslate"><span class="pre">RedisBackend.status</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.add_subparser"><code class="docutils literal notranslate"><span class="pre">RedisBackend.add_subparser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.init"><code class="docutils literal notranslate"><span class="pre">RedisBackend.init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.RedisBackend.start"><code class="docutils literal notranslate"><span class="pre">RedisBackend.start()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.backend_capability"><code class="docutils literal notranslate"><span class="pre">Config.backend_capability</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.address"><code class="docutils literal notranslate"><span class="pre">Config.address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.data_address"><code class="docutils literal notranslate"><span class="pre">Config.data_address</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.separator"><code class="docutils literal notranslate"><span class="pre">Config.separator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.prefix"><code class="docutils literal notranslate"><span class="pre">Config.prefix</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.users_prefix"><code class="docutils literal notranslate"><span class="pre">Config.users_prefix</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.users_json"><code class="docutils literal notranslate"><span class="pre">Config.users_json</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Config.parse_args"><code class="docutils literal notranslate"><span class="pre">Config.parse_args()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.Session.filter_set"><code class="docutils literal notranslate"><span class="pre">Session.filter_set</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#module-pymap.backend.redis.keys"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.RedisKey"><code class="docutils literal notranslate"><span class="pre">RedisKey</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.RedisKey.fork"><code class="docutils literal notranslate"><span class="pre">RedisKey.fork()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.RedisKey.end"><code class="docutils literal notranslate"><span class="pre">RedisKey.end()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.KeysGroup"><code class="docutils literal notranslate"><span class="pre">KeysGroup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.KeysGroup.keys"><code class="docutils literal notranslate"><span class="pre">KeysGroup.keys</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.GlobalKeys"><code class="docutils literal notranslate"><span class="pre">GlobalKeys</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.GlobalKeys.keys"><code class="docutils literal notranslate"><span class="pre">GlobalKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.CleanupKeys"><code class="docutils literal notranslate"><span class="pre">CleanupKeys</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.CleanupKeys.keys"><code class="docutils literal notranslate"><span class="pre">CleanupKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.NamespaceKeys"><code class="docutils literal notranslate"><span class="pre">NamespaceKeys</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.NamespaceKeys.keys"><code class="docutils literal notranslate"><span class="pre">NamespaceKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.ContentKeys"><code class="docutils literal notranslate"><span class="pre">ContentKeys</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.ContentKeys.keys"><code class="docutils literal notranslate"><span class="pre">ContentKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.FilterKeys"><code class="docutils literal notranslate"><span class="pre">FilterKeys</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.FilterKeys.keys"><code class="docutils literal notranslate"><span class="pre">FilterKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.MailboxKeys"><code class="docutils literal notranslate"><span class="pre">MailboxKeys</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.keys.MailboxKeys.keys"><code class="docutils literal notranslate"><span class="pre">MailboxKeys.keys</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html#module-pymap.backend.redis.cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pymap.backend.redis.html#pymap.backend.redis.cleanup.CleanupAction"><code class="docutils literal notranslate"><span class="pre">CleanupAction</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 <span class="target" id="module-pymap.backend"></span><dl class="py data">
 <dt class="sig sig-object py" id="pymap.backend.backends">
-<span class="sig-prename descclassname"><span class="pre">pymap.backend.</span></span><span class="sig-name descname"><span class="pre">backends</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><span class="pre">pymap.interfaces.backend.BackendInterface</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.backend')</span></em><a class="headerlink" href="#pymap.backend.backends" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.backend.</span></span><span class="sig-name descname"><span class="pre">backends</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><span class="pre">BackendInterface</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.backend')</span></em><a class="headerlink" href="#pymap.backend.backends" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers new backend plugins.</p>
 </dd></dl>
 
@@ -1010,8 +1161,70 @@ the selected mailbox.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.backend.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.backend.session"><code class="docutils literal notranslate"><span class="pre">pymap.backend.session</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.backends"><code class="docutils literal notranslate"><span class="pre">backends</span></code></a></li>
+<li><a class="reference internal" href="#module-pymap.backend.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT"><code class="docutils literal notranslate"><span class="pre">MailboxDataT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT_co"><code class="docutils literal notranslate"><span class="pre">MailboxDataT_co</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.mailbox_id"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.mailbox_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.readonly"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.readonly</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.uid_validity"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.uid_validity</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.permanent_flags"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.session_flags"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.session_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.selected_set"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.selected_set</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.update_selected"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.update_selected()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.append"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.append()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.copy"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.copy()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.move"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.move()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.get"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.update"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.update()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.delete"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.delete()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.claim_recent"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.claim_recent()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.cleanup"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.cleanup()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.snapshot"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.snapshot()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.find"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.find()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface.find_deleted"><code class="docutils literal notranslate"><span class="pre">MailboxDataInterface.find_deleted()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.delimiter"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.delimiter</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.set_subscribed"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.set_subscribed()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.list_subscribed"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.list_subscribed()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.list_mailboxes"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.list_mailboxes()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.get_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.get_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.add_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.add_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.delete_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.delete_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.mailbox.MailboxSetInterface.rename_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSetInterface.rename_mailbox()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.session"><code class="docutils literal notranslate"><span class="pre">pymap.backend.session</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession"><code class="docutils literal notranslate"><span class="pre">BaseSession</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.owner"><code class="docutils literal notranslate"><span class="pre">BaseSession.owner</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.filter_set"><code class="docutils literal notranslate"><span class="pre">BaseSession.filter_set</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.close"><code class="docutils literal notranslate"><span class="pre">BaseSession.close()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.cleanup"><code class="docutils literal notranslate"><span class="pre">BaseSession.cleanup()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.list_mailboxes"><code class="docutils literal notranslate"><span class="pre">BaseSession.list_mailboxes()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.get_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.get_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.create_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.create_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.delete_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.delete_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.rename_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.rename_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.subscribe"><code class="docutils literal notranslate"><span class="pre">BaseSession.subscribe()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.unsubscribe"><code class="docutils literal notranslate"><span class="pre">BaseSession.unsubscribe()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.append_messages"><code class="docutils literal notranslate"><span class="pre">BaseSession.append_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.select_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.select_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.check_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.check_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.fetch_messages"><code class="docutils literal notranslate"><span class="pre">BaseSession.fetch_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.search_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.search_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.expunge_mailbox"><code class="docutils literal notranslate"><span class="pre">BaseSession.expunge_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.copy_messages"><code class="docutils literal notranslate"><span class="pre">BaseSession.copy_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.move_messages"><code class="docutils literal notranslate"><span class="pre">BaseSession.move_messages()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.session.BaseSession.update_flags"><code class="docutils literal notranslate"><span class="pre">BaseSession.update_flags()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1082,7 +1295,7 @@ the selected mailbox.</p>
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -1090,8 +1303,8 @@ the selected mailbox.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

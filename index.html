@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap Documentation &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap Documentation &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -54,7 +55,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
-    <li><a href="#">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="#">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap</span></code> Documentation</a></li> 
       </ul>
@@ -74,20 +75,123 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="pymap.bytes.html"><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.concurrent.html"><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.config.html"><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.context.html"><code class="docutils literal notranslate"><span class="pre">pymap.context</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.exceptions.html"><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.fetch.html"><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.filter.html"><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.flags.html"><code class="docutils literal notranslate"><span class="pre">pymap.flags</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.listtree.html"><code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.mailbox.html"><code class="docutils literal notranslate"><span class="pre">pymap.mailbox</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.message.html"><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.search.html"><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.selected.html"><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.sockets.html"><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.bytes.html"><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.bytes.html#pymap.bytes.MaybeBytes"><code class="docutils literal notranslate"><span class="pre">MaybeBytes</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.bytes.html#pymap.bytes.MaybeBytesT"><code class="docutils literal notranslate"><span class="pre">MaybeBytesT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.bytes.html#pymap.bytes.has_bytes"><code class="docutils literal notranslate"><span class="pre">has_bytes()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.bytes.html#pymap.bytes.WriteStream"><code class="docutils literal notranslate"><span class="pre">WriteStream</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.bytes.html#pymap.bytes.Writeable"><code class="docutils literal notranslate"><span class="pre">Writeable</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.bytes.html#pymap.bytes.BytesFormat"><code class="docutils literal notranslate"><span class="pre">BytesFormat</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.concurrent.html"><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem"><code class="docutils literal notranslate"><span class="pre">Subsystem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event"><code class="docutils literal notranslate"><span class="pre">Event</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.ReadWriteLock"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.FileLock"><code class="docutils literal notranslate"><span class="pre">FileLock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.EventT"><code class="docutils literal notranslate"><span class="pre">EventT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.RetT"><code class="docutils literal notranslate"><span class="pre">RetT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.config.html"><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.config.html#pymap.config.ConfigT"><code class="docutils literal notranslate"><span class="pre">ConfigT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.config.html#pymap.config.ConfigT_contra"><code class="docutils literal notranslate"><span class="pre">ConfigT_contra</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.config.html#pymap.config.BackendCapability"><code class="docutils literal notranslate"><span class="pre">BackendCapability</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig"><code class="docutils literal notranslate"><span class="pre">IMAPConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.context.html"><code class="docutils literal notranslate"><span class="pre">pymap.context</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.context.html#pymap.context.subsystem"><code class="docutils literal notranslate"><span class="pre">subsystem</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.context.html#pymap.context.current_command"><code class="docutils literal notranslate"><span class="pre">current_command</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.context.html#pymap.context.socket_info"><code class="docutils literal notranslate"><span class="pre">socket_info</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.context.html#pymap.context.language_code"><code class="docutils literal notranslate"><span class="pre">language_code</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.context.html#pymap.context.connection_exit"><code class="docutils literal notranslate"><span class="pre">connection_exit</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.context.html#pymap.context.cluster_metadata"><code class="docutils literal notranslate"><span class="pre">cluster_metadata</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.exceptions.html"><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.ResponseError"><code class="docutils literal notranslate"><span class="pre">ResponseError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.CloseConnection"><code class="docutils literal notranslate"><span class="pre">CloseConnection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotSupportedError"><code class="docutils literal notranslate"><span class="pre">NotSupportedError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.TemporaryFailure"><code class="docutils literal notranslate"><span class="pre">TemporaryFailure</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.SearchNotAllowed"><code class="docutils literal notranslate"><span class="pre">SearchNotAllowed</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth"><code class="docutils literal notranslate"><span class="pre">InvalidAuth</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AuthorizationFailure"><code class="docutils literal notranslate"><span class="pre">AuthorizationFailure</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotAllowedError"><code class="docutils literal notranslate"><span class="pre">NotAllowedError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.IncompatibleData"><code class="docutils literal notranslate"><span class="pre">IncompatibleData</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxError"><code class="docutils literal notranslate"><span class="pre">MailboxError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound"><code class="docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxConflict"><code class="docutils literal notranslate"><span class="pre">MailboxConflict</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxHasChildren"><code class="docutils literal notranslate"><span class="pre">MailboxHasChildren</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxReadOnly"><code class="docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AppendFailure"><code class="docutils literal notranslate"><span class="pre">AppendFailure</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound"><code class="docutils literal notranslate"><span class="pre">UserNotFound</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.fetch.html"><code class="docutils literal notranslate"><span class="pre">pymap.fetch</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.fetch.html#pymap.fetch.LoadedMessageProvider"><code class="docutils literal notranslate"><span class="pre">LoadedMessageProvider</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.fetch.html#pymap.fetch.DynamicFetchValue"><code class="docutils literal notranslate"><span class="pre">DynamicFetchValue</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.fetch.html#pymap.fetch.DynamicLoadedFetchValue"><code class="docutils literal notranslate"><span class="pre">DynamicLoadedFetchValue</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.fetch.html#pymap.fetch.MessageAttributes"><code class="docutils literal notranslate"><span class="pre">MessageAttributes</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.filter.html"><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.filter.html#pymap.filter.filters"><code class="docutils literal notranslate"><span class="pre">filters</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.filter.html#pymap.filter.PluginFilterSet"><code class="docutils literal notranslate"><span class="pre">PluginFilterSet</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.filter.html#pymap.filter.SingleFilterSet"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.flags.html"><code class="docutils literal notranslate"><span class="pre">pymap.flags</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp"><code class="docutils literal notranslate"><span class="pre">FlagOp</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.flags.html#pymap.flags.PermanentFlags"><code class="docutils literal notranslate"><span class="pre">PermanentFlags</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.flags.html#pymap.flags.SessionFlags"><code class="docutils literal notranslate"><span class="pre">SessionFlags</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.listtree.html"><code class="docutils literal notranslate"><span class="pre">pymap.listtree</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.listtree.html#pymap.listtree.ListEntry"><code class="docutils literal notranslate"><span class="pre">ListEntry</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.listtree.html#pymap.listtree.ListTree"><code class="docutils literal notranslate"><span class="pre">ListTree</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.mailbox.html"><code class="docutils literal notranslate"><span class="pre">pymap.mailbox</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot"><code class="docutils literal notranslate"><span class="pre">MailboxSnapshot</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.message.html"><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.message.html#pymap.message.BaseMessage"><code class="docutils literal notranslate"><span class="pre">BaseMessage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage"><code class="docutils literal notranslate"><span class="pre">ExpungedMessage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.message.html#pymap.message.BaseLoadedMessage"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.search.html"><code class="docutils literal notranslate"><span class="pre">pymap.search</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.SearchParams"><code class="docutils literal notranslate"><span class="pre">SearchParams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.SearchCriteria"><code class="docutils literal notranslate"><span class="pre">SearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.SearchCriteriaSet"><code class="docutils literal notranslate"><span class="pre">SearchCriteriaSet</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.InverseSearchCriteria"><code class="docutils literal notranslate"><span class="pre">InverseSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.AllSearchCriteria"><code class="docutils literal notranslate"><span class="pre">AllSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.OrSearchCriteria"><code class="docutils literal notranslate"><span class="pre">OrSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.SequenceSetSearchCriteria"><code class="docutils literal notranslate"><span class="pre">SequenceSetSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.HasEmailIdSearchCriteria"><code class="docutils literal notranslate"><span class="pre">HasEmailIdSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.HasThreadIdSearchCriteria"><code class="docutils literal notranslate"><span class="pre">HasThreadIdSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.HasFlagSearchCriteria"><code class="docutils literal notranslate"><span class="pre">HasFlagSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.NewSearchCriteria"><code class="docutils literal notranslate"><span class="pre">NewSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.DateSearchCriteria"><code class="docutils literal notranslate"><span class="pre">DateSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.HeaderDateSearchCriteria"><code class="docutils literal notranslate"><span class="pre">HeaderDateSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.SizeSearchCriteria"><code class="docutils literal notranslate"><span class="pre">SizeSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.EnvelopeSearchCriteria"><code class="docutils literal notranslate"><span class="pre">EnvelopeSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.HeaderSearchCriteria"><code class="docutils literal notranslate"><span class="pre">HeaderSearchCriteria</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.search.html#pymap.search.BodySearchCriteria"><code class="docutils literal notranslate"><span class="pre">BodySearchCriteria</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.selected.html"><code class="docutils literal notranslate"><span class="pre">pymap.selected</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedSet"><code class="docutils literal notranslate"><span class="pre">SelectedSet</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.selected.html#pymap.selected.SynchronizedMessages"><code class="docutils literal notranslate"><span class="pre">SynchronizedMessages</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox"><code class="docutils literal notranslate"><span class="pre">SelectedMailbox</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.sockets.html"><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.sockets.html#pymap.sockets.InheritedSockets"><code class="docutils literal notranslate"><span class="pre">InheritedSockets</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.interfaces.html"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pymap.interfaces.html#module-pymap.interfaces.backend"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.backend</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.interfaces.html#module-pymap.interfaces.message"><code class="docutils literal notranslate"><span class="pre">pymap.interfaces.message</span></code></a></li>
@@ -98,6 +202,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.parsing.html"><code class="docutils literal notranslate"><span class="pre">pymap.parsing</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.ParseableT"><code class="docutils literal notranslate"><span class="pre">ParseableT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.AnyParseable"><code class="docutils literal notranslate"><span class="pre">AnyParseable</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.Params"><code class="docutils literal notranslate"><span class="pre">Params</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.Parseable"><code class="docutils literal notranslate"><span class="pre">Parseable</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.ExpectedParseable"><code class="docutils literal notranslate"><span class="pre">ExpectedParseable</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.Space"><code class="docutils literal notranslate"><span class="pre">Space</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#pymap.parsing.EndLine"><code class="docutils literal notranslate"><span class="pre">EndLine</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#module-pymap.parsing.exceptions"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.exceptions</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#module-pymap.parsing.state"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.state</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.parsing.html#module-pymap.parsing.commands"><code class="docutils literal notranslate"><span class="pre">pymap.parsing.commands</span></code></a></li>
@@ -110,36 +221,73 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.mime.html"><code class="docutils literal notranslate"><span class="pre">pymap.mime</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.mime.html#pymap.mime.MessageContent"><code class="docutils literal notranslate"><span class="pre">MessageContent</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.mime.html#pymap.mime.MessageHeader"><code class="docutils literal notranslate"><span class="pre">MessageHeader</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.mime.html#pymap.mime.MessageBody"><code class="docutils literal notranslate"><span class="pre">MessageBody</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.mime.html#module-pymap.mime.cte"><code class="docutils literal notranslate"><span class="pre">pymap.mime.cte</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.mime.html#module-pymap.mime.parsed"><code class="docutils literal notranslate"><span class="pre">pymap.mime.parsed</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.threads.html"><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.plugin.html"><code class="docutils literal notranslate"><span class="pre">pymap.plugin</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.service.html"><code class="docutils literal notranslate"><span class="pre">pymap.service</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.user.html"><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.threads.html"><code class="docutils literal notranslate"><span class="pre">pymap.threads</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.threads.html#pymap.threads.ThreadKey"><code class="docutils literal notranslate"><span class="pre">ThreadKey</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.plugin.html"><code class="docutils literal notranslate"><span class="pre">pymap.plugin</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.plugin.html#pymap.plugin.PluginT"><code class="docutils literal notranslate"><span class="pre">PluginT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin"><code class="docutils literal notranslate"><span class="pre">Plugin</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.service.html"><code class="docutils literal notranslate"><span class="pre">pymap.service</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.service.html#pymap.service.services"><code class="docutils literal notranslate"><span class="pre">services</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.user.html"><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.user.html#pymap.user.UserRoles"><code class="docutils literal notranslate"><span class="pre">UserRoles</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.user.html#pymap.user.UserMetadata"><code class="docutils literal notranslate"><span class="pre">UserMetadata</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.backend.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.dict.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.dict</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.redis.html"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.backend.html#pymap.backend.backends"><code class="docutils literal notranslate"><span class="pre">backends</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.html#module-pymap.backend.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.html#module-pymap.backend.session"><code class="docutils literal notranslate"><span class="pre">pymap.backend.session</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="pymap.imap.html"><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pymap.imap.html"><code class="docutils literal notranslate"><span class="pre">pymap.imap</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.imap.html#pymap.imap.IMAPService"><code class="docutils literal notranslate"><span class="pre">IMAPService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.imap.html#pymap.imap.IMAPServer"><code class="docutils literal notranslate"><span class="pre">IMAPServer</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.imap.html#pymap.imap.IMAPConnection"><code class="docutils literal notranslate"><span class="pre">IMAPConnection</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.imap.html#pymap.imap.state.ConnectionState"><code class="docutils literal notranslate"><span class="pre">ConnectionState</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.admin.html"><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.admin.html#pymap.admin.AdminService"><code class="docutils literal notranslate"><span class="pre">AdminService</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.admin.html#pymap.admin.errors.get_unimplemented_error"><code class="docutils literal notranslate"><span class="pre">get_unimplemented_error()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.admin.html#pymap.admin.errors.get_incompatible_version_error"><code class="docutils literal notranslate"><span class="pre">get_incompatible_version_error()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.admin.html#pymap.admin.typing.Handler"><code class="docutils literal notranslate"><span class="pre">Handler</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.admin.html#module-pymap.admin.handlers"><code class="docutils literal notranslate"><span class="pre">pymap.admin.handlers</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.cluster.html"><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.cluster.html#pymap.cluster.MemberInterface"><code class="docutils literal notranslate"><span class="pre">MemberInterface</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.cluster.html#pymap.cluster.ListenCallback"><code class="docutils literal notranslate"><span class="pre">ListenCallback</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.cluster.html#pymap.cluster.ClusterMetadata"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.cluster.html#module-pymap.cluster.swim"><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.token.html"><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.token.html#pymap.token.tokens"><code class="docutils literal notranslate"><span class="pre">tokens</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.token.html#pymap.token.TokensBase"><code class="docutils literal notranslate"><span class="pre">TokensBase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.token.html#pymap.token.AllTokens"><code class="docutils literal notranslate"><span class="pre">AllTokens</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.token.html#module-pymap.token.macaroon"><code class="docutils literal notranslate"><span class="pre">pymap.token.macaroon</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pymap.sieve.html"><code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pymap.sieve.html#pymap.sieve.SieveParseError"><code class="docutils literal notranslate"><span class="pre">SieveParseError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.sieve.html#pymap.sieve.SieveCompiler"><code class="docutils literal notranslate"><span class="pre">SieveCompiler</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymap.sieve.html#pymap.sieve.SieveFilter"><code class="docutils literal notranslate"><span class="pre">SieveFilter</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.sieve.html#module-pymap.sieve.tests"><code class="docutils literal notranslate"><span class="pre">pymap.sieve.tests</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.sieve.html#module-pymap.sieve.manage"><code class="docutils literal notranslate"><span class="pre">pymap.sieve.manage</span></code></a></li>
 </ul>
@@ -231,7 +379,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >next</a> &nbsp; &nbsp;</li>
-    <li><a href="#">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="#">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap</span></code> Documentation</a></li> 
       </ul>
@@ -239,8 +387,8 @@
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

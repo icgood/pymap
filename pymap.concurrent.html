@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.concurrent &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.concurrent &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -402,7 +403,52 @@ released.</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem"><code class="docutils literal notranslate"><span class="pre">Subsystem</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.for_executor"><code class="docutils literal notranslate"><span class="pre">Subsystem.for_executor()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.for_asyncio"><code class="docutils literal notranslate"><span class="pre">Subsystem.for_asyncio()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.for_threading"><code class="docutils literal notranslate"><span class="pre">Subsystem.for_threading()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.subsystem"><code class="docutils literal notranslate"><span class="pre">Subsystem.subsystem</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.execute"><code class="docutils literal notranslate"><span class="pre">Subsystem.execute()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.new_rwlock"><code class="docutils literal notranslate"><span class="pre">Subsystem.new_rwlock()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Subsystem.new_event"><code class="docutils literal notranslate"><span class="pre">Subsystem.new_event()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.concurrent.Event"><code class="docutils literal notranslate"><span class="pre">Event</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.concurrent.Event.for_asyncio"><code class="docutils literal notranslate"><span class="pre">Event.for_asyncio()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.for_threading"><code class="docutils literal notranslate"><span class="pre">Event.for_threading()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.subsystem"><code class="docutils literal notranslate"><span class="pre">Event.subsystem</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.or_event"><code class="docutils literal notranslate"><span class="pre">Event.or_event()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.is_set"><code class="docutils literal notranslate"><span class="pre">Event.is_set()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.set"><code class="docutils literal notranslate"><span class="pre">Event.set()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.clear"><code class="docutils literal notranslate"><span class="pre">Event.clear()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.Event.wait"><code class="docutils literal notranslate"><span class="pre">Event.wait()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.concurrent.ReadWriteLock"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.concurrent.ReadWriteLock.for_asyncio"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock.for_asyncio()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.ReadWriteLock.for_threading"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock.for_threading()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.ReadWriteLock.subsystem"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock.subsystem</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.ReadWriteLock.read_lock"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock.read_lock()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.ReadWriteLock.write_lock"><code class="docutils literal notranslate"><span class="pre">ReadWriteLock.write_lock()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.concurrent.FileLock"><code class="docutils literal notranslate"><span class="pre">FileLock</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.concurrent.FileLock.subsystem"><code class="docutils literal notranslate"><span class="pre">FileLock.subsystem</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.FileLock.read_lock"><code class="docutils literal notranslate"><span class="pre">FileLock.read_lock()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.FileLock.write_lock"><code class="docutils literal notranslate"><span class="pre">FileLock.write_lock()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.concurrent.EventT"><code class="docutils literal notranslate"><span class="pre">EventT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.concurrent.RetT"><code class="docutils literal notranslate"><span class="pre">RetT</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="pymap.bytes.html"
@@ -468,7 +514,7 @@ released.</p>
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -476,8 +522,8 @@ released.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

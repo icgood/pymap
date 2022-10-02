@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.exceptions &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.exceptions &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
@@ -430,7 +431,58 @@ allowed.</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.ResponseError"><code class="docutils literal notranslate"><span class="pre">ResponseError</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.ResponseError.get_response"><code class="docutils literal notranslate"><span class="pre">ResponseError.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.CloseConnection"><code class="docutils literal notranslate"><span class="pre">CloseConnection</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.CloseConnection.get_response"><code class="docutils literal notranslate"><span class="pre">CloseConnection.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.NotSupportedError"><code class="docutils literal notranslate"><span class="pre">NotSupportedError</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.NotSupportedError.get_response"><code class="docutils literal notranslate"><span class="pre">NotSupportedError.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.TemporaryFailure"><code class="docutils literal notranslate"><span class="pre">TemporaryFailure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.TemporaryFailure.get_response"><code class="docutils literal notranslate"><span class="pre">TemporaryFailure.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.SearchNotAllowed"><code class="docutils literal notranslate"><span class="pre">SearchNotAllowed</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.InvalidAuth"><code class="docutils literal notranslate"><span class="pre">InvalidAuth</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.InvalidAuth.get_response"><code class="docutils literal notranslate"><span class="pre">InvalidAuth.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.AuthorizationFailure"><code class="docutils literal notranslate"><span class="pre">AuthorizationFailure</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.AuthorizationFailure.get_response"><code class="docutils literal notranslate"><span class="pre">AuthorizationFailure.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.NotAllowedError"><code class="docutils literal notranslate"><span class="pre">NotAllowedError</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.NotAllowedError.get_response"><code class="docutils literal notranslate"><span class="pre">NotAllowedError.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.IncompatibleData"><code class="docutils literal notranslate"><span class="pre">IncompatibleData</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.MailboxError"><code class="docutils literal notranslate"><span class="pre">MailboxError</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.MailboxError.get_response"><code class="docutils literal notranslate"><span class="pre">MailboxError.get_response()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.exceptions.MailboxNotFound"><code class="docutils literal notranslate"><span class="pre">MailboxNotFound</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.MailboxConflict"><code class="docutils literal notranslate"><span class="pre">MailboxConflict</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.MailboxHasChildren"><code class="docutils literal notranslate"><span class="pre">MailboxHasChildren</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.MailboxReadOnly"><code class="docutils literal notranslate"><span class="pre">MailboxReadOnly</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.AppendFailure"><code class="docutils literal notranslate"><span class="pre">AppendFailure</span></code></a></li>
+<li><a class="reference internal" href="#pymap.exceptions.UserNotFound"><code class="docutils literal notranslate"><span class="pre">UserNotFound</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.exceptions.UserNotFound.get_response"><code class="docutils literal notranslate"><span class="pre">UserNotFound.get_response()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="pymap.context.html"
@@ -496,7 +548,7 @@ allowed.</p>
         <li class="right" >
           <a href="pymap.context.html" title="pymap.context"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.exceptions</span></code></a></li> 
       </ul>
@@ -504,8 +556,8 @@ allowed.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

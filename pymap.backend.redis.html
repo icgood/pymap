@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.backend.redis &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.backend.redis &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a></li> 
@@ -503,8 +504,70 @@ entities.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.backend.redis.keys"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code></a></li>
-<li><a class="reference internal" href="#module-pymap.backend.redis.cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend"><code class="docutils literal notranslate"><span class="pre">RedisBackend</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend.login"><code class="docutils literal notranslate"><span class="pre">RedisBackend.login</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend.config"><code class="docutils literal notranslate"><span class="pre">RedisBackend.config</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend.status"><code class="docutils literal notranslate"><span class="pre">RedisBackend.status</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend.add_subparser"><code class="docutils literal notranslate"><span class="pre">RedisBackend.add_subparser()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend.init"><code class="docutils literal notranslate"><span class="pre">RedisBackend.init()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.RedisBackend.start"><code class="docutils literal notranslate"><span class="pre">RedisBackend.start()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.backend_capability"><code class="docutils literal notranslate"><span class="pre">Config.backend_capability</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.address"><code class="docutils literal notranslate"><span class="pre">Config.address</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.data_address"><code class="docutils literal notranslate"><span class="pre">Config.data_address</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.separator"><code class="docutils literal notranslate"><span class="pre">Config.separator</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.prefix"><code class="docutils literal notranslate"><span class="pre">Config.prefix</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.users_prefix"><code class="docutils literal notranslate"><span class="pre">Config.users_prefix</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.users_json"><code class="docutils literal notranslate"><span class="pre">Config.users_json</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.Config.parse_args"><code class="docutils literal notranslate"><span class="pre">Config.parse_args()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.Session.filter_set"><code class="docutils literal notranslate"><span class="pre">Session.filter_set</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.redis.keys"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.keys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.RedisKey"><code class="docutils literal notranslate"><span class="pre">RedisKey</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.RedisKey.fork"><code class="docutils literal notranslate"><span class="pre">RedisKey.fork()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.RedisKey.end"><code class="docutils literal notranslate"><span class="pre">RedisKey.end()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.KeysGroup"><code class="docutils literal notranslate"><span class="pre">KeysGroup</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.KeysGroup.keys"><code class="docutils literal notranslate"><span class="pre">KeysGroup.keys</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.GlobalKeys"><code class="docutils literal notranslate"><span class="pre">GlobalKeys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.GlobalKeys.keys"><code class="docutils literal notranslate"><span class="pre">GlobalKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.CleanupKeys"><code class="docutils literal notranslate"><span class="pre">CleanupKeys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.CleanupKeys.keys"><code class="docutils literal notranslate"><span class="pre">CleanupKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.NamespaceKeys"><code class="docutils literal notranslate"><span class="pre">NamespaceKeys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.NamespaceKeys.keys"><code class="docutils literal notranslate"><span class="pre">NamespaceKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.ContentKeys"><code class="docutils literal notranslate"><span class="pre">ContentKeys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.ContentKeys.keys"><code class="docutils literal notranslate"><span class="pre">ContentKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.FilterKeys"><code class="docutils literal notranslate"><span class="pre">FilterKeys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.FilterKeys.keys"><code class="docutils literal notranslate"><span class="pre">FilterKeys.keys</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.MailboxKeys"><code class="docutils literal notranslate"><span class="pre">MailboxKeys</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.keys.MailboxKeys.keys"><code class="docutils literal notranslate"><span class="pre">MailboxKeys.keys</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.redis.cleanup"><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis.cleanup</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.redis.cleanup.CleanupAction"><code class="docutils literal notranslate"><span class="pre">CleanupAction</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -575,7 +638,7 @@ entities.</p>
         <li class="right" >
           <a href="pymap.backend.maildir.html" title="pymap.backend.maildir"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.redis</span></code></a></li> 
@@ -584,8 +647,8 @@ entities.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

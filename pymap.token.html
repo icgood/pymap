@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.token &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.token &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.cluster.html" title="pymap.cluster"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></li> 
       </ul>
@@ -75,16 +76,32 @@
 <span id="pymap-token"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code><a class="headerlink" href="#module-pymap.token" title="Permalink to this heading">¶</a></h1>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.token.tokens">
-<span class="sig-prename descclassname"><span class="pre">pymap.token.</span></span><span class="sig-name descname"><span class="pre">tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">pymap.interfaces.token.TokensInterface</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.token')</span></em><a class="headerlink" href="#pymap.token.tokens" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.token.</span></span><span class="sig-name descname"><span class="pre">tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.token.TokensBase" title="pymap.token.TokensBase"><span class="pre">TokensBase</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.token')</span></em><a class="headerlink" href="#pymap.token.tokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers token plugins.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pymap.token.TokensBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.</span></span><span class="sig-name descname"><span class="pre">TokensBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token.html#TokensBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.TokensBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for token types registered by <a class="reference internal" href="#pymap.token.tokens" title="pymap.token.tokens"><code class="xref py py-data docutils literal notranslate"><span class="pre">tokens</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – The IMAP configuration object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.token.AllTokens">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.</span></span><span class="sig-name descname"><span class="pre">AllTokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token.html#AllTokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.AllTokens" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.</span></span><span class="sig-name descname"><span class="pre">AllTokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token.html#AllTokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.AllTokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses <a class="reference internal" href="#pymap.token.tokens" title="pymap.token.tokens"><code class="xref py py-data docutils literal notranslate"><span class="pre">tokens</span></code></a> to support all registered token types.</p>
 <p>For token creation, the <a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin.default" title="pymap.plugin.Plugin.default"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default</span></code></a> token plugin
 is used. For token parsing, each token plugin is tried until one succeeds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.token.AllTokens.get_login_token">
 <span class="sig-name descname"><span class="pre">get_login_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authcid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token.html#AllTokens.get_login_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.AllTokens.get_login_token" title="Permalink to this definition">¶</a></dt>
@@ -155,8 +172,13 @@ special private admin key that grants unrestricted access.</p>
 <span id="pymap-token-macaroon"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.token.macaroon</span></code><a class="headerlink" href="#module-pymap.token.macaroon" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.token.macaroon.MacaroonTokens">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.macaroon.</span></span><span class="sig-name descname"><span class="pre">MacaroonTokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token/macaroon.html#MacaroonTokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.macaroon.</span></span><span class="sig-name descname"><span class="pre">MacaroonTokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token/macaroon.html#MacaroonTokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates and parses <code class="xref py py-class docutils literal notranslate"><span class="pre">Macaroon</span></code> tokens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.token.macaroon.MacaroonTokens.get_login_token">
 <span class="sig-name descname"><span class="pre">get_login_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authcid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token/macaroon.html#MacaroonTokens.get_login_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.macaroon.MacaroonTokens.get_login_token" title="Permalink to this definition">¶</a></dt>
@@ -225,7 +247,7 @@ special private admin key that grants unrestricted access.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.token.macaroon.MacaroonCredentials">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.macaroon.</span></span><span class="sig-name descname"><span class="pre">MacaroonCredentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token/macaroon.html#MacaroonCredentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.macaroon.MacaroonCredentials" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.token.macaroon.</span></span><span class="sig-name descname"><span class="pre">MacaroonCredentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepare</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/token/macaroon.html#MacaroonCredentials"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.token.macaroon.MacaroonCredentials" title="Permalink to this definition">¶</a></dt>
 <dd><p>Authenticate using a <a class="reference external" href="https://github.com/ecordell/pymacaroons#readme">Macaroon</a> token. Tokens may be created with
 either <a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.get_login_token" title="pymap.token.macaroon.MacaroonTokens.get_login_token"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_login_token()</span></code></a> or
 <a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.get_admin_token" title="pymap.token.macaroon.MacaroonTokens.get_admin_token"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_admin_token()</span></code></a>.</p>
@@ -238,6 +260,7 @@ is valid.</p>
 <li><p><strong>identity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The identity to be authorized.</p></li>
 <li><p><strong>serialized</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – The serialized macaroon string.</p></li>
 <li><p><strong>admin_keys</strong> (<em>Set</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>]</em>) – The admin token string.</p></li>
+<li><p><strong>prepare</strong> (<em>Preparation</em>) – The preparation algorithm function.</p></li>
 </ul>
 </dd>
 </dl>
@@ -300,7 +323,31 @@ attempt to succeed.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a><ul>
-<li><a class="reference internal" href="#module-pymap.token.macaroon"><code class="docutils literal notranslate"><span class="pre">pymap.token.macaroon</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.tokens"><code class="docutils literal notranslate"><span class="pre">tokens</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.TokensBase"><code class="docutils literal notranslate"><span class="pre">TokensBase</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.AllTokens"><code class="docutils literal notranslate"><span class="pre">AllTokens</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.token.AllTokens.get_login_token"><code class="docutils literal notranslate"><span class="pre">AllTokens.get_login_token()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.AllTokens.get_admin_token"><code class="docutils literal notranslate"><span class="pre">AllTokens.get_admin_token()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.AllTokens.parse"><code class="docutils literal notranslate"><span class="pre">AllTokens.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.token.macaroon"><code class="docutils literal notranslate"><span class="pre">pymap.token.macaroon</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens"><code class="docutils literal notranslate"><span class="pre">MacaroonTokens</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.get_login_token"><code class="docutils literal notranslate"><span class="pre">MacaroonTokens.get_login_token()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.get_admin_token"><code class="docutils literal notranslate"><span class="pre">MacaroonTokens.get_admin_token()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonTokens.parse"><code class="docutils literal notranslate"><span class="pre">MacaroonTokens.parse()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials"><code class="docutils literal notranslate"><span class="pre">MacaroonCredentials</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.identifier"><code class="docutils literal notranslate"><span class="pre">MacaroonCredentials.identifier</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.role"><code class="docutils literal notranslate"><span class="pre">MacaroonCredentials.role</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.authcid"><code class="docutils literal notranslate"><span class="pre">MacaroonCredentials.authcid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.authzid"><code class="docutils literal notranslate"><span class="pre">MacaroonCredentials.authzid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.token.macaroon.MacaroonCredentials.verify"><code class="docutils literal notranslate"><span class="pre">MacaroonCredentials.verify()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -371,7 +418,7 @@ attempt to succeed.</p>
         <li class="right" >
           <a href="pymap.cluster.html" title="pymap.cluster"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></li> 
       </ul>
@@ -379,8 +426,8 @@ attempt to succeed.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

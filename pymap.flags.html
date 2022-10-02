@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.flags &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.flags &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.filter.html" title="pymap.filter"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.flags</span></code></a></li> 
       </ul>
@@ -289,7 +290,39 @@ calls equivalent:</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.flags</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.flags.FlagOp"><code class="docutils literal notranslate"><span class="pre">FlagOp</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.flags.FlagOp.REPLACE"><code class="docutils literal notranslate"><span class="pre">FlagOp.REPLACE</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.FlagOp.ADD"><code class="docutils literal notranslate"><span class="pre">FlagOp.ADD</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.FlagOp.DELETE"><code class="docutils literal notranslate"><span class="pre">FlagOp.DELETE</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.FlagOp.apply"><code class="docutils literal notranslate"><span class="pre">FlagOp.apply()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.flags.PermanentFlags"><code class="docutils literal notranslate"><span class="pre">PermanentFlags</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.flags.PermanentFlags.defined"><code class="docutils literal notranslate"><span class="pre">PermanentFlags.defined</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.PermanentFlags.intersect"><code class="docutils literal notranslate"><span class="pre">PermanentFlags.intersect()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags"><code class="docutils literal notranslate"><span class="pre">SessionFlags</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.defined"><code class="docutils literal notranslate"><span class="pre">SessionFlags.defined</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.intersect"><code class="docutils literal notranslate"><span class="pre">SessionFlags.intersect()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.get"><code class="docutils literal notranslate"><span class="pre">SessionFlags.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.remove"><code class="docutils literal notranslate"><span class="pre">SessionFlags.remove()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.update"><code class="docutils literal notranslate"><span class="pre">SessionFlags.update()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.add_recent"><code class="docutils literal notranslate"><span class="pre">SessionFlags.add_recent()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.recent"><code class="docutils literal notranslate"><span class="pre">SessionFlags.recent</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.recent_uids"><code class="docutils literal notranslate"><span class="pre">SessionFlags.recent_uids</span></code></a></li>
+<li><a class="reference internal" href="#pymap.flags.SessionFlags.flags"><code class="docutils literal notranslate"><span class="pre">SessionFlags.flags</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="pymap.filter.html"
@@ -355,7 +388,7 @@ calls equivalent:</p>
         <li class="right" >
           <a href="pymap.filter.html" title="pymap.filter"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.flags</span></code></a></li> 
       </ul>
@@ -363,8 +396,8 @@ calls equivalent:</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

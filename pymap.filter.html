@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.filter &#8212; pymap 0.28.0rc1 documentation</title>
+    <title>pymap.filter &#8212; pymap 0.28.0rc2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -18,6 +18,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
 
     
     
@@ -58,7 +59,7 @@
         <li class="right" >
           <a href="pymap.fetch.html" title="pymap.fetch"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code></a></li> 
       </ul>
@@ -75,7 +76,7 @@
 <span id="pymap-filter"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code><a class="headerlink" href="#module-pymap.filter" title="Permalink to this heading">¶</a></h1>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.filter.filters">
-<span class="sig-prename descclassname"><span class="pre">pymap.filter.</span></span><span class="sig-name descname"><span class="pre">filters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterCompilerInterface" title="pymap.interfaces.filter.FilterCompilerInterface"><span class="pre">pymap.interfaces.filter.FilterCompilerInterface</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.filter')</span></em><a class="headerlink" href="#pymap.filter.filters" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.filter.</span></span><span class="sig-name descname"><span class="pre">filters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.plugin.html#pymap.plugin.Plugin" title="pymap.plugin.Plugin"><span class="pre">Plugin</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterCompilerInterface" title="pymap.interfaces.filter.FilterCompilerInterface"><span class="pre">FilterCompilerInterface</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Plugin('pymap.filter')</span></em><a class="headerlink" href="#pymap.filter.filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers filter compiler plugins.</p>
 </dd></dl>
 
@@ -260,7 +261,33 @@ exists.</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.filter.filters"><code class="docutils literal notranslate"><span class="pre">filters</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.PluginFilterSet"><code class="docutils literal notranslate"><span class="pre">PluginFilterSet</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.filter.PluginFilterSet.compiler"><code class="docutils literal notranslate"><span class="pre">PluginFilterSet.compiler</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.name"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.name</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.put"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.put()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.delete"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.delete()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.rename"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.rename()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.clear_active"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.clear_active()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.set_active"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.set_active()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.get"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.get_all"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.get_all()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.replace_active"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.replace_active()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.filter.SingleFilterSet.get_active"><code class="docutils literal notranslate"><span class="pre">SingleFilterSet.get_active()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="pymap.fetch.html"
@@ -326,7 +353,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.fetch.html" title="pymap.fetch"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.filter</span></code></a></li> 
       </ul>
@@ -334,8 +361,8 @@ exists.</p>
     </div>
 
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
