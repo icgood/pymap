@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import TypeAlias
 
 import msgpack
-from aioredis import Redis, ResponseError, WatchError
+from redis.asyncio import Redis, ResponseError, WatchError
 
 from pymap.bytes import HashStream
 from pymap.concurrent import Event
@@ -44,8 +44,8 @@ class MailboxData(MailboxDataInterface[Message]):
 
     """
 
-    def __init__(self, redis: Redis, mailbox_id: bytes, uid_validity: int,
-                 keys: MailboxKeys, ns_keys: NamespaceKeys,
+    def __init__(self, redis: Redis[bytes], mailbox_id: bytes,
+                 uid_validity: int, keys: MailboxKeys, ns_keys: NamespaceKeys,
                  cl_keys: CleanupKeys) -> None:
         super().__init__()
         self._redis = redis
@@ -84,7 +84,7 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def update_selected(self, selected: SelectedMailbox, *,
                               wait_on: Event | None = None) -> SelectedMailbox:
-        last_mod_seq = selected.mod_sequence
+        last_mod_seq: bytes = selected.mod_sequence
         if wait_on is not None:
             await self._wait_updates(selected, last_mod_seq)
         if last_mod_seq is None:
@@ -152,7 +152,7 @@ class MailboxData(MailboxDataInterface[Message]):
             -> Message | ExpungedMessage:
         redis = self._redis
         keys = self._keys
-        message_raw = await redis.hget(keys.uids, uid)
+        message_raw = await redis.hget(keys.uids, str(uid))
         if message_raw is None:
             return ExpungedMessage(cached_msg)
         return self._get_msg(uid, message_raw)
@@ -247,7 +247,7 @@ class MailboxData(MailboxDataInterface[Message]):
         keys = self._keys
         async with self._redis.pipeline() as multi:
             multi.xlen(keys.changes)
-            multi.xrange(keys.changes, min=last_mod_seq)
+            multi.xrange(keys.changes, min=last_mod_seq)  # type: ignore
             multi.xrevrange(keys.changes, count=1)
             changes_len, changes, last_changes = await multi.execute()
         if len(changes) == changes_len:
@@ -269,7 +269,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
 
     """
 
-    def __init__(self, redis: Redis, keys: NamespaceKeys,
+    def __init__(self, redis: Redis[bytes], keys: NamespaceKeys,
                  cl_keys: CleanupKeys) -> None:
         super().__init__()
         self._redis = redis
@@ -337,7 +337,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         redis = self._redis
         async with redis.pipeline() as pipe:
             await pipe.watch(self._keys.mailboxes)
-            pipe.multi()  # type: ignore
+            pipe.multi()
             pipe.hgetall(self._keys.mailboxes)
             all_keys, = await pipe.execute()
         all_mbx = {modutf7_decode(key): ns for key, ns in all_keys.items()}

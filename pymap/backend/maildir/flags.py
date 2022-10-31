@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping
 from typing import IO, TypeVar
 
 from pymap.parsing.specials.flag import Flag, Seen, Flagged, Deleted, Draft, \
@@ -46,15 +46,11 @@ class MaildirFlags(FileReadable):
                                    'D': Draft,
                                    'R': Answered}
 
-    def __init__(self, keywords: Sequence[Flag]) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        if len(keywords) > 26:
-            raise ValueError(keywords)
-        self._keywords = frozenset(keywords)
-        self._to_kwd = {chr(ord('a') + i): kwd
-                        for i, kwd in enumerate(keywords)}
-        self._from_kwd = {kwd: chr(ord('a') + i)
-                          for i, kwd in enumerate(keywords)}
+        self._keywords: frozenset[Flag] = frozenset()
+        self._to_kwd: Mapping[str, Flag] = {}
+        self._from_kwd: Mapping[Flag, str] = {}
 
     @property
     def permanent_flags(self) -> frozenset[Flag]:
@@ -118,10 +114,11 @@ class MaildirFlags(FileReadable):
 
     @classmethod
     def get_default(cls: type[_MFT], base_dir: str) -> _MFT:
-        return cls([])
+        return cls()
 
     @classmethod
     def open(cls: type[_MFT], base_dir: str, fp: IO[str]) -> _MFT:
+        return cls()
         ret = []
         for line in fp:
             i, kwd = line.split()
@@ -129,3 +126,18 @@ class MaildirFlags(FileReadable):
                 raise ValueError(kwd)
             ret.append((i, kwd))
         return cls([Flag(kwd) for _, kwd in sorted(ret)])
+
+    def read(self, fp: IO[str]) -> None:
+        to_kwd = {}
+        from_kwd = {}
+        for line in fp:
+            i, kwd = line.split()
+            if kwd.startswith('\\'):
+                raise ValueError(kwd)
+            code = chr(ord('a') + int(i))
+            flag = Flag(kwd)
+            to_kwd[code] = flag
+            from_kwd[flag] = code
+        self._keywords = frozenset(from_kwd)
+        self._to_kwd = to_kwd
+        self._from_kwd = from_kwd

@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Final
 
-from aioredis import Redis
+from redis.asyncio import Redis
 
 from . import ScriptBase
 from ..keys import CleanupKeys, NamespaceKeys
@@ -35,7 +35,7 @@ class MailboxList(ScriptBase[Sequence[bytes]]):
         rev_mbx = {mbx_id: key for key, mbx_id in mailboxes_zip}
         return [rev_mbx[mbx_id] for mbx_id in mbx_order if mbx_id in rev_mbx]
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys) \
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys) \
             -> Sequence[bytes]:
         keys = [ns_keys.mailboxes, ns_keys.order]
         return await self.eval(redis, keys, [])
@@ -49,7 +49,7 @@ class MailboxGet(ScriptBase[tuple[bytes, int]]):
     def _convert(self, ret: tuple[bytes, bytes]) -> tuple[bytes, int]:
         return (ret[0], int(ret[1]))
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys, *,
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys, *,
                        name: bytes) -> tuple[bytes, int]:
         keys = [ns_keys.mailboxes, ns_keys.uid_validity]
         return await self.eval(redis, keys, [name])
@@ -60,7 +60,7 @@ class MailboxAdd(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('mailbox_add')
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys, *,
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys, *,
                        name: bytes, mailbox_id: bytes) -> None:
         keys = [ns_keys.mailboxes, ns_keys.order, ns_keys.max_order,
                 ns_keys.uid_validity]
@@ -72,7 +72,7 @@ class MailboxDelete(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('mailbox_delete')
 
-    async def __call__(self, redis: Redis,
+    async def __call__(self, redis: Redis[bytes],
                        ns_keys: NamespaceKeys, cl_keys: CleanupKeys, *,
                        name: bytes) -> None:
         keys = [ns_keys.mailboxes, ns_keys.order, cl_keys.mailboxes]

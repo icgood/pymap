@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from aioredis import Redis, ResponseError
+from redis.asyncio import Redis, ResponseError
 
 from .keys import NamespaceKeys, FilterKeys
 from .scripts.filter import FilterScripts
@@ -19,7 +19,7 @@ class FilterSet(PluginFilterSet[bytes]):
 
     _active_name = b''
 
-    def __init__(self, redis: Redis, ns_keys: NamespaceKeys) -> None:
+    def __init__(self, redis: Redis[bytes], ns_keys: NamespaceKeys) -> None:
         super().__init__(None, bytes)
         self._redis = redis
         self._keys = FilterKeys(ns_keys)

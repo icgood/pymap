@@ -6,7 +6,7 @@ import logging
 import time
 from typing import ClassVar
 
-from aioredis import Redis
+from redis.asyncio import Redis
 
 from .background import BackgroundAction
 from .keys import GlobalKeys, CleanupKeys, NamespaceKeys, ContentKeys, \
@@ -40,13 +40,15 @@ class CleanupAction(BackgroundAction):
         self._keys = keys = CleanupKeys(global_keys)
         self._order = (keys.mailboxes, keys.namespaces, keys.contents)
 
-    async def __call__(self, conn: Redis, duration: float) -> None:
+    async def __call__(self, conn: Redis[bytes], duration: float) -> None:
         now = time.time()
         finished = now + duration
         while now < finished:
             timeout: int = finished - now  # type: ignore
-            cleanup_key, cleanup_val = await conn.blpop(
-                self._order, timeout=timeout)
+            cleanup = await conn.blpop(self._order, timeout=timeout)
+            if cleanup is None:
+                continue
+            cleanup_key, cleanup_val = cleanup
             try:
                 await asyncio.shield(
                     self._run_one(conn, cleanup_key, cleanup_val))
@@ -56,7 +58,7 @@ class CleanupAction(BackgroundAction):
                 raise
             now = time.time()
 
-    async def _run_one(self, conn: Redis, cleanup_key: bytes,
+    async def _run_one(self, conn: Redis[bytes], cleanup_key: bytes,
                        cleanup_val: bytes) -> None:
         keys = self._keys
         if cleanup_key == keys.namespaces:
@@ -69,19 +71,20 @@ class CleanupAction(BackgroundAction):
             namespace, email_id = cleanup_val.split(b'\x00', 1)
             await self._run_content(conn, namespace, email_id)
 
-    async def _run_namespace(self, conn: Redis, namespace: bytes) -> None:
+    async def _run_namespace(self, conn: Redis[bytes],
+                             namespace: bytes) -> None:
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         await _scripts.namespace(conn, self._keys, ns_keys,
                                  ttl=self.namespace_ttl)
 
-    async def _run_mailbox(self, conn: Redis, namespace: bytes,
+    async def _run_mailbox(self, conn: Redis[bytes], namespace: bytes,
                            mailbox_id: bytes) -> None:
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         mbx_keys = MailboxKeys(ns_keys, mailbox_id)
         await _scripts.mailbox(conn, self._keys, mbx_keys,
                                ttl=self.mailbox_ttl)
 
-    async def _run_content(self, conn: Redis, namespace: bytes,
+    async def _run_content(self, conn: Redis[bytes], namespace: bytes,
                            email_id: bytes) -> None:
         ns_keys = NamespaceKeys(self._global_keys, namespace)
         ct_keys = ContentKeys(ns_keys, email_id)

@@ -11,8 +11,8 @@ from base64 import b64encode, b64decode
 from collections.abc import Mapping
 from contextlib import closing, AsyncExitStack
 
-from proxyprotocol import ProxyProtocolResult
 from proxyprotocol.reader import ProxyProtocolReader
+from proxyprotocol.result import ProxyResult
 from proxyprotocol.sock import SocketInfo
 from pymap import __version__
 from pymap.bytes import BytesFormat
@@ -120,7 +120,7 @@ class ManageSieveConnection:
         self.auth = config.initial_auth
         self.params = config.parsing_params.copy(allow_continuations=False)
         self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
-        self.pp_result: ProxyProtocolResult | None = None
+        self.pp_result: ProxyResult | None = None
         self._offer_starttls = b'STARTTLS' in config.initial_capability
         self._state: FilterState | None = None
         self._reset_streams(reader, writer)
@@ -129,7 +129,7 @@ class ManageSieveConnection:
                        writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo(writer, self.pp_result))
+        socket_info.set(SocketInfo.get(writer, self.pp_result))
 
     async def _read_proxy_protocol(self) -> None:
         self.pp_result = await self.pp_reader.read(self.reader)

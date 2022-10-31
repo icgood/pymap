@@ -123,7 +123,7 @@ mail messages remain intact.
 ### redis Plugin
 
 The redis plugin uses the [Redis][8] data structure store for mail and
-metadata. It requires [aioredis][9] and will not appear in the plugins list
+metadata. It requires [redis-py][9] and will not appear in the plugins list
 without it.
 
 ```console
@@ -143,21 +143,13 @@ In this example, the `eacb1cf1558741d0b5419b3f838882f5` and
 as the namespaces for the login user and mailbox, respectively, and the message
 has UID `9173`.
 
-The default way to create logins is with a redis hash with a `password` field.
-For example:
+To create logins, assign a JSON object containing a `"password"` field to
+username keys prefixed with `/`, e.g.:
 
 ```
-127.0.0.1:6379> HSET /john password "s3cretp4ssword"
+127.0.0.1:6379> SET /john "{\"password\": \"s3cretp4ssword\"}"
 (integer) 1
-127.0.0.1:6379> HSET /sally password "sallypass"
-(integer) 1
-```
-
-For compatibility with [dovecot's auth dict][11], a JSON object can be used
-instead of a redis hash with the `--users-json` command-line argument.
-
-```
-127.0.0.1:6379> SET /susan "{\"password\": \"!@#$%^:*\"}"
+127.0.0.1:6379> SET /sally "{\"password\": \"sallypass\"}"
 (integer) 1
 ```
 
@@ -172,7 +164,7 @@ action.
 
 ## Admin Tool
 
-With optional dependencies, the pymap server will also open a [gRPC][12]
+With optional dependencies, the pymap server will also open a [gRPC][11]
 service providing administrative operations for the running server.
 
 ```console
@@ -293,7 +285,6 @@ no need to attempt `--strict` mode.
 [6]: https://www.python.org/dev/peps/pep-0484/
 [7]: http://mypy-lang.org/
 [8]: https://redis.io/
-[9]: https://github.com/aio-libs/aioredis
+[9]: https://github.com/redis/redis-py
 [10]: https://github.com/icgood/pymap-admin
-[11]: https://wiki.dovecot.org/AuthDatabase/Dict
-[12]: https://grpc.io/
+[11]: https://grpc.io/

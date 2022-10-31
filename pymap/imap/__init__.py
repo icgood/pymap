@@ -16,8 +16,8 @@ from ssl import SSLError
 from typing import TypeVar
 from uuid import uuid4
 
-from proxyprotocol import ProxyProtocolResult
 from proxyprotocol.reader import ProxyProtocolReader
+from proxyprotocol.result import ProxyResult
 from proxyprotocol.sock import SocketInfo
 from proxyprotocol.version import ProxyProtocolVersion
 from pymap.concurrent import Event
@@ -149,15 +149,15 @@ class IMAPConnection:
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
         self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
-        self.pp_result: ProxyProtocolResult | None = None
+        self.pp_result: ProxyResult | None = None
         self._reset_streams(reader, writer)
 
     def _reset_streams(self, reader: StreamReader,
                        writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo(writer, self.pp_result,
-                                   unique_id=uuid4().bytes))
+        socket_info.set(SocketInfo.get(writer, self.pp_result,
+                                       unique_id=uuid4().bytes))
 
     async def _read_proxy_protocol(self) -> None:
         self.pp_result = await self.pp_reader.read(self.reader)

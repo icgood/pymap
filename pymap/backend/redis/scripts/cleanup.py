@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Final
 
-from aioredis import Redis
+from redis.asyncio import Redis
 
 from . import ScriptBase
 from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys
@@ -25,7 +25,7 @@ class CleanupNamespace(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('cleanup_namespace')
 
-    async def __call__(self, redis: Redis,
+    async def __call__(self, redis: Redis[bytes],
                        cl_keys: CleanupKeys, ns_keys: NamespaceKeys, *,
                        ttl: int) -> None:
         keys = [cl_keys.mailboxes, ns_keys.mailboxes, *ns_keys.keys]
@@ -38,7 +38,7 @@ class CleanupMailbox(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('cleanup_mailbox')
 
-    async def __call__(self, redis: Redis,
+    async def __call__(self, redis: Redis[bytes],
                        cl_keys: CleanupKeys, mbx_keys: MailboxKeys, *,
                        ttl: int) -> None:
         keys = [cl_keys.contents, mbx_keys.content, *mbx_keys.keys]
@@ -52,7 +52,7 @@ class CleanupContent(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('cleanup_content')
 
-    async def __call__(self, redis: Redis,
+    async def __call__(self, redis: Redis[bytes],
                        ns_keys: NamespaceKeys, ct_keys: ContentKeys, *,
                        ttl: int) -> None:
         keys = [ns_keys.content_refs, ct_keys.data]

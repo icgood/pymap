@@ -66,7 +66,7 @@ class InvalidCommand(Command):
         if not self.command_name:
             return b'Command not given.'
         elif not self.command_type:
-            return b'%b: Command not implemented.' % (self.command_name, )
+            return b'%b: Unknown command.' % (self.command_name, )
         else:
             return b'%b: Invalid arguments.' % (self.command_name, )
 
