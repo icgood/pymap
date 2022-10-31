@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap &#8212; pymap 0.28.0rc2 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.28.0rc3 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -50,7 +50,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc3 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -83,8 +83,8 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
 
-<span class="kn">from</span> <span class="nn">proxyprotocol</span> <span class="kn">import</span> <span class="n">ProxyProtocolResult</span>
 <span class="kn">from</span> <span class="nn">proxyprotocol.reader</span> <span class="kn">import</span> <span class="n">ProxyProtocolReader</span>
+<span class="kn">from</span> <span class="nn">proxyprotocol.result</span> <span class="kn">import</span> <span class="n">ProxyResult</span>
 <span class="kn">from</span> <span class="nn">proxyprotocol.sock</span> <span class="kn">import</span> <span class="n">SocketInfo</span>
 <span class="kn">from</span> <span class="nn">proxyprotocol.version</span> <span class="kn">import</span> <span class="n">ProxyProtocolVersion</span>
 <span class="kn">from</span> <span class="nn">pymap.concurrent</span> <span class="kn">import</span> <span class="n">Event</span>
@@ -216,15 +216,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">parsing_params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bad_command_limit</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">bad_command_limit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pp_reader</span> <span class="o">=</span> <span class="n">ProxyProtocolReader</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">proxy_protocol</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">:</span> <span class="n">ProxyProtocolResult</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">:</span> <span class="n">ProxyResult</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span>
                        <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">reader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">writer</span>
-        <span class="n">socket_info</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">SocketInfo</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">,</span>
-                                   <span class="n">unique_id</span><span class="o">=</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">bytes</span><span class="p">))</span>
+        <span class="n">socket_info</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">SocketInfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">,</span>
+                                       <span class="n">unique_id</span><span class="o">=</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">bytes</span><span class="p">))</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_read_proxy_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
@@ -551,7 +551,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.28.0rc3 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -561,7 +561,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

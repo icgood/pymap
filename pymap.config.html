@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.config &#8212; pymap 0.28.0rc2 documentation</title>
+    <title>pymap.config &#8212; pymap 0.28.0rc3 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -59,7 +59,7 @@
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc3 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li> 
       </ul>
@@ -95,10 +95,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> extension is supported.</p></li>
-<li><p><strong>object_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">OBJECTID</span></code> extension is supported.</p></li>
-<li><p><strong>multi_append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">MULTIAPPEND</span></code> extension is supported.</p></li>
-<li><p><strong>custom</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – Optional list of custom capability strings to declare.</p></li>
+<li><p><strong>idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> extension is supported.</p></li>
+<li><p><strong>object_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">OBJECTID</span></code> extension is supported.</p></li>
+<li><p><strong>multi_append</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – The <code class="docutils literal notranslate"><span class="pre">MULTIAPPEND</span></code> extension is supported.</p></li>
+<li><p><strong>custom</strong> (<em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – Optional list of custom capability strings to declare.</p></li>
 </ul>
 </dd>
 </dl>
@@ -113,32 +113,32 @@ extensions it supports.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<em>Namespace</em>) – The command-line arguments.</p></li>
-<li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>None</em>) – The IMAP server host.</p></li>
-<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – The IMAP server port or service name.</p></li>
-<li><p><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If true, prints all socket activity to stdout.</p></li>
+<li><p><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – The IMAP server host.</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The IMAP server port or service name.</p></li>
+<li><p><strong>debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If true, prints all socket activity to stdout.</p></li>
 <li><p><strong>subsystem</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a><em> | </em><em>None</em>) – The concurrency subsystem in use by the backend.</p></li>
 <li><p><strong>ssl_context</strong> (<em>SSLContext</em><em> | </em><em>None</em>) – SSL context that will be used for opportunistic TLS.
 Alternatively, you can pass extra arguments <code class="docutils literal notranslate"><span class="pre">cert_file</span></code> and
 <code class="docutils literal notranslate"><span class="pre">key_file</span></code> and an SSL context will be created.</p></li>
-<li><p><strong>tls_enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – True if opportunistic TLS should be supported.</p></li>
-<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em> | </em><em>None</em>) – The private admin key for unrestricted access by token.</p></li>
+<li><p><strong>tls_enabled</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if opportunistic TLS should be supported.</p></li>
+<li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>None</em>) – The private admin key for unrestricted access by token.</p></li>
 <li><p><strong>hash_context</strong> (<em>HashInterface</em><em> | </em><em>None</em>) – The hash to use for passwords.</p></li>
 <li><p><strong>cpu_subsystem</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a><em> | </em><em>None</em>) – The subsystem to use for CPU-heavy operations,
 defaulting to a small thread pool.</p></li>
 <li><p><strong>preauth_credentials</strong> (<em>ServerCredentials</em><em> | </em><em>None</em>) – If given, clients will pre-authenticate on
 connection using these credentials.</p></li>
-<li><p><strong>invalid_user_sleep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Seconds to delay before failing authentication for
+<li><p><strong>invalid_user_sleep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – Seconds to delay before failing authentication for
 an unrecognized user.</p></li>
 <li><p><strong>proxy_protocol</strong> (<em>ProxyProtocol</em><em> | </em><em>None</em>) – The PROXY protocol implementation to use.</p></li>
-<li><p><strong>reject_dnsbl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Reject connections with a non-empty DNSBL result.</p></li>
-<li><p><strong>max_append_len</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – The maximum allowed length of the message body to an
+<li><p><strong>reject_dnsbl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Reject connections with a non-empty DNSBL result.</p></li>
+<li><p><strong>max_append_len</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> | </em><em>None</em>) – The maximum allowed length of the message body to an
 <code class="docutils literal notranslate"><span class="pre">APPEND</span></code> command.</p></li>
-<li><p><strong>bad_command_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a><em> | </em><em>None</em>) – The number of consecutive commands received from
+<li><p><strong>bad_command_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em> | </em><em>None</em>) – The number of consecutive commands received from
 the client with parsing errors before the client is disconnected.</p></li>
-<li><p><strong>disable_idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Disable the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> capability.</p></li>
+<li><p><strong>disable_idle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – Disable the <code class="docutils literal notranslate"><span class="pre">IDLE</span></code> capability.</p></li>
 <li><p><strong>extra</strong> (<em>Any</em>) – Additional keywords used for special circumstances.</p></li>
-<li><p><strong>secure_auth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – </p></li>
-<li><p><strong>disable_search_keys</strong> (<em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.10)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – </p></li>
+<li><p><strong>secure_auth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – </p></li>
+<li><p><strong>disable_search_keys</strong> (<em>Iterable</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em>] </em><em>| </em><em>None</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -156,10 +156,10 @@ should be passed in to the <a class="reference internal" href="#pymap.config.IMA
 constructor. Sub-classes should override this method as needed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><em>Namespace</em></a>) – The arguments parsed from the command-line.</p>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.11)"><em>Namespace</em></a>) – The arguments parsed from the command-line.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.10)"><em>Mapping</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><em>Any</em></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.11)"><em>Mapping</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><em>Any</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -172,8 +172,8 @@ arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.10)"><em>Namespace</em></a>) – The arguments parsed from the command-line.</p></li>
-<li><p><strong>overrides</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><em>Any</em></a>) – Override keyword arguments to the config constructor.</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.11)"><em>Namespace</em></a>) – The arguments parsed from the command-line.</p></li>
+<li><p><strong>overrides</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><em>Any</em></a>) – Override keyword arguments to the config constructor.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -296,7 +296,7 @@ capabilities.</p>
         <li class="right" >
           <a href="pymap.concurrent.html" title="pymap.concurrent"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0rc2 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.28.0rc3 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.config</span></code></a></li> 
       </ul>
@@ -305,7 +305,7 @@ capabilities.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

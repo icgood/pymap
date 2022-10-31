@@ -7,6 +7,7 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 2
+   :titlesonly:
    :caption: Contents:
 
    pymap.bytes
