@@ -8,8 +8,8 @@ from contextlib import closing
 from typing import final, Generic, TypeAlias, TypeVar, Any
 
 import msgpack
-from aioredis import Redis
-from aioredis.exceptions import NoScriptError
+from redis.asyncio import Redis
+from redis.exceptions import NoScriptError
 from pkg_resources import resource_stream
 
 __all__ = ['ScriptBase']
@@ -55,7 +55,7 @@ class ScriptBase(Generic[_RetT]):
         else:
             return int(val)
 
-    async def eval(self, redis: Redis, keys: Sequence[bytes],
+    async def eval(self, redis: Redis[bytes], keys: Sequence[bytes],
                    args: Sequence[_Val]) -> _RetT:
         """Run the script.
 
@@ -68,11 +68,11 @@ class ScriptBase(Generic[_RetT]):
 
         """
         num_keys = len(keys)
-        # TODO: remove after aioredis > 2.0.0
-        tmp_args: list[str] = [*keys, *args]  # type: ignore
         try:
-            ret = await redis.evalsha(self._sha, num_keys, *tmp_args)
+            ret = await redis.evalsha(
+                self._sha, num_keys, *keys, *args)  # type: ignore
         except NoScriptError:
             self._sha, data = self._load()
-            ret = await redis.eval(data, num_keys, *keys, *args)
+            ret = await redis.eval(
+                data, num_keys, *keys, *args)  # type: ignore
         return self._convert(ret)

@@ -14,7 +14,7 @@ from datetime import datetime
 from secrets import token_bytes
 from typing import TypeAlias, Any, Final
 
-from aioredis import Redis
+from redis.asyncio import Redis
 from pysasl.creds.server import ServerCredentials
 
 from pymap.bytes import BytesFormat
@@ -41,7 +41,7 @@ __all__ = ['RedisBackend', 'Config', 'Session']
 
 _log = logging.getLogger(__name__)
 
-_Connect: TypeAlias = Callable[[], Awaitable[Redis]]
+_Connect: TypeAlias = Callable[[], Awaitable['Redis[bytes]']]
 
 
 class RedisBackend(BackendInterface):
@@ -84,8 +84,6 @@ class RedisBackend(BackendInterface):
                             help='the mail data key prefix')
         parser.add_argument('--users-prefix', metavar='VAL', default='/users',
                             help='the user lookup key prefix')
-        parser.add_argument('--users-json', action='store_true',
-                            help='the user lookup value contains JSON')
         return parser
 
     @classmethod
@@ -115,21 +113,19 @@ class Config(IMAPConfig):
         separator: The redis key segment separator.
         prefix: The prefix for mail data keys.
         users_prefix: The user lookup key prefix.
-        users_json: True if the user lookup value contains JSON.
 
     """
 
     def __init__(self, args: Namespace, *, address: str,
                  data_address: str | None,
                  separator: bytes, prefix: bytes, users_prefix: bytes,
-                 users_json: bool, **extra: Any) -> None:
+                 **extra: Any) -> None:
         super().__init__(args, admin_key=token_bytes(), **extra)
         self._address = address
         self._data_address = data_address
         self._separator = separator
         self._prefix = prefix
         self._users_prefix = users_prefix
-        self._users_json = users_json
 
     @property
     def backend_capability(self) -> BackendCapability:
@@ -179,19 +175,6 @@ class Config(IMAPConfig):
         return self._users_prefix
 
     @property
-    def users_json(self) -> bool:
-        """True if the value from the user lookup key contains a JSON object
-        with a ``"password"`` attribute, instead of a redis hash with a
-        ``password`` key.
-
-        See Also:
-            `redis hashes
-            <https://redis.io/topics/data-types-intro#redis-hashes>`_
-
-        """
-        return self._users_json
-
-    @property
     def _joiner(self) -> BytesFormat:
         return BytesFormat(self.separator)
 
@@ -211,8 +194,7 @@ class Config(IMAPConfig):
                 'data_address': args.data_address,
                 'separator': args.separator.encode('utf-8'),
                 'prefix': args.prefix.encode('utf-8'),
-                'users_prefix': args.users_prefix.encode('utf-8'),
-                'users_json': args.users_json}
+                'users_prefix': args.users_prefix.encode('utf-8')}
 
 
 class Session(BaseSession[Message]):
@@ -220,7 +202,7 @@ class Session(BaseSession[Message]):
 
     resource = __name__
 
-    def __init__(self, redis: Redis, owner: str, config: Config,
+    def __init__(self, redis: Redis[bytes], owner: str, config: Config,
                  mailbox_set: MailboxSet, filter_set: FilterSet) -> None:
         super().__init__(owner)
         self._redis = redis
@@ -258,8 +240,9 @@ class Login(LoginInterface):
         return self._tokens
 
     @classmethod
-    async def _connect(cls, stack: AsyncExitStack,
-                       redis: Redis, status: HealthStatus) -> Redis:
+    async def _connect(cls, stack: AsyncExitStack, redis: Redis[bytes],
+                       status: HealthStatus) \
+            -> Redis[bytes]:
         try:
             conn = await stack.enter_async_context(redis.client())
         except OSError as exc:
@@ -271,11 +254,11 @@ class Login(LoginInterface):
             status.set_healthy()
             return conn
 
-    async def _user_connect(self) -> Redis:
+    async def _user_connect(self) -> Redis[bytes]:
         return await self._connect(connection_exit.get(),
                                    self._user_redis, self._user_status)
 
-    async def _mail_connect(self) -> Redis:
+    async def _mail_connect(self) -> Redis[bytes]:
         return await self._connect(connection_exit.get(),
                                    self._mail_redis, self._mail_status)
 
@@ -366,7 +349,7 @@ class Identity(IdentityInterface):
             pass
         yield Session(conn, self.name, config, mailbox_set, filter_set)
 
-    async def _get_namespace(self, conn: Redis, global_keys: GlobalKeys,
+    async def _get_namespace(self, conn: Redis[bytes], global_keys: GlobalKeys,
                              user: str) -> bytes:
         user_key = user.encode('utf-8')
         new_namespace = uuid.uuid4().hex.encode('ascii')
@@ -384,15 +367,10 @@ class Identity(IdentityInterface):
         conn = await self._user_connect()
         user_bytes = self.name.encode('utf-8')
         user_key = self.config._users_root.end(user_bytes)
-        if self.config.users_json:
-            json_data = await conn.get(user_key)
-            if json_data is None:
-                raise UserNotFound(self.name)
-            data_dict = json.loads(json_data)
-        else:
-            data_dict = await conn.hgetall(user_key)
-            if data_dict is None:
-                raise UserNotFound(self.name)
+        json_data = await conn.get(user_key)
+        if json_data is None:
+            raise UserNotFound(self.name)
+        data_dict: Mapping[str, str] = json.loads(json_data)
         return User._from_dict(self.config, self.name, data_dict)
 
     async def set(self, metadata: UserMetadata) -> None:
@@ -405,14 +383,8 @@ class Identity(IdentityInterface):
             raise NotAllowedError('Cannot assign role.')
         user_key = config._users_root.end(self.name.encode('utf-8'))
         user_dict = user._to_dict()
-        if self.config.users_json:
-            json_data = json.dumps(user_dict)
-            await conn.set(user_key, json_data)
-        else:
-            async with conn.pipeline() as multi:
-                multi.delete(user_key)
-                multi.hmset(user_key, user_dict)
-                await multi.execute()
+        json_data = json.dumps(user_dict)
+        await conn.set(user_key, json_data)
 
     async def delete(self) -> None:
         config = self.config

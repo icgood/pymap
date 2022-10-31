@@ -9,7 +9,7 @@ from asyncio import Task, CancelledError
 from contextlib import AsyncExitStack
 from typing import ClassVar, Protocol
 
-from aioredis import Redis
+from redis.asyncio import Redis
 from pymap.context import connection_exit
 from pymap.health import HealthStatus
 
@@ -22,7 +22,7 @@ class BackgroundAction(Protocol):
     """An action to perform with the connection."""
 
     @abstractmethod
-    async def __call__(self, conn: Redis, duration: float) -> None:
+    async def __call__(self, conn: Redis[bytes], duration: float) -> None:
         ...
 
 
@@ -32,7 +32,7 @@ class NoopAction(BackgroundAction):
 
     """
 
-    async def __call__(self, conn: Redis, duration: float) -> None:
+    async def __call__(self, conn: Redis[bytes], duration: float) -> None:
         key = b'invalid-' + uuid.uuid4().bytes + uuid.uuid4().bytes
         duration2: int = duration  # type: ignore
         await conn.blpop(key, timeout=duration2)
@@ -56,7 +56,7 @@ class BackgroundTask:
     #: silent failures.
     reconnect_duration: ClassVar[float] = 30.0
 
-    def __init__(self, redis: Redis, status: HealthStatus,
+    def __init__(self, redis: Redis[bytes], status: HealthStatus,
                  action: BackgroundAction) -> None:
         super().__init__()
         self._redis = redis

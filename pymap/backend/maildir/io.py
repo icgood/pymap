@@ -42,8 +42,9 @@ class FileReadable(metaclass=ABCMeta):
     def open(cls: type[_RT], base_dir: str, fp: IO[str]) -> _RT:
         ...
 
+    @abstractmethod
     def read(self, fp: IO[str]) -> None:
-        pass
+        ...
 
     @classmethod
     @asynccontextmanager

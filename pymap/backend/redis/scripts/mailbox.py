@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any, Final
 
-from aioredis import Redis
+from redis.asyncio import Redis
 
 from . import ScriptBase
 from ..keys import CleanupKeys, NamespaceKeys, ContentKeys, MailboxKeys
@@ -33,7 +33,7 @@ class MessageAdd(ScriptBase[tuple[int, bytes, bytes]]):
             -> tuple[int, bytes, bytes]:
         return (int(ret[0]), ret[1], ret[2])
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys,
                        ct_keys: ContentKeys, mbx_keys: MailboxKeys, *,
                        recent: bool, date: bytes, flags: Sequence[str],
                        email_id: bytes, thread_id: bytes,
@@ -61,7 +61,7 @@ class MessageCopy(ScriptBase[int]):
     def _convert(self, ret: tuple[bytes]) -> int:
         return int(ret[0])
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys,
                        mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys, *,
                        source_uid: int, recent: bool) -> int:
         keys = [mbx_keys.uids, dest_mbx_keys.max_uid, dest_mbx_keys.uids,
@@ -81,7 +81,7 @@ class MessageMove(ScriptBase[int]):
     def _convert(self, ret: tuple[bytes]) -> int:
         return int(ret[0])
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys,
                        mbx_keys: MailboxKeys, dest_mbx_keys: MailboxKeys, *,
                        source_uid: int, recent: bool) -> int:
         keys = [mbx_keys.uids, mbx_keys.seq, mbx_keys.content,
@@ -100,7 +100,7 @@ class MessageUpdate(ScriptBase[bytes]):
     def __init__(self) -> None:
         super().__init__('message_update')
 
-    async def __call__(self, redis: Redis,
+    async def __call__(self, redis: Redis[bytes],
                        ns_keys: NamespaceKeys, mbx_keys: MailboxKeys, *,
                        uid: int, flags: Sequence[str], mode: bytes) -> bytes:
         keys = [mbx_keys.uids, mbx_keys.changes, mbx_keys.deleted,
@@ -114,7 +114,7 @@ class MessageDelete(ScriptBase[None]):
     def __init__(self) -> None:
         super().__init__('message_delete')
 
-    async def __call__(self, redis: Redis, ns_keys: NamespaceKeys,
+    async def __call__(self, redis: Redis[bytes], ns_keys: NamespaceKeys,
                        mbx_keys: MailboxKeys, cl_keys: CleanupKeys, *,
                        uids: Sequence[int]) -> None:
         keys = [mbx_keys.uids, mbx_keys.seq, mbx_keys.content,
@@ -136,7 +136,7 @@ class MailboxSnapshot(ScriptBase[tuple[int, int, int, int, int | None]]):
         return (int(ret[0]), int(ret[1]), int(ret[2]),
                 int(ret[3]), self._maybe_int(ret[4]))
 
-    async def __call__(self, redis: Redis, mbx_keys: MailboxKeys) \
+    async def __call__(self, redis: Redis[bytes], mbx_keys: MailboxKeys) \
             -> tuple[int, int, int, int, int | None]:
         keys = [mbx_keys.max_uid, mbx_keys.uids, mbx_keys.seq,
                 mbx_keys.recent, mbx_keys.unseen]

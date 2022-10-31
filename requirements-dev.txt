@@ -11,6 +11,7 @@ rope
 
 types-certifi
 types-protobuf
+types-redis
 types-setuptools
 types-toml
 

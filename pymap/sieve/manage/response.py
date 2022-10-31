@@ -21,7 +21,7 @@ class Condition(enum.Enum):
     BYE = enum.auto()
 
     def __bytes__(self) -> bytes:
-        return bytes(str(self.name), 'ascii')
+        return bytes(self.name, 'ascii')
 
 
 class Response(Writeable):

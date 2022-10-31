@@ -30,7 +30,7 @@ class FlagOp(enum.Enum):
     DELETE = enum.auto()
 
     def __bytes__(self) -> bytes:
-        return self.name.encode('ascii')
+        return bytes(self.name, 'ascii')
 
     def apply(self, flag_set: Set[Flag], operand: Set[Flag]) \
             -> frozenset[Flag]:
