@@ -208,11 +208,11 @@ class MailboxData(MailboxDataInterface[Message]):
                                self.session_flags, num_exists, num_recent,
                                num_unseen, first_unseen, next_uid)
 
-    def _get_mod_seq(self, changes: _ChangesRaw) -> bytes | None:
+    def _get_mod_seq(self, changes: _ChangesRaw) -> bytes:
         try:
             ret = changes[-1][0]
         except IndexError:
-            return None
+            return b'0-0'
         else:
             left, right = ret.rsplit(b'-', 1)
             next_right = int(right) + 1

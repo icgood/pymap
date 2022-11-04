@@ -403,7 +403,7 @@ class IMAPConnection:
                     resp = ResponseNo(cmd.tag, b'Operation timed out.',
                                       ResponseCode.of(b'TIMEOUT'))
                     await self.write_response(resp)
-                except CancelledError:
+                except (CancelledError, ConnectionError, EOFError):
                     await self.send_error_disconnect()
                     break
                 except Exception:
