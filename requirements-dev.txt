@@ -1,3 +1,5 @@
+-r requirements-all.txt
+
 invoke
 mypy
 flake8
@@ -9,10 +11,9 @@ pytest-asyncio
 pytest-cov
 rope
 
+# stubs
 types-certifi
 types-protobuf
 types-redis
 types-setuptools
 types-toml
-
--r requirements-all.txt
