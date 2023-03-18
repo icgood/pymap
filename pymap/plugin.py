@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Mapping
+from importlib.metadata import entry_points
 from typing import TypeVar, Generic, Final
-
-from pkg_resources import iter_entry_points, DistributionNotFound
 
 __all__ = ['PluginT', 'Plugin']
 
@@ -13,7 +12,8 @@ PluginT = TypeVar('PluginT')
 
 
 class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
-    """Plugin system, typically loaded from :mod:`pkg_resources` `entry points
+    """Plugin system, typically loaded from :mod:`importlib.metadata`
+    `entry points
     <https://packaging.python.org/guides/creating-and-discovering-plugins/#using-package-metadata>`_.
 
     >>> example: Plugin[Example] = Plugin('plugins.example')
@@ -79,13 +79,9 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
         loaded = self._loaded
         if loaded is None:
             loaded = {}
-            for entry_point in iter_entry_points(self.group):
-                try:
-                    plugin: type[PluginT] = entry_point.load()
-                except DistributionNotFound:
-                    pass  # optional dependencies not installed
-                else:
-                    loaded[entry_point.name] = plugin
+            for entry_point in entry_points(group=self.group):
+                plugin: type[PluginT] = entry_point.load()
+                loaded[entry_point.name] = plugin
             self._loaded = loaded
         return loaded
 

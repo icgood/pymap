@@ -3,23 +3,25 @@ import base64
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestSession(TestBase):
 
-    async def test_login_logout(self, imap_server):
+    async def test_login_logout(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_logout()
         await self.run(transport)
 
-    async def test_select(self, imap_server):
+    async def test_select(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX', 4, 1, 105, 3)
         transport.push_logout()
         await self.run(transport)
 
-    async def test_select_clears_recent(self, imap_server):
+    async def test_select_clears_recent(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX', 4, 1, 105, 3)
@@ -27,7 +29,8 @@ class TestSession(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_concurrent_select_clears_recent(self, imap_server):
+    async def test_concurrent_select_clears_recent(
+            self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)
         event1, event2 = self.new_events(2)
@@ -47,7 +50,7 @@ class TestSession(TestBase):
 
         await self.run(transport, concurrent)
 
-    async def test_auth_plain(self, imap_server):
+    async def test_auth_plain(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_write(
             b'* OK [CAPABILITY IMAP4rev1',

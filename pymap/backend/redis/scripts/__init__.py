@@ -4,13 +4,12 @@ from __future__ import annotations
 import hashlib
 import os.path
 from collections.abc import Sequence
-from contextlib import closing
+from importlib.resources import files
 from typing import final, Generic, TypeAlias, TypeVar, Any
 
 import msgpack
 from redis.asyncio import Redis
 from redis.exceptions import NoScriptError
-from pkg_resources import resource_stream
 
 __all__ = ['ScriptBase']
 
@@ -35,8 +34,7 @@ class ScriptBase(Generic[_RetT]):
 
     def _load(self) -> tuple[str, bytes]:
         fname = os.path.join('lua', f'{self._name}.lua')
-        with closing(resource_stream(__name__, fname)) as script:
-            data = script.read()
+        data = files(__name__).joinpath(fname).read_bytes()
         # Redis docs specify using SHA1 here:
         return hashlib.sha1(data).hexdigest(), data  # nosec
 

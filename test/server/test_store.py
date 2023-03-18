@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestStore(TestBase):
 
-    async def test_store(self, imap_server):
+    async def test_store(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -16,7 +18,7 @@ class TestStore(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_store_silent(self, imap_server):
+    async def test_store_silent(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -27,7 +29,7 @@ class TestStore(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_uid_store(self, imap_server):
+    async def test_uid_store(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -39,7 +41,7 @@ class TestStore(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_store_add_recent(self, imap_server):
+    async def test_store_add_recent(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -51,7 +53,7 @@ class TestStore(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_store_remove_recent(self, imap_server):
+    async def test_store_remove_recent(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -63,7 +65,7 @@ class TestStore(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_store_set_non_recent(self, imap_server):
+    async def test_store_set_non_recent(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -75,7 +77,7 @@ class TestStore(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_store_invalid(self, imap_server):
+    async def test_store_invalid(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX', 4, 1)

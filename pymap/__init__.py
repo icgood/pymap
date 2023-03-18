@@ -5,9 +5,9 @@ See Also:
 
 """
 
-import pkg_resources
+from importlib.metadata import distribution
 
 __all__ = ['__version__']
 
 #: The package version string.
-__version__: str = pkg_resources.require(__package__)[0].version
+__version__: str = distribution(__package__).version

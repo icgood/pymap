@@ -107,7 +107,7 @@ class SessionFlags:
 
     __slots__ = ['_defined', '_flags', '_recent']
 
-    def __init__(self, defined: Iterable[Flag]):
+    def __init__(self, defined: Iterable[Flag]) -> None:
         super().__init__()
         self._defined = frozenset(defined) - _recent_set
         self._flags: dict[int, frozenset[Flag]] = {}

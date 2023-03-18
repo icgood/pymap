@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestIdle(TestBase):
 
-    async def test_idle(self, imap_server):
+    async def test_idle(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX', 4, 1, 105)
@@ -20,7 +22,7 @@ class TestIdle(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_idle_invalid(self, imap_server):
+    async def test_idle_invalid(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX', 4, 1, 105)
@@ -36,7 +38,7 @@ class TestIdle(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_idle_noselect(self, imap_server):
+    async def test_idle_noselect(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -46,7 +48,8 @@ class TestIdle(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_concurrent_idle_append(self, imap_server):
+    async def test_concurrent_idle_append(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)
         event1, event2, event3 = self.new_events(3)
@@ -86,7 +89,8 @@ class TestIdle(TestBase):
 
         await self.run(transport, concurrent)
 
-    async def test_concurrent_idle_expunge(self, imap_server):
+    async def test_concurrent_idle_expunge(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)
         event1, event2, event3 = self.new_events(3)

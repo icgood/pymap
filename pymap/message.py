@@ -101,7 +101,7 @@ class ExpungedMessage(BaseMessage):
 
     """
 
-    def __init__(self, cached_msg: CachedMessage):
+    def __init__(self, cached_msg: CachedMessage) -> None:
         super().__init__(cached_msg.uid, cached_msg.internal_date,
                          cached_msg.permanent_flags,
                          email_id=cached_msg.email_id,

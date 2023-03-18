@@ -308,7 +308,8 @@ class TestSearchKey(unittest.TestCase):
     def test_parse_list(self):
         ret, buf = SearchKey.parse(b'(4,5,6 NOT 1,2,3)', Params())
         self.assertEqual(b'KEYSET', ret.value)
-        self.assertIsInstance(ret.filter, list)
+        self.assertIsInstance(ret.filter, tuple)
+        self.assertEqual(hash(ret), hash(ret))
         self.assertEqual(2, len(ret.filter))
         self.assertEqual(b'SEQSET', ret.filter[0].value)
         self.assertIsInstance(ret.filter[0].filter, SequenceSet)

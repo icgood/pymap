@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestCopy(TestBase):
 
-    async def test_copy(self, imap_server):
+    async def test_copy(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -17,7 +19,7 @@ class TestCopy(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_uid_copy(self, imap_server):
+    async def test_uid_copy(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -30,7 +32,7 @@ class TestCopy(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_copy_email_id(self, imap_server):
+    async def test_copy_email_id(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -55,7 +57,8 @@ class TestCopy(TestBase):
         assert self.matches['mid1'] == self.matches['mid2']
         assert self.matches['tid1'] == self.matches['tid2']
 
-    async def test_concurrent_copy_fetch(self, imap_server):
+    async def test_concurrent_copy_fetch(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)
         event1, event2, event3 = self.new_events(3)
@@ -85,7 +88,7 @@ class TestCopy(TestBase):
 
         await self.run(transport, concurrent)
 
-    async def test_move(self, imap_server):
+    async def test_move(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -103,7 +106,7 @@ class TestCopy(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_uid_move(self, imap_server):
+    async def test_uid_move(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -121,7 +124,7 @@ class TestCopy(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_move_email_id(self, imap_server):
+    async def test_move_email_id(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -150,7 +153,8 @@ class TestCopy(TestBase):
         assert self.matches['mid1'] == self.matches['mid2']
         assert self.matches['tid1'] == self.matches['tid2']
 
-    async def test_concurrent_move_fetch(self, imap_server):
+    async def test_concurrent_move_fetch(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)
         event1, event2, event3 = self.new_events(3)

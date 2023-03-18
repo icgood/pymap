@@ -186,7 +186,7 @@ class SearchKey(Parseable[bytes]):
             pass
         else:
             key_list = key_list_p.get_as(SearchKey)
-            return cls(b'KEYSET', frozenset(key_list), inverse), buf
+            return cls(b'KEYSET', key_list, inverse), buf
         atom, after = Atom.parse(buf, params)
         key = atom.value.upper()
         if key in (b'ALL', b'ANSWERED', b'DELETED', b'FLAGGED', b'NEW', b'OLD',

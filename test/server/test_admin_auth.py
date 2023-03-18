@@ -9,6 +9,7 @@ from pymapadmin.grpc.admin_pb2 import SUCCESS, FAILURE, UserData, \
 
 from pymap.admin.handlers.system import SystemHandlers
 from pymap.admin.handlers.user import UserHandlers
+from pymap.interfaces.backend import BackendInterface
 
 from .base import TestBase
 
@@ -23,7 +24,7 @@ class TestAdminAuth(TestBase):
     def overrides(self):
         return {'admin_key': b'testadmintoken'}
 
-    async def test_token(self, backend) -> None:
+    async def test_token(self, backend: BackendInterface) -> None:
         token = await self._login(backend, 'testuser', 'testpass')
         await self._get_user(backend, token, 'testuser')
         await self._set_user(backend, token, 'testuser', 'newpass')
@@ -34,7 +35,7 @@ class TestAdminAuth(TestBase):
         await self._get_user(backend, self.admin_token, 'testuser',
                              failure_key='UserNotFound')
 
-    async def test_authorization(self, backend) -> None:
+    async def test_authorization(self, backend: BackendInterface) -> None:
         await self._set_user(backend, self.admin_token, 'newuser', 'newpass')
         token1 = await self._login(backend, 'testuser', 'testpass')
         token2 = await self._login(backend, 'newuser', 'newpass')
@@ -48,7 +49,7 @@ class TestAdminAuth(TestBase):
                                 failure_key='AuthorizationFailure')
         await self._delete_user(backend, token2, 'newuser')
 
-    async def test_admin_role(self, backend) -> None:
+    async def test_admin_role(self, backend: BackendInterface) -> None:
         token = await self._login(backend, 'testuser', 'testpass')
         await self._set_user(backend, token, 'testuser', 'testpass',
                              params={'role': 'admin'},
@@ -69,8 +70,9 @@ class TestAdminAuth(TestBase):
         assert SUCCESS == response.result.code
         return response.bearer_token
 
-    async def _get_user(self, backend, token: str, user: str, *,
-                        failure_key: str = None) -> None:
+    async def _get_user(self, backend: BackendInterface,
+                        token: str, user: str, *,
+                        failure_key: str | None = None) -> None:
         handlers = UserHandlers(backend)
         request = GetUserRequest(user=user)
         metadata = {'auth-token': token}
@@ -84,9 +86,10 @@ class TestAdminAuth(TestBase):
             assert FAILURE == response.result.code
             assert failure_key == response.result.key
 
-    async def _set_user(self, backend, token: str, user: str, password: str, *,
-                        params: Mapping[str, str] = None,
-                        failure_key: str = None) -> None:
+    async def _set_user(self, backend: BackendInterface,
+                        token: str, user: str, password: str, *,
+                        params: Mapping[str, str] | None = None,
+                        failure_key: str | None = None) -> None:
         handlers = UserHandlers(backend)
         data = UserData(password=password, params=params)
         request = SetUserRequest(user=user, data=data)
@@ -101,8 +104,9 @@ class TestAdminAuth(TestBase):
             assert FAILURE == response.result.code
             assert failure_key == response.result.key
 
-    async def _delete_user(self, backend, token: str, user: str, *,
-                           failure_key: str = None) -> None:
+    async def _delete_user(self, backend: BackendInterface,
+                           token: str, user: str, *,
+                           failure_key: str | None = None) -> None:
         handlers = UserHandlers(backend)
         request = DeleteUserRequest(user=user)
         metadata = {'auth-token': token}

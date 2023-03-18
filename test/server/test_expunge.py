@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestExpunge(TestBase):
 
-    async def test_expunge(self, imap_server):
+    async def test_expunge(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -22,7 +24,7 @@ class TestExpunge(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_expunge_uid(self, imap_server):
+    async def test_expunge_uid(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -44,7 +46,8 @@ class TestExpunge(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_concurrent_expunge_responses(self, imap_server):
+    async def test_concurrent_expunge_responses(
+            self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         concurrent = self.new_transport(imap_server)
         event1, event2 = self.new_events(2)

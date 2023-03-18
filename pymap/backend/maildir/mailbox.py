@@ -7,7 +7,7 @@ import os.path
 from collections.abc import Iterable, AsyncIterable
 from datetime import datetime
 from mailbox import Maildir as _Maildir, MaildirMessage
-from typing import Final, Any, Literal
+from typing import Any, Final, Literal, Self
 
 from pymap.concurrent import Event, ReadWriteLock
 from pymap.context import subsystem
@@ -44,7 +44,7 @@ class Maildir(_Maildir):
         return self._paths['cur']  # type: ignore
 
     def _join(self, subpath: str) -> str:
-        base_path: str = self._path  # type: ignore
+        base_path: str = self._path
         return os.path.join(base_path, subpath)
 
     def _split(self, subpath: str) \
@@ -170,7 +170,7 @@ class Message(BaseMessage):
                      maildir: Maildir, key: str,
                      email_id: ObjectId | None,
                      thread_id: ObjectId | None,
-                     maildir_flags: MaildirFlags) -> Message:
+                     maildir_flags: MaildirFlags) -> Self:
         flag_set = maildir_flags.from_maildir(maildir_msg.get_flags())
         recent = maildir_msg.get_subdir() == 'new'
         msg_dt = datetime.fromtimestamp(maildir_msg.get_date())

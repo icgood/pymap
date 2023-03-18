@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestMailbox(TestBase):
 
-    async def test_rename(self, imap_server):
+    async def test_rename(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -31,7 +33,7 @@ class TestMailbox(TestBase):
         await self.run(transport)
         assert self.matches['uidval1'] == self.matches['uidval2']
 
-    async def test_rename_inbox(self, imap_server):
+    async def test_rename_inbox(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -61,7 +63,8 @@ class TestMailbox(TestBase):
         assert self.matches['uidval1'] != self.matches['uidval2']
         assert self.matches['uidval1'] == self.matches['uidval3']
 
-    async def test_rename_inbox_selected(self, imap_server):
+    async def test_rename_inbox_selected(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -73,7 +76,8 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_rename_other_selected(self, imap_server):
+    async def test_rename_other_selected(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -84,7 +88,7 @@ class TestMailbox(TestBase):
             b'rename1 OK RENAME completed.\r\n')
         await self.run(transport)
 
-    async def test_rename_selected(self, imap_server):
+    async def test_rename_selected(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -95,7 +99,7 @@ class TestMailbox(TestBase):
             b'rename1 OK RENAME completed.\r\n')
         await self.run(transport)
 
-    async def test_rename_inferior(self, imap_server):
+    async def test_rename_inferior(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -135,7 +139,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_rename_mailbox_id(self, imap_server):
+    async def test_rename_mailbox_id(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(

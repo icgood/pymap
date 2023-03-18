@@ -36,9 +36,11 @@ except ImportError:
         return nullcontext()
 
 try:
-    import passlib
+    __import__('passlib')
 except ImportError:
-    passlib = None
+    has_passlib = False
+else:
+    has_passlib = True
 
 
 def main() -> None:
@@ -57,7 +59,7 @@ def main() -> None:
                         help='config file for logging')
     parser.add_argument('--no-service', dest='skip_services', action='append',
                         metavar='NAME', help='do not run the given service')
-    if passlib is not None:
+    if has_passlib:
         parser.add_argument('--passlib-cfg', metavar='PATH',
                             help='config file for passlib hashing')
     subparsers = parser.add_subparsers(dest='backend', required=True,
