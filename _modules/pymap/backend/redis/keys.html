@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.redis.keys &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.redis.keys &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../redis.html" accesskey="U">pymap.backend.redis</a> &#187;</li>
@@ -86,7 +83,7 @@
 
 
 <div class="viewcode-block" id="RedisKey"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.RedisKey">[docs]</a><span class="k">class</span> <span class="nc">RedisKey</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Defines complex redis keys using composite segments.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines complex redis keys using composite segments.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        joiner: The object used to join segments.</span>
@@ -105,7 +102,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">named</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">named</span>
 
 <div class="viewcode-block" id="RedisKey.fork"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.RedisKey.fork">[docs]</a>    <span class="k">def</span> <span class="nf">fork</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segment</span><span class="p">:</span> <span class="n">_Value</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RedisKey</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Fork a new redis key adding a new segment.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fork a new redis key adding a new segment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            segment: The new key segment to append.</span>
@@ -122,7 +119,7 @@
             <span class="k">return</span> <span class="n">RedisKey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">joiner</span><span class="p">,</span> <span class="n">new_segments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">named</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RedisKey.end"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.RedisKey.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">segments</span><span class="p">:</span> <span class="n">_Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Terminate the redis key producing a bytestring.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Terminate the redis key producing a bytestring.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            segments: Optional segments to add to the result.</span>
@@ -132,7 +129,7 @@
 
 
 <div class="viewcode-block" id="KeysGroup"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.KeysGroup">[docs]</a><span class="k">class</span> <span class="nc">KeysGroup</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A group of redis keys that are related and contained in the same root</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A group of redis keys that are related and contained in the same root</span>
 <span class="sd">    key.</span>
 
 <span class="sd">    Args:</span>
@@ -149,12 +146,12 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;All the keys in the group, not including nested key groups.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All the keys in the group, not including nested key groups.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 
 <div class="viewcode-block" id="GlobalKeys"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.GlobalKeys">[docs]</a><span class="k">class</span> <span class="nc">GlobalKeys</span><span class="p">(</span><span class="n">KeysGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The key group that is considered global. New :attr:`DATA_VERSION` values</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The key group that is considered global. New :attr:`DATA_VERSION` values</span>
 <span class="sd">    must be compatible with these keys.</span>
 
 <span class="sd">    Args:</span>
@@ -176,7 +173,7 @@
 
 
 <div class="viewcode-block" id="CleanupKeys"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.CleanupKeys">[docs]</a><span class="k">class</span> <span class="nc">CleanupKeys</span><span class="p">(</span><span class="n">KeysGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The key group for cleaning up keys that are no longer active.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The key group for cleaning up keys that are no longer active.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root: The root redis key.</span>
@@ -198,7 +195,7 @@
 
 
 <div class="viewcode-block" id="NamespaceKeys"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.NamespaceKeys">[docs]</a><span class="k">class</span> <span class="nc">NamespaceKeys</span><span class="p">(</span><span class="n">KeysGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The key group for managing mailbox namespaces, groups of mailboxes that</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The key group for managing mailbox namespaces, groups of mailboxes that</span>
 <span class="sd">    typically correspond to a login user.</span>
 
 <span class="sd">    Args:</span>
@@ -233,7 +230,7 @@
 
 
 <div class="viewcode-block" id="ContentKeys"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.ContentKeys">[docs]</a><span class="k">class</span> <span class="nc">ContentKeys</span><span class="p">(</span><span class="n">KeysGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The key group for managing the content of messages.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The key group for managing the content of messages.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root: The root redis key.</span>
@@ -254,7 +251,7 @@
 
 
 <div class="viewcode-block" id="FilterKeys"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.FilterKeys">[docs]</a><span class="k">class</span> <span class="nc">FilterKeys</span><span class="p">(</span><span class="n">KeysGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The key group for managing filters.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The key group for managing filters.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root: The root redis key.</span>
@@ -275,7 +272,7 @@
 
 
 <div class="viewcode-block" id="MailboxKeys"><a class="viewcode-back" href="../../../../pymap.backend.redis.html#pymap.backend.redis.keys.MailboxKeys">[docs]</a><span class="k">class</span> <span class="nc">MailboxKeys</span><span class="p">(</span><span class="n">KeysGroup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The key group for managing a single mailbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The key group for managing a single mailbox.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root: The root redis key.</span>
@@ -352,7 +349,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../redis.html" >pymap.backend.redis</a> &#187;</li>
@@ -363,7 +360,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

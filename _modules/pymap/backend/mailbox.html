@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.mailbox &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.mailbox &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.mailbox</a></li> 
@@ -96,12 +93,12 @@
 
 
 <div class="viewcode-block" id="MailboxDataInterface"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface">[docs]</a><span class="k">class</span> <span class="nc">MailboxDataInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">MessageT_co</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Manages the messages and metadata associated with a single mailbox.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the messages and metadata associated with a single mailbox.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">mailbox_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The mailbox object ID.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mailbox object ID.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :attr:`~pymap.interfaces.mailbox.MailboxInterface.mailbox_id`</span>
@@ -112,35 +109,35 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">readonly</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Whether the mailbox is read-only or read-write.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the mailbox is read-only or read-write.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">uid_validity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The mailbox UID validity value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mailbox UID validity value.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">permanent_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The permanent flags allowed in the mailbox.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The permanent flags allowed in the mailbox.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">get_system_flags</span><span class="p">()</span> <span class="o">-</span> <span class="p">{</span><span class="n">Recent</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">session_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The session flags allowed in the mailbox.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The session flags allowed in the mailbox.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">frozenset</span><span class="p">({</span><span class="n">Recent</span><span class="p">})</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">selected_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectedSet</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The set of selected mailbox sessions currently active.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of selected mailbox sessions currently active.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
 <div class="viewcode-block" id="MailboxDataInterface.update_selected"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.update_selected">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">update_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                               <span class="n">wait_on</span><span class="p">:</span> <span class="n">Event</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Populates and returns the selected mailbox object with the state</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Populates and returns the selected mailbox object with the state</span>
 <span class="sd">        needed to discover updates.</span>
 
 <span class="sd">        Args:</span>
@@ -154,7 +151,7 @@
 <div class="viewcode-block" id="MailboxDataInterface.append"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.append">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">append_msg</span><span class="p">:</span> <span class="n">AppendMessage</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                      <span class="n">recent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageT_co</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Adds a new message to the end of the mailbox, returning a copy of</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a new message to the end of the mailbox, returning a copy of</span>
 <span class="sd">        message with its assigned UID.</span>
 
 <span class="sd">        Args:</span>
@@ -167,7 +164,7 @@
 <div class="viewcode-block" id="MailboxDataInterface.copy"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.copy">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MailboxDataT</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">MailboxDataT</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                    <span class="n">recent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Copies a message, if it exists, from this mailbox to the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copies a message, if it exists, from this mailbox to the</span>
 <span class="sd">        *destination* mailbox.</span>
 
 <span class="sd">        Args:</span>
@@ -181,7 +178,7 @@
 <div class="viewcode-block" id="MailboxDataInterface.move"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.move">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">MailboxDataT</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">MailboxDataT</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                    <span class="n">recent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Moves a message, if it exists, from this mailbox to the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves a message, if it exists, from this mailbox to the</span>
 <span class="sd">        *destination* mailbox.</span>
 
 <span class="sd">        Args:</span>
@@ -195,7 +192,7 @@
 <div class="viewcode-block" id="MailboxDataInterface.get"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.get">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">MessageT_co</span> <span class="o">|</span> <span class="n">ExpungedMessage</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the message with the given UID.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the message with the given UID.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uid: The message UID.</span>
@@ -208,7 +205,7 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">,</span>
                      <span class="n">flag_set</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="n">FlagOp</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">MessageT_co</span> <span class="o">|</span> <span class="n">ExpungedMessage</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update the permanent flags of the message.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the permanent flags of the message.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uid: The message UID.</span>
@@ -221,7 +218,7 @@
 
 <div class="viewcode-block" id="MailboxDataInterface.delete"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.delete">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete messages with the given UIDs.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete messages with the given UIDs.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uids: The message UIDs.</span>
@@ -231,7 +228,7 @@
 
 <div class="viewcode-block" id="MailboxDataInterface.claim_recent"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.claim_recent">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">claim_recent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Messages that are newly added to the mailbox are assigned the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Messages that are newly added to the mailbox are assigned the</span>
 <span class="sd">        ``\\Recent`` flag in the current selected mailbox session.</span>
 
 <span class="sd">        Args:</span>
@@ -242,7 +239,7 @@
 
 <div class="viewcode-block" id="MailboxDataInterface.cleanup"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.cleanup">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Perform any necessary &quot;housekeeping&quot; steps. This may be a slow</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform any necessary &quot;housekeeping&quot; steps. This may be a slow</span>
 <span class="sd">        operation, and may run things like garbage collection on the backend.</span>
 
 <span class="sd">        See Also:</span>
@@ -253,12 +250,12 @@
 
 <div class="viewcode-block" id="MailboxDataInterface.snapshot"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.snapshot">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxSnapshot</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns a snapshot of the current state of the mailbox.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a snapshot of the current state of the mailbox.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 <div class="viewcode-block" id="MailboxDataInterface.find"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.find">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">AsyncIterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageT_co</span> <span class="o">|</span> <span class="n">ExpungedMessage</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Find the active message UID and message pairs in the mailbox that</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the active message UID and message pairs in the mailbox that</span>
 <span class="sd">        are contained in the given sequences set. Message sequence numbers</span>
 <span class="sd">        are resolved by the selected mailbox session.</span>
 
@@ -274,7 +271,7 @@
 
 <div class="viewcode-block" id="MailboxDataInterface.find_deleted"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.find_deleted">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">find_deleted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
                            <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return all the active message UIDs that have the ``\\Deleted`` flag.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all the active message UIDs that have the ``\\Deleted`` flag.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seq_set: The sequence set of the possible messages.</span>
@@ -287,17 +284,17 @@
 
 
 <div class="viewcode-block" id="MailboxSetInterface"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface">[docs]</a><span class="k">class</span> <span class="nc">MailboxSetInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">MailboxDataT_co</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Manages the set of mailboxes available to the authenticated user.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the set of mailboxes available to the authenticated user.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The delimiter used in mailbox names to indicate hierarchy.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The delimiter used in mailbox names to indicate hierarchy.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
 <div class="viewcode-block" id="MailboxSetInterface.set_subscribed"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.set_subscribed">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">set_subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subscribed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add or remove the subscribed status of a mailbox.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add or remove the subscribed status of a mailbox.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :meth:`~pymap.interfaces.session.SessionInterface.subscribe`</span>
@@ -312,7 +309,7 @@
 
 <div class="viewcode-block" id="MailboxSetInterface.list_subscribed"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.list_subscribed">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">list_subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of all subscribed mailboxes.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of all subscribed mailboxes.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :meth:`~pymap.interfaces.session.SessionInterface.list_mailboxes`</span>
@@ -322,7 +319,7 @@
 
 <div class="viewcode-block" id="MailboxSetInterface.list_mailboxes"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.list_mailboxes">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">list_mailboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of all mailboxes.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of all mailboxes.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :meth:`~pymap.interfaces.session.SessionInterface.list_mailboxes`</span>
@@ -332,7 +329,7 @@
 
 <div class="viewcode-block" id="MailboxSetInterface.get_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.get_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">get_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxDataT_co</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return an existing mailbox by name.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an existing mailbox by name.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The name of the mailbox.</span>
@@ -345,7 +342,7 @@
 
 <div class="viewcode-block" id="MailboxSetInterface.add_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.add_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">add_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a new mailbox, returning its object ID.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new mailbox, returning its object ID.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :meth:`~pymap.interfaces.session.SessionInterface.create_mailbox`</span>
@@ -361,7 +358,7 @@
 
 <div class="viewcode-block" id="MailboxSetInterface.delete_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.delete_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Delete an existing mailbox.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete an existing mailbox.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :meth:`~pymap.interfaces.session.SessionInterface.delete_mailbox`</span>
@@ -377,7 +374,7 @@
 
 <div class="viewcode-block" id="MailboxSetInterface.rename_mailbox"><a class="viewcode-back" href="../../../pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.rename_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">rename_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">after</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Rename an existing mailbox.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rename an existing mailbox.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :meth:`~pymap.interfaces.session.SessionInterface.rename_mailbox`</span>
@@ -442,7 +439,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.mailbox</a></li> 
@@ -452,7 +449,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

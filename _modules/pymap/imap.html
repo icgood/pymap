@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -117,7 +114,7 @@
 
 
 <div class="viewcode-block" id="IMAPService"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService">[docs]</a><span class="k">class</span> <span class="nc">IMAPService</span><span class="p">(</span><span class="n">ServiceInterface</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
-    <span class="sd">&quot;&quot;&quot;A pymap service implementing an IMAP server.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pymap service implementing an IMAP server.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="IMAPService.add_arguments"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService.add_arguments">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_arguments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -162,7 +159,7 @@
 
 
 <div class="viewcode-block" id="IMAPServer"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPServer">[docs]</a><span class="k">class</span> <span class="nc">IMAPServer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Callable object that creates and runs :class:`IMAPConnection` objects</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable object that creates and runs :class:`IMAPConnection` objects</span>
 <span class="sd">    when :func:`asyncio.start_server` receives a new connection.</span>
 
 <span class="sd">    Args:</span>
@@ -191,7 +188,7 @@
 
 
 <div class="viewcode-block" id="IMAPConnection"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPConnection">[docs]</a><span class="k">class</span> <span class="nc">IMAPConnection</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Runs a single IMAP connection from start to finish.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs a single IMAP connection from start to finish.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        commands: Defines the IMAP commands available to the connection.</span>
@@ -410,7 +407,7 @@
             <span class="k">return</span> <span class="n">response</span>
 
 <div class="viewcode-block" id="IMAPConnection.run"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPConnection.run">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ConnectionState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Start the socket communication with the IMAP greeting, and then</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the socket communication with the IMAP greeting, and then</span>
 <span class="sd">        enter the command/response cycle.</span>
 
 <span class="sd">        Args:</span>
@@ -551,7 +548,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -561,7 +558,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

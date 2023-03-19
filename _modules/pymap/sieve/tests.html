@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.sieve.tests &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.sieve.tests &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sieve.html" accesskey="U">pymap.sieve</a> &#187;</li>
@@ -85,7 +82,7 @@
 
 
 <div class="viewcode-block" id="SieveTest"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.tests.SieveTest">[docs]</a><span class="k">class</span> <span class="nc">SieveTest</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for all sieve tests.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all sieve tests.</span>
 
 <span class="sd">    See Also:</span>
 <span class="sd">        `RFC 5228 5. &lt;https://tools.ietf.org/html/rfc5228#section-5&gt;`_</span>
@@ -94,7 +91,7 @@
 
 <div class="viewcode-block" id="SieveTest.of"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.tests.SieveTest.of">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="n">Command</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SieveTest</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Given a test command, determine the implementation sub-class and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a test command, determine the implementation sub-class and</span>
 <span class="sd">        return an instance.</span>
 
 <span class="sd">        Args:</span>
@@ -145,7 +142,7 @@
 <div class="viewcode-block" id="SieveTest.run"><a class="viewcode-back" href="../../../pymap.sieve.html#pymap.sieve.tests.SieveTest.run">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">recipient</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">append_msg</span><span class="p">:</span> <span class="n">AppendMessage</span><span class="p">,</span>
             <span class="n">content</span><span class="p">:</span> <span class="n">MessageContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Run the test implementation on the appended message data, returning</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the test implementation on the appended message data, returning</span>
 <span class="sd">        True if the test matched the data. Must be overridden by sub-classes.</span>
 
 <span class="sd">        Args:</span>
@@ -394,7 +391,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../sieve.html" >pymap.sieve</a> &#187;</li>
@@ -405,7 +402,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

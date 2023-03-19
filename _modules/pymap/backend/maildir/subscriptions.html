@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.maildir.subscriptions &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.maildir.subscriptions &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../maildir.html" accesskey="U">pymap.backend.maildir</a> &#187;</li>
@@ -80,7 +77,7 @@
 
 
 <div class="viewcode-block" id="Subscriptions"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions">[docs]</a><span class="k">class</span> <span class="nc">Subscriptions</span><span class="p">(</span><span class="n">FileWriteable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Maintains the set of folders currently subscribed to.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maintains the set of folders currently subscribed to.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        base_dir: The directory of the file.</span>
@@ -94,22 +91,22 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The folders currently subscribed to.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The folders currently subscribed to.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subscribed</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 <div class="viewcode-block" id="Subscriptions.add"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a new folder to the subscriptions.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new folder to the subscriptions.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subscribed</span><span class="p">[</span><span class="n">folder</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Subscriptions.remove"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Remove a folder from the subscriptions.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a folder from the subscriptions.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subscribed</span><span class="p">[</span><span class="n">folder</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Subscriptions.set"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.subscriptions.Subscriptions.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subscribed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set the subscribed status of a folder.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the subscribed status of a folder.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">subscribed</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -191,7 +188,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../maildir.html" >pymap.backend.maildir</a> &#187;</li>
@@ -202,7 +199,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.specials.objectid &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.specials.objectid &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -81,7 +78,7 @@
 
 
 <div class="viewcode-block" id="ObjectId"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId">[docs]</a><span class="k">class</span> <span class="nc">ObjectId</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Represents an object ID, used to identify a mailbox, message, or thread.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an object ID, used to identify a mailbox, message, or thread.</span>
 
 <span class="sd">    An *object_id* value of ``None`` is a special case indicating that this</span>
 <span class="sd">    object ID is not defined.</span>
@@ -104,14 +101,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The object ID value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The object ID value.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object_id</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parens</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The object ID value surrounded by parentheses.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The object ID value surrounded by parentheses.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;(%b)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">)</span>
 
 <div class="viewcode-block" id="ObjectId.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.parse">[docs]</a>    <span class="nd">@classmethod</span>
@@ -125,7 +122,7 @@
 
 <div class="viewcode-block" id="ObjectId.new"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">digest</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new object ID from a hash digest.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new object ID from a hash digest.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            prefix: The prefix for the object ID.</span>
@@ -136,7 +133,7 @@
 
 <div class="viewcode-block" id="ObjectId.new_mailbox_id"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_mailbox_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new_mailbox_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">digest</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new mailbox ID from a hash digest.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new mailbox ID from a hash digest.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            digest: The hash digest.</span>
@@ -146,7 +143,7 @@
 
 <div class="viewcode-block" id="ObjectId.new_email_id"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_email_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new_email_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">digest</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new email ID from a hash digest.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new email ID from a hash digest.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            digest: The hash digest.</span>
@@ -156,7 +153,7 @@
 
 <div class="viewcode-block" id="ObjectId.new_thread_id"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_thread_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">new_thread_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">digest</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new thread ID from a hash digest.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new thread ID from a hash digest.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            digest: The hash digest.</span>
@@ -166,7 +163,7 @@
 
 <div class="viewcode-block" id="ObjectId.random"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.random">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">random</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new randomized object ID.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new randomized object ID.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            prefix: The prefix for the object ID.</span>
@@ -176,22 +173,22 @@
 
 <div class="viewcode-block" id="ObjectId.random_mailbox_id"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.random_mailbox_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">random_mailbox_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new randomized mailbox ID.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new randomized mailbox ID.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;F&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ObjectId.random_email_id"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.random_email_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">random_email_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new randomized email ID.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new randomized email ID.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ObjectId.random_thread_id"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.random_thread_id">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">random_thread_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return a new randomized thread ID.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new randomized thread ID.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;T&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ObjectId.maybe"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.maybe">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">maybe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">AnyStr</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return an object ID representing the string or bytestring value. If</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an object ID representing the string or bytestring value. If</span>
 <span class="sd">        the input is empty or ``None``, the object ID returned will have</span>
 <span class="sd">        :attr:`.not_defined` be true.</span>
 
@@ -277,7 +274,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -288,7 +285,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

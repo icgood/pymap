@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.cluster &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.cluster &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.cluster</a></li> 
@@ -81,7 +78,7 @@
 
 
 <div class="viewcode-block" id="MemberInterface"><a class="viewcode-back" href="../../pymap.cluster.html#pymap.cluster.MemberInterface">[docs]</a><span class="k">class</span> <span class="nc">MemberInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A hashable type that represents a cluster member node.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A hashable type that represents a cluster member node.&quot;&quot;&quot;</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -90,13 +87,13 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The name of the cluster member node.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the cluster member node.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Metadata</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The metadata mapping from the cluster member node.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The metadata mapping from the cluster member node.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 
@@ -109,7 +106,7 @@
 
 <div class="viewcode-block" id="ListenCallback.__call__"><a class="viewcode-back" href="../../pymap.cluster.html#pymap.cluster.ListenCallback.__call__">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">:</span> <span class="n">ArgT_contra</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">_Metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Called when the value associated with a local metadata key has been</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Called when the value associated with a local metadata key has been</span>
 <span class="sd">        changed.</span>
 
 <span class="sd">        Args:</span>
@@ -187,7 +184,7 @@
 
 
 <div class="viewcode-block" id="ClusterMetadata"><a class="viewcode-back" href="../../pymap.cluster.html#pymap.cluster.ClusterMetadata">[docs]</a><span class="k">class</span> <span class="nc">ClusterMetadata</span><span class="p">(</span><span class="n">MutableSet</span><span class="p">[</span><span class="n">MemberInterface</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Keeps a mapping of metadata pertaining to the current instance and</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Keeps a mapping of metadata pertaining to the current instance and</span>
 <span class="sd">    possibly other clustered instances, if the current instance is part of a</span>
 <span class="sd">    cluster.</span>
 
@@ -229,7 +226,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The local cluster instance metadata. Keys added, removed, and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The local cluster instance metadata. Keys added, removed, and</span>
 <span class="sd">        modified in this mapping should be disseminated to the rest of the</span>
 <span class="sd">        cluster.</span>
 
@@ -238,11 +235,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">remote</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_MemberValuesView</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The remote cluster instance metadata, organized by metadata key.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The remote cluster instance metadata, organized by metadata key.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remote</span>
 
 <div class="viewcode-block" id="ClusterMetadata.get_all"><a class="viewcode-back" href="../../pymap.cluster.html#pymap.cluster.ClusterMetadata.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the set of all known values for the metadata key, local and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the set of all known values for the metadata key, local and</span>
 <span class="sd">        remote.</span>
 
 <span class="sd">        Args:</span>
@@ -255,7 +252,7 @@
         <span class="k">return</span> <span class="n">results</span></div>
 
 <div class="viewcode-block" id="ClusterMetadata.listen"><a class="viewcode-back" href="../../pymap.cluster.html#pymap.cluster.ClusterMetadata.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">ListenCallback</span><span class="p">[</span><span class="n">ArgT</span><span class="p">],</span> <span class="n">arg</span><span class="p">:</span> <span class="n">ArgT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Adds a callback to be run whenever the local metadata has been</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a callback to be run whenever the local metadata has been</span>
 <span class="sd">        modified. Cluster services can use this to disseminate metadata</span>
 <span class="sd">        changes.</span>
 
@@ -321,7 +318,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.cluster</a></li> 
@@ -331,7 +328,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

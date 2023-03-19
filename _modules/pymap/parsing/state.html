@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.state &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.state &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -81,7 +78,7 @@
 
 
 <div class="viewcode-block" id="ParsingState"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.state.ParsingState">[docs]</a><span class="k">class</span> <span class="nc">ParsingState</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Contains mutable parsing state. As parsing advances, it may need</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Contains mutable parsing state. As parsing advances, it may need</span>
 <span class="sd">    external data to proceed. Because parsing is linear, these expectations</span>
 <span class="sd">    are defined as sequence of objects that are iterated during parsing.</span>
 
@@ -105,7 +102,7 @@
 
 
 <div class="viewcode-block" id="ParsingInterrupt"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.state.ParsingInterrupt">[docs]</a><span class="k">class</span> <span class="nc">ParsingInterrupt</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Exception thrown to interrupt the IMAP parsing process, because an</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception thrown to interrupt the IMAP parsing process, because an</span>
 <span class="sd">    expectation was not met. The caller should update provide an updated</span>
 <span class="sd">    :class:`ParsingState` object that meets the expectation.</span>
 
@@ -122,7 +119,7 @@
 
 
 <div class="viewcode-block" id="ParsingExpectation"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.state.ParsingExpectation">[docs]</a><span class="k">class</span> <span class="nc">ParsingExpectation</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ParsingExpectedT</span><span class="p">],</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for parsing expectations that may require additional data</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for parsing expectations that may require additional data</span>
 <span class="sd">    before parsing can advance.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -131,7 +128,7 @@
 
 <div class="viewcode-block" id="ParsingExpectation.consume"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.state.ParsingExpectation.consume">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ParsingState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParsingExpectedT</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Consume and return a piece of data, if available.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Consume and return a piece of data, if available.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            state: The parsing state.</span>
@@ -140,7 +137,7 @@
         <span class="o">...</span></div>
 
 <div class="viewcode-block" id="ParsingExpectation.expect"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.state.ParsingExpectation.expect">[docs]</a>    <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ParsingState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParsingExpectedT</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Indicates that the buffer has been successfully parsed so far, but</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Indicates that the buffer has been successfully parsed so far, but</span>
 <span class="sd">        additional data is expected from the parsing state.</span>
 
 <span class="sd">        Args:</span>
@@ -158,7 +155,7 @@
 
 
 <span class="k">class</span> <span class="nc">ExpectContinuation</span><span class="p">(</span><span class="n">ParsingExpectation</span><span class="p">[</span><span class="nb">memoryview</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates that the buffer has been successfully parsed so far, but</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates that the buffer has been successfully parsed so far, but</span>
 <span class="sd">    requires a continuation of the command from the client.</span>
 
 <span class="sd">    Args:</span>
@@ -227,7 +224,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -238,7 +235,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.redis &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.redis &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.redis</a></li> 
@@ -79,7 +76,7 @@
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">asynccontextmanager</span><span class="p">,</span> <span class="n">suppress</span><span class="p">,</span> <span class="n">AsyncExitStack</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_bytes</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Self</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span> <span class="nn">redis.asyncio</span> <span class="kn">import</span> <span class="n">Redis</span>
 <span class="kn">from</span> <span class="nn">pysasl.creds.server</span> <span class="kn">import</span> <span class="n">ServerCredentials</span>
@@ -112,7 +109,7 @@
 
 
 <div class="viewcode-block" id="RedisBackend"><a class="viewcode-back" href="../../../pymap.backend.redis.html#pymap.backend.redis.RedisBackend">[docs]</a><span class="k">class</span> <span class="nc">RedisBackend</span><span class="p">(</span><span class="n">BackendInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Defines a backend that uses redis data structures for mailbox storage.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a backend that uses redis data structures for mailbox storage.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -155,7 +152,7 @@
 
 <div class="viewcode-block" id="RedisBackend.init"><a class="viewcode-back" href="../../../pymap.backend.redis.html#pymap.backend.redis.RedisBackend.init">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RedisBackend</span><span class="p">,</span> <span class="n">Config</span><span class="p">]:</span>
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Self</span><span class="p">,</span> <span class="n">Config</span><span class="p">]:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">from_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="n">status</span> <span class="o">=</span> <span class="n">HealthStatus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">)</span>
         <span class="n">login</span> <span class="o">=</span> <span class="n">Login</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
@@ -171,7 +168,7 @@
 
 
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../pymap.backend.redis.html#pymap.backend.redis.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">IMAPConfig</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The config implementation for the redis backend.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The config implementation for the redis backend.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        args: The command-line arguments.</span>
@@ -200,7 +197,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">address</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The redis server address for user data. Defaults to a connection to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The redis server address for user data. Defaults to a connection to</span>
 <span class="sd">        localhost.</span>
 
 <span class="sd">        See Also:</span>
@@ -211,7 +208,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_address</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The redis server address for mail data. Defaults to a connection to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The redis server address for mail data. Defaults to a connection to</span>
 <span class="sd">        localhost.</span>
 
 <span class="sd">        See Also:</span>
@@ -225,12 +222,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">separator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The bytestring used to separate segments of composite redis keys.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The bytestring used to separate segments of composite redis keys.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_separator</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The prefix for mail data keys. This prefix does not apply to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The prefix for mail data keys. This prefix does not apply to</span>
 <span class="sd">        :attr:`.users_key`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -238,7 +235,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">users_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The prefix for user lookup keys.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The prefix for user lookup keys.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_users_prefix</span>
 
     <span class="nd">@property</span>
@@ -265,7 +262,7 @@
 
 
 <div class="viewcode-block" id="Session"><a class="viewcode-back" href="../../../pymap.backend.redis.html#pymap.backend.redis.Session">[docs]</a><span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">BaseSession</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;The session implementation for the redis backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The session implementation for the redis backend.&quot;&quot;&quot;</span>
 
     <span class="n">resource</span> <span class="o">=</span> <span class="vm">__name__</span>
 
@@ -291,7 +288,7 @@
 
 
 <span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">LoginInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The login implementation for the redis backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The login implementation for the redis backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">HealthStatus</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -375,7 +372,7 @@
 
 
 <span class="k">class</span> <span class="nc">Identity</span><span class="p">(</span><span class="n">IdentityInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The identity implementation for the redis backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The identity implementation for the redis backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">TokensInterface</span><span class="p">,</span>
                  <span class="n">user_connect</span><span class="p">:</span> <span class="n">_Connect</span><span class="p">,</span> <span class="n">mail_connect</span><span class="p">:</span> <span class="n">_Connect</span><span class="p">,</span>
@@ -475,7 +472,8 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span> <span class="n">authcid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                   <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+                   <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
         <span class="k">match</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">case</span> <span class="p">{</span><span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">}:</span>
                 <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">authcid</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
@@ -554,7 +552,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.redis</a></li> 
@@ -564,7 +562,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

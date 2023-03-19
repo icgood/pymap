@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.message &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.message &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.message</a></li> 
@@ -97,7 +94,7 @@
 
 
 <div class="viewcode-block" id="BaseMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseMessage</span><span class="p">(</span><span class="n">MessageInterface</span><span class="p">,</span> <span class="n">CachedMessage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Message metadata such as UID, permanent flags, and when the message</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Message metadata such as UID, permanent flags, and when the message</span>
 <span class="sd">    was added to the system.</span>
 
 <span class="sd">    Args:</span>
@@ -161,14 +158,14 @@
 
 
 <div class="viewcode-block" id="ExpungedMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.ExpungedMessage">[docs]</a><span class="k">class</span> <span class="nc">ExpungedMessage</span><span class="p">(</span><span class="n">BaseMessage</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a message that has been expunged from the mailbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a message that has been expunged from the mailbox.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cached_msg: A cached copy of the message metadata.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">cached_msg</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">cached_msg</span><span class="o">.</span><span class="n">internal_date</span><span class="p">,</span>
                          <span class="n">cached_msg</span><span class="o">.</span><span class="n">permanent_flags</span><span class="p">,</span>
                          <span class="n">email_id</span><span class="o">=</span><span class="n">cached_msg</span><span class="o">.</span><span class="n">email_id</span><span class="p">,</span>
@@ -181,7 +178,7 @@
 
 
 <div class="viewcode-block" id="BaseLoadedMessage"><a class="viewcode-back" href="../../pymap.message.html#pymap.message.BaseLoadedMessage">[docs]</a><span class="k">class</span> <span class="nc">BaseLoadedMessage</span><span class="p">(</span><span class="n">LoadedMessageInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The loaded message content, implemented using an instance of</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The loaded message content, implemented using an instance of</span>
 <span class="sd">    :class:`~pymap.mime.MessageContent`.</span>
 
 <span class="sd">    Args:</span>
@@ -430,7 +427,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.message</a></li> 
@@ -440,7 +437,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

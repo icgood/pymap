@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.response.code &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.response.code &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -82,7 +79,7 @@
 
 
 <div class="viewcode-block" id="Capability"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.Capability">[docs]</a><span class="k">class</span> <span class="nc">Capability</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Lists the capabilities the server advertises to the client.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Lists the capabilities the server advertises to the client.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        server_capabilities: The list of capabilities to advertise.</span>
@@ -99,7 +96,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The capabilities string without the enclosing square brackets.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The capabilities string without the enclosing square brackets.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="n">raw</span> <span class="o">=</span> <span class="n">BytesFormat</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -111,7 +108,7 @@
 
 
 <div class="viewcode-block" id="PermanentFlags"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.PermanentFlags">[docs]</a><span class="k">class</span> <span class="nc">PermanentFlags</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the permanent flags available in a mailbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the permanent flags available in a mailbox.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        flags: The flags to return.</span>
@@ -129,7 +126,7 @@
 
 
 <div class="viewcode-block" id="UidNext"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.UidNext">[docs]</a><span class="k">class</span> <span class="nc">UidNext</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the next unique identifier value of the mailbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the next unique identifier value of the mailbox.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        next_: The next available message UID.</span>
@@ -145,7 +142,7 @@
 
 
 <div class="viewcode-block" id="UidValidity"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.UidValidity">[docs]</a><span class="k">class</span> <span class="nc">UidValidity</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the mailbox unique identifier validity value.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the mailbox unique identifier validity value.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        validity: The UID validity value.</span>
@@ -162,7 +159,7 @@
 
 
 <div class="viewcode-block" id="Unseen"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.Unseen">[docs]</a><span class="k">class</span> <span class="nc">Unseen</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the message sequence ID of the first message without the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the message sequence ID of the first message without the</span>
 <span class="sd">    ``\\Seen`` flag.</span>
 
 <span class="sd">    Args:</span>
@@ -179,7 +176,7 @@
 
 
 <div class="viewcode-block" id="AppendUid"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.AppendUid">[docs]</a><span class="k">class</span> <span class="nc">AppendUid</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the newly assigned UIDs and UIDVALIDITY of messages appended</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the newly assigned UIDs and UIDVALIDITY of messages appended</span>
 <span class="sd">    to a mailbox.</span>
 
 <span class="sd">    Args:</span>
@@ -203,7 +200,7 @@
 
 
 <div class="viewcode-block" id="CopyUid"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.CopyUid">[docs]</a><span class="k">class</span> <span class="nc">CopyUid</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the original and newly assigned UIDs and UIDVALIDITY of</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the original and newly assigned UIDs and UIDVALIDITY of</span>
 <span class="sd">    messages appended to the mailbox.</span>
 
 <span class="sd">    Args:</span>
@@ -228,7 +225,7 @@
 
 
 <div class="viewcode-block" id="MailboxId"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.code.MailboxId">[docs]</a><span class="k">class</span> <span class="nc">MailboxId</span><span class="p">(</span><span class="n">ResponseCode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Indicates the mailbox ID, which can be used to correlate mailboxes</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates the mailbox ID, which can be used to correlate mailboxes</span>
 <span class="sd">    between renames.</span>
 
 <span class="sd">    Args:</span>
@@ -296,7 +293,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -308,7 +305,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

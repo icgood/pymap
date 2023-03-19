@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.mime.parsed &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.mime.parsed &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../mime.html" accesskey="U">pymap.mime</a> &#187;</li>
@@ -82,7 +79,7 @@
 
 
 <div class="viewcode-block" id="ParsedHeaders"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.parsed.ParsedHeaders">[docs]</a><span class="k">class</span> <span class="nc">ParsedHeaders</span><span class="p">(</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">BaseHeader</span><span class="p">]]):</span>
-    <span class="sd">&quot;&quot;&quot;The mapping of message headers, parsed on-demand using a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The mapping of message headers, parsed on-demand using a</span>
 <span class="sd">    :class:`~email.headerregistry.HeaderRegistry`. Also provides typed</span>
 <span class="sd">    properties for standard headers used in IMAP processing.</span>
 
@@ -134,7 +131,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContentTypeHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Type`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Type`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">ContentTypeHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-type&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -142,7 +139,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DateHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Date`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Date`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">DateHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;date&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -150,7 +147,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subject</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Subject`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Subject`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;subject&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -158,7 +155,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">from_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``From`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``From`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;from&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -166,7 +163,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sender</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SingleAddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Sender`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Sender`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">SingleAddressHeader</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;sender&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -174,7 +171,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">reply_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Reply-To`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Reply-To`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;reply-to&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -182,7 +179,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``To`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``To`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;to&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -190,7 +187,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Cc`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Cc`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;cc&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -198,7 +195,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">bcc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Bcc`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Bcc`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">],</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;bcc&#39;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -206,7 +203,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">in_reply_to</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``In-Reply-To`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``In-Reply-To`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;in-reply-to&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -214,7 +211,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">references</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``References`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``References`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;references&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -222,7 +219,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">message_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Message-Id`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Message-Id`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;message-id&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -230,7 +227,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_disposition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContentDispositionHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Disposition`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Disposition`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">ContentDispositionHeader</span><span class="p">,</span>
                         <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-disposition&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -239,7 +236,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_language</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Language`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Language`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-language&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -247,7 +244,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_location</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Location`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Location`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-location&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -255,7 +252,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Id`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Id`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-id&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -263,7 +260,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_description</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnstructuredHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Description`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Description`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">UnstructuredHeader</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-description&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
@@ -272,7 +269,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">content_transfer_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">ContentTransferEncodingHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The ``Content-Transfer-Encoding`` header.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ``Content-Transfer-Encoding`` header.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">ContentTransferEncodingHeader</span><span class="p">,</span>
                         <span class="bp">self</span><span class="p">[</span><span class="sa">b</span><span class="s1">&#39;content-transfer-encoding&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -328,7 +325,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../mime.html" >pymap.mime</a> &#187;</li>
@@ -339,7 +336,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

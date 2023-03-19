@@ -8,15 +8,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.bytes &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.bytes &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
 
@@ -59,7 +56,7 @@
         <li class="right" >
           <a href="index.html" title="pymap Documentation"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li> 
       </ul>
@@ -81,9 +78,9 @@
 <dd><p>An object that can be converted to a bytestring.</p>
 </dd></dl>
 
-<dl class="py data">
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.bytes.MaybeBytesT">
-<span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">MaybeBytesT</span></span><a class="headerlink" href="#pymap.bytes.MaybeBytesT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">MaybeBytesT</span></span><a class="headerlink" href="#pymap.bytes.MaybeBytesT" title="Permalink to this definition">¶</a></dt>
 <dd><p>A type variable bound to <a class="reference internal" href="#pymap.bytes.MaybeBytes" title="pymap.bytes.MaybeBytes"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaybeBytes</span></code></a>.</p>
 <p>alias of TypeVar(‘MaybeBytesT’, bound=<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>)</p>
 </dd></dl>
@@ -98,7 +95,7 @@ method to be converted to bytes.</p>
 <dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><em>object</em></a>) – The value to check.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.11)"><em>TypeGuard</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a> | SupportsBytes]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.11)"><em>TypeGuard</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a> | <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -162,7 +159,7 @@ buffer.</p>
 <dd><p>Wrap the bytes in a <a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>SupportsBytes</em>) – The object to wrap.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a>) – The object to wrap.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
@@ -176,7 +173,7 @@ buffer.</p>
 <dd><p>Wrap the iterable in a <a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a> that will write each item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>SupportsBytes</em><em>]</em>) – The iterable to wrap.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a><em>]</em>) – The iterable to wrap.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
@@ -218,7 +215,7 @@ operations, this class intends to provide cleaner typing.</p>
 <dd><p>String interpolation into the format string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><em>SupportsIndex</em><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>SupportsBytes</em><em>]</em>) – The data interpolated into the format string.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsIndex" title="(in Python v3.11)"><em>SupportsIndex</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a><em>]</em>) – The data interpolated into the format string.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
@@ -237,7 +234,7 @@ operations, this class intends to provide cleaner typing.</p>
 <dd><p>Iterable join on a delimiter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><em>SupportsIndex</em><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>SupportsBytes</em><em>]</em>) – Iterable of items to join.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsIndex" title="(in Python v3.11)"><em>SupportsIndex</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a><em>]</em>) – Iterable of items to join.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
@@ -353,7 +350,7 @@ operations, this class intends to provide cleaner typing.</p>
         <li class="right" >
           <a href="index.html" title="pymap Documentation"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li> 
       </ul>
@@ -362,7 +359,7 @@ operations, this class intends to provide cleaner typing.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

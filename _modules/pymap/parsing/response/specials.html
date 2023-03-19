@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.response.specials &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.response.specials &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -90,7 +87,7 @@
 
 
 <div class="viewcode-block" id="FlagsResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FlagsResponse">[docs]</a><span class="k">class</span> <span class="nc">FlagsResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special FLAGS response used by the SELECT and EXAMINE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special FLAGS response used by the SELECT and EXAMINE</span>
 <span class="sd">    commands.</span>
 
 <span class="sd">    Args:</span>
@@ -109,7 +106,7 @@
 
 
 <div class="viewcode-block" id="ExistsResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ExistsResponse">[docs]</a><span class="k">class</span> <span class="nc">ExistsResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special EXISTS response used by the SELECT and EXAMINE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special EXISTS response used by the SELECT and EXAMINE</span>
 <span class="sd">    commands.</span>
 
 <span class="sd">    Args:</span>
@@ -127,7 +124,7 @@
 
 
 <div class="viewcode-block" id="RecentResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.RecentResponse">[docs]</a><span class="k">class</span> <span class="nc">RecentResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special RECENT response used by the SELECT and EXAMINE</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special RECENT response used by the SELECT and EXAMINE</span>
 <span class="sd">    commands.</span>
 
 <span class="sd">    Args:</span>
@@ -145,7 +142,7 @@
 
 
 <div class="viewcode-block" id="ExpungeResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ExpungeResponse">[docs]</a><span class="k">class</span> <span class="nc">ExpungeResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special EXPUNGE response used by the EXPUNGE command.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special EXPUNGE response used by the EXPUNGE command.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        seq: The message sequence number.</span>
@@ -162,7 +159,7 @@
 
 
 <div class="viewcode-block" id="FetchResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FetchResponse">[docs]</a><span class="k">class</span> <span class="nc">FetchResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special FETCH response used by the STORE and FETCH</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special FETCH response used by the STORE and FETCH</span>
 <span class="sd">    commands.</span>
 
 <span class="sd">    Args:</span>
@@ -186,7 +183,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span>
 
 <div class="viewcode-block" id="FetchResponse.merge"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.FetchResponse.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">FetchResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchResponse</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Merge the other FETCH response, adding any fetch attributes that do</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge the other FETCH response, adding any fetch attributes that do</span>
 <span class="sd">        not already exist in this FETCH response. For example::</span>
 
 <span class="sd">            * 3 FETCH (UID 119)</span>
@@ -219,7 +216,7 @@
 
 
 <div class="viewcode-block" id="SearchResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.SearchResponse">[docs]</a><span class="k">class</span> <span class="nc">SearchResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special SEARCH response used by the SEARCH command.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special SEARCH response used by the SEARCH command.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        seqs: List of message sequence integers.</span>
@@ -238,7 +235,7 @@
 
 
 <div class="viewcode-block" id="ESearchResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ESearchResponse">[docs]</a><span class="k">class</span> <span class="nc">ESearchResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special ESEARCH response used by extended SEARCH</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special ESEARCH response used by extended SEARCH</span>
 <span class="sd">    commands. This response should be mutually exclusive with SEARCH responses.</span>
 
 <span class="sd">    See Also:</span>
@@ -271,7 +268,7 @@
 
 
 <div class="viewcode-block" id="StatusResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.StatusResponse">[docs]</a><span class="k">class</span> <span class="nc">StatusResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special STATUS response used by the STATUS command.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special STATUS response used by the STATUS command.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name: The name of the mailbox.</span>
@@ -293,7 +290,7 @@
 
 
 <div class="viewcode-block" id="ListResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.ListResponse">[docs]</a><span class="k">class</span> <span class="nc">ListResponse</span><span class="p">(</span><span class="n">UntaggedResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special LIST response used by the LIST command.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special LIST response used by the LIST command.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mailbox: The mailbox name.</span>
@@ -323,7 +320,7 @@
 
 
 <div class="viewcode-block" id="LSubResponse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.specials.LSubResponse">[docs]</a><span class="k">class</span> <span class="nc">LSubResponse</span><span class="p">(</span><span class="n">ListResponse</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Constructs the special LSUB response used by the LSUB command.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs the special LSUB response used by the LSUB command.&quot;&quot;&quot;</span>
 
     <span class="n">_name</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;LSUB&#39;</span></div>
 </pre></div>
@@ -376,7 +373,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -388,7 +385,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

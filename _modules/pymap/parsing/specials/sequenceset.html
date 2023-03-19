@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.specials.sequenceset &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.specials.sequenceset &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -84,7 +81,7 @@
 
 
 <div class="viewcode-block" id="MaxValue"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.sequenceset.MaxValue">[docs]</a><span class="k">class</span> <span class="nc">MaxValue</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;The type used as a placeholder for the maximum value.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type used as a placeholder for the maximum value.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MaxValue</span><span class="p">):</span>
@@ -96,7 +93,7 @@
 
 
 <div class="viewcode-block" id="SequenceSet"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet">[docs]</a><span class="k">class</span> <span class="nc">SequenceSet</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">_SeqElem</span><span class="p">]]):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a sequence set from an IMAP stream.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a sequence set from an IMAP stream.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        sequences: The sequence set data.</span>
@@ -119,17 +116,17 @@
 
 <div class="viewcode-block" id="SequenceSet.all"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet.all">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceSet</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;A sequence set intended to contain all values.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A sequence set intended to contain all values.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_AllSequenceSet</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_SeqElem</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The sequence set data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The sequence set data.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;True if the sequence set starts at ``1`` and ends at the maximum</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if the sequence set starts at ``1`` and ends at the maximum</span>
 <span class="sd">        value.</span>
 
 <span class="sd">        This may be used to optimize cases of checking for a value in the set,</span>
@@ -164,7 +161,7 @@
                 <span class="k">return</span> <span class="p">()</span>
 
 <div class="viewcode-block" id="SequenceSet.flatten"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a set of all values contained in the sequence set.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a set of all values contained in the sequence set.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            max_value: The maximum value, in place of any ``*``.</span>
@@ -173,7 +170,7 @@
         <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">max_value</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="SequenceSet.iter"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet.iter">[docs]</a>    <span class="k">def</span> <span class="nf">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Iterates through the sequence numbers contained in the set, bounded</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates through the sequence numbers contained in the set, bounded</span>
 <span class="sd">        by the given maximum value (in place of any ``*``).</span>
 
 <span class="sd">        Args:</span>
@@ -241,7 +238,7 @@
 
 <div class="viewcode-block" id="SequenceSet.build"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet.build">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">seqs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SequenceSet</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build a new sequence set that contains the given values using as</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a new sequence set that contains the given values using as</span>
 <span class="sd">        few groups as possible.</span>
 
 <span class="sd">        Args:</span>
@@ -351,7 +348,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -362,7 +359,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.command.select &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.command.select &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -90,7 +87,7 @@
 
 
 <div class="viewcode-block" id="CheckCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CheckCommand">[docs]</a><span class="k">class</span> <span class="nc">CheckCommand</span><span class="p">(</span><span class="n">CommandNoArgs</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``CHECK`` command initiates an implementation-specific backend</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``CHECK`` command initiates an implementation-specific backend</span>
 <span class="sd">    synchronization for the selected mailbox.</span>
 
 <span class="sd">    See Also:</span>
@@ -102,7 +99,7 @@
 
 
 <div class="viewcode-block" id="CloseCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CloseCommand">[docs]</a><span class="k">class</span> <span class="nc">CloseCommand</span><span class="p">(</span><span class="n">CommandNoArgs</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``CLOSE`` command closes a selected mailbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``CLOSE`` command closes a selected mailbox.</span>
 
 <span class="sd">    See Also:</span>
 <span class="sd">        `RFC 3501 6.4.2. &lt;https://tools.ietf.org/html/rfc3501#section-6.4.2&gt;`_</span>
@@ -113,7 +110,7 @@
 
 
 <div class="viewcode-block" id="ExpungeCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.ExpungeCommand">[docs]</a><span class="k">class</span> <span class="nc">ExpungeCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``EXPUNGE`` command permanently erases all messages in the selected</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``EXPUNGE`` command permanently erases all messages in the selected</span>
 <span class="sd">    mailbox that contain the ``\\Deleted`` flag.</span>
 
 <span class="sd">    See Also:</span>
@@ -145,7 +142,7 @@
 
 
 <div class="viewcode-block" id="CopyCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CopyCommand">[docs]</a><span class="k">class</span> <span class="nc">CopyCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``COPY`` command copies messages from the selected mailbox to the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``COPY`` command copies messages from the selected mailbox to the</span>
 <span class="sd">    end of the destination mailbox.</span>
 
 <span class="sd">    See Also:</span>
@@ -183,7 +180,7 @@
 
 
 <div class="viewcode-block" id="MoveCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.MoveCommand">[docs]</a><span class="k">class</span> <span class="nc">MoveCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``MOVE`` command moves messages from the selected mailbox to the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``MOVE`` command moves messages from the selected mailbox to the</span>
 <span class="sd">    end of the destination mailbox.</span>
 
 <span class="sd">    See Also:</span>
@@ -221,7 +218,7 @@
 
 
 <div class="viewcode-block" id="FetchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.FetchCommand">[docs]</a><span class="k">class</span> <span class="nc">FetchCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``FETCH`` command fetches message data from the selected mailbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``FETCH`` command fetches message data from the selected mailbox.</span>
 <span class="sd">    What data is fetched can be controlled in depth by a set of fetch</span>
 <span class="sd">    attributes given in the command.</span>
 
@@ -299,7 +296,7 @@
 
 
 <div class="viewcode-block" id="StoreCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.StoreCommand">[docs]</a><span class="k">class</span> <span class="nc">StoreCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``STORE`` command updates the flags of a set of messages in the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``STORE`` command updates the flags of a set of messages in the</span>
 <span class="sd">    selected mailbox.</span>
 
 <span class="sd">    See Also:</span>
@@ -375,7 +372,7 @@
 
 
 <div class="viewcode-block" id="SearchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.SearchCommand">[docs]</a><span class="k">class</span> <span class="nc">SearchCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``SEARCH`` command searches the messages in the selected mailbox</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``SEARCH`` command searches the messages in the selected mailbox</span>
 <span class="sd">    based on a set of search criteria.</span>
 
 <span class="sd">    See Also:</span>
@@ -449,7 +446,7 @@
 
 
 <div class="viewcode-block" id="UidCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCommand">[docs]</a><span class="k">class</span> <span class="nc">UidCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID`` command precedes one of the ``COPY``, ``EXPUNGE``,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID`` command precedes one of the ``COPY``, ``EXPUNGE``,</span>
 <span class="sd">    ``FETCH``, ``SEARCH``, or ``STORE`` commands and indicates that the</span>
 <span class="sd">    command interacts with message UIDs instead of sequence numbers. Refer</span>
 <span class="sd">    to the RFC section for a complete description.</span>
@@ -470,7 +467,7 @@
 
 
 <div class="viewcode-block" id="UidCopyCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCopyCommand">[docs]</a><span class="k">class</span> <span class="nc">UidCopyCommand</span><span class="p">(</span><span class="n">CopyCommand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID COPY`` variant of the ``COPY`` command, which uses message</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID COPY`` variant of the ``COPY`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -489,7 +486,7 @@
 
 
 <div class="viewcode-block" id="UidMoveCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidMoveCommand">[docs]</a><span class="k">class</span> <span class="nc">UidMoveCommand</span><span class="p">(</span><span class="n">MoveCommand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID MOVE`` variant of the ``MOVE`` command, which uses message</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID MOVE`` variant of the ``MOVE`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -508,7 +505,7 @@
 
 
 <div class="viewcode-block" id="UidExpungeCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidExpungeCommand">[docs]</a><span class="k">class</span> <span class="nc">UidExpungeCommand</span><span class="p">(</span><span class="n">ExpungeCommand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID EXPUNGE`` variant of the ``EXPUNGE`` command, which uses</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID EXPUNGE`` variant of the ``EXPUNGE`` command, which uses</span>
 <span class="sd">    message UIDs instead of sequence numbers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -527,7 +524,7 @@
 
 
 <div class="viewcode-block" id="UidFetchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidFetchCommand">[docs]</a><span class="k">class</span> <span class="nc">UidFetchCommand</span><span class="p">(</span><span class="n">FetchCommand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID FETCH`` variant of the ``FETCH`` command, which uses message</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID FETCH`` variant of the ``FETCH`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -546,7 +543,7 @@
 
 
 <div class="viewcode-block" id="UidSearchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidSearchCommand">[docs]</a><span class="k">class</span> <span class="nc">UidSearchCommand</span><span class="p">(</span><span class="n">SearchCommand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID SEARCH`` variant of the ``SEARCH`` command, which uses message</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID SEARCH`` variant of the ``SEARCH`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -565,7 +562,7 @@
 
 
 <div class="viewcode-block" id="UidStoreCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidStoreCommand">[docs]</a><span class="k">class</span> <span class="nc">UidStoreCommand</span><span class="p">(</span><span class="n">StoreCommand</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``UID STORE`` variant of the ``STORE`` command, which uses message</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID STORE`` variant of the ``STORE`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -584,7 +581,7 @@
 
 
 <div class="viewcode-block" id="IdleCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand">[docs]</a><span class="k">class</span> <span class="nc">IdleCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The ``IDLE`` command waits for the continuation string ``DONE`` from the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``IDLE`` command waits for the continuation string ``DONE`` from the</span>
 <span class="sd">    client. During this wait, the server may be sending untagged responses</span>
 <span class="sd">    indicating concurrent updates to the mailbox.</span>
 
@@ -612,7 +609,7 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span> <span class="n">buf</span></div>
 
 <div class="viewcode-block" id="IdleCommand.parse_done"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand.parse_done">[docs]</a>    <span class="k">def</span> <span class="nf">parse_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Parse the continuation line sent by the client to end the ``IDLE``</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the continuation line sent by the client to end the ``IDLE``</span>
 <span class="sd">        command.</span>
 
 <span class="sd">        Args:</span>
@@ -675,7 +672,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -687,7 +684,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -8,15 +8,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.token &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.token &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
 
@@ -59,7 +56,7 @@
         <li class="right" >
           <a href="pymap.cluster.html" title="pymap.cluster"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></li> 
       </ul>
@@ -115,7 +112,7 @@ data, or <code class="docutils literal notranslate"><span class="pre">None</span
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a>) – The private key used to create and verify the token.</p></li>
 <li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Limits the token to authorizing as this identity.</p></li>
 <li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Arbitrary metadata string, application-specific.</p></li>
-<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime.datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -136,7 +133,7 @@ special private admin key that grants unrestricted access.</p>
 <li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>None</em>) – The private admin key.</p></li>
 <li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Limits the token to authorizing as this identity.</p></li>
 <li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Arbitrary metadata string, application-specific.</p></li>
-<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime.datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -192,7 +189,7 @@ data, or <code class="docutils literal notranslate"><span class="pre">None</span
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a>) – The private key used to create and verify the token.</p></li>
 <li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Limits the token to authorizing as this identity.</p></li>
 <li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Arbitrary metadata string, application-specific.</p></li>
-<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime.datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -213,7 +210,7 @@ special private admin key that grants unrestricted access.</p>
 <li><p><strong>admin_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><em>None</em>) – The private admin key.</p></li>
 <li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Limits the token to authorizing as this identity.</p></li>
 <li><p><strong>location</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – Arbitrary metadata string, application-specific.</p></li>
-<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime.datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
+<li><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime</em></a><em> | </em><em>None</em>) – An expiration when this token shall no longer be valid.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -296,7 +293,7 @@ attempt to succeed.</p>
 <dd><p>Authenticates the credentials against the given <em>identity</em>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>identity</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.identity.html#pysasl.identity.Identity" title="(in pysasl v1.0)"><em>pysasl.identity.Identity</em></a><em> | </em><em>None</em>) – The identity being authenticated.</p>
+<dd class="field-odd"><p><strong>identity</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.identity.html#pysasl.identity.Identity" title="(in pysasl v1.0)"><em>Identity</em></a><em> | </em><em>None</em>) – The identity being authenticated.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>MechanismUnusable</strong> – The mechanism is not capable of verifying
@@ -418,7 +415,7 @@ attempt to succeed.</p>
         <li class="right" >
           <a href="pymap.cluster.html" title="pymap.cluster"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.token</span></code></a></li> 
       </ul>
@@ -427,7 +424,7 @@ attempt to succeed.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

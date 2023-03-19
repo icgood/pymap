@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.maildir &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.maildir &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.maildir</a></li> 
@@ -97,7 +94,7 @@
 
 
 <div class="viewcode-block" id="MaildirBackend"><a class="viewcode-back" href="../../../pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend">[docs]</a><span class="k">class</span> <span class="nc">MaildirBackend</span><span class="p">(</span><span class="n">BackendInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Defines an on-disk backend that uses :class:`~mailbox.Maildir` for</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines an on-disk backend that uses :class:`~mailbox.Maildir` for</span>
 <span class="sd">    mailbox storage and `MailboxFormat/Maildir</span>
 <span class="sd">    &lt;https://wiki2.dovecot.org/MailboxFormat/Maildir&gt;`_ for metadata storage.</span>
 
@@ -152,7 +149,7 @@
 
 
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../pymap.backend.maildir.html#pymap.backend.maildir.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">IMAPConfig</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The config implementation for the maildir backend.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The config implementation for the maildir backend.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        args: The command-line arguments.</span>
@@ -193,7 +190,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">users_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Used by the default :meth:`~Session.find_user` implementation</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Used by the default :meth:`~Session.find_user` implementation</span>
 <span class="sd">        to retrieve the users file path from the command-line arguments. The</span>
 <span class="sd">        users file is given as the first positional argument on the</span>
 <span class="sd">        command-line.</span>
@@ -211,7 +208,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">base_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The base directory for all relative mailbox paths. The default is</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The base directory for all relative mailbox paths. The default is</span>
 <span class="sd">        the directory containing the users file.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -219,7 +216,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">layout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The Maildir directory layout name.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Maildir directory layout name.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :class:`~pymap.backend.maildir.layout.MaildirLayout`</span>
@@ -229,7 +226,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">colon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The info delimiter in mail filename.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The info delimiter in mail filename.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            Note on ``colon`` in :class:`mailbox.Maildir`.</span>
@@ -276,7 +273,7 @@
 
 
 <span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">BaseSession</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;The session implementation for the maildir backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The session implementation for the maildir backend.&quot;&quot;&quot;</span>
 
     <span class="n">resource</span> <span class="o">=</span> <span class="vm">__name__</span>
 
@@ -301,7 +298,7 @@
 
 
 <span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">LoginInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The login implementation for the maildir backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The login implementation for the maildir backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -333,7 +330,7 @@
 
 
 <span class="k">class</span> <span class="nc">Identity</span><span class="p">(</span><span class="n">IdentityInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The identity implementation for the maildir backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The identity implementation for the maildir backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">UserMetadata</span><span class="p">,</span>
                  <span class="n">mailbox_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -426,7 +423,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.maildir</a></li> 
@@ -436,7 +433,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

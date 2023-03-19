@@ -8,15 +8,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.backend &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
 
@@ -59,7 +56,7 @@
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -249,16 +246,16 @@
 
 <section id="module-pymap.backend.mailbox">
 <span id="pymap-backend-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.mailbox</span></code><a class="headerlink" href="#module-pymap.backend.mailbox" title="Permalink to this heading">¶</a></h2>
-<dl class="py data">
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.mailbox.MailboxDataT">
-<span class="sig-prename descclassname"><span class="pre">pymap.backend.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxDataT</span></span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxDataT</span></span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
 <p>alias of TypeVar(‘MailboxDataT’, bound=<code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface[Any]</span></code>)</p>
 </dd></dl>
 
-<dl class="py data">
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.mailbox.MailboxDataT_co">
-<span class="sig-prename descclassname"><span class="pre">pymap.backend.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxDataT_co</span></span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxDataT_co</span></span><a class="headerlink" href="#pymap.backend.mailbox.MailboxDataT_co" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariant type variable with an upper bound of
 <a class="reference internal" href="#pymap.backend.mailbox.MailboxDataInterface" title="pymap.backend.mailbox.MailboxDataInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface</span></code></a>.</p>
 <p>alias of TypeVar(‘MailboxDataT_co’, bound=<code class="xref py py-class docutils literal notranslate"><span class="pre">MailboxDataInterface[Any]</span></code>, covariant=True)</p>
@@ -317,7 +314,7 @@ needed to discover updates.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – the selected mailbox object.</p></li>
-<li><p><strong>wait_on</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>pymap.concurrent.Event</em></a><em> | </em><em>None</em>) – If given, block until this event signals or mailbox
+<li><p><strong>wait_on</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>Event</em></a><em> | </em><em>None</em>) – If given, block until this event signals or mailbox
 activity occurs.</p></li>
 </ul>
 </dd>
@@ -340,7 +337,7 @@ message with its assigned UID.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>MessageT_co</em></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -354,9 +351,9 @@ message with its assigned UID.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The UID of the message to copy.</p></li>
-<li><p><strong>destination</strong> (<em>MailboxDataT</em>) – The destination mailbox.</p></li>
+<li><p><strong>destination</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – The destination mailbox.</p></li>
 <li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
-<li><p><strong>self</strong> (<em>MailboxDataT</em>) – </p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -374,9 +371,9 @@ message with its assigned UID.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The UID of the message to move.</p></li>
-<li><p><strong>destination</strong> (<em>MailboxDataT</em>) – The destination mailbox.</p></li>
+<li><p><strong>destination</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – The destination mailbox.</p></li>
 <li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
-<li><p><strong>self</strong> (<em>MailboxDataT</em>) – </p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -397,7 +394,7 @@ message with its assigned UID.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a>[<em>MessageT_co</em>, <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage"><em>ExpungedMessage</em></a>]</p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a> | <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage"><em>ExpungedMessage</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -417,7 +414,7 @@ message with its assigned UID.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a>[<em>MessageT_co</em>, <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage"><em>ExpungedMessage</em></a>]</p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a> | <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage"><em>ExpungedMessage</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -590,7 +587,7 @@ are resolved by the selected mailbox session.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.11)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>MailboxDataT_co</em></p>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT_co" title="pymap.backend.mailbox.MailboxDataT_co"><em>MailboxDataT_co</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -688,7 +685,7 @@ most backends.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.backend.session.BaseSession.filter_set">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filter_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><span class="pre">FilterSetInterface</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.session.BaseSession.filter_set" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filter_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface" title="pymap.interfaces.filter.FilterSetInterface"><span class="pre">FilterSetInterface</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#pymap.backend.session.BaseSession.filter_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manages the active and inactive filters for the login user.</p>
 </dd></dl>
 
@@ -734,7 +731,7 @@ backend to clean up resources.</p>
 <li><p><strong>ref_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Mailbox reference name.</p></li>
 <li><p><strong>filter</strong> – Mailbox name with possible wildcards.</p></li>
 <li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If True, only list the subscribed mailboxes.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 <li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
 </ul>
 </dd>
@@ -754,7 +751,7 @@ an exception if the mailbox does not yet exist.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -778,7 +775,7 @@ an exception if the mailbox does not yet exist.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -802,7 +799,7 @@ an exception if the mailbox does not yet exist.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -812,7 +809,7 @@ an exception if the mailbox does not yet exist.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a> | None</p>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -830,7 +827,7 @@ an exception if the mailbox does not yet exist.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>before_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox before the rename.</p></li>
 <li><p><strong>after_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox after the rename.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -840,7 +837,7 @@ an exception if the mailbox does not yet exist.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a> | None</p>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -858,14 +855,14 @@ folder name currently exists.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a> | None</p>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -883,14 +880,14 @@ not the given folder name currently exists.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a> | None</p>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -908,7 +905,7 @@ not the given folder name currently exists.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
 <li><p><strong>messages</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.11)"><em>Sequence</em></a><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><em>AppendMessage</em></a><em>]</em>) – The messages to append.</p></li>
-<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>pymap.selected.SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -969,7 +966,7 @@ mailbox backend, which may be a slower operation.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – The selected mailbox session.</p></li>
-<li><p><strong>wait_on</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>pymap.concurrent.Event</em></a><em> | </em><em>None</em>) – If given, block until this event signals.</p></li>
+<li><p><strong>wait_on</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>Event</em></a><em> | </em><em>None</em>) – If given, block until this event signals.</p></li>
 <li><p><strong>housekeeping</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If True, the backend may perform additional
 housekeeping operations if necessary.</p></li>
 </ul>
@@ -1044,7 +1041,7 @@ from the mailbox.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – The selected mailbox session.</p></li>
-<li><p><strong>uid_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><em>pymap.parsing.specials.sequenceset.SequenceSet</em></a><em> | </em><em>None</em>) – Only the messages in the given UID set should be expunged.</p></li>
+<li><p><strong>uid_set</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet" title="pymap.parsing.specials.sequenceset.SequenceSet"><em>SequenceSet</em></a><em> | </em><em>None</em>) – Only the messages in the given UID set should be expunged.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -1294,7 +1291,7 @@ the selected mailbox.</p>
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -1303,7 +1300,7 @@ the selected mailbox.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.dict &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.dict &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.dict</a></li> 
@@ -75,10 +72,10 @@
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">AsyncIterator</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span><span class="p">,</span> <span class="n">asynccontextmanager</span><span class="p">,</span> <span class="n">AsyncExitStack</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span> <span class="nn">importlib.resources</span> <span class="kn">import</span> <span class="n">files</span>
 <span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_bytes</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Final</span>
 
-<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_listdir</span><span class="p">,</span> <span class="n">resource_stream</span>
 <span class="kn">from</span> <span class="nn">pysasl.creds.server</span> <span class="kn">import</span> <span class="n">ServerCredentials</span>
 
 <span class="kn">from</span> <span class="nn">pymap.config</span> <span class="kn">import</span> <span class="n">BackendCapability</span><span class="p">,</span> <span class="n">IMAPConfig</span>
@@ -101,7 +98,7 @@
 
 
 <div class="viewcode-block" id="DictBackend"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend">[docs]</a><span class="k">class</span> <span class="nc">DictBackend</span><span class="p">(</span><span class="n">BackendInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Defines a backend that uses an in-memory dictionary for example usage</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a backend that uses an in-memory dictionary for example usage</span>
 <span class="sd">    and integration testing.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -155,7 +152,7 @@
 
 
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">IMAPConfig</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The config implementation for the dict backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The config implementation for the dict backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">demo_data</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
                  <span class="n">demo_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">demo_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -175,17 +172,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">demo_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;True if demo data should be loaded at startup.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if demo data should be loaded at startup.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">demo_data_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Resource path of demo data files.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resource path of demo data files.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_data_resource</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">demo_user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;A login name that is valid at startup, which defaults to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A login name that is valid at startup, which defaults to</span>
 <span class="sd">        ``demouser``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -193,7 +190,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">demo_password</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The password for the :attr:`.demo_user` login name, which defaults</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The password for the :attr:`.demo_user` login name, which defaults</span>
 <span class="sd">        to ``demopass``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -208,7 +205,7 @@
 
 
 <span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">BaseSession</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;The session implementation for the dict backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The session implementation for the dict backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">mailbox_set</span><span class="p">:</span> <span class="n">MailboxSet</span><span class="p">,</span>
                  <span class="n">filter_set</span><span class="p">:</span> <span class="n">FilterSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -231,7 +228,7 @@
 
 
 <span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">LoginInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The login implementation for the dict backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The login implementation for the dict backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -270,7 +267,7 @@
 
 
 <span class="k">class</span> <span class="nc">Identity</span><span class="p">(</span><span class="n">IdentityInterface</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The identity implementation for the dict backend.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The identity implementation for the dict backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">Login</span><span class="p">,</span> <span class="n">roles</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -310,27 +307,29 @@
                          <span class="n">filter_set</span><span class="p">:</span> <span class="n">FilterSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">inbox</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mailbox_set</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_mailbox</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">,</span> <span class="n">inbox</span><span class="p">)</span>
-        <span class="n">mbx_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">resource_listdir</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="s1">&#39;demo&#39;</span><span class="p">))</span>
+        <span class="n">mbx_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span>
+                           <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span>
+                           <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_dir</span><span class="p">())</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_sieve</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">filter_set</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mbx_names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;sieve&#39;</span><span class="p">:</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_sieve</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">filter_set</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
                 <span class="k">await</span> <span class="n">mailbox_set</span><span class="o">.</span><span class="n">add_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                 <span class="n">mbx</span> <span class="o">=</span> <span class="k">await</span> <span class="n">mailbox_set</span><span class="o">.</span><span class="n">get_mailbox</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
                 <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_demo_mailbox</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mbx</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_demo_sieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_demo_sieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                <span class="n">filter_set</span><span class="p">:</span> <span class="n">FilterSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">resource_stream</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span> <span class="k">as</span> <span class="n">sieve_stream</span><span class="p">:</span>
-            <span class="n">sieve</span> <span class="o">=</span> <span class="n">sieve_stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;sieve&#39;</span><span class="p">)</span>
+        <span class="n">sieve</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
         <span class="k">await</span> <span class="n">filter_set</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">sieve</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">filter_set</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_load_demo_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                  <span class="n">mbx</span><span class="p">:</span> <span class="n">MailboxData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">msg_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">resource_listdir</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+        <span class="n">msg_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span>
+                           <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span>
+                           <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">msg_name</span> <span class="ow">in</span> <span class="n">msg_names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">msg_name</span> <span class="o">==</span> <span class="s1">&#39;.readonly&#39;</span><span class="p">:</span>
                 <span class="n">mbx</span><span class="o">.</span><span class="n">_readonly</span> <span class="o">=</span> <span class="kc">True</span>
@@ -338,7 +337,8 @@
             <span class="k">elif</span> <span class="n">msg_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
                 <span class="k">continue</span>
             <span class="n">msg_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">msg_name</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">resource_stream</span><span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">msg_path</span><span class="p">))</span> <span class="k">as</span> <span class="n">msg_stream</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">closing</span><span class="p">(</span><span class="n">files</span><span class="p">(</span><span class="n">resource</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">msg_path</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;rb&#39;</span><span class="p">))</span> \
+                    <span class="k">as</span> <span class="n">msg_stream</span><span class="p">:</span>
                 <span class="n">flags_line</span> <span class="o">=</span> <span class="n">msg_stream</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
                 <span class="n">msg_timestamp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">msg_stream</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
                 <span class="n">msg_data</span> <span class="o">=</span> <span class="n">msg_stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -443,7 +443,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.dict</a></li> 
@@ -453,7 +453,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

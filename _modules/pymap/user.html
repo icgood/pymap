@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.user &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.user &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.user</a></li> 
@@ -82,7 +79,7 @@
 
 
 <div class="viewcode-block" id="UserRoles"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserRoles">[docs]</a><span class="k">class</span> <span class="nc">UserRoles</span><span class="p">(</span><span class="n">MutableSet</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A set of roles for a user.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A set of roles for a user.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        roles: Initial roles for the set.</span>
@@ -114,7 +111,7 @@
 
 
 <div class="viewcode-block" id="UserMetadata"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata">[docs]</a><span class="k">class</span> <span class="nc">UserMetadata</span><span class="p">(</span><span class="n">Identity</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Contains user metadata such as the password or hash.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Contains user metadata such as the password or hash.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config: The configuration object.</span>
@@ -139,7 +136,7 @@
     <span class="k">async</span> <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span> <span class="n">authcid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                      <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserMetadata</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a new :class:`UserMetadata` by hashing the given *password*</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new :class:`UserMetadata` by hashing the given *password*</span>
 <span class="sd">        using the configured hash algorithm. Uses the</span>
 <span class="sd">        :attr:`~pymap.config.cpu_subsystem` to avoid blocking the main thread.</span>
 
@@ -178,12 +175,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">password</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The password string or hash digest.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The password string or hash digest.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserRoles</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;A set of role strings given to the user. These strings only have</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A set of role strings given to the user. These strings only have</span>
 <span class="sd">        meaning to the backend.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -191,11 +188,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Additional parameters associated with the user metadata.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Additional parameters associated with the user metadata.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
 
 <div class="viewcode-block" id="UserMetadata.get_key"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata.get_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Find the token key for the given identifier associated with this</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the token key for the given identifier associated with this</span>
 <span class="sd">        user.</span>
 
 <span class="sd">        Args:</span>
@@ -205,7 +202,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="UserMetadata.check_password"><a class="viewcode-back" href="../../pymap.user.html#pymap.user.UserMetadata.check_password">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">creds</span><span class="p">:</span> <span class="n">ServerCredentials</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check the given credentials against the known password comparison</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the given credentials against the known password comparison</span>
 <span class="sd">        data. If the known data used a hash, then the equivalent hash of the</span>
 <span class="sd">        provided secret is compared.</span>
 
@@ -274,7 +271,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.user</a></li> 
@@ -284,7 +281,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

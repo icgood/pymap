@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.maildir.layout &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.backend.maildir.layout &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../maildir.html" accesskey="U">pymap.backend.maildir</a> &#187;</li>
@@ -84,7 +81,7 @@
 
 
 <div class="viewcode-block" id="MaildirLayout"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout">[docs]</a><span class="k">class</span> <span class="nc">MaildirLayout</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">_MaildirT</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Manages the folder layout of a :class:`~mailbox.Maildir` inbox.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the folder layout of a :class:`~mailbox.Maildir` inbox.</span>
 
 <span class="sd">    See Also:</span>
 <span class="sd">        `Directory Structure</span>
@@ -95,7 +92,7 @@
 <div class="viewcode-block" id="MaildirLayout.get"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">maildir_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">_MaildirT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MaildirLayout</span><span class="p">[</span><span class="n">_MaildirT</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: The root path of the inbox.</span>
@@ -116,12 +113,12 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The root path of the inbox.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The root path of the inbox.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
 <div class="viewcode-block" id="MaildirLayout.get_path"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get_path">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the path of the sub-folder.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the path of the sub-folder.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The nested parts of the folder name, not including inbox.</span>
@@ -133,7 +130,7 @@
 <div class="viewcode-block" id="MaildirLayout.list_folders"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.list_folders">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">list_folders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">top</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return all folders, starting with ``top`` and traversing</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all folders, starting with ``top`` and traversing</span>
 <span class="sd">        through the sub-folder heirarchy.</span>
 
 <span class="sd">        Args:</span>
@@ -148,7 +145,7 @@
 
 <div class="viewcode-block" id="MaildirLayout.get_folder"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get_folder">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_MaildirT</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the existing sub-folder.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the existing sub-folder.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The delimited sub-folder name, not including inbox.</span>
@@ -162,7 +159,7 @@
 
 <div class="viewcode-block" id="MaildirLayout.add_folder"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.add_folder">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">add_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a new sub-folder.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a new sub-folder.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The delimited sub-folder name, not including inbox.</span>
@@ -177,7 +174,7 @@
 
 <div class="viewcode-block" id="MaildirLayout.remove_folder"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.remove_folder">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">remove_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Remove the existing sub-folder.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the existing sub-folder.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The delimited sub-folder name, not including inbox.</span>
@@ -193,7 +190,7 @@
 <div class="viewcode-block" id="MaildirLayout.rename_folder"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.rename_folder">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">rename_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dest_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                       <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Rename the existing sub-folder to the destination.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rename the existing sub-folder to the destination.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            source_name: The delimited source sub-folder name.</span>
@@ -304,7 +301,7 @@
 
 
 <div class="viewcode-block" id="DefaultLayout"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.DefaultLayout">[docs]</a><span class="k">class</span> <span class="nc">DefaultLayout</span><span class="p">(</span><span class="n">_BaseLayout</span><span class="p">[</span><span class="n">_MaildirT</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;The default Maildir++ layout, which uses sub-folder names starting</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The default Maildir++ layout, which uses sub-folder names starting</span>
 <span class="sd">    with and using ``.`` as a delimiter for nesting , e.g.::</span>
 
 <span class="sd">        .Trash/</span>
@@ -359,7 +356,7 @@
 
 
 <div class="viewcode-block" id="FilesystemLayout"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.layout.FilesystemLayout">[docs]</a><span class="k">class</span> <span class="nc">FilesystemLayout</span><span class="p">(</span><span class="n">_BaseLayout</span><span class="p">[</span><span class="n">_MaildirT</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;The ``fs`` layout, which uses nested sub-directories on the filesystem,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``fs`` layout, which uses nested sub-directories on the filesystem,</span>
 <span class="sd">    e.g.::</span>
 
 <span class="sd">        Trash/</span>
@@ -448,7 +445,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../maildir.html" >pymap.backend.maildir</a> &#187;</li>
@@ -459,7 +456,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

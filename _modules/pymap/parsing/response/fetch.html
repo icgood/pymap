@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.response.fetch &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing.response.fetch &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -158,7 +155,7 @@
 
 
 <div class="viewcode-block" id="EnvelopeStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure">[docs]</a><span class="k">class</span> <span class="nc">EnvelopeStructure</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Builds the response to an `RFC 3501 7.4.2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Builds the response to an `RFC 3501 7.4.2</span>
 <span class="sd">    &lt;https://tools.ietf.org/html/rfc3501#section-7.4.2&gt;`_ FETCH ENVELOPE</span>
 <span class="sd">    request.</span>
 
@@ -200,7 +197,7 @@
 
 <div class="viewcode-block" id="EnvelopeStructure.empty"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure.empty">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvelopeStructure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return an empty envelope structure object.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an empty envelope structure object.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            `RFC 2180 4.1.3</span>
@@ -239,7 +236,7 @@
 
 
 <div class="viewcode-block" id="BodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure">[docs]</a><span class="k">class</span> <span class="nc">BodyStructure</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parent class for the response to an `RFC 3501 7.4.2</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for the response to an `RFC 3501 7.4.2</span>
 <span class="sd">    &lt;https://tools.ietf.org/html/rfc3501#section-7.4.2&gt;`_ FETCH BODYSTRUCTURE</span>
 <span class="sd">    request. This class should not be used directly.</span>
 
@@ -268,7 +265,7 @@
 
 <div class="viewcode-block" id="BodyStructure.empty"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure.empty">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BodyStructure</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return an empty body structure object.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an empty body structure object.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            `RFC 2180 4.1.3</span>
@@ -289,12 +286,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">extended</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="MultipartBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.MultipartBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">MultipartBodyStructure</span><span class="p">(</span><span class="n">BodyStructure</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``multipart/*`` messages. The</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``multipart/*`` messages. The</span>
 <span class="sd">    response is made up of the BODYSTRUCTUREs of all sub-parts.</span>
 
 <span class="sd">    Args:</span>
@@ -324,7 +321,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">extended</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">extended</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">List</span><span class="p">([</span><span class="n">_Concatenated</span><span class="p">(</span><span class="n">parts</span><span class="p">),</span> <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subtype</span><span class="p">),</span>
                      <span class="n">_ParamsList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_type_params</span><span class="p">),</span>
@@ -334,7 +331,7 @@
 
 
 <div class="viewcode-block" id="ContentBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.ContentBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">ContentBodyStructure</span><span class="p">(</span><span class="n">BodyStructure</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for any content type that does not</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for any content type that does not</span>
 <span class="sd">    fit the other sub-classes.</span>
 
 <span class="sd">    Args:</span>
@@ -383,7 +380,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">extended</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">List</span><span class="p">([</span><span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maintype</span><span class="p">),</span> <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subtype</span><span class="p">),</span>
                      <span class="n">_ParamsList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_type_params</span><span class="p">),</span>
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_id</span><span class="p">),</span>
@@ -398,7 +395,7 @@
 
 
 <div class="viewcode-block" id="TextBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.TextBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">TextBodyStructure</span><span class="p">(</span><span class="n">ContentBodyStructure</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``text/*`` messages.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``text/*`` messages.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        subtype: Sub-type of the ``Content-Type:`` header.</span>
@@ -443,7 +440,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">extended</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">List</span><span class="p">([</span><span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maintype</span><span class="p">),</span> <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subtype</span><span class="p">),</span>
                      <span class="n">_ParamsList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_type_params</span><span class="p">),</span>
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_id</span><span class="p">),</span>
@@ -458,7 +455,7 @@
 
 
 <div class="viewcode-block" id="MessageBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.MessageBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">MessageBodyStructure</span><span class="p">(</span><span class="n">ContentBodyStructure</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``message/rfc822`` messages.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``message/rfc822`` messages.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        content_type_params: Parameters from the ``Content-Type:`` header.</span>
@@ -510,7 +507,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">extended</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The body structure attributes with extension data.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">List</span><span class="p">([</span><span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maintype</span><span class="p">),</span> <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subtype</span><span class="p">),</span>
                      <span class="n">_ParamsList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_type_params</span><span class="p">),</span>
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_id</span><span class="p">),</span>
@@ -589,7 +586,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -601,7 +598,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

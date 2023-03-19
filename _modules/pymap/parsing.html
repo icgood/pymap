@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.parsing &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.parsing</a></li> 
@@ -90,7 +87,7 @@
 
 
 <div class="viewcode-block" id="Params"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Params">[docs]</a><span class="k">class</span> <span class="nc">Params</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Parameters used and passed around among the :meth:`~Parseable.parse`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parameters used and passed around among the :meth:`~Parseable.parse`</span>
 <span class="sd">    methods.</span>
 
 <span class="sd">    Args:</span>
@@ -147,7 +144,7 @@
              <span class="n">tag</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">max_append_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">allow_continuations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Params</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Copy the parameters, possibly replacing a subset.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the parameters, possibly replacing a subset.&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;expected&#39;</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
@@ -162,7 +159,7 @@
 
 
 <div class="viewcode-block" id="Parseable"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Parseable">[docs]</a><span class="k">class</span> <span class="nc">Parseable</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">],</span> <span class="n">Writeable</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a parseable data object from an IMAP stream. The sub-classes</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a parseable data object from an IMAP stream. The sub-classes</span>
 <span class="sd">    implement the different data formats.</span>
 
 <span class="sd">    This base class will be inherited by all necessary entries in the IMAP</span>
@@ -179,7 +176,7 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParseableT</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The primary value associated with the parsed data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The primary value associated with the parsed data.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
     <span class="nd">@classmethod</span>
@@ -199,7 +196,7 @@
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Parseable</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">]],</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span>
               <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Parseable</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">],</span> <span class="nb">memoryview</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Implemented by sub-classes to define how to parse the given buffer.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Implemented by sub-classes to define how to parse the given buffer.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            buf: The bytes containing the data to be parsed.</span>
@@ -210,7 +207,7 @@
 
 
 <div class="viewcode-block" id="ExpectedParseable"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.ExpectedParseable">[docs]</a><span class="k">class</span> <span class="nc">ExpectedParseable</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="kc">None</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Non-instantiable class, used to parse a buffer from a list of</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Non-instantiable class, used to parse a buffer from a list of</span>
 <span class="sd">    expected types.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -229,7 +226,7 @@
 <div class="viewcode-block" id="ExpectedParseable.parse"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.ExpectedParseable.parse">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AnyParseable</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Parses the given buffer by attempting to parse the list of</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses the given buffer by attempting to parse the list of</span>
 <span class="sd">        :attr:`~Params.expected` types until one of them succeeds,</span>
 <span class="sd">        then returns the parsed object.</span>
 
@@ -247,7 +244,7 @@
 
 
 <div class="viewcode-block" id="Space"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Space">[docs]</a><span class="k">class</span> <span class="nc">Space</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Represents at least one space character.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents at least one space character.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        length: The number of spaces parsed.</span>
@@ -262,7 +259,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The number of spaces parsed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of spaces parsed.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
 
 <div class="viewcode-block" id="Space.parse"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Space.parse">[docs]</a>    <span class="nd">@classmethod</span>
@@ -278,7 +275,7 @@
 
 
 <div class="viewcode-block" id="EndLine"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.EndLine">[docs]</a><span class="k">class</span> <span class="nc">EndLine</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Represents the end of a parsed line. This will only parse if the buffer</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the end of a parsed line. This will only parse if the buffer</span>
 <span class="sd">    has zero or more space characters followed by a new-line sequence.</span>
 
 <span class="sd">    Args:</span>
@@ -303,7 +300,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The endline bytestring.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The endline bytestring.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">carriage_return</span> <span class="k">else</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 
 <div class="viewcode-block" id="EndLine.parse"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.EndLine.parse">[docs]</a>    <span class="nd">@classmethod</span>
@@ -368,7 +365,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.parsing</a></li> 
@@ -378,7 +375,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -8,15 +8,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.concurrent &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.concurrent &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
 
@@ -59,7 +56,7 @@
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -90,7 +87,7 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 <a class="reference external" href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">concurrent.futures.ThreadPoolExecutor</span></code></a>, use <a class="reference external" href="https://docs.python.org/3/library/threading.html#module-threading" title="(in Python v3.11)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">threading</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>executor</strong> (<em>concurrent.futures._base.Executor</em><em> | </em><em>None</em>) – The executor in use, if any.</p>
+<dd class="field-odd"><p><strong>executor</strong> (<em>Executor</em><em> | </em><em>None</em>) – The executor in use, if any.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.concurrent.Subsystem" title="pymap.concurrent.Subsystem"><em>Subsystem</em></a></p>
@@ -139,10 +136,10 @@ None, use <a class="reference external" href="https://docs.python.org/3/library/
 another thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.11)"><em>Awaitable</em></a><em>[</em><em>RetT</em><em>]</em>) – An awaitable result to execute by the subsystem.</p>
+<dd class="field-odd"><p><strong>future</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.11)"><em>Awaitable</em></a><em>[</em><a class="reference internal" href="#pymap.concurrent.RetT" title="pymap.concurrent.RetT"><em>RetT</em></a><em>]</em>) – An awaitable result to execute by the subsystem.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.11)"><em>Awaitable</em></a>[<em>RetT</em>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Awaitable" title="(in Python v3.11)"><em>Awaitable</em></a>[<a class="reference internal" href="#pymap.concurrent.RetT" title="pymap.concurrent.RetT"><em>RetT</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -212,12 +209,12 @@ or any of the provided events are signalled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>self</strong> (<em>EventT</em>) – </p></li>
-<li><p><strong>events</strong> (<em>EventT</em>) – </p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.concurrent.EventT" title="pymap.concurrent.EventT"><em>EventT</em></a>) – </p></li>
+<li><p><strong>events</strong> (<a class="reference internal" href="#pymap.concurrent.EventT" title="pymap.concurrent.EventT"><em>EventT</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>EventT</em></p>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.concurrent.EventT" title="pymap.concurrent.EventT"><em>EventT</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -381,16 +378,16 @@ released.</p>
 
 </dd></dl>
 
-<dl class="py data">
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.concurrent.EventT">
-<span class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></span><span class="sig-name descname"><span class="pre">EventT</span></span><a class="headerlink" href="#pymap.concurrent.EventT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></span><span class="sig-name descname"><span class="pre">EventT</span></span><a class="headerlink" href="#pymap.concurrent.EventT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable with an upper bound of <a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>.</p>
 <p>alias of TypeVar(‘EventT’, bound=<a class="reference internal" href="#pymap.concurrent.Event" title="pymap.concurrent.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a>)</p>
 </dd></dl>
 
-<dl class="py data">
+<dl class="py class">
 <dt class="sig sig-object py" id="pymap.concurrent.RetT">
-<span class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></span><span class="sig-name descname"><span class="pre">RetT</span></span><a class="headerlink" href="#pymap.concurrent.RetT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.concurrent.</span></span><span class="sig-name descname"><span class="pre">RetT</span></span><a class="headerlink" href="#pymap.concurrent.RetT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type variable for any return type.</p>
 <p>alias of TypeVar(‘RetT’)</p>
 </dd></dl>
@@ -514,7 +511,7 @@ released.</p>
         <li class="right" >
           <a href="pymap.bytes.html" title="pymap.bytes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.concurrent</span></code></a></li> 
       </ul>
@@ -523,7 +520,7 @@ released.</p>
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

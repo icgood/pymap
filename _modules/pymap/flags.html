@@ -7,15 +7,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.flags &#8212; pymap 0.28.0 documentation</title>
+    <title>pymap.flags &#8212; pymap 0.29.0rc1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
 
@@ -50,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.flags</a></li> 
@@ -85,7 +82,7 @@
 
 
 <div class="viewcode-block" id="FlagOp"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.FlagOp">[docs]</a><span class="k">class</span> <span class="nc">FlagOp</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Types of operations when updating flags.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Types of operations when updating flags.&quot;&quot;&quot;</span>
 
     <span class="c1">#: All existing flags should be replaced with the flag set.</span>
     <span class="n">REPLACE</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
@@ -101,7 +98,7 @@
 
 <div class="viewcode-block" id="FlagOp.apply"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.FlagOp.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flag_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span> <span class="n">operand</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span> \
             <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Apply the flag operation on the two sets, returning the result.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the flag operation on the two sets, returning the result.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            flag_set: The flag set being operated on.</span>
@@ -117,7 +114,7 @@
 
 
 <div class="viewcode-block" id="PermanentFlags"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.PermanentFlags">[docs]</a><span class="k">class</span> <span class="nc">PermanentFlags</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Keeps track of the defined permanent flags on a mailbox. Because the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Keeps track of the defined permanent flags on a mailbox. Because the</span>
 <span class="sd">    permanent flags can include the special ``\\*`` wildcard flag, a simple</span>
 <span class="sd">    set intersect operation is not enough to filter out unknown permanent</span>
 <span class="sd">    flags.</span>
@@ -135,11 +132,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">defined</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The defined permanent flags for the mailbox.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The defined permanent flags for the mailbox.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defined</span>
 
 <div class="viewcode-block" id="PermanentFlags.intersect"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.PermanentFlags.intersect">[docs]</a>    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the subset of flags in ``other`` that are also in</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the subset of flags in ``other`` that are also in</span>
 <span class="sd">        :attr:`.defined`. If the wildcard flag is defined, then all flags in</span>
 <span class="sd">        ``other`` are returned.</span>
 
@@ -163,7 +160,7 @@
 
 
 <div class="viewcode-block" id="SessionFlags"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.SessionFlags">[docs]</a><span class="k">class</span> <span class="nc">SessionFlags</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Used to track session flags on a message. Session flags are only valid</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to track session flags on a message. Session flags are only valid</span>
 <span class="sd">    for the current IMAP client connection while it has the mailbox selected,</span>
 <span class="sd">    they do not persist. The ``\\Recent`` flag is a special-case session flag.</span>
 
@@ -174,7 +171,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_defined&#39;</span><span class="p">,</span> <span class="s1">&#39;_flags&#39;</span><span class="p">,</span> <span class="s1">&#39;_recent&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defined</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Flag</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defined</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_defined</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">defined</span><span class="p">)</span> <span class="o">-</span> <span class="n">_recent_set</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -182,11 +179,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">defined</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The defined session flags for the mailbox.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The defined session flags for the mailbox.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defined</span>
 
 <div class="viewcode-block" id="SessionFlags.intersect"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.SessionFlags.intersect">[docs]</a>    <span class="k">def</span> <span class="nf">intersect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the subset of flags in ``other`` that are also in</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the subset of flags in ``other`` that are also in</span>
 <span class="sd">        :attr:`.defined`. If the wildcard flag is defined, then all flags in</span>
 <span class="sd">        ``other`` are returned.</span>
 
@@ -209,7 +206,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SessionFlags.get"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.SessionFlags.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return the session flags for the mailbox session.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the session flags for the mailbox session.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uid: The message UID value.</span>
@@ -220,7 +217,7 @@
         <span class="k">return</span> <span class="n">recent</span> <span class="k">if</span> <span class="n">flags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">flags</span> <span class="o">|</span> <span class="n">recent</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SessionFlags.remove"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.SessionFlags.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Remove any session flags for the given message.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove any session flags for the given message.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uids: The message UID values.</span>
@@ -232,7 +229,7 @@
 
 <div class="viewcode-block" id="SessionFlags.update"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.SessionFlags.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">flag_set</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span>
                <span class="n">op</span><span class="p">:</span> <span class="n">FlagOp</span> <span class="o">=</span> <span class="n">FlagOp</span><span class="o">.</span><span class="n">REPLACE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Update the flags for the session, returning the resulting flags.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the flags for the session, returning the resulting flags.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uid: The message UID value.</span>
@@ -249,7 +246,7 @@
         <span class="k">return</span> <span class="n">new_flags</span></div>
 
 <div class="viewcode-block" id="SessionFlags.add_recent"><a class="viewcode-back" href="../../pymap.flags.html#pymap.flags.SessionFlags.add_recent">[docs]</a>    <span class="k">def</span> <span class="nf">add_recent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Adds the ``\\Recent`` flag to the flags for the session.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds the ``\\Recent`` flag to the flags for the session.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            uid: The message UID value.</span>
@@ -259,17 +256,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">recent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The number of messages with the ``\\Recent`` flag.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of messages with the ``\\Recent`` flag.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_recent</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">recent_uids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The message UIDs with the ``\\Recent`` flag.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The message UIDs with the ``\\Recent`` flag.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recent</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;The mapping of UID to its associated session flags, not including</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mapping of UID to its associated session flags, not including</span>
 <span class="sd">        ``\\Recent``.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -324,7 +321,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.28.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.29.0rc1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.flags</a></li> 
@@ -334,7 +331,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
