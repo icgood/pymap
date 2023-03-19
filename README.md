@@ -15,7 +15,7 @@ Everything runs in an [asyncio][2] event loop.
 
 #### [API Documentation](https://icgood.github.io/pymap/)
 
-#### [Docker Image](https://hub.docker.com/r/icgood/pymap)
+#### [Docker Image](https://github.com/icgood/pymap/pkgs/container/pymap)
 
 ### Table of Contents
 

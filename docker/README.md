@@ -62,8 +62,8 @@ The Docker image includes a [healthcheck][6] that will mark the service as
 `unhealthy` if `$KEY_FILE` has changed since the service started.
 
 [1]: https://github.com/icgood/pymap
-[2]: https://hub.docker.com/repository/docker/icgood/proxy-protocol
+[2]: https://github.com/icgood/proxy-protocol/pkgs/container/proxy-protocol
 [3]: https://docs.docker.com/compose/compose-file/#volumes
 [4]: https://letsencrypt.org/
-[5]: https://hub.docker.com/repository/docker/icgood/letsencrypt-service
+[5]: https://github.com/icgood/letsencrypt-service/pkgs/container/letsencrypt-service
 [6]: https://docs.docker.com/compose/compose-file/compose-file-v3/#healthcheck
