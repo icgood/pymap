@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestFetch(TestBase):
 
-    async def test_uid_fetch(self, imap_server):
+    async def test_uid_fetch(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -19,7 +21,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_full(self, imap_server):
+    async def test_fetch_full(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -39,7 +41,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_bodystructure(self, imap_server):
+    async def test_fetch_bodystructure(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -52,7 +54,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_body_section(self, imap_server):
+    async def test_fetch_body_section(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -77,7 +79,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_rfc822(self, imap_server):
+    async def test_fetch_rfc822(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -102,7 +104,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_rfc822_header(self, imap_server):
+    async def test_fetch_rfc822_header(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -120,7 +122,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_rfc822_text(self, imap_server):
+    async def test_fetch_rfc822_text(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -139,7 +141,8 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_body_section_header(self, imap_server):
+    async def test_fetch_body_section_header(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -164,7 +167,8 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_body_section_header_fields(self, imap_server):
+    async def test_fetch_body_section_header_fields(
+            self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -180,7 +184,8 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_body_section_text(self, imap_server):
+    async def test_fetch_body_section_text(
+            self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -205,7 +210,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_binary_section(self, imap_server):
+    async def test_fetch_binary_section(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -226,7 +231,8 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_binary_section_partial(self, imap_server):
+    async def test_fetch_binary_section_partial(
+            self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -240,7 +246,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append_fetch_binary(self, imap_server):
+    async def test_append_fetch_binary(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         message = b'\r\ntest\x00message\r\n'
         transport.push_login()
@@ -265,7 +271,7 @@ class TestFetch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_email_id(self, imap_server):
+    async def test_fetch_email_id(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')

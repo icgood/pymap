@@ -1,10 +1,13 @@
 
 from .base import TestBase
+from .mocktransport import MockTransport
+
+from pymap.sieve.manage import ManageSieveServer
 
 
 class TestManageSieve(TestBase):
 
-    def _push_capabilities(self, transport):
+    def _push_capabilities(self, transport: MockTransport) -> None:
         transport.push_write(
             b'"IMPLEMENTATION" "pymap managesieve', (br'.*?', ), b'"\r\n'
             b'"SASL" "PLAIN LOGIN"\r\n'
@@ -13,13 +16,13 @@ class TestManageSieve(TestBase):
             b'"VERSION" "1.0"\r\n'
             b'OK\r\n')
 
-    def _push_logout(self, transport):
+    def _push_logout(self, transport: MockTransport) -> None:
         transport.push_readline(
             b'logout\r\n')
         transport.push_write(
             b'BYE\r\n')
 
-    def _push_authenticate(self, transport):
+    def _push_authenticate(self, transport: MockTransport) -> None:
         transport.push_readline(
             b'authenticate "plain"\r\n')
         transport.push_write(
@@ -30,20 +33,23 @@ class TestManageSieve(TestBase):
         transport.push_write(
             b'OK\r\n')
 
-    async def test_capabilities(self, managesieve_server):
+    async def test_capabilities(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_authenticate(self, managesieve_server):
+    async def test_authenticate(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_capability(self, managesieve_server):
+    async def test_capability(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         transport.push_readline(
@@ -62,7 +68,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_unauthenticate(self, managesieve_server):
+    async def test_unauthenticate(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -76,7 +83,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_bad_command(self, managesieve_server):
+    async def test_bad_command(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         transport.push_readline(
@@ -91,7 +99,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_listscripts(self, managesieve_server):
+    async def test_listscripts(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -103,7 +112,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_getscript(self, managesieve_server):
+    async def test_getscript(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -141,7 +151,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_havespace(self, managesieve_server):
+    async def test_havespace(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -152,7 +163,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_putscript(self, managesieve_server):
+    async def test_putscript(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -174,7 +186,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_deletescript(self, managesieve_server):
+    async def test_deletescript(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -197,7 +210,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_renamescript(self, managesieve_server):
+    async def test_renamescript(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)
@@ -213,7 +227,8 @@ class TestManageSieve(TestBase):
         self._push_logout(transport)
         await self.run(transport)
 
-    async def test_checkscript(self, managesieve_server):
+    async def test_checkscript(
+            self, managesieve_server: ManageSieveServer) -> None:
         transport = self.new_transport(managesieve_server)
         self._push_capabilities(transport)
         self._push_authenticate(transport)

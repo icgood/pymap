@@ -400,7 +400,7 @@ class LiteralString(String):
         return self._raw
 
 
-class List(Parseable[Sequence[MaybeBytes]]):
+class List(Parseable[tuple[MaybeBytes, ...]]):
     """Represents a list of :class:`Parseable` objects from an IMAP stream.
 
     Args:
@@ -417,19 +417,16 @@ class List(Parseable[Sequence[MaybeBytes]]):
                  sort: bool = False) -> None:
         super().__init__()
         if sort:
-            items_list = sorted(items)  # type: ignore
-        else:
-            items_list = list(items)
-        self.items: Sequence[MaybeBytes] = items_list
+            items = tuple(sorted(items))  # type: ignore
+        self.items: tuple[MaybeBytes, ...] = tuple(items)
 
     @property
-    def value(self) -> Sequence[MaybeBytes]:
+    def value(self) -> tuple[MaybeBytes, ...]:
         """The list of parsed objects."""
         return self.items
 
     def get_as(self, cls: type[MaybeBytesT]) -> Sequence[MaybeBytesT]:
         """Return the list of parsed objects."""
-        _ = cls  # noqa
         return cast(Sequence[MaybeBytesT], self.items)
 
     def __iter__(self) -> Iterator[MaybeBytes]:

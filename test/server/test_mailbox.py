@@ -3,10 +3,12 @@ from textwrap import dedent
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestMailbox(TestBase):
 
-    async def test_list_sep(self, imap_server):
+    async def test_list_sep(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -17,7 +19,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_list(self, imap_server):
+    async def test_list(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -30,7 +32,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_create(self, imap_server):
+    async def test_create(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -49,7 +51,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_create_inferior(self, imap_server):
+    async def test_create_inferior(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -66,7 +68,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_delete(self, imap_server):
+    async def test_delete(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -82,7 +84,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_delete_superior(self, imap_server):
+    async def test_delete_superior(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -103,7 +105,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_delete_selected(self, imap_server):
+    async def test_delete_selected(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Sent')
@@ -114,7 +116,7 @@ class TestMailbox(TestBase):
             b'delete1 OK DELETE completed.\r\n')
         await self.run(transport)
 
-    async def test_lsub(self, imap_server):
+    async def test_lsub(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -125,7 +127,8 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_subscribe_unsubscribe(self, imap_server):
+    async def test_subscribe_unsubscribe(self, imap_server: IMAPServer) \
+            -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -149,7 +152,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_status(self, imap_server):
+    async def test_status(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -184,7 +187,7 @@ class TestMailbox(TestBase):
         assert self.matches['uidval1'] == self.matches['uidval2']
         assert self.matches['mbxid1'] == self.matches['mbxid']
 
-    async def test_append(self, imap_server):
+    async def test_append(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         message = b'test message\r\n'
         transport.push_login()
@@ -202,7 +205,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append_empty(self, imap_server):
+    async def test_append_empty(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_readline(
@@ -219,7 +222,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append_multi(self, imap_server):
+    async def test_append_multi(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         message_1 = b'test message\r\n'
         message_2 = b'other test message\r\n'
@@ -243,7 +246,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append_selected(self, imap_server):
+    async def test_append_selected(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         message = b'test message\r\n'
         transport.push_login()
@@ -269,7 +272,7 @@ class TestMailbox(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append_email_id(self, imap_server):
+    async def test_append_email_id(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         message_1 = b'test message\r\n'
         message_2 = b'other test message\r\n'
@@ -315,7 +318,7 @@ class TestMailbox(TestBase):
         assert self.matches['id1'] != self.matches['id2']
         assert self.matches['id1'] == self.matches['id3']
 
-    async def test_append_thread_id(self, imap_server):
+    async def test_append_thread_id(self, imap_server: IMAPServer) -> None:
         messages = [dedent("""\
                            Message-Id: <one>
                            Subject: thread one

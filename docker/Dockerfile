@@ -3,7 +3,7 @@ FROM python:3.11-alpine
 WORKDIR /pymap
 COPY . .
 
-RUN pip install -U pip wheel setuptools typing-extensions
+RUN pip install -U pip typing-extensions
 
 RUN apk --update add --virtual build-dependencies \
     build-base python3-dev libffi-dev \

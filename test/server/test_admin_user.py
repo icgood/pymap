@@ -6,6 +6,8 @@ from pymapadmin.grpc.admin_pb2 import SUCCESS, FAILURE, \
     GetUserRequest, SetUserRequest, DeleteUserRequest, UserData
 
 from pymap.admin.handlers.user import UserHandlers
+from pymap.imap import IMAPServer
+from pymap.interfaces.backend import BackendInterface
 
 from .base import TestBase
 
@@ -21,7 +23,7 @@ class TestMailboxHandlers(TestBase):
     def overrides(self):
         return {'admin_key': b'testadmintoken'}
 
-    async def test_get_user(self, backend) -> None:
+    async def test_get_user(self, backend: BackendInterface) -> None:
         handlers = UserHandlers(backend)
         request = GetUserRequest(user='testuser')
         async with ChannelFor([handlers]) as channel:
@@ -32,7 +34,7 @@ class TestMailboxHandlers(TestBase):
         assert '$pbkdf2$1$$FzEpdTtdOaIFkUucxV4PjfW88BE=' \
             == response.data.password
 
-    async def test_get_user_not_found(self, backend) -> None:
+    async def test_get_user_not_found(self, backend: BackendInterface) -> None:
         handlers = UserHandlers(backend)
         request = GetUserRequest(user='baduser')
         async with ChannelFor([handlers]) as channel:
@@ -41,7 +43,8 @@ class TestMailboxHandlers(TestBase):
         assert FAILURE == response.result.code
         assert 'UserNotFound' == response.result.key
 
-    async def test_set_user(self, backend, imap_server) -> None:
+    async def test_set_user(self, backend: BackendInterface,
+                            imap_server: IMAPServer) -> None:
         handlers = UserHandlers(backend)
         data = UserData(password='newpass', params={'key': 'val'})
         request = SetUserRequest(user='testuser', data=data)
@@ -57,7 +60,7 @@ class TestMailboxHandlers(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_delete_user(self, backend) -> None:
+    async def test_delete_user(self, backend: BackendInterface) -> None:
         handlers = UserHandlers(backend)
         request = DeleteUserRequest(user='testuser')
         async with ChannelFor([handlers]) as channel:
@@ -66,7 +69,8 @@ class TestMailboxHandlers(TestBase):
         assert SUCCESS == response.result.code
         assert 'testuser' == response.username
 
-    async def test_delete_user_not_found(self, backend) -> None:
+    async def test_delete_user_not_found(self, backend: BackendInterface) \
+            -> None:
         handlers = UserHandlers(backend)
         request = DeleteUserRequest(user='baduser')
         async with ChannelFor([handlers]) as channel:

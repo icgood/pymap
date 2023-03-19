@@ -1,8 +1,10 @@
 -r requirements-all.txt
 
 invoke
+build
 mypy
 flake8
+flake8-annotations
 flake8-bugbear
 autopep8
 bandit[toml]
@@ -15,5 +17,5 @@ rope
 types-certifi
 types-protobuf
 types-redis
-types-setuptools
 types-toml
+types-passlib

@@ -184,7 +184,7 @@ class TestList(unittest.TestCase):
     def test_parse_empty(self):
         ret, buf = List.parse(br'  ()  ', Params())
         self.assertIsInstance(ret, List)
-        self.assertEqual([], ret.value)
+        self.assertEqual((), ret.value)
         self.assertEqual(b'  ', buf)
 
     def test_parse_failure(self):

@@ -1,13 +1,8 @@
 # type: ignore
 
-import inspect
 import os
 import os.path
 from shlex import join
-
-if not hasattr(inspect, 'getargspec'):
-    # https://github.com/pyinvoke/invoke/issues/833
-    inspect.getargspec = inspect.getfullargspec
 
 from invoke import task, Collection
 

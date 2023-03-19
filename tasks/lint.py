@@ -8,7 +8,7 @@ from .check import check_import
 @task(check_import)
 def flake8(ctx):
     """Run the flake8 linter."""
-    ctx.run('flake8 {} test {} *.py'.format(ctx.package, __package__))
+    ctx.run('flake8 {} test {}'.format(ctx.package, __package__))
 
 
 @task(check_import)

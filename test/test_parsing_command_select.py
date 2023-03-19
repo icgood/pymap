@@ -77,8 +77,8 @@ class TestFetchCommand(unittest.TestCase):
     def test_parse_list(self):
         ret, buf = FetchCommand.parse(b' 1,2,3 (FLAGS ENVELOPE)\n  ', Params())
         self.assertEqual([1, 2, 3], ret.sequence_set.value)
-        self.assertListEqual([FetchAttribute(b'FLAGS'),
-                              FetchAttribute(b'ENVELOPE')], ret.attributes)
+        self.assertEqual((FetchAttribute(b'FLAGS'),
+                          FetchAttribute(b'ENVELOPE')), ret.attributes)
         self.assertEqual(b'  ', buf)
 
     def test_parse_uid_list(self):

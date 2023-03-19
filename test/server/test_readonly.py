@@ -1,10 +1,12 @@
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestReadOnly(TestBase):
 
-    async def test_select(self, imap_server):
+    async def test_select(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Trash', 1, 1, readonly=True)
@@ -12,7 +14,7 @@ class TestReadOnly(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_examine(self, imap_server):
+    async def test_examine(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX', 4, 1, examine=True)
@@ -20,7 +22,7 @@ class TestReadOnly(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_append(self, imap_server):
+    async def test_append(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         message = b'test message\r\n'
         transport.push_login()
@@ -37,7 +39,7 @@ class TestReadOnly(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_copy(self, imap_server):
+    async def test_copy(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -49,7 +51,7 @@ class TestReadOnly(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_expunge(self, imap_server):
+    async def test_expunge(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Trash', 1, readonly=True)
@@ -61,7 +63,7 @@ class TestReadOnly(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_store(self, imap_server):
+    async def test_store(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Trash', 1, readonly=True)
@@ -72,7 +74,7 @@ class TestReadOnly(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_fetch_not_seen(self, imap_server):
+    async def test_fetch_not_seen(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'Trash', 1, readonly=True)

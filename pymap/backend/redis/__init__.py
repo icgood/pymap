@@ -12,7 +12,7 @@ from collections.abc import Awaitable, Callable, Mapping, Set, AsyncIterator
 from contextlib import asynccontextmanager, suppress, AsyncExitStack
 from datetime import datetime
 from secrets import token_bytes
-from typing import TypeAlias, Any, Final
+from typing import Any, Final, Self, TypeAlias
 
 from redis.asyncio import Redis
 from pysasl.creds.server import ServerCredentials
@@ -88,7 +88,7 @@ class RedisBackend(BackendInterface):
 
     @classmethod
     async def init(cls, args: Namespace, **overrides: Any) \
-            -> tuple[RedisBackend, Config]:
+            -> tuple[Self, Config]:
         config = Config.from_args(args)
         status = HealthStatus(name='redis')
         login = Login(config, status)
@@ -408,7 +408,8 @@ class User(UserMetadata):
 
     @classmethod
     def _from_dict(cls, config: IMAPConfig, authcid: str,
-                   data: Mapping[str, str]) -> User:
+                   data: Mapping[str, str]) -> Self:
+        params: Mapping[str, str]
         match data:
             case {'password': password, **params}:
                 return cls(config, authcid, password=password, params=params)

@@ -14,7 +14,7 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-import pkg_resources
+from importlib.metadata import distribution
 
 import cloud_sptheme as csp  # type: ignore
 
@@ -26,7 +26,7 @@ copyright = '2022, Ian Good'
 author = 'Ian Good'
 
 # The short X.Y version
-project_version = pkg_resources.require(project)[0].version
+project_version = distribution(project).version
 version_parts = project_version.split('.')
 version = '.'.join(version_parts[0:2])
 # The full version, including alpha/beta/rc tags

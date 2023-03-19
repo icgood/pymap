@@ -1,11 +1,14 @@
 
 import asyncio
 from argparse import Namespace
+from asyncio import StreamReader, StreamWriter
+from collections.abc import Iterable
 
 import pytest
 from pysasl.hashing import BuiltinHash
 
 from pymap.backend.dict import DictBackend
+from pymap.concurrent import Event
 from pymap.context import subsystem
 from pymap.imap import IMAPServer
 from pymap.sieve.manage import ManageSieveServer
@@ -38,7 +41,7 @@ class TestBase:
     def init(cls, request, backend):
         test = request.instance
         test._fd = 1
-        test.matches: dict[str, bytes] = {}
+        test._matches = {}
 
     @pytest.fixture
     def imap_server(self, backend):
@@ -70,24 +73,28 @@ class TestBase:
         self._fd += 1
         return fd
 
-    def new_transport(self, server):
+    @property
+    def matches(self) -> dict[str, bytes]:
+        return self._matches  # type: ignore
+
+    def new_transport(self, server: IMAPServer | ManageSieveServer) \
+            -> MockTransport:
         return MockTransport(server, self.matches, self._incr_fd())
 
-    def new_events(self, n=1):
-        if n == 1:
-            return subsystem.get().new_event()
-        else:
-            return (subsystem.get().new_event() for _ in range(n))
+    def new_events(self, n: int) -> Iterable[Event]:
+        return (subsystem.get().new_event() for _ in range(n))
 
-    def _check_queue(self, transport):
+    def _check_queue(self, transport: MockTransport) -> None:
         queue = transport.queue
         assert 0 == len(queue), 'Items left on queue: ' + repr(queue)
 
-    async def _run_transport(self, transport):
+    async def _run_transport(self, transport: MockTransport) -> None:
         server = transport.server
-        return await server(transport, transport)
+        reader: StreamReader = transport  # type: ignore
+        writer: StreamWriter = transport  # type: ignore
+        return await server(reader, writer)
 
-    async def run(self, *transports):
+    async def run(self, *transports: MockTransport) -> None:
         failures = []
         transport_tasks = [asyncio.create_task(
             self._run_transport(transport)) for transport in transports]

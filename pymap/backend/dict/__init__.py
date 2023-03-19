@@ -8,10 +8,10 @@ from argparse import ArgumentParser, Namespace
 from collections.abc import Set, Mapping, AsyncIterator
 from contextlib import closing, asynccontextmanager, AsyncExitStack
 from datetime import datetime, timezone
+from importlib.resources import files
 from secrets import token_bytes
 from typing import Any, Final
 
-from pkg_resources import resource_listdir, resource_stream
 from pysasl.creds.server import ServerCredentials
 
 from pymap.config import BackendCapability, IMAPConfig
@@ -243,27 +243,29 @@ class Identity(IdentityInterface):
                          filter_set: FilterSet) -> None:
         inbox = await mailbox_set.get_mailbox('INBOX')
         await self._load_demo_mailbox(resource, 'INBOX', inbox)
-        mbx_names = sorted(resource_listdir(resource, 'demo'))
+        mbx_names = sorted(f.name
+                           for f in files(resource).joinpath('demo').iterdir()
+                           if f.is_dir())
+        await self._load_demo_sieve(resource, filter_set)
         for name in mbx_names:
-            if name == 'sieve':
-                await self._load_demo_sieve(resource, name, filter_set)
-            elif name != 'INBOX':
+            if name != 'INBOX':
                 await mailbox_set.add_mailbox(name)
                 mbx = await mailbox_set.get_mailbox(name)
                 await self._load_demo_mailbox(resource, name, mbx)
 
-    async def _load_demo_sieve(self, resource: str, name: str,
+    async def _load_demo_sieve(self, resource: str,
                                filter_set: FilterSet) -> None:
-        path = os.path.join('demo', name)
-        with closing(resource_stream(resource, path)) as sieve_stream:
-            sieve = sieve_stream.read()
+        path = os.path.join('demo', 'sieve')
+        sieve = files(resource).joinpath(path).read_bytes()
         await filter_set.put('demo', sieve)
         await filter_set.set_active('demo')
 
     async def _load_demo_mailbox(self, resource: str, name: str,
                                  mbx: MailboxData) -> None:
         path = os.path.join('demo', name)
-        msg_names = sorted(resource_listdir(resource, path))
+        msg_names = sorted(f.name
+                           for f in files(resource).joinpath(path).iterdir()
+                           if f.is_file())
         for msg_name in msg_names:
             if msg_name == '.readonly':
                 mbx._readonly = True
@@ -271,7 +273,8 @@ class Identity(IdentityInterface):
             elif msg_name.startswith('.'):
                 continue
             msg_path = os.path.join(path, msg_name)
-            with closing(resource_stream(resource, msg_path)) as msg_stream:
+            with closing(files(resource).joinpath(msg_path).open('rb')) \
+                    as msg_stream:
                 flags_line = msg_stream.readline()
                 msg_timestamp = float(msg_stream.readline())
                 msg_data = msg_stream.read()

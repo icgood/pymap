@@ -3,6 +3,8 @@ import pytest
 
 from .base import TestBase
 
+from pymap.imap import IMAPServer
+
 
 class TestSearch(TestBase):
 
@@ -10,7 +12,7 @@ class TestSearch(TestBase):
     def overrides(self):
         return {'disable_search_keys': [b'DRAFT']}
 
-    async def test_search_disabled(self, imap_server):
+    async def test_search_disabled(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -21,7 +23,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search(self, imap_server):
+    async def test_search(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -33,7 +35,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_not(self, imap_server):
+    async def test_search_not(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -45,7 +47,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_uid(self, imap_server):
+    async def test_search_uid(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -57,7 +59,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_seqset(self, imap_server):
+    async def test_search_seqset(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -69,7 +71,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_and(self, imap_server):
+    async def test_search_and(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -81,7 +83,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_or(self, imap_server):
+    async def test_search_or(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -93,7 +95,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_seen(self, imap_server):
+    async def test_search_seen(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -105,7 +107,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_unseen(self, imap_server):
+    async def test_search_unseen(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -117,7 +119,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_new(self, imap_server):
+    async def test_search_new(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -129,7 +131,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_date_on(self, imap_server):
+    async def test_search_date_on(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -141,7 +143,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_date_since(self, imap_server):
+    async def test_search_date_since(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -153,7 +155,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_header_date(self, imap_server):
+    async def test_search_header_date(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -165,7 +167,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_size(self, imap_server):
+    async def test_search_size(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -177,7 +179,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_from(self, imap_server):
+    async def test_search_from(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -189,7 +191,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_subject(self, imap_server):
+    async def test_search_subject(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -201,7 +203,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_header(self, imap_server):
+    async def test_search_header(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -213,7 +215,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_body(self, imap_server):
+    async def test_search_body(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -225,7 +227,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_text(self, imap_server):
+    async def test_search_text(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -237,7 +239,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_emailid(self, imap_server):
+    async def test_search_emailid(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
@@ -260,7 +262,7 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
-    async def test_search_threadid(self, imap_server):
+    async def test_search_threadid(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
         transport.push_select(b'INBOX')
