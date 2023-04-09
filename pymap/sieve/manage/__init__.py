@@ -6,7 +6,7 @@ import binascii
 import logging
 import re
 from argparse import ArgumentParser
-from asyncio import StreamReader, StreamWriter, WriteTransport
+from asyncio import StreamReader, StreamWriter
 from base64 import b64encode, b64decode
 from collections.abc import Mapping
 from contextlib import closing, AsyncExitStack
@@ -62,10 +62,12 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         backend = self.backend
         config = self.config
         managesieve_server = ManageSieveServer(backend.login, config)
+        pp_reader = ProxyProtocolReader(config.proxy_protocol)
+        managesieve_server_cb = pp_reader.get_callback(managesieve_server)
         host: str | None = config.args.sieve_host
         port: str | int = config.args.sieve_port
         server = await asyncio.start_server(
-            managesieve_server, host=host, port=port)
+            managesieve_server_cb, host=host, port=port)
         await stack.enter_async_context(server)
         task = asyncio.create_task(server.serve_forever())
         stack.callback(task.cancel)
@@ -87,9 +89,10 @@ class ManageSieveServer:
         self._login = login
         self._config = config
 
-    async def __call__(self, reader: StreamReader,
-                       writer: StreamWriter) -> None:
-        conn = ManageSieveConnection(self._login, self._config, reader, writer)
+    async def __call__(self, reader: StreamReader, writer: StreamWriter,
+                       sock_info: SocketInfo) -> None:
+        conn = ManageSieveConnection(self._login, self._config,
+                                     reader, writer, sock_info)
         async with AsyncExitStack() as stack:
             connection_exit.set(stack)
             stack.enter_context(closing(writer))
@@ -113,7 +116,8 @@ class ManageSieveConnection:
     _impl = b'pymap managesieve ' + __version__.encode('ascii')
 
     def __init__(self, login: LoginInterface, config: IMAPConfig,
-                 reader: StreamReader, writer: StreamWriter) -> None:
+                 reader: StreamReader, writer: StreamWriter,
+                 sock_info: SocketInfo) -> None:
         super().__init__()
         self.login = login
         self.config = config
@@ -123,17 +127,9 @@ class ManageSieveConnection:
         self.pp_result: ProxyResult | None = None
         self._offer_starttls = b'STARTTLS' in config.initial_capability
         self._state: FilterState | None = None
-        self._reset_streams(reader, writer)
-
-    def _reset_streams(self, reader: StreamReader,
-                       writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo.get(writer, self.pp_result))
-
-    async def _read_proxy_protocol(self) -> None:
-        self.pp_result = await self.pp_reader.read(self.reader)
-        self._reset_streams(self.reader, self.writer)
+        socket_info.set(sock_info)
 
     def _get_state(self, session: SessionInterface) -> FilterState:
         owner = session.owner.encode('utf-8')
@@ -280,16 +276,7 @@ class ManageSieveConnection:
             return Response(Condition.NO, text='Bad command.')
         resp = Response(Condition.OK)
         await self._write_response(resp)
-        loop = asyncio.get_event_loop()
-        transport = self.writer.transport
-        protocol = transport.get_protocol()
-        new_transport = await loop.start_tls(
-            transport, protocol, ssl_context, server_side=True)
-        assert isinstance(new_transport, WriteTransport)
-        new_protocol = new_transport.get_protocol()
-        new_writer = StreamWriter(new_transport, new_protocol,
-                                  self.reader, loop)
-        self._reset_streams(self.reader, new_writer)
+        await self.writer.start_tls(ssl_context)
         self._print('%d <->| %s', b'<TLS handshake>')
         self._offer_starttls = False
         self.auth = self.config.tls_auth
@@ -300,7 +287,6 @@ class ManageSieveConnection:
         enter the command/response cycle.
 
         """
-        await self._read_proxy_protocol()
         self._print('%d +++| %s', str(socket_info.get()))
         greeting = await self._do_greeting()
         await self._write_response(greeting)
