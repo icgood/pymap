@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap &#8212; pymap 0.29.0 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.30.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -47,7 +47,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.29.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.30.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -71,17 +71,15 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
-<span class="kn">from</span> <span class="nn">asyncio</span> <span class="kn">import</span> <span class="n">shield</span><span class="p">,</span> <span class="n">StreamReader</span><span class="p">,</span> <span class="n">StreamWriter</span><span class="p">,</span> <span class="n">WriteTransport</span><span class="p">,</span> \
-    <span class="n">AbstractServer</span><span class="p">,</span> <span class="n">CancelledError</span><span class="p">,</span> <span class="ne">TimeoutError</span>
+<span class="kn">from</span> <span class="nn">asyncio</span> <span class="kn">import</span> <span class="n">shield</span><span class="p">,</span> <span class="n">StreamReader</span><span class="p">,</span> <span class="n">StreamWriter</span><span class="p">,</span> <span class="n">AbstractServer</span><span class="p">,</span> \
+    <span class="n">CancelledError</span><span class="p">,</span> <span class="ne">TimeoutError</span>
 <span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64encode</span><span class="p">,</span> <span class="n">b64decode</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span><span class="p">,</span> <span class="n">AsyncExitStack</span>
 <span class="kn">from</span> <span class="nn">ssl</span> <span class="kn">import</span> <span class="n">SSLError</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
 
 <span class="kn">from</span> <span class="nn">proxyprotocol.reader</span> <span class="kn">import</span> <span class="n">ProxyProtocolReader</span>
-<span class="kn">from</span> <span class="nn">proxyprotocol.result</span> <span class="kn">import</span> <span class="n">ProxyResult</span>
 <span class="kn">from</span> <span class="nn">proxyprotocol.sock</span> <span class="kn">import</span> <span class="n">SocketInfo</span>
 <span class="kn">from</span> <span class="nn">proxyprotocol.version</span> <span class="kn">import</span> <span class="n">ProxyProtocolVersion</span>
 <span class="kn">from</span> <span class="nn">pymap.concurrent</span> <span class="kn">import</span> <span class="n">Event</span>
@@ -142,16 +140,18 @@
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
         <span class="n">servers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AbstractServer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">imap_server</span> <span class="o">=</span> <span class="n">IMAPServer</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+        <span class="n">pp_reader</span> <span class="o">=</span> <span class="n">ProxyProtocolReader</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">proxy_protocol</span><span class="p">)</span>
+        <span class="n">imap_server_cb</span> <span class="o">=</span> <span class="n">pp_reader</span><span class="o">.</span><span class="n">get_callback</span><span class="p">(</span><span class="n">imap_server</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">inherited_sockets</span><span class="p">:</span>
             <span class="n">sockets</span> <span class="o">=</span> <span class="n">InheritedSockets</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">inherited_sockets</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">sockets</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No inherited sockets found&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">sock</span> <span class="ow">in</span> <span class="n">sockets</span><span class="p">:</span>
                 <span class="n">servers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">start_server</span><span class="p">(</span>
-                    <span class="n">imap_server</span><span class="p">,</span> <span class="n">sock</span><span class="o">=</span><span class="n">sock</span><span class="p">))</span>
+                    <span class="n">imap_server_cb</span><span class="p">,</span> <span class="n">sock</span><span class="o">=</span><span class="n">sock</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">servers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">start_server</span><span class="p">(</span>
-                <span class="n">imap_server</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
+                <span class="n">imap_server_cb</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">server</span> <span class="ow">in</span> <span class="n">servers</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
             <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">())</span>
@@ -177,9 +177,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_login</span> <span class="o">=</span> <span class="n">login</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span>
-                       <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">conn</span> <span class="o">=</span> <span class="n">IMAPConnection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">,</span>
+                       <span class="n">sock_info</span><span class="p">:</span> <span class="n">SocketInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">IMAPConnection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span>
+                              <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">sock_info</span><span class="p">)</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">ConnectionState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_login</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
             <span class="n">connection_exit</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
@@ -205,27 +206,16 @@
                  <span class="s1">&#39;reader&#39;</span><span class="p">,</span> <span class="s1">&#39;writer&#39;</span><span class="p">,</span> <span class="s1">&#39;pp_reader&#39;</span><span class="p">,</span> <span class="s1">&#39;pp_result&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="n">Commands</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span>
-                 <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span>
-                 <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+                 <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">,</span>
+                 <span class="n">sock_info</span><span class="p">:</span> <span class="n">SocketInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="n">commands</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">parsing_params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bad_command_limit</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">bad_command_limit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pp_reader</span> <span class="o">=</span> <span class="n">ProxyProtocolReader</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">proxy_protocol</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">:</span> <span class="n">ProxyResult</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="n">StreamReader</span><span class="p">,</span>
-                       <span class="n">writer</span><span class="p">:</span> <span class="n">StreamWriter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">reader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">writer</span>
-        <span class="n">socket_info</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">SocketInfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span><span class="p">,</span>
-                                       <span class="n">unique_id</span><span class="o">=</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">bytes</span><span class="p">))</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_read_proxy_protocol</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pp_result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">pp_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">)</span>
+        <span class="n">socket_info</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">sock_info</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -285,7 +275,7 @@
                 <span class="n">resp_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_continuation</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">resp_bytes</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;*&#39;</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">AuthenticationError</span><span class="p">(</span><span class="s1">&#39;Authentication canceled.&#39;</span><span class="p">)</span> \
-                        <span class="kn">from</span> <span class="bp">None</span>
+                        <span class="kn">from</span> <span class="kc">None</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">resp_dec</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">resp_bytes</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">binascii</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -339,17 +329,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;--| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">resp</span><span class="p">))</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">start_tls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-        <span class="n">transport</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">transport</span>
-        <span class="n">protocol</span> <span class="o">=</span> <span class="n">transport</span><span class="o">.</span><span class="n">get_protocol</span><span class="p">()</span>
         <span class="n">ssl_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ssl_context</span>
-        <span class="n">new_transport</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">start_tls</span><span class="p">(</span>
-            <span class="n">transport</span><span class="p">,</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">ssl_context</span><span class="p">,</span> <span class="n">server_side</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_transport</span><span class="p">,</span> <span class="n">WriteTransport</span><span class="p">)</span>
-        <span class="n">new_protocol</span> <span class="o">=</span> <span class="n">new_transport</span><span class="o">.</span><span class="n">get_protocol</span><span class="p">()</span>
-        <span class="n">new_writer</span> <span class="o">=</span> <span class="n">StreamWriter</span><span class="p">(</span><span class="n">new_transport</span><span class="p">,</span> <span class="n">new_protocol</span><span class="p">,</span>
-                                  <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_streams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="n">new_writer</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">start_tls</span><span class="p">(</span><span class="n">ssl_context</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &lt;-&gt;| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;TLS handshake&gt;&#39;</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">send_error_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -414,7 +395,6 @@
 <span class="sd">            state: Defines the interaction with the backend plugin.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_proxy_protocol</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> +++| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">socket_info</span><span class="o">.</span><span class="n">get</span><span class="p">()))</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -548,7 +528,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.29.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.30.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
