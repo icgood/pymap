@@ -7,17 +7,15 @@ import logging
 import re
 import sys
 from argparse import ArgumentParser
-from asyncio import shield, StreamReader, StreamWriter, WriteTransport, \
-    AbstractServer, CancelledError, TimeoutError
+from asyncio import shield, StreamReader, StreamWriter, AbstractServer, \
+    CancelledError, TimeoutError
 from base64 import b64encode, b64decode
 from collections.abc import Awaitable, Iterable
 from contextlib import closing, AsyncExitStack
 from ssl import SSLError
 from typing import TypeVar
-from uuid import uuid4
 
 from proxyprotocol.reader import ProxyProtocolReader
-from proxyprotocol.result import ProxyResult
 from proxyprotocol.sock import SocketInfo
 from proxyprotocol.version import ProxyProtocolVersion
 from pymap.concurrent import Event
@@ -78,16 +76,18 @@ class IMAPService(ServiceInterface):  # pragma: no cover
         config = self.config
         servers: list[AbstractServer] = []
         imap_server = IMAPServer(backend.login, config)
+        pp_reader = ProxyProtocolReader(config.proxy_protocol)
+        imap_server_cb = pp_reader.get_callback(imap_server)
         if config.args.inherited_sockets:
             sockets = InheritedSockets.of(config.args.inherited_sockets).get()
             if not sockets:
                 raise ValueError('No inherited sockets found')
             for sock in sockets:
                 servers.append(await asyncio.start_server(
-                    imap_server, sock=sock))
+                    imap_server_cb, sock=sock))
         else:
             servers.append(await asyncio.start_server(
-                imap_server, host=config.host, port=config.port))
+                imap_server_cb, host=config.host, port=config.port))
         for server in servers:
             await stack.enter_async_context(server)
             task = asyncio.create_task(server.serve_forever())
@@ -113,9 +113,10 @@ class IMAPServer:
         self._login = login
         self._config = config
 
-    async def __call__(self, reader: StreamReader,
-                       writer: StreamWriter) -> None:
-        conn = IMAPConnection(self.commands, self._config, reader, writer)
+    async def __call__(self, reader: StreamReader, writer: StreamWriter,
+                       sock_info: SocketInfo) -> None:
+        conn = IMAPConnection(self.commands, self._config,
+                              reader, writer, sock_info)
         state = ConnectionState(self._login, self._config)
         async with AsyncExitStack() as stack:
             connection_exit.set(stack)
@@ -141,27 +142,16 @@ class IMAPConnection:
                  'reader', 'writer', 'pp_reader', 'pp_result']
 
     def __init__(self, commands: Commands, config: IMAPConfig,
-                 reader: StreamReader,
-                 writer: StreamWriter) -> None:
+                 reader: StreamReader, writer: StreamWriter,
+                 sock_info: SocketInfo) -> None:
         super().__init__()
         self.commands = commands
         self.config = config
         self.params = config.parsing_params
         self.bad_command_limit = config.bad_command_limit
-        self.pp_reader = ProxyProtocolReader(config.proxy_protocol)
-        self.pp_result: ProxyResult | None = None
-        self._reset_streams(reader, writer)
-
-    def _reset_streams(self, reader: StreamReader,
-                       writer: StreamWriter) -> None:
         self.reader = reader
         self.writer = writer
-        socket_info.set(SocketInfo.get(writer, self.pp_result,
-                                       unique_id=uuid4().bytes))
-
-    async def _read_proxy_protocol(self) -> None:
-        self.pp_result = await self.pp_reader.read(self.reader)
-        self._reset_streams(self.reader, self.writer)
+        socket_info.set(sock_info)
 
     def close(self) -> None:
         self.writer.close()
@@ -275,17 +265,8 @@ class IMAPConnection:
             self._print('%s <--| %s', bytes(resp))
 
     async def start_tls(self) -> None:
-        loop = asyncio.get_event_loop()
-        transport = self.writer.transport
-        protocol = transport.get_protocol()
         ssl_context = self.config.ssl_context
-        new_transport = await loop.start_tls(
-            transport, protocol, ssl_context, server_side=True)
-        assert isinstance(new_transport, WriteTransport)
-        new_protocol = new_transport.get_protocol()
-        new_writer = StreamWriter(new_transport, new_protocol,
-                                  self.reader, loop)
-        self._reset_streams(self.reader, new_writer)
+        await self.writer.start_tls(ssl_context)
         self._print('%s <->| %s', '<TLS handshake>')
 
     async def send_error_disconnect(self) -> None:
@@ -350,7 +331,6 @@ class IMAPConnection:
             state: Defines the interaction with the backend plugin.
 
         """
-        await self._read_proxy_protocol()
         self._print('%s +++| %s', str(socket_info.get()))
         try:
             await self._run_state(state)

@@ -25,7 +25,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'pymap'
-version = '0.29.0'
+version = '0.30.0'
 authors = [
     { name = 'Ian Good', email = 'ian@icgood.net' },
 ]
@@ -45,7 +45,7 @@ classifiers = [
 ]
 dependencies = [
     'pysasl ~= 1.0',
-    'proxy-protocol ~= 0.9.1',
+    'proxy-protocol ~= 0.10.3',
 ]
 
 [project.optional-dependencies]
@@ -53,7 +53,7 @@ admin = ['pymap-admin ~= 0.9.0', 'protobuf', 'googleapis-common-protos']
 macaroon = ['pymacaroons']
 redis = ['redis ~= 4.2', 'msgpack ~= 1.0']
 sieve = ['sievelib']
-swim = ['swim-protocol ~= 0.3.10']
+swim = ['swim-protocol ~= 0.3.12']
 systemd = ['systemd-python']
 optional = ['hiredis', 'passlib', 'pid']
 
@@ -87,6 +87,9 @@ user = 'pymap.admin.handlers.user:UserHandlers'
 
 [tool.hatch.build]
 exclude = ['/tasks', '/doc', '/.github']
+
+[tool.hatch.build.targets.wheel]
+packages = ['pymap']
 
 [tool.mypy]
 files = ['pymap', 'test']

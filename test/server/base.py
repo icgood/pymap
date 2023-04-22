@@ -5,6 +5,7 @@ from asyncio import StreamReader, StreamWriter
 from collections.abc import Iterable
 
 import pytest
+from proxyprotocol.sock import SocketInfoLocal
 from pysasl.hashing import BuiltinHash
 
 from pymap.backend.dict import DictBackend
@@ -92,7 +93,8 @@ class TestBase:
         server = transport.server
         reader: StreamReader = transport  # type: ignore
         writer: StreamWriter = transport  # type: ignore
-        return await server(reader, writer)
+        sock_info = SocketInfoLocal(transport)
+        return await server(reader, writer, sock_info)
 
     async def run(self, *transports: MockTransport) -> None:
         failures = []
