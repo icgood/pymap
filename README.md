@@ -3,7 +3,7 @@ pymap
 
 Lightweight, asynchronous IMAP serving in Python.
 
-[![build](https://github.com/icgood/pymap/actions/workflows/python-package.yml/badge.svg)](https://github.com/icgood/pymap/actions/workflows/python-package.yml)
+[![build](https://github.com/icgood/pymap/actions/workflows/python-check.yml/badge.svg)](https://github.com/icgood/pymap/actions/workflows/python-check.yml)
 [![Coverage Status](https://coveralls.io/repos/icgood/pymap/badge.svg)](https://coveralls.io/r/icgood/pymap)
 [![PyPI](https://img.shields.io/pypi/v/pymap.svg)](https://pypi.python.org/pypi/pymap)
 [![PyPI](https://img.shields.io/pypi/pyversions/pymap.svg)](https://pypi.python.org/pypi/pymap)
