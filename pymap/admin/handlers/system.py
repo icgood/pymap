@@ -5,8 +5,8 @@ from datetime import datetime
 from typing import TypeAlias
 
 from grpclib.server import Stream
-from pymap import __version__ as pymap_version
-from pymapadmin import __version__ as pymap_admin_version
+from pymap.__about__ import __version__ as pymap_version
+from pymapadmin.__about__ import __version__ as pymap_admin_version
 from pymapadmin.grpc.admin_grpc import SystemBase
 from pymapadmin.grpc.admin_pb2 import LoginRequest, LoginResponse, \
     PingRequest, PingResponse

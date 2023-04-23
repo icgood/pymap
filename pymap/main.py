@@ -15,7 +15,7 @@ from contextlib import nullcontext, suppress, AsyncExitStack
 from string import Template
 from typing import Any
 
-from . import __version__
+from .__about__ import __version__
 from .backend import backends
 from .interfaces.backend import BackendInterface, ServiceInterface
 from .service import services

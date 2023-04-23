@@ -5,8 +5,7 @@ on:
     types: [ published ]
 
 jobs:
-  deploy:
-
+  publish-dist:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,34 +16,13 @@ jobs:
         python-version: '3.11'
     - name: Install build tools
       run: |
-        python -m pip install --upgrade pip build twine
-    - name: Build and publish
+        python -m pip install hatch
+    - name: Build distributions
+      run: |
+        hatch build
+    - name: Publish distributions
       env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        HATCH_INDEX_USER: ${{ secrets.PYPI_USERNAME }}
+        HATCH_INDEX_AUTH: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        python -m build
-        twine upload dist/*
-
-  docs:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    - name: Install build tools
-      run: |
-        python -m pip install --upgrade pip invoke
-    - name: Build the Sphinx documentation
-      run: |
-        invoke install doc.install doc.build
-    - name: Deploy to GitHub Pages
-      if: success()
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ github.token }}
-        publish_dir: ./doc/build/html
+        hatch publish

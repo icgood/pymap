@@ -14,7 +14,7 @@ from contextlib import closing, AsyncExitStack
 from proxyprotocol.reader import ProxyProtocolReader
 from proxyprotocol.result import ProxyResult
 from proxyprotocol.sock import SocketInfo
-from pymap import __version__
+from pymap.__about__ import __version__
 from pymap.bytes import BytesFormat
 from pymap.config import IMAPConfig
 from pymap.context import socket_info, language_code, connection_exit
