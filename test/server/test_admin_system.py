@@ -1,11 +1,11 @@
 
 from grpclib.testing import ChannelFor
-from pymapadmin import __version__ as pymap_admin_version
+from pymapadmin.__about__ import __version__ as pymap_admin_version
 from pymapadmin.grpc.admin_grpc import SystemStub
 from pymapadmin.grpc.admin_pb2 import SUCCESS, FAILURE, \
     LoginRequest, PingRequest
 
-from pymap import __version__ as pymap_version
+from pymap.__about__ import __version__ as pymap_version
 from pymap.admin.handlers.system import SystemHandlers
 from pymap.interfaces.backend import BackendInterface
 

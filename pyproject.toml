@@ -25,7 +25,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'pymap'
-version = '0.30.0'
+dynamic = ['version']
 authors = [
     { name = 'Ian Good', email = 'ian@icgood.net' },
 ]
@@ -49,7 +49,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-admin = ['pymap-admin ~= 0.9.0', 'protobuf', 'googleapis-common-protos']
+admin = ['pymap-admin ~= 0.9.2', 'protobuf', 'googleapis-common-protos']
 macaroon = ['pymacaroons']
 redis = ['redis ~= 4.2', 'msgpack ~= 1.0']
 sieve = ['sievelib']
@@ -58,7 +58,8 @@ systemd = ['systemd-python']
 optional = ['hiredis', 'passlib', 'pid']
 
 [project.urls]
-homepage = 'https://github.com/icgood/pymap/'
+'Homepage' = 'https://github.com/icgood/pymap/'
+'API Documentation' = 'https://icgood.github.io/pymap/'
 
 [project.scripts]
 pymap = 'pymap.main:main'
@@ -85,8 +86,16 @@ server = 'pymap.admin.handlers.system:SystemHandlers'
 mailbox = 'pymap.admin.handlers.mailbox:MailboxHandlers'
 user = 'pymap.admin.handlers.user:UserHandlers'
 
+[tool.hatch.version]
+path = 'pymap/__about__.py'
+
 [tool.hatch.build]
-exclude = ['/tasks', '/doc', '/.github']
+exclude = [
+    '/.dockerignore',
+    '/doc',
+    '/docker',
+    '/.github',
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ['pymap']
@@ -141,10 +150,56 @@ norecursedirs = 'doc'
 
 [tool.coverage.report]
 fail_under = 90
-omit = ['*/maildir/*', '*/redis/*', '*/main.py']
+omit = ['*/__about__.py', '*/maildir/*', '*/redis/*', '*/main.py']
 exclude_lines = [
     'pragma: no cover',
     'NotImplemented',
     '^\s*...\s*$',
     'def __repr__',
 ]
+
+[tool.hatch.envs.default]
+dependencies = [
+    'mypy',
+    'pytest',
+    'pytest-asyncio',
+    'pytest-cov',
+    'flake8',
+    'flake8-annotations',
+    'flake8-bugbear',
+    'bandit[toml]',
+    'types-certifi',
+    'types-protobuf',
+    'types-redis',
+    'types-toml',
+    'types-passlib',
+]
+features = [
+    'admin',
+    'redis',
+    'macaroon',
+    'optional',
+    'sieve',
+    'swim',
+]
+
+[tool.hatch.envs.default.scripts]
+run-pytest = 'py.test --cov-report=term-missing --cov=pymap'
+run-mypy = 'mypy pymap test'
+run-flake8 = 'flake8 pymap test'
+run-bandit = 'bandit -c pyproject.toml -qr pymap'
+check = ['run-pytest', 'run-mypy', 'run-flake8', 'run-bandit']
+
+[[tool.hatch.envs.all.matrix]]
+python = ['3.11']
+
+[tool.hatch.envs.doc]
+dependencies = [
+    'sphinx',
+    'sphinx-autodoc-typehints',
+    'cloud_sptheme',
+]
+
+[tool.hatch.envs.doc.scripts]
+build = 'make -C doc html'
+browse = ['build', 'open doc/build/html/index.html']

@@ -15,7 +15,8 @@ from grpclib.health.check import ServiceStatus
 from grpclib.health.service import Health, OVERALL
 from pymap.context import cluster_metadata
 from pymap.interfaces.backend import ServiceInterface
-from pymapadmin import is_compatible, __version__ as server_version
+from pymapadmin import is_compatible
+from pymapadmin.__about__ import __version__ as server_version
 from pymapadmin.local import socket_file, token_file
 
 from .errors import get_incompatible_version_error
