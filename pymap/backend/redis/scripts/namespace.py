@@ -31,7 +31,7 @@ class MailboxList(ScriptBase[Sequence[bytes]]):
             -> Sequence[bytes]:
         mailboxes, mbx_order = ret
         mailboxes_iter = iter(mailboxes)
-        mailboxes_zip = zip(mailboxes_iter, mailboxes_iter)
+        mailboxes_zip = zip(mailboxes_iter, mailboxes_iter, strict=True)
         rev_mbx = {mbx_id: key for key, mbx_id in mailboxes_zip}
         return [rev_mbx[mbx_id] for mbx_id in mbx_order if mbx_id in rev_mbx]
 

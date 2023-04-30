@@ -8,6 +8,7 @@ import logging
 import logging.config
 import os
 import signal
+import sys
 from argparse import ArgumentParser, Namespace, ArgumentTypeError
 from asyncio import CancelledError
 from collections.abc import Sequence
@@ -32,7 +33,7 @@ else:
 try:
     from pid import PidFile
 except ImportError:
-    def PidFile(*args: Any, **kwargs: Any) -> Any:
+    def PidFile(*args: Any, **kwargs: Any) -> Any:  # noqa: N802
         return nullcontext()
 
 try:
@@ -51,10 +52,11 @@ def main() -> None:
                         version='%(prog)s ' + __version__)
     parser.add_argument('--pid-file', metavar='NAME',
                         help='change the filename of the PID file')
-    parser.add_argument('--set-uid', metavar='USER', type=_get_pwd,
-                        help='drop privileges to user name or uid')
-    parser.add_argument('--set-gid', metavar='GROUP', type=_get_grp,
-                        help='drop privileges to group name or gid')
+    if sys.platform != 'win32' and os.name == 'posix':
+        parser.add_argument('--set-uid', metavar='USER', type=_get_pwd,
+                            help='drop privileges to user name or uid')
+        parser.add_argument('--set-gid', metavar='GROUP', type=_get_grp,
+                            help='drop privileges to group name or gid')
     parser.add_argument('--logging-cfg', metavar='PATH',
                         help='config file for logging')
     parser.add_argument('--no-service', dest='skip_services', action='append',
@@ -114,41 +116,43 @@ async def _sleep_forever() -> None:
     print()
 
 
-def _get_pwd(setuid: str) -> int:
-    from pwd import getpwnam, getpwuid
-    try:
+if sys.platform != 'win32' and os.name == 'posix':
+    def _get_pwd(setuid: str) -> int:
+        from pwd import getpwnam, getpwuid
         try:
-            uid = int(setuid)
-        except ValueError:
-            entry = getpwnam(setuid)
+            try:
+                uid = int(setuid)
+            except ValueError:
+                entry = getpwnam(setuid)
+            else:
+                entry = getpwuid(uid)
+        except KeyError as exc:
+            raise ArgumentTypeError(f'Invalid user: {setuid}') from exc
         else:
-            entry = getpwuid(uid)
-    except KeyError as exc:
-        raise ArgumentTypeError(f'Invalid user: {setuid}') from exc
-    else:
-        return entry.pw_uid
+            return entry.pw_uid
 
 
-def _get_grp(setgid: str) -> int:
-    from grp import getgrnam, getgrgid
-    try:
+    def _get_grp(setgid: str) -> int:
+        from grp import getgrnam, getgrgid
         try:
-            gid = int(setgid)
-        except ValueError:
-            entry = getgrnam(setgid)
+            try:
+                gid = int(setgid)
+            except ValueError:
+                entry = getgrnam(setgid)
+            else:
+                entry = getgrgid(gid)
+        except KeyError as exc:
+            raise ArgumentTypeError(f'Invalid group: {setgid}') from exc
         else:
-            entry = getgrgid(gid)
-    except KeyError as exc:
-        raise ArgumentTypeError(f'Invalid group: {setgid}') from exc
-    else:
-        return entry.gr_gid
+            return entry.gr_gid
 
 
 def _drop_privileges(args: Namespace) -> None:
-    if args.set_gid is not None:
-        os.setgid(args.set_gid)
-    if args.set_uid is not None:
-        os.setuid(args.set_uid)
+    if sys.platform != 'win32' and os.name == 'posix':
+        if args.set_gid is not None:
+            os.setgid(args.set_gid)
+        if args.set_uid is not None:
+            os.setuid(args.set_uid)
 
 
 class _PymapArgumentParser(ArgumentParser):

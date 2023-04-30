@@ -184,7 +184,7 @@ class ListTree:
                       if entry.exists)
         to_names = (entry.name for entry in self._iter(from_node, to_name)
                     if entry.exists)
-        return list(zip(from_names, to_names))
+        return list(zip(from_names, to_names, strict=True))
 
     def list(self) -> Iterable[ListEntry]:
         """Return all the entries in the list tree."""

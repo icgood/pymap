@@ -42,7 +42,7 @@ class TestClusterMetadata(unittest.TestCase):
         callback.assert_called_with(arg, {'one': b'1'})
         metadata.local['one'] = b'one'
         callback.assert_called_with(arg, {'one': b'one'})
-        metadata.local
+        metadata.local  # noqa: B018
         callback.reset_mock()
         del arg
         metadata.local['three'] = b'3'

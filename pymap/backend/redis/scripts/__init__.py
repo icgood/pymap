@@ -36,7 +36,7 @@ class ScriptBase(Generic[_RetT]):
         fname = os.path.join('lua', f'{self._name}.lua')
         data = files(__name__).joinpath(fname).read_bytes()
         # Redis docs specify using SHA1 here:
-        return hashlib.sha1(data).hexdigest(), data  # nosec
+        return hashlib.sha1(data).hexdigest(), data  # noqa: S324
 
     def _convert(self, ret: Any) -> _RetT:
         converted: _RetT = ret

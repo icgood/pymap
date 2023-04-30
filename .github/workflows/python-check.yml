@@ -8,28 +8,28 @@ on:
 
 jobs:
   run-checks:
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.11']
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: |
+          3.11
     - name: Install build tools
       run: |
-        python -m pip install hatch coveralls
+        python -m pip install hatch
+    - name: Create hatch environment
+      run: |
+        hatch -v env create all
     - name: Run test suites, type checks, and linters
       run: |
-        hatch run check
-    - name: Report test coverage to Coveralls
-      if: success()
+        hatch run all:check
       env:
-        GITHUB_TOKEN: ${{ github.token }}
-      run: |
-        coveralls --service=github
+        PYTEST_ADDOPTS: ${{ runner.os != 'Linux' && '--no-cov' || '' }}
