@@ -148,7 +148,7 @@ class CopyUid(ResponseCode):
 
     def __init__(self, validity: int, uids: Iterable[tuple[int, int]]) -> None:
         super().__init__()
-        source_uids, dest_uids = zip(*uids)
+        source_uids, dest_uids = zip(*uids, strict=True)
         source_uid_set = SequenceSet.build(source_uids)
         dest_uid_set = SequenceSet.build(dest_uids)
         self._raw = b'[COPYUID %i %b %b]' \

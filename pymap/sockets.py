@@ -102,9 +102,8 @@ class _SystemdSockets(InheritedSockets):
 
     @classmethod
     def _get_family(cls, fd: int) -> int:
-        if systemd.daemon.is_socket(fd, _socket.AF_UNIX):
-            return _socket.AF_UNIX
-        elif systemd.daemon.is_socket(fd, _socket.AF_INET6):
-            return _socket.AF_INET6
+        for family in _socket.AddressFamily:
+            if systemd.daemon.is_socket(fd, family):
+                return family
         else:
-            return _socket.AF_INET
+            raise KeyError(f'Unrecognized socket family: {fd}')

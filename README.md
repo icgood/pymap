@@ -4,9 +4,9 @@ pymap
 Lightweight, asynchronous IMAP serving in Python.
 
 [![build](https://github.com/icgood/pymap/actions/workflows/python-check.yml/badge.svg)](https://github.com/icgood/pymap/actions/workflows/python-check.yml)
-[![Coverage Status](https://coveralls.io/repos/icgood/pymap/badge.svg)](https://coveralls.io/r/icgood/pymap)
 [![PyPI](https://img.shields.io/pypi/v/pymap.svg)](https://pypi.python.org/pypi/pymap)
 [![PyPI](https://img.shields.io/pypi/pyversions/pymap.svg)](https://pypi.python.org/pypi/pymap)
+![platforms](https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-blueviolet)
 [![PyPI](https://img.shields.io/pypi/l/pymap.svg)](https://pypi.python.org/pypi/pymap)
 
 This project attempts to simplify the complexity of the [IMAP protocol][1] into
@@ -236,52 +236,28 @@ and threads to improve client caching and display.
 
 ## Development and Testing
 
-You will need to do some additional setup to develop and test plugins. First
-off, I suggest activating a [venv][5]. Then, install the test requirements and
-a local link to the pymap package:
+You will need to do some additional setup to develop and test plugins. Install
+[Hatch][5] to use the CLI examples below.
+
+Run all tests and linters:
 
 ```console
-$ pip install -r test/requirements.txt
-$ pip install -e .
+$ hatch run check
 ```
-
-Run the tests with py.test:
-
-```console
-$ py.test
-```
-
-If you intend to create a pull request, you should make sure the full suite of
-tests run by CI/CD is passing:
-
-```console
-$ py.test
-$ mypy pymap test
-$ flake8 pymap test
-```
-
-A py.test run executes both unit and integration tests. The integration tests
-use mocked sockets to simulate the sending and receiving of commands and
-responses, and are kept in the `test/server/` subdirectory.
 
 ### Type Hinting
 
 This project makes heavy use of Python's [type hinting][6] system, with the
-intention of a clean run of [mypy][7]:
-
-```console
-mypy pymap test
-```
+intention of a clean run of [mypy][7].
 
 No code contribution will be accepted unless it makes every effort to use type
-hinting to the extent possible and common in the rest of the codebase. There is
-no need to attempt `--strict` mode.
+hinting to the extent possible and common in the rest of the codebase.
 
 [1]: https://tools.ietf.org/html/rfc3501
 [2]: https://docs.python.org/3/library/asyncio.html
 [3]: https://en.wikipedia.org/wiki/Maildir
 [4]: https://wiki.dovecot.org/MailboxFormat/Maildir
-[5]: https://docs.python.org/3/library/venv.html
+[5]: https://hatch.pypa.io/latest/install/
 [6]: https://www.python.org/dev/peps/pep-0484/
 [7]: http://mypy-lang.org/
 [8]: https://redis.io/

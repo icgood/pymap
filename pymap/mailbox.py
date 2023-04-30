@@ -62,7 +62,7 @@ class MailboxSnapshot(MailboxInterface):
 
         """
         time_part = int(time.time()) % 65535
-        rand_part = random.randint(0, 65535)  # nosec
+        rand_part = random.randint(0, 65535)  # noqa: S311
         return (time_part << 16) + rand_part
 
     @property

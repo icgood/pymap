@@ -45,7 +45,7 @@ classifiers = [
 ]
 dependencies = [
     'pysasl ~= 1.0',
-    'proxy-protocol ~= 0.10.3',
+    'proxy-protocol ~= 0.11.0',
 ]
 
 [project.optional-dependencies]
@@ -140,8 +140,14 @@ ignore_missing_imports = true
 module = 'pid.*'
 ignore_missing_imports = true
 
-[tool.bandit]
-skips = ['B101']
+[tool.ruff]
+select = ['ANN', 'B', 'E', 'F', 'N', 'S', 'W']
+ignore = ['ANN101', 'ANN102', 'ANN401', 'N818', 'S101']
+line-length = 79
+
+[tool.ruff.per-file-ignores]
+"test/*" = ['ANN', 'S105', 'S106']
+"pymap/admin/handlers/*" = ['N802']
 
 [tool.pytest.ini_options]
 testpaths = 'test'
@@ -164,10 +170,7 @@ dependencies = [
     'pytest',
     'pytest-asyncio',
     'pytest-cov',
-    'flake8',
-    'flake8-annotations',
-    'flake8-bugbear',
-    'bandit[toml]',
+    'ruff',
     'types-certifi',
     'types-protobuf',
     'types-redis',
@@ -186,9 +189,8 @@ features = [
 [tool.hatch.envs.default.scripts]
 run-pytest = 'py.test --cov-report=term-missing --cov=pymap'
 run-mypy = 'mypy pymap test'
-run-flake8 = 'flake8 pymap test'
-run-bandit = 'bandit -c pyproject.toml -qr pymap'
-check = ['run-pytest', 'run-mypy', 'run-flake8', 'run-bandit']
+run-ruff = 'ruff pymap test'
+check = ['run-pytest', 'run-mypy', 'run-ruff']
 
 [[tool.hatch.envs.all.matrix]]
 python = ['3.11']
