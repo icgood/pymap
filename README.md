@@ -106,6 +106,9 @@ sally:mail/data:sallypass
 susan:/var/mail/susan:!@#$%^:*
 ```
 
+Note: Cleartext passwords are currently broken.
+See [Github issue 123](https://github.com/icgood/pymap/issues/123) for a work-around.
+
 The colon-delimited fields are the user ID, the mailbox path, and the password.
 The mailbox path may be empty, relative, or absolute. An empty mailbox path
 will use the user ID as a relative path.
