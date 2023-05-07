@@ -1,28 +1,30 @@
 
 from __future__ import annotations
 
+import os.path
 from collections.abc import Sequence
-from typing import TypeVar, IO
+from typing import IO, Self
 
 from .io import FileWriteable
 
 __all__ = ['Subscriptions']
-
-_ST = TypeVar('_ST', bound='Subscriptions')
 
 
 class Subscriptions(FileWriteable):
     """Maintains the set of folders currently subscribed to.
 
     Args:
-        base_dir: The directory of the file.
+        path: The directory of the file.
 
     """
 
-    def __init__(self, base_dir: str) -> None:
-        super().__init__()
-        self._base_dir = base_dir
+    def __init__(self, path: str) -> None:
+        super().__init__(path)
         self._subscribed: dict[str, None] = {}
+
+    @property
+    def empty(self) -> bool:
+        return not self._subscribed
 
     @property
     def subscribed(self) -> Sequence[str]:
@@ -32,13 +34,12 @@ class Subscriptions(FileWriteable):
     def add(self, folder: str) -> None:
         """Add a new folder to the subscriptions."""
         self._subscribed[folder] = None
+        self.touch()
 
     def remove(self, folder: str) -> None:
         """Remove a folder from the subscriptions."""
-        try:
-            del self._subscribed[folder]
-        except KeyError:
-            pass
+        self._subscribed.pop(folder, None)
+        self.touch()
 
     def set(self, folder: str, subscribed: bool) -> None:
         """Set the subscribed status of a folder."""
@@ -48,23 +49,20 @@ class Subscriptions(FileWriteable):
             self.remove(folder)
 
     @classmethod
-    def get_file(cls) -> str:
-        return 'subscriptions'
+    def get_file(cls, path: str) -> str:
+        return os.path.join(path, 'subscriptions')
 
     @classmethod
-    def get_lock(cls) -> str | None:
-        return 'subscriptions.lock'
+    def get_lock(cls, path: str) -> str | None:
+        return os.path.join(path, 'subscriptions.lock')
 
     @classmethod
-    def get_default(cls: type[_ST], base_dir: str) -> _ST:
-        return cls(base_dir)
-
-    def get_dir(self) -> str:
-        return self._base_dir
+    def get_default(cls, path: str) -> Self:
+        return cls(path)
 
     @classmethod
-    def open(cls: type[_ST], base_dir: str, fp: IO[str]) -> _ST:
-        return cls(base_dir)
+    def open(cls, path: str, fp: IO[str]) -> Self:
+        return cls(path)
 
     def read(self, fp: IO[str]) -> None:
         for line in fp:

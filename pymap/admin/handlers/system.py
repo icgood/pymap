@@ -44,13 +44,18 @@ class SystemHandlers(SystemBase, BaseHandler):
         request = await stream.recv_message()
         assert request is not None
         bearer_token: str | None = None
-        async with self.catch_errors('Login') as result:
+        credentials: PlainCredentials | None = None
+        if not request.HasField('secret'):
+            login_context = self.login_as(stream.metadata, request.authcid)
+        else:
             credentials = PlainCredentials(
                 request.authcid, request.secret, request.authzid)
+            login_context = self.login_with(credentials)
+        async with self.catch_errors('Login') as result, \
+                login_context as identity:
             expiration: datetime | None = None
             if request.HasField('token_expiration'):
                 expiration = datetime.fromtimestamp(request.token_expiration)
-            identity = await self.login.authenticate(credentials)
             bearer_token = await identity.new_token(expiration=expiration)
         resp = LoginResponse(result=result)
         if bearer_token is not None:

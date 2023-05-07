@@ -19,7 +19,7 @@ from contextvars import copy_context, Context
 from functools import partial
 from threading import local, Event as _threading_Event, Lock as _threading_Lock
 from typing import TypeVar, TypeAlias
-from weakref import WeakSet
+from weakref import finalize, WeakSet
 
 __all__ = ['Subsystem', 'Event', 'ReadWriteLock', 'FileLock', 'EventT', 'RetT']
 
@@ -49,9 +49,9 @@ class Subsystem(metaclass=ABCMeta):
 
         """
         if isinstance(executor, ThreadPoolExecutor):
-            return _ThreadingSubsystem(executor)
+            return cls.for_threading(executor)
         elif executor is None:
-            return _AsyncioSubsystem()
+            return cls.for_asyncio()
         else:
             raise TypeError(executor)
 
@@ -117,7 +117,8 @@ class _ThreadingSubsystem(Subsystem):  # pragma: no cover
     class _EventLoopLocal(local):
 
         def __init__(self) -> None:
-            self.event_loop = asyncio.new_event_loop()
+            self.event_loop = loop = asyncio.new_event_loop()
+            finalize(self, loop.close)
 
     def __init__(self, executor: ThreadPoolExecutor) -> None:
         super().__init__()

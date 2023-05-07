@@ -24,7 +24,6 @@ from pymap.parsing.specials.flag import Flag, Seen
 from pymap.selected import SelectedSet, SelectedMailbox
 
 from .flags import MaildirFlags
-from .io import NoChanges
 from .layout import MaildirLayout
 from .subscriptions import Subscriptions
 from .uidlist import Record, UidList
@@ -409,8 +408,6 @@ class MailboxData(MailboxDataInterface[Message]):
         async with UidList.with_write(self._path) as uidl:
             for rec in uidl.records:
                 keys.pop(rec.key, None)
-            if not keys:
-                raise NoChanges()
             for key, info in keys.items():
                 filename = key + ':' + info
                 fields = {'E': str(ObjectId.random_email_id()),
@@ -495,7 +492,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
             mbx = self._cache[name]
         else:
             path = self._layout.get_path(name, self.delimiter)
-            async with UidList.with_open(path) as uidl:
+            async with UidList.with_init(path) as uidl:
                 mailbox_id = ObjectId(uidl.global_uid)
             mbx = MailboxData(mailbox_id, maildir, path)
             self._cache[name] = mbx
@@ -507,7 +504,7 @@ class MailboxSet(MailboxSetInterface[MailboxData]):
         except FileExistsError as exc:
             raise KeyError(name) from exc
         path = self._layout.get_path(name, self.delimiter)
-        async with UidList.with_open(path) as uidl:
+        async with UidList.with_init(path) as uidl:
             global_uid = uidl.global_uid
         return ObjectId(global_uid)
 

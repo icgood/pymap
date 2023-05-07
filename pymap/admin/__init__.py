@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import shlex
 import sys
 from argparse import ArgumentParser, SUPPRESS
 from asyncio import Task, CancelledError
@@ -69,7 +70,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
             admin_key, expiration=expiration)
         if token is not None:
             self._write_admin_token(token)
-            print(f'PYMAP_ADMIN_TOKEN={token}', file=sys.stderr)
+            print(f'PYMAP_ADMIN_TOKEN={shlex.quote(token)}', file=sys.stderr)
         if admin_key is not None:
             cluster_metadata.get().local['admin'] = admin_key
 
@@ -97,13 +98,12 @@ class AdminService(ServiceInterface):  # pragma: no cover
     async def start(self, stack: AsyncExitStack) -> None:
         self._init_admin_token()
         backend = self.backend
-        path: str | None = self.config.args.admin_path
         host: str | None = self.config.args.admin_host
         port: int | None = self.config.args.admin_port
         server_handlers: list[Handler] = [self._get_health()]
         server_handlers.extend(handler(backend) for _, handler in handlers)
         ssl = self.config.ssl_context
-        local_task = await self._start_local(server_handlers, path)
+        local_task = await self._start_local(server_handlers)
         remote_task = await self._start(server_handlers, host, port, ssl)
         stack.callback(local_task.cancel)
         stack.callback(remote_task.cancel)
@@ -113,8 +113,8 @@ class AdminService(ServiceInterface):  # pragma: no cover
         listen(server, RecvRequest, self._check_version)
         return server
 
-    async def _start_local(self, server_handlers: Sequence[Handler],
-                           path: str | None) -> Task[None]:
+    async def _start_local(self, server_handlers: Sequence[Handler]) \
+            -> Task[None]:
         server = self._new_server(server_handlers)
         path = str(socket_file.get_temp(mkdir=True))
         await server.start(path=path)

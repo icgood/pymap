@@ -22,8 +22,11 @@ Everything runs in an [asyncio][2] event loop.
 * [Install and Usage](#install-and-usage)
   * [dict Plugin](#dict-plugin)
   * [maildir Plugin](#maildir-plugin)
+    * [maildir Quick Start](#maildir-quick-start)
   * [redis Plugin](#redis-plugin)
+    * [redis Quick Start](#redis-quick-start)
 * [Admin Tool](#admin-tool)
+  * [Configuring an MTA](#configuring-an-mta)
 * [Supported Extensions](#supported-extensions)
 * [Development and Testing](#development-and-testing)
   * [Type Hinting](#type-hinting)
@@ -98,30 +101,37 @@ enough for modern IMAP usage, it is extended with additional data as described
 in Dovecot's [MailboxFormat/Maildir][4], with the intention of being fully
 compatible.
 
-For login, the plugin uses a simple formatted text file, e.g.:
+For login, the plugin uses files compatible with the [`/etc/passwd`][14],
+[`/etc/shadow`][15], and [`/etc/group`][16] formats. By default, they are
+prefixed with `pymap-etc-` and placed inside the configured base directory to
+avoid conflicting with the corresponding system files.
 
-```
-john::s3cretp4ssword
-sally:mail/data:sallypass
-susan:/var/mail/susan:!@#$%^:*
-```
+#### maildir Quick Start
 
-Note: Cleartext passwords are currently broken.
-See [Github issue 123](https://github.com/icgood/pymap/issues/123) for a work-around.
-
-The colon-delimited fields are the user ID, the mailbox path, and the password.
-The mailbox path may be empty, relative, or absolute. An empty mailbox path
-will use the user ID as a relative path.
-
-Try out the maildir plugin:
+Start the pymap server pointing to a base directory, e.g.:
 
 ```console
-$ pymap --port 1143 --debug maildir /path/to/users.txt
+$ pymap --port 1143 --debug maildir ~/maildir/
 ```
 
-Once started, check out the dict plugin example above to connect and see it in
-action. The biggest difference is, when stop and restart the pymap server, your
-mail messages remain intact.
+In another terminal, use [pymap-admin](#admin-tool) to create a user to login
+with:
+
+```console
+$ pymap-admin set-user demouser
+# Type in a password at the prompt, e.g. "demopass"
+```
+
+If you already have a maildir folder that you could like to reuse, you can
+re-assign your user's `mailbox_path`:
+
+```console
+$ pymap-admin set-user --param mailbox_path=/path/to/mailbox demouser
+# Re-type or change the password
+```
+
+You are now ready to login to IMAP on port 1143 using your favorite mail
+client.
 
 ### redis Plugin
 
@@ -146,24 +156,25 @@ In this example, the `eacb1cf1558741d0b5419b3f838882f5` and
 as the namespaces for the login user and mailbox, respectively, and the message
 has UID `9173`.
 
-To create logins, assign a JSON object containing a `"password"` field to
-username keys prefixed with `/`, e.g.:
+#### redis Quick Start
 
-```
-127.0.0.1:6379> SET /john "{\"password\": \"s3cretp4ssword\"}"
-(integer) 1
-127.0.0.1:6379> SET /sally "{\"password\": \"sallypass\"}"
-(integer) 1
-```
-
-Try out the redis plugin:
+Start the pymap server pointing to a local redis server, or use `--address` to
+connect to a remote redis, e.g.:
 
 ```console
-$ pymap --port 1143 --debug redis
+$ pymap --port 1143 --debug redis  # --address redis://my.redis
 ```
 
-Once started, check out the dict plugin example above to connect and see it in
-action.
+In another terminal, use [pymap-admin](#admin-tool) to create a user to login
+with:
+
+```console
+$ pymap-admin set-user demouser
+# Type in a password at the prompt, e.g. "demopass"
+```
+
+You are now ready to login to IMAP on port 1143 using your favorite mail
+client.
 
 ## Admin Tool
 
@@ -184,6 +195,18 @@ It can also be installed standalone to interact with remote pymap servers:
 $ pip install pymap-admin
 $ pymap-admin --help
 ```
+
+### Configuring an MTA
+
+The admin tool can be used as a ["local delivery agent"][12] for an MTA with
+the `append` sub-command. For example, in postfix you might use:
+
+```
+mailbox_command = /some/where/pymap-admin --from "$SENDER" "$USER"
+```
+
+This setup may be combined with [remote authentication][13] to keep a clean
+separation between your MTA and pymap.
 
 ## Supported Extensions
 
@@ -267,3 +290,8 @@ hinting to the extent possible and common in the rest of the codebase.
 [9]: https://github.com/redis/redis-py
 [10]: https://github.com/icgood/pymap-admin
 [11]: https://grpc.io/
+[12]: https://www.postfix.org/postconf.5.html#mailbox_command
+[13]: https://github.com/icgood/pymap-admin#authentication
+[14]: https://linux.die.net/man/5/passwd
+[15]: https://linux.die.net/man/5/shadow
+[16]: https://linux.die.net/man/5/group

@@ -27,7 +27,7 @@ class LoginInterface(Protocol):
     @abstractmethod
     async def authenticate(self, credentials: ServerCredentials) \
             -> IdentityInterface:
-        """Authenticate and authorize the credentials.
+        """Authenticate the credentials.
 
         Args:
             credentials: Authentication credentials supplied by the user.
@@ -38,26 +38,44 @@ class LoginInterface(Protocol):
         """
         ...
 
+    @abstractmethod
+    async def authorize(self, authenticated: IdentityInterface, authzid: str) \
+            -> IdentityInterface:
+        """The *authenticated* identity must be authorized to assume the
+        identity of *authzid*, returning its user identity if successful.
+
+        Args:
+            authenticated: The identity that successfully authorized.
+            authzid: The identity name to be authorized.
+
+        Raises:
+            :exc:`~pymap.exceptions.AuthorizationFailure`
+
+        """
+        ...
+
 
 class IdentityInterface(Protocol):
-    """Defines the operations available to a user identity that has been
-    authenticated and authorized. This user identity may or may not "exist" in
-    the backend.
+    """Defines the operations available to a user identity. This user identity
+    may or may not "exist" yet in the backend.
 
     """
 
     @property
+    @abstractmethod
     def name(self) -> str:
-        """The SASL authorization identity of the logged-in user."""
+        """The SASL authorization identity of the user."""
+        ...
+
+    @property
+    @abstractmethod
+    def roles(self) -> frozenset[str]:
+        """The set of roles granted to this identity."""
         ...
 
     @abstractmethod
     def new_session(self) -> AbstractAsyncContextManager[SessionInterface]:
-        """Authenticate and authorize the credentials, returning a new IMAP
-        session.
-
-        Args:
-            credentials: Authentication credentials supplied by the user.
+        """Returns a new IMAP session.
 
         Raises:
             :class:`~pymap.exceptions.UserNotFound`
@@ -68,8 +86,8 @@ class IdentityInterface(Protocol):
     @abstractmethod
     async def new_token(self, *, expiration: datetime | None = None) \
             -> str | None:
-        """Authenticate and authorize the credentials, returning a bearer token
-        that may be used in future authentication attempts.
+        """Returns a bearer token that may be used in future authentication
+        attempts.
 
         Since tokens should use their own private key, backends may return
         ``None`` if it does not support tokens or the user does not have a

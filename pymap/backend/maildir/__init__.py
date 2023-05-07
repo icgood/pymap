@@ -1,29 +1,34 @@
 
 from __future__ import annotations
 
+import asyncio
 import os.path
-from argparse import ArgumentParser, Namespace
-from collections.abc import Mapping, AsyncIterator
+import secrets
+import uuid
+from argparse import Action, ArgumentParser, Namespace
+from collections.abc import Mapping, AsyncIterator, Set
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager, AsyncExitStack
 from datetime import datetime
 from typing import Any, Final
 
-from pysasl.hashing import HashInterface, Cleartext
 from pysasl.creds.server import ServerCredentials
 
 from pymap.concurrent import Subsystem
 from pymap.config import BackendCapability, IMAPConfig
-from pymap.exceptions import AuthorizationFailure, NotSupportedError
+from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
+    UserNotFound
 from pymap.filter import PluginFilterSet, SingleFilterSet
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
+from pymap.interfaces.token import TokenCredentials, TokensInterface
 from pymap.token import AllTokens
-from pymap.user import UserMetadata
+from pymap.user import UserRoles, UserMetadata
 
 from .layout import MaildirLayout
 from .mailbox import Message, Maildir, MailboxSet
+from .users import UsersFile, PasswordsFile, TokensFile, GroupsFile
 from ..session import BaseSession
 
 __all__ = ['MaildirBackend', 'Config']
@@ -47,10 +52,6 @@ class MaildirBackend(BackendInterface):
         return self._login
 
     @property
-    def users(self) -> None:
-        return None
-
-    @property
     def config(self) -> Config:
         return self._config
 
@@ -62,8 +63,7 @@ class MaildirBackend(BackendInterface):
     def add_subparser(cls, name: str, subparsers: Any) -> ArgumentParser:
         parser: ArgumentParser = subparsers.add_parser(
             name, help='on-disk backend')
-        parser.add_argument('users_file', help='path the the users file')
-        parser.add_argument('--base-dir', metavar='DIR',
+        parser.add_argument('base_dir', metavar='DIR', action=_BaseDirAction,
                             help='base directory for mailbox relative paths')
         parser.add_argument('--concurrency', metavar='NUM', type=int,
                             help='maximum number of IO workers')
@@ -78,10 +78,23 @@ class MaildirBackend(BackendInterface):
             -> tuple[MaildirBackend, Config]:
         config = Config.from_args(args)
         login = Login(config)
+        if not os.path.exists(config.base_dir):
+            os.mkdir(config.base_dir)
         return cls(login, config), config
 
     async def start(self, stack: AsyncExitStack) -> None:
         pass
+
+
+class _BaseDirAction(Action):
+
+    def __call__(self, parser: ArgumentParser, namespace: Namespace,
+                 values: Any, option_string: str | None = None) -> None:
+        assert isinstance(values, str)
+        if os.path.isfile(values):
+            raise parser.error(
+                f'{self.metavar} argument {values!r} must not be a file')
+        setattr(namespace, self.dest, values)
 
 
 class Config(IMAPConfig):
@@ -89,7 +102,6 @@ class Config(IMAPConfig):
 
     Args:
         args: The command-line arguments.
-        users_file: The path to the users file.
         base_dir: The base directory for all relative mailbox paths.
         layout: The Maildir directory layout.
         colon: The info delimiter in mail filename.
@@ -97,57 +109,21 @@ class Config(IMAPConfig):
 
     """
 
-    _cleartext = Cleartext()
-
-    def __init__(self, args: Namespace, *, users_file: str,
-                 base_dir: str | None, layout: str,
-                 colon: str | None,
-                 hash_context: HashInterface = _cleartext,
+    def __init__(self, args: Namespace, *, base_dir: str,
+                 layout: str, colon: str | None,
                  **extra: Any) -> None:
-        super().__init__(args, hash_context=hash_context, **extra)
-        self._users_file = users_file
-        self._base_dir = self._get_base_dir(base_dir, users_file)
+        super().__init__(args,  admin_key=secrets.token_bytes(), **extra)
+        self._base_dir = base_dir
         self._layout = layout
         self._colon = colon
-
-    @classmethod
-    def _get_base_dir(cls, base_dir: str | None,
-                      users_file: str | None) -> str:
-        if base_dir:
-            return base_dir
-        elif users_file:
-            return os.path.dirname(users_file)
-        else:
-            raise ValueError('--base-dir', base_dir)
 
     @property
     def backend_capability(self) -> BackendCapability:
         return BackendCapability(idle=True, object_id=True, multi_append=True)
 
     @property
-    def users_file(self) -> str:
-        """Used by the default :meth:`~Session.find_user` implementation
-        to retrieve the users file path from the command-line arguments. The
-        users file is given as the first positional argument on the
-        command-line.
-
-        This file contains a valid login on each line, which are split into
-        three parts by colon (``:``) characters: the user name, the mailbox
-        path, and the password.
-
-        The password may contain colon characters. The mailbox path may be
-        empty, relative, or absolute. If it is empty, the user ID is used as a
-        relative path.
-
-        """
-        return self._users_file
-
-    @property
     def base_dir(self) -> str:
-        """The base directory for all relative mailbox paths. The default is
-        the directory containing the users file.
-
-        """
+        """The base directory for all relative paths."""
         return self._base_dir
 
     @property
@@ -175,7 +151,6 @@ class Config(IMAPConfig):
         executor = ThreadPoolExecutor(args.concurrency)
         subsystem = Subsystem.for_executor(executor)
         return {**super().parse_args(args),
-                'users_file': args.users_file,
                 'base_dir': args.base_dir,
                 'layout': args.layout,
                 'colon': args.colon,
@@ -247,52 +222,87 @@ class Login(LoginInterface):
 
     async def authenticate(self, credentials: ServerCredentials) \
             -> Identity:
+        config = self.config
         authcid = credentials.authcid
-        authzid = credentials.authzid
-        password: str | None = None
-        mailbox_path: str | None = None
-        with open(self.config.users_file, 'r') as users_file:
-            for line in users_file:
-                this_user, this_user_dir, this_password = line.split(':', 2)
-                if authcid == this_user:
-                    password = this_password.rstrip('\r\n')
-                if authzid == this_user:
-                    mailbox_path = this_user_dir or this_user
-        data = UserMetadata(self.config, authcid, password=password)
-        await data.check_password(credentials)
-        if mailbox_path is None or authcid != authzid:
+        roles = UserRoles()
+        token_id: str | None = None
+        if isinstance(credentials, TokenCredentials):
+            token_id = credentials.identifier
+            roles.add(credentials.role)
+        identity = Identity(config, self.tokens, authcid, token_id, roles)
+        try:
+            metadata: UserMetadata = await identity.get()
+        except UserNotFound:
+            await asyncio.sleep(self.config.invalid_user_sleep)
+            metadata = UserMetadata(config, authcid)
+        roles |= metadata.roles
+        await metadata.check_password(credentials)
+        return identity
+
+    async def authorize(self, authenticated: IdentityInterface, authzid: str) \
+            -> Identity:
+        authcid = authenticated.name
+        roles = authenticated.roles
+        if authcid != authzid and roles.isdisjoint({'sudo', 'admin'}):
             raise AuthorizationFailure()
-        return Identity(self.config, authzid, data, mailbox_path)
+        return Identity(self.config, self.tokens, authzid, None, roles)
 
 
 class Identity(IdentityInterface):
     """The identity implementation for the maildir backend."""
 
-    def __init__(self, config: Config, name: str, metadata: UserMetadata,
-                 mailbox_path: str) -> None:
+    def __init__(self, config: Config, tokens: TokensInterface,
+                 name: str, token_id: str | None, roles: Set[str]) -> None:
         super().__init__()
         self.config: Final = config
-        self.metadata: Final = metadata
-        self.mailbox_path: Final = mailbox_path
+        self.tokens: Final = tokens
         self._name = name
+        self._token_id = token_id
+        self._roles = roles
+        self._base_dir = config.base_dir
 
     @property
     def name(self) -> str:
         return self._name
 
-    async def new_token(self, *, expiration: datetime | None = None) -> None:
-        return None
+    @property
+    def roles(self) -> frozenset[str]:
+        return frozenset(self._roles)
+
+    async def new_token(self, *, expiration: datetime | None = None) \
+            -> str | None:
+        base_dir = self._base_dir
+        name = self.name
+        identifier = uuid.uuid4().hex
+        key = secrets.token_bytes()
+        async with UsersFile.with_write(base_dir) as users_file, \
+                TokensFile.with_write(base_dir) as tokens_file:
+            if not users_file.has(name):
+                raise UserNotFound(name)
+            tokens_file.set(tokens_file.build_record(
+                identifier, key, name))
+        return self.tokens.get_login_token(identifier, name, key)
 
     @asynccontextmanager
     async def new_session(self) -> AsyncIterator[Session]:
         config = self.config
-        maildir, layout = self._load_maildir()
+        base_dir = self._base_dir
+        name = self.name
+        async with UsersFile.with_read(base_dir) as users_file:
+            try:
+                user_record = users_file.get(name)
+            except KeyError as exc:
+                raise UserNotFound(name) from exc
+            else:
+                mailbox_path = user_record.home_dir
+        maildir, layout = self._load_maildir(mailbox_path)
         mailbox_set = MailboxSet(maildir, layout)
         filter_set = FilterSet(layout.path)
         yield Session(self.name, config, mailbox_set, filter_set)
 
-    def _load_maildir(self) -> tuple[Maildir, MaildirLayout[Any]]:
-        full_path = os.path.join(self.config.base_dir, self.mailbox_path)
+    def _load_maildir(self, mailbox_path: str) \
+            -> tuple[Maildir, MaildirLayout[Any]]:
+        full_path = os.path.join(self._base_dir, mailbox_path)
         layout = MaildirLayout.get(full_path, self.config.layout, Maildir)
         create = not os.path.exists(full_path)
         maildir = Maildir(full_path, create=create)
@@ -302,10 +312,105 @@ class Identity(IdentityInterface):
         return maildir, layout
 
     async def get(self) -> UserMetadata:
-        return self.metadata
+        base_dir = self._base_dir
+        name = self.name
+        token_id = self._token_id
+        password: str | None = None
+        token_key: bytes | None = None
+        roles = UserRoles(self._roles)
+        async with UsersFile.with_read(base_dir) as users_file, \
+                GroupsFile.with_read(base_dir) as groups_file:
+            if token_id is None:
+                async with PasswordsFile.with_read(base_dir) as passwords_file:
+                    try:
+                        password_record = passwords_file.get(name)
+                    except KeyError:
+                        pass
+                    else:
+                        password = password_record.password
+                        if not password or password[0] in ('*', '!'):
+                            password = None  # disabled
+            else:
+                async with TokensFile.with_read(base_dir) as tokens_file:
+                    try:
+                        token = tokens_file.get(token_id)
+                    except KeyError as exc:
+                        raise UserNotFound() from exc
+                    else:
+                        self._name = name = token.users_list
+                        token_key = bytes.fromhex(token.password)
+            try:
+                user_record = users_file.get(name)
+            except KeyError as exc:
+                raise UserNotFound(name) from exc
+            else:
+                if user_record.uid == '0':
+                    roles.add('admin')
+                mailbox_path = user_record.home_dir
+            for role in groups_file.get_user(name):
+                roles.add(role.name)
+        return User(self.config, name, password, roles,
+                    token_key, mailbox_path)
 
     async def set(self, metadata: UserMetadata) -> None:
-        raise NotSupportedError()
+        base_dir = self._base_dir
+        name = self.name
+        password = metadata.password if metadata.password is not None else '*'
+        mailbox_path = metadata.params.get('mailbox_path', name)
+        roles = metadata.roles
+        if self.roles.isdisjoint({'sudo', 'admin'}):
+            async with UsersFile.with_read(base_dir) as users_file, \
+                    GroupsFile.with_read(base_dir) as groups_file:
+                try:
+                    existing_user = users_file.get(name)
+                except KeyError:
+                    pass
+                else:
+                    if mailbox_path != existing_user.home_dir:
+                        raise NotAllowedError('Cannot assign parameters.')
+                existing_groups = groups_file.get_user(name)
+                if metadata.roles != existing_groups:
+                    raise NotAllowedError('Cannot assign roles.')
+        async with UsersFile.with_write(base_dir) as users_file, \
+                PasswordsFile.with_write(base_dir) as passwords_file, \
+                GroupsFile.with_write(base_dir) as groups_file:
+            users_file.set(users_file.build_record(name, mailbox_path))
+            passwords_file.set(passwords_file.build_record(name, password))
+            groups_file.remove_user(name)
+            groups_file.merge(groups_file.build_record(role, name)
+                              for role in roles)
 
     async def delete(self) -> None:
-        raise NotSupportedError()
+        base_dir = self._base_dir
+        name = self.name
+        async with UsersFile.with_write(base_dir) as users_file, \
+                PasswordsFile.with_write(base_dir) as passwords_file, \
+                TokensFile.with_write(base_dir) as tokens_file, \
+                GroupsFile.with_write(base_dir) as groups_file:
+            try:
+                users_file.remove(name)
+            except KeyError as exc:
+                raise UserNotFound(name) from exc
+            try:
+                passwords_file.remove(name)
+            except KeyError:
+                pass
+            tokens_file.remove_user(name)
+            groups_file.remove_user(name)
+
+
+class User(UserMetadata):
+
+    def __init__(self, config: IMAPConfig, name: str, password: str | None,
+                 roles: UserRoles, token_key: bytes | None,
+                 mailbox_path: str | None) -> None:
+        params: dict[str, str] = {}
+        if mailbox_path is not None:
+            params['mailbox_path'] = mailbox_path
+        super().__init__(config, name, password=password, token_key=token_key,
+                         params=params)
+        self._roles = roles
+
+    @property
+    def roles(self) -> UserRoles:
+        return self._roles
