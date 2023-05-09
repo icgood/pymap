@@ -171,6 +171,8 @@ dependencies = [
     'pytest-asyncio',
     'pytest-cov',
     'ruff',
+    'pycodestyle',
+    'autopep8',
     'types-certifi',
     'types-protobuf',
     'types-redis',
@@ -190,7 +192,8 @@ features = [
 run-pytest = 'py.test --cov-report=term-missing --cov=pymap'
 run-mypy = 'mypy pymap test'
 run-ruff = 'ruff pymap test'
-check = ['run-pytest', 'run-mypy', 'run-ruff']
+run-pycodestyle = 'pycodestyle pymap test'
+check = ['run-pytest', 'run-pycodestyle', 'run-mypy', 'run-ruff']
 
 [[tool.hatch.envs.all.matrix]]
 python = ['3.11']

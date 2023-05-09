@@ -16,15 +16,16 @@ from pysasl.creds.server import ServerCredentials
 
 from pymap.concurrent import Subsystem
 from pymap.config import BackendCapability, IMAPConfig
-from pymap.exceptions import AuthorizationFailure, NotAllowedError, \
-    UserNotFound
+from pymap.exceptions import AuthorizationFailure, InvalidAuth, \
+    NotAllowedError, UserNotFound
 from pymap.filter import PluginFilterSet, SingleFilterSet
+from pymap.frozen import frozendict
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.interfaces.token import TokenCredentials, TokensInterface
 from pymap.token import AllTokens
-from pymap.user import UserRoles, UserMetadata
+from pymap.user import Passwords, UserMetadata
 
 from .layout import MaildirLayout
 from .mailbox import Message, Maildir, MailboxSet
@@ -112,7 +113,7 @@ class Config(IMAPConfig):
     def __init__(self, args: Namespace, *, base_dir: str,
                  layout: str, colon: str | None,
                  **extra: Any) -> None:
-        super().__init__(args,  admin_key=secrets.token_bytes(), **extra)
+        super().__init__(args, admin_key=secrets.token_bytes(), **extra)
         self._base_dir = base_dir
         self._layout = layout
         self._colon = colon
@@ -214,6 +215,7 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
+        self._passwords = Passwords(config)
         self._tokens = AllTokens(config)
 
     @property
@@ -224,19 +226,20 @@ class Login(LoginInterface):
             -> Identity:
         config = self.config
         authcid = credentials.authcid
-        roles = UserRoles()
+        roles: set[str] = set()
         token_id: str | None = None
         if isinstance(credentials, TokenCredentials):
             token_id = credentials.identifier
-            roles.add(credentials.role)
+            roles.update(credentials.roles)
         identity = Identity(config, self.tokens, authcid, token_id, roles)
         try:
-            metadata: UserMetadata = await identity.get()
+            user = await identity.get()
         except UserNotFound:
             await asyncio.sleep(self.config.invalid_user_sleep)
-            metadata = UserMetadata(config, authcid)
-        roles |= metadata.roles
-        await metadata.check_password(credentials)
+            user = UserMetadata(config, authcid)
+        roles |= user.roles
+        if not await self._passwords.check_password(user, credentials):
+            raise InvalidAuth()
         return identity
 
     async def authorize(self, authenticated: IdentityInterface, authzid: str) \
@@ -258,7 +261,7 @@ class Identity(IdentityInterface):
         self.tokens: Final = tokens
         self._name = name
         self._token_id = token_id
-        self._roles = roles
+        self._roles = frozenset(roles)
         self._base_dir = config.base_dir
 
     @property
@@ -267,7 +270,7 @@ class Identity(IdentityInterface):
 
     @property
     def roles(self) -> frozenset[str]:
-        return frozenset(self._roles)
+        return self._roles
 
     async def new_token(self, *, expiration: datetime | None = None) \
             -> str | None:
@@ -317,7 +320,7 @@ class Identity(IdentityInterface):
         token_id = self._token_id
         password: str | None = None
         token_key: bytes | None = None
-        roles = UserRoles(self._roles)
+        roles = set(self._roles)
         async with UsersFile.with_read(base_dir) as users_file, \
                 GroupsFile.with_read(base_dir) as groups_file:
             if token_id is None:
@@ -349,8 +352,9 @@ class Identity(IdentityInterface):
                 mailbox_path = user_record.home_dir
             for role in groups_file.get_user(name):
                 roles.add(role.name)
-        return User(self.config, name, password, roles,
-                    token_key, mailbox_path)
+        params = frozendict({'mailbox_path': mailbox_path})
+        return UserMetadata(self.config, name, password, token_key,
+                            frozenset(roles), params)
 
     async def set(self, metadata: UserMetadata) -> None:
         base_dir = self._base_dir
@@ -368,8 +372,9 @@ class Identity(IdentityInterface):
                 else:
                     if mailbox_path != existing_user.home_dir:
                         raise NotAllowedError('Cannot assign parameters.')
-                existing_groups = groups_file.get_user(name)
-                if metadata.roles != existing_groups:
+                existing_roles = {group.name for group in
+                                  groups_file.get_user(name)}
+                if metadata.roles != existing_roles:
                     raise NotAllowedError('Cannot assign roles.')
         async with UsersFile.with_write(base_dir) as users_file, \
                 PasswordsFile.with_write(base_dir) as passwords_file, \
@@ -397,20 +402,3 @@ class Identity(IdentityInterface):
                 pass
             tokens_file.remove_user(name)
             groups_file.remove_user(name)
-
-
-class User(UserMetadata):
-
-    def __init__(self, config: IMAPConfig, name: str, password: str | None,
-                 roles: UserRoles, token_key: bytes | None,
-                 mailbox_path: str | None) -> None:
-        params: dict[str, str] = {}
-        if mailbox_path is not None:
-            params['mailbox_path'] = mailbox_path
-        super().__init__(config, name, password=password, token_key=token_key,
-                         params=params)
-        self._roles = roles
-
-    @property
-    def roles(self) -> UserRoles:
-        return self._roles

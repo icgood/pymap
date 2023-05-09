@@ -139,10 +139,10 @@ class TestString(unittest.TestCase):
         with self.assertRaises(NotParseable):
             String.parse(b'{10}\r\nabc', Params())
         with self.assertRaises(NotParseable):
-            state = ParsingState(continuations=[b'a'*9])
+            state = ParsingState(continuations=[b'a' * 9])
             String.parse(b'{10}\r\n', Params(state))
         with self.assertRaises(NotParseable):
-            String.parse(b'{10+}\r\n' + (b'a'*9), Params())
+            String.parse(b'{10+}\r\n' + (b'a' * 9), Params())
         with self.assertRaises(ParsingInterrupt) as raised1:
             String.parse(b'{10}\r\n', Params())
         self.assertIsInstance(raised1.exception.expected, ExpectContinuation)

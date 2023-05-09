@@ -20,14 +20,15 @@ from pysasl.creds.server import ServerCredentials
 from pymap.bytes import BytesFormat
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
-from pymap.exceptions import AuthorizationFailure, IncompatibleData, \
-    NotAllowedError, UserNotFound
+from pymap.exceptions import AuthorizationFailure, InvalidAuth, \
+    IncompatibleData, NotAllowedError, UserNotFound
+from pymap.frozen import frozendict
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
 from pymap.interfaces.token import TokenCredentials, TokensInterface
 from pymap.token import AllTokens
-from pymap.user import UserRoles, UserMetadata
+from pymap.user import Passwords, UserMetadata
 
 from .background import BackgroundAction, BackgroundTask, NoopAction
 from .cleanup import CleanupAction
@@ -230,6 +231,7 @@ class Login(LoginInterface):
         super().__init__()
         self._config = config
         self._tokens = AllTokens(config)
+        self._passwords = Passwords(config)
         self._user_redis = Redis.from_url(config.address)
         self._user_status = status.new_dependency(False, name='user')
         self._mail_redis = Redis.from_url(config.data_address)
@@ -285,20 +287,21 @@ class Login(LoginInterface):
             -> Identity:
         config = self._config
         authcid = credentials.authcid
-        roles = UserRoles()
+        roles: set[str] = set()
         if isinstance(credentials, TokenCredentials):
             authcid = credentials.identifier
-            roles.add(credentials.role)
+            roles.update(credentials.roles)
         identity = Identity(config, self.tokens,
                             self._user_connect, self._mail_connect,
                             authcid, roles)
         try:
-            metadata: UserMetadata = await identity.get()
+            user: UserMetadata = await identity.get()
         except UserNotFound:
             await asyncio.sleep(self._config.invalid_user_sleep)
-            metadata = UserMetadata(config, authcid)
-        await metadata.check_password(credentials)
-        roles |= metadata.roles
+            user = UserMetadata(config, authcid)
+        if not await self._passwords.check_password(user, credentials):
+            raise InvalidAuth()
+        roles |= user.roles
         return identity
 
     async def authorize(self, authenticated: IdentityInterface, authzid: str) \
@@ -309,7 +312,7 @@ class Login(LoginInterface):
             raise AuthorizationFailure()
         return Identity(self._config, self.tokens,
                         self._user_connect, self._mail_connect,
-                        authzid, UserRoles())
+                        authzid, set())
 
 
 class Identity(IdentityInterface):
@@ -337,7 +340,7 @@ class Identity(IdentityInterface):
     async def new_token(self, *, expiration: datetime | None = None) \
             -> str | None:
         user = await self.get()
-        key = user.key
+        key = user.token_key
         if key is None:
             return None
         return self.tokens.get_login_token(self.name, self.name, key)
@@ -372,26 +375,53 @@ class Identity(IdentityInterface):
             raise IncompatibleData()
         return namespace
 
-    async def get(self) -> User:
+    def _user_from_dict(self, data: dict[str, str]) -> UserMetadata:
+        password = data.pop('password', None)
+        role_str = data.pop('role', None)
+        token_key_str = data.pop('token_key', None)
+        if token_key_str is not None:
+            token_key: bytes | None = bytes.fromhex(token_key_str)
+        else:
+            token_key = None
+        if role_str is not None:
+            roles = frozenset([role_str])
+        else:
+            roles = frozenset()
+        params = frozendict(data)
+        return UserMetadata(self.config, self.name, password=password,
+                            token_key=token_key, roles=roles, params=params)
+
+    def _user_to_dict(self, user: UserMetadata) -> Mapping[str, str]:
+        ret: dict[str, str] = dict(user.params)
+        if user.password is not None:
+            ret['password'] = user.password
+        if user.token_key is not None:
+            ret['key'] = user.token_key.hex()
+        else:
+            ret['key'] = secrets.token_hex()
+        if len(user.roles) == 1:
+            ret['role'] = tuple(user.roles)[0]
+        elif len(user.roles) > 1:
+            raise NotImplementedError('Cannot save multiple roles')
+        return ret
+
+    async def get(self) -> UserMetadata:
         conn = await self._user_connect()
         user_bytes = self.name.encode('utf-8')
         user_key = self.config._users_root.end(user_bytes)
         json_data = await conn.get(user_key)
         if json_data is None:
             raise UserNotFound(self.name)
-        data_dict: Mapping[str, str] = json.loads(json_data)
-        return User._from_dict(self.config, self.name, data_dict)
+        data_dict: dict[str, str] = json.loads(json_data)
+        return self._user_from_dict(data_dict)
 
-    async def set(self, metadata: UserMetadata) -> None:
+    async def set(self, user: UserMetadata) -> None:
         config = self.config
         conn = await self._user_connect()
-        params = self._params_with_key(metadata.params)
-        user = User(self.config, metadata.authcid,
-                    password=metadata.password, params=params)
         if 'admin' not in self._roles and user.roles:
             raise NotAllowedError('Cannot assign role.')
         user_key = config._users_root.end(self.name.encode('utf-8'))
-        user_dict = user._to_dict()
+        user_dict = self._user_to_dict(user)
         json_data = json.dumps(user_dict)
         await conn.set(user_key, json_data)
 
@@ -408,39 +438,3 @@ class Identity(IdentityInterface):
             return params
         else:
             return dict(params, key=secrets.token_hex())
-
-
-class User(UserMetadata):
-
-    @classmethod
-    def _from_dict(cls, config: IMAPConfig, authcid: str,
-                   data: Mapping[str, str]) -> Self:
-        params: Mapping[str, str]
-        match data:
-            case {'password': password, **params}:
-                return cls(config, authcid, password=password, params=params)
-            case params:
-                return cls(config, authcid, params=params)
-
-    def _to_dict(self) -> Mapping[str, str]:
-        ret = dict(self.params)
-        if self.password is not None:
-            ret['password'] = self.password
-        return ret
-
-    @property
-    def roles(self) -> UserRoles:
-        return UserRoles([self.params.get('role')])
-
-    @property
-    def key(self) -> bytes | None:
-        key = self.params.get('key')
-        if key is not None:
-            return bytes.fromhex(key)
-        else:
-            return None
-
-    def get_key(self, identifier: str) -> bytes | None:
-        if identifier != self.authcid:
-            return None
-        return self.key

@@ -27,8 +27,8 @@ class TestAppendCommand(unittest.TestCase):
     def test_parse(self):
         state = ParsingState(continuations=[b'test test!\n  '])
         ret, buf = AppendCommand.parse(
-                b' inbox (\\Seen) "01-Jan-1970 01:01:00 +0000" {10}\n',
-                Params(state))
+            b' inbox (\\Seen) "01-Jan-1970 01:01:00 +0000" {10}\n',
+            Params(state))
         self.assertEqual('INBOX', ret.mailbox)
         self.assertEqual(1, len(ret.messages))
         self.assertEqual(b'test test!', ret.messages[0].literal)
