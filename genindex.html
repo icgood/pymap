@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pymap 0.31.1 documentation</title>
+    <title>Index &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -221,6 +221,8 @@
       <li><a href="pymap.parsing.html#pymap.parsing.command.nonauth.AuthenticateCommand">AuthenticateCommand (class in pymap.parsing.command.nonauth)</a>
 </li>
       <li><a href="pymap.exceptions.html#pymap.exceptions.AuthorizationFailure">AuthorizationFailure</a>
+</li>
+      <li><a href="pymap.interfaces.html#pymap.interfaces.login.LoginInterface.authorize">authorize() (pymap.interfaces.login.LoginInterface method)</a>
 </li>
       <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.authzid">authzid (pymap.token.macaroon.MacaroonCredentials property)</a>
 </li>
@@ -738,8 +740,6 @@
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.expunged">expunged (pymap.interfaces.message.MessageInterface property)</a>
 </li>
-      <li><a href="pymap.message.html#pymap.message.ExpungedMessage">ExpungedMessage (class in pymap.message)</a>
-</li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.specials.ExpungeResponse">ExpungeResponse (class in pymap.parsing.response.specials)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure.extended">extended (pymap.parsing.response.fetch.BodyStructure property)</a>
@@ -999,8 +999,6 @@
 </li>
       </ul></li>
       <li><a href="pymap.admin.html#pymap.admin.errors.get_incompatible_version_error">get_incompatible_version_error() (in module pymap.admin.errors)</a>
-</li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.get_key">get_key() (pymap.user.UserMetadata method)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.datetime_.DateTime.get_local_tzinfo">get_local_tzinfo() (pymap.parsing.specials.datetime_.DateTime class method)</a>
 </li>
@@ -1299,11 +1297,7 @@
       <li><a href="pymap.parsing.html#pymap.parsing.primitives.LiteralString">LiteralString (class in pymap.parsing.primitives)</a>
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">load_content() (pymap.interfaces.message.MessageInterface method)</a>
-
-      <ul>
-        <li><a href="pymap.message.html#pymap.message.ExpungedMessage.load_content">(pymap.message.ExpungedMessage method)</a>
 </li>
-      </ul></li>
       <li><a href="pymap.fetch.html#pymap.fetch.MessageAttributes.load_hook">load_hook() (pymap.fetch.MessageAttributes method)</a>
 </li>
       <li><a href="pymap.fetch.html#pymap.fetch.LoadedMessageProvider.loaded_msg">loaded_msg (pymap.fetch.LoadedMessageProvider property)</a>
@@ -1329,6 +1323,8 @@
       <li><a href="pymap.admin.html#pymap.admin.handlers.system.SystemHandlers.Login">Login() (pymap.admin.handlers.system.SystemHandlers method)</a>
 </li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.BaseHandler.login_as">login_as() (pymap.admin.handlers.BaseHandler method)</a>
+</li>
+      <li><a href="pymap.admin.html#pymap.admin.handlers.BaseHandler.login_with">login_with() (pymap.admin.handlers.BaseHandler method)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.nonauth.LoginCommand">LoginCommand (class in pymap.parsing.command.nonauth)</a>
 </li>
@@ -2693,8 +2689,12 @@
 </li>
       <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.role">role (pymap.token.macaroon.MacaroonCredentials property)</a>
 </li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.roles">roles (pymap.user.UserMetadata property)</a>
+      <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.roles">roles (pymap.interfaces.login.IdentityInterface property)</a>
+
+      <ul>
+        <li><a href="pymap.user.html#pymap.user.UserMetadata.roles">(pymap.user.UserMetadata property)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.imap.html#pymap.imap.IMAPConnection.run">run() (pymap.imap.IMAPConnection method)</a>
 
       <ul>
@@ -2967,6 +2967,8 @@
 </li>
       <li><a href="pymap.bytes.html#pymap.bytes.Writeable.tobytes">tobytes() (pymap.bytes.Writeable method)</a>
 </li>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.token_key">token_key (pymap.user.UserMetadata property)</a>
+</li>
       <li><a href="pymap.token.html#pymap.token.tokens">tokens (in module pymap.token)</a>
 
       <ul>
@@ -3019,10 +3021,10 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.exceptions.UnexpectedType">UnexpectedType</a>
 </li>
-      <li><a href="pymap.parsing.html#pymap.parsing.response.code.Unseen">Unseen (class in pymap.parsing.response.code)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.parsing.html#pymap.parsing.response.code.Unseen">Unseen (class in pymap.parsing.response.code)</a>
+</li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.unseen">unseen (pymap.interfaces.mailbox.MailboxInterface property)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.unsubscribe">unsubscribe() (pymap.backend.session.BaseSession method)</a>
@@ -3058,8 +3060,6 @@
       <li><a href="pymap.exceptions.html#pymap.exceptions.UserNotFound">UserNotFound</a>
 </li>
       <li><a href="pymap.user.html#pymap.user.UserRoles">UserRoles (class in pymap.user)</a>
-</li>
-      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.Config.users_file">users_file (pymap.backend.maildir.Config property)</a>
 </li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.Config.users_prefix">users_prefix (pymap.backend.redis.Config property)</a>
 </li>
@@ -3240,7 +3240,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>

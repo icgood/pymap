@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.message &#8212; pymap 0.31.1 documentation</title>
+    <title>pymap.message &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>
@@ -133,31 +133,6 @@ was added to the system.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flags_key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.11)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><span class="pre">pymap.parsing.specials.flag.Flag</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.message.BaseMessage.flags_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hashable value that represents the current flags of this
 message, used for detecting mailbox updates.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pymap.message.ExpungedMessage">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.message.</span></span><span class="sig-name descname"><span class="pre">ExpungedMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cached_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#ExpungedMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.ExpungedMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a message that has been expunged from the mailbox.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><em>CachedMessage</em></a>) – A cached copy of the message metadata.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.message.ExpungedMessage.load_content">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requirement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/message.html#ExpungedMessage.load_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.message.ExpungedMessage.load_content" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads the content of the message.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><em>FetchRequirement</em></a>) – The data required from the message content.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface" title="pymap.interfaces.message.LoadedMessageInterface"><em>LoadedMessageInterface</em></a></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -356,10 +331,6 @@ optimized to only search headers and <code class="docutils literal notranslate">
 <li><a class="reference internal" href="#pymap.message.BaseMessage.flags_key"><code class="docutils literal notranslate"><span class="pre">BaseMessage.flags_key</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#pymap.message.ExpungedMessage"><code class="docutils literal notranslate"><span class="pre">ExpungedMessage</span></code></a><ul>
-<li><a class="reference internal" href="#pymap.message.ExpungedMessage.load_content"><code class="docutils literal notranslate"><span class="pre">ExpungedMessage.load_content()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#pymap.message.BaseLoadedMessage"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage</span></code></a><ul>
 <li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.requirement"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.requirement</span></code></a></li>
 <li><a class="reference internal" href="#pymap.message.BaseLoadedMessage.get_header"><code class="docutils literal notranslate"><span class="pre">BaseLoadedMessage.get_header()</span></code></a></li>
@@ -443,7 +414,7 @@ optimized to only search headers and <code class="docutils literal notranslate">
         <li class="right" >
           <a href="pymap.mailbox.html" title="pymap.mailbox"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.message</span></code></a></li> 
       </ul>

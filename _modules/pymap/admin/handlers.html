@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.admin.handlers &#8212; pymap 0.31.1 documentation</title>
+    <title>pymap.admin.handlers &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../admin.html" accesskey="U">pymap.admin</a> &#187;</li>
@@ -66,7 +66,8 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">AsyncGenerator</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span><span class="p">,</span> <span class="n">asynccontextmanager</span><span class="p">,</span> <span class="n">AsyncExitStack</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">closing</span><span class="p">,</span> <span class="n">asynccontextmanager</span><span class="p">,</span> <span class="n">AsyncExitStack</span><span class="p">,</span> \
+    <span class="n">AbstractAsyncContextManager</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">Final</span>
 
 <span class="kn">from</span> <span class="nn">pymap.context</span> <span class="kn">import</span> <span class="n">cluster_metadata</span><span class="p">,</span> <span class="n">connection_exit</span>
@@ -76,6 +77,7 @@
 <span class="kn">from</span> <span class="nn">pymap.interfaces.session</span> <span class="kn">import</span> <span class="n">SessionInterface</span>
 <span class="kn">from</span> <span class="nn">pymap.plugin</span> <span class="kn">import</span> <span class="n">Plugin</span>
 <span class="kn">from</span> <span class="nn">pymapadmin.grpc.admin_pb2</span> <span class="kn">import</span> <span class="n">Result</span><span class="p">,</span> <span class="n">SUCCESS</span><span class="p">,</span> <span class="n">FAILURE</span>
+<span class="kn">from</span> <span class="nn">pysasl.creds.server</span> <span class="kn">import</span> <span class="n">ServerCredentials</span>
 
 <span class="kn">from</span> <span class="nn">..errors</span> <span class="kn">import</span> <span class="n">get_unimplemented_error</span>
 <span class="kn">from</span> <span class="nn">..typing</span> <span class="kn">import</span> <span class="n">Handler</span>
@@ -141,27 +143,45 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseHandler.login_as"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.handlers.BaseHandler.login_as">[docs]</a>    <span class="nd">@asynccontextmanager</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">login_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">_Metadata</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+<div class="viewcode-block" id="BaseHandler.login_with"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.handlers.BaseHandler.login_with">[docs]</a>    <span class="nd">@asynccontextmanager</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">login_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">credentials</span><span class="p">:</span> <span class="n">ServerCredentials</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">IdentityInterface</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context manager to login and get an identity object.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context manager to login with the given credentials and get an</span>
+<span class="sd">        identity object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            credentials: The SASL credentials.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`~pymap.exceptions.InvalidAuth`,</span>
+<span class="sd">            :class:`~pymap.exceptions.AuthorizationFailure`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">authenticated</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="n">authenticated</span><span class="p">,</span> <span class="n">credentials</span><span class="o">.</span><span class="n">authzid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseHandler.login_as"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.handlers.BaseHandler.login_as">[docs]</a>    <span class="k">def</span> <span class="nf">login_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">_Metadata</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="n">IdentityInterface</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context manager to :meth:`.login` with a token from the request</span>
+<span class="sd">        metadata.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stream: The grpc request/response stream.</span>
 <span class="sd">            user: The user to authorize as.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            :class:`~pymap.exceptions.InvalidAuth`</span>
+<span class="sd">            :class:`~pymap.exceptions.InvalidAuth`,</span>
+<span class="sd">            :class:`~pymap.exceptions.AuthorizationFailure`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">admin_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_admin_keys</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_token</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
-            <span class="n">creds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span>
-                                            <span class="n">admin_keys</span><span class="o">=</span><span class="n">admin_keys</span><span class="p">)</span>
+            <span class="n">credentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">tokens</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                <span class="n">user</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">admin_keys</span><span class="o">=</span><span class="n">admin_keys</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidAuth</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">exc</span>
-        <span class="k">yield</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_with</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHandler.with_session"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.handlers.BaseHandler.with_session">[docs]</a>    <span class="nd">@asynccontextmanager</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">with_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identity</span><span class="p">:</span> <span class="n">IdentityInterface</span><span class="p">)</span> \
@@ -229,7 +249,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../admin.html" >pymap.admin</a> &#187;</li>

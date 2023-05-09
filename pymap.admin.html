@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.admin &#8212; pymap 0.31.1 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -206,9 +206,31 @@ the response.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pymap.admin.handlers.BaseHandler.login_with">
+<span class="sig-name descname"><span class="pre">login_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers.html#BaseHandler.login_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.login_with" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to login with the given credentials and get an
+identity object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>credentials</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.creds.html#pysasl.creds.server.ServerCredentials" title="(in pysasl v1.0)"><em>ServerCredentials</em></a>) – The SASL credentials.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AuthorizationFailure" title="pymap.exceptions.AuthorizationFailure"><strong>AuthorizationFailure</strong></a> – </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncGenerator" title="(in Python v3.11)"><em>AsyncGenerator</em></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a>, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pymap.admin.handlers.BaseHandler.login_as">
 <span class="sig-name descname"><span class="pre">login_as</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers.html#BaseHandler.login_as"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.login_as" title="Permalink to this definition">¶</a></dt>
-<dd><p>Context manager to login and get an identity object.</p>
+<dd><p>Context manager to <a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.login" title="pymap.backend.dict.DictBackend.login"><code class="xref py py-meth docutils literal notranslate"><span class="pre">login()</span></code></a> with a token from the request
+metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -218,10 +240,13 @@ the response.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.InvalidAuth" title="pymap.exceptions.InvalidAuth"><strong>InvalidAuth</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AuthorizationFailure" title="pymap.exceptions.AuthorizationFailure"><strong>AuthorizationFailure</strong></a> – </p></li>
+</ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncGenerator" title="(in Python v3.11)"><em>AsyncGenerator</em></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a>, None]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractAsyncContextManager" title="(in Python v3.11)"><em>AbstractAsyncContextManager</em></a>[<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -426,6 +451,7 @@ request and response.</p>
 <li><a class="reference internal" href="#pymap.admin.handlers.handlers"><code class="docutils literal notranslate"><span class="pre">handlers</span></code></a></li>
 <li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler"><code class="docutils literal notranslate"><span class="pre">BaseHandler</span></code></a><ul>
 <li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.catch_errors"><code class="docutils literal notranslate"><span class="pre">BaseHandler.catch_errors()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.login_with"><code class="docutils literal notranslate"><span class="pre">BaseHandler.login_with()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.login_as"><code class="docutils literal notranslate"><span class="pre">BaseHandler.login_as()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.admin.handlers.BaseHandler.with_session"><code class="docutils literal notranslate"><span class="pre">BaseHandler.with_session()</span></code></a></li>
 </ul>
@@ -517,7 +543,7 @@ request and response.</p>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.interfaces &#8212; pymap 0.31.1 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
@@ -1109,7 +1109,7 @@ the selected mailbox.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.interfaces.login.LoginInterface.authenticate">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#LoginInterface.authenticate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.LoginInterface.authenticate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Authenticate and authorize the credentials.</p>
+<dd><p>Authenticate the credentials.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>credentials</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.creds.html#pysasl.creds.server.ServerCredentials" title="(in pysasl v1.0)"><em>ServerCredentials</em></a>) – Authentication credentials supplied by the user.</p>
@@ -1123,34 +1123,56 @@ the selected mailbox.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.interfaces.login.LoginInterface.authorize">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">authorize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">authenticated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authzid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#LoginInterface.authorize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.LoginInterface.authorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <em>authenticated</em> identity must be authorized to assume the
+identity of <em>authzid</em>, returning its user identity if successful.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>authenticated</strong> (<a class="reference internal" href="#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a>) – The identity that successfully authorized.</p></li>
+<li><p><strong>authzid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The identity name to be authorized.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.AuthorizationFailure" title="pymap.exceptions.AuthorizationFailure"><strong>AuthorizationFailure</strong></a> – </p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface" title="pymap.interfaces.login.IdentityInterface"><em>IdentityInterface</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.interfaces.login.IdentityInterface">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.interfaces.login.</span></span><span class="sig-name descname"><span class="pre">IdentityInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#IdentityInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.IdentityInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the operations available to a user identity that has been
-authenticated and authorized. This user identity may or may not “exist” in
-the backend.</p>
+<dd><p>Defines the operations available to a user identity. This user identity
+may or may not “exist” yet in the backend.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.interfaces.login.IdentityInterface.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.interfaces.login.IdentityInterface.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The SASL authorization identity of the logged-in user.</p>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.interfaces.login.IdentityInterface.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The SASL authorization identity of the user.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.interfaces.login.IdentityInterface.roles">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">roles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.11)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.interfaces.login.IdentityInterface.roles" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of roles granted to this identity.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.interfaces.login.IdentityInterface.new_session">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#IdentityInterface.new_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.IdentityInterface.new_session" title="Permalink to this definition">¶</a></dt>
-<dd><p>Authenticate and authorize the credentials, returning a new IMAP
-session.</p>
+<dd><p>Returns a new IMAP session.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>credentials</strong> – Authentication credentials supplied by the user.</p>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractAsyncContextManager" title="(in Python v3.11)"><em>AbstractAsyncContextManager</em></a>[<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><em>SessionInterface</em></a>]</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractAsyncContextManager" title="(in Python v3.11)"><em>AbstractAsyncContextManager</em></a>[<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><em>SessionInterface</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1158,8 +1180,8 @@ session.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.interfaces.login.IdentityInterface.new_token">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/interfaces/login.html#IdentityInterface.new_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.interfaces.login.IdentityInterface.new_token" title="Permalink to this definition">¶</a></dt>
-<dd><p>Authenticate and authorize the credentials, returning a bearer token
-that may be used in future authentication attempts.</p>
+<dd><p>Returns a bearer token that may be used in future authentication
+attempts.</p>
 <p>Since tokens should use their own private key, backends may return
 <code class="docutils literal notranslate"><span class="pre">None</span></code> if it does not support tokens or the user does not have a
 private key.</p>
@@ -1555,10 +1577,12 @@ exists.</p>
 <li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface"><code class="docutils literal notranslate"><span class="pre">LoginInterface</span></code></a><ul>
 <li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface.tokens"><code class="docutils literal notranslate"><span class="pre">LoginInterface.tokens</span></code></a></li>
 <li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface.authenticate"><code class="docutils literal notranslate"><span class="pre">LoginInterface.authenticate()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.LoginInterface.authorize"><code class="docutils literal notranslate"><span class="pre">LoginInterface.authorize()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface"><code class="docutils literal notranslate"><span class="pre">IdentityInterface</span></code></a><ul>
 <li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.name"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.name</span></code></a></li>
+<li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.roles"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.roles</span></code></a></li>
 <li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.new_session"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.new_session()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.new_token"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.new_token()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.interfaces.login.IdentityInterface.get"><code class="docutils literal notranslate"><span class="pre">IdentityInterface.get()</span></code></a></li>
@@ -1664,7 +1688,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>

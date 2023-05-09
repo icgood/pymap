@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.backend &#8212; pymap 0.31.1 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -106,7 +106,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.backend_capability"><code class="docutils literal notranslate"><span class="pre">Config.backend_capability</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.users_file"><code class="docutils literal notranslate"><span class="pre">Config.users_file</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.base_dir"><code class="docutils literal notranslate"><span class="pre">Config.base_dir</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.layout"><code class="docutils literal notranslate"><span class="pre">Config.layout</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pymap.backend.maildir.html#pymap.backend.maildir.Config.colon"><code class="docutils literal notranslate"><span class="pre">Config.colon</span></code></a></li>
@@ -393,7 +392,7 @@ message with its assigned UID.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a> | <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage"><em>ExpungedMessage</em></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -413,7 +412,7 @@ message with its assigned UID.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a> | <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage"><em>ExpungedMessage</em></a></p>
+<dd class="field-even"><p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.MessageT_co" title="pymap.interfaces.message.MessageT_co"><em>MessageT_co</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -488,7 +487,7 @@ are resolved by the selected mailbox session.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterable" title="(in Python v3.11)"><em>AsyncIterable</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a>[+MessageT_co, <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage">pymap.message.ExpungedMessage</a>]]]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterable" title="(in Python v3.11)"><em>AsyncIterable</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, +MessageT_co]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -996,7 +995,7 @@ set.</p>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)">collections.abc.Iterable</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a>[~MessageT, <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage">pymap.message.ExpungedMessage</a>]]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)">collections.abc.Iterable</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1021,7 +1020,7 @@ given search criteria.</p>
 <dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.MailboxNotFound" title="pymap.exceptions.MailboxNotFound"><strong>MailboxNotFound</strong></a> – </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)">collections.abc.Iterable</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a>[~MessageT, <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage">pymap.message.ExpungedMessage</a>]]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)">collections.abc.Iterable</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1136,7 +1135,7 @@ the selected mailbox.</p>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)">collections.abc.Iterable</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a>[~MessageT, <a class="reference internal" href="pymap.message.html#pymap.message.ExpungedMessage" title="pymap.message.ExpungedMessage">pymap.message.ExpungedMessage</a>]]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)">collections.abc.Iterable</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a>, ~MessageT]], <a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox">pymap.selected.SelectedMailbox</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1290,7 +1289,7 @@ the selected mailbox.</p>
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>

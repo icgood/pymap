@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.interfaces.login &#8212; pymap 0.31.1 documentation</title>
+    <title>pymap.interfaces.login &#8212; pymap 0.32.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.login</a></li> 
@@ -90,7 +90,7 @@
 <div class="viewcode-block" id="LoginInterface.authenticate"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.login.LoginInterface.authenticate">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">credentials</span><span class="p">:</span> <span class="n">ServerCredentials</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">IdentityInterface</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Authenticate and authorize the credentials.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Authenticate the credentials.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            credentials: Authentication credentials supplied by the user.</span>
@@ -99,28 +99,46 @@
 <span class="sd">            :exc:`~pymap.exceptions.InvalidAuth`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+<div class="viewcode-block" id="LoginInterface.authorize"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.login.LoginInterface.authorize">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">authorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">authenticated</span><span class="p">:</span> <span class="n">IdentityInterface</span><span class="p">,</span> <span class="n">authzid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">IdentityInterface</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The *authenticated* identity must be authorized to assume the</span>
+<span class="sd">        identity of *authzid*, returning its user identity if successful.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            authenticated: The identity that successfully authorized.</span>
+<span class="sd">            authzid: The identity name to be authorized.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :exc:`~pymap.exceptions.AuthorizationFailure`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div></div>
 
 
 <div class="viewcode-block" id="IdentityInterface"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.login.IdentityInterface">[docs]</a><span class="k">class</span> <span class="nc">IdentityInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the operations available to a user identity that has been</span>
-<span class="sd">    authenticated and authorized. This user identity may or may not &quot;exist&quot; in</span>
-<span class="sd">    the backend.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the operations available to a user identity. This user identity</span>
+<span class="sd">    may or may not &quot;exist&quot; yet in the backend.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The SASL authorization identity of the logged-in user.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The SASL authorization identity of the user.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of roles granted to this identity.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
 <div class="viewcode-block" id="IdentityInterface.new_session"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_session">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">new_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="n">SessionInterface</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Authenticate and authorize the credentials, returning a new IMAP</span>
-<span class="sd">        session.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            credentials: Authentication credentials supplied by the user.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a new IMAP session.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            :class:`~pymap.exceptions.UserNotFound`</span>
@@ -131,8 +149,8 @@
 <div class="viewcode-block" id="IdentityInterface.new_token"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_token">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">new_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">expiration</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Authenticate and authorize the credentials, returning a bearer token</span>
-<span class="sd">        that may be used in future authentication attempts.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a bearer token that may be used in future authentication</span>
+<span class="sd">        attempts.</span>
 
 <span class="sd">        Since tokens should use their own private key, backends may return</span>
 <span class="sd">        ``None`` if it does not support tokens or the user does not have a</span>
@@ -226,7 +244,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.31.1 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.login</a></li> 
