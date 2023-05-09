@@ -16,7 +16,7 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import BaseMessage, ExpungedMessage, BaseLoadedMessage
+from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.specials import ObjectId, FetchRequirement
@@ -153,6 +153,13 @@ class Message(BaseMessage):
         else:
             content = MessageContent.parse(bytes(maildir_msg))
             return LoadedMessage(self, requirement, content)
+
+    @classmethod
+    def copy_expunged(cls, msg: CachedMessage) -> Self:
+        assert isinstance(msg, cls)
+        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
+                   expunged=True, email_id=msg.email_id,
+                   thread_id=msg.thread_id, maildir=msg._maildir, key=msg._key)
 
     @classmethod
     def to_maildir(cls, append_msg: AppendMessage, recent: bool,
@@ -310,13 +317,12 @@ class MailboxData(MailboxDataInterface[Message]):
             uidl.set(new_rec)
         return new_rec.uid
 
-    async def get(self, uid: int, cached_msg: CachedMessage) \
-            -> Message | ExpungedMessage:
+    async def get(self, uid: int, cached_msg: CachedMessage) -> Message:
         maildir = self._maildir
         try:
             record, maildir_msg = await self._get_maildir_msg(uid)
         except (KeyError, FileNotFoundError):
-            return ExpungedMessage(cached_msg)
+            return Message.copy_expunged(cached_msg)
         key = record.key
         email_id = self._get_object_id(record, 'E')
         thread_id = self._get_object_id(record, 'T')
@@ -325,13 +331,12 @@ class MailboxData(MailboxDataInterface[Message]):
             self.maildir_flags)
 
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: frozenset[Flag], mode: FlagOp) \
-            -> Message | ExpungedMessage:
+                     flag_set: frozenset[Flag], mode: FlagOp) -> Message:
         maildir = self._maildir
         try:
             record, maildir_msg = await self._get_maildir_msg(uid)
         except (KeyError, FileNotFoundError):
-            msg = ExpungedMessage(cached_msg)
+            msg = Message.copy_expunged(cached_msg)
             msg.permanent_flags = mode.apply(msg.permanent_flags, flag_set)
             return msg
         key = record.key
