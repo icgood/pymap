@@ -1,8 +1,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator, Mapping, MutableSet
-from typing import Final
+from collections.abc import Collection, Iterable, Iterator, Mapping, MutableSet
+from typing import Any, Final
 
 from pysasl.creds.server import ServerCredentials
 from pysasl.hashing import Cleartext
@@ -45,6 +45,19 @@ class UserRoles(MutableSet[str]):
         if role is not None:
             self._roles.discard(role)
 
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, UserRoles):
+            return other._roles == self._roles
+        elif isinstance(other, Iterable):
+            return set(other) == self._roles
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(self._roles)
+
+    def __repr__(self) -> str:
+        return repr(self._roles)
+
 
 class UserMetadata(Identity):
     """Contains user metadata such as the password or hash.
@@ -53,6 +66,8 @@ class UserMetadata(Identity):
         config: The configuration object.
         authcid: The authentication identity for the user.
         password: The password string or hash digest.
+        token_key: The private key used to verify tokens.
+        roles: The roles assigned to the user.
         params: The user metadata parameters.
 
     """
@@ -61,16 +76,22 @@ class UserMetadata(Identity):
 
     def __init__(self, config: IMAPConfig, authcid: str, *,
                  password: str | None = None,
+                 token_key: bytes | None = None,
+                 roles: Collection[str] | None = None,
                  params: Mapping[str, str] | None = None) -> None:
         super().__init__()
         self.config: Final = config
         self._authcid = authcid
         self._password = password
+        self._token_key = token_key
+        self._roles = UserRoles(roles or ())
         self._params = params or {}
 
     @classmethod
     async def create(cls, config: IMAPConfig, authcid: str, *,
                      password: str | None = None,
+                     token_key: bytes | None = None,
+                     roles: Collection[str] | None = None,
                      params: Mapping[str, str] | None = None) -> UserMetadata:
         """Create a new :class:`UserMetadata` by hashing the given *password*
         using the configured hash algorithm. Uses the
@@ -80,13 +101,16 @@ class UserMetadata(Identity):
             config: The configuration object.
             authcid: The authentication identity for the user.
             password: The password string or hash digest.
+            token_key: The private key used to verify tokens.
+            roles: The roles assigned to the user.
             params: The user metadata parameters.
 
         """
         if password is not None:
             fut = cls._hash(config, password)
             password = await config.cpu_subsystem.execute(fut)
-        return cls(config, authcid, password=password, params=params)
+        return cls(config, authcid, password=password,
+                   token_key=token_key, roles=roles, params=params)
 
     @classmethod
     async def _hash(cls, config: IMAPConfig, password: str) -> str:
@@ -115,27 +139,19 @@ class UserMetadata(Identity):
         return self._password
 
     @property
-    def roles(self) -> UserRoles:
-        """A set of role strings given to the user. These strings only have
-        meaning to the backend.
+    def token_key(self) -> bytes | None:
+        """The private key used to verify tokens."""
+        return self._token_key
 
-        """
-        return UserRoles()
+    @property
+    def roles(self) -> UserRoles:
+        """The set of roles assigned to the user."""
+        return self._roles
 
     @property
     def params(self) -> Mapping[str, str]:
         """Additional parameters associated with the user metadata."""
         return self._params
-
-    def get_key(self, identifier: str) -> bytes | None:
-        """Find the token key for the given identifier associated with this
-        user.
-
-        Args:
-            identifier: Any string that can facilitate the lookup of the key.
-
-        """
-        return None
 
     async def check_password(self, creds: ServerCredentials) -> None:
         """Check the given credentials against the known password comparison

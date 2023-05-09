@@ -285,26 +285,31 @@ class Login(LoginInterface):
             -> Identity:
         config = self._config
         authcid = credentials.authcid
-        authzid = credentials.authzid
         roles = UserRoles()
         if isinstance(credentials, TokenCredentials):
             authcid = credentials.identifier
             roles.add(credentials.role)
+        identity = Identity(config, self.tokens,
+                            self._user_connect, self._mail_connect,
+                            authcid, roles)
         try:
-            authcid_identity = Identity(config, self.tokens,
-                                        self._user_connect, self._mail_connect,
-                                        authcid, roles)
-            metadata: UserMetadata = await authcid_identity.get()
+            metadata: UserMetadata = await identity.get()
         except UserNotFound:
             await asyncio.sleep(self._config.invalid_user_sleep)
             metadata = UserMetadata(config, authcid)
         await metadata.check_password(credentials)
         roles |= metadata.roles
+        return identity
+
+    async def authorize(self, authenticated: IdentityInterface, authzid: str) \
+            -> Identity:
+        authcid = authenticated.name
+        roles = authenticated.roles
         if authcid != authzid and 'admin' not in roles:
             raise AuthorizationFailure()
-        return Identity(config, self.tokens,
+        return Identity(self._config, self.tokens,
                         self._user_connect, self._mail_connect,
-                        authzid, roles)
+                        authzid, UserRoles())
 
 
 class Identity(IdentityInterface):
@@ -324,6 +329,10 @@ class Identity(IdentityInterface):
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def roles(self) -> frozenset[str]:
+        return frozenset(self._roles)
 
     async def new_token(self, *, expiration: datetime | None = None) \
             -> str | None:
@@ -394,14 +403,11 @@ class Identity(IdentityInterface):
             raise UserNotFound(self.name)
 
     @classmethod
-    def _params_with_key(cls, params: Mapping[str, str] | None) \
-            -> Mapping[str, str]:
-        if params is None:
-            return {'key': secrets.token_hex()}
-        elif 'key' not in params:
-            return dict(params, key=secrets.token_hex())
-        else:
+    def _params_with_key(cls, params: Mapping[str, str]) -> Mapping[str, str]:
+        if 'key' in params:
             return params
+        else:
+            return dict(params, key=secrets.token_hex())
 
 
 class User(UserMetadata):

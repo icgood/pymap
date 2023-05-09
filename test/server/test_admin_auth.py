@@ -1,5 +1,5 @@
 
-from collections.abc import Mapping
+from collections.abc import Collection
 
 import pytest
 from grpclib.testing import ChannelFor
@@ -52,12 +52,11 @@ class TestAdminAuth(TestBase):
     async def test_admin_role(self, backend: BackendInterface) -> None:
         token = await self._login(backend, 'testuser', 'testpass')
         await self._set_user(backend, token, 'testuser', 'testpass',
-                             params={'role': 'admin'},
-                             failure_key='NotAllowedError')
+                             roles={'admin'}, failure_key='NotAllowedError')
         await self._set_user(backend, self.admin_token, 'testuser', 'testpass',
-                             params={'role': 'admin'})
+                             roles={'admin'})
         await self._set_user(backend, token, 'testuser', 'testpass',
-                             params={'role': 'admin'})
+                             roles={'admin'})
         await self._set_user(backend, token, 'newuser', 'newpass')
         await self._delete_user(backend, token, 'newuser')
 
@@ -88,10 +87,10 @@ class TestAdminAuth(TestBase):
 
     async def _set_user(self, backend: BackendInterface,
                         token: str, user: str, password: str, *,
-                        params: Mapping[str, str] | None = None,
+                        roles: Collection[str] | None = None,
                         failure_key: str | None = None) -> None:
         handlers = UserHandlers(backend)
-        data = UserData(password=password, params=params)
+        data = UserData(password=password, roles=roles)
         request = SetUserRequest(user=user, data=data)
         metadata = {'auth-token': token}
         async with ChannelFor([handlers]) as channel:

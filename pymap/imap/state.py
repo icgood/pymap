@@ -98,8 +98,9 @@ class ConnectionState:
     async def _login(self, creds: ServerCredentials) \
             -> SessionInterface:
         stack = connection_exit.get()
-        identity = await self.login.authenticate(creds)
-        return await stack.enter_async_context(identity.new_session())
+        authenticated = await self.login.authenticate(creds)
+        authorized = await self.login.authorize(authenticated, creds.authzid)
+        return await stack.enter_async_context(authorized.new_session())
 
     async def do_greeting(self) -> CommandResponse:
         sock_info = socket_info.get()

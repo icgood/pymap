@@ -169,7 +169,7 @@ class Login(LoginInterface):
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
-        self.users_dict: dict[str, UserMetadata] = {}
+        self.users_dict: dict[str, User] = {}
         self.tokens_dict: dict[str, tuple[str, bytes]] = {}
         self._tokens = AllTokens(config)
 
@@ -179,42 +179,53 @@ class Login(LoginInterface):
 
     @property
     def demo_user_identity(self) -> Identity:
-        return Identity(self.config.demo_user, self, frozenset())
+        return Identity(self.config.demo_user, self, None, frozenset())
 
     async def authenticate(self, credentials: ServerCredentials) -> Identity:
         authcid = credentials.authcid
-        authzid = credentials.authzid
         roles = UserRoles()
+        token_id: str | None = None
         if isinstance(credentials, TokenCredentials):
-            identifier = credentials.identifier
-            if identifier in self.tokens_dict:
-                authcid, _ = self.tokens_dict[identifier]
+            token_id = credentials.identifier
             roles.add(credentials.role)
+        identity = Identity(authcid, self, token_id, roles)
         try:
-            metadata = await Identity(authcid, self, roles).get()
+            metadata = await identity.get()
         except UserNotFound:
             await asyncio.sleep(self.config.invalid_user_sleep)
             metadata = UserMetadata(self.config, authcid)
         await metadata.check_password(credentials)
         roles |= metadata.roles
+        return identity
+
+    async def authorize(self, authenticated: IdentityInterface, authzid: str) \
+            -> Identity:
+        authcid = authenticated.name
+        roles = authenticated.roles
         if authcid != authzid and 'admin' not in roles:
             raise AuthorizationFailure()
-        return Identity(authzid, self, roles)
+        return Identity(authzid, self, None, roles)
 
 
 class Identity(IdentityInterface):
     """The identity implementation for the dict backend."""
 
-    def __init__(self, name: str, login: Login, roles: Set[str]) -> None:
+    def __init__(self, name: str, login: Login, token_id: str | None,
+                 roles: Set[str]) -> None:
         super().__init__()
         self.login: Final = login
         self.config: Final = login.config
         self._name = name
-        self._roles = frozenset(roles)
+        self._roles = roles
+        self._token_id = token_id
 
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def roles(self) -> frozenset[str]:
+        return frozenset(self._roles)
 
     async def new_token(self, *, expiration: datetime | None = None) \
             -> str | None:
@@ -289,13 +300,24 @@ class Identity(IdentityInterface):
             await mbx.append(append_msg, recent=msg_recent)
 
     async def get(self) -> UserMetadata:
-        data = self.login.users_dict.get(self.name)
+        token_id = self._token_id
+        name = self.name
+        token_key: bytes | None = None
+        if token_id is not None:
+            try:
+                name, token_key = self.login.tokens_dict[token_id]
+            except KeyError as exc:
+                raise UserNotFound() from exc
+            else:
+                self._name = name
+        data = self.login.users_dict.get(name)
         if data is None:
             raise UserNotFound(self.name)
-        return data
+        return data.copy(token_key=token_key)
 
     async def set(self, data: UserMetadata) -> None:
-        user = User(self.login, data.authcid, data.password, data.params)
+        user = User(self.config, data.authcid, password=data.password,
+                    roles=data.roles, params=data.params)
         if 'admin' not in self._roles and user.roles:
             raise NotAllowedError('Cannot assign roles.')
         self.login.users_dict[self.name] = user
@@ -313,19 +335,6 @@ class Identity(IdentityInterface):
 
 class User(UserMetadata):
 
-    def __init__(self, login: Login, authcid: str,
-                 password: str | None, params: Mapping[str, str]) -> None:
-        super().__init__(login.config, authcid,
-                         password=password, params=params)
-        self._login = login
-
-    @property
-    def roles(self) -> UserRoles:
-        return UserRoles([self.params.get('role')])
-
-    def get_key(self, identifier: str) -> bytes | None:
-        if identifier in self._login.tokens_dict:
-            authcid, key = self._login.tokens_dict[identifier]
-            if authcid == self.authcid:
-                return key
-        return None
+    def copy(self, token_key: bytes | None) -> User:
+        return User(self.config, self.authcid, password=self.password,
+                    roles=self.roles, params=self.params, token_key=token_key)

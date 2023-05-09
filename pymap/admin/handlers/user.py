@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Collection, Mapping
 from typing import TypeAlias
 
 from grpclib.server import Stream
@@ -46,7 +46,7 @@ class UserHandlers(UserBase, BaseHandler):
                     self.login_as(stream.metadata, request.user) as identity):
             username = identity.name
             metadata = await identity.get()
-            user_data = UserData(params=metadata.params)
+            user_data = UserData(params=metadata.params, roles=metadata.roles)
             if metadata.password is not None:
                 user_data.password = metadata.password
         resp = UserResponse(result=result, username=username,
@@ -70,9 +70,11 @@ class UserHandlers(UserBase, BaseHandler):
             user_data = request.data
             password = user_data.password \
                 if user_data.HasField('password') else None
+            roles: Collection[str] = user_data.roles
             params: Mapping[str, str] = user_data.params
             metadata = await UserMetadata.create(
-                self.config, request.user, password=password, params=params)
+                self.config, request.user,
+                password=password, roles=roles, params=params)
             await identity.set(metadata)
         resp = UserResponse(result=result, username=request.user)
         await stream.send_message(resp)

@@ -1,8 +1,9 @@
 
 from __future__ import annotations
 
+import os.path
 from collections.abc import Iterable, Mapping
-from typing import IO, TypeVar
+from typing import IO, Self
 
 from pymap.parsing.specials.flag import Flag, Seen, Flagged, Deleted, Draft, \
     Answered
@@ -10,8 +11,6 @@ from pymap.parsing.specials.flag import Flag, Seen, Flagged, Deleted, Draft, \
 from .io import FileReadable
 
 __all__ = ['MaildirFlags']
-
-_MFT = TypeVar('_MFT', bound='MaildirFlags')
 
 
 class MaildirFlags(FileReadable):
@@ -46,11 +45,15 @@ class MaildirFlags(FileReadable):
                                    'D': Draft,
                                    'R': Answered}
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, path: str) -> None:
+        super().__init__(path)
         self._keywords: frozenset[Flag] = frozenset()
         self._to_kwd: Mapping[str, Flag] = {}
         self._from_kwd: Mapping[Flag, str] = {}
+
+    @property
+    def empty(self) -> bool:
+        return not self._keywords
 
     @property
     def permanent_flags(self) -> frozenset[Flag]:
@@ -109,23 +112,16 @@ class MaildirFlags(FileReadable):
         return frozenset(flags)
 
     @classmethod
-    def get_file(cls) -> str:
-        return 'dovecot-keywords'
+    def get_file(cls, path: str) -> str:
+        return os.path.join(path, 'dovecot-keywords')
 
     @classmethod
-    def get_default(cls: type[_MFT], base_dir: str) -> _MFT:
-        return cls()
+    def get_default(cls, path: str) -> Self:
+        return cls(path)
 
     @classmethod
-    def open(cls: type[_MFT], base_dir: str, fp: IO[str]) -> _MFT:
-        return cls()
-        ret = []
-        for line in fp:
-            i, kwd = line.split()
-            if kwd.startswith('\\'):
-                raise ValueError(kwd)
-            ret.append((i, kwd))
-        return cls([Flag(kwd) for _, kwd in sorted(ret)])
+    def open(cls, path: str, fp: IO[str]) -> Self:
+        return cls(path)
 
     def read(self, fp: IO[str]) -> None:
         to_kwd = {}

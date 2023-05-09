@@ -141,7 +141,8 @@ class MacaroonCredentials(TokenCredentials):
 
     def _get_login_verifier(self, identity: Identity) -> Verifier:
         verifier = Verifier()
-        verifier.satisfy_exact(f'authcid = {self.prepare(identity.authcid)}')
+        authcid = self.prepare(identity.authcid)
+        verifier.satisfy_exact(f'authcid = {authcid}')
         verifier.satisfy_general(self._satisfy)
         return verifier
 
@@ -158,7 +159,7 @@ class MacaroonCredentials(TokenCredentials):
                 if self._verify(verifier, admin_key):
                     return True
         if isinstance(identity, UserMetadata):
-            key = identity.get_key(self.identifier)
+            key = identity.token_key
             if key is not None:
                 verifier = self._get_login_verifier(identity)
                 if self._verify(verifier, key):

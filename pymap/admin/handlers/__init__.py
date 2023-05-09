@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Set, AsyncGenerator
-from contextlib import closing, asynccontextmanager, AsyncExitStack
+from contextlib import closing, asynccontextmanager, AsyncExitStack, \
+    AbstractAsyncContextManager
 from typing import TypeAlias, Final
 
 from pymap.context import cluster_metadata, connection_exit
@@ -12,6 +13,7 @@ from pymap.interfaces.login import IdentityInterface
 from pymap.interfaces.session import SessionInterface
 from pymap.plugin import Plugin
 from pymapadmin.grpc.admin_pb2 import Result, SUCCESS, FAILURE
+from pysasl.creds.server import ServerCredentials
 
 from ..errors import get_unimplemented_error
 from ..typing import Handler
@@ -78,26 +80,44 @@ class BaseHandler(Handler):
             raise KeyError()
 
     @asynccontextmanager
-    async def login_as(self, metadata: _Metadata, user: str) \
+    async def login_with(self, credentials: ServerCredentials) \
             -> AsyncGenerator[IdentityInterface, None]:
-        """Context manager to login and get an identity object.
+        """Context manager to login with the given credentials and get an
+        identity object.
+
+        Args:
+            credentials: The SASL credentials.
+
+        Raises:
+            :class:`~pymap.exceptions.InvalidAuth`,
+            :class:`~pymap.exceptions.AuthorizationFailure`
+
+        """
+        authenticated = await self.login.authenticate(credentials)
+        yield await self.login.authorize(authenticated, credentials.authzid)
+
+    def login_as(self, metadata: _Metadata, user: str) \
+            -> AbstractAsyncContextManager[IdentityInterface]:
+        """Context manager to :meth:`.login` with a token from the request
+        metadata.
 
         Args:
             stream: The grpc request/response stream.
             user: The user to authorize as.
 
         Raises:
-            :class:`~pymap.exceptions.InvalidAuth`
+            :class:`~pymap.exceptions.InvalidAuth`,
+            :class:`~pymap.exceptions.AuthorizationFailure`
 
         """
         admin_keys = self._get_admin_keys()
         try:
             token = self._get_token(metadata)
-            creds = self.login.tokens.parse(user, token,
-                                            admin_keys=admin_keys)
+            credentials = self.login.tokens.parse(
+                user, token, admin_keys=admin_keys)
         except (KeyError, ValueError) as exc:
             raise InvalidAuth() from exc
-        yield await self.login.authenticate(creds)
+        return self.login_with(credentials)
 
     @asynccontextmanager
     async def with_session(self, identity: IdentityInterface) \
