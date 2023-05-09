@@ -15,7 +15,6 @@ from pymap.flags import FlagOp
 from pymap.interfaces.message import CachedMessage
 from pymap.listtree import ListTree
 from pymap.mailbox import MailboxSnapshot
-from pymap.message import ExpungedMessage
 from pymap.mime import MessageContent
 from pymap.parsing.message import AppendMessage
 from pymap.parsing.modutf7 import modutf7_encode, modutf7_decode
@@ -148,18 +147,16 @@ class MailboxData(MailboxDataInterface[Message]):
             raise
         return dest_uid
 
-    async def get(self, uid: int, cached_msg: CachedMessage) \
-            -> Message | ExpungedMessage:
+    async def get(self, uid: int, cached_msg: CachedMessage) -> Message:
         redis = self._redis
         keys = self._keys
         message_raw = await redis.hget(keys.uids, str(uid))
         if message_raw is None:
-            return ExpungedMessage(cached_msg)
+            return Message.copy_expunged(cached_msg)
         return self._get_msg(uid, message_raw)
 
     async def update(self, uid: int, cached_msg: CachedMessage,
-                     flag_set: frozenset[Flag], mode: FlagOp) \
-            -> Message | ExpungedMessage:
+                     flag_set: frozenset[Flag], mode: FlagOp) -> Message:
         keys = self._keys
         ns_keys = self._ns_keys
         try:
@@ -169,7 +166,7 @@ class MailboxData(MailboxDataInterface[Message]):
         except ResponseError as exc:
             if 'message not found' not in str(exc):
                 raise
-            return ExpungedMessage(cached_msg)
+            return Message.copy_expunged(cached_msg)
         return self._get_msg(uid, message_raw)
 
     async def delete(self, uids: Iterable[int]) -> None:

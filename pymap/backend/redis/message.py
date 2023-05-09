@@ -3,10 +3,12 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import datetime
+from typing import Self
 
 import msgpack
 from redis.asyncio import Redis
 
+from pymap.interfaces.message import CachedMessage
 from pymap.message import BaseMessage, BaseLoadedMessage
 from pymap.mime import MessageContent, MessageHeader, MessageBody
 from pymap.parsing.specials import Flag, ObjectId, FetchRequirement
@@ -65,6 +67,14 @@ class Message(BaseMessage):
         elif requirement & FetchRequirement.HEADER:
             content = await self._load_header(redis, ct_keys)
         return LoadedMessage(self, requirement, content)
+
+    @classmethod
+    def copy_expunged(cls, msg: CachedMessage) -> Self:
+        assert isinstance(msg, cls)
+        return cls(msg.uid, msg.internal_date, msg.permanent_flags,
+                   expunged=True, email_id=msg.email_id,
+                   thread_id=msg.thread_id, redis=msg._redis,
+                   ns_keys=msg._ns_keys)
 
 
 class LoadedMessage(BaseLoadedMessage):
