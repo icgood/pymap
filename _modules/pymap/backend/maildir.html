@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.maildir &#8212; pymap 0.32.0 documentation</title>
+    <title>pymap.backend.maildir &#8212; pymap 0.33.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.maildir</a></li> 
@@ -79,15 +79,16 @@
 
 <span class="kn">from</span> <span class="nn">pymap.concurrent</span> <span class="kn">import</span> <span class="n">Subsystem</span>
 <span class="kn">from</span> <span class="nn">pymap.config</span> <span class="kn">import</span> <span class="n">BackendCapability</span><span class="p">,</span> <span class="n">IMAPConfig</span>
-<span class="kn">from</span> <span class="nn">pymap.exceptions</span> <span class="kn">import</span> <span class="n">AuthorizationFailure</span><span class="p">,</span> <span class="n">NotAllowedError</span><span class="p">,</span> \
-    <span class="n">UserNotFound</span>
+<span class="kn">from</span> <span class="nn">pymap.exceptions</span> <span class="kn">import</span> <span class="n">AuthorizationFailure</span><span class="p">,</span> <span class="n">InvalidAuth</span><span class="p">,</span> \
+    <span class="n">NotAllowedError</span><span class="p">,</span> <span class="n">UserNotFound</span>
 <span class="kn">from</span> <span class="nn">pymap.filter</span> <span class="kn">import</span> <span class="n">PluginFilterSet</span><span class="p">,</span> <span class="n">SingleFilterSet</span>
+<span class="kn">from</span> <span class="nn">pymap.frozen</span> <span class="kn">import</span> <span class="n">frozendict</span>
 <span class="kn">from</span> <span class="nn">pymap.health</span> <span class="kn">import</span> <span class="n">HealthStatus</span>
 <span class="kn">from</span> <span class="nn">pymap.interfaces.backend</span> <span class="kn">import</span> <span class="n">BackendInterface</span>
 <span class="kn">from</span> <span class="nn">pymap.interfaces.login</span> <span class="kn">import</span> <span class="n">LoginInterface</span><span class="p">,</span> <span class="n">IdentityInterface</span>
 <span class="kn">from</span> <span class="nn">pymap.interfaces.token</span> <span class="kn">import</span> <span class="n">TokenCredentials</span><span class="p">,</span> <span class="n">TokensInterface</span>
 <span class="kn">from</span> <span class="nn">pymap.token</span> <span class="kn">import</span> <span class="n">AllTokens</span>
-<span class="kn">from</span> <span class="nn">pymap.user</span> <span class="kn">import</span> <span class="n">UserRoles</span><span class="p">,</span> <span class="n">UserMetadata</span>
+<span class="kn">from</span> <span class="nn">pymap.user</span> <span class="kn">import</span> <span class="n">Passwords</span><span class="p">,</span> <span class="n">UserMetadata</span>
 
 <span class="kn">from</span> <span class="nn">.layout</span> <span class="kn">import</span> <span class="n">MaildirLayout</span>
 <span class="kn">from</span> <span class="nn">.mailbox</span> <span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">Maildir</span><span class="p">,</span> <span class="n">MailboxSet</span>
@@ -175,7 +176,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                  <span class="n">layout</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">colon</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">extra</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">,</span>  <span class="n">admin_key</span><span class="o">=</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_bytes</span><span class="p">(),</span> <span class="o">**</span><span class="n">extra</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">admin_key</span><span class="o">=</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_bytes</span><span class="p">(),</span> <span class="o">**</span><span class="n">extra</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span> <span class="o">=</span> <span class="n">base_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span> <span class="o">=</span> <span class="n">layout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_colon</span> <span class="o">=</span> <span class="n">colon</span>
@@ -277,6 +278,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_passwords</span> <span class="o">=</span> <span class="n">Passwords</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span> <span class="o">=</span> <span class="n">AllTokens</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -287,19 +289,20 @@
             <span class="o">-&gt;</span> <span class="n">Identity</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
         <span class="n">authcid</span> <span class="o">=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">authcid</span>
-        <span class="n">roles</span> <span class="o">=</span> <span class="n">UserRoles</span><span class="p">()</span>
+        <span class="n">roles</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">token_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">credentials</span><span class="p">,</span> <span class="n">TokenCredentials</span><span class="p">):</span>
             <span class="n">token_id</span> <span class="o">=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">identifier</span>
-            <span class="n">roles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">credentials</span><span class="o">.</span><span class="n">role</span><span class="p">)</span>
+            <span class="n">roles</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">credentials</span><span class="o">.</span><span class="n">roles</span><span class="p">)</span>
         <span class="n">identity</span> <span class="o">=</span> <span class="n">Identity</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">,</span> <span class="n">authcid</span><span class="p">,</span> <span class="n">token_id</span><span class="p">,</span> <span class="n">roles</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">metadata</span><span class="p">:</span> <span class="n">UserMetadata</span> <span class="o">=</span> <span class="k">await</span> <span class="n">identity</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">identity</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">UserNotFound</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">invalid_user_sleep</span><span class="p">)</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">UserMetadata</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">authcid</span><span class="p">)</span>
-        <span class="n">roles</span> <span class="o">|=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">roles</span>
-        <span class="k">await</span> <span class="n">metadata</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">UserMetadata</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">authcid</span><span class="p">)</span>
+        <span class="n">roles</span> <span class="o">|=</span> <span class="n">user</span><span class="o">.</span><span class="n">roles</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passwords</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">credentials</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidAuth</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">identity</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">authorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">authenticated</span><span class="p">:</span> <span class="n">IdentityInterface</span><span class="p">,</span> <span class="n">authzid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
@@ -321,7 +324,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">tokens</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_token_id</span> <span class="o">=</span> <span class="n">token_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_roles</span> <span class="o">=</span> <span class="n">roles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roles</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">roles</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">base_dir</span>
 
     <span class="nd">@property</span>
@@ -330,7 +333,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_roles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roles</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">new_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">expiration</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -380,7 +383,7 @@
         <span class="n">token_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token_id</span>
         <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">token_key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">roles</span> <span class="o">=</span> <span class="n">UserRoles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_roles</span><span class="p">)</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_roles</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">UsersFile</span><span class="o">.</span><span class="n">with_read</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">users_file</span><span class="p">,</span> \
                 <span class="n">GroupsFile</span><span class="o">.</span><span class="n">with_read</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">groups_file</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">token_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -412,8 +415,9 @@
                 <span class="n">mailbox_path</span> <span class="o">=</span> <span class="n">user_record</span><span class="o">.</span><span class="n">home_dir</span>
             <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">groups_file</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
                 <span class="n">roles</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">User</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">roles</span><span class="p">,</span>
-                    <span class="n">token_key</span><span class="p">,</span> <span class="n">mailbox_path</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">frozendict</span><span class="p">({</span><span class="s1">&#39;mailbox_path&#39;</span><span class="p">:</span> <span class="n">mailbox_path</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">UserMetadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">token_key</span><span class="p">,</span>
+                            <span class="nb">frozenset</span><span class="p">(</span><span class="n">roles</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">UserMetadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">base_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_dir</span>
@@ -431,8 +435,9 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">mailbox_path</span> <span class="o">!=</span> <span class="n">existing_user</span><span class="o">.</span><span class="n">home_dir</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">NotAllowedError</span><span class="p">(</span><span class="s1">&#39;Cannot assign parameters.&#39;</span><span class="p">)</span>
-                <span class="n">existing_groups</span> <span class="o">=</span> <span class="n">groups_file</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">roles</span> <span class="o">!=</span> <span class="n">existing_groups</span><span class="p">:</span>
+                <span class="n">existing_roles</span> <span class="o">=</span> <span class="p">{</span><span class="n">group</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span>
+                                  <span class="n">groups_file</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">name</span><span class="p">)}</span>
+                <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">roles</span> <span class="o">!=</span> <span class="n">existing_roles</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">NotAllowedError</span><span class="p">(</span><span class="s1">&#39;Cannot assign roles.&#39;</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">UsersFile</span><span class="o">.</span><span class="n">with_write</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">users_file</span><span class="p">,</span> \
                 <span class="n">PasswordsFile</span><span class="o">.</span><span class="n">with_write</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">passwords_file</span><span class="p">,</span> \
@@ -460,23 +465,6 @@
                 <span class="k">pass</span>
             <span class="n">tokens_file</span><span class="o">.</span><span class="n">remove_user</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="n">groups_file</span><span class="o">.</span><span class="n">remove_user</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">UserMetadata</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">IMAPConfig</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">roles</span><span class="p">:</span> <span class="n">UserRoles</span><span class="p">,</span> <span class="n">token_key</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">mailbox_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">mailbox_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">params</span><span class="p">[</span><span class="s1">&#39;mailbox_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mailbox_path</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">token_key</span><span class="o">=</span><span class="n">token_key</span><span class="p">,</span>
-                         <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_roles</span> <span class="o">=</span> <span class="n">roles</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserRoles</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_roles</span>
 </pre></div>
 
             <div class="clearer"></div>
@@ -527,7 +515,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.maildir</a></li> 

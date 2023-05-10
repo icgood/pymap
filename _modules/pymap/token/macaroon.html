@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.token.macaroon &#8212; pymap 0.32.0 documentation</title>
+    <title>pymap.token.macaroon &#8212; pymap 0.33.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../token.html" accesskey="U">pymap.token</a> &#187;</li>
@@ -163,12 +163,12 @@
         <span class="k">return</span> <span class="n">identifier</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">role</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">caveat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macaroon</span><span class="o">.</span><span class="n">first_party_caveats</span><span class="p">():</span>
             <span class="n">caveat_id</span> <span class="o">=</span> <span class="n">caveat</span><span class="o">.</span><span class="n">caveat_id</span>
             <span class="k">if</span> <span class="n">caveat_id</span> <span class="o">==</span> <span class="s1">&#39;role = admin&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s1">&#39;admin&#39;</span>
-        <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">return</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s1">&#39;admin&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">authcid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -217,7 +217,7 @@
         <span class="k">return</span> <span class="n">verifier</span>
 
 <div class="viewcode-block" id="MacaroonCredentials.verify"><a class="viewcode-back" href="../../../pymap.token.html#pymap.token.macaroon.MacaroonCredentials.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identity</span><span class="p">:</span> <span class="n">Identity</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s1">&#39;admin&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;admin&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">roles</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">admin_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">admin_keys</span><span class="p">:</span>
                 <span class="n">verifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_admin_verifier</span><span class="p">()</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verify</span><span class="p">(</span><span class="n">verifier</span><span class="p">,</span> <span class="n">admin_key</span><span class="p">):</span>
@@ -279,7 +279,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../token.html" >pymap.token</a> &#187;</li>

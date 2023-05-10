@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pymap 0.32.0 documentation</title>
+    <title>Index &#8212; pymap 0.33.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -111,8 +111,6 @@
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedSet.add">(pymap.selected.SelectedSet method)</a>
 </li>
-        <li><a href="pymap.user.html#pymap.user.UserRoles.add">(pymap.user.UserRoles method)</a>
-</li>
       </ul></li>
       <li><a href="pymap.admin.html#pymap.admin.AdminService.add_arguments">add_arguments() (pymap.admin.AdminService class method)</a>
 
@@ -129,7 +127,11 @@
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.add_folder">add_folder() (pymap.backend.maildir.layout.MaildirLayout method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.add_mailbox">add_mailbox() (pymap.backend.mailbox.MailboxSetInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.add_mailbox">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.flags.html#pymap.flags.SessionFlags.add_recent">add_recent() (pymap.flags.SessionFlags method)</a>
 </li>
       <li><a href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.add_subparser">add_subparser() (pymap.backend.dict.DictBackend class method)</a>
@@ -160,16 +162,20 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Answered">Answered (in module pymap.parsing.specials.flag)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.selected.html#pymap.selected.SelectedSet.any_selected">any_selected (pymap.selected.SelectedSet property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.AnyParseable">AnyParseable (in module pymap.parsing)</a>
 </li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.mailbox.MailboxHandlers.Append">Append() (pymap.admin.handlers.mailbox.MailboxHandlers method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.append">append() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.append">(pymap.backend.maildir.mailbox.MailboxData method)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.append_messages">append_messages() (pymap.backend.session.BaseSession method)</a>
 
       <ul>
@@ -310,15 +316,23 @@
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.check_mailbox">(pymap.interfaces.session.SessionInterface method)</a>
 </li>
       </ul></li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.check_password">check_password() (pymap.user.UserMetadata method)</a>
+      <li><a href="pymap.user.html#pymap.user.Passwords.check_password">check_password() (pymap.user.Passwords method)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.select.CheckCommand">CheckCommand (class in pymap.parsing.command.select)</a>
 </li>
-      <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.claim_recent">claim_recent() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.claim_new">claim_new() (pymap.backend.maildir.mailbox.Maildir method)</a>
 </li>
+      <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.claim_recent">claim_recent() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.claim_recent">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.cleanup">cleanup() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.cleanup">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
         <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.cleanup">(pymap.backend.session.BaseSession method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.cleanup">(pymap.interfaces.session.SessionInterface method)</a>
@@ -501,6 +515,8 @@
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface.config">(pymap.interfaces.backend.BackendInterface property)</a>
 </li>
+        <li><a href="pymap.user.html#pymap.user.UserMetadata.config">(pymap.user.UserMetadata attribute)</a>
+</li>
       </ul></li>
       <li><a href="pymap.config.html#pymap.config.ConfigT">ConfigT (class in pymap.config)</a>
 </li>
@@ -545,6 +561,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.copy">copy() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.copy">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
         <li><a href="pymap.parsing.html#pymap.parsing.Params.copy">(pymap.parsing.Params method)</a>
 </li>
       </ul></li>
@@ -558,7 +576,7 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.code.CopyUid">CopyUid (class in pymap.parsing.response.code)</a>
 </li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.create">create() (pymap.user.UserMetadata class method)</a>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenList.count">count() (pymap.frozen.FrozenList method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.create_mailbox">create_mailbox() (pymap.backend.session.BaseSession method)</a>
 
@@ -621,6 +639,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.delete">delete() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.delete">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
         <li><a href="pymap.filter.html#pymap.filter.SingleFilterSet.delete">(pymap.filter.SingleFilterSet method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface.delete">(pymap.interfaces.filter.FilterSetInterface method)</a>
@@ -633,6 +653,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.delete_mailbox">delete_mailbox() (pymap.backend.mailbox.MailboxSetInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.delete_mailbox">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
+</li>
         <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.delete_mailbox">(pymap.backend.session.BaseSession method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.delete_mailbox">(pymap.interfaces.session.SessionInterface method)</a>
@@ -645,7 +667,11 @@
       <li><a href="pymap.admin.html#pymap.admin.handlers.user.UserHandlers.DeleteUser">DeleteUser() (pymap.admin.handlers.user.UserHandlers method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.delimiter">delimiter (pymap.backend.mailbox.MailboxSetInterface property)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.delimiter">(pymap.backend.maildir.mailbox.MailboxSet property)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.backend.dict.html#pymap.backend.dict.Config.demo_data">demo_data (pymap.backend.dict.Config property)</a>
 </li>
       <li><a href="pymap.backend.dict.html#pymap.backend.dict.Config.demo_data_resource">demo_data_resource (pymap.backend.dict.Config property)</a>
@@ -659,11 +685,7 @@
       <li><a href="pymap.backend.dict.html#pymap.backend.dict.DictBackend">DictBackend (class in pymap.backend.dict)</a>
 </li>
       <li><a href="pymap.cluster.html#pymap.cluster.ClusterMetadata.discard">discard() (pymap.cluster.ClusterMetadata method)</a>
-
-      <ul>
-        <li><a href="pymap.user.html#pymap.user.UserRoles.discard">(pymap.user.UserRoles method)</a>
 </li>
-      </ul></li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.flag.Draft">Draft (in module pymap.parsing.specials.flag)</a>
 </li>
       <li><a href="pymap.fetch.html#pymap.fetch.DynamicFetchValue">DynamicFetchValue (class in pymap.fetch)</a>
@@ -787,7 +809,17 @@
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchValue">FetchValue (class in pymap.parsing.specials.fetchattr)</a>
 </li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.FILE_NAME">FILE_NAME (pymap.backend.maildir.uidlist.UidList attribute)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.GroupsFile.FILE_NAME">(pymap.backend.maildir.users.GroupsFile attribute)</a>
 </li>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.PasswordsFile.FILE_NAME">(pymap.backend.maildir.users.PasswordsFile attribute)</a>
+</li>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.TokensFile.FILE_NAME">(pymap.backend.maildir.users.TokensFile attribute)</a>
+</li>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.UsersFile.FILE_NAME">(pymap.backend.maildir.users.UsersFile attribute)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.concurrent.html#pymap.concurrent.FileLock">FileLock (class in pymap.concurrent)</a>
 </li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.layout.FilesystemLayout">FilesystemLayout (class in pymap.backend.maildir.layout)</a>
@@ -896,6 +928,14 @@
       </ul></li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.from_maildir">from_maildir() (pymap.backend.maildir.flags.MaildirFlags method)</a>
 </li>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenDict">FrozenDict (class in pymap.frozen)</a>
+</li>
+      <li><a href="pymap.frozen.html#pymap.frozen.frozendict">frozendict (in module pymap.frozen)</a>
+</li>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenList">FrozenList (class in pymap.frozen)</a>
+</li>
+      <li><a href="pymap.frozen.html#pymap.frozen.frozenlist">frozenlist (in module pymap.frozen)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -907,11 +947,15 @@
       <ul>
         <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.get">(pymap.backend.maildir.layout.MaildirLayout class method)</a>
 </li>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.get">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
         <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.uidlist.UidList.get">(pymap.backend.maildir.uidlist.UidList method)</a>
 </li>
         <li><a href="pymap.filter.html#pymap.filter.SingleFilterSet.get">(pymap.filter.SingleFilterSet method)</a>
 </li>
         <li><a href="pymap.flags.html#pymap.flags.SessionFlags.get">(pymap.flags.SessionFlags method)</a>
+</li>
+        <li><a href="pymap.frozen.html#pymap.frozen.FrozenDict.get">(pymap.frozen.FrozenDict method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.filter.FilterSetInterface.get">(pymap.interfaces.filter.FilterSetInterface method)</a>
 </li>
@@ -1011,6 +1055,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.get_mailbox">get_mailbox() (pymap.backend.mailbox.MailboxSetInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.get_mailbox">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
+</li>
         <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.get_mailbox">(pymap.backend.session.BaseSession method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.get_mailbox">(pymap.interfaces.session.SessionInterface method)</a>
@@ -1022,6 +1068,8 @@
         <li><a href="pymap.message.html#pymap.message.BaseLoadedMessage.get_message_headers">(pymap.message.BaseLoadedMessage method)</a>
 </li>
       </ul></li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.get_message_metadata">get_message_metadata() (pymap.backend.maildir.mailbox.Maildir method)</a>
+</li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_text">get_message_text() (pymap.interfaces.message.LoadedMessageInterface method)</a>
 
       <ul>
@@ -1074,6 +1122,10 @@
 </li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.keys.GlobalKeys">GlobalKeys (class in pymap.backend.redis.keys)</a>
 </li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.GroupRecord">GroupRecord (class in pymap.backend.maildir.users)</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.GroupsFile">GroupsFile (class in pymap.backend.maildir.users)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1092,11 +1144,15 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement.has_none">has_none() (pymap.parsing.specials.fetchattr.FetchRequirement method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.search.html#pymap.search.HasEmailIdSearchCriteria">HasEmailIdSearchCriteria (class in pymap.search)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.search.html#pymap.search.HasFlagSearchCriteria">HasFlagSearchCriteria (class in pymap.search)</a>
+</li>
+      <li><a href="pymap.user.html#pymap.user.Passwords.hash_password">hash_password() (pymap.user.Passwords method)</a>
+</li>
+      <li><a href="pymap.frozen.html#pymap.frozen.HashableT">HashableT (class in pymap.frozen)</a>
 </li>
       <li><a href="pymap.search.html#pymap.search.HasThreadIdSearchCriteria">HasThreadIdSearchCriteria (class in pymap.search)</a>
 </li>
@@ -1131,6 +1187,8 @@
       <li><a href="pymap.mime.html#pymap.mime.parsed.ParsedHeaders.in_reply_to">in_reply_to (pymap.mime.parsed.ParsedHeaders property)</a>
 </li>
       <li><a href="pymap.exceptions.html#pymap.exceptions.IncompatibleData">IncompatibleData</a>
+</li>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenList.index">index() (pymap.frozen.FrozenList method)</a>
 </li>
       <li><a href="pymap.sockets.html#pymap.sockets.InheritedSockets">InheritedSockets (class in pymap.sockets)</a>
 </li>
@@ -1188,6 +1246,8 @@
         <li><a href="pymap.parsing.html#pymap.parsing.response.ResponseBye.is_terminal">(pymap.parsing.response.ResponseBye property)</a>
 </li>
       </ul></li>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenDict.items">items() (pymap.frozen.FrozenDict method)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.sequenceset.SequenceSet.iter">iter() (pymap.parsing.specials.sequenceset.SequenceSet method)</a>
 </li>
   </ul></td>
@@ -1232,6 +1292,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenDict.keys">keys() (pymap.frozen.FrozenDict method)</a>
+</li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.keys.KeysGroup">KeysGroup (class in pymap.backend.redis.keys)</a>
 </li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.keywords">keywords (pymap.backend.maildir.flags.MaildirFlags property)</a>
@@ -1271,6 +1333,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.list_mailboxes">list_mailboxes() (pymap.backend.mailbox.MailboxSetInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.list_mailboxes">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
+</li>
         <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.list_mailboxes">(pymap.backend.session.BaseSession method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.list_mailboxes">(pymap.interfaces.session.SessionInterface method)</a>
@@ -1279,7 +1343,11 @@
       <li><a href="pymap.listtree.html#pymap.listtree.ListTree.list_matching">list_matching() (pymap.listtree.ListTree method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.list_subscribed">list_subscribed() (pymap.backend.mailbox.MailboxSetInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.list_subscribed">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.parsing.html#pymap.parsing.command.auth.ListCommand">ListCommand (class in pymap.parsing.command.auth)</a>
 </li>
       <li><a href="pymap.cluster.html#pymap.cluster.ClusterMetadata.listen">listen() (pymap.cluster.ClusterMetadata method)</a>
@@ -1296,8 +1364,12 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.primitives.LiteralString">LiteralString (class in pymap.parsing.primitives)</a>
 </li>
-      <li><a href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">load_content() (pymap.interfaces.message.MessageInterface method)</a>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Message.load_content">load_content() (pymap.backend.maildir.mailbox.Message method)</a>
+
+      <ul>
+        <li><a href="pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">(pymap.interfaces.message.MessageInterface method)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.fetch.html#pymap.fetch.MessageAttributes.load_hook">load_hook() (pymap.fetch.MessageAttributes method)</a>
 </li>
       <li><a href="pymap.fetch.html#pymap.fetch.LoadedMessageProvider.loaded_msg">loaded_msg (pymap.fetch.LoadedMessageProvider property)</a>
@@ -1353,12 +1425,16 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.mailbox_id">mailbox_id (pymap.backend.mailbox.MailboxDataInterface property)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.mailbox_id">(pymap.backend.maildir.mailbox.MailboxData property)</a>
+</li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.mailbox_id">(pymap.interfaces.mailbox.MailboxInterface property)</a>
 </li>
         <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.mailbox_id">(pymap.selected.SelectedMailbox property)</a>
 </li>
       </ul></li>
       <li><a href="pymap.exceptions.html#pymap.exceptions.MailboxConflict">MailboxConflict</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData">MailboxData (class in pymap.backend.maildir.mailbox)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface">MailboxDataInterface (class in pymap.backend.mailbox)</a>
 </li>
@@ -1382,9 +1458,13 @@
 </li>
       <li><a href="pymap.exceptions.html#pymap.exceptions.MailboxReadOnly">MailboxReadOnly</a>
 </li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet">MailboxSet (class in pymap.backend.maildir.mailbox)</a>
+</li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface">MailboxSetInterface (class in pymap.backend.mailbox)</a>
 </li>
       <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot">MailboxSnapshot (class in pymap.mailbox)</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir">Maildir (class in pymap.backend.maildir.mailbox)</a>
 </li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.MaildirBackend">MaildirBackend (class in pymap.backend.maildir)</a>
 </li>
@@ -1454,6 +1534,8 @@
         <li><a href="pymap.parsing.html#pymap.parsing.response.UntaggedResponse.merge_key">(pymap.parsing.response.UntaggedResponse property)</a>
 </li>
       </ul></li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Message">Message (class in pymap.backend.maildir.mailbox)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.commands.InvalidCommand.message">message (pymap.parsing.commands.InvalidCommand property)</a>
 </li>
       <li><a href="pymap.mime.html#pymap.mime.parsed.ParsedHeaders.message_id">message_id (pymap.mime.parsed.ParsedHeaders property)</a>
@@ -1514,9 +1596,13 @@
 </li>
         <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.layout">pymap.backend.maildir.layout</a>
 </li>
+        <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.mailbox">pymap.backend.maildir.mailbox</a>
+</li>
         <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.subscriptions">pymap.backend.maildir.subscriptions</a>
 </li>
         <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.uidlist">pymap.backend.maildir.uidlist</a>
+</li>
+        <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.users">pymap.backend.maildir.users</a>
 </li>
         <li><a href="pymap.backend.redis.html#module-pymap.backend.redis">pymap.backend.redis</a>
 </li>
@@ -1545,6 +1631,8 @@
         <li><a href="pymap.filter.html#module-pymap.filter">pymap.filter</a>
 </li>
         <li><a href="pymap.flags.html#module-pymap.flags">pymap.flags</a>
+</li>
+        <li><a href="pymap.frozen.html#module-pymap.frozen">pymap.frozen</a>
 </li>
         <li><a href="pymap.imap.html#module-pymap.imap">pymap.imap</a>
 </li>
@@ -1660,6 +1748,12 @@
       <li><a href="pymap.parsing.html#pymap.parsing.modutf7.modutf7_encode">modutf7_encode() (in module pymap.parsing.modutf7)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.move">move() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.move">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
+      </ul></li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.move_message">move_message() (pymap.backend.maildir.mailbox.Maildir method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.move_messages">move_messages() (pymap.backend.session.BaseSession method)</a>
 
@@ -1684,6 +1778,8 @@
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.name">(pymap.interfaces.login.IdentityInterface property)</a>
 </li>
+        <li><a href="pymap.user.html#pymap.user.UserMetadata.name">(pymap.user.UserMetadata attribute)</a>
+</li>
       </ul></li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.keys.NamespaceKeys">NamespaceKeys (class in pymap.backend.redis.keys)</a>
 </li>
@@ -1701,10 +1797,10 @@
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_session">new_session() (pymap.interfaces.login.IdentityInterface method)</a>
 </li>
-      <li><a href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_thread_id">new_thread_id() (pymap.parsing.specials.objectid.ObjectId class method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_thread_id">new_thread_id() (pymap.parsing.specials.objectid.ObjectId class method)</a>
+</li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_token">new_token() (pymap.interfaces.login.IdentityInterface method)</a>
 </li>
       <li><a href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot.new_uid_validity">new_uid_validity() (pymap.mailbox.MailboxSnapshot class method)</a>
@@ -1777,7 +1873,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.Params">Params (class in pymap.parsing)</a>
 </li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.params">params (pymap.user.UserMetadata property)</a>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.params">params (pymap.user.UserMetadata attribute)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.parens">parens (pymap.parsing.specials.objectid.ObjectId property)</a>
 </li>
@@ -1919,7 +2015,13 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchAttribute.partial">partial (pymap.parsing.specials.fetchattr.FetchAttribute attribute)</a>
 </li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.password">password (pymap.user.UserMetadata property)</a>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.password">password (pymap.user.UserMetadata attribute)</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.PasswordRecord">PasswordRecord (class in pymap.backend.maildir.users)</a>
+</li>
+      <li><a href="pymap.user.html#pymap.user.Passwords">Passwords (class in pymap.user)</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.PasswordsFile">PasswordsFile (class in pymap.backend.maildir.users)</a>
 </li>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.path">path (pymap.backend.maildir.layout.MaildirLayout property)</a>
 </li>
@@ -1927,6 +2029,8 @@
 
       <ul>
         <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.flags.MaildirFlags.permanent_flags">(pymap.backend.maildir.flags.MaildirFlags property)</a>
+</li>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.permanent_flags">(pymap.backend.maildir.mailbox.MailboxData property)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.permanent_flags">(pymap.interfaces.mailbox.MailboxInterface property)</a>
 </li>
@@ -2057,6 +2161,13 @@
 </li>
       </ul></li>
       <li>
+    pymap.backend.maildir.mailbox
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.mailbox">module</a>
+</li>
+      </ul></li>
+      <li>
     pymap.backend.maildir.subscriptions
 
       <ul>
@@ -2068,6 +2179,13 @@
 
       <ul>
         <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.uidlist">module</a>
+</li>
+      </ul></li>
+      <li>
+    pymap.backend.maildir.users
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#module-pymap.backend.maildir.users">module</a>
 </li>
       </ul></li>
       <li>
@@ -2084,6 +2202,8 @@
         <li><a href="pymap.backend.redis.html#module-pymap.backend.redis.cleanup">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pymap.backend.redis.keys
 
@@ -2098,8 +2218,6 @@
         <li><a href="pymap.backend.html#module-pymap.backend.session">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pymap.bytes
 
@@ -2168,6 +2286,13 @@
 
       <ul>
         <li><a href="pymap.flags.html#module-pymap.flags">module</a>
+</li>
+      </ul></li>
+      <li>
+    pymap.frozen
+
+      <ul>
+        <li><a href="pymap.frozen.html#module-pymap.frozen">module</a>
 </li>
       </ul></li>
       <li>
@@ -2572,6 +2697,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.readonly">readonly (pymap.backend.mailbox.MailboxDataInterface property)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.readonly">(pymap.backend.maildir.mailbox.MailboxData property)</a>
+</li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.readonly">(pymap.interfaces.mailbox.MailboxInterface property)</a>
 </li>
         <li><a href="pymap.parsing.html#pymap.parsing.command.auth.ExamineCommand.readonly">(pymap.parsing.command.auth.ExamineCommand attribute)</a>
@@ -2642,6 +2769,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.rename_mailbox">rename_mailbox() (pymap.backend.mailbox.MailboxSetInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.rename_mailbox">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
+</li>
         <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.rename_mailbox">(pymap.backend.session.BaseSession method)</a>
 </li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.rename_mailbox">(pymap.interfaces.session.SessionInterface method)</a>
@@ -2687,12 +2816,12 @@
 </li>
       <li><a href="pymap.concurrent.html#pymap.concurrent.RetT">RetT (class in pymap.concurrent)</a>
 </li>
-      <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.role">role (pymap.token.macaroon.MacaroonCredentials property)</a>
-</li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.roles">roles (pymap.interfaces.login.IdentityInterface property)</a>
 
       <ul>
-        <li><a href="pymap.user.html#pymap.user.UserMetadata.roles">(pymap.user.UserMetadata property)</a>
+        <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.roles">(pymap.token.macaroon.MacaroonCredentials property)</a>
+</li>
+        <li><a href="pymap.user.html#pymap.user.UserMetadata.roles">(pymap.user.UserMetadata attribute)</a>
 </li>
       </ul></li>
       <li><a href="pymap.imap.html#pymap.imap.IMAPConnection.run">run() (pymap.imap.IMAPConnection method)</a>
@@ -2742,7 +2871,11 @@
       <li><a href="pymap.parsing.html#pymap.parsing.command.auth.SelectCommand">SelectCommand (class in pymap.parsing.command.auth)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.selected_set">selected_set (pymap.backend.mailbox.MailboxDataInterface property)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.selected_set">(pymap.backend.maildir.mailbox.MailboxData property)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox">SelectedMailbox (class in pymap.selected)</a>
 </li>
       <li><a href="pymap.selected.html#pymap.selected.SelectedSet">SelectedSet (class in pymap.selected)</a>
@@ -2798,7 +2931,11 @@
       <li><a href="pymap.selected.html#pymap.selected.SelectedMailbox.set_messages">set_messages() (pymap.selected.SelectedMailbox method)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxSetInterface.set_subscribed">set_subscribed() (pymap.backend.mailbox.MailboxSetInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.set_subscribed">(pymap.backend.maildir.mailbox.MailboxSet method)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.user.UserHandlers.SetUser">SetUser() (pymap.admin.handlers.user.UserHandlers method)</a>
 </li>
       <li><a href="pymap.sieve.html#pymap.sieve.SieveCompiler">SieveCompiler (class in pymap.sieve)</a>
@@ -2818,7 +2955,11 @@
       <li><a href="pymap.search.html#pymap.search.SizeSearchCriteria">SizeSearchCriteria (class in pymap.search)</a>
 </li>
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.snapshot">snapshot() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.snapshot">(pymap.backend.maildir.mailbox.MailboxData method)</a>
 </li>
+      </ul></li>
       <li><a href="pymap.context.html#pymap.context.socket_info">socket_info (in module pymap.context)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.Space">Space (class in pymap.parsing)</a>
@@ -2967,7 +3108,7 @@
 </li>
       <li><a href="pymap.bytes.html#pymap.bytes.Writeable.tobytes">tobytes() (pymap.bytes.Writeable method)</a>
 </li>
-      <li><a href="pymap.user.html#pymap.user.UserMetadata.token_key">token_key (pymap.user.UserMetadata property)</a>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.token_key">token_key (pymap.user.UserMetadata attribute)</a>
 </li>
       <li><a href="pymap.token.html#pymap.token.tokens">tokens (in module pymap.token)</a>
 
@@ -2976,6 +3117,8 @@
 </li>
       </ul></li>
       <li><a href="pymap.token.html#pymap.token.TokensBase">TokensBase (class in pymap.token)</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.TokensFile">TokensFile (class in pymap.backend.maildir.users)</a>
 </li>
       <li><a href="pymap.cluster.html#pymap.cluster.swim.transport_type">transport_type (in module pymap.cluster.swim)</a>
 </li>
@@ -2996,6 +3139,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.uid_validity">uid_validity (pymap.backend.mailbox.MailboxDataInterface property)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.uid_validity">(pymap.backend.maildir.mailbox.MailboxData property)</a>
+</li>
         <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.uid_validity">(pymap.interfaces.mailbox.MailboxInterface property)</a>
 </li>
       </ul></li>
@@ -3021,12 +3166,12 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.exceptions.UnexpectedType">UnexpectedType</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.response.code.Unseen">Unseen (class in pymap.parsing.response.code)</a>
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.unseen">unseen (pymap.interfaces.mailbox.MailboxInterface property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.backend.html#pymap.backend.session.BaseSession.unsubscribe">unsubscribe() (pymap.backend.session.BaseSession method)</a>
 
       <ul>
@@ -3040,6 +3185,8 @@
       <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.update">update() (pymap.backend.mailbox.MailboxDataInterface method)</a>
 
       <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.update">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
         <li><a href="pymap.flags.html#pymap.flags.SessionFlags.update">(pymap.flags.SessionFlags method)</a>
 </li>
         <li><a href="pymap.listtree.html#pymap.listtree.ListTree.update">(pymap.listtree.ListTree method)</a>
@@ -3051,17 +3198,25 @@
         <li><a href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.update_flags">(pymap.interfaces.session.SessionInterface method)</a>
 </li>
       </ul></li>
-      <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.update_selected">update_selected() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.update_metadata">update_metadata() (pymap.backend.maildir.mailbox.Maildir method)</a>
 </li>
+      <li><a href="pymap.backend.html#pymap.backend.mailbox.MailboxDataInterface.update_selected">update_selected() (pymap.backend.mailbox.MailboxDataInterface method)</a>
+
+      <ul>
+        <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.update_selected">(pymap.backend.maildir.mailbox.MailboxData method)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.admin.html#pymap.admin.handlers.user.UserHandlers">UserHandlers (class in pymap.admin.handlers.user)</a>
 </li>
       <li><a href="pymap.user.html#pymap.user.UserMetadata">UserMetadata (class in pymap.user)</a>
 </li>
       <li><a href="pymap.exceptions.html#pymap.exceptions.UserNotFound">UserNotFound</a>
 </li>
-      <li><a href="pymap.user.html#pymap.user.UserRoles">UserRoles (class in pymap.user)</a>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.UserRecord">UserRecord (class in pymap.backend.maildir.users)</a>
 </li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.Config.users_prefix">users_prefix (pymap.backend.redis.Config property)</a>
+</li>
+      <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.users.UsersFile">UsersFile (class in pymap.backend.maildir.users)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -3131,6 +3286,10 @@
         <li><a href="pymap.sieve.html#pymap.sieve.SieveCompiler.value_type">(pymap.sieve.SieveCompiler property)</a>
 </li>
       </ul></li>
+      <li><a href="pymap.frozen.html#pymap.frozen.FrozenDict.values">values() (pymap.frozen.FrozenDict method)</a>
+</li>
+      <li><a href="pymap.frozen.html#pymap.frozen.ValueT">ValueT (class in pymap.frozen)</a>
+</li>
       <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.verify">verify() (pymap.token.macaroon.MacaroonCredentials method)</a>
 </li>
   </ul></td>
@@ -3240,7 +3399,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>

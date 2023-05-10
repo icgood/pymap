@@ -28,3 +28,15 @@
 
 .. automodule:: pymap.backend.maildir.uidlist
    :members:
+
+``pymap.backend.maildir.mailbox``
+---------------------------------
+
+.. automodule:: pymap.backend.maildir.mailbox
+   :members:
+
+``pymap.backend.maildir.users``
+-------------------------------
+
+.. automodule:: pymap.backend.maildir.users
+   :members:

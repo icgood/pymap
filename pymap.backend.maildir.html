@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pymap.backend.maildir &#8212; pymap 0.32.0 documentation</title>
+    <title>pymap.backend.maildir &#8212; pymap 0.33.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" accesskey="U"><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
@@ -74,7 +74,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.backend.maildir.MaildirBackend">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.</span></span><span class="sig-name descname"><span class="pre">MaildirBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir.html#MaildirBackend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.MaildirBackend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines an on-disk backend that uses <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
+<dd><p>Defines an on-disk backend that uses <a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir" title="pymap.backend.maildir.mailbox.Maildir"><code class="xref py py-class docutils literal notranslate"><span class="pre">Maildir</span></code></a> for
 mailbox storage and <a class="reference external" href="https://wiki2.dovecot.org/MailboxFormat/Maildir">MailboxFormat/Maildir</a> for metadata storage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -206,7 +206,7 @@ capabilities.</p>
 <dd><p>The info delimiter in mail filename.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>Note on <code class="docutils literal notranslate"><span class="pre">colon</span></code> in <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.Maildir" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">mailbox.Maildir</span></code></a>.</p>
+<p>Note on <code class="docutils literal notranslate"><span class="pre">colon</span></code> in <a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir" title="pymap.backend.maildir.mailbox.Maildir"><code class="xref py py-class docutils literal notranslate"><span class="pre">mailbox.Maildir</span></code></a>.</p>
 </div>
 </dd></dl>
 
@@ -696,6 +696,635 @@ e.g.:</p>
 </dd></dl>
 
 </section>
+<section id="module-pymap.backend.maildir.mailbox">
+<span id="pymap-backend-maildir-mailbox"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.mailbox</span></code><a class="headerlink" href="#module-pymap.backend.maildir.mailbox" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Maildir">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.mailbox.</span></span><span class="sig-name descname"><span class="pre">Maildir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Maildir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Maildir" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Maildir.claim_new">
+<span class="sig-name descname"><span class="pre">claim_new</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Maildir.claim_new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Maildir.claim_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for messages in the <code class="docutils literal notranslate"><span class="pre">new</span></code> subdirectory, moving them to
+<code class="docutils literal notranslate"><span class="pre">cur</span></code> and returning their keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Maildir.move_message">
+<span class="sig-name descname"><span class="pre">move_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest_subdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Maildir.move_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Maildir.move_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the message to another maildir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>dest</strong> (<a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir" title="pymap.backend.maildir.mailbox.Maildir"><em>Maildir</em></a>) – </p></li>
+<li><p><strong>dest_subdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Maildir.get_message_metadata">
+<span class="sig-name descname"><span class="pre">get_message_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Maildir.get_message_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Maildir.get_message_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <code class="xref py py-meth docutils literal notranslate"><span class="pre">get_message()</span></code> but the message contents
+are not read from disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.MaildirMessage" title="(in Python v3.11)"><em>MaildirMessage</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Maildir.update_metadata">
+<span class="sig-name descname"><span class="pre">update_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Maildir.update_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Maildir.update_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses <a class="reference external" href="https://docs.python.org/3/library/os.html#os.rename" title="(in Python v3.11)"><code class="xref py py-func docutils literal notranslate"><span class="pre">os.rename()</span></code></a> to atomically update the message filename
+based on <a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.MaildirMessage.get_info" title="(in Python v3.11)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_info()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3/library/mailbox.html#mailbox.MaildirMessage" title="(in Python v3.11)"><em>MaildirMessage</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Message">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.mailbox.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internal_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">permanent_flags</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expunged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maildir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Message" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – </p></li>
+<li><p><strong>internal_date</strong> (<em>datetime</em>) – </p></li>
+<li><p><strong>permanent_flags</strong> (<em>Iterable</em><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><em>Flag</em></a><em>]</em>) – </p></li>
+<li><p><strong>expunged</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – </p></li>
+<li><p><strong>email_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>thread_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – </p></li>
+<li><p><strong>maildir</strong> (<a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir" title="pymap.backend.maildir.mailbox.Maildir"><em>Maildir</em></a><em> | </em><em>None</em>) – </p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.Message.load_content">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">requirement</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#Message.load_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.Message.load_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the content of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>requirement</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.fetchattr.FetchRequirement" title="pymap.parsing.specials.fetchattr.FetchRequirement"><em>FetchRequirement</em></a>) – The data required from the message content.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>LoadedMessage</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mailbox_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maildir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mailbox_id</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a>) – </p></li>
+<li><p><strong>maildir</strong> (<a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir" title="pymap.backend.maildir.mailbox.Maildir"><em>Maildir</em></a>) – </p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.mailbox_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mailbox_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><span class="pre">ObjectId</span></a></em><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.mailbox_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox object ID.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.mailbox_id" title="pymap.interfaces.mailbox.MailboxInterface.mailbox_id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mailbox_id</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.readonly">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">readonly</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.readonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the mailbox is read-only or read-write.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.uid_validity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid_validity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></em><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.uid_validity" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mailbox UID validity value.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.permanent_flags">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">permanent_flags</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.11)"><span class="pre">frozenset</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><span class="pre">pymap.parsing.specials.flag.Flag</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.permanent_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>The permanent flags allowed in the mailbox.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.selected_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selected_set</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedSet" title="pymap.selected.SelectedSet"><span class="pre">SelectedSet</span></a></em><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.selected_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of selected mailbox sessions currently active.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.update_selected">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.update_selected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.update_selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates and returns the selected mailbox object with the state
+needed to discover updates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – the selected mailbox object.</p></li>
+<li><p><strong>wait_on</strong> (<a class="reference internal" href="pymap.concurrent.html#pymap.concurrent.Event" title="pymap.concurrent.Event"><em>Event</em></a><em> | </em><em>None</em>) – If given, block until this event signals or mailbox
+activity occurs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.append">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">append_msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new message to the end of the mailbox, returning a copy of
+message with its assigned UID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>append_msg</strong> (<a class="reference internal" href="pymap.parsing.html#pymap.parsing.message.AppendMessage" title="pymap.parsing.message.AppendMessage"><em>AppendMessage</em></a>) – The new message data.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.backend.maildir.mailbox.Message" title="pymap.backend.maildir.mailbox.Message"><em>Message</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.copy">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies a message, if it exists, from this mailbox to the
+<em>destination</em> mailbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The UID of the message to copy.</p></li>
+<li><p><strong>destination</strong> (<a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData" title="pymap.backend.maildir.mailbox.MailboxData"><em>MailboxData</em></a>) – The destination mailbox.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.move">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.move"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves a message, if it exists, from this mailbox to the
+<em>destination</em> mailbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The UID of the message to move.</p></li>
+<li><p><strong>destination</strong> (<a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData" title="pymap.backend.maildir.mailbox.MailboxData"><em>MailboxData</em></a>) – The destination mailbox.</p></li>
+<li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.get">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached_msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the message with the given UID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The message UID.</p></li>
+<li><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><em>CachedMessage</em></a>) – The last known cached message.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.backend.maildir.mailbox.Message" title="pymap.backend.maildir.mailbox.Message"><em>Message</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.update">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cached_msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the permanent flags of the message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The message UID.</p></li>
+<li><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><em>CachedMessage</em></a>) – The last known cached message.</p></li>
+<li><p><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.11)"><em>frozenset</em></a><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><em>pymap.parsing.specials.flag.Flag</em></a><em>]</em>) – The set of flags for the update operation.</p></li>
+<li><p><strong>flag_op</strong> – The mode to change the flags.</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><em>FlagOp</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pymap.backend.maildir.mailbox.Message" title="pymap.backend.maildir.mailbox.Message"><em>Message</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.delete">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete messages with the given UIDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uids</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>]</em>) – The message UIDs.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.claim_recent">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">claim_recent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.claim_recent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.claim_recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Messages that are newly added to the mailbox are assigned the
+<code class="docutils literal notranslate"><span class="pre">\Recent</span></code> flag in the current selected mailbox session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a>) – The selected mailbox session.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.cleanup">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform any necessary “housekeeping” steps. This may be a slow
+operation, and may run things like garbage collection on the backend.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.check_mailbox" title="pymap.interfaces.session.SessionInterface.check_mailbox"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_mailbox()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxData.snapshot">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">snapshot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxData.snapshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxData.snapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a snapshot of the current state of the mailbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.mailbox.html#pymap.mailbox.MailboxSnapshot" title="pymap.mailbox.MailboxSnapshot"><em>MailboxSnapshot</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.mailbox.</span></span><span class="sig-name descname"><span class="pre">MailboxSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maildir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maildir</strong> (<a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir" title="pymap.backend.maildir.mailbox.Maildir"><em>Maildir</em></a>) – </p></li>
+<li><p><strong>layout</strong> (<a class="reference internal" href="#pymap.backend.maildir.layout.MaildirLayout" title="pymap.backend.maildir.layout.MaildirLayout"><em>MaildirLayout</em></a><em>[</em><em>Any</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.delimiter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delimiter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.delimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The delimiter used in mailbox names to indicate hierarchy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.set_subscribed">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_subscribed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subscribed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.set_subscribed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.set_subscribed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add or remove the subscribed status of a mailbox.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.subscribe" title="pymap.interfaces.session.SessionInterface.subscribe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">subscribe()</span></code></a>
+<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.unsubscribe" title="pymap.interfaces.session.SessionInterface.unsubscribe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unsubscribe()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p></li>
+<li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – True if the mailbox should be subscribed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.list_subscribed">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_subscribed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.list_subscribed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.list_subscribed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all subscribed mailboxes.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.list_mailboxes" title="pymap.interfaces.session.SessionInterface.list_mailboxes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">list_mailboxes()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.listtree.html#pymap.listtree.ListTree" title="pymap.listtree.ListTree"><em>ListTree</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.list_mailboxes">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_mailboxes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.list_mailboxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.list_mailboxes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all mailboxes.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.list_mailboxes" title="pymap.interfaces.session.SessionInterface.list_mailboxes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">list_mailboxes()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.listtree.html#pymap.listtree.ListTree" title="pymap.listtree.ListTree"><em>ListTree</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.get_mailbox">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_mailbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.get_mailbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.get_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an existing mailbox by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.11)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData" title="pymap.backend.maildir.mailbox.MailboxData"><em>MailboxData</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.add_mailbox">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_mailbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.add_mailbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.add_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new mailbox, returning its object ID.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.create_mailbox" title="pymap.interfaces.session.SessionInterface.create_mailbox"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_mailbox()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – The mailbox already exists.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId" title="pymap.parsing.specials.objectid.ObjectId"><em>ObjectId</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.delete_mailbox">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_mailbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.delete_mailbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.delete_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete an existing mailbox.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.delete_mailbox" title="pymap.interfaces.session.SessionInterface.delete_mailbox"><code class="xref py py-meth docutils literal notranslate"><span class="pre">delete_mailbox()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the mailbox.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.11)"><strong>KeyError</strong></a> – The mailbox did not exist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.backend.maildir.mailbox.MailboxSet.rename_mailbox">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rename_mailbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/mailbox.html#MailboxSet.rename_mailbox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.mailbox.MailboxSet.rename_mailbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename an existing mailbox.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.session.SessionInterface.rename_mailbox" title="pymap.interfaces.session.SessionInterface.rename_mailbox"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rename_mailbox()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>before</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the existing mailbox.</p></li>
+<li><p><strong>after</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The name of the destination mailbox.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.11)"><strong>KeyError</strong></a> – The <em>before</em> mailbox does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – The <em>after</em> mailbox already exists.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pymap.backend.maildir.users">
+<span id="pymap-backend-maildir-users"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.users</span></code><a class="headerlink" href="#module-pymap.backend.maildir.users" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.UserRecord">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">UserRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">home_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#UserRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.UserRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates a single user line in the passwd file.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://linux.die.net/man/5/passwd">passwd(5)</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>gid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>comment</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>home_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>shell</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.PasswordRecord">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">PasswordRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_change_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_password_age</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_password_age</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_warning_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password_inactivity_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account_expiration_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reserved</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#PasswordRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.PasswordRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates a single user line in the shadow file.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://linux.die.net/man/5/shadow">shadow(5)</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>last_change_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>min_password_age</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>max_password_age</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>password_warning_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>password_inactivity_period</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>account_expiration_date</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>reserved</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.GroupRecord">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">GroupRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">users_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#GroupRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.GroupRecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encapsulates a single group line in the group file.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://linux.die.net/man/5/group">group(5)</a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>password</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>gid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>users_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.UsersFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">UsersFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#UsersFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.UsersFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and writes a file using the
+<a class="reference external" href="https://linux.die.net/man/5/passwd">passwd file format</a>. The home
+directory field in the user record will be the path (absolute or relative
+to the base directory) to the user’s maildir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.UsersFile.FILE_NAME">
+<span class="sig-name descname"><span class="pre">FILE_NAME</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.11)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pymap-etc-passwd'</span></em><a class="headerlink" href="#pymap.backend.maildir.users.UsersFile.FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>The users file name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.PasswordsFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">PasswordsFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#PasswordsFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.PasswordsFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and writes a file using the
+<a class="reference external" href="https://linux.die.net/man/5/passwd">passwd file format</a>. Similar to the
+<code class="docutils literal notranslate"><span class="pre">/etc/shadow</span></code> file on a Linux system, this file contains the password
+representation and may have stricter file permissions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.PasswordsFile.FILE_NAME">
+<span class="sig-name descname"><span class="pre">FILE_NAME</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.11)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pymap-etc-shadow'</span></em><a class="headerlink" href="#pymap.backend.maildir.users.PasswordsFile.FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>The passwords file name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.GroupsFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">GroupsFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#GroupsFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.GroupsFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and writes a file using the
+<a class="reference external" href="https://linux.die.net/man/5/group">group file format</a>. The name field
+in each record is the role name, and the users list are the users that have
+been assigned that role.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.GroupsFile.FILE_NAME">
+<span class="sig-name descname"><span class="pre">FILE_NAME</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.11)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pymap-etc-group'</span></em><a class="headerlink" href="#pymap.backend.maildir.users.GroupsFile.FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>The roles file name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.TokensFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.backend.maildir.users.</span></span><span class="sig-name descname"><span class="pre">TokensFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/backend/maildir/users.html#TokensFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.backend.maildir.users.TokensFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads and writes a file using the
+<a class="reference external" href="https://linux.die.net/man/5/group">group file format</a>. The name field
+in each record is the token identifier, the password field is the private
+key, and the users list contains the user or users it is valid for.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pymap.backend.maildir.users.TokensFile.FILE_NAME">
+<span class="sig-name descname"><span class="pre">FILE_NAME</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.11)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pymap-tokens'</span></em><a class="headerlink" href="#pymap.backend.maildir.users.TokensFile.FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>The roles file name.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 </section>
 
 
@@ -779,6 +1408,71 @@ e.g.:</p>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-pymap.backend.maildir.mailbox"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.mailbox</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir"><code class="docutils literal notranslate"><span class="pre">Maildir</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir.claim_new"><code class="docutils literal notranslate"><span class="pre">Maildir.claim_new()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir.move_message"><code class="docutils literal notranslate"><span class="pre">Maildir.move_message()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir.get_message_metadata"><code class="docutils literal notranslate"><span class="pre">Maildir.get_message_metadata()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Maildir.update_metadata"><code class="docutils literal notranslate"><span class="pre">Maildir.update_metadata()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Message"><code class="docutils literal notranslate"><span class="pre">Message</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.Message.load_content"><code class="docutils literal notranslate"><span class="pre">Message.load_content()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData"><code class="docutils literal notranslate"><span class="pre">MailboxData</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.mailbox_id"><code class="docutils literal notranslate"><span class="pre">MailboxData.mailbox_id</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.readonly"><code class="docutils literal notranslate"><span class="pre">MailboxData.readonly</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.uid_validity"><code class="docutils literal notranslate"><span class="pre">MailboxData.uid_validity</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.permanent_flags"><code class="docutils literal notranslate"><span class="pre">MailboxData.permanent_flags</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.selected_set"><code class="docutils literal notranslate"><span class="pre">MailboxData.selected_set</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.update_selected"><code class="docutils literal notranslate"><span class="pre">MailboxData.update_selected()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.append"><code class="docutils literal notranslate"><span class="pre">MailboxData.append()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.copy"><code class="docutils literal notranslate"><span class="pre">MailboxData.copy()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.move"><code class="docutils literal notranslate"><span class="pre">MailboxData.move()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.get"><code class="docutils literal notranslate"><span class="pre">MailboxData.get()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.update"><code class="docutils literal notranslate"><span class="pre">MailboxData.update()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.delete"><code class="docutils literal notranslate"><span class="pre">MailboxData.delete()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.claim_recent"><code class="docutils literal notranslate"><span class="pre">MailboxData.claim_recent()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.cleanup"><code class="docutils literal notranslate"><span class="pre">MailboxData.cleanup()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxData.snapshot"><code class="docutils literal notranslate"><span class="pre">MailboxData.snapshot()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet"><code class="docutils literal notranslate"><span class="pre">MailboxSet</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.delimiter"><code class="docutils literal notranslate"><span class="pre">MailboxSet.delimiter</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.set_subscribed"><code class="docutils literal notranslate"><span class="pre">MailboxSet.set_subscribed()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.list_subscribed"><code class="docutils literal notranslate"><span class="pre">MailboxSet.list_subscribed()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.list_mailboxes"><code class="docutils literal notranslate"><span class="pre">MailboxSet.list_mailboxes()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.get_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSet.get_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.add_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSet.add_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.delete_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSet.delete_mailbox()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.mailbox.MailboxSet.rename_mailbox"><code class="docutils literal notranslate"><span class="pre">MailboxSet.rename_mailbox()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-pymap.backend.maildir.users"><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir.users</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.UserRecord"><code class="docutils literal notranslate"><span class="pre">UserRecord</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.PasswordRecord"><code class="docutils literal notranslate"><span class="pre">PasswordRecord</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.GroupRecord"><code class="docutils literal notranslate"><span class="pre">GroupRecord</span></code></a></li>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.UsersFile"><code class="docutils literal notranslate"><span class="pre">UsersFile</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.UsersFile.FILE_NAME"><code class="docutils literal notranslate"><span class="pre">UsersFile.FILE_NAME</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.PasswordsFile"><code class="docutils literal notranslate"><span class="pre">PasswordsFile</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.PasswordsFile.FILE_NAME"><code class="docutils literal notranslate"><span class="pre">PasswordsFile.FILE_NAME</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.GroupsFile"><code class="docutils literal notranslate"><span class="pre">GroupsFile</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.GroupsFile.FILE_NAME"><code class="docutils literal notranslate"><span class="pre">GroupsFile.FILE_NAME</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.TokensFile"><code class="docutils literal notranslate"><span class="pre">TokensFile</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.backend.maildir.users.TokensFile.FILE_NAME"><code class="docutils literal notranslate"><span class="pre">TokensFile.FILE_NAME</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -849,7 +1543,7 @@ e.g.:</p>
         <li class="right" >
           <a href="pymap.backend.dict.html" title="pymap.backend.dict"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.32.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.33.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="pymap.backend.html" ><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a> &#187;</li>
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend.maildir</span></code></a></li> 
