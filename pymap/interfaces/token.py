@@ -22,8 +22,8 @@ class TokenCredentials(ServerCredentials, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def role(self) -> str | None:
-        """A specialized role granted by the token."""
+    def roles(self) -> frozenset[str]:
+        """Any specialized roles granted by the token."""
         ...
 
 

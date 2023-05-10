@@ -18,6 +18,7 @@ Table of Contents
    pymap.fetch
    pymap.filter
    pymap.flags
+   pymap.frozen
    pymap.listtree
    pymap.mailbox
    pymap.message

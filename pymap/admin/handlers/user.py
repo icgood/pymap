@@ -1,11 +1,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Mapping
 from typing import TypeAlias
 
 from grpclib.server import Stream
-from pymap.user import UserMetadata
+from pymap.frozen import frozendict
+from pymap.user import Passwords, UserMetadata
 from pymapadmin.grpc.admin_grpc import UserBase
 from pymapadmin.grpc.admin_pb2 import \
     UserData, UserResponse, GetUserRequest, SetUserRequest, DeleteUserRequest
@@ -68,13 +68,13 @@ class UserHandlers(UserBase, BaseHandler):
         async with (self.catch_errors('SetUser') as result,
                     self.login_as(stream.metadata, request.user) as identity):
             user_data = request.data
-            password = user_data.password \
-                if user_data.HasField('password') else None
-            roles: Collection[str] = user_data.roles
-            params: Mapping[str, str] = user_data.params
-            metadata = await UserMetadata.create(
-                self.config, request.user,
-                password=password, roles=roles, params=params)
+            password = await Passwords(self.config).hash_password(
+                user_data.password if user_data.HasField('password') else None)
+            roles: frozenset[str] = frozenset(user_data.roles)
+            params: frozendict[str, str] = frozendict(user_data.params)
+            metadata = UserMetadata(
+                self.config, request.user, password=password,
+                roles=roles, params=params)
             await identity.set(metadata)
         resp = UserResponse(result=result, username=request.user)
         await stream.send_message(resp)

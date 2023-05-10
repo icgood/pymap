@@ -55,7 +55,7 @@ class ManageSieveService(ServiceInterface):  # pragma: no cover
         group = parser.add_argument_group('managesieve service')
         group.add_argument('--sieve-host', action='append', metavar='IFACE',
                            help='the network interface to listen on')
-        group.add_argument('--sieve-port',  metavar='NUM', default='4190',
+        group.add_argument('--sieve-port', metavar='NUM', default='4190',
                            help='the port or service name to listen on')
 
     async def start(self, stack: AsyncExitStack) -> None:

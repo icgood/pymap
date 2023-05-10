@@ -131,7 +131,6 @@ if sys.platform != 'win32' and os.name == 'posix':
         else:
             return entry.pw_uid
 
-
     def _get_grp(setgid: str) -> int:
         from grp import getgrnam, getgrgid
         try:

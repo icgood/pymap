@@ -129,8 +129,8 @@ class GroupRecord(_Record):
             name=name if name is not None else self.name,
             password=password if password is not None else self.password,
             gid=self.gid,
-            users_list=users_list if users_list is not None \
-                else self.users_list)
+            users_list=(users_list if users_list is not None
+                        else self.users_list))
 
     def add_users(self, users: Collection[str]) -> GroupRecord:
         all_users = self.users | set(users)
@@ -170,53 +170,19 @@ class _ColonSeparatedValuesFile(FileWriteable, Generic[_RecordT]):
         return os.path.join(path, cls.FILE_NAME)
 
     def has(self, name: str) -> bool:
-        """Check presence of a record by name.
-
-        Args:
-            name: The record name to check.
-
-        """
         return name in self._records
 
     def get(self, name: str) -> _RecordT:
-        """Look up a record by name.
-
-        Args:
-            name: The record name to get.
-
-        Raises:
-            KeyError: The record name does not exist.
-
-        """
         return self._records[name]
 
     def get_all(self) -> Collection[_RecordT]:
-        """Get all the known records."""
         return self._records.values()
 
     def set(self, record: _RecordT) -> None:
-        """Add or update a record with the given data.
-
-        Args:
-            record: The new record data.
-
-        Raises:
-            ValueError: The record could not be assigned.
-
-        """
         self._records[record.name] = record
         self.touch()
 
     def remove(self, name: str) -> None:
-        """Remove a record by name.
-
-        Args:
-            name: The record name to remove.
-
-        Raises:
-            KeyError: The record name does not exist.
-
-        """
         del self._records[name]
         self.touch()
 

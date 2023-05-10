@@ -99,12 +99,12 @@ class MacaroonCredentials(TokenCredentials):
         return identifier
 
     @property
-    def role(self) -> str | None:
+    def roles(self) -> frozenset[str]:
         for caveat in self.macaroon.first_party_caveats():
             caveat_id = caveat.caveat_id
             if caveat_id == 'role = admin':
-                return 'admin'
-        return None
+                return frozenset(['admin'])
+        return frozenset()
 
     @property
     def authcid(self) -> str:
@@ -153,7 +153,7 @@ class MacaroonCredentials(TokenCredentials):
         return verifier
 
     def verify(self, identity: Identity | None) -> bool:
-        if self.role == 'admin':
+        if 'admin' in self.roles:
             for admin_key in self.admin_keys:
                 verifier = self._get_admin_verifier()
                 if self._verify(verifier, admin_key):
