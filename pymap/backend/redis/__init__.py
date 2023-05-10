@@ -378,7 +378,7 @@ class Identity(IdentityInterface):
     def _user_from_dict(self, data: dict[str, str]) -> UserMetadata:
         password = data.pop('password', None)
         role_str = data.pop('role', None)
-        token_key_str = data.pop('token_key', None)
+        token_key_str = data.pop('key', None)
         if token_key_str is not None:
             token_key: bytes | None = bytes.fromhex(token_key_str)
         else:
