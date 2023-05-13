@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing &#8212; pymap 0.33.1 documentation</title>
+    <title>pymap.parsing &#8212; pymap 0.34.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.33.1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.parsing</a></li> 
@@ -68,21 +68,62 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeAlias</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">Protocol</span>
 
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">NotParseable</span><span class="p">,</span> <span class="n">UnexpectedType</span>
 <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">ParsingState</span>
 <span class="kn">from</span> <span class="nn">..bytes</span> <span class="kn">import</span> <span class="n">Writeable</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ParseableT&#39;</span><span class="p">,</span> <span class="s1">&#39;AnyParseable&#39;</span><span class="p">,</span> <span class="s1">&#39;Params&#39;</span><span class="p">,</span> <span class="s1">&#39;Parseable&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;ExpectedParseable&#39;</span><span class="p">,</span> <span class="s1">&#39;Space&#39;</span><span class="p">,</span> <span class="s1">&#39;EndLine&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ParsedT&#39;</span><span class="p">,</span> <span class="s1">&#39;AnyParseable&#39;</span><span class="p">,</span> <span class="s1">&#39;ParseableT&#39;</span><span class="p">,</span> <span class="s1">&#39;ParseableTyepT_co&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;AnyParseableType&#39;</span><span class="p">,</span> <span class="s1">&#39;Params&#39;</span><span class="p">,</span> <span class="s1">&#39;Parseable&#39;</span><span class="p">,</span> <span class="s1">&#39;ExpectedParseable&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;Space&#39;</span><span class="p">,</span> <span class="s1">&#39;EndLine&#39;</span><span class="p">]</span>
 
-<span class="c1">#: Type variable used for specifying the parseable type of a :class:`Parseable`</span>
+<span class="c1">#: Type variable used for specifying the data parsed by a :class:`Parseable`</span>
 <span class="c1">#: sub-class.</span>
-<span class="n">ParseableT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ParseableT&#39;</span><span class="p">)</span>
+<span class="n">ParsedT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ParsedT&#39;</span><span class="p">)</span>
 
 <span class="c1">#: Type alias for an unspecified parseable object.</span>
 <span class="n">AnyParseable</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="s1">&#39;Parseable[Any]&#39;</span>
+
+<span class="c1">#: Type variable used for parseable objects.</span>
+<span class="n">ParseableT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ParseableT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;AnyParseable&#39;</span><span class="p">)</span>
+
+<span class="c1">#: Covariant type variable used for parseable classes.</span>
+<span class="n">ParseableTypeT_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ParseableTypeT_co&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;AnyParseable&#39;</span><span class="p">,</span>
+                            <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">#: Type alias for an unspecified parseable type.</span>
+<span class="n">AnyParseableType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="s1">&#39;ParseableType[Any]&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">ParseableType</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">ParseableTypeT_co</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A parseable type has a :meth:`.parse` method for reading something from</span>
+<span class="sd">    the given buffer. This is usually, but not always, a :func:`type` where the</span>
+<span class="sd">    :meth:`.parse` method is a class method that returns an instance of the</span>
+<span class="sd">    type.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Until mypy supports using abstract classes when a ``type[...]`` is</span>
+<span class="sd">        expected (discussed</span>
+<span class="sd">        `here &lt;https://github.com/python/mypy/issues/4717&gt;`_), this is needed</span>
+<span class="sd">        as a stopgap.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ParseableTypeT_co</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses something from the beginning of the buffer. The parsed object</span>
+<span class="sd">        is returned as well as the remaining data in the buffer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            buf: The bytes containing the data to be parsed.</span>
+<span class="sd">            params: The parameters used by some parseable types.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :exc:`~pymap.parsing.exceptions.NotParseable`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
 
 
 <div class="viewcode-block" id="Params"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Params">[docs]</a><span class="k">class</span> <span class="nc">Params</span><span class="p">:</span>
@@ -91,8 +132,8 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        state: The mutable parsing state.</span>
-<span class="sd">        expected: The types that are expected in the next parsed object.</span>
-<span class="sd">        list_expected: The types that are expect in a parsed list.</span>
+<span class="sd">        expected: The types that are expected to be parsed..</span>
+<span class="sd">        list_limit: The maximum number of items in a parsed list.</span>
 <span class="sd">        command_name: The name of the command currently being parsed, if any.</span>
 <span class="sd">        uid: The next parsed command came after a ``UID`` command.</span>
 <span class="sd">        charset: Strings should be decoded using this character set.</span>
@@ -104,12 +145,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;expected&#39;</span><span class="p">,</span> <span class="s1">&#39;list_expected&#39;</span><span class="p">,</span> <span class="s1">&#39;command_name&#39;</span><span class="p">,</span> <span class="s1">&#39;uid&#39;</span><span class="p">,</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;expected&#39;</span><span class="p">,</span> <span class="s1">&#39;list_limit&#39;</span><span class="p">,</span> <span class="s1">&#39;command_name&#39;</span><span class="p">,</span> <span class="s1">&#39;uid&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;charset&#39;</span><span class="p">,</span> <span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;max_append_len&#39;</span><span class="p">,</span> <span class="s1">&#39;allow_continuations&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ParsingState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                 <span class="n">expected</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">AnyParseable</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">list_expected</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">AnyParseable</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">expected</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AnyParseableType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">list_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">command_name</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">uid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">charset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -119,7 +160,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">state</span> <span class="ow">or</span> <span class="n">ParsingState</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expected</span> <span class="o">=</span> <span class="n">expected</span> <span class="ow">or</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">list_expected</span> <span class="o">=</span> <span class="n">list_expected</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_limit</span> <span class="o">=</span> <span class="n">list_limit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">command_name</span> <span class="o">=</span> <span class="n">command_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">charset</span> <span class="o">=</span> <span class="n">charset</span>
@@ -135,8 +176,8 @@
             <span class="n">kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Params.copy"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Params.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ParsingState</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-             <span class="n">expected</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">AnyParseable</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-             <span class="n">list_expected</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">AnyParseable</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">expected</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AnyParseableType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">list_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">command_name</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">uid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">charset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -147,7 +188,7 @@
         <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;expected&#39;</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;list_expected&#39;</span><span class="p">,</span> <span class="n">list_expected</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;list_limit&#39;</span><span class="p">,</span> <span class="n">list_limit</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;command_name&#39;</span><span class="p">,</span> <span class="n">command_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;uid&#39;</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_if_none</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;charset&#39;</span><span class="p">,</span> <span class="n">charset</span><span class="p">)</span>
@@ -157,7 +198,7 @@
         <span class="k">return</span> <span class="n">Params</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Parseable"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Parseable">[docs]</a><span class="k">class</span> <span class="nc">Parseable</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">],</span> <span class="n">Writeable</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="Parseable"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Parseable">[docs]</a><span class="k">class</span> <span class="nc">Parseable</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ParsedT</span><span class="p">],</span> <span class="n">Writeable</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a parseable data object from an IMAP stream. The sub-classes</span>
 <span class="sd">    implement the different data formats.</span>
 
@@ -174,7 +215,7 @@
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParseableT</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParsedT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The primary value associated with the parsed data.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
@@ -192,9 +233,8 @@
 
 <div class="viewcode-block" id="Parseable.parse"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.Parseable.parse">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Parseable</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">]],</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span>
-              <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Parseable</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">],</span> <span class="nb">memoryview</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Parseable</span><span class="p">[</span><span class="n">ParsedT</span><span class="p">]],</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Parseable</span><span class="p">[</span><span class="n">ParsedT</span><span class="p">],</span> <span class="nb">memoryview</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implemented by sub-classes to define how to parse the given buffer.</span>
 
 <span class="sd">        Args:</span>
@@ -205,22 +245,13 @@
         <span class="o">...</span></div></div>
 
 
-<div class="viewcode-block" id="ExpectedParseable"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.ExpectedParseable">[docs]</a><span class="k">class</span> <span class="nc">ExpectedParseable</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="kc">None</span><span class="p">]):</span>
+<div class="viewcode-block" id="ExpectedParseable"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.ExpectedParseable">[docs]</a><span class="k">class</span> <span class="nc">ExpectedParseable</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Non-instantiable class, used to parse a buffer from a list of</span>
 <span class="sd">    expected types.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="vm">__slots__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="ExpectedParseable.parse"><a class="viewcode-back" href="../../pymap.parsing.html#pymap.parsing.ExpectedParseable.parse">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
@@ -364,7 +395,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.33.1 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.parsing</a></li> 
@@ -374,7 +405,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

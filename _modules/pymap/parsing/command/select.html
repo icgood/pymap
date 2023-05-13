@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.command.select &#8212; pymap 0.33.1 documentation</title>
+    <title>pymap.parsing.command.select &#8212; pymap 0.34.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.33.1 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -284,7 +284,7 @@
         <span class="k">except</span> <span class="n">NotParseable</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">attr_list</span><span class="p">:</span>
-            <span class="n">params_copy</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">list_expected</span><span class="o">=</span><span class="p">[</span><span class="n">FetchAttribute</span><span class="p">])</span>
+            <span class="n">params_copy</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">expected</span><span class="o">=</span><span class="p">[</span><span class="n">FetchAttribute</span><span class="p">])</span>
             <span class="n">attr_list_p</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params_copy</span><span class="p">)</span>
             <span class="n">attr_list</span> <span class="o">=</span> <span class="n">attr_list_p</span><span class="o">.</span><span class="n">get_as</span><span class="p">(</span><span class="n">FetchAttribute</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
@@ -341,7 +341,7 @@
     <span class="k">def</span> <span class="nf">_parse_flag_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">params_copy</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">list_expected</span><span class="o">=</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span>
+            <span class="n">params_copy</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">expected</span><span class="o">=</span><span class="p">[</span><span class="n">Flag</span><span class="p">])</span>
             <span class="n">flag_list_p</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params_copy</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">NotParseable</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -671,7 +671,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.33.1 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -683,7 +683,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

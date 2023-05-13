@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.primitives &#8212; pymap 0.33.1 documentation</title>
+    <title>pymap.parsing.primitives &#8212; pymap 0.34.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.33.1 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -71,9 +71,10 @@
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">total_ordering</span>
 <span class="kn">from</span> <span class="nn">re</span> <span class="kn">import</span> <span class="n">Match</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">SupportsBytes</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">SupportsBytes</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">AnyParseable</span><span class="p">,</span> <span class="n">Parseable</span><span class="p">,</span> <span class="n">ExpectedParseable</span><span class="p">,</span> <span class="n">Params</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">AnyParseable</span><span class="p">,</span> <span class="n">ParseableT</span><span class="p">,</span> <span class="n">ParseableType</span><span class="p">,</span> <span class="n">Parseable</span><span class="p">,</span> \
+    <span class="n">ExpectedParseable</span><span class="p">,</span> <span class="n">Params</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">NotParseable</span>
 <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">ExpectContinuation</span>
 <span class="kn">from</span> <span class="nn">..bytes</span> <span class="kn">import</span> <span class="n">MaybeBytes</span><span class="p">,</span> <span class="n">MaybeBytesT</span><span class="p">,</span> <span class="n">BytesFormat</span><span class="p">,</span> <span class="n">WriteStream</span><span class="p">,</span> \
@@ -489,9 +490,17 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The list of parsed objects.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
 
-<div class="viewcode-block" id="List.get_as"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.primitives.List.get_as">[docs]</a>    <span class="k">def</span> <span class="nf">get_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MaybeBytesT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MaybeBytesT</span><span class="p">]:</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">get_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">ParseableType</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ParseableT</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">get_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">MaybeBytesT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MaybeBytesT</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="List.get_as"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.primitives.List.get_as">[docs]</a>    <span class="k">def</span> <span class="nf">get_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the list of parsed objects.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Sequence</span><span class="p">[</span><span class="n">MaybeBytesT</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span></div>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -507,14 +516,16 @@
             <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
         <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyParseable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">list_limit</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">match</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_end_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">buf</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
             <span class="k">elif</span> <span class="n">items</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_whitespace_length</span><span class="p">(</span><span class="n">buf</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
-            <span class="n">params_copy</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">expected</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">list_expected</span><span class="p">)</span>
-            <span class="n">item</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">ExpectedParseable</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params_copy</span><span class="p">)</span>
+            <span class="n">item</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">ExpectedParseable</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="List.write"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.primitives.List.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -599,7 +610,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.33.1 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -610,7 +621,7 @@
 
     <div class="footer" role="contentinfo">
         &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
