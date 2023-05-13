@@ -75,7 +75,7 @@ class AppendCommand(CommandAuth):
             -> tuple[AppendMessage | None, memoryview]:
         _, buf = Space.parse(buf, params)
         try:
-            params_copy = params.copy(list_expected=[Flag])
+            params_copy = params.copy(expected=[Flag])
             flag_list, buf = List.parse(buf, params_copy)
         except UnexpectedType:
             raise
@@ -320,7 +320,7 @@ class StatusCommand(CommandMailboxArg):
         _, buf = Space.parse(buf, params)
         mailbox, buf = Mailbox.parse(buf, params)
         _, buf = Space.parse(buf, params)
-        params_copy = params.copy(list_expected=[StatusAttribute])
+        params_copy = params.copy(expected=[StatusAttribute])
         status_list_p, after = List.parse(buf, params_copy)
         if not status_list_p.value:
             raise NotParseable(buf)

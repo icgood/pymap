@@ -260,7 +260,7 @@ class FetchAttribute(Parseable[bytes]):
         elif specifier in (b'HEADER', b'TEXT'):
             return cls.Section(section_parts, specifier), after
         elif specifier in (b'HEADER.FIELDS', b'HEADER.FIELDS.NOT'):
-            params = params.copy(list_expected=[AString])
+            params = params.copy(expected=[AString])
             header_list_p, buf = List.parse(after, params)
             header_list = frozenset([bytes(hdr)
                                      for hdr in header_list_p.value])

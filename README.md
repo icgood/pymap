@@ -223,6 +223,11 @@ issuing commands) and receive mailbox updates as they happen without polling.
 Defines some conventions for handling multi-access in scenarios such as
 `EXPUNGE` and mailbox deletion.
 
+#### [RFC 2971](https://tools.ietf.org/html/rfc2971)
+
+Adds the `ID` capability and command, which lets clients send and receive
+arbitrary information for "statistical" purposes and bug reports.
+
 #### [RFC 3502](https://tools.ietf.org/html/rfc3502)
 
 Adds the `MULTIAPPEND` capability, allowing multiple messages to be atomically

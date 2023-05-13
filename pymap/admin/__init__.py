@@ -14,6 +14,7 @@ from ssl import SSLContext
 from grpclib.events import listen, RecvRequest
 from grpclib.health.check import ServiceStatus
 from grpclib.health.service import Health, OVERALL
+from grpclib.server import Server
 from pymap.context import cluster_metadata
 from pymap.interfaces.backend import ServiceInterface
 from pymapadmin import is_compatible
@@ -22,7 +23,6 @@ from pymapadmin.local import socket_file, token_file
 
 from .errors import get_incompatible_version_error
 from .handlers import handlers
-from .server import Server
 from .typing import Handler
 
 __all__ = ['AdminService']

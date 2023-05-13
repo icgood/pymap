@@ -168,7 +168,7 @@ class TestList(unittest.TestCase):
     def test_parse(self):
         ret, buf = List.parse(
             b'  (ONE 2 (NIL) "four" )  ',
-            Params(list_expected=[Nil, Number, Atom, String, List]))
+            Params(expected=[Nil, Number, Atom, String, List]))
         self.assertIsInstance(ret, List)
         self.assertEqual(4, len(ret.value))
         self.assertEqual(b'  ', buf)
@@ -191,9 +191,13 @@ class TestList(unittest.TestCase):
         with self.assertRaises(NotParseable):
             List.parse(b'{}', Params())
         with self.assertRaises(NotParseable):
-            List.parse(b'("one"TWO)', Params(list_expected=[Atom, String]))
+            List.parse(b'("one"TWO)', Params(expected=[Atom, String]))
         with self.assertRaises(NotParseable):
-            List.parse(b'(123 abc 456)', Params(list_expected=[Number]))
+            List.parse(b'(123 abc 456)', Params(expected=[Number]))
+
+    def test_parse_overflow(self):
+        with self.assertRaises(NotParseable):
+            List.parse(b'(123 456)', Params(list_limit=1))
 
     def test_bytes(self):
         ret = List([QuotedString(b'abc'), Number(123), List([Nil()])])

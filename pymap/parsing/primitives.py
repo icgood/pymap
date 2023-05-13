@@ -7,9 +7,10 @@ from abc import abstractmethod, ABCMeta
 from collections.abc import Iterable, Iterator, Sequence
 from functools import total_ordering
 from re import Match
-from typing import cast, Any, SupportsBytes
+from typing import cast, overload, Any, SupportsBytes
 
-from . import AnyParseable, Parseable, ExpectedParseable, Params
+from . import AnyParseable, ParseableT, ParseableType, Parseable, \
+    ExpectedParseable, Params
 from .exceptions import NotParseable
 from .state import ExpectContinuation
 from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
@@ -425,9 +426,17 @@ class List(Parseable[tuple[MaybeBytes, ...]]):
         """The list of parsed objects."""
         return self.items
 
+    @overload
+    def get_as(self, cls: ParseableType[ParseableT]) -> Sequence[ParseableT]:
+        ...
+
+    @overload
     def get_as(self, cls: type[MaybeBytesT]) -> Sequence[MaybeBytesT]:
+        ...
+
+    def get_as(self, cls: Any) -> Sequence[Any]:
         """Return the list of parsed objects."""
-        return cast(Sequence[MaybeBytesT], self.items)
+        return self.items
 
     def __iter__(self) -> Iterator[MaybeBytes]:
         return iter(self.value)
@@ -443,14 +452,16 @@ class List(Parseable[tuple[MaybeBytes, ...]]):
             raise NotParseable(buf)
         items: list[AnyParseable] = []
         buf = buf[start + 1:]
+        limit = params.list_limit
         while True:
             match = cls._end_pattern.match(buf)
             if match:
                 return cls(items), buf[match.end(0):]
             elif items and not cls._whitespace_length(buf):
                 raise NotParseable(buf)
-            params_copy = params.copy(expected=params.list_expected)
-            item, buf = ExpectedParseable.parse(buf, params_copy)
+            item, buf = ExpectedParseable.parse(buf, params)
+            if len(items) == limit:
+                raise NotParseable(buf)
             items.append(item)
 
     def write(self, writer: WriteStream) -> None:

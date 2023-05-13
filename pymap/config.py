@@ -281,7 +281,7 @@ class IMAPConfig(metaclass=ABCMeta):
 
     @property
     def initial_capability(self) -> Sequence[bytes]:
-        ret = [b'LITERAL+']
+        ret = [b'LITERAL+', b'ID']
         if self._tls_enabled:
             ret.append(b'STARTTLS')
         return ret
@@ -289,3 +289,7 @@ class IMAPConfig(metaclass=ABCMeta):
     @property
     def max_filter_len(self) -> int | None:
         return self._max_append_len
+
+    @property
+    def id_response(self) -> Mapping[bytes, bytes] | None:
+        return None

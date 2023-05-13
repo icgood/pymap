@@ -5,21 +5,62 @@ from __future__ import annotations
 import re
 from abc import abstractmethod, ABCMeta
 from collections.abc import Sequence
-from typing import Any, TypeVar, Generic, TypeAlias
+from typing import Any, TypeVar, Generic, TypeAlias, Protocol
 
 from .exceptions import NotParseable, UnexpectedType
 from .state import ParsingState
 from ..bytes import Writeable
 
-__all__ = ['ParseableT', 'AnyParseable', 'Params', 'Parseable',
-           'ExpectedParseable', 'Space', 'EndLine']
+__all__ = ['ParsedT', 'AnyParseable', 'ParseableT', 'ParseableTyepT_co',
+           'AnyParseableType', 'Params', 'Parseable', 'ExpectedParseable',
+           'Space', 'EndLine']
 
-#: Type variable used for specifying the parseable type of a :class:`Parseable`
+#: Type variable used for specifying the data parsed by a :class:`Parseable`
 #: sub-class.
-ParseableT = TypeVar('ParseableT')
+ParsedT = TypeVar('ParsedT')
 
 #: Type alias for an unspecified parseable object.
 AnyParseable: TypeAlias = 'Parseable[Any]'
+
+#: Type variable used for parseable objects.
+ParseableT = TypeVar('ParseableT', bound='AnyParseable')
+
+#: Covariant type variable used for parseable classes.
+ParseableTypeT_co = TypeVar('ParseableTypeT_co', bound='AnyParseable',
+                            covariant=True)
+
+#: Type alias for an unspecified parseable type.
+AnyParseableType: TypeAlias = 'ParseableType[Any]'
+
+
+class ParseableType(Protocol[ParseableTypeT_co]):
+    """A parseable type has a :meth:`.parse` method for reading something from
+    the given buffer. This is usually, but not always, a :func:`type` where the
+    :meth:`.parse` method is a class method that returns an instance of the
+    type.
+
+    Note:
+        Until mypy supports using abstract classes when a ``type[...]`` is
+        expected (discussed
+        `here <https://github.com/python/mypy/issues/4717>`_), this is needed
+        as a stopgap.
+
+    """
+
+    def parse(self, buf: memoryview, params: Params) \
+            -> tuple[ParseableTypeT_co, memoryview]:
+        """Parses something from the beginning of the buffer. The parsed object
+        is returned as well as the remaining data in the buffer.
+
+        Args:
+            buf: The bytes containing the data to be parsed.
+            params: The parameters used by some parseable types.
+
+        Raises:
+            :exc:`~pymap.parsing.exceptions.NotParseable`
+
+        """
+        ...
 
 
 class Params:
@@ -28,8 +69,8 @@ class Params:
 
     Args:
         state: The mutable parsing state.
-        expected: The types that are expected in the next parsed object.
-        list_expected: The types that are expect in a parsed list.
+        expected: The types that are expected to be parsed..
+        list_limit: The maximum number of items in a parsed list.
         command_name: The name of the command currently being parsed, if any.
         uid: The next parsed command came after a ``UID`` command.
         charset: Strings should be decoded using this character set.
@@ -41,12 +82,12 @@ class Params:
 
     """
 
-    __slots__ = ['state', 'expected', 'list_expected', 'command_name', 'uid',
+    __slots__ = ['state', 'expected', 'list_limit', 'command_name', 'uid',
                  'charset', 'tag', 'max_append_len', 'allow_continuations']
 
     def __init__(self, state: ParsingState | None = None, *,
-                 expected: Sequence[type[AnyParseable]] | None = None,
-                 list_expected: Sequence[type[AnyParseable]] | None = None,
+                 expected: Sequence[AnyParseableType] | None = None,
+                 list_limit: int | None = None,
                  command_name: bytes | None = None,
                  uid: bool = False,
                  charset: str | None = None,
@@ -56,7 +97,7 @@ class Params:
         super().__init__()
         self.state = state or ParsingState()
         self.expected = expected or []
-        self.list_expected = list_expected or []
+        self.list_limit = list_limit
         self.command_name = command_name
         self.uid = uid
         self.charset = charset
@@ -72,8 +113,8 @@ class Params:
             kwargs[attr] = getattr(self, attr)
 
     def copy(self, state: ParsingState | None = None, *,
-             expected: Sequence[type[AnyParseable]] | None = None,
-             list_expected: Sequence[type[AnyParseable]] | None = None,
+             expected: Sequence[AnyParseableType] | None = None,
+             list_limit: int | None = None,
              command_name: bytes | None = None,
              uid: bool | None = None,
              charset: str | None = None,
@@ -84,7 +125,7 @@ class Params:
         kwargs: dict[str, Any] = {}
         self._set_if_none(kwargs, 'state', state)
         self._set_if_none(kwargs, 'expected', expected)
-        self._set_if_none(kwargs, 'list_expected', list_expected)
+        self._set_if_none(kwargs, 'list_limit', list_limit)
         self._set_if_none(kwargs, 'command_name', command_name)
         self._set_if_none(kwargs, 'uid', uid)
         self._set_if_none(kwargs, 'charset', charset)
@@ -94,7 +135,7 @@ class Params:
         return Params(**kwargs)
 
 
-class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
+class Parseable(Generic[ParsedT], Writeable, metaclass=ABCMeta):
     """Represents a parseable data object from an IMAP stream. The sub-classes
     implement the different data formats.
 
@@ -111,7 +152,7 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def value(self) -> ParseableT:
+    def value(self) -> ParsedT:
         """The primary value associated with the parsed data."""
         ...
 
@@ -129,9 +170,8 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def parse(cls: type[Parseable[ParseableT]], buf: memoryview,
-              params: Params) \
-            -> tuple[Parseable[ParseableT], memoryview]:
+    def parse(cls: type[Parseable[ParsedT]], buf: memoryview, params: Params) \
+            -> tuple[Parseable[ParsedT], memoryview]:
         """Implemented by sub-classes to define how to parse the given buffer.
 
         Args:
@@ -142,22 +182,13 @@ class Parseable(Generic[ParseableT], Writeable, metaclass=ABCMeta):
         ...
 
 
-class ExpectedParseable(Parseable[None]):
+class ExpectedParseable(Parseable[None], metaclass=ABCMeta):
     """Non-instantiable class, used to parse a buffer from a list of
     expected types.
 
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        raise NotImplementedError
-
-    @property
-    def value(self) -> None:
-        raise NotImplementedError
-
-    def __bytes__(self) -> bytes:
-        raise NotImplementedError
+    __slots__: list[str] = []
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \

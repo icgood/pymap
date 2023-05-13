@@ -178,7 +178,7 @@ class SearchKey(Parseable[bytes]):
         else:
             return cls(b'SEQSET', seq_set, inverse), buf
         try:
-            params_copy = params.copy(list_expected=[SearchKey])
+            params_copy = params.copy(expected=[SearchKey])
             key_list_p, buf = List.parse(buf, params_copy)
         except UnexpectedType:
             raise

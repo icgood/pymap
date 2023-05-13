@@ -3,7 +3,7 @@ import unittest
 
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, ExpungeResponse, FetchResponse, SearchResponse, \
-    ESearchResponse, ListResponse, LSubResponse
+    ESearchResponse, ListResponse, LSubResponse, IdResponse
 from pymap.parsing.specials import FetchAttribute, FetchValue
 
 
@@ -77,3 +77,13 @@ class TestLSubResponse(unittest.TestCase):
                              [b'Marked', b'Noinferior', b'Noselect'])
         self.assertEqual(b'* LSUB (\\Marked \\Noinferior \\Noselect) '
                          b'"." Other.Stuff\r\n', bytes(resp2))
+
+
+class TestIdbResponse(unittest.TestCase):
+
+    def test_bytes(self):
+        resp1 = IdResponse(None)
+        self.assertEqual(b'* ID NIL\r\n', bytes(resp1))
+        resp2 = IdResponse({b'one': b'two', b'three': b'four'})
+        self.assertEqual(b'* ID ("one" "two" "three" "four")\r\n',
+                         bytes(resp2))

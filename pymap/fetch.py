@@ -100,10 +100,12 @@ class DynamicLoadedFetchValue(FetchValue, metaclass=ABCMeta):
             self.attribute.for_response, value)
 
     @classmethod
-    def _get_data(cls, section: FetchAttribute.Section,
+    def _get_data(cls, section: FetchAttribute.Section | None,
                   partial: FetchPartial | None,
                   loaded_msg: LoadedMessageInterface, *,
                   binary: bool = False) -> Writeable:
+        if section is None:
+            raise RuntimeError()  # Parsing should not allow this
         specifier = section.specifier
         parts = section.parts
         headers = section.headers
@@ -120,7 +122,7 @@ class DynamicLoadedFetchValue(FetchValue, metaclass=ABCMeta):
         elif specifier == b'HEADER.FIELDS.NOT':
             data = loaded_msg.get_message_headers(parts, headers, True)
         else:
-            raise RuntimeError()  # Should not happen.
+            raise ValueError(specifier)  # Should not happen.
         return cls._get_partial(data, partial)
 
     @classmethod
@@ -238,8 +240,6 @@ class _BinaryFetchValue(DynamicLoadedFetchValue):
 
     def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
         attr = self.attribute
-        if attr.section is None:
-            raise RuntimeError()  # should not happen.
         data = self._get_data(attr.section, attr.partial, loaded_msg,
                               binary=True)
         return LiteralString(data, True)
@@ -253,8 +253,6 @@ class _BinarySizeFetchValue(DynamicLoadedFetchValue):
 
     def get_value(self, loaded_msg: LoadedMessageInterface) -> MaybeBytes:
         attr = self.attribute
-        if attr.section is None:
-            raise RuntimeError()  # should not happen.
         data = self._get_data(attr.section, attr.partial, loaded_msg,
                               binary=True)
         return Number(len(data))
