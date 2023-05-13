@@ -45,17 +45,17 @@ classifiers = [
 ]
 dependencies = [
     'pysasl ~= 1.0',
-    'proxy-protocol ~= 0.11.0',
+    'proxy-protocol ~= 0.11.1',
 ]
 
 [project.optional-dependencies]
-admin = ['pymap-admin ~= 0.10.1', 'protobuf', 'googleapis-common-protos']
-macaroon = ['pymacaroons']
+admin = ['pymap-admin[error-details] ~= 0.10.2']
+macaroon = ['pymacaroons ~= 0.13.0']
 redis = ['redis ~= 4.2', 'msgpack ~= 1.0']
-sieve = ['sievelib']
-swim = ['swim-protocol ~= 0.3.12']
+sieve = ['sievelib ~= 1.2']
+swim = ['swim-protocol ~= 0.4.0']
 systemd = ['systemd-python']
-optional = ['hiredis', 'passlib', 'pid']
+optional = ['hiredis', 'passlib ~= 1.7', 'pid ~= 3.0']
 
 [project.urls]
 'Homepage' = 'https://github.com/icgood/pymap/'
@@ -149,6 +149,9 @@ line-length = 79
 "test/*" = ['ANN', 'S105', 'S106']
 "pymap/admin/handlers/*" = ['N802']
 
+[tool.autopep8]
+aggressive = 1
+
 [tool.pytest.ini_options]
 testpaths = 'test'
 asyncio_mode = 'auto'
@@ -192,8 +195,8 @@ features = [
 run-pytest = 'py.test --cov-report=term-missing --cov=pymap'
 run-mypy = 'mypy pymap test'
 run-ruff = 'ruff pymap test'
-run-pycodestyle = 'pycodestyle pymap test'
-check = ['run-pytest', 'run-pycodestyle', 'run-mypy', 'run-ruff']
+run-autopep8 = 'autopep8 --exit-code -dr pymap test'
+check = ['run-pytest', 'run-autopep8', 'run-mypy', 'run-ruff']
 
 [[tool.hatch.envs.all.matrix]]
 python = ['3.11']

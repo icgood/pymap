@@ -17,7 +17,7 @@ from pymap.interfaces.session import SessionInterface
 from pymap.parsing.command import CommandAuth, CommandNonAuth, CommandSelect, \
     Command
 from pymap.parsing.command.any import CapabilityCommand, LogoutCommand, \
-    NoOpCommand
+    NoOpCommand, IdCommand
 from pymap.parsing.command.nonauth import AuthenticateCommand, LoginCommand, \
     StartTLSCommand
 from pymap.parsing.command.auth import AppendCommand, CreateCommand, \
@@ -33,7 +33,7 @@ from pymap.parsing.response import ResponseOk, ResponseNo, ResponseBad, \
 from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
     UidValidity, Unseen, MailboxId
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
-    RecentResponse, FetchResponse, ListResponse, LSubResponse, \
+    RecentResponse, FetchResponse, ListResponse, LSubResponse, IdResponse, \
     SearchResponse, StatusResponse
 from pymap.parsing.specials import StatusAttribute, FetchAttribute, FetchValue
 from pymap.selected import SelectedMailbox
@@ -69,13 +69,19 @@ class ConnectionState:
     @property
     def session(self) -> SessionInterface:
         if self._session is None:
-            raise RuntimeError()  # State checking should prevent this.
+            # Commands using this attribute should be state-bound to only be
+            # allowed once a session has begun, so this should not throw.
+            raise AttributeError('Connection has not begun a session.',
+                                 name='session', obj=self)
         return self._session
 
     @property
     def selected(self) -> SelectedMailbox:
         if self._selected is None:
-            raise RuntimeError()  # State checking should prevent this.
+            # Commands using this attribute should be state-bound to only be
+            # allowed once mailbox has been selected, so this should not throw.
+            raise AttributeError('Connection has not selected a mailbox.',
+                                 name='selected', obj=self)
         return self._selected
 
     @property
@@ -154,6 +160,11 @@ class ConnectionState:
         if self._selected and self._session:
             updates = await self.session.check_mailbox(self.selected)
         return ResponseOk(cmd.tag, cmd.command + b' completed.'), updates
+
+    async def do_id(self, cmd: IdCommand) -> _CommandRet:
+        response = ResponseOk(cmd.tag, cmd.command + b' completed.')
+        response.add_untagged(IdResponse(self.config.id_response))
+        return response, None
 
     async def do_select(self, cmd: SelectCommand) -> _CommandRet:
         self._selected = None

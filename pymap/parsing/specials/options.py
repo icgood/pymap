@@ -77,7 +77,7 @@ class ExtensionOption(Parseable[bytes]):
             arg = List([seq_set])
             return arg, buf
         try:
-            params_copy = params.copy(list_expected=[AString, List])
+            params_copy = params.copy(expected=[AString, List])
             return List.parse(buf, params_copy)
         except NotParseable:
             pass

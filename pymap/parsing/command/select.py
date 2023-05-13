@@ -219,7 +219,7 @@ class FetchCommand(CommandSelect):
         except NotParseable:
             pass
         if not attr_list:
-            params_copy = params.copy(list_expected=[FetchAttribute])
+            params_copy = params.copy(expected=[FetchAttribute])
             attr_list_p, buf = List.parse(buf, params_copy)
             attr_list = attr_list_p.get_as(FetchAttribute)
         if params.uid:
@@ -276,7 +276,7 @@ class StoreCommand(CommandSelect):
     def _parse_flag_list(cls, buf: memoryview, params: Params) \
             -> tuple[Sequence[Flag], memoryview]:
         try:
-            params_copy = params.copy(list_expected=[Flag])
+            params_copy = params.copy(expected=[Flag])
             flag_list_p, buf = List.parse(buf, params_copy)
         except NotParseable:
             pass

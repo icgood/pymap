@@ -5,7 +5,8 @@ from collections.abc import Collection
 
 from . import Space, Params
 from .command import Command
-from .command.any import CapabilityCommand, LogoutCommand, NoOpCommand
+from .command.any import CapabilityCommand, LogoutCommand, NoOpCommand, \
+    IdCommand
 from .command.auth import AppendCommand, CreateCommand, DeleteCommand, \
     ExamineCommand, ListCommand, LSubCommand, RenameCommand, SelectCommand, \
     StatusCommand, SubscribeCommand, UnsubscribeCommand
@@ -23,7 +24,7 @@ __all__ = ['builtin_commands', 'InvalidCommand', 'Commands']
 #: List of built-in commands. These commands are automatically registered by a
 #: new :class:`Commands` object.
 builtin_commands: Collection[type[Command]] = [
-    CapabilityCommand, LogoutCommand, NoOpCommand, AppendCommand,
+    CapabilityCommand, LogoutCommand, NoOpCommand, IdCommand, AppendCommand,
     CreateCommand, DeleteCommand, ExamineCommand, ListCommand, LSubCommand,
     RenameCommand, SelectCommand, StatusCommand, SubscribeCommand,
     UnsubscribeCommand, AuthenticateCommand, LoginCommand, StartTLSCommand,
@@ -88,7 +89,7 @@ class InvalidCommand(Command):
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[InvalidCommand, memoryview]:
-        raise RuntimeError('Do not call')
+        raise NotImplementedError()
 
 
 class Commands:

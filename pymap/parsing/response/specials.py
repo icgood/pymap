@@ -4,18 +4,18 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from contextlib import AbstractAsyncContextManager
 from itertools import chain
-from typing import TypeAlias, ClassVar
+from typing import TypeAlias, ClassVar, Final, SupportsBytes
 
 from . import UntaggedResponse
 from ..modutf7 import modutf7_encode
-from ..primitives import Nil, List, QuotedString
+from ..primitives import Nil, List, QuotedString, String
 from ..specials import Mailbox, FetchAttribute, FetchValue, StatusAttribute
 from ...bytes import MaybeBytes, BytesFormat, WriteStream
 
 __all__ = ['FlagsResponse', 'ExistsResponse', 'RecentResponse',
            'ExpungeResponse', 'FetchResponse', 'SearchResponse',
            'ESearchResponse', 'StatusResponse', 'ListResponse',
-           'LSubResponse']
+           'LSubResponse', 'IdResponse']
 
 _WritingHook: TypeAlias = AbstractAsyncContextManager[None]
 
@@ -257,3 +257,29 @@ class LSubResponse(ListResponse):
     """Constructs the special LSUB response used by the LSUB command."""
 
     _name = b'LSUB'
+
+
+class IdResponse(UntaggedResponse):
+    """Constructs the untagged ID response used by the ID command.
+
+    Args:
+        parameters: Optional mapping of key/value parameters sent back to the
+            client.
+
+    """
+
+    #: Type alias for the response parameter key/value mapping.
+    Parameters: TypeAlias = Mapping[bytes, bytes]
+
+    def __init__(self, parameters: Parameters | None) -> None:
+        super().__init__()
+        self.parameters: Final = parameters
+
+    @property
+    def text(self) -> bytes:
+        parameters = self.parameters
+        value: SupportsBytes = Nil()
+        if parameters is not None:
+            value = List(String.build(token) for token in
+                         chain.from_iterable(parameters.items()))
+        return b'ID %s' % value
