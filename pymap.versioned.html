@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pymap.versioned &#8212; pymap 0.35.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+
+    
+    
+     
+        <script src="_static/jquery.cookie.js"></script>
+    
+
+    
+     
+        <script src="_static/cloud.base.js"></script>
+    
+
+    
+     
+        <script src="_static/cloud.js"></script>
+    
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pymap.sieve" href="pymap.sieve.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body>
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.sieve.html" title="pymap.sieve"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.35.0 documentation</a> &#187;</li>
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code></a></li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-pymap.versioned">
+<span id="pymap-versioned"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code><a class="headerlink" href="#module-pymap.versioned" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.versioned.VersionedT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">VersionedT</span></span><a class="headerlink" href="#pymap.versioned.VersionedT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable for versioned objects.</p>
+<p>alias of TypeVar(‘VersionedT’, bound=<code class="xref py py-class docutils literal notranslate"><span class="pre">Versioned[Any]</span></code>)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.versioned.EntityTagT">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">EntityTagT</span></span><a class="headerlink" href="#pymap.versioned.EntityTagT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type variable for versioned object entity tags.</p>
+<p>alias of TypeVar(‘EntityTagT’)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pymap.versioned.Versioned">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">Versioned</span></span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned" title="Permalink to this definition">¶</a></dt>
+<dd><p>This simple base class defines objects that supports “versioning” using
+entity tags.</p>
+<p>The <a class="reference internal" href="#pymap.versioned.Versioned.entity_tag" title="pymap.versioned.Versioned.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a> of an object represents the <em>current</em> object and
+<a class="reference internal" href="#pymap.versioned.Versioned.previous_entity_tag" title="pymap.versioned.Versioned.previous_entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">previous_entity_tag</span></code></a> represents the object that it is intended to
+replace. A versioned object then provides optimistic locking by preventing
+replacement of an object other than the one it was intended to replace.</p>
+<p>In a linear chain of objects and their replacements, the first object in
+the chain should have a <a class="reference internal" href="#pymap.versioned.Versioned.previous_entity_tag" title="pymap.versioned.Versioned.previous_entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">previous_entity_tag</span></code></a> of <code class="docutils literal notranslate"><span class="pre">None</span></code>, and every
+subsequent object should have a <a class="reference internal" href="#pymap.versioned.Versioned.previous_entity_tag" title="pymap.versioned.Versioned.previous_entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">previous_entity_tag</span></code></a> equal to the
+<a class="reference internal" href="#pymap.versioned.Versioned.entity_tag" title="pymap.versioned.Versioned.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a> of the object before it.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pymap.versioned.Versioned.REPLACE_ANY">
+<span class="sig-name descname"><span class="pre">REPLACE_ANY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.11)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pymap.versioned.Versioned.REPLACE_ANY" title="Permalink to this definition">¶</a></dt>
+<dd><p>A special marker for <a class="reference internal" href="#pymap.versioned.Versioned.previous_entity_tag" title="pymap.versioned.Versioned.previous_entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">previous_entity_tag</span></code></a> indicating that any
+previous object may be replaced.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.versioned.Versioned.entity_tag">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entity_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><span class="pre">EntityTagT</span></a></em><a class="headerlink" href="#pymap.versioned.Versioned.entity_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the <em>current</em> version of the object.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymap.versioned.Versioned.previous_entity_tag">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">previous_entity_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><span class="pre">EntityTagT</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#pymap.versioned.Versioned.previous_entity_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the version of the object it is intended to replace.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.versioned.Versioned.can_replace">
+<span class="sig-name descname"><span class="pre">can_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">previous</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned.can_replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned.can_replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this object can replace the <em>previous</em> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>previous</strong> (<a class="reference internal" href="#pymap.versioned.VersionedT" title="pymap.versioned.VersionedT"><em>VersionedT</em></a><em> | </em><em>None</em>) – The object to be replaced, if any.</p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.versioned.VersionedT" title="pymap.versioned.VersionedT"><em>VersionedT</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymap.versioned.Versioned.new_entity_tag">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_entity_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned.new_entity_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned.new_entity_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a new random value for <a class="reference internal" href="#pymap.versioned.Versioned.entity_tag" title="pymap.versioned.Versioned.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><em>EntityTagT</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="sphinx-toc sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.versioned.VersionedT"><code class="docutils literal notranslate"><span class="pre">VersionedT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.versioned.EntityTagT"><code class="docutils literal notranslate"><span class="pre">EntityTagT</span></code></a></li>
+<li><a class="reference internal" href="#pymap.versioned.Versioned"><code class="docutils literal notranslate"><span class="pre">Versioned</span></code></a><ul>
+<li><a class="reference internal" href="#pymap.versioned.Versioned.REPLACE_ANY"><code class="docutils literal notranslate"><span class="pre">Versioned.REPLACE_ANY</span></code></a></li>
+<li><a class="reference internal" href="#pymap.versioned.Versioned.entity_tag"><code class="docutils literal notranslate"><span class="pre">Versioned.entity_tag</span></code></a></li>
+<li><a class="reference internal" href="#pymap.versioned.Versioned.previous_entity_tag"><code class="docutils literal notranslate"><span class="pre">Versioned.previous_entity_tag</span></code></a></li>
+<li><a class="reference internal" href="#pymap.versioned.Versioned.can_replace"><code class="docutils literal notranslate"><span class="pre">Versioned.can_replace()</span></code></a></li>
+<li><a class="reference internal" href="#pymap.versioned.Versioned.new_entity_tag"><code class="docutils literal notranslate"><span class="pre">Versioned.new_entity_tag()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="pymap.sieve.html"
+                          title="Previous page">&larr; <code class="docutils literal notranslate"><span class="pre">pymap.sieve</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pymap.versioned.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+    
+    
+        <div class="sidebar-toggle-group no-js">
+            
+            <button class="sidebar-toggle" id="sidebar-hide" title="Hide the sidebar menu">
+                 «
+                <span class="show-for-small">hide menu</span>
+                
+            </button>
+            <button class="sidebar-toggle" id="sidebar-show" title="Show the sidebar menu">
+                
+                <span class="show-for-small">menu</span>
+                <span class="hide-for-small">sidebar</span>
+                 »
+            </button>
+        </div>
+    
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="pymap.sieve.html" title="pymap.sieve"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">pymap 0.35.0 documentation</a> &#187;</li>
+
+        <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code></a></li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Ian Good.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

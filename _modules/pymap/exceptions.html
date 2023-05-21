@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.exceptions &#8212; pymap 0.34.0 documentation</title>
+    <title>pymap.exceptions &#8212; pymap 0.35.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.exceptions</a></li> 
@@ -66,6 +66,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span>
 
 <span class="kn">from</span> <span class="nn">.parsing.specials</span> <span class="kn">import</span> <span class="n">SearchKey</span>
 <span class="kn">from</span> <span class="nn">.parsing.response</span> <span class="kn">import</span> <span class="n">Response</span><span class="p">,</span> <span class="n">ResponseCode</span><span class="p">,</span> <span class="n">ResponseNo</span><span class="p">,</span> <span class="n">ResponseOk</span><span class="p">,</span> \
@@ -76,7 +77,7 @@
            <span class="s1">&#39;AuthorizationFailure&#39;</span><span class="p">,</span> <span class="s1">&#39;NotAllowedError&#39;</span><span class="p">,</span> <span class="s1">&#39;IncompatibleData&#39;</span><span class="p">,</span>
            <span class="s1">&#39;MailboxError&#39;</span><span class="p">,</span> <span class="s1">&#39;MailboxNotFound&#39;</span><span class="p">,</span> <span class="s1">&#39;MailboxConflict&#39;</span><span class="p">,</span>
            <span class="s1">&#39;MailboxHasChildren&#39;</span><span class="p">,</span> <span class="s1">&#39;MailboxReadOnly&#39;</span><span class="p">,</span> <span class="s1">&#39;AppendFailure&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;UserNotFound&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;UserNotFound&#39;</span><span class="p">,</span> <span class="s1">&#39;CannotReplaceUser&#39;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ResponseError"><a class="viewcode-back" href="../../pymap.exceptions.html#pymap.exceptions.ResponseError">[docs]</a><span class="k">class</span> <span class="nc">ResponseError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
@@ -213,9 +214,9 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
                  <span class="n">code</span><span class="p">:</span> <span class="n">ResponseCode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mailbox</span> <span class="o">=</span> <span class="n">mailbox</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mailbox</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">mailbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">code</span>
 
 <div class="viewcode-block" id="MailboxError.get_response"><a class="viewcode-back" href="../../pymap.exceptions.html#pymap.exceptions.MailboxError.get_response">[docs]</a>    <span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseNo</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span></div></div>
@@ -286,6 +287,14 @@
 <div class="viewcode-block" id="UserNotFound.get_response"><a class="viewcode-back" href="../../pymap.exceptions.html#pymap.exceptions.UserNotFound.get_response">[docs]</a>    <span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseNo</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;User not found.&#39;</span><span class="p">,</span>
                           <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;NONEXISTENT&#39;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="CannotReplaceUser"><a class="viewcode-back" href="../../pymap.exceptions.html#pymap.exceptions.CannotReplaceUser">[docs]</a><span class="k">class</span> <span class="nc">CannotReplaceUser</span><span class="p">(</span><span class="n">ResponseError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The existing user cannot be replaced.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CannotReplaceUser.get_response"><a class="viewcode-back" href="../../pymap.exceptions.html#pymap.exceptions.CannotReplaceUser.get_response">[docs]</a>    <span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResponseNo</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ResponseNo</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;Cannot replace existing user.&#39;</span><span class="p">,</span>
+                          <span class="n">ResponseCode</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;CANNOT&#39;</span><span class="p">))</span></div></div>
 </pre></div>
 
             <div class="clearer"></div>
@@ -336,7 +345,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.exceptions</a></li> 

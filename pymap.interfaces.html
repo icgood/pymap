@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.interfaces &#8212; pymap 0.34.0 documentation</title>
+    <title>pymap.interfaces &#8212; pymap 0.35.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>
@@ -1169,7 +1169,10 @@ may or may not “exist” yet in the backend.</p>
 <dd><p>Returns a new IMAP session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotAllowedError" title="pymap.exceptions.NotAllowedError"><strong>NotAllowedError</strong></a> – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AbstractAsyncContextManager" title="(in Python v3.11)"><em>AbstractAsyncContextManager</em></a>[<a class="reference internal" href="#pymap.interfaces.session.SessionInterface" title="pymap.interfaces.session.SessionInterface"><em>SessionInterface</em></a>]</p>
@@ -1190,7 +1193,10 @@ private key.</p>
 <dd class="field-odd"><p><strong>expiration</strong> (<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><em>datetime</em></a><em> | </em><em>None</em>) – When the token should stop being valid.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotAllowedError" title="pymap.exceptions.NotAllowedError"><strong>NotAllowedError</strong></a> – </p></li>
+</ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a> | None</p>
@@ -1204,7 +1210,10 @@ private key.</p>
 <dd><p>Return the metadata associated with the user identity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotAllowedError" title="pymap.exceptions.NotAllowedError"><strong>NotAllowedError</strong></a> – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="pymap.user.html#pymap.user.UserMetadata" title="pymap.user.UserMetadata"><em>UserMetadata</em></a></p>
@@ -1220,8 +1229,18 @@ private key.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>metadata</strong> (<a class="reference internal" href="pymap.user.html#pymap.user.UserMetadata" title="pymap.user.UserMetadata"><em>UserMetadata</em></a>) – New metadata, such as password.</p>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The <a class="reference internal" href="pymap.user.html#pymap.user.UserMetadata.entity_tag" title="pymap.user.UserMetadata.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a> of the updated
+metadata, if applicable.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.CannotReplaceUser" title="pymap.exceptions.CannotReplaceUser"><strong>CannotReplaceUser</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotAllowedError" title="pymap.exceptions.NotAllowedError"><strong>NotAllowedError</strong></a> – </p></li>
+</ul>
+</dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a> | None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1232,7 +1251,10 @@ private key.</p>
 <dd><p>Delete existing metadata for the user identity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.UserNotFound" title="pymap.exceptions.UserNotFound"><strong>UserNotFound</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pymap.exceptions.html#pymap.exceptions.NotAllowedError" title="pymap.exceptions.NotAllowedError"><strong>NotAllowedError</strong></a> – </p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -1688,7 +1710,7 @@ exists.</p>
         <li class="right" >
           <a href="pymap.sockets.html" title="pymap.sockets"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.interfaces</span></code></a></li> 
       </ul>

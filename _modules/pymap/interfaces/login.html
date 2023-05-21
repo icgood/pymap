@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.interfaces.login &#8212; pymap 0.34.0 documentation</title>
+    <title>pymap.interfaces.login &#8212; pymap 0.35.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.login</a></li> 
@@ -142,6 +142,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            :class:`~pymap.exceptions.UserNotFound`</span>
+<span class="sd">            :exc:`~pymap.exceptions.NotAllowedError`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
@@ -161,6 +162,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            :exc:`~pymap.exceptions.UserNotFound`</span>
+<span class="sd">            :exc:`~pymap.exceptions.NotAllowedError`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
@@ -171,16 +173,25 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            :exc:`~pymap.exceptions.UserNotFound`</span>
+<span class="sd">            :exc:`~pymap.exceptions.NotAllowedError`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
 <div class="viewcode-block" id="IdentityInterface.set"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.set">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">UserMetadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">UserMetadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign new metadata to the user identity.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            metadata: New metadata, such as password.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The :attr:`~pymap.user.UserMetadata.entity_tag` of the updated</span>
+<span class="sd">            metadata, if applicable.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            :exc:`~pymap.exceptions.CannotReplaceUser`</span>
+<span class="sd">            :exc:`~pymap.exceptions.NotAllowedError`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
@@ -191,6 +202,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            :exc:`~pymap.exceptions.UserNotFound`</span>
+<span class="sd">            :exc:`~pymap.exceptions.NotAllowedError`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div></div>
@@ -244,7 +256,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.login</a></li> 

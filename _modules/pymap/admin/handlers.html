@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.admin.handlers &#8212; pymap 0.34.0 documentation</title>
+    <title>pymap.admin.handlers &#8212; pymap 0.35.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../admin.html" accesskey="U">pymap.admin</a> &#187;</li>
@@ -122,7 +122,8 @@
 <span class="sd">            command: The admin command name.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;. OK %b completed.&#39;</span> <span class="o">%</span> <span class="n">command</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">command_bytes</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;%b OK completed.&#39;</span> <span class="o">%</span> <span class="n">command_bytes</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">SUCCESS</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
             <span class="n">connection_exit</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
@@ -132,7 +133,7 @@
                 <span class="k">raise</span> <span class="n">get_unimplemented_error</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">exc</span>
             <span class="k">except</span> <span class="n">ResponseError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">FAILURE</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">command_bytes</span><span class="p">))</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span></div>
 
     <span class="k">def</span> <span class="nf">_get_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">_Metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -249,7 +250,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../admin.html" >pymap.admin</a> &#187;</li>

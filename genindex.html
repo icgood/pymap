@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pymap 0.34.0 documentation</title>
+    <title>Index &#8212; pymap 0.35.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
@@ -301,6 +301,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage">CachedMessage (class in pymap.interfaces.message)</a>
+</li>
+      <li><a href="pymap.versioned.html#pymap.versioned.Versioned.can_replace">can_replace() (pymap.versioned.Versioned method)</a>
+</li>
+      <li><a href="pymap.exceptions.html#pymap.exceptions.CannotReplaceUser">CannotReplaceUser</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.code.Capability">Capability (class in pymap.parsing.response.code)</a>
 </li>
@@ -728,6 +732,14 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.EndLine">EndLine (class in pymap.parsing)</a>
 </li>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.entity_tag">entity_tag (pymap.user.UserMetadata attribute)</a>
+
+      <ul>
+        <li><a href="pymap.versioned.html#pymap.versioned.Versioned.entity_tag">(pymap.versioned.Versioned property)</a>
+</li>
+      </ul></li>
+      <li><a href="pymap.versioned.html#pymap.versioned.EntityTagT">EntityTagT (class in pymap.versioned)</a>
+</li>
       <li><a href="pymap.search.html#pymap.search.EnvelopeSearchCriteria">EnvelopeSearchCriteria (class in pymap.search)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure">EnvelopeStructure (class in pymap.parsing.response.fetch)</a>
@@ -738,12 +750,12 @@
 </li>
       <li><a href="pymap.concurrent.html#pymap.concurrent.EventT">EventT (class in pymap.concurrent)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.parsing.html#pymap.parsing.command.auth.ExamineCommand">ExamineCommand (class in pymap.parsing.command.auth)</a>
 </li>
       <li><a href="pymap.concurrent.html#pymap.concurrent.Subsystem.execute">execute() (pymap.concurrent.Subsystem method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.interfaces.html#pymap.interfaces.mailbox.MailboxInterface.exists">exists (pymap.interfaces.mailbox.MailboxInterface property)</a>
 
       <ul>
@@ -1087,6 +1099,8 @@
       <li><a href="pymap.exceptions.html#pymap.exceptions.AuthorizationFailure.get_response">get_response() (pymap.exceptions.AuthorizationFailure method)</a>
 
       <ul>
+        <li><a href="pymap.exceptions.html#pymap.exceptions.CannotReplaceUser.get_response">(pymap.exceptions.CannotReplaceUser method)</a>
+</li>
         <li><a href="pymap.exceptions.html#pymap.exceptions.CloseConnection.get_response">(pymap.exceptions.CloseConnection method)</a>
 </li>
         <li><a href="pymap.exceptions.html#pymap.exceptions.InvalidAuth.get_response">(pymap.exceptions.InvalidAuth method)</a>
@@ -1748,6 +1762,8 @@
 </li>
         <li><a href="pymap.user.html#module-pymap.user">pymap.user</a>
 </li>
+        <li><a href="pymap.versioned.html#module-pymap.versioned">pymap.versioned</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1797,16 +1813,22 @@
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_email_id">new_email_id() (pymap.parsing.specials.objectid.ObjectId class method)</a>
 </li>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.new_entity_tag">new_entity_tag() (pymap.user.UserMetadata class method)</a>
+
+      <ul>
+        <li><a href="pymap.versioned.html#pymap.versioned.Versioned.new_entity_tag">(pymap.versioned.Versioned class method)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.concurrent.html#pymap.concurrent.Subsystem.new_event">new_event() (pymap.concurrent.Subsystem method)</a>
 </li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_mailbox_id">new_mailbox_id() (pymap.parsing.specials.objectid.ObjectId class method)</a>
 </li>
       <li><a href="pymap.concurrent.html#pymap.concurrent.Subsystem.new_rwlock">new_rwlock() (pymap.concurrent.Subsystem method)</a>
 </li>
-      <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_session">new_session() (pymap.interfaces.login.IdentityInterface method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_session">new_session() (pymap.interfaces.login.IdentityInterface method)</a>
+</li>
       <li><a href="pymap.parsing.html#pymap.parsing.specials.objectid.ObjectId.new_thread_id">new_thread_id() (pymap.parsing.specials.objectid.ObjectId class method)</a>
 </li>
       <li><a href="pymap.interfaces.html#pymap.interfaces.login.IdentityInterface.new_token">new_token() (pymap.interfaces.login.IdentityInterface method)</a>
@@ -2077,6 +2099,12 @@
 </li>
       <li><a href="pymap.backend.redis.html#pymap.backend.redis.Config.prefix">prefix (pymap.backend.redis.Config property)</a>
 </li>
+      <li><a href="pymap.user.html#pymap.user.UserMetadata.previous_entity_tag">previous_entity_tag (pymap.user.UserMetadata attribute)</a>
+
+      <ul>
+        <li><a href="pymap.versioned.html#pymap.versioned.Versioned.previous_entity_tag">(pymap.versioned.Versioned property)</a>
+</li>
+      </ul></li>
       <li><a href="pymap.filter.html#pymap.filter.SingleFilterSet.put">put() (pymap.filter.SingleFilterSet method)</a>
 
       <ul>
@@ -2680,6 +2708,13 @@
         <li><a href="pymap.user.html#module-pymap.user">module</a>
 </li>
       </ul></li>
+      <li>
+    pymap.versioned
+
+      <ul>
+        <li><a href="pymap.versioned.html#module-pymap.versioned">module</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -2768,10 +2803,10 @@
         <li><a href="pymap.flags.html#pymap.flags.SessionFlags.remove">(pymap.flags.SessionFlags method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.backend.maildir.html#pymap.backend.maildir.layout.MaildirLayout.remove_folder">remove_folder() (pymap.backend.maildir.layout.MaildirLayout method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pymap.filter.html#pymap.filter.SingleFilterSet.rename">rename() (pymap.filter.SingleFilterSet method)</a>
 
       <ul>
@@ -2795,6 +2830,8 @@
       <li><a href="pymap.flags.html#pymap.flags.FlagOp.REPLACE">REPLACE (pymap.flags.FlagOp attribute)</a>
 </li>
       <li><a href="pymap.filter.html#pymap.filter.SingleFilterSet.replace_active">replace_active() (pymap.filter.SingleFilterSet method)</a>
+</li>
+      <li><a href="pymap.versioned.html#pymap.versioned.Versioned.REPLACE_ANY">REPLACE_ANY (pymap.versioned.Versioned attribute)</a>
 </li>
       <li><a href="pymap.mime.html#pymap.mime.parsed.ParsedHeaders.reply_to">reply_to (pymap.mime.parsed.ParsedHeaders property)</a>
 </li>
@@ -3306,6 +3343,10 @@
 </li>
       <li><a href="pymap.token.html#pymap.token.macaroon.MacaroonCredentials.verify">verify() (pymap.token.macaroon.MacaroonCredentials method)</a>
 </li>
+      <li><a href="pymap.versioned.html#pymap.versioned.Versioned">Versioned (class in pymap.versioned)</a>
+</li>
+      <li><a href="pymap.versioned.html#pymap.versioned.VersionedT">VersionedT (class in pymap.versioned)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -3413,7 +3454,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.34.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.35.0 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href="">Index</a></li> 
       </ul>
