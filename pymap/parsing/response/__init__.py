@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections.abc import Hashable, AsyncIterator
 from contextlib import asynccontextmanager, AbstractAsyncContextManager
-from typing import TypeAlias, TypeVar, Final
+from typing import overload, TypeAlias, TypeVar, Final
 
 from ...bytes import MaybeBytes, BytesFormat, WriteStream, Writeable
 
@@ -26,6 +26,16 @@ class ResponseCode:
 
     def __bytes__(self) -> bytes:
         raise NotImplementedError
+
+    @overload
+    @classmethod
+    def of(cls, code: None) -> None:
+        ...
+
+    @overload
+    @classmethod
+    def of(cls, code: MaybeBytes) -> ResponseCode:
+        ...
 
     @classmethod
     def of(cls, code: MaybeBytes | None) -> ResponseCode | None:

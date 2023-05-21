@@ -58,7 +58,8 @@ class BaseHandler(Handler):
             command: The admin command name.
 
         """
-        response = b'. OK %b completed.' % command.encode('utf-8')
+        command_bytes = command.encode('utf-8')
+        response = b'%b OK completed.' % command_bytes
         result = Result(code=SUCCESS, response=response)
         async with AsyncExitStack() as stack:
             connection_exit.set(stack)
@@ -68,7 +69,7 @@ class BaseHandler(Handler):
                 raise get_unimplemented_error() from exc
             except ResponseError as exc:
                 result.code = FAILURE
-                result.response = bytes(exc.get_response(b'.'))
+                result.response = bytes(exc.get_response(command_bytes))
                 result.key = type(exc).__name__
 
     def _get_token(self, metadata: _Metadata) -> str:

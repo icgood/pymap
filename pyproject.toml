@@ -49,7 +49,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-admin = ['pymap-admin[error-details] ~= 0.10.2']
+admin = ['pymap-admin[error-details] ~= 0.11.0']
 macaroon = ['pymacaroons ~= 0.13.0']
 redis = ['redis ~= 4.2', 'msgpack ~= 1.0']
 sieve = ['sievelib ~= 1.2']

@@ -38,6 +38,7 @@ Table of Contents
    pymap.cluster
    pymap.token
    pymap.sieve
+   pymap.versioned
 
 Indices and tables
 ==================

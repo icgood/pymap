@@ -17,7 +17,7 @@ from pysasl.creds.server import ServerCredentials
 
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.exceptions import AuthorizationFailure, InvalidAuth, \
-    NotAllowedError, UserNotFound
+    NotAllowedError, UserNotFound, CannotReplaceUser
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
 from pymap.interfaces.login import LoginInterface, IdentityInterface
@@ -320,10 +320,16 @@ class Identity(IdentityInterface):
             raise UserNotFound(self.name)
         return dataclasses.replace(user, token_key=token_key)
 
-    async def set(self, user: UserMetadata) -> None:
+    async def set(self, user: UserMetadata) -> int:
         if 'admin' not in self._roles and user.roles:
             raise NotAllowedError('Cannot assign roles.')
-        self.login.users_dict[self.name] = user
+        existing = self.login.users_dict.get(self.name)
+        if not user.can_replace(existing):
+            raise CannotReplaceUser()
+        entity_tag = UserMetadata.new_entity_tag()
+        self.login.users_dict[self.name] = \
+            dataclasses.replace(user, entity_tag=entity_tag)
+        return entity_tag
 
     async def delete(self) -> None:
         try:

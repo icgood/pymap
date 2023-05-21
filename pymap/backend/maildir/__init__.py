@@ -353,8 +353,9 @@ class Identity(IdentityInterface):
             for role in groups_file.get_user(name):
                 roles.add(role.name)
         params = frozendict({'mailbox_path': mailbox_path})
-        return UserMetadata(self.config, name, password, token_key,
-                            frozenset(roles), params)
+        return UserMetadata(self.config, name, password=password,
+                            token_key=token_key, roles=frozenset(roles),
+                            params=params)
 
     async def set(self, metadata: UserMetadata) -> None:
         base_dir = self._base_dir

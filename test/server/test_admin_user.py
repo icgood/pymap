@@ -30,7 +30,7 @@ class TestMailboxHandlers(TestBase):
             stub = UserStub(channel)
             response = await stub.GetUser(request, metadata=self.metadata)
         assert SUCCESS == response.result.code
-        assert 'testuser' == response.username
+        assert 'testuser' == response.user
         assert '$pbkdf2$1$$FzEpdTtdOaIFkUucxV4PjfW88BE=' \
             == response.data.password
 
@@ -51,14 +51,78 @@ class TestMailboxHandlers(TestBase):
         async with ChannelFor([handlers]) as channel:
             stub = UserStub(channel)
             response = await stub.SetUser(request, metadata=self.metadata)
+        assert FAILURE == response.result.code
+        assert 'CannotReplaceUser' == response.result.key
+
+    async def test_set_user_new(self, backend: BackendInterface,
+                                imap_server: IMAPServer) -> None:
+        handlers = UserHandlers(backend)
+        data = UserData(password='newpass', params={'key': 'val'})
+        request = SetUserRequest(user='newuser', data=data)
+        async with ChannelFor([handlers]) as channel:
+            stub = UserStub(channel)
+            response = await stub.SetUser(request, metadata=self.metadata)
         assert SUCCESS == response.result.code
-        assert 'testuser' == response.username
+        assert 'newuser' == response.user
+
+        transport = self.new_transport(imap_server)
+        transport.push_login(user=b'newuser', password=b'newpass')
+        transport.push_select(b'INBOX', unseen=False)
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_set_user_overwrite(self, backend: BackendInterface,
+                                      imap_server: IMAPServer) -> None:
+        handlers = UserHandlers(backend)
+        data = UserData(password='newpass', params={'key': 'val'})
+        request = SetUserRequest(user='testuser', overwrite=True, data=data)
+        async with ChannelFor([handlers]) as channel:
+            stub = UserStub(channel)
+            response = await stub.SetUser(request, metadata=self.metadata)
+        assert SUCCESS == response.result.code
+        assert 'testuser' == response.user
 
         transport = self.new_transport(imap_server)
         transport.push_login(password=b'newpass')
         transport.push_select(b'INBOX')
         transport.push_logout()
         await self.run(transport)
+
+    async def test_set_user_stale(self, backend: BackendInterface,
+                                  imap_server: IMAPServer) -> None:
+        handlers = UserHandlers(backend)
+        async with ChannelFor([handlers]) as channel:
+            stub = UserStub(channel)
+            get_request = GetUserRequest(user='testuser')
+            response = await stub.GetUser(get_request, metadata=self.metadata)
+            bad_entity_tag = response.entity_tag ^ 1
+        data = UserData(password='newpass', params={'key': 'val'})
+        request = SetUserRequest(user='testuser',
+                                 previous_entity_tag=bad_entity_tag, data=data)
+        async with ChannelFor([handlers]) as channel:
+            stub = UserStub(channel)
+            response = await stub.SetUser(request, metadata=self.metadata)
+        assert FAILURE == response.result.code
+        assert 'CannotReplaceUser' == response.result.key
+
+    async def test_set_user_replace(self, backend: BackendInterface,
+                                    imap_server: IMAPServer) -> None:
+        handlers = UserHandlers(backend)
+        async with ChannelFor([handlers]) as channel:
+            stub = UserStub(channel)
+            get_request = GetUserRequest(user='testuser')
+            response = await stub.GetUser(get_request, metadata=self.metadata)
+            previous_entity_tag = response.entity_tag
+        print(previous_entity_tag)
+        data = UserData(password='newpass', params={'key': 'val'})
+        request = SetUserRequest(user='testuser',
+                                 previous_entity_tag=previous_entity_tag,
+                                 data=data)
+        async with ChannelFor([handlers]) as channel:
+            stub = UserStub(channel)
+            response = await stub.SetUser(request, metadata=self.metadata)
+        assert SUCCESS == response.result.code
+        assert 'testuser' == response.user
 
     async def test_delete_user(self, backend: BackendInterface) -> None:
         handlers = UserHandlers(backend)
@@ -67,7 +131,7 @@ class TestMailboxHandlers(TestBase):
             stub = UserStub(channel)
             response = await stub.DeleteUser(request, metadata=self.metadata)
         assert SUCCESS == response.result.code
-        assert 'testuser' == response.username
+        assert 'testuser' == response.user
 
     async def test_delete_user_not_found(self, backend: BackendInterface) \
             -> None:

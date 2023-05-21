@@ -80,7 +80,7 @@ class TestAdminAuth(TestBase):
             response = await stub.GetUser(request, metadata=metadata)
         if failure_key is None:
             assert SUCCESS == response.result.code
-            assert user == response.username
+            assert user == response.user
         else:
             assert FAILURE == response.result.code
             assert failure_key == response.result.key
@@ -91,14 +91,14 @@ class TestAdminAuth(TestBase):
                         failure_key: str | None = None) -> None:
         handlers = UserHandlers(backend)
         data = UserData(password=password, roles=roles)
-        request = SetUserRequest(user=user, data=data)
+        request = SetUserRequest(user=user, overwrite=True, data=data)
         metadata = {'auth-token': token}
         async with ChannelFor([handlers]) as channel:
             stub = UserStub(channel)
             response = await stub.SetUser(request, metadata=metadata)
         if failure_key is None:
             assert SUCCESS == response.result.code
-            assert user == response.username
+            assert user == response.user
         else:
             assert FAILURE == response.result.code
             assert failure_key == response.result.key
@@ -114,7 +114,7 @@ class TestAdminAuth(TestBase):
             response = await stub.DeleteUser(request, metadata=metadata)
         if failure_key is None:
             assert SUCCESS == response.result.code
-            assert user == response.username
+            assert user == response.user
         else:
             assert FAILURE == response.result.code
             assert failure_key == response.result.key

@@ -79,6 +79,7 @@ class IdentityInterface(Protocol):
 
         Raises:
             :class:`~pymap.exceptions.UserNotFound`
+            :exc:`~pymap.exceptions.NotAllowedError`
 
         """
         ...
@@ -98,6 +99,7 @@ class IdentityInterface(Protocol):
 
         Raises:
             :exc:`~pymap.exceptions.UserNotFound`
+            :exc:`~pymap.exceptions.NotAllowedError`
 
         """
         ...
@@ -108,16 +110,25 @@ class IdentityInterface(Protocol):
 
         Raises:
             :exc:`~pymap.exceptions.UserNotFound`
+            :exc:`~pymap.exceptions.NotAllowedError`
 
         """
         ...
 
     @abstractmethod
-    async def set(self, metadata: UserMetadata) -> None:
+    async def set(self, metadata: UserMetadata) -> int | None:
         """Assign new metadata to the user identity.
 
         Args:
             metadata: New metadata, such as password.
+
+        Returns:
+            The :attr:`~pymap.user.UserMetadata.entity_tag` of the updated
+            metadata, if applicable.
+
+        Raises:
+            :exc:`~pymap.exceptions.CannotReplaceUser`
+            :exc:`~pymap.exceptions.NotAllowedError`
 
         """
         ...
@@ -128,6 +139,7 @@ class IdentityInterface(Protocol):
 
         Raises:
             :exc:`~pymap.exceptions.UserNotFound`
+            :exc:`~pymap.exceptions.NotAllowedError`
 
         """
         ...
