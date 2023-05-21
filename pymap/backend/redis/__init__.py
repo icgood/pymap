@@ -312,7 +312,7 @@ class Login(LoginInterface):
             raise AuthorizationFailure()
         return Identity(self._config, self.tokens,
                         self._user_connect, self._mail_connect,
-                        authzid, set())
+                        authzid, frozenset(roles))
 
 
 class Identity(IdentityInterface):
