@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from random import getrandbits
 from typing import overload, Final
 
 from pysasl.creds.server import ServerCredentials
@@ -10,6 +11,7 @@ from pysasl.identity import Identity
 
 from .config import IMAPConfig
 from .frozen import frozendict
+from .versioned import Versioned
 
 __all__ = ['Passwords', 'UserMetadata']
 
@@ -75,7 +77,7 @@ class Passwords:
 
 
 @dataclass(frozen=True)
-class UserMetadata(Identity):
+class UserMetadata(Identity, Versioned[int | None]):
     """Defines the attributes associated with a user identity."""
 
     #: The config object.
@@ -83,6 +85,12 @@ class UserMetadata(Identity):
 
     #: The user identity name.
     name: str
+
+    #: The entity tag of the current version of this metadata.
+    entity_tag: int | None = None
+
+    #: The entity tag of the previous version of this metadata.
+    previous_entity_tag: int | None = None
 
     #: The password string or hash digest.
     password: str | None = None
@@ -111,3 +119,7 @@ class UserMetadata(Identity):
         if isinstance(self.config.hash_context, Cleartext):
             return self.password
         return None
+
+    @classmethod
+    def new_entity_tag(cls) -> int:
+        return getrandbits(64)

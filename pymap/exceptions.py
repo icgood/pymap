@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABCMeta
+from typing import Final
 
 from .parsing.specials import SearchKey
 from .parsing.response import Response, ResponseCode, ResponseNo, ResponseOk, \
@@ -13,7 +14,7 @@ __all__ = ['ResponseError', 'CloseConnection', 'NotSupportedError',
            'AuthorizationFailure', 'NotAllowedError', 'IncompatibleData',
            'MailboxError', 'MailboxNotFound', 'MailboxConflict',
            'MailboxHasChildren', 'MailboxReadOnly', 'AppendFailure',
-           'UserNotFound']
+           'UserNotFound', 'CannotReplaceUser']
 
 
 class ResponseError(Exception, metaclass=ABCMeta):
@@ -150,9 +151,9 @@ class MailboxError(ResponseError):
     def __init__(self, mailbox: str | None, message: bytes,
                  code: ResponseCode | None = None) -> None:
         super().__init__()
-        self.mailbox = mailbox
-        self.message = message
-        self.code = code
+        self.mailbox: Final = mailbox
+        self.message: Final = message
+        self.code: Final = code
 
     def get_response(self, tag: bytes) -> ResponseNo:
         return ResponseNo(tag, self.message, self.code)
@@ -223,3 +224,11 @@ class UserNotFound(ResponseError):
     def get_response(self, tag: bytes) -> ResponseNo:
         return ResponseNo(tag, b'User not found.',
                           ResponseCode.of(b'NONEXISTENT'))
+
+
+class CannotReplaceUser(ResponseError):
+    """The existing user cannot be replaced."""
+
+    def get_response(self, tag: bytes) -> ResponseNo:
+        return ResponseNo(tag, b'Cannot replace existing user.',
+                          ResponseCode.of(b'CANNOT'))

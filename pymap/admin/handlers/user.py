@@ -40,16 +40,18 @@ class UserHandlers(UserBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
-        username: str | None = None
+        user: str | None = None
         user_data: UserData | None = None
+        entity_tag: int | None = None
         async with (self.catch_errors('GetUser') as result,
                     self.login_as(stream.metadata, request.user) as identity):
-            username = identity.name
+            user = identity.name
             metadata = await identity.get()
+            entity_tag = metadata.entity_tag
             user_data = UserData(params=metadata.params, roles=metadata.roles)
             if metadata.password is not None:
                 user_data.password = metadata.password
-        resp = UserResponse(result=result, username=username,
+        resp = UserResponse(result=result, user=user, entity_tag=entity_tag,
                             data=user_data)
         await stream.send_message(resp)
 
@@ -65,18 +67,27 @@ class UserHandlers(UserBase, BaseHandler):
         """
         request = await stream.recv_message()
         assert request is not None
+        user: str | None = None
+        entity_tag: int | None = None
         async with (self.catch_errors('SetUser') as result,
                     self.login_as(stream.metadata, request.user) as identity):
+            user = identity.name
             user_data = request.data
             password = await Passwords(self.config).hash_password(
                 user_data.password if user_data.HasField('password') else None)
             roles: frozenset[str] = frozenset(user_data.roles)
             params: frozendict[str, str] = frozendict(user_data.params)
+            previous_entity_tag: int | None = None
+            if request.HasField('previous_entity_tag'):
+                previous_entity_tag = request.previous_entity_tag
+            elif request.overwrite:
+                previous_entity_tag = UserMetadata.REPLACE_ANY
             metadata = UserMetadata(
-                self.config, request.user, password=password,
-                roles=roles, params=params)
-            await identity.set(metadata)
-        resp = UserResponse(result=result, username=request.user)
+                self.config, request.user,
+                previous_entity_tag=previous_entity_tag,
+                password=password, roles=roles, params=params)
+            entity_tag = await identity.set(metadata)
+        resp = UserResponse(result=result, user=user, entity_tag=entity_tag)
         await stream.send_message(resp)
 
     async def DeleteUser(self, stream: _DeleteUserStream) -> None:
@@ -94,5 +105,5 @@ class UserHandlers(UserBase, BaseHandler):
         async with (self.catch_errors('DeleteUser') as result,
                     self.login_as(stream.metadata, request.user) as identity):
             await identity.delete()
-        resp = UserResponse(result=result, username=request.user)
+        resp = UserResponse(result=result, user=request.user)
         await stream.send_message(resp)

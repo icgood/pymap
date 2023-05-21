@@ -14,14 +14,14 @@ from datetime import datetime
 from secrets import token_bytes
 from typing import Any, Final, Self, TypeAlias
 
-from redis.asyncio import Redis
+from redis.asyncio import Redis, WatchError
 from pysasl.creds.server import ServerCredentials
 
 from pymap.bytes import BytesFormat
 from pymap.config import BackendCapability, IMAPConfig
 from pymap.context import connection_exit
 from pymap.exceptions import AuthorizationFailure, InvalidAuth, \
-    IncompatibleData, NotAllowedError, UserNotFound
+    IncompatibleData, NotAllowedError, UserNotFound, CannotReplaceUser
 from pymap.frozen import frozendict
 from pymap.health import HealthStatus
 from pymap.interfaces.backend import BackendInterface
@@ -379,6 +379,7 @@ class Identity(IdentityInterface):
         password = data.pop('password', None)
         role_str = data.pop('role', None)
         token_key_str = data.pop('key', None)
+        entity_tag_str = data.pop('etag', None)
         if token_key_str is not None:
             token_key: bytes | None = bytes.fromhex(token_key_str)
         else:
@@ -387,11 +388,17 @@ class Identity(IdentityInterface):
             roles = frozenset([role_str])
         else:
             roles = frozenset()
+        if entity_tag_str is not None:
+            entity_tag: int | None = int(entity_tag_str)
+        else:
+            entity_tag = None
         params = frozendict(data)
-        return UserMetadata(self.config, self.name, password=password,
+        return UserMetadata(self.config, self.name,
+                            entity_tag=entity_tag, password=password,
                             token_key=token_key, roles=roles, params=params)
 
-    def _user_to_dict(self, user: UserMetadata) -> Mapping[str, str]:
+    def _user_to_dict(self, user: UserMetadata, entity_tag: int) \
+            -> Mapping[str, str]:
         ret: dict[str, str] = dict(user.params)
         if user.password is not None:
             ret['password'] = user.password
@@ -403,6 +410,7 @@ class Identity(IdentityInterface):
             ret['role'] = tuple(user.roles)[0]
         elif len(user.roles) > 1:
             raise NotImplementedError('Cannot save multiple roles')
+        ret['etag'] = str(entity_tag)
         return ret
 
     async def get(self) -> UserMetadata:
@@ -415,15 +423,31 @@ class Identity(IdentityInterface):
         data_dict: dict[str, str] = json.loads(json_data)
         return self._user_from_dict(data_dict)
 
-    async def set(self, user: UserMetadata) -> None:
+    async def set(self, user: UserMetadata) -> int:
         config = self.config
         conn = await self._user_connect()
         if 'admin' not in self._roles and user.roles:
             raise NotAllowedError('Cannot assign role.')
         user_key = config._users_root.end(self.name.encode('utf-8'))
-        user_dict = self._user_to_dict(user)
+        entity_tag = UserMetadata.new_entity_tag()
+        user_dict = self._user_to_dict(user, entity_tag)
         json_data = json.dumps(user_dict)
-        await conn.set(user_key, json_data)
+        async with conn.pipeline() as pipe:
+            try:
+                await pipe.watch(user_key)
+                existing_json_data = await conn.get(user_key)
+                if existing_json_data is not None:
+                    existing_data_dict: dict[str, str] = \
+                        json.loads(existing_json_data)
+                    existing_user = self._user_from_dict(existing_data_dict)
+                    if not user.can_replace(existing_user):
+                        raise CannotReplaceUser()
+                pipe.multi()
+                pipe.set(user_key, json_data)
+                await pipe.execute()
+            except WatchError as exc:
+                raise CannotReplaceUser() from exc
+        return entity_tag
 
     async def delete(self) -> None:
         config = self.config
