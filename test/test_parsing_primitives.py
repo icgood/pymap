@@ -1,6 +1,7 @@
 
 import unittest
 
+from pymap.frozen import frozenlist
 from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable
 from pymap.parsing.primitives import Nil, Number, Atom, String, QuotedString, \
@@ -170,6 +171,7 @@ class TestList(unittest.TestCase):
             b'  (ONE 2 (NIL) "four" )  ',
             Params(expected=[Nil, Number, Atom, String, List]))
         self.assertIsInstance(ret, List)
+        self.assertIsInstance(ret.value, frozenlist)
         self.assertEqual(4, len(ret.value))
         self.assertEqual(b'  ', buf)
         self.assertIsInstance(ret.value[0], Atom)

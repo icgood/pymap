@@ -14,13 +14,14 @@ from .sequenceset import SequenceSet
 from .. import Params, Parseable, ExpectedParseable, Space
 from ..exceptions import NotParseable, UnexpectedType
 from ..primitives import Atom, Number, QuotedString, List
+from ...frozen import frozenlist
 
 __all__ = ['SearchKey']
 
 _FilterType: TypeAlias = Union[
     tuple['SearchKey', 'SearchKey'], tuple[str, str],
     Sequence['SearchKey'], SequenceSet, Flag, ObjectId,
-    datetime, int, str, frozenset['SearchKey']]
+    datetime, int, str, frozenlist['SearchKey']]
 _FilterT = TypeVar('_FilterT', bound=_FilterType)
 
 
@@ -94,8 +95,8 @@ class SearchKey(Parseable[bytes]):
         return self._get_filter(SequenceSet)
 
     @property
-    def filter_key_set(self) -> frozenset[SearchKey]:
-        return self._get_filter(frozenset)
+    def filter_key_set(self) -> frozenlist[SearchKey]:
+        return self._get_filter(frozenlist)  # type: ignore
 
     @property
     def filter_key_or(self) -> tuple[SearchKey, SearchKey]:
@@ -185,8 +186,8 @@ class SearchKey(Parseable[bytes]):
         except NotParseable:
             pass
         else:
-            key_list = key_list_p.get_as(SearchKey)
-            return cls(b'KEYSET', key_list, inverse), buf
+            key_set = key_list_p.get_as(SearchKey)
+            return cls(b'KEYSET', key_set, inverse), buf
         atom, after = Atom.parse(buf, params)
         key = atom.value.upper()
         if key in (b'ALL', b'ANSWERED', b'DELETED', b'FLAGGED', b'NEW', b'OLD',

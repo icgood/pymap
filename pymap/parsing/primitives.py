@@ -15,6 +15,7 @@ from .exceptions import NotParseable
 from .state import ExpectContinuation
 from ..bytes import MaybeBytes, MaybeBytesT, BytesFormat, WriteStream, \
     Writeable
+from ..frozen import frozenlist
 
 __all__ = ['Nil', 'Number', 'Atom', 'List', 'String',
            'QuotedString', 'LiteralString']
@@ -401,7 +402,7 @@ class LiteralString(String):
         return self._raw
 
 
-class List(Parseable[tuple[MaybeBytes, ...]]):
+class List(Parseable[frozenlist[MaybeBytes]]):
     """Represents a list of :class:`Parseable` objects from an IMAP stream.
 
     Args:
@@ -419,10 +420,10 @@ class List(Parseable[tuple[MaybeBytes, ...]]):
         super().__init__()
         if sort:
             items = tuple(sorted(items))  # type: ignore
-        self.items: tuple[MaybeBytes, ...] = tuple(items)
+        self.items: frozenlist[MaybeBytes] = frozenlist(items)
 
     @property
-    def value(self) -> tuple[MaybeBytes, ...]:
+    def value(self) -> frozenlist[MaybeBytes]:
         """The list of parsed objects."""
         return self.items
 
