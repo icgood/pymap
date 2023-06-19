@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.specials.searchkey &#8212; pymap 0.35.1 documentation</title>
+    <title>pymap.parsing.specials.searchkey &#8212; pymap 0.36.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.35.1 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -78,13 +78,14 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">Params</span><span class="p">,</span> <span class="n">Parseable</span><span class="p">,</span> <span class="n">ExpectedParseable</span><span class="p">,</span> <span class="n">Space</span>
 <span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">NotParseable</span><span class="p">,</span> <span class="n">UnexpectedType</span>
 <span class="kn">from</span> <span class="nn">..primitives</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">QuotedString</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">...frozen</span> <span class="kn">import</span> <span class="n">frozenlist</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SearchKey&#39;</span><span class="p">]</span>
 
 <span class="n">_FilterType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
     <span class="nb">tuple</span><span class="p">[</span><span class="s1">&#39;SearchKey&#39;</span><span class="p">,</span> <span class="s1">&#39;SearchKey&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">Sequence</span><span class="p">[</span><span class="s1">&#39;SearchKey&#39;</span><span class="p">],</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">Flag</span><span class="p">,</span> <span class="n">ObjectId</span><span class="p">,</span>
-    <span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="s1">&#39;SearchKey&#39;</span><span class="p">]]</span>
+    <span class="n">datetime</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frozenlist</span><span class="p">[</span><span class="s1">&#39;SearchKey&#39;</span><span class="p">]]</span>
 <span class="n">_FilterT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;_FilterT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">_FilterType</span><span class="p">)</span>
 
 
@@ -158,8 +159,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_filter</span><span class="p">(</span><span class="n">SequenceSet</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">filter_key_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">SearchKey</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_filter</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">filter_key_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">frozenlist</span><span class="p">[</span><span class="n">SearchKey</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_filter</span><span class="p">(</span><span class="n">frozenlist</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">filter_key_or</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SearchKey</span><span class="p">,</span> <span class="n">SearchKey</span><span class="p">]:</span>
@@ -249,8 +250,8 @@
         <span class="k">except</span> <span class="n">NotParseable</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">key_list</span> <span class="o">=</span> <span class="n">key_list_p</span><span class="o">.</span><span class="n">get_as</span><span class="p">(</span><span class="n">SearchKey</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;KEYSET&#39;</span><span class="p">,</span> <span class="n">key_list</span><span class="p">,</span> <span class="n">inverse</span><span class="p">),</span> <span class="n">buf</span>
+            <span class="n">key_set</span> <span class="o">=</span> <span class="n">key_list_p</span><span class="o">.</span><span class="n">get_as</span><span class="p">(</span><span class="n">SearchKey</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;KEYSET&#39;</span><span class="p">,</span> <span class="n">key_set</span><span class="p">,</span> <span class="n">inverse</span><span class="p">),</span> <span class="n">buf</span>
         <span class="n">atom</span><span class="p">,</span> <span class="n">after</span> <span class="o">=</span> <span class="n">Atom</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ALL&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;ANSWERED&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;DELETED&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;FLAGGED&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;NEW&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;OLD&#39;</span><span class="p">,</span>
@@ -348,7 +349,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.35.1 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.0 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
