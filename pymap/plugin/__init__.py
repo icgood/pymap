@@ -1,8 +1,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Iterator, Mapping
+import pkgutil
+import tomllib
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from importlib.metadata import entry_points
+from importlib.resources import open_binary
 from typing import TypeVar, Generic, Final
 
 __all__ = ['PluginT', 'Plugin']
@@ -75,11 +78,25 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
     def default(self, default: str | None) -> None:
         self._default = default
 
+    def _check_extras(self, extras: Sequence[str]) -> bool:
+        with open_binary(__name__, 'extras.toml') as extras_file:
+            extras_data = tomllib.load(extras_file)
+            extras_names = extras_data['extras']['check']
+        for extra_name in extras:
+            for name in extras_names[extra_name]:
+                try:
+                    pkgutil.resolve_name(name)
+                except ImportError:
+                    return False
+        return True
+
     def _load(self) -> Mapping[str, type[PluginT]]:
         loaded = self._loaded
         if loaded is None:
             loaded = {}
             for entry_point in entry_points(group=self.group):
+                if not self._check_extras(entry_point.extras):
+                    continue
                 plugin: type[PluginT] = entry_point.load()
                 loaded[entry_point.name] = plugin
             self._loaded = loaded
