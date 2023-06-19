@@ -166,7 +166,7 @@ class SearchCriteriaSet(SearchCriteria):
 
     """
 
-    def __init__(self, keys: frozenset[SearchKey],
+    def __init__(self, keys: Iterable[SearchKey],
                  params: SearchParams) -> None:
         super().__init__(params)
         self.all_criteria = [SearchCriteria.of(key, params) for key in keys]

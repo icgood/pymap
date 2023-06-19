@@ -71,6 +71,18 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
+    async def test_search_keyset(self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'search1 SEARCH (1:3 2:4)\r\n')
+        transport.push_write(
+            b'* SEARCH 2 3\r\n'
+            b'search1 OK SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
     async def test_search_and(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()

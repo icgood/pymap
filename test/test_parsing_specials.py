@@ -2,6 +2,7 @@
 import unittest
 from datetime import datetime, timezone, timedelta
 
+from pymap.frozen import frozenlist
 from pymap.parsing import Params
 from pymap.parsing.exceptions import NotParseable, UnexpectedType, \
     InvalidContent
@@ -305,10 +306,10 @@ class TestSearchKey(unittest.TestCase):
         self.assertEqual([1, 2, 3], ret.filter.value)
         self.assertTrue(ret.inverse)
 
-    def test_parse_list(self):
+    def test_parse_keyset(self):
         ret, buf = SearchKey.parse(b'(4,5,6 NOT 1,2,3)', Params())
         self.assertEqual(b'KEYSET', ret.value)
-        self.assertIsInstance(ret.filter, tuple)
+        self.assertIsInstance(ret.filter, frozenlist)
         self.assertEqual(hash(ret), hash(ret))
         self.assertEqual(2, len(ret.filter))
         self.assertEqual(b'SEQSET', ret.filter[0].value)
@@ -322,7 +323,7 @@ class TestSearchKey(unittest.TestCase):
                          ret.filter[1].filter.value)
         self.assertTrue(ret.filter[1].inverse)
 
-    def test_parse_list_error(self):
+    def test_parse_keyset_error(self):
         with self.assertRaises(UnexpectedType):
             SearchKey.parse(b'(TEST)', Params())
         with self.assertRaises(NotParseable):

@@ -83,7 +83,7 @@ class FrozenList(Sequence[ValueT], Hashable):
 
     def __init__(self, /, iterable: Iterable[ValueT] = _empty) -> None:
         super().__init__()
-        self._sequence: tuple[ValueT, ...] = tuple(list(*iterable))
+        self._sequence: tuple[ValueT, ...] = tuple(list(iterable))
 
     def __getitem__(self, index: Any) -> Any:
         return self._sequence.__getitem__(index)
