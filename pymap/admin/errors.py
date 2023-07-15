@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from grpclib.const import Status
 from grpclib.exceptions import GRPCError
-from google.rpc.error_details_pb2 import ErrorInfo
+from pymapadmin.grpc.error_details_pb2 import ErrorInfo
 
 __all__ = ['get_unimplemented_error', 'get_incompatible_version_error']
 
 
-def get_unimplemented_error(*, domain: str | None = None, **metadata: str) \
+def get_unimplemented_error(*, domain: str = '', **metadata: str) \
         -> GRPCError:
     """Build a :exc:`~grpclib.exceptions.GRPCError` exception for an
     operation that is not implemented by the server.
@@ -23,7 +23,7 @@ def get_unimplemented_error(*, domain: str | None = None, **metadata: str) \
 
 
 def get_incompatible_version_error(client_version: str, server_version: str, *,
-                                   domain: str | None = None,
+                                   domain: str = '',
                                    **metadata: str) -> GRPCError:
     """Build a :exc:`~grpclib.exceptions.GRPCError` exception for an
     incompatible version error.

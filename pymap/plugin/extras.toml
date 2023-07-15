@@ -1,6 +1,6 @@
 
 [extras.check]  # These are resolvable names to check if an extra is installed
-admin = ['pymapadmin:', 'google.rpc.error_details_pb2:ErrorInfo']
+admin = ['pymapadmin:']
 macaroon = ['pymacaroons:Macaroon']
 redis = ['redis.asyncio:Redis', 'msgpack:']
 sieve = ['sievelib.commands:Command', 'sievelib.parser:Parser']

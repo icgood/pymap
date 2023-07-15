@@ -5,7 +5,7 @@ import pkgutil
 import tomllib
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from importlib.metadata import entry_points
-from importlib.resources import open_binary
+from importlib.resources import files
 from typing import TypeVar, Generic, Final
 
 __all__ = ['PluginT', 'Plugin']
@@ -79,7 +79,8 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
         self._default = default
 
     def _check_extras(self, extras: Sequence[str]) -> bool:
-        with open_binary(__name__, 'extras.toml') as extras_file:
+        extras_path = files(__name__).joinpath('extras.toml')
+        with extras_path.open('rb') as extras_file:
             extras_data = tomllib.load(extras_file)
             extras_names = extras_data['extras']['check']
         for extra_name in extras:

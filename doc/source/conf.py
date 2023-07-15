@@ -91,9 +91,9 @@ napoleon_numpy_docstring = False
 
 # -- Options for intersphinx extension ---------------------------------------
 
-intersphinx_mapping = {'https://docs.python.org/3/': None,
-                       'https://icgood.github.io/pymap-admin/': None,
-                       'https://icgood.github.io/pysasl/': None,
-                       'https://icgood.github.io/swim-protocol/': None,
-                       'https://grpclib.readthedocs.io/en/latest/': None,
-                       'https://pymacaroons.readthedocs.io/en/latest/': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3/', None),
+                       'pymap-admin': ('https://icgood.github.io/pymap-admin/', None),
+                       'pysasl': ('https://icgood.github.io/pysasl/', None),
+                       'swim-protocol': ('https://icgood.github.io/swim-protocol/', None),
+                       'grpclib': ('https://grpclib.readthedocs.io/en/latest/', None),
+                       'pymacaroons': ('https://pymacaroons.readthedocs.io/en/latest/', None)}
