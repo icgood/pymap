@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.admin.errors &#8212; pymap 0.36.0 documentation</title>
+    <title>pymap.admin.errors &#8212; pymap 0.36.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../admin.html" accesskey="U">pymap.admin</a> &#187;</li>
@@ -67,12 +67,12 @@
 
 <span class="kn">from</span> <span class="nn">grpclib.const</span> <span class="kn">import</span> <span class="n">Status</span>
 <span class="kn">from</span> <span class="nn">grpclib.exceptions</span> <span class="kn">import</span> <span class="n">GRPCError</span>
-<span class="kn">from</span> <span class="nn">google.rpc.error_details_pb2</span> <span class="kn">import</span> <span class="n">ErrorInfo</span>
+<span class="kn">from</span> <span class="nn">pymapadmin.grpc.error_details_pb2</span> <span class="kn">import</span> <span class="n">ErrorInfo</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_unimplemented_error&#39;</span><span class="p">,</span> <span class="s1">&#39;get_incompatible_version_error&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="get_unimplemented_error"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.errors.get_unimplemented_error">[docs]</a><span class="k">def</span> <span class="nf">get_unimplemented_error</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+<div class="viewcode-block" id="get_unimplemented_error"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.errors.get_unimplemented_error">[docs]</a><span class="k">def</span> <span class="nf">get_unimplemented_error</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
         <span class="o">-&gt;</span> <span class="n">GRPCError</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a :exc:`~grpclib.exceptions.GRPCError` exception for an</span>
 <span class="sd">    operation that is not implemented by the server.</span>
@@ -87,7 +87,7 @@
 
 
 <div class="viewcode-block" id="get_incompatible_version_error"><a class="viewcode-back" href="../../../pymap.admin.html#pymap.admin.errors.get_incompatible_version_error">[docs]</a><span class="k">def</span> <span class="nf">get_incompatible_version_error</span><span class="p">(</span><span class="n">client_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">server_version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                                   <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                   <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                                    <span class="o">**</span><span class="n">metadata</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GRPCError</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a :exc:`~grpclib.exceptions.GRPCError` exception for an</span>
 <span class="sd">    incompatible version error.</span>
@@ -154,7 +154,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.0 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.1 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../admin.html" >pymap.admin</a> &#187;</li>

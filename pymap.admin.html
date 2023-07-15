@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.admin &#8212; pymap 0.36.0 documentation</title>
+    <title>pymap.admin &#8212; pymap 0.36.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
@@ -129,13 +129,13 @@ For example:</p>
 
 <span class="target" id="module-pymap.admin.errors"></span><dl class="py function">
 <dt class="sig sig-object py" id="pymap.admin.errors.get_unimplemented_error">
-<span class="sig-prename descclassname"><span class="pre">pymap.admin.errors.</span></span><span class="sig-name descname"><span class="pre">get_unimplemented_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/errors.html#get_unimplemented_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.errors.get_unimplemented_error" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.admin.errors.</span></span><span class="sig-name descname"><span class="pre">get_unimplemented_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/errors.html#get_unimplemented_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.errors.get_unimplemented_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">GRPCError</span></code></a> exception for an
 operation that is not implemented by the server.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – The domain string to include in the error.</p></li>
+<li><p><strong>domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The domain string to include in the error.</p></li>
 <li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Additional metadata to include in the error.</p></li>
 </ul>
 </dd>
@@ -147,7 +147,7 @@ operation that is not implemented by the server.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pymap.admin.errors.get_incompatible_version_error">
-<span class="sig-prename descclassname"><span class="pre">pymap.admin.errors.</span></span><span class="sig-name descname"><span class="pre">get_incompatible_version_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_version</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/errors.html#get_incompatible_version_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.errors.get_incompatible_version_error" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.admin.errors.</span></span><span class="sig-name descname"><span class="pre">get_incompatible_version_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server_version</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/errors.html#get_incompatible_version_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.errors.get_incompatible_version_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a <a class="reference external" href="https://grpclib.readthedocs.io/en/latest/errors.html#grpclib.exceptions.GRPCError" title="(in grpclib)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">GRPCError</span></code></a> exception for an
 incompatible version error.</p>
 <dl class="field-list simple">
@@ -155,7 +155,7 @@ incompatible version error.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>client_version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The client version string.</p></li>
 <li><p><strong>server_version</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The server version string.</p></li>
-<li><p><strong>domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> | </em><em>None</em>) – The domain string to include in the error.</p></li>
+<li><p><strong>domain</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The domain string to include in the error.</p></li>
 <li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – Additional metadata to include in the error.</p></li>
 </ul>
 </dd>
@@ -229,7 +229,7 @@ identity object.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.admin.handlers.BaseHandler.login_as">
 <span class="sig-name descname"><span class="pre">login_as</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/admin/handlers.html#BaseHandler.login_as"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.admin.handlers.BaseHandler.login_as" title="Permalink to this definition">¶</a></dt>
-<dd><p>Context manager to <a class="reference internal" href="pymap.backend.dict.html#pymap.backend.dict.DictBackend.login" title="pymap.backend.dict.DictBackend.login"><code class="xref py py-meth docutils literal notranslate"><span class="pre">login()</span></code></a> with a token from the request
+<dd><p>Context manager to <a class="reference internal" href="#pymap.admin.handlers.BaseHandler.login_with" title="pymap.admin.handlers.BaseHandler.login_with"><code class="xref py py-meth docutils literal notranslate"><span class="pre">login_with()</span></code></a> with a token from the request
 metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -543,7 +543,7 @@ request and response.</p>
         <li class="right" >
           <a href="pymap.imap.html" title="pymap.imap"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.0 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.1 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.admin</span></code></a></li> 
       </ul>
