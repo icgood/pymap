@@ -49,7 +49,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-admin = ['pymap-admin[error-details] ~= 0.11.0']
+admin = ['pymap-admin ~= 0.12.0']
 macaroon = ['pymacaroons ~= 0.13.0']
 redis = ['redis ~= 4.2', 'msgpack ~= 1.0']
 sieve = ['sievelib ~= 1.2']
@@ -123,9 +123,6 @@ strict_equality = true
 
 [[tool.mypy.overrides]]
 module = 'msgpack.*'
-ignore_missing_imports = true
-[[tool.mypy.overrides]]
-module = 'google.rpc.*'
 ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = 'pymacaroons.*'

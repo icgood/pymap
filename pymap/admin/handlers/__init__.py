@@ -99,7 +99,7 @@ class BaseHandler(Handler):
 
     def login_as(self, metadata: _Metadata, user: str) \
             -> AbstractAsyncContextManager[IdentityInterface]:
-        """Context manager to :meth:`.login` with a token from the request
+        """Context manager to :meth:`.login_with` with a token from the request
         metadata.
 
         Args:
