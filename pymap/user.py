@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 
+import secrets
 from dataclasses import dataclass
 from random import getrandbits
 from typing import overload, Final
@@ -108,11 +109,18 @@ class UserMetadata(Identity, Versioned[int | None]):
     def authcid(self) -> str:
         return self.name
 
+    def compare_authcid(self, authcid: str) -> bool:
+        prepare = self.config.password_prep
+        self_authcid = prepare(self.authcid).encode('utf-8')
+        other_authcid = prepare(authcid).encode('utf-8')
+        return secrets.compare_digest(self_authcid, other_authcid)
+
     def compare_secret(self, value: str) -> bool:
+        prepare = self.config.password_prep
         password = self.password
         if password is not None:
             hash_context = self.config.hash_context.copy()
-            return hash_context.verify(value, password)
+            return hash_context.verify(prepare(value), prepare(password))
         return False
 
     def get_clear_secret(self) -> str | None:
