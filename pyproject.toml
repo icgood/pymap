@@ -44,7 +44,7 @@ classifiers = [
     'Programming Language :: Python :: 3.11',
 ]
 dependencies = [
-    'pysasl ~= 1.0',
+    'pysasl ~= 1.2',
     'proxy-protocol ~= 0.11.1',
 ]
 

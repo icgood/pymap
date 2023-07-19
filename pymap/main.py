@@ -63,7 +63,7 @@ def main() -> None:
                         metavar='NAME', help='do not run the given service')
     if has_passlib:
         parser.add_argument('--passlib-cfg', metavar='PATH',
-                            help='config file for passlib hashing')
+                            help=argparse.SUPPRESS)
     subparsers = parser.add_subparsers(dest='backend', required=True,
                                        metavar='BACKEND')
 

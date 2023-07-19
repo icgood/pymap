@@ -15,13 +15,20 @@ from proxyprotocol import ProxyProtocol
 from proxyprotocol.version import ProxyProtocolVersion
 from pysasl import SASLAuth
 from pysasl.creds.server import ServerCredentials
-from pysasl.hashing import HashInterface, get_hash
-from pysasl.prep import Preparation
+from pysasl.hashing import BuiltinHash, HashInterface
+from pysasl.prep import saslprep, Preparation
 
 from .concurrent import Subsystem
 from .context import subsystem
 from .parsing import Params
 from .parsing.commands import Commands
+
+try:
+    from passlib.context import CryptContext
+except ImportError as _exc:  # pragma: no cover
+    _passlib_import_exc: ImportError | None = _exc
+else:
+    _passlib_import_exc = None
 
 __all__ = ['ConfigT', 'ConfigT_contra', 'BackendCapability', 'IMAPConfig']
 
@@ -149,7 +156,7 @@ class IMAPConfig(metaclass=ABCMeta):
         self.disable_search_keys: Final = disable_search_keys or []
         self.admin_key: Final = admin_key
         self.hash_context: Final = hash_context or \
-            get_hash(passlib_config=args.passlib_cfg)
+            self._get_hash_context(args.passlib_cfg)
         self.cpu_subsystem: Final = cpu_subsystem or \
             self._get_cpu_subsystem()
         self.invalid_user_sleep: Final = invalid_user_sleep
@@ -207,6 +214,20 @@ class IMAPConfig(metaclass=ABCMeta):
         ...
 
     @classmethod
+    def _get_hash_context(cls, passlib_cfg: str | None) -> HashInterface:
+        if passlib_cfg is not None:
+            if _passlib_import_exc is not None:
+                raise _passlib_import_exc
+            return CryptContext.from_path(passlib_cfg)
+        elif _passlib_import_exc is None:
+            return CryptContext(
+                schemes=['argon2', 'bcrypt_sha256', 'phpass', 'pbkdf2_sha1',
+                         'pbkdf2_sha256', 'pbkdf2_sha512', 'scram', 'scrypt'],
+                default='pbkdf2_sha256')
+        else:
+            return BuiltinHash()
+
+    @classmethod
     def _get_cpu_subsystem(cls) -> Subsystem:
         cpu_count = os.cpu_count() or 1
         cpus_minus_one = max(1, cpu_count - 1)
@@ -245,7 +266,7 @@ class IMAPConfig(metaclass=ABCMeta):
 
     @property
     def password_prep(self) -> Preparation:
-        return self.tls_auth.prepare
+        return saslprep
 
     @property
     def tls_auth(self) -> SASLAuth:
