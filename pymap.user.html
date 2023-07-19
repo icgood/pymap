@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.user &#8212; pymap 0.36.1 documentation</title>
+    <title>pymap.user &#8212; pymap 0.36.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.service.html" title="pymap.service"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code></a></li> 
       </ul>
@@ -99,8 +99,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>identity</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.identity.html#pysasl.identity.Identity" title="(in pysasl v1.0)"><em>Identity</em></a>) – The identity to check against.</p></li>
-<li><p><strong>credentials</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.creds.html#pysasl.creds.server.ServerCredentials" title="(in pysasl v1.0)"><em>ServerCredentials</em></a>) – The credentials to check with.</p></li>
+<li><p><strong>identity</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.identity.html#pysasl.identity.Identity" title="(in pysasl v1.2)"><em>Identity</em></a>) – The identity to check against.</p></li>
+<li><p><strong>credentials</strong> (<a class="reference external" href="https://icgood.github.io/pysasl/pysasl.creds.html#pysasl.creds.server.ServerCredentials" title="(in pysasl v1.2)"><em>ServerCredentials</em></a>) – The credentials to check with.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -184,6 +184,20 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pymap.user.UserMetadata.compare_authcid">
+<span class="sig-name descname"><span class="pre">compare_authcid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">authcid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/user.html#UserMetadata.compare_authcid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.user.UserMetadata.compare_authcid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare the identity’s authcid with the given <em>authcid</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>authcid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The authentication identity string value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pymap.user.UserMetadata.compare_secret">
 <span class="sig-name descname"><span class="pre">compare_secret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/user.html#UserMetadata.compare_secret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.user.UserMetadata.compare_secret" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare the identity’s secret with the given <em>secret</em>. The
@@ -204,9 +218,7 @@ comparison must account for things like hashing or token algorithms.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.user.UserMetadata.get_clear_secret">
 <span class="sig-name descname"><span class="pre">get_clear_secret</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/user.html#UserMetadata.get_clear_secret"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.user.UserMetadata.get_clear_secret" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the cleartext secret string if it is available. This value
-has already been prepared with a <a class="reference external" href="https://icgood.github.io/pysasl/pysasl.prep.html#pysasl.prep.Preparation" title="(in pysasl v1.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Preparation</span></code></a>
-function.</p>
+<dd><p>Return the cleartext secret string if it is available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a> | None</p>
@@ -254,6 +266,7 @@ function.</p>
 <li><a class="reference internal" href="#pymap.user.UserMetadata.roles"><code class="docutils literal notranslate"><span class="pre">UserMetadata.roles</span></code></a></li>
 <li><a class="reference internal" href="#pymap.user.UserMetadata.params"><code class="docutils literal notranslate"><span class="pre">UserMetadata.params</span></code></a></li>
 <li><a class="reference internal" href="#pymap.user.UserMetadata.authcid"><code class="docutils literal notranslate"><span class="pre">UserMetadata.authcid</span></code></a></li>
+<li><a class="reference internal" href="#pymap.user.UserMetadata.compare_authcid"><code class="docutils literal notranslate"><span class="pre">UserMetadata.compare_authcid()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.user.UserMetadata.compare_secret"><code class="docutils literal notranslate"><span class="pre">UserMetadata.compare_secret()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.user.UserMetadata.get_clear_secret"><code class="docutils literal notranslate"><span class="pre">UserMetadata.get_clear_secret()</span></code></a></li>
 <li><a class="reference internal" href="#pymap.user.UserMetadata.new_entity_tag"><code class="docutils literal notranslate"><span class="pre">UserMetadata.new_entity_tag()</span></code></a></li>
@@ -329,7 +342,7 @@ function.</p>
         <li class="right" >
           <a href="pymap.service.html" title="pymap.service"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.1 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.2 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.user</span></code></a></li> 
       </ul>
