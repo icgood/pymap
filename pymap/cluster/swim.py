@@ -13,6 +13,7 @@ from swimprotocol.config import ConfigError, TransientConfigError
 from swimprotocol.members import Member, Members
 from swimprotocol.status import Status
 from swimprotocol.transport import load_transport
+from swimprotocol.worker import Worker
 
 
 __all__ = ['transport_type', 'SwimService']
@@ -65,9 +66,10 @@ class SwimService(ServiceInterface):  # pragma: no cover
 
         transport = transport_type(config)
         members = Members(config)
+        worker = Worker(config, members)
         cluster_metadata.get().listen(self._local_update, members)
         stack.enter_context(members.listener.on_notify(self._remote_update))
-        worker = await stack.enter_async_context(transport.enter(members))
+        await stack.enter_async_context(transport.enter(worker))
         task = asyncio.create_task(worker.run())
         stack.callback(task.cancel)
 
