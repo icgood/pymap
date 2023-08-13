@@ -64,14 +64,13 @@ class SwimService(ServiceInterface):  # pragma: no cover
         _log.debug('SWIM configuration: %r %r',
                    config.local_name, config.peers)
 
-        transport = transport_type(config)
         members = Members(config)
         worker = Worker(config, members)
+        transport = transport_type(config, worker)
         cluster_metadata.get().listen(self._local_update, members)
-        stack.enter_context(members.listener.on_notify(self._remote_update))
-        await stack.enter_async_context(transport.enter(worker))
-        task = asyncio.create_task(worker.run())
-        stack.callback(task.cancel)
+        await stack.enter_async_context(transport)
+        await stack.enter_async_context(
+            members.listener.on_notify(self._remote_update))
 
     async def start(self, stack: AsyncExitStack) -> None:
         args = self.config.args
