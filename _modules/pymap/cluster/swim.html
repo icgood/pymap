@@ -6,12 +6,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.cluster.swim &#8212; pymap 0.36.3 documentation</title>
+    <title>pymap.cluster.swim &#8212; pymap 0.36.4 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=17b9dffe"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=dc304f33"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.3 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.4 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../cluster.html" accesskey="U">pymap.cluster</a> &#187;</li>
@@ -128,14 +128,13 @@
         <span class="n">_log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;SWIM configuration: </span><span class="si">%r</span><span class="s1"> </span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span>
                    <span class="n">config</span><span class="o">.</span><span class="n">local_name</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">peers</span><span class="p">)</span>
 
-        <span class="n">transport</span> <span class="o">=</span> <span class="n">transport_type</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="n">members</span> <span class="o">=</span> <span class="n">Members</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="n">worker</span> <span class="o">=</span> <span class="n">Worker</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">members</span><span class="p">)</span>
+        <span class="n">transport</span> <span class="o">=</span> <span class="n">transport_type</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">worker</span><span class="p">)</span>
         <span class="n">cluster_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_local_update</span><span class="p">,</span> <span class="n">members</span><span class="p">)</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">members</span><span class="o">.</span><span class="n">listener</span><span class="o">.</span><span class="n">on_notify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_remote_update</span><span class="p">))</span>
-        <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">transport</span><span class="o">.</span><span class="n">enter</span><span class="p">(</span><span class="n">worker</span><span class="p">))</span>
-        <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">worker</span><span class="o">.</span><span class="n">run</span><span class="p">())</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span>
+            <span class="n">members</span><span class="o">.</span><span class="n">listener</span><span class="o">.</span><span class="n">on_notify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_remote_update</span><span class="p">))</span>
 
 <div class="viewcode-block" id="SwimService.start"><a class="viewcode-back" href="../../../pymap.cluster.html#pymap.cluster.swim.SwimService.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">args</span>
@@ -193,7 +192,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.3 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.4 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../cluster.html" >pymap.cluster</a> &#187;</li>
