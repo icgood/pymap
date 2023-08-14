@@ -31,6 +31,7 @@ class HealthStatus:
         self._listeners: set[_WeakCallback] = set()
         self._watchers: WeakSet[HealthStatus] = WeakSet()
         self._dependencies: WeakSet[HealthStatus] = WeakSet()
+        self._parent_status: HealthStatus | None = None  # strong reference
         self._healthy = initial
         self._prev_healthy = initial
         if name:
@@ -44,7 +45,12 @@ class HealthStatus:
     @property
     def healthy(self) -> bool:
         """The current healthy (True) or unhealthy (False) status."""
-        return self._healthy and all(dep.healthy for dep in self._dependencies)
+        return self._healthy and self.healthy_dependencies
+
+    @property
+    def healthy_dependencies(self) -> bool:
+        """Whether all the added dependencies are healthy."""
+        return all(dep.healthy for dep in self._dependencies)
 
     def _log_change(self, healthy: bool) -> None:
         health_str = 'healthy' if healthy else 'unhealthy'
@@ -71,9 +77,9 @@ class HealthStatus:
             self._prev_healthy = new_healthy
             seen.add(self)
             for listener in self._listeners:
-                cb = listener()
-                if cb is not None:
-                    cb(new_healthy)
+                callback = listener()
+                if callback is not None:
+                    callback(self.healthy)
             for watcher in self._watchers:
                 if watcher not in seen:
                     watcher._check(seen)
@@ -92,6 +98,7 @@ class HealthStatus:
         full_name = f'{self.name}.{name}' if name else ''
         status = HealthStatus(initial, name=full_name)
         self._dependencies.add(status)
+        status._parent_status = self
         status._watchers.add(self)
         self._check(set())
         finalize(status, self._check, set())
@@ -114,3 +121,7 @@ class HealthStatus:
     def set_unhealthy(self) -> None:
         """Shortcut for calling :meth:`.set` with False."""
         self.set(False)
+
+    def __repr__(self) -> str:
+        state = 'healthy' if self.healthy else 'unhealthy'
+        return f'<HealthStatus {self.name!r} {state}>'

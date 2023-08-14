@@ -146,7 +146,7 @@ class SequenceSet(Parseable[Sequence[_SeqElem]]):
 
     def __repr__(self) -> str:
         attr = 'uidset' if self.uid else 'set'
-        return '<SequenceSet %s=%r>' % (attr, self.sequences)
+        return f'<SequenceSet {attr}={self.sequences!r}>'
 
     @classmethod
     def _parse_part(cls, buf: memoryview) -> tuple[_SeqElem, memoryview]:

@@ -8,6 +8,7 @@ from collections.abc import Mapping
 from contextlib import AsyncExitStack
 
 from pymap.context import cluster_metadata
+from pymap.health import HealthStatus
 from pymap.interfaces.backend import ServiceInterface
 from swimprotocol.config import ConfigError, TransientConfigError
 from swimprotocol.members import Member, Members
@@ -34,6 +35,13 @@ class SwimService(ServiceInterface):  # pragma: no cover
     @classmethod
     def add_arguments(cls, parser: ArgumentParser) -> None:
         transport_type.config_type.add_arguments(parser, prefix='--swim-')
+
+    async def _health_update(self, member: Member, members: Members,
+                             health: HealthStatus) -> None:
+        if members.get_status(Status.OFFLINE):
+            health.set_unhealthy()
+        else:
+            health.set_healthy()
 
     async def _remote_update(self, member: Member) -> None:
         if member.status & Status.AVAILABLE \
@@ -63,18 +71,20 @@ class SwimService(ServiceInterface):  # pragma: no cover
                 break
         _log.debug('SWIM configuration: %r %r',
                    config.local_name, config.peers)
+        health = HealthStatus(False, name='swim')
 
         members = Members(config)
         worker = Worker(config, members)
         transport = transport_type(config, worker)
         cluster_metadata.get().listen(self._local_update, members)
         await stack.enter_async_context(transport)
+        await stack.enter_async_context(worker)
         await stack.enter_async_context(
             members.listener.on_notify(self._remote_update))
+        await stack.enter_async_context(
+            members.listener.on_notify(self._health_update, members, health))
 
     async def start(self, stack: AsyncExitStack) -> None:
         args = self.config.args
-        swim_stack = AsyncExitStack()
-        await stack.enter_async_context(swim_stack)
-        task = asyncio.create_task(self._start(args, swim_stack))
+        task = asyncio.create_task(self._start(args, stack))
         stack.callback(task.cancel)
