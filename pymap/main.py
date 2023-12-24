@@ -67,10 +67,10 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest='backend', required=True,
                                        metavar='BACKEND')
 
-    for backend_name, backend_type in backends:
+    for backend_name, backend_type in backends.items():
         subparser = backend_type.add_subparser(backend_name, subparsers)
         subparser.set_defaults(backend_type=backend_type)
-    for _, service_type in services:
+    for service_type in services.values():
         service_type.add_arguments(parser)
     parser.set_defaults(skip_services=[], passlib_cfg=None)
     args = parser.parse_args()
@@ -82,7 +82,7 @@ def main() -> None:
     if args.debug:
         logging.getLogger(__package__).setLevel(logging.DEBUG)
 
-    service_types = [service for name, service in services
+    service_types = [service for name, service in services.items()
                      if name not in args.skip_services]
     with PidFile(pidname=args.pid_file, force_tmpdir=True):
         return asyncio.run(run(args, args.backend_type, service_types),

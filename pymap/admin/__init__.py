@@ -6,14 +6,15 @@ import shlex
 import sys
 from argparse import ArgumentParser, SUPPRESS
 from asyncio import Task, CancelledError
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from contextlib import AsyncExitStack
 from datetime import datetime, timedelta, timezone
 from ssl import SSLContext
+from typing import Any
 
 from grpclib.events import listen, RecvRequest
 from grpclib.health.check import ServiceStatus
-from grpclib.health.service import Health, OVERALL
+from grpclib.health.service import Health
 from grpclib.server import Server
 from pymap.context import cluster_metadata
 from pymap.interfaces.backend import ServiceInterface
@@ -26,6 +27,14 @@ from .handlers import handlers
 from .typing import Handler
 
 __all__ = ['AdminService']
+
+
+class _HealthService:
+    def __init__(self, name: str) -> None:
+        self._name = name
+
+    def __mapping__(self) -> Mapping[str, Any]:
+        return {f'/{self._name}/': None}
 
 
 class AdminService(ServiceInterface):  # pragma: no cover
@@ -93,7 +102,7 @@ class AdminService(ServiceInterface):  # pragma: no cover
     def _get_health(self) -> Handler:
         backend_status = ServiceStatus()
         self.backend.status.register(backend_status.set)
-        return Health({OVERALL: [backend_status]})
+        return Health({_HealthService('pymap.backend'): [backend_status]})
 
     async def start(self, stack: AsyncExitStack) -> None:
         self._init_admin_token()
@@ -101,7 +110,8 @@ class AdminService(ServiceInterface):  # pragma: no cover
         host: str | None = self.config.args.admin_host
         port: int | None = self.config.args.admin_port
         server_handlers: list[Handler] = [self._get_health()]
-        server_handlers.extend(handler(backend) for _, handler in handlers)
+        server_handlers.extend(handler(backend)
+                               for handler in handlers.values())
         ssl = self.config.ssl_context
         local_task = await self._start_local(server_handlers)
         remote_task = await self._start(server_handlers, host, port, ssl)

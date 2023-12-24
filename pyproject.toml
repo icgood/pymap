@@ -42,6 +42,7 @@ classifiers = [
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
 ]
 dependencies = [
     'pysasl ~= 1.2',
@@ -49,13 +50,32 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-admin = ['pymap-admin ~= 0.12.0']
+admin = ['pymap-admin ~= 0.12.1']
 macaroon = ['pymacaroons ~= 0.13.0']
 redis = ['redis ~= 4.2', 'msgpack ~= 1.0']
-sieve = ['sievelib ~= 1.2']
+sieve = ['sievelib ~= 1.2', 'setuptools']
 swim = ['swim-protocol ~= 0.6.3']
 systemd = ['systemd-python']
 optional = ['hiredis', 'passlib ~= 1.7', 'pid ~= 3.0']
+dev = [
+    'mypy',
+    'pytest',
+    'pytest-asyncio',
+    'pytest-cov',
+    'ruff',
+    'pycodestyle',
+    'autopep8',
+    'types-certifi',
+    'types-protobuf',
+    'types-redis',
+    'types-toml',
+    'types-passlib',
+]
+doc = [
+    'sphinx',
+    'sphinx-autodoc-typehints',
+    'cloud_sptheme',
+]
 
 [project.urls]
 'Homepage' = 'https://github.com/icgood/pymap/'
@@ -165,21 +185,8 @@ exclude_lines = [
 ]
 
 [tool.hatch.envs.default]
-dependencies = [
-    'mypy',
-    'pytest',
-    'pytest-asyncio',
-    'pytest-cov',
-    'ruff',
-    'pycodestyle',
-    'autopep8',
-    'types-certifi',
-    'types-protobuf',
-    'types-redis',
-    'types-toml',
-    'types-passlib',
-]
 features = [
+    'dev',
     'admin',
     'redis',
     'macaroon',
@@ -196,14 +203,10 @@ run-autopep8 = 'autopep8 --exit-code -dr pymap test'
 check = ['run-pytest', 'run-autopep8', 'run-mypy', 'run-ruff']
 
 [[tool.hatch.envs.all.matrix]]
-python = ['3.11']
+python = ['3.11', '3.12']
 
 [tool.hatch.envs.doc]
-dependencies = [
-    'sphinx',
-    'sphinx-autodoc-typehints',
-    'cloud_sptheme',
-]
+features = ['doc']
 
 [tool.hatch.envs.doc.scripts]
 build = 'make -C doc html'
