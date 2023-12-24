@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pkgutil
 import tomllib
-from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from importlib.metadata import entry_points
 from importlib.resources import files
 from typing import TypeVar, Generic, Final
@@ -14,7 +14,7 @@ __all__ = ['PluginT', 'Plugin']
 PluginT = TypeVar('PluginT')
 
 
-class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
+class Plugin(Generic[PluginT], Mapping[str, type[PluginT]]):
     """Plugin system, typically loaded from :mod:`importlib.metadata`
     `entry points
     <https://packaging.python.org/guides/creating-and-discovering-plugins/#using-package-metadata>`_.
@@ -42,8 +42,14 @@ class Plugin(Generic[PluginT], Iterable[tuple[str, type[PluginT]]]):
         self._loaded: dict[str, type[PluginT]] | None = None
         self._added: dict[str, type[PluginT]] = {}
 
-    def __iter__(self) -> Iterator[tuple[str, type[PluginT]]]:
-        return iter(self.registered.items())
+    def __getitem__(self, name: str) -> type[PluginT]:
+        return self.registered[name]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.registered)
+
+    def __len__(self) -> int:
+        return len(self.registered)
 
     @property
     def registered(self) -> Mapping[str, type[PluginT]]:

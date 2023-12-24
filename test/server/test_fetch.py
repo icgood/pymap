@@ -295,4 +295,4 @@ class TestFetch(TestBase):
         await self.run(transport)
         assert len({self.matches[f'id{n}'] for n in range(1, 5)}) == 4
         for n in range(1, 5):
-            assert self.matches[f'id{n}'] == self.matches[f'id{n+4}']
+            assert self.matches[f'id{n}'] == self.matches[f'id{n + 4}']

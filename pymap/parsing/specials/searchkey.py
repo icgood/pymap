@@ -100,7 +100,7 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_key_or(self) -> tuple[SearchKey, SearchKey]:
-        return self._get_filter(tuple)  # type: ignore
+        return self._get_filter(tuple)
 
     @property
     def filter_flag(self) -> Flag:
@@ -120,7 +120,7 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_header(self) -> tuple[str, str]:
-        return self._get_filter(tuple)  # type: ignore
+        return self._get_filter(tuple)
 
     @property
     def filter_object_id(self) -> ObjectId:
