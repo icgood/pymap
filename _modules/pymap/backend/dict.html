@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.dict &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.backend.dict &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.dict</a></li> 
@@ -97,7 +97,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DictBackend&#39;</span><span class="p">,</span> <span class="s1">&#39;Config&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="DictBackend"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend">[docs]</a><span class="k">class</span> <span class="nc">DictBackend</span><span class="p">(</span><span class="n">BackendInterface</span><span class="p">):</span>
+<div class="viewcode-block" id="DictBackend">
+<a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend">[docs]</a>
+<span class="k">class</span> <span class="nc">DictBackend</span><span class="p">(</span><span class="n">BackendInterface</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a backend that uses an in-memory dictionary for example usage</span>
 <span class="sd">    and integration testing.</span>
 
@@ -121,7 +123,9 @@
     <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HealthStatus</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span>
 
-<div class="viewcode-block" id="DictBackend.add_subparser"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.add_subparser">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="DictBackend.add_subparser">
+<a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.add_subparser">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_subparser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subparsers</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
         <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
             <span class="n">name</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;in-memory backend&#39;</span><span class="p">)</span>
@@ -133,13 +137,17 @@
                             <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;VAL&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;demo user password&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
-<div class="viewcode-block" id="DictBackend.init"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.init">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="DictBackend.init">
+<a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.init">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DictBackend</span><span class="p">,</span> <span class="n">Config</span><span class="p">]:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">from_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span>
         <span class="n">login</span> <span class="o">=</span> <span class="n">Login</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_add_demo_user</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">login</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">login</span><span class="p">,</span> <span class="n">config</span><span class="p">),</span> <span class="n">config</span></div>
+
 
     <span class="nd">@classmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_add_demo_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">login</span><span class="p">:</span> <span class="n">Login</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -149,11 +157,17 @@
                                  <span class="n">password</span><span class="o">=</span><span class="n">hashed_password</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">login</span><span class="o">.</span><span class="n">demo_user_identity</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">demo_user</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DictBackend.start"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">pass</span></div></div>
+<div class="viewcode-block" id="DictBackend.start">
+<a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.DictBackend.start">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">IMAPConfig</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Config">
+<a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config">[docs]</a>
+<span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">IMAPConfig</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The config implementation for the dict backend.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">demo_data</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -198,12 +212,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_demo_password</span>
 
-<div class="viewcode-block" id="Config.parse_args"><a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config.parse_args">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Config.parse_args">
+<a class="viewcode-back" href="../../../pymap.backend.dict.html#pymap.backend.dict.Config.parse_args">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">),</span>
                 <span class="s1">&#39;demo_data&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_data</span><span class="p">,</span>
                 <span class="s1">&#39;demo_user&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_user</span><span class="p">,</span>
-                <span class="s1">&#39;demo_password&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_password</span><span class="p">}</span></div></div>
+                <span class="s1">&#39;demo_password&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">demo_password</span><span class="p">}</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">Session</span><span class="p">(</span><span class="n">BaseSession</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
@@ -453,7 +471,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.backend.dict</a></li> 
@@ -463,7 +481,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

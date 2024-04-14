@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.response.fetch &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.parsing.response.fetch &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -153,7 +153,9 @@
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="EnvelopeStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure">[docs]</a><span class="k">class</span> <span class="nc">EnvelopeStructure</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
+<div class="viewcode-block" id="EnvelopeStructure">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">EnvelopeStructure</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Builds the response to an `RFC 3501 7.4.2</span>
 <span class="sd">    &lt;https://tools.ietf.org/html/rfc3501#section-7.4.2&gt;`_ FETCH ENVELOPE</span>
 <span class="sd">    request.</span>
@@ -194,7 +196,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">in_reply_to</span> <span class="o">=</span> <span class="n">in_reply_to</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span> <span class="o">=</span> <span class="n">message_id</span>
 
-<div class="viewcode-block" id="EnvelopeStructure.empty"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure.empty">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="EnvelopeStructure.empty">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure.empty">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvelopeStructure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an empty envelope structure object.</span>
 
@@ -204,6 +208,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_EmptyEnvelopeStructure</span><span class="p">()</span></div>
+
 
     <span class="k">def</span> <span class="nf">_addresses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">headers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">fallback</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AddressHeader</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
@@ -227,14 +232,20 @@
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_reply_to</span><span class="p">),</span>
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="p">)])</span>
 
-<div class="viewcode-block" id="EnvelopeStructure.write"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="EnvelopeStructure.write">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.EnvelopeStructure.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure">[docs]</a><span class="k">class</span> <span class="nc">BodyStructure</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BodyStructure">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">BodyStructure</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for the response to an `RFC 3501 7.4.2</span>
 <span class="sd">    &lt;https://tools.ietf.org/html/rfc3501#section-7.4.2&gt;`_ FETCH BODYSTRUCTURE</span>
 <span class="sd">    request. This class should not be used directly.</span>
@@ -262,7 +273,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">content_language</span> <span class="o">=</span> <span class="n">content_language</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">content_location</span> <span class="o">=</span> <span class="n">content_location</span>
 
-<div class="viewcode-block" id="BodyStructure.empty"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure.empty">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BodyStructure.empty">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure.empty">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BodyStructure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an empty body structure object.</span>
 
@@ -273,12 +286,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_EmptyBodyStructure</span><span class="p">()</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="BodyStructure.write"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="BodyStructure.write">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.BodyStructure.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
@@ -289,7 +306,10 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
-<div class="viewcode-block" id="MultipartBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.MultipartBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">MultipartBodyStructure</span><span class="p">(</span><span class="n">BodyStructure</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MultipartBodyStructure">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.MultipartBodyStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">MultipartBodyStructure</span><span class="p">(</span><span class="n">BodyStructure</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``multipart/*`` messages. The</span>
 <span class="sd">    response is made up of the BODYSTRUCTUREs of all sub-parts.</span>
 
@@ -329,7 +349,10 @@
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_location</span><span class="p">)])</span></div>
 
 
-<div class="viewcode-block" id="ContentBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.ContentBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">ContentBodyStructure</span><span class="p">(</span><span class="n">BodyStructure</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ContentBodyStructure">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.ContentBodyStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">ContentBodyStructure</span><span class="p">(</span><span class="n">BodyStructure</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for any content type that does not</span>
 <span class="sd">    fit the other sub-classes.</span>
 
@@ -393,7 +416,10 @@
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_location</span><span class="p">)])</span></div>
 
 
-<div class="viewcode-block" id="TextBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.TextBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">TextBodyStructure</span><span class="p">(</span><span class="n">ContentBodyStructure</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TextBodyStructure">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.TextBodyStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">TextBodyStructure</span><span class="p">(</span><span class="n">ContentBodyStructure</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``text/*`` messages.</span>
 
 <span class="sd">    Args:</span>
@@ -453,7 +479,10 @@
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_location</span><span class="p">)])</span></div>
 
 
-<div class="viewcode-block" id="MessageBodyStructure"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.MessageBodyStructure">[docs]</a><span class="k">class</span> <span class="nc">MessageBodyStructure</span><span class="p">(</span><span class="n">ContentBodyStructure</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MessageBodyStructure">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.response.fetch.MessageBodyStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageBodyStructure</span><span class="p">(</span><span class="n">ContentBodyStructure</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;:class:`BodyStructure` sub-class for ``message/rfc822`` messages.</span>
 
 <span class="sd">    Args:</span>
@@ -523,6 +552,7 @@
                      <span class="n">String</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_location</span><span class="p">)])</span></div>
 
 
+
 <span class="k">class</span> <span class="nc">_EmptyEnvelopeStructure</span><span class="p">(</span><span class="n">EnvelopeStructure</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -585,7 +615,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -597,7 +627,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

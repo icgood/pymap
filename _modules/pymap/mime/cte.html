@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.mime.cte &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.mime.cte &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../mime.html" accesskey="U">pymap.mime</a> &#187;</li>
@@ -76,7 +76,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MessageDecoder&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="MessageDecoder"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder">[docs]</a><span class="k">class</span> <span class="nc">MessageDecoder</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="MessageDecoder">
+<a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageDecoder</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decodes a :class:`~pymap.mime.MessageBody` as decided by its</span>
 <span class="sd">    ``Content-Transfer-Encoding`` header.</span>
 
@@ -88,7 +90,9 @@
 
     <span class="n">registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MessageDecoder</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="MessageDecoder.of"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.of">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MessageDecoder.of">
+<a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.of">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg_header</span><span class="p">:</span> <span class="n">MessageHeader</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageDecoder</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a decoder from the message header object.</span>
 
@@ -102,7 +106,10 @@
         <span class="n">cte_hdr</span> <span class="o">=</span> <span class="n">msg_header</span><span class="o">.</span><span class="n">parsed</span><span class="o">.</span><span class="n">content_transfer_encoding</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">of_cte</span><span class="p">(</span><span class="n">cte_hdr</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MessageDecoder.of_cte"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.of_cte">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="MessageDecoder.of_cte">
+<a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.of_cte">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">of_cte</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">ContentTransferEncodingHeader</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">MessageDecoder</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a decoder from the CTE header value.</span>
@@ -130,7 +137,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">hdr_str</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MessageDecoder.decode"><a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.decode">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="MessageDecoder.decode">
+<a class="viewcode-back" href="../../../pymap.mime.html#pymap.mime.cte.MessageDecoder.decode">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">:</span> <span class="n">MessageBody</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode and return the decoded body of the message.</span>
 
@@ -138,7 +148,9 @@
 <span class="sd">            body: The message body.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">_NoopDecoder</span><span class="p">(</span><span class="n">MessageDecoder</span><span class="p">):</span>
@@ -211,7 +223,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../mime.html" >pymap.mime</a> &#187;</li>
@@ -222,7 +234,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

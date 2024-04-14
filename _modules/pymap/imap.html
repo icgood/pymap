@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.imap &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.imap &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -110,10 +110,14 @@
 <span class="n">_log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="IMAPService"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService">[docs]</a><span class="k">class</span> <span class="nc">IMAPService</span><span class="p">(</span><span class="n">ServiceInterface</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<div class="viewcode-block" id="IMAPService">
+<a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService">[docs]</a>
+<span class="k">class</span> <span class="nc">IMAPService</span><span class="p">(</span><span class="n">ServiceInterface</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A pymap service implementing an IMAP server.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="IMAPService.add_arguments"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService.add_arguments">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IMAPService.add_arguments">
+<a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService.add_arguments">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">add_arguments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;imap service&#39;</span><span class="p">)</span>
         <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--host&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;IFACE&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span>
@@ -134,7 +138,10 @@
         <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--proxy-protocol&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">pp_choices</span><span class="p">,</span>
                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the PROXY protocol version string&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IMAPService.start"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService.start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IMAPService.start">
+<a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPService.start">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">AsyncExitStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span>
         <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
         <span class="n">servers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AbstractServer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -154,10 +161,14 @@
         <span class="k">for</span> <span class="n">server</span> <span class="ow">in</span> <span class="n">servers</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_async_context</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
             <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">())</span>
-            <span class="n">stack</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">)</span></div></div>
+            <span class="n">stack</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="IMAPServer"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPServer">[docs]</a><span class="k">class</span> <span class="nc">IMAPServer</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IMAPServer">
+<a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPServer">[docs]</a>
+<span class="k">class</span> <span class="nc">IMAPServer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable object that creates and runs :class:`IMAPConnection` objects</span>
 <span class="sd">    when :func:`asyncio.start_server` receives a new connection.</span>
 
@@ -187,7 +198,10 @@
             <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="IMAPConnection"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPConnection">[docs]</a><span class="k">class</span> <span class="nc">IMAPConnection</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IMAPConnection">
+<a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPConnection">[docs]</a>
+<span class="k">class</span> <span class="nc">IMAPConnection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs a single IMAP connection from start to finish.</span>
 
 <span class="sd">    Args:</span>
@@ -319,8 +333,8 @@
         <span class="k">return</span> <span class="n">ok</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">write_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resp</span><span class="p">:</span> <span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">async_write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">async_write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="p">)</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -386,7 +400,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">response</span>
 
-<div class="viewcode-block" id="IMAPConnection.run"><a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPConnection.run">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ConnectionState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="IMAPConnection.run">
+<a class="viewcode-back" href="../../pymap.imap.html#pymap.imap.IMAPConnection.run">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ConnectionState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the socket communication with the IMAP greeting, and then</span>
 <span class="sd">        enter the command/response cycle.</span>
 
@@ -399,6 +415,7 @@
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> ---| </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;&lt;disconnected&gt;&#39;</span><span class="p">)</span></div>
+
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_run_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">ConnectionState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">bad_commands</span> <span class="o">=</span> <span class="mi">0</span>
@@ -477,6 +494,7 @@
                 <span class="k">finally</span><span class="p">:</span>
                     <span class="k">await</span> <span class="n">state</span><span class="o">.</span><span class="n">do_cleanup</span><span class="p">()</span>
                     <span class="n">current_command</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">prev_cmd</span><span class="p">)</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -527,7 +545,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.imap</a></li> 
@@ -537,7 +555,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

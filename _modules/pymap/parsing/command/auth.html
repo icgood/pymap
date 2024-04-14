@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.command.auth &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.parsing.command.auth &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -103,7 +103,9 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">),</span> <span class="n">buf</span>
 
 
-<div class="viewcode-block" id="AppendCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.AppendCommand">[docs]</a><span class="k">class</span> <span class="nc">AppendCommand</span><span class="p">(</span><span class="n">CommandAuth</span><span class="p">):</span>
+<div class="viewcode-block" id="AppendCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.AppendCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">AppendCommand</span><span class="p">(</span><span class="n">CommandAuth</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``APPEND`` command adds a new message to a mailbox.</span>
 
 <span class="sd">    See Also:</span>
@@ -181,7 +183,9 @@
         <span class="n">append_msg</span> <span class="o">=</span> <span class="n">AppendMessage</span><span class="p">(</span><span class="n">literal</span><span class="p">,</span> <span class="n">date_time</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">append_msg</span><span class="p">,</span> <span class="n">buf</span>
 
-<div class="viewcode-block" id="AppendCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.AppendCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AppendCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.AppendCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AppendCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -202,10 +206,14 @@
                     <span class="k">break</span>
                 <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_msg</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">cancelled</span><span class="p">,</span> <span class="n">error</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">messages</span><span class="p">,</span> <span class="n">cancelled</span><span class="p">,</span> <span class="n">error</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="CreateCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.CreateCommand">[docs]</a><span class="k">class</span> <span class="nc">CreateCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CreateCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.CreateCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">CreateCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``CREATE`` command creates a new mailbox.&quot;&quot;&quot;</span>
 
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;CREATE&#39;</span>
@@ -215,23 +223,32 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
 
-<div class="viewcode-block" id="CreateCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.CreateCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CreateCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.CreateCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CreateCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">mailbox</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Mailbox</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">options</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">ExtensionOptions</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="DeleteCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.DeleteCommand">[docs]</a><span class="k">class</span> <span class="nc">DeleteCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DeleteCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.DeleteCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">DeleteCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``DELETE`` command deletes a mailbox.&quot;&quot;&quot;</span>
 
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;DELETE&#39;</span></div>
 
 
-<div class="viewcode-block" id="ListCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.ListCommand">[docs]</a><span class="k">class</span> <span class="nc">ListCommand</span><span class="p">(</span><span class="n">CommandAuth</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ListCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.ListCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">ListCommand</span><span class="p">(</span><span class="n">CommandAuth</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``LIST`` command lists existing mailboxes.</span>
 
 <span class="sd">    Args:</span>
@@ -254,7 +271,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ref_name</span> <span class="o">=</span> <span class="n">ref_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="n">filter_</span>
 
-<div class="viewcode-block" id="ListCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.ListCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ListCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.ListCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ListCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -269,10 +288,14 @@
             <span class="n">filter_str</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
             <span class="n">filter_</span> <span class="o">=</span> <span class="n">modutf7_decode</span><span class="p">(</span><span class="n">filter_str</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">ref_name</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">filter_</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">ref_name</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">filter_</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="LSubCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.LSubCommand">[docs]</a><span class="k">class</span> <span class="nc">LSubCommand</span><span class="p">(</span><span class="n">ListCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LSubCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.LSubCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">LSubCommand</span><span class="p">(</span><span class="n">ListCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``LSUB`` command lists subscribed mailboxes.&quot;&quot;&quot;</span>
 
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;LSUB&#39;</span>
@@ -282,7 +305,10 @@
     <span class="n">only_subscribed</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="RenameCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.RenameCommand">[docs]</a><span class="k">class</span> <span class="nc">RenameCommand</span><span class="p">(</span><span class="n">CommandAuth</span><span class="p">):</span>
+
+<div class="viewcode-block" id="RenameCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.RenameCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">RenameCommand</span><span class="p">(</span><span class="n">CommandAuth</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``RENAME`` command renames an existing mailbox.</span>
 
 <span class="sd">    Args:</span>
@@ -309,7 +335,9 @@
     <span class="k">def</span> <span class="nf">to_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_mailbox_obj</span><span class="p">)</span>
 
-<div class="viewcode-block" id="RenameCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.RenameCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RenameCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.RenameCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RenameCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -318,10 +346,14 @@
         <span class="n">to_mailbox</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Mailbox</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">options</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">ExtensionOptions</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">from_mailbox</span><span class="p">,</span> <span class="n">to_mailbox</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">from_mailbox</span><span class="p">,</span> <span class="n">to_mailbox</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="SelectCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.SelectCommand">[docs]</a><span class="k">class</span> <span class="nc">SelectCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SelectCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.SelectCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">SelectCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``SELECT`` command selects a mailbox for querying, updates, and</span>
 <span class="sd">    state changes.</span>
 
@@ -338,17 +370,23 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
 
-<div class="viewcode-block" id="SelectCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.SelectCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SelectCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.SelectCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SelectCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">mailbox</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Mailbox</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">options</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">ExtensionOptions</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ExamineCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.ExamineCommand">[docs]</a><span class="k">class</span> <span class="nc">ExamineCommand</span><span class="p">(</span><span class="n">SelectCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ExamineCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.ExamineCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">ExamineCommand</span><span class="p">(</span><span class="n">SelectCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``EXAMINE`` command selects a mailbox as read-only for querying and</span>
 <span class="sd">    state changes.</span>
 
@@ -361,7 +399,10 @@
     <span class="n">readonly</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="StatusCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.StatusCommand">[docs]</a><span class="k">class</span> <span class="nc">StatusCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StatusCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.StatusCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">StatusCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``STATUS`` command returns information about a mailbox without</span>
 <span class="sd">    selecting it.</span>
 
@@ -379,7 +420,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">status_list</span> <span class="o">=</span> <span class="n">status_list</span>
 
-<div class="viewcode-block" id="StatusCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.StatusCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="StatusCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.StatusCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">StatusCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -391,19 +434,27 @@
             <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">after</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">status_list</span> <span class="o">=</span> <span class="n">status_list_p</span><span class="o">.</span><span class="n">get_as</span><span class="p">(</span><span class="n">StatusAttribute</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">status_list</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">,</span> <span class="n">status_list</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="SubscribeCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.SubscribeCommand">[docs]</a><span class="k">class</span> <span class="nc">SubscribeCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SubscribeCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.SubscribeCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">SubscribeCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``SUBSCRIBE`` command subscribes to an existing mailbox.&quot;&quot;&quot;</span>
 
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;SUBSCRIBE&#39;</span></div>
 
 
-<div class="viewcode-block" id="UnsubscribeCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.UnsubscribeCommand">[docs]</a><span class="k">class</span> <span class="nc">UnsubscribeCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UnsubscribeCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.auth.UnsubscribeCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UnsubscribeCommand</span><span class="p">(</span><span class="n">CommandMailboxArg</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UNSUBSCRIBE`` command unsubscribes from a subscribed mailbox.&quot;&quot;&quot;</span>
 
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;UNSUBSCRIBE&#39;</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -454,7 +505,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -466,7 +517,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

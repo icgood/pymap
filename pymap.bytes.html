@@ -2,19 +2,19 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.bytes &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.bytes &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="_static/documentation_options.js?v=3795f234"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="index.html" title="pymap Documentation"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li> 
       </ul>
@@ -69,56 +69,56 @@
           <div class="body" role="main">
             
   <section id="module-pymap.bytes">
-<span id="pymap-bytes"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code><a class="headerlink" href="#module-pymap.bytes" title="Permalink to this heading">¶</a></h1>
+<span id="pymap-bytes"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code><a class="headerlink" href="#module-pymap.bytes" title="Link to this heading">¶</a></h1>
 <p>Defines useful types and utilities for working with bytestrings.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="pymap.bytes.MaybeBytes">
-<span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">MaybeBytes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeAlias" title="(in Python v3.11)"><span class="pre">TypeAlias</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">typing.SupportsBytes</span></em><a class="headerlink" href="#pymap.bytes.MaybeBytes" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">MaybeBytes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeAlias" title="(in Python v3.12)"><span class="pre">TypeAlias</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">bytes</span> <span class="pre">|</span> <span class="pre">typing.SupportsBytes</span></em><a class="headerlink" href="#pymap.bytes.MaybeBytes" title="Link to this definition">¶</a></dt>
 <dd><p>An object that can be converted to a bytestring.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.bytes.MaybeBytesT">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">MaybeBytesT</span></span><a class="headerlink" href="#pymap.bytes.MaybeBytesT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">MaybeBytesT</span></span><a class="headerlink" href="#pymap.bytes.MaybeBytesT" title="Link to this definition">¶</a></dt>
 <dd><p>A type variable bound to <a class="reference internal" href="#pymap.bytes.MaybeBytes" title="pymap.bytes.MaybeBytes"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaybeBytes</span></code></a>.</p>
-<p>alias of TypeVar(‘MaybeBytesT’, bound=<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>)</p>
+<p>alias of TypeVar(‘MaybeBytesT’, bound=<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBytes</span></code></a>)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pymap.bytes.has_bytes">
-<span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">has_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#has_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.has_bytes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the <em>value</em> is <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> or implements the <code class="docutils literal notranslate"><span class="pre">__bytes__</span></code>
+<span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">has_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#has_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.has_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the <em>value</em> is <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> or implements the <code class="docutils literal notranslate"><span class="pre">__bytes__</span></code>
 method to be converted to bytes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><em>object</em></a>) – The value to check.</p>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a>) – The value to check.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.11)"><em>TypeGuard</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a> | <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.12)"><em>TypeGuard</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)">bytes</a> | <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.12)"><em>SupportsBytes</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.bytes.WriteStream">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">WriteStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#WriteStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.WriteStream" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">WriteStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#WriteStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.WriteStream" title="Link to this definition">¶</a></dt>
 <dd><p>Typing protocol indicating the object implements the <a class="reference internal" href="#pymap.bytes.WriteStream.write" title="pymap.bytes.WriteStream.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a>
 method.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.StreamWriter" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.BinaryIO" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryIO</span></code></a></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/asyncio-stream.html#asyncio.StreamWriter" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamWriter</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.BinaryIO" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryIO</span></code></a></p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.WriteStream.write">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#WriteStream.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.WriteStream.write" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#WriteStream.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.WriteStream.write" title="Link to this definition">¶</a></dt>
 <dd><p>Defines an abstract method where <code class="docutils literal notranslate"><span class="pre">data</span></code> is written to a stream or
 buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a>) – The data to write.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a>) – The data to write.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><em>Any</em></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><em>Any</em></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -127,23 +127,23 @@ buffer.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.bytes.Writeable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">Writeable</span></span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">Writeable</span></span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable" title="Link to this definition">¶</a></dt>
 <dd><p>Base class for types that can be written to a stream.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.Writeable.tobytes">
-<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tobytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.tobytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.tobytes" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">final</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tobytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.tobytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.tobytes" title="Link to this definition">¶</a></dt>
 <dd><p>Convert the writeable object back into a bytestring using the
 <a class="reference internal" href="#pymap.bytes.Writeable.write" title="pymap.bytes.Writeable.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a> method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)">bytes</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.Writeable.empty">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.empty" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.empty" title="Link to this definition">¶</a></dt>
 <dd><p>Return a <a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a> for an empty string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -154,11 +154,11 @@ buffer.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.Writeable.wrap">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.wrap" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.wrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.wrap" title="Link to this definition">¶</a></dt>
 <dd><p>Wrap the bytes in a <a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a>) – The object to wrap.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.12)"><em>SupportsBytes</em></a>) – The object to wrap.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
@@ -168,11 +168,11 @@ buffer.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.Writeable.concat">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.concat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.concat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.concat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.concat" title="Link to this definition">¶</a></dt>
 <dd><p>Wrap the iterable in a <a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Writeable</span></code></a> that will write each item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a><em>]</em>) – The iterable to wrap.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.12)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.12)"><em>SupportsBytes</em></a><em>]</em>) – The iterable to wrap.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.bytes.Writeable" title="pymap.bytes.Writeable"><em>Writeable</em></a></p>
@@ -182,7 +182,7 @@ buffer.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.Writeable.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.write" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">writer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#Writeable.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.Writeable.write" title="Link to this definition">¶</a></dt>
 <dd><p>Write the object to the stream, with one or more calls to
 <a class="reference internal" href="#pymap.bytes.WriteStream.write" title="pymap.bytes.WriteStream.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a>.</p>
 <dl class="field-list simple">
@@ -199,25 +199,25 @@ buffer.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.bytes.BytesFormat">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">BytesFormat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">how</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#BytesFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.BytesFormat" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.bytes.</span></span><span class="sig-name descname"><span class="pre">BytesFormat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">how</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#BytesFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.BytesFormat" title="Link to this definition">¶</a></dt>
 <dd><p>Helper utility for performing formatting operations that produce
 bytestrings. While similar to the builtin formatting and join
 operations, this class intends to provide cleaner typing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>how</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a>) – The formatting string or join delimiter to use.</p>
+<dd class="field-odd"><p><strong>how</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a>) – The formatting string or join delimiter to use.</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.BytesFormat.format">
-<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#BytesFormat.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.BytesFormat.format" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#BytesFormat.format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.BytesFormat.format" title="Link to this definition">¶</a></dt>
 <dd><p>String interpolation into the format string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsIndex" title="(in Python v3.11)"><em>SupportsIndex</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a><em>]</em>) – The data interpolated into the format string.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.12)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsIndex" title="(in Python v3.12)"><em>SupportsIndex</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.12)"><em>SupportsBytes</em></a><em>]</em>) – The data interpolated into the format string.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)">bytes</a></p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -229,14 +229,14 @@ operations, this class intends to provide cleaner typing.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.bytes.BytesFormat.join">
-<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#BytesFormat.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.BytesFormat.join" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/bytes.html#BytesFormat.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.bytes.BytesFormat.join" title="Link to this definition">¶</a></dt>
 <dd><p>Iterable join on a delimiter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsIndex" title="(in Python v3.11)"><em>SupportsIndex</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.11)"><em>SupportsBytes</em></a><em>]</em>) – Iterable of items to join.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.12)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsIndex" title="(in Python v3.12)"><em>SupportsIndex</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.SupportsBytes" title="(in Python v3.12)"><em>SupportsBytes</em></a><em>]</em>) – Iterable of items to join.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)">bytes</a></p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -349,7 +349,7 @@ operations, this class intends to provide cleaner typing.</p>
         <li class="right" >
           <a href="index.html" title="pymap Documentation"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.bytes</span></code></a></li> 
       </ul>
@@ -358,7 +358,7 @@ operations, this class intends to provide cleaner typing.</p>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

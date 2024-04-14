@@ -2,19 +2,19 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.versioned &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.versioned &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="_static/documentation_options.js?v=3795f234"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="pymap.sieve.html" title="pymap.sieve"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code></a></li> 
       </ul>
@@ -65,24 +65,24 @@
           <div class="body" role="main">
             
   <section id="module-pymap.versioned">
-<span id="pymap-versioned"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code><a class="headerlink" href="#module-pymap.versioned" title="Permalink to this heading">¶</a></h1>
+<span id="pymap-versioned"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code><a class="headerlink" href="#module-pymap.versioned" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.versioned.VersionedT">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">VersionedT</span></span><a class="headerlink" href="#pymap.versioned.VersionedT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">VersionedT</span></span><a class="headerlink" href="#pymap.versioned.VersionedT" title="Link to this definition">¶</a></dt>
 <dd><p>Type variable for versioned objects.</p>
 <p>alias of TypeVar(‘VersionedT’, bound=<code class="xref py py-class docutils literal notranslate"><span class="pre">Versioned[Any]</span></code>)</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.versioned.EntityTagT">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">EntityTagT</span></span><a class="headerlink" href="#pymap.versioned.EntityTagT" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">EntityTagT</span></span><a class="headerlink" href="#pymap.versioned.EntityTagT" title="Link to this definition">¶</a></dt>
 <dd><p>Type variable for versioned object entity tags.</p>
 <p>alias of TypeVar(‘EntityTagT’)</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.versioned.Versioned">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">Versioned</span></span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.versioned.</span></span><span class="sig-name descname"><span class="pre">Versioned</span></span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned" title="Link to this definition">¶</a></dt>
 <dd><p>This simple base class defines objects that supports “versioning” using
 entity tags.</p>
 <p>The <a class="reference internal" href="#pymap.versioned.Versioned.entity_tag" title="pymap.versioned.Versioned.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a> of an object represents the <em>current</em> object and
@@ -95,26 +95,26 @@ subsequent object should have a <a class="reference internal" href="#pymap.versi
 <a class="reference internal" href="#pymap.versioned.Versioned.entity_tag" title="pymap.versioned.Versioned.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a> of the object before it.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pymap.versioned.Versioned.REPLACE_ANY">
-<span class="sig-name descname"><span class="pre">REPLACE_ANY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.11)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pymap.versioned.Versioned.REPLACE_ANY" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">REPLACE_ANY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ClassVar" title="(in Python v3.12)"><span class="pre">ClassVar</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#pymap.versioned.Versioned.REPLACE_ANY" title="Link to this definition">¶</a></dt>
 <dd><p>A special marker for <a class="reference internal" href="#pymap.versioned.Versioned.previous_entity_tag" title="pymap.versioned.Versioned.previous_entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">previous_entity_tag</span></code></a> indicating that any
 previous object may be replaced.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.versioned.Versioned.entity_tag">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entity_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><span class="pre">EntityTagT</span></a></em><a class="headerlink" href="#pymap.versioned.Versioned.entity_tag" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entity_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><span class="pre">EntityTagT</span></a></em><a class="headerlink" href="#pymap.versioned.Versioned.entity_tag" title="Link to this definition">¶</a></dt>
 <dd><p>Represents the <em>current</em> version of the object.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.versioned.Versioned.previous_entity_tag">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">previous_entity_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><span class="pre">EntityTagT</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#pymap.versioned.Versioned.previous_entity_tag" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">previous_entity_tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#pymap.versioned.EntityTagT" title="pymap.versioned.EntityTagT"><span class="pre">EntityTagT</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></em><a class="headerlink" href="#pymap.versioned.Versioned.previous_entity_tag" title="Link to this definition">¶</a></dt>
 <dd><p>Represents the version of the object it is intended to replace.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.versioned.Versioned.can_replace">
-<span class="sig-name descname"><span class="pre">can_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">previous</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned.can_replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned.can_replace" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">can_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">previous</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned.can_replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned.can_replace" title="Link to this definition">¶</a></dt>
 <dd><p>Check if this object can replace the <em>previous</em> object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -124,14 +124,14 @@ previous object may be replaced.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.versioned.Versioned.new_entity_tag">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_entity_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned.new_entity_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned.new_entity_tag" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new_entity_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/versioned.html#Versioned.new_entity_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.versioned.Versioned.new_entity_tag" title="Link to this definition">¶</a></dt>
 <dd><p>Generate a new random value for <a class="reference internal" href="#pymap.versioned.Versioned.entity_tag" title="pymap.versioned.Versioned.entity_tag"><code class="xref py py-attr docutils literal notranslate"><span class="pre">entity_tag</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -226,7 +226,7 @@ previous object may be replaced.</p>
         <li class="right" >
           <a href="pymap.sieve.html" title="pymap.sieve"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.versioned</span></code></a></li> 
       </ul>
@@ -235,7 +235,7 @@ previous object may be replaced.</p>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -2,19 +2,19 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.cluster &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.cluster &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="_static/documentation_options.js?v=3795f234"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a></li> 
       </ul>
@@ -69,20 +69,20 @@
           <div class="body" role="main">
             
   <section id="module-pymap.cluster">
-<span id="pymap-cluster"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code><a class="headerlink" href="#module-pymap.cluster" title="Permalink to this heading">¶</a></h1>
+<span id="pymap-cluster"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code><a class="headerlink" href="#module-pymap.cluster" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.cluster.MemberInterface">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.</span></span><span class="sig-name descname"><span class="pre">MemberInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#MemberInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.MemberInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.</span></span><span class="sig-name descname"><span class="pre">MemberInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#MemberInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.MemberInterface" title="Link to this definition">¶</a></dt>
 <dd><p>A hashable type that represents a cluster member node.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.cluster.MemberInterface.name">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.cluster.MemberInterface.name" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#pymap.cluster.MemberInterface.name" title="Link to this definition">¶</a></dt>
 <dd><p>The name of the cluster member node.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.cluster.MemberInterface.metadata">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.11)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.cluster.MemberInterface.metadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.12)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.cluster.MemberInterface.metadata" title="Link to this definition">¶</a></dt>
 <dd><p>The metadata mapping from the cluster member node.</p>
 </dd></dl>
 
@@ -90,10 +90,10 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.cluster.ListenCallback">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.</span></span><span class="sig-name descname"><span class="pre">ListenCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ListenCallback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ListenCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.</span></span><span class="sig-name descname"><span class="pre">ListenCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ListenCallback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ListenCallback" title="Link to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="pymap.cluster.ListenCallback.__call__">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ListenCallback.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ListenCallback.__call__" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ListenCallback.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ListenCallback.__call__" title="Link to this definition">¶</a></dt>
 <dd><p>Called when the value associated with a local metadata key has been
 changed.</p>
 <dl class="field-list simple">
@@ -101,7 +101,7 @@ changed.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arg</strong> (<em>ArgT_contra</em>) – The argument given when the callback was registered with
 <a class="reference internal" href="#pymap.cluster.ClusterMetadata.listen" title="pymap.cluster.ClusterMetadata.listen"><code class="xref py py-meth docutils literal notranslate"><span class="pre">listen()</span></code></a>.</p></li>
-<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.11)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><em>bytes</em></a><em>]</em>) – The updated local metadata mapping.</p></li>
+<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.12)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><em>bytes</em></a><em>]</em>) – The updated local metadata mapping.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -114,7 +114,7 @@ changed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.</span></span><span class="sig-name descname"><span class="pre">ClusterMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.</span></span><span class="sig-name descname"><span class="pre">ClusterMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata" title="Link to this definition">¶</a></dt>
 <dd><p>Keeps a mapping of metadata pertaining to the current instance and
 possibly other clustered instances, if the current instance is part of a
 cluster.</p>
@@ -128,7 +128,7 @@ go offline.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.add" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.add" title="Link to this definition">¶</a></dt>
 <dd><p>Add an element.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -142,7 +142,7 @@ go offline.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata.discard">
-<span class="sig-name descname"><span class="pre">discard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.discard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.discard" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">discard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">member</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.discard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.discard" title="Link to this definition">¶</a></dt>
 <dd><p>Remove an element.  Do not raise an exception if absent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -156,7 +156,7 @@ go offline.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata.local">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.11)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.cluster.ClusterMetadata.local" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.cluster.ClusterMetadata.local" title="Link to this definition">¶</a></dt>
 <dd><p>The local cluster instance metadata. Keys added, removed, and
 modified in this mapping should be disseminated to the rest of the
 cluster.</p>
@@ -164,35 +164,35 @@ cluster.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata.remote">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remote</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.11)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.11)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.cluster.MemberInterface" title="pymap.cluster.MemberInterface"><span class="pre">MemberInterface</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.cluster.ClusterMetadata.remote" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remote</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.12)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.12)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pymap.cluster.MemberInterface" title="pymap.cluster.MemberInterface"><span class="pre">MemberInterface</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pymap.cluster.ClusterMetadata.remote" title="Link to this definition">¶</a></dt>
 <dd><p>The remote cluster instance metadata, organized by metadata key.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata.get_all">
-<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.get_all" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.get_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.get_all" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the set of all known values for the metadata key, local and
 remote.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The metadata key.</p>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The metadata key.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Set" title="(in Python v3.11)"><em>Set</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Set" title="(in Python v3.12)"><em>Set</em></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.12)">bytes</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.cluster.ClusterMetadata.listen">
-<span class="sig-name descname"><span class="pre">listen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.listen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.listen" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">listen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster.html#ClusterMetadata.listen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.ClusterMetadata.listen" title="Link to this definition">¶</a></dt>
 <dd><p>Adds a callback to be run whenever the local metadata has been
 modified. Cluster services can use this to disseminate metadata
 changes.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <em>arg</em> object is weakly referenced, and the callback will be
-automatically removed if it is <a class="reference external" href="https://docs.python.org/3/glossary.html#term-garbage-collection" title="(in Python v3.11)"><span class="xref std std-term">garbage-collected</span></a>.</p>
+automatically removed if it is <a class="reference external" href="https://docs.python.org/3/glossary.html#term-garbage-collection" title="(in Python v3.12)"><span class="xref std std-term">garbage-collected</span></a>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -209,62 +209,8 @@ automatically removed if it is <a class="reference external" href="https://docs.
 
 </dd></dl>
 
-<section id="module-pymap.cluster.swim">
-<span id="pymap-cluster-swim"></span><h2><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code><a class="headerlink" href="#module-pymap.cluster.swim" title="Permalink to this heading">¶</a></h2>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pymap.cluster.swim.transport_type">
-<span class="sig-prename descclassname"><span class="pre">pymap.cluster.swim.</span></span><span class="sig-name descname"><span class="pre">transport_type</span></span><a class="headerlink" href="#pymap.cluster.swim.transport_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>The <a class="reference external" href="https://icgood.github.io/swim-protocol/swimprotocol.html#swimprotocol.transport.Transport" title="(in swim-protocol v0.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transport</span></code></a> implementation.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pymap.cluster.swim.SwimService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.cluster.swim.</span></span><span class="sig-name descname"><span class="pre">SwimService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster/swim.html#SwimService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.swim.SwimService" title="Permalink to this definition">¶</a></dt>
-<dd><p>A pymap service implemented using <a class="reference external" href="https://icgood.github.io/swim-protocol/">swim-protocol</a> to establish a cluster of pymap
-instances.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>backend</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.backend.BackendInterface" title="pymap.interfaces.backend.BackendInterface"><em>BackendInterface</em></a>) – </p></li>
-<li><p><strong>config</strong> (<a class="reference internal" href="pymap.config.html#pymap.config.IMAPConfig" title="pymap.config.IMAPConfig"><em>IMAPConfig</em></a>) – </p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.cluster.swim.SwimService.add_arguments">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster/swim.html#SwimService.add_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.swim.SwimService.add_arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the arguments or argument group used to configure the service.
-For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s1">&#39;foo service arguments&#39;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parser</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.11)"><em>ArgumentParser</em></a>) – The argument parser.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pymap.cluster.swim.SwimService.start">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stack</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/cluster/swim.html#SwimService.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.cluster.swim.SwimService.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the service.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stack</strong> (<a class="reference external" href="https://docs.python.org/3/library/contextlib.html#contextlib.AsyncExitStack" title="(in Python v3.11)"><em>AsyncExitStack</em></a>) – An exit stack that should be used for cleanup.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="pymap-cluster-swim">
+<h2><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code><a class="headerlink" href="#pymap-cluster-swim" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -296,15 +242,7 @@ For example:</p>
 <li><a class="reference internal" href="#pymap.cluster.ClusterMetadata.listen"><code class="docutils literal notranslate"><span class="pre">ClusterMetadata.listen()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-pymap.cluster.swim"><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code></a><ul>
-<li><a class="reference internal" href="#pymap.cluster.swim.transport_type"><code class="docutils literal notranslate"><span class="pre">transport_type</span></code></a></li>
-<li><a class="reference internal" href="#pymap.cluster.swim.SwimService"><code class="docutils literal notranslate"><span class="pre">SwimService</span></code></a><ul>
-<li><a class="reference internal" href="#pymap.cluster.swim.SwimService.add_arguments"><code class="docutils literal notranslate"><span class="pre">SwimService.add_arguments()</span></code></a></li>
-<li><a class="reference internal" href="#pymap.cluster.swim.SwimService.start"><code class="docutils literal notranslate"><span class="pre">SwimService.start()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#pymap-cluster-swim"><code class="docutils literal notranslate"><span class="pre">pymap.cluster.swim</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -375,7 +313,7 @@ For example:</p>
         <li class="right" >
           <a href="pymap.admin.html" title="pymap.admin"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.cluster</span></code></a></li> 
       </ul>
@@ -384,7 +322,7 @@ For example:</p>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

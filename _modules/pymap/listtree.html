@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.listtree &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.listtree &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.listtree</a></li> 
@@ -72,7 +72,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ListEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;ListTree&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="ListEntry"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListEntry">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="ListEntry">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListEntry">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">ListEntry</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An entry in the list results.</span>
 
@@ -114,6 +116,7 @@
         <span class="k">return</span> <span class="n">ret</span></div>
 
 
+
 <span class="k">class</span> <span class="nc">_TreeNode</span><span class="p">:</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;parent&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;exists&#39;</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span><span class="p">]</span>
@@ -135,7 +138,9 @@
             <span class="n">child</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">extra</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ListTree"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree">[docs]</a><span class="k">class</span> <span class="nc">ListTree</span><span class="p">:</span>
+<div class="viewcode-block" id="ListTree">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree">[docs]</a>
+<span class="k">class</span> <span class="nc">ListTree</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a tree of hierarchical mailbox names. If a mailbox name</span>
 <span class="sd">    has superior names in the heirarchy that do not exist, they are added as</span>
 <span class="sd">    &quot;unreferenced&quot;.</span>
@@ -156,7 +161,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">_TreeNode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_marked</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="ListTree.update"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
+<div class="viewcode-block" id="ListTree.update">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add all the mailbox names to the tree, filling in any missing nodes.</span>
 
 <span class="sd">        Args:</span>
@@ -168,7 +175,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="ListTree.set_marked"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.set_marked">[docs]</a>    <span class="k">def</span> <span class="nf">set_marked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">marked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+
+<div class="viewcode-block" id="ListTree.set_marked">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.set_marked">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_marked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">marked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                    <span class="n">unmarked</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add or remove the ``\\Marked`` and ``\\Unmarked`` mailbox</span>
 <span class="sd">        attributes.</span>
@@ -185,6 +195,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_marked</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_marked</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="nf">_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">_TreeNode</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ListEntry</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -205,7 +216,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">child</span>
 
-<div class="viewcode-block" id="ListTree.get"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListEntry</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ListTree.get">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListEntry</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the named entry in the list tree.</span>
 
 <span class="sd">        Args:</span>
@@ -221,7 +234,10 @@
             <span class="n">marked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_marked</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">ListEntry</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">exists</span><span class="p">,</span> <span class="n">marked</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="ListTree.get_renames"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.get_renames">[docs]</a>    <span class="k">def</span> <span class="nf">get_renames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+
+<div class="viewcode-block" id="ListTree.get_renames">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.get_renames">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_renames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of tuples for all mailboxes that must be renamed, for</span>
 <span class="sd">        the given rename operation. This should include</span>
@@ -249,10 +265,14 @@
                     <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">exists</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">from_names</span><span class="p">,</span> <span class="n">to_names</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="ListTree.list"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ListEntry</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="ListTree.list">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.list">[docs]</a>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ListEntry</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all the entries in the list tree.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">entry</span></div>
+
 
     <span class="k">def</span> <span class="nf">_get_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Pattern</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
         <span class="n">pattern_parts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -266,7 +286,9 @@
         <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern_parts</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;$&#39;</span>
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ListTree.list_matching"><a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.list_matching">[docs]</a>    <span class="k">def</span> <span class="nf">list_matching</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
+<div class="viewcode-block" id="ListTree.list_matching">
+<a class="viewcode-back" href="../../pymap.listtree.html#pymap.listtree.ListTree.list_matching">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_matching</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ListEntry</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all the entries in the list tree that match the given query.</span>
 
@@ -281,7 +303,9 @@
                 <span class="k">if</span> <span class="n">canonical_i</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">):</span>
                     <span class="k">yield</span> <span class="n">entry</span>
             <span class="k">elif</span> <span class="n">canonical</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">entry</span></div></div>
+                <span class="k">yield</span> <span class="n">entry</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -332,7 +356,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.listtree</a></li> 
@@ -342,7 +366,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

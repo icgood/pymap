@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.concurrent &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.concurrent &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.concurrent</a></li> 
@@ -95,13 +95,17 @@
 <span class="n">_Delay</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Subsystem"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem">[docs]</a><span class="k">class</span> <span class="nc">Subsystem</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="Subsystem">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem">[docs]</a>
+<span class="k">class</span> <span class="nc">Subsystem</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Utility for creating concurrency primitives for a subsystem, either</span>
 <span class="sd">    :mod:`asyncio` or :mod:`threading`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Subsystem.for_executor"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.for_executor">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Subsystem.for_executor">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.for_executor">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_executor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">executor</span><span class="p">:</span> <span class="n">Executor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subsystem</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a subsystem based on the given executor. If ``executor`` is</span>
 <span class="sd">        None, use :mod:`asyncio`. If ``executor`` is a</span>
@@ -118,15 +122,22 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">executor</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Subsystem.for_asyncio"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.for_asyncio">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Subsystem.for_asyncio">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.for_asyncio">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_asyncio</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subsystem</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a subsystem for :mod:`asyncio`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_AsyncioSubsystem</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Subsystem.for_threading"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.for_threading">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Subsystem.for_threading">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.for_threading">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_threading</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">executor</span><span class="p">:</span> <span class="n">ThreadPoolExecutor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Subsystem</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a subsystem for :mod:`threading`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ThreadingSubsystem</span><span class="p">(</span><span class="n">executor</span><span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -134,7 +145,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The subsystem name, ``&#39;asyncio&#39;`` or ``&#39;threading&#39;``.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="Subsystem.execute"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.execute">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Subsystem.execute">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.execute">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">future</span><span class="p">:</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">RetT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">RetT</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Executes the future and returns its result in the subsystem. For</span>
 <span class="sd">        :mod:`asyncio`, this simply means ``return await future``. For</span>
@@ -148,15 +161,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="Subsystem.new_rwlock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.new_rwlock">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Subsystem.new_rwlock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.new_rwlock">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">new_rwlock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReadWriteLock</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new read-write lock.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="Subsystem.new_event"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.new_event">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Subsystem.new_event">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Subsystem.new_event">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">new_event</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new concurrent event.&quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">_AsyncioSubsystem</span><span class="p">(</span><span class="n">Subsystem</span><span class="p">):</span>
@@ -210,18 +231,26 @@
         <span class="k">return</span> <span class="n">_ThreadingEvent</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="ReadWriteLock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock">[docs]</a><span class="k">class</span> <span class="nc">ReadWriteLock</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadWriteLock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock">[docs]</a>
+<span class="k">class</span> <span class="nc">ReadWriteLock</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read-write lock.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ReadWriteLock.for_asyncio"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.for_asyncio">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ReadWriteLock.for_asyncio">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.for_asyncio">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_asyncio</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReadWriteLock</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a read-write lock for asyncio.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_AsyncioReadWriteLock</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ReadWriteLock.for_threading"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.for_threading">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="ReadWriteLock.for_threading">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.for_threading">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_threading</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReadWriteLock</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a read-write lock for threading.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ThreadingReadWriteLock</span><span class="p">()</span></div>
+
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -232,36 +261,51 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="ReadWriteLock.read_lock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.read_lock">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="ReadWriteLock.read_lock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.read_lock">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">read_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquires a read-lock, blocking until any write-locks are released.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="ReadWriteLock.write_lock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.write_lock">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="ReadWriteLock.write_lock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.ReadWriteLock.write_lock">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">write_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractAsyncContextManager</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquires a write-lock, blocking until all read- or write-locks are</span>
 <span class="sd">        released.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Event">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event">[docs]</a>
+<span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Concurrent event, one thread signals and any waiting event is released.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Event.for_asyncio"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.for_asyncio">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Event.for_asyncio">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.for_asyncio">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_asyncio</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an event for asyncio.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_AsyncioEvent</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Event.for_threading"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.for_threading">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Event.for_threading">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.for_threading">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_threading</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an event for threading.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ThreadingEvent</span><span class="p">()</span></div>
+
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -272,7 +316,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="Event.or_event"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.or_event">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Event.or_event">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.or_event">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">or_event</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">EventT</span><span class="p">,</span> <span class="o">*</span><span class="n">events</span><span class="p">:</span> <span class="n">EventT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EventT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new event that is signalled when either the current event</span>
 <span class="sd">        or any of the provided events are signalled.</span>
@@ -280,22 +326,34 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="Event.is_set"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.is_set">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Event.is_set">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.is_set">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the event is set.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="Event.set"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.set">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Event.set">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.set">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Signal the waiting threads to release.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="Event.clear"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.clear">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Event.clear">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.clear">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear the signal, allowing threads to wait again.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="Event.wait"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.wait">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="Event.wait">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.Event.wait">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait until another thread signals the event.</span>
 
@@ -303,7 +361,9 @@
 <span class="sd">            timeout: Maximum time to wait, in seconds.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">_AsyncioReadWriteLock</span><span class="p">(</span><span class="n">ReadWriteLock</span><span class="p">):</span>
@@ -382,7 +442,9 @@
             <span class="k">yield</span>
 
 
-<div class="viewcode-block" id="FileLock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.FileLock">[docs]</a><span class="k">class</span> <span class="nc">FileLock</span><span class="p">(</span><span class="n">ReadWriteLock</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<div class="viewcode-block" id="FileLock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.FileLock">[docs]</a>
+<span class="k">class</span> <span class="nc">FileLock</span><span class="p">(</span><span class="n">ReadWriteLock</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Uses the presence or absence of a file on the filesystem to simulate</span>
 <span class="sd">    a read-write lock. If the file is present, other read- and write-locks will</span>
 <span class="sd">    block until the file is gone. If the file is absent, read-locks will not</span>
@@ -448,7 +510,9 @@
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
             <span class="k">pass</span>
 
-<div class="viewcode-block" id="FileLock.read_lock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.FileLock.read_lock">[docs]</a>    <span class="nd">@asynccontextmanager</span>
+<div class="viewcode-block" id="FileLock.read_lock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.FileLock.read_lock">[docs]</a>
+    <span class="nd">@asynccontextmanager</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">read_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_lock</span><span class="p">():</span>
             <span class="k">yield</span>
@@ -461,7 +525,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FileLock.write_lock"><a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.FileLock.write_lock">[docs]</a>    <span class="nd">@asynccontextmanager</span>
+
+<div class="viewcode-block" id="FileLock.write_lock">
+<a class="viewcode-back" href="../../pymap.concurrent.html#pymap.concurrent.FileLock.write_lock">[docs]</a>
+    <span class="nd">@asynccontextmanager</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">write_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_lock</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_lock</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
@@ -478,7 +545,9 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_unlock</span><span class="p">()</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">()</span></div></div>
+            <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">()</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">_AsyncioEvent</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
@@ -599,7 +668,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.concurrent</a></li> 
@@ -609,7 +678,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

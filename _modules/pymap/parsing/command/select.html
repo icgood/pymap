@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.command.select &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.parsing.command.select &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -85,7 +85,9 @@
            <span class="s1">&#39;UidStoreCommand&#39;</span><span class="p">,</span> <span class="s1">&#39;IdleCommand&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="CheckCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CheckCommand">[docs]</a><span class="k">class</span> <span class="nc">CheckCommand</span><span class="p">(</span><span class="n">CommandNoArgs</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
+<div class="viewcode-block" id="CheckCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CheckCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">CheckCommand</span><span class="p">(</span><span class="n">CommandNoArgs</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``CHECK`` command initiates an implementation-specific backend</span>
 <span class="sd">    synchronization for the selected mailbox.</span>
 
@@ -97,7 +99,10 @@
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;CHECK&#39;</span></div>
 
 
-<div class="viewcode-block" id="CloseCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CloseCommand">[docs]</a><span class="k">class</span> <span class="nc">CloseCommand</span><span class="p">(</span><span class="n">CommandNoArgs</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CloseCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CloseCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">CloseCommand</span><span class="p">(</span><span class="n">CommandNoArgs</span><span class="p">,</span> <span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``CLOSE`` command closes a selected mailbox.</span>
 
 <span class="sd">    See Also:</span>
@@ -108,7 +113,10 @@
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;CLOSE&#39;</span></div>
 
 
-<div class="viewcode-block" id="ExpungeCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.ExpungeCommand">[docs]</a><span class="k">class</span> <span class="nc">ExpungeCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ExpungeCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.ExpungeCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">ExpungeCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``EXPUNGE`` command permanently erases all messages in the selected</span>
 <span class="sd">    mailbox that contain the ``\\Deleted`` flag.</span>
 
@@ -129,7 +137,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uid_set</span> <span class="o">=</span> <span class="n">uid_set</span>
 
-<div class="viewcode-block" id="ExpungeCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.ExpungeCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ExpungeCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.ExpungeCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ExpungeCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">uid_set</span><span class="p">:</span> <span class="n">SequenceSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -137,10 +147,14 @@
             <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
             <span class="n">uid_set</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">SequenceSet</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">uid_set</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">uid_set</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="CopyCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CopyCommand">[docs]</a><span class="k">class</span> <span class="nc">CopyCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CopyCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CopyCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">CopyCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``COPY`` command copies messages from the selected mailbox to the</span>
 <span class="sd">    end of the destination mailbox.</span>
 
@@ -167,7 +181,9 @@
     <span class="k">def</span> <span class="nf">mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mailbox_obj</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CopyCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CopyCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CopyCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.CopyCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">CopyCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -175,10 +191,14 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">mailbox</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Mailbox</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="MoveCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.MoveCommand">[docs]</a><span class="k">class</span> <span class="nc">MoveCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MoveCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.MoveCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">MoveCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``MOVE`` command moves messages from the selected mailbox to the</span>
 <span class="sd">    end of the destination mailbox.</span>
 
@@ -205,7 +225,9 @@
     <span class="k">def</span> <span class="nf">mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mailbox_obj</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MoveCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.MoveCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MoveCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.MoveCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MoveCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -213,10 +235,14 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">mailbox</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Mailbox</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">mailbox</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="FetchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.FetchCommand">[docs]</a><span class="k">class</span> <span class="nc">FetchCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FetchCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.FetchCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">FetchCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``FETCH`` command fetches message data from the selected mailbox.</span>
 <span class="sd">    What data is fetched can be controlled in depth by a set of fetch</span>
 <span class="sd">    attributes given in the command.</span>
@@ -267,7 +293,9 @@
             <span class="k">return</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">after</span>
         <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FetchCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.FetchCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FetchCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.FetchCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FetchCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -291,10 +319,14 @@
             <span class="n">attr_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">attr_list</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">FetchAttribute</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;UID&#39;</span><span class="p">)]</span>
         <span class="n">options</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">ExtensionOptions</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">attr_list</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">attr_list</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="StoreCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.StoreCommand">[docs]</a><span class="k">class</span> <span class="nc">StoreCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StoreCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.StoreCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">StoreCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``STORE`` command updates the flags of a set of messages in the</span>
 <span class="sd">    selected mailbox.</span>
 
@@ -356,7 +388,9 @@
             <span class="k">except</span> <span class="n">NotParseable</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">flag_list</span><span class="p">,</span> <span class="n">buf</span>
 
-<div class="viewcode-block" id="StoreCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.StoreCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="StoreCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.StoreCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">StoreCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -367,10 +401,14 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">Space</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">flag_list</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_flag_list</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">flag_list</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">silent</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">,</span> <span class="n">flag_list</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">silent</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="SearchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.SearchCommand">[docs]</a><span class="k">class</span> <span class="nc">SearchCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SearchCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.SearchCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">SearchCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``SEARCH`` command searches the messages in the selected mailbox</span>
 <span class="sd">    based on a set of search criteria.</span>
 
@@ -425,7 +463,9 @@
             <span class="n">options</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ExtensionOptions</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">memoryview</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">options</span><span class="p">,</span> <span class="n">buf</span>
 
-<div class="viewcode-block" id="SearchCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.SearchCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SearchCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.SearchCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SearchCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">options</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_options</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -441,10 +481,14 @@
                     <span class="k">raise</span>
                 <span class="k">break</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">search_keys</span><span class="p">,</span> <span class="n">charset</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">search_keys</span><span class="p">,</span> <span class="n">charset</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCommand">[docs]</a><span class="k">class</span> <span class="nc">UidCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID`` command precedes one of the ``COPY``, ``EXPUNGE``,</span>
 <span class="sd">    ``FETCH``, ``SEARCH``, or ``STORE`` commands and indicates that the</span>
 <span class="sd">    command interacts with message UIDs instead of sequence numbers. Refer</span>
@@ -459,13 +503,19 @@
     <span class="n">command</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;UID&#39;</span>
     <span class="n">compound</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># never parsed directly</span></div></div>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># never parsed directly</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidCopyCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCopyCommand">[docs]</a><span class="k">class</span> <span class="nc">UidCopyCommand</span><span class="p">(</span><span class="n">CopyCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidCopyCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCopyCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidCopyCommand</span><span class="p">(</span><span class="n">CopyCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID COPY`` variant of the ``COPY`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
@@ -475,16 +525,22 @@
     <span class="n">delegate</span> <span class="o">=</span> <span class="n">CopyCommand</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidCopyCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCopyCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidCopyCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidCopyCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidCopyCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">UidCopyCommand</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidMoveCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidMoveCommand">[docs]</a><span class="k">class</span> <span class="nc">UidMoveCommand</span><span class="p">(</span><span class="n">MoveCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidMoveCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidMoveCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidMoveCommand</span><span class="p">(</span><span class="n">MoveCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID MOVE`` variant of the ``MOVE`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
@@ -494,16 +550,22 @@
     <span class="n">delegate</span> <span class="o">=</span> <span class="n">MoveCommand</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidMoveCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidMoveCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidMoveCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidMoveCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidMoveCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">UidMoveCommand</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidExpungeCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidExpungeCommand">[docs]</a><span class="k">class</span> <span class="nc">UidExpungeCommand</span><span class="p">(</span><span class="n">ExpungeCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidExpungeCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidExpungeCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidExpungeCommand</span><span class="p">(</span><span class="n">ExpungeCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID EXPUNGE`` variant of the ``EXPUNGE`` command, which uses</span>
 <span class="sd">    message UIDs instead of sequence numbers.</span>
 
@@ -513,16 +575,22 @@
     <span class="n">delegate</span> <span class="o">=</span> <span class="n">ExpungeCommand</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidExpungeCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidExpungeCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidExpungeCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidExpungeCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidExpungeCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">UidExpungeCommand</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidFetchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidFetchCommand">[docs]</a><span class="k">class</span> <span class="nc">UidFetchCommand</span><span class="p">(</span><span class="n">FetchCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidFetchCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidFetchCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidFetchCommand</span><span class="p">(</span><span class="n">FetchCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID FETCH`` variant of the ``FETCH`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
@@ -532,16 +600,22 @@
     <span class="n">delegate</span> <span class="o">=</span> <span class="n">FetchCommand</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidFetchCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidFetchCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidFetchCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidFetchCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidFetchCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">UidFetchCommand</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidSearchCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidSearchCommand">[docs]</a><span class="k">class</span> <span class="nc">UidSearchCommand</span><span class="p">(</span><span class="n">SearchCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidSearchCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidSearchCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidSearchCommand</span><span class="p">(</span><span class="n">SearchCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID SEARCH`` variant of the ``SEARCH`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
@@ -551,16 +625,22 @@
     <span class="n">delegate</span> <span class="o">=</span> <span class="n">SearchCommand</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidSearchCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidSearchCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidSearchCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidSearchCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidSearchCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">UidSearchCommand</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="UidStoreCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidStoreCommand">[docs]</a><span class="k">class</span> <span class="nc">UidStoreCommand</span><span class="p">(</span><span class="n">StoreCommand</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UidStoreCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidStoreCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">UidStoreCommand</span><span class="p">(</span><span class="n">StoreCommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``UID STORE`` variant of the ``STORE`` command, which uses message</span>
 <span class="sd">    UIDs instead of sequence numbers.</span>
 
@@ -570,16 +650,22 @@
     <span class="n">delegate</span> <span class="o">=</span> <span class="n">StoreCommand</span>
     <span class="n">uid</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="UidStoreCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidStoreCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UidStoreCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.UidStoreCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">UidStoreCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">UidStoreCommand</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
 
 
-<div class="viewcode-block" id="IdleCommand"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand">[docs]</a><span class="k">class</span> <span class="nc">IdleCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IdleCommand">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">IdleCommand</span><span class="p">(</span><span class="n">CommandSelect</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The ``IDLE`` command waits for the continuation string ``DONE`` from the</span>
 <span class="sd">    client. During this wait, the server may be sending untagged responses</span>
 <span class="sd">    indicating concurrent updates to the mailbox.</span>
@@ -601,13 +687,18 @@
 
     <span class="n">_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39;^(.*?)\r?\n&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="IdleCommand.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IdleCommand.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">IdleCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">EndLine</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span> <span class="n">buf</span></div>
 
-<div class="viewcode-block" id="IdleCommand.parse_done"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand.parse_done">[docs]</a>    <span class="k">def</span> <span class="nf">parse_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="IdleCommand.parse_done">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.command.select.IdleCommand.parse_done">[docs]</a>
+    <span class="k">def</span> <span class="nf">parse_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the continuation line sent by the client to end the ``IDLE``</span>
 <span class="sd">        command.</span>
 
@@ -620,7 +711,9 @@
             <span class="k">raise</span> <span class="n">NotParseable</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
         <span class="n">done</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">continuation</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="mi">0</span><span class="p">):]</span>
-        <span class="k">return</span> <span class="n">done</span><span class="p">,</span> <span class="n">buf</span></div></div>
+        <span class="k">return</span> <span class="n">done</span><span class="p">,</span> <span class="n">buf</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -671,7 +764,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -683,7 +776,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

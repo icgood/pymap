@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.search &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.search &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.search</a></li> 
@@ -81,7 +81,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SearchParams&#39;</span><span class="p">,</span> <span class="s1">&#39;SearchCriteria&#39;</span><span class="p">,</span> <span class="s1">&#39;SearchCriteriaSet&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="SearchParams"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchParams">[docs]</a><span class="k">class</span> <span class="nc">SearchParams</span><span class="p">:</span>
+<div class="viewcode-block" id="SearchParams">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchParams">[docs]</a>
+<span class="k">class</span> <span class="nc">SearchParams</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines certain parameters and routines necessary to process any</span>
 <span class="sd">    kind of search criteria. If a parameter is not supplied, or a method not</span>
 <span class="sd">    implemented, any search keys that require it will fail.</span>
@@ -105,7 +107,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session_flags</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">selected</span><span class="o">.</span><span class="n">session_flags</span></div>
 
 
-<div class="viewcode-block" id="SearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">SearchCriteria</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">SearchCriteria</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for different types of search criteria.</span>
 
 <span class="sd">    Args:</span>
@@ -122,7 +127,9 @@
         <span class="n">escaped_substr</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">substr</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">escaped_substr</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">re_flags</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="SearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteria.matches">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="SearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteria.matches">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implemented by sub-classes to define the search criteria.</span>
@@ -135,7 +142,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SearchCriteria.of"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteria.of">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="SearchCriteria.of">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteria.of">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">SearchKey</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchCriteria</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Factory method for producing a search criteria sub-class from a</span>
 <span class="sd">        search key.</span>
@@ -216,10 +226,14 @@
             <span class="k">return</span> <span class="n">HeaderSearchCriteria</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">key_name</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;BODY&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;TEXT&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">BodySearchCriteria</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">filter_str</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">SearchNotAllowed</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div></div>
+        <span class="k">raise</span> <span class="n">SearchNotAllowed</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="SearchCriteriaSet"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteriaSet">[docs]</a><span class="k">class</span> <span class="nc">SearchCriteriaSet</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SearchCriteriaSet">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteriaSet">[docs]</a>
+<span class="k">class</span> <span class="nc">SearchCriteriaSet</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Search criteria composed of a set of search criteria that must all</span>
 <span class="sd">    match. If the set is empty, nothing will match.</span>
 
@@ -249,7 +263,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">seqset_crit</span><span class="o">.</span><span class="n">seq_set</span>
 
-<div class="viewcode-block" id="SearchCriteriaSet.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteriaSet.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="SearchCriteriaSet.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SearchCriteriaSet.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The message matches if all the defined search key criteria match.</span>
 
@@ -259,30 +275,46 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">crit</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">)</span>
-                   <span class="k">for</span> <span class="n">crit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_criteria</span><span class="p">)</span></div></div>
+                   <span class="k">for</span> <span class="n">crit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_criteria</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="InverseSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.InverseSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">InverseSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="InverseSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.InverseSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">InverseSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches only if the given search criteria does not match.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">SearchKey</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">SearchCriteria</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InverseSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.InverseSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="InverseSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.InverseSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="AllSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.AllSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">AllSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AllSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.AllSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">AllSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Always matches anything.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AllSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.AllSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="AllSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.AllSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span></div></div>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
 
 
-<div class="viewcode-block" id="OrSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.OrSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">OrSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="OrSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.OrSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">OrSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if either of the search criteria match.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">SearchKey</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">SearchKey</span><span class="p">,</span>
@@ -291,13 +323,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">SearchCriteria</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">SearchCriteria</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 
-<div class="viewcode-block" id="OrSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.OrSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="OrSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.OrSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">))</span></div></div>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">msg_seq</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">))</span></div>
+</div>
 
 
-<div class="viewcode-block" id="SequenceSetSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SequenceSetSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">SequenceSetSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SequenceSetSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SequenceSetSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">SequenceSetSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message is contained in the sequence set.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -308,15 +346,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">flat</span> <span class="o">=</span> <span class="n">seq_set</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">max_seq</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SequenceSetSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SequenceSetSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="SequenceSetSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SequenceSetSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_set</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">uid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flat</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">msg_seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flat</span></div></div>
+            <span class="k">return</span> <span class="n">msg_seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flat</span></div>
+</div>
 
 
-<div class="viewcode-block" id="HasEmailIdSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasEmailIdSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">HasEmailIdSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HasEmailIdSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasEmailIdSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">HasEmailIdSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message has the same</span>
 <span class="sd">    :attr:`~pymap.interfaces.message.MessageInterface.email_id` value.</span>
 
@@ -326,17 +370,23 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">email_id</span> <span class="o">=</span> <span class="n">email_id</span>
 
-<div class="viewcode-block" id="HasEmailIdSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasEmailIdSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="HasEmailIdSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasEmailIdSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">email_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">email_id</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">email_id</span> <span class="o">==</span> <span class="n">email_id</span></div></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">email_id</span> <span class="o">==</span> <span class="n">email_id</span></div>
+</div>
 
 
-<div class="viewcode-block" id="HasThreadIdSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasThreadIdSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">HasThreadIdSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HasThreadIdSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasThreadIdSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">HasThreadIdSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message has the same</span>
 <span class="sd">    :attr:`~pymap.interfaces.message.MessageInterface.thread_id` value.</span>
 
@@ -346,12 +396,18 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thread_id</span> <span class="o">=</span> <span class="n">thread_id</span>
 
-<div class="viewcode-block" id="HasThreadIdSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasThreadIdSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="HasThreadIdSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasThreadIdSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_id</span> <span class="o">==</span> <span class="n">msg</span><span class="o">.</span><span class="n">thread_id</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thread_id</span> <span class="o">==</span> <span class="n">msg</span><span class="o">.</span><span class="n">thread_id</span></div>
+</div>
 
 
-<div class="viewcode-block" id="HasFlagSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasFlagSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">HasFlagSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HasFlagSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasFlagSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">HasFlagSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message has the given flag in their permanent or</span>
 <span class="sd">    session flag sets.</span>
 
@@ -363,23 +419,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="n">flag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expected</span> <span class="o">=</span> <span class="n">expected</span>
 
-<div class="viewcode-block" id="HasFlagSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasFlagSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="HasFlagSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HasFlagSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">has_flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">session_flags</span><span class="p">)</span>
         <span class="n">expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">has_flag</span> <span class="ow">and</span> <span class="n">expected</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">expected</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_flag</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">has_flag</span> <span class="ow">and</span> <span class="n">expected</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">expected</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_flag</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="NewSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.NewSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">NewSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="NewSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.NewSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">NewSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message is considered &quot;new&quot;, i.e. recent and unseen.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="NewSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.NewSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="NewSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.NewSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">flags</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">session_flags</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Recent</span> <span class="ow">in</span> <span class="n">flags</span> <span class="ow">and</span> <span class="n">Seen</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flags</span></div></div>
+        <span class="k">return</span> <span class="n">Recent</span> <span class="ow">in</span> <span class="n">flags</span> <span class="ow">and</span> <span class="n">Seen</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flags</span></div>
+</div>
 
 
-<div class="viewcode-block" id="DateSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.DateSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">DateSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="DateSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.DateSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">DateSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches by comparing against the internal date of the message.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">when</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -393,7 +461,9 @@
             <span class="o">-&gt;</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">internal_date</span>
 
-<div class="viewcode-block" id="DateSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.DateSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="DateSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.DateSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">msg_datetime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_msg_date</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">loaded_msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">msg_datetime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -405,10 +475,14 @@
             <span class="k">return</span> <span class="n">msg_date</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">when</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span>  <span class="c1"># SINCE</span>
             <span class="k">return</span> <span class="n">msg_date</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">when</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">)</span></div></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="HeaderDateSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HeaderDateSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">HeaderDateSearchCriteria</span><span class="p">(</span><span class="n">DateSearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HeaderDateSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HeaderDateSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">HeaderDateSearchCriteria</span><span class="p">(</span><span class="n">DateSearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches by comparing against the ``Date:`` header of the message.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
@@ -419,7 +493,10 @@
         <span class="k">return</span> <span class="n">envelope</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">datetime</span> <span class="k">if</span> <span class="n">envelope</span><span class="o">.</span><span class="n">date</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="SizeSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SizeSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">SizeSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SizeSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SizeSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">SizeSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches by comparing against the size of the message.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -427,17 +504,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">op</span>
 
-<div class="viewcode-block" id="SizeSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.SizeSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="SizeSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.SizeSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">size</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">)</span></div></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="EnvelopeSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.EnvelopeSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">EnvelopeSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EnvelopeSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.EnvelopeSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">EnvelopeSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches by checking for strings within various fields of the envelope</span>
 <span class="sd">    structure.</span>
 
@@ -448,7 +531,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="EnvelopeSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.EnvelopeSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="EnvelopeSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.EnvelopeSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">envelope</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_envelope_structure</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;BCC&#39;</span><span class="p">:</span>
@@ -472,10 +557,14 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">envelope</span><span class="o">.</span><span class="n">to</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">to</span><span class="p">))</span> <span class="k">for</span> <span class="n">to</span> <span class="ow">in</span> <span class="n">envelope</span><span class="o">.</span><span class="n">to</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span></div></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="HeaderSearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HeaderSearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">HeaderSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HeaderSearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HeaderSearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">HeaderSearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message has a header containing a value.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -483,22 +572,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="HeaderSearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.HeaderSearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="HeaderSearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.HeaderSearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">get_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="BodySearchCriteria"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.BodySearchCriteria">[docs]</a><span class="k">class</span> <span class="nc">BodySearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BodySearchCriteria">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.BodySearchCriteria">[docs]</a>
+<span class="k">class</span> <span class="nc">BodySearchCriteria</span><span class="p">(</span><span class="n">SearchCriteria</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches if the message body contains a value.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">SearchParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BodySearchCriteria.matches"><a class="viewcode-back" href="../../pymap.search.html#pymap.search.BodySearchCriteria.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
+<div class="viewcode-block" id="BodySearchCriteria.matches">
+<a class="viewcode-back" href="../../pymap.search.html#pymap.search.BodySearchCriteria.matches">[docs]</a>
+    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_seq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MessageInterface</span><span class="p">,</span>
                 <span class="n">loaded_msg</span><span class="p">:</span> <span class="n">LoadedMessageInterface</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">loaded_msg</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -549,7 +648,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.search</a></li> 
@@ -559,7 +658,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

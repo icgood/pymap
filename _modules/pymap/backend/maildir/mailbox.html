@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.backend.maildir.mailbox &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.backend.maildir.mailbox &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../maildir.html" accesskey="U">pymap.backend.maildir</a> &#187;</li>
@@ -96,7 +96,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Maildir&#39;</span><span class="p">,</span> <span class="s1">&#39;Message&#39;</span><span class="p">,</span> <span class="s1">&#39;MailboxData&#39;</span><span class="p">,</span> <span class="s1">&#39;MailboxSet&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Maildir"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir">[docs]</a><span class="k">class</span> <span class="nc">Maildir</span><span class="p">(</span><span class="n">_Maildir</span><span class="p">):</span>
+<div class="viewcode-block" id="Maildir">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir">[docs]</a>
+<span class="k">class</span> <span class="nc">Maildir</span><span class="p">(</span><span class="n">_Maildir</span><span class="p">):</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_path_new</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -126,7 +128,9 @@
     <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_toc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">subpath</span>  <span class="c1"># type: ignore</span>
 
-<div class="viewcode-block" id="Maildir.claim_new"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.claim_new">[docs]</a>    <span class="k">def</span> <span class="nf">claim_new</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="Maildir.claim_new">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.claim_new">[docs]</a>
+    <span class="k">def</span> <span class="nf">claim_new</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks for messages in the ``new`` subdirectory, moving them to</span>
 <span class="sd">        ``cur`` and returning their keys.</span>
 
@@ -143,7 +147,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">colon</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Maildir.move_message"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.move_message">[docs]</a>    <span class="k">def</span> <span class="nf">move_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="n">Maildir</span><span class="p">,</span> <span class="n">dest_subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Maildir.move_message">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.move_message">[docs]</a>
+    <span class="k">def</span> <span class="nf">move_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="n">Maildir</span><span class="p">,</span> <span class="n">dest_subdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves the message to another maildir.&quot;&quot;&quot;</span>
         <span class="n">subpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="n">subdir</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split</span><span class="p">(</span><span class="n">subpath</span><span class="p">)</span>
@@ -153,7 +160,10 @@
         <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="Maildir.get_message_metadata"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.get_message_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_message_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaildirMessage</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Maildir.get_message_metadata">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.get_message_metadata">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_message_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MaildirMessage</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Like :meth:`~mailbox.Maildir.get_message` but the message contents</span>
 <span class="sd">        are not read from disk.</span>
 
@@ -167,7 +177,10 @@
         <span class="n">msg</span><span class="o">.</span><span class="n">set_date</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_join</span><span class="p">(</span><span class="n">subpath</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">msg</span></div>
 
-<div class="viewcode-block" id="Maildir.update_metadata"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.update_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MaildirMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Maildir.update_metadata">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Maildir.update_metadata">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">MaildirMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses :func:`os.rename` to atomically update the message filename</span>
 <span class="sd">        based on :meth:`~mailbox.MaildirMessage.get_info`.</span>
 
@@ -183,10 +196,14 @@
             <span class="n">old_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_join</span><span class="p">(</span><span class="n">subpath</span><span class="p">)</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_join</span><span class="p">(</span><span class="n">new_subpath</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">old_path</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">new_subpath</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">new_subpath</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">BaseMessage</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Message">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Message">[docs]</a>
+<span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">BaseMessage</span><span class="p">):</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;recent&#39;</span><span class="p">,</span> <span class="s1">&#39;_maildir&#39;</span><span class="p">,</span> <span class="s1">&#39;_key&#39;</span><span class="p">]</span>
 
@@ -204,7 +221,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span> <span class="o">=</span> <span class="n">maildir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="o">=</span> <span class="n">key</span>
 
-<div class="viewcode-block" id="Message.load_content"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Message.load_content">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">load_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">)</span> \
+<div class="viewcode-block" id="Message.load_content">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.Message.load_content">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">load_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">LoadedMessage</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span> <span class="ow">is</span> <span class="kc">None</span> \
                 <span class="ow">or</span> <span class="n">requirement</span><span class="o">.</span><span class="n">has_none</span><span class="p">(</span><span class="n">FetchRequirement</span><span class="o">.</span><span class="n">CONTENT</span><span class="p">):</span>
@@ -216,6 +235,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">MessageContent</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">maildir_msg</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">LoadedMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span></div>
+
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">copy_expunged</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -249,11 +269,14 @@
                    <span class="n">recent</span><span class="o">=</span><span class="n">recent</span><span class="p">,</span> <span class="n">maildir</span><span class="o">=</span><span class="n">maildir</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span></div>
 
 
+
 <span class="k">class</span> <span class="nc">LoadedMessage</span><span class="p">(</span><span class="n">BaseLoadedMessage</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="MailboxData"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData">[docs]</a><span class="k">class</span> <span class="nc">MailboxData</span><span class="p">(</span><span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
+<div class="viewcode-block" id="MailboxData">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData">[docs]</a>
+<span class="k">class</span> <span class="nc">MailboxData</span><span class="p">(</span><span class="n">MailboxDataInterface</span><span class="p">[</span><span class="n">Message</span><span class="p">]):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mailbox_id</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">,</span> <span class="n">maildir</span><span class="p">:</span> <span class="n">Maildir</span><span class="p">,</span>
                  <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -312,7 +335,9 @@
             <span class="n">maildir_msg</span> <span class="o">=</span> <span class="n">maildir</span><span class="o">.</span><span class="n">get_message_metadata</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">record</span><span class="p">,</span> <span class="n">maildir_msg</span>
 
-<div class="viewcode-block" id="MailboxData.update_selected"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.update_selected">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">update_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+<div class="viewcode-block" id="MailboxData.update_selected">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.update_selected">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">update_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                               <span class="n">wait_on</span><span class="p">:</span> <span class="n">Event</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">wait_on</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">wait_on</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
@@ -320,7 +345,10 @@
         <span class="n">selected</span><span class="o">.</span><span class="n">set_messages</span><span class="p">(</span><span class="n">all_messages</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">selected</span></div>
 
-<div class="viewcode-block" id="MailboxData.append"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.append">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">append_msg</span><span class="p">:</span> <span class="n">AppendMessage</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+
+<div class="viewcode-block" id="MailboxData.append">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.append">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">append_msg</span><span class="p">:</span> <span class="n">AppendMessage</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                      <span class="n">recent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
         <span class="n">maildir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span>
         <span class="n">email_id</span> <span class="o">=</span> <span class="n">ObjectId</span><span class="o">.</span><span class="n">random_email_id</span><span class="p">()</span>
@@ -339,7 +367,10 @@
             <span class="n">new_rec</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">maildir_msg</span><span class="p">,</span> <span class="n">maildir</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">email_id</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">maildir_flags</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxData.copy"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.copy">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">MailboxData</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+
+<div class="viewcode-block" id="MailboxData.copy">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.copy">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">MailboxData</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                    <span class="n">recent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dest_maildir</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="n">_maildir</span>
         <span class="k">try</span><span class="p">:</span>
@@ -357,7 +388,10 @@
             <span class="n">uidl</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">new_rec</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_rec</span><span class="o">.</span><span class="n">uid</span></div>
 
-<div class="viewcode-block" id="MailboxData.move"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.move">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">MailboxData</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+
+<div class="viewcode-block" id="MailboxData.move">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.move">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">MailboxData</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                    <span class="n">recent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">maildir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span>
         <span class="n">dest_maildir</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="n">_maildir</span>
@@ -380,7 +414,10 @@
             <span class="n">uidl</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">new_rec</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_rec</span><span class="o">.</span><span class="n">uid</span></div>
 
-<div class="viewcode-block" id="MailboxData.get"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.get">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxData.get">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.get">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
         <span class="n">maildir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">record</span><span class="p">,</span> <span class="n">maildir_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_maildir_msg</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
@@ -393,7 +430,10 @@
             <span class="n">uid</span><span class="p">,</span> <span class="n">maildir_msg</span><span class="p">,</span> <span class="n">maildir</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">email_id</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">maildir_flags</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxData.update"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.update">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">,</span>
+
+<div class="viewcode-block" id="MailboxData.update">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.update">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cached_msg</span><span class="p">:</span> <span class="n">CachedMessage</span><span class="p">,</span>
                      <span class="n">flag_set</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="n">FlagOp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
         <span class="n">maildir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span>
         <span class="k">try</span><span class="p">:</span>
@@ -418,7 +458,10 @@
             <span class="n">uid</span><span class="p">,</span> <span class="n">maildir_msg</span><span class="p">,</span> <span class="n">maildir</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">email_id</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">maildir_flags</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxData.delete"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.delete">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxData.delete">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.delete">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">UidList</span><span class="o">.</span><span class="n">with_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">uidl</span><span class="p">:</span>
             <span class="n">records</span> <span class="o">=</span> <span class="n">uidl</span><span class="o">.</span><span class="n">get_all</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages_lock</span><span class="o">.</span><span class="n">write_lock</span><span class="p">():</span>
@@ -428,7 +471,10 @@
                 <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
                     <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="MailboxData.claim_recent"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.claim_recent">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">claim_recent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxData.claim_recent">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.claim_recent">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">claim_recent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages_lock</span><span class="o">.</span><span class="n">write_lock</span><span class="p">():</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span><span class="o">.</span><span class="n">claim_new</span><span class="p">()</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">UidList</span><span class="o">.</span><span class="n">with_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">uidl</span><span class="p">:</span>
@@ -436,7 +482,10 @@
                 <span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
                     <span class="n">selected</span><span class="o">.</span><span class="n">session_flags</span><span class="o">.</span><span class="n">add_recent</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxData.cleanup"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.cleanup">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxData.cleanup">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.cleanup">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_maildir</span><span class="o">.</span><span class="n">clean</span><span class="p">()</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_keys</span><span class="p">()</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">UidList</span><span class="o">.</span><span class="n">with_write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">uidl</span><span class="p">:</span>
@@ -449,6 +498,7 @@
                     <span class="n">filename</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">info</span>
                     <span class="n">new_rec</span> <span class="o">=</span> <span class="n">Record</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
                     <span class="n">uidl</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">new_rec</span><span class="p">)</span></div>
+
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">messages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterable</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">UidList</span><span class="o">.</span><span class="n">with_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">uidl</span><span class="p">:</span>
@@ -483,7 +533,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_next_uid</span> <span class="o">=</span> <span class="n">uidl</span><span class="o">.</span><span class="n">next_uid</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="MailboxData.snapshot"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.snapshot">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxSnapshot</span><span class="p">:</span>
+<div class="viewcode-block" id="MailboxData.snapshot">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxData.snapshot">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxSnapshot</span><span class="p">:</span>
         <span class="n">exists</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">recent</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">unseen</span> <span class="o">=</span> <span class="mi">0</span>
@@ -502,6 +554,7 @@
                                <span class="bp">self</span><span class="o">.</span><span class="n">session_flags</span><span class="p">,</span> <span class="n">exists</span><span class="p">,</span> <span class="n">recent</span><span class="p">,</span> <span class="n">unseen</span><span class="p">,</span>
                                <span class="n">first_unseen</span><span class="p">,</span> <span class="n">next_uid</span><span class="p">)</span></div>
 
+
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="n">keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages_lock</span><span class="o">.</span><span class="n">read_lock</span><span class="p">():</span>
@@ -515,7 +568,10 @@
         <span class="k">return</span> <span class="n">keys</span></div>
 
 
-<div class="viewcode-block" id="MailboxSet"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet">[docs]</a><span class="k">class</span> <span class="nc">MailboxSet</span><span class="p">(</span><span class="n">MailboxSetInterface</span><span class="p">[</span><span class="n">MailboxData</span><span class="p">]):</span>
+
+<div class="viewcode-block" id="MailboxSet">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet">[docs]</a>
+<span class="k">class</span> <span class="nc">MailboxSet</span><span class="p">(</span><span class="n">MailboxSetInterface</span><span class="p">[</span><span class="n">MailboxData</span><span class="p">]):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maildir</span><span class="p">:</span> <span class="n">Maildir</span><span class="p">,</span>
                  <span class="n">layout</span><span class="p">:</span> <span class="n">MaildirLayout</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -529,22 +585,33 @@
     <span class="k">def</span> <span class="nf">delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s1">&#39;/&#39;</span>
 
-<div class="viewcode-block" id="MailboxSet.set_subscribed"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.set_subscribed">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subscribed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MailboxSet.set_subscribed">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.set_subscribed">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">set_subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subscribed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">Subscriptions</span><span class="o">.</span><span class="n">with_write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">subs</span><span class="p">:</span>
             <span class="n">subs</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">subscribed</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxSet.list_subscribed"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.list_subscribed">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxSet.list_subscribed">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.list_subscribed">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_subscribed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">Subscriptions</span><span class="o">.</span><span class="n">with_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">subs</span><span class="p">:</span>
             <span class="n">subscribed</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">subs</span><span class="o">.</span><span class="n">subscribed</span><span class="p">)</span>
         <span class="n">mailboxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">list_folders</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
                      <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">subscribed</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ListTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">mailboxes</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxSet.list_mailboxes"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.list_mailboxes">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_mailboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxSet.list_mailboxes">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.list_mailboxes">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">list_mailboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ListTree</span><span class="p">:</span>
         <span class="n">mailboxes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">list_folders</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ListTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">mailboxes</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxSet.get_mailbox"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.get_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxData</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxSet.get_mailbox">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.get_mailbox">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MailboxData</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
             <span class="n">maildir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inbox_maildir</span>
         <span class="k">else</span><span class="p">:</span>
@@ -562,7 +629,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mbx</span>
         <span class="k">return</span> <span class="k">await</span> <span class="n">mbx</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MailboxSet.add_mailbox"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.add_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">add_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxSet.add_mailbox">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.add_mailbox">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">add_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObjectId</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">add_folder</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileExistsError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -572,7 +642,10 @@
             <span class="n">global_uid</span> <span class="o">=</span> <span class="n">uidl</span><span class="o">.</span><span class="n">global_uid</span>
         <span class="k">return</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">global_uid</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MailboxSet.delete_mailbox"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.delete_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxSet.delete_mailbox">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.delete_mailbox">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">remove_folder</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
@@ -582,11 +655,16 @@
                 <span class="k">raise</span> <span class="n">MailboxHasChildren</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
             <span class="k">raise</span> <span class="n">exc</span></div>
 
-<div class="viewcode-block" id="MailboxSet.rename_mailbox"><a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.rename_mailbox">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">rename_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">after</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MailboxSet.rename_mailbox">
+<a class="viewcode-back" href="../../../../pymap.backend.maildir.html#pymap.backend.maildir.mailbox.MailboxSet.rename_mailbox">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">rename_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">after</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">before</span> <span class="o">==</span> <span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NotSupportedError</span><span class="p">()</span>  <span class="c1"># TODO</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">rename_folder</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout</span><span class="o">.</span><span class="n">rename_folder</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -637,7 +715,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../maildir.html" >pymap.backend.maildir</a> &#187;</li>
@@ -648,7 +726,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

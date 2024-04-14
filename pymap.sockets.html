@@ -2,19 +2,19 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.sockets &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.sockets &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="_static/documentation_options.js?v=3795f234"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.selected.html" title="pymap.selected"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code></a></li> 
       </ul>
@@ -69,42 +69,42 @@
           <div class="body" role="main">
             
   <section id="module-pymap.sockets">
-<span id="pymap-sockets"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code><a class="headerlink" href="#module-pymap.sockets" title="Permalink to this heading">¶</a></h1>
+<span id="pymap-sockets"></span><h1><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code><a class="headerlink" href="#module-pymap.sockets" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pymap.sockets.InheritedSockets">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sockets.</span></span><span class="sig-name descname"><span class="pre">InheritedSockets</span></span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymap.sockets.</span></span><span class="sig-name descname"><span class="pre">InheritedSockets</span></span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets" title="Link to this definition">¶</a></dt>
 <dd><p>Abstracts the ability to retrieve inherited sockets from the calling
 process, usually a service management framework.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.sockets.InheritedSockets.get">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.get" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.get" title="Link to this definition">¶</a></dt>
 <dd><p>Return the sockets inherited by the process.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.11)"><em>Sequence</em></a>[<a class="reference external" href="https://docs.python.org/3/library/socket.html#socket.socket" title="(in Python v3.11)"><em>socket</em></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.12)"><em>Sequence</em></a>[<a class="reference external" href="https://docs.python.org/3/library/socket.html#socket.socket" title="(in Python v3.12)"><em>socket</em></a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.sockets.InheritedSockets.supports">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.supports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.supports" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">supports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.supports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.supports" title="Link to this definition">¶</a></dt>
 <dd><p>Return True if the given service manager is supported. This does not
 guarantee the service manager will provide inherited sockets, only that
 it is available to <a class="reference internal" href="#pymap.sockets.InheritedSockets.of" title="pymap.sockets.InheritedSockets.of"><code class="xref py py-meth docutils literal notranslate"><span class="pre">of()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>service_manager</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The service manager name.</p>
+<dd class="field-odd"><p><strong>service_manager</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The service manager name.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.sockets.InheritedSockets.of">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.of" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.of" title="Link to this definition">¶</a></dt>
 <dd><p>Return the inherited sockets for the given service manager.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -112,7 +112,7 @@ it is available to <a class="reference internal" href="#pymap.sockets.InheritedS
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>service_manager</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The service manager name.</p>
+<dd class="field-odd"><p><strong>service_manager</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The service manager name.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.sockets.InheritedSockets" title="pymap.sockets.InheritedSockets"><em>InheritedSockets</em></a></p>
@@ -122,7 +122,7 @@ it is available to <a class="reference internal" href="#pymap.sockets.InheritedS
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pymap.sockets.InheritedSockets.for_systemd">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_systemd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.for_systemd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.for_systemd" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_systemd</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymap/sockets.html#InheritedSockets.for_systemd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymap.sockets.InheritedSockets.for_systemd" title="Link to this definition">¶</a></dt>
 <dd><p>Return the inherited sockets for <a class="reference external" href="https://freedesktop.org/wiki/Software/systemd/">systemd</a>. The <a class="reference external" href="https://github.com/systemd/python-systemd">python-systemd</a>
 library must be installed.</p>
 <div class="admonition seealso">
@@ -131,7 +131,7 @@ library must be installed.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.11)"><strong>NotImplementedError</strong></a> – </p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.12)"><strong>NotImplementedError</strong></a> – </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pymap.sockets.InheritedSockets" title="pymap.sockets.InheritedSockets"><em>InheritedSockets</em></a></p>
@@ -230,7 +230,7 @@ library must be installed.</p>
         <li class="right" >
           <a href="pymap.selected.html" title="pymap.selected"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.sockets</span></code></a></li> 
       </ul>
@@ -239,7 +239,7 @@ library must be installed.</p>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

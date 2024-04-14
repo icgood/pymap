@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.config &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.config &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.config</a></li> 
@@ -103,7 +103,9 @@
                          <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="BackendCapability"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.BackendCapability">[docs]</a><span class="k">class</span> <span class="nc">BackendCapability</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]):</span>
+<div class="viewcode-block" id="BackendCapability">
+<a class="viewcode-back" href="../../pymap.config.html#pymap.config.BackendCapability">[docs]</a>
+<span class="k">class</span> <span class="nc">BackendCapability</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Declares the IMAP capabilities that the backend supports.</span>
 
 <span class="sd">    Args:</span>
@@ -153,7 +155,10 @@
         <span class="k">return</span> <span class="nb">repr</span><span class="p">([</span><span class="n">cap</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">cap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capability</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="IMAPConfig"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig">[docs]</a><span class="k">class</span> <span class="nc">IMAPConfig</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+
+<div class="viewcode-block" id="IMAPConfig">
+<a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig">[docs]</a>
+<span class="k">class</span> <span class="nc">IMAPConfig</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Configurable settings that control how the IMAP server operates and what</span>
 <span class="sd">    extensions it supports.</span>
 
@@ -231,7 +236,9 @@
             <span class="n">ProxyProtocolVersion</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">proxy_protocol</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_append_len</span> <span class="o">=</span> <span class="n">max_append_len</span>
 
-<div class="viewcode-block" id="IMAPConfig.parse_args"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.parse_args">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IMAPConfig.parse_args">
+<a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.parse_args">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given command-line arguments, return a dictionary of keywords that</span>
 <span class="sd">        should be passed in to the :class:`IMAPConfig` (or sub-class)</span>
@@ -243,7 +250,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{}</span></div>
 
-<div class="viewcode-block" id="IMAPConfig.from_args"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.from_args">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="IMAPConfig.from_args">
+<a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.from_args">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">ConfigT</span><span class="p">],</span> <span class="n">args</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span>
                   <span class="o">**</span><span class="n">overrides</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and return a new :class:`IMAPConfig` using command-line</span>
@@ -259,13 +269,17 @@
                    <span class="n">cert_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="n">key_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
                    <span class="n">tls_enabled</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">tls</span><span class="p">,</span> <span class="o">**</span><span class="n">parsed_args</span><span class="p">,</span> <span class="o">**</span><span class="n">overrides</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="IMAPConfig.apply_context"><a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.apply_context">[docs]</a>    <span class="k">def</span> <span class="nf">apply_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="IMAPConfig.apply_context">
+<a class="viewcode-back" href="../../pymap.config.html#pymap.config.IMAPConfig.apply_context">[docs]</a>
+    <span class="k">def</span> <span class="nf">apply_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the configured settings to any :mod:`~pymap.context`</span>
 <span class="sd">        variables.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsystem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">subsystem</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subsystem</span><span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
@@ -377,6 +391,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">id_response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -427,7 +442,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.config</a></li> 
@@ -437,7 +452,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

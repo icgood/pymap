@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.bytes &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.bytes &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.bytes</a></li> 
@@ -86,7 +86,9 @@
 <span class="n">_FormatArg</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">SupportsIndex</span> <span class="o">|</span> <span class="n">MaybeBytes</span>
 
 
-<div class="viewcode-block" id="has_bytes"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.has_bytes">[docs]</a><span class="k">def</span> <span class="nf">has_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">]:</span>
+<div class="viewcode-block" id="has_bytes">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.has_bytes">[docs]</a>
+<span class="k">def</span> <span class="nf">has_bytes</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the *value* is :class:`bytes` or implements the ``__bytes__``</span>
 <span class="sd">    method to be converted to bytes.</span>
 
@@ -97,7 +99,10 @@
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">SupportsBytes</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="WriteStream"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.WriteStream">[docs]</a><span class="k">class</span> <span class="nc">WriteStream</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="WriteStream">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.WriteStream">[docs]</a>
+<span class="k">class</span> <span class="nc">WriteStream</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Typing protocol indicating the object implements the :meth:`.write`</span>
 <span class="sd">    method.</span>
 
@@ -106,7 +111,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="WriteStream.write"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.WriteStream.write">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="WriteStream.write">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.WriteStream.write">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines an abstract method where ``data`` is written to a stream or</span>
 <span class="sd">        buffer.</span>
@@ -115,7 +122,9 @@
 <span class="sd">            data: The data to write.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">HashStream</span><span class="p">(</span><span class="n">WriteStream</span><span class="p">):</span>
@@ -145,12 +154,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_digest</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Writeable"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable">[docs]</a><span class="k">class</span> <span class="nc">Writeable</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="Writeable">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable">[docs]</a>
+<span class="k">class</span> <span class="nc">Writeable</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for types that can be written to a stream.&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="Writeable.tobytes"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.tobytes">[docs]</a>    <span class="nd">@final</span>
+<div class="viewcode-block" id="Writeable.tobytes">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.tobytes">[docs]</a>
+    <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">tobytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the writeable object back into a bytestring using the</span>
 <span class="sd">        :meth:`.write` method.</span>
@@ -160,12 +173,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">writer</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">writer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Writeable.empty"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.empty">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Writeable.empty">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.empty">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a :class:`Writeable` for an empty string.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_EmptyWriteable</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Writeable.wrap"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.wrap">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Writeable.wrap">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.wrap">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">MaybeBytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrap the bytes in a :class:`Writeable`.</span>
 
@@ -175,7 +194,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_WrappedWriteable</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Writeable.concat"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.concat">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Writeable.concat">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.concat">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MaybeBytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrap the iterable in a :class:`Writeable` that will write each item.</span>
 
@@ -185,7 +207,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ConcatWriteable</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Writeable.write"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Writeable.write">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.Writeable.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the object to the stream, with one or more calls to</span>
 <span class="sd">        :meth:`~WriteStream.write`.</span>
 
@@ -194,6 +219,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
 
     <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -207,6 +233,7 @@
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span></div>
+
 
 
 <span class="k">class</span> <span class="nc">_EmptyWriteable</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
@@ -265,7 +292,9 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;Writeable </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="si">!r}</span><span class="s1">&gt;&#39;</span>
 
 
-<div class="viewcode-block" id="BytesFormat"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.BytesFormat">[docs]</a><span class="k">class</span> <span class="nc">BytesFormat</span><span class="p">:</span>
+<div class="viewcode-block" id="BytesFormat">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.BytesFormat">[docs]</a>
+<span class="k">class</span> <span class="nc">BytesFormat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper utility for performing formatting operations that produce</span>
 <span class="sd">    bytestrings. While similar to the builtin formatting and join</span>
 <span class="sd">    operations, this class intends to provide cleaner typing.</span>
@@ -306,7 +335,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BytesFormat.format"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.BytesFormat.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_FormatArg</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<div class="viewcode-block" id="BytesFormat.format">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.BytesFormat.format">[docs]</a>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_FormatArg</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;String interpolation into the format string.</span>
 
 <span class="sd">        Args:</span>
@@ -322,6 +353,7 @@
         <span class="n">fix_arg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_format_arg</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">how</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fix_arg</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span></div>
 
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_fix_join_arg</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">_FormatArg</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
@@ -329,7 +361,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BytesFormat.join"><a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.BytesFormat.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_FormatArg</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<div class="viewcode-block" id="BytesFormat.join">
+<a class="viewcode-back" href="../../pymap.bytes.html#pymap.bytes.BytesFormat.join">[docs]</a>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_FormatArg</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterable join on a delimiter.</span>
 
 <span class="sd">        Args:</span>
@@ -342,7 +376,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fix_arg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_join_arg</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">how</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fix_arg</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">))</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">how</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fix_arg</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">))</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -393,7 +429,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.bytes</a></li> 
@@ -403,7 +439,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

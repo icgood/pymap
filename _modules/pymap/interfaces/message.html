@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.interfaces.message &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.interfaces.message &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.message</a></li> 
@@ -88,7 +88,9 @@
 <span class="n">FlagsKey</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]]</span>
 
 
-<div class="viewcode-block" id="CachedMessage"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.CachedMessage">[docs]</a><span class="k">class</span> <span class="nc">CachedMessage</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<div class="viewcode-block" id="CachedMessage">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.CachedMessage">[docs]</a>
+<span class="k">class</span> <span class="nc">CachedMessage</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Cached message metadata used to track state changes. Used to produce</span>
 <span class="sd">    untagged FETCH responses when a message&#39;s flags have changed, or when a</span>
 <span class="sd">    FETCH command requests metadata of an expunged message before its untagged</span>
@@ -140,7 +142,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="CachedMessage.get_flags"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.CachedMessage.get_flags">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="CachedMessage.get_flags">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.CachedMessage.get_flags">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_flags</span><span class="p">:</span> <span class="n">SessionFlags</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the full set of permanent and session flags for the message.</span>
 
@@ -148,10 +152,14 @@
 <span class="sd">            session_flags: The current session flags.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
 
 
-<div class="viewcode-block" id="MessageInterface"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface">[docs]</a><span class="k">class</span> <span class="nc">MessageInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MessageInterface">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Message data such as UID, permanent flags, and when the message was</span>
 <span class="sd">    added to the system.</span>
 
@@ -205,7 +213,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="MessageInterface.get_flags"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface.get_flags">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MessageInterface.get_flags">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface.get_flags">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_flags</span><span class="p">:</span> <span class="n">SessionFlags</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the full set of permanent and session flags for the message.</span>
 
@@ -215,7 +225,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="MessageInterface.load_content"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="MessageInterface.load_content">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.MessageInterface.load_content">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">load_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement</span><span class="p">:</span> <span class="n">FetchRequirement</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">LoadedMessageInterface</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the content of the message.</span>
@@ -224,10 +237,14 @@
 <span class="sd">            requirement: The data required from the message content.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
 
 
-<div class="viewcode-block" id="LoadedMessageInterface"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface">[docs]</a><span class="k">class</span> <span class="nc">LoadedMessageInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">LoadedMessageInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The loaded message content, which may include the header, the body,</span>
 <span class="sd">    both, or neither, depending on the requirements.</span>
 
@@ -252,7 +269,9 @@
     <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_header"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_header">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="LoadedMessageInterface.get_header">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_header">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the values of a header from the message.</span>
 
@@ -262,7 +281,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_headers"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_headers">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_headers">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_headers">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the headers from the message part.</span>
 
@@ -276,7 +298,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_message_headers"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_headers">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_message_headers">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_headers">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_message_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">subset</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">inverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
@@ -296,7 +321,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_message_text"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_text">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_message_text">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_message_text">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_message_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the text of the message part, not including headers.</span>
@@ -311,7 +339,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_body"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_body">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_body">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_body">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_body</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Writeable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the full body of the message part, including headers.</span>
@@ -328,7 +359,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_size"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_size">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_size">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_size">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the size of the message, in octets.</span>
 
@@ -338,7 +372,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_envelope_structure"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_envelope_structure">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_envelope_structure">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_envelope_structure">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_envelope_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvelopeStructure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and return the envelope structure.</span>
 
@@ -349,7 +386,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.get_body_structure"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_body_structure">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.get_body_structure">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.get_body_structure">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_body_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BodyStructure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and return the body structure.</span>
 
@@ -360,7 +400,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="LoadedMessageInterface.contains"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.contains">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="LoadedMessageInterface.contains">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.message.LoadedMessageInterface.contains">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the body of the message for a sub-string. This may be</span>
 <span class="sd">        optimized to only search headers and ``text/*`` MIME parts.</span>
@@ -369,7 +412,9 @@
 <span class="sd">            value: The sub-string to find.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -420,7 +465,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.message</a></li> 
@@ -430,7 +475,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

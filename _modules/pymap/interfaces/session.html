@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.interfaces.session &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.interfaces.session &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.session</a></li> 
@@ -81,7 +81,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SessionInterface&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="SessionInterface"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface">[docs]</a><span class="k">class</span> <span class="nc">SessionInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<div class="viewcode-block" id="SessionInterface">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface">[docs]</a>
+<span class="k">class</span> <span class="nc">SessionInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Corresponds to a single, authenticated IMAP session.&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -98,12 +100,17 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Manages the active and inactive filters for the login user.&quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-<div class="viewcode-block" id="SessionInterface.close"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.close">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="SessionInterface.close">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.close">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Called at the end of a session, to clean up any resources.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.cleanup"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.cleanup">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.cleanup">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.cleanup">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Called after every operation, success or failure, to allow the</span>
 <span class="sd">        backend to clean up resources.</span>
@@ -114,7 +121,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.list_mailboxes"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.list_mailboxes">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.list_mailboxes">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.list_mailboxes">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">list_mailboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                              <span class="n">subscribed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                              <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
@@ -137,7 +147,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.get_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.get_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.get_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.get_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">get_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                           <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MailboxInterface</span><span class="p">,</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
@@ -155,7 +168,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.create_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.create_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.create_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.create_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">create_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                              <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObjectId</span><span class="p">,</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
@@ -175,7 +191,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.delete_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.delete_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.delete_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.delete_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                              <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -196,7 +215,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.rename_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.rename_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.rename_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.rename_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">rename_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">before_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">after_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                              <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -218,7 +240,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.subscribe"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.subscribe">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.subscribe">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.subscribe">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                         <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -239,7 +264,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.unsubscribe"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.unsubscribe">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.unsubscribe">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.unsubscribe">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                           <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -260,7 +288,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.append_messages"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.append_messages">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.append_messages">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.append_messages">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">append_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                               <span class="n">messages</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AppendMessage</span><span class="p">],</span>
                               <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
@@ -283,7 +314,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.select_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.select_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.select_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.select_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">select_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">readonly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">MailboxInterface</span><span class="p">,</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Selects an existing mailbox owned by the user. The returned session</span>
@@ -306,7 +340,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.check_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.check_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.check_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.check_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">check_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                             <span class="n">wait_on</span><span class="p">:</span> <span class="n">Event</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">housekeeping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
@@ -338,7 +375,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.fetch_messages"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.fetch_messages">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.fetch_messages">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.fetch_messages">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
                              <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span> <span class="n">set_seen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageInterface</span><span class="p">]],</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
@@ -356,7 +396,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.search_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.search_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.search_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.search_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">search_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
                              <span class="n">keys</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">SearchKey</span><span class="p">])</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MessageInterface</span><span class="p">]],</span> <span class="n">SelectedMailbox</span><span class="p">]:</span>
@@ -377,7 +420,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.expunge_mailbox"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.expunge_mailbox">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.expunge_mailbox">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.expunge_mailbox">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">expunge_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
                               <span class="n">uid_set</span><span class="p">:</span> <span class="n">SequenceSet</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="n">SelectedMailbox</span><span class="p">:</span>
@@ -400,7 +446,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.copy_messages"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.copy_messages">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.copy_messages">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.copy_messages">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">copy_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
                             <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
                             <span class="n">mailbox</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
@@ -423,7 +472,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.move_messages"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.move_messages">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.move_messages">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.move_messages">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">move_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
                             <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
                             <span class="n">mailbox</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> \
@@ -446,7 +498,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="SessionInterface.update_flags"><a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.update_flags">[docs]</a>    <span class="nd">@abstractmethod</span>
+
+<div class="viewcode-block" id="SessionInterface.update_flags">
+<a class="viewcode-back" href="../../../pymap.interfaces.html#pymap.interfaces.session.SessionInterface.update_flags">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">update_flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">:</span> <span class="n">SelectedMailbox</span><span class="p">,</span>
                            <span class="n">sequence_set</span><span class="p">:</span> <span class="n">SequenceSet</span><span class="p">,</span>
                            <span class="n">flag_set</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="n">Flag</span><span class="p">],</span>
@@ -469,7 +524,9 @@
 <span class="sd">            :class:`~pymap.exceptions.MailboxReadOnly`</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span></div></div>
+        <span class="o">...</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -520,7 +577,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.interfaces.session</a></li> 
@@ -530,7 +587,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

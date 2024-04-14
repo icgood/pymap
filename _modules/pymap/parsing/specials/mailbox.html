@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.specials.mailbox &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.parsing.specials.mailbox &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -72,7 +72,9 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mailbox&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Mailbox"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.mailbox.Mailbox">[docs]</a><span class="k">class</span> <span class="nc">Mailbox</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<div class="viewcode-block" id="Mailbox">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.mailbox.Mailbox">[docs]</a>
+<span class="k">class</span> <span class="nc">Mailbox</span><span class="p">(</span><span class="n">Parseable</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a mailbox data object from an IMAP stream.</span>
 
 <span class="sd">    Args:</span>
@@ -94,7 +96,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The mailbox name.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mailbox</span>
 
-<div class="viewcode-block" id="Mailbox.parse"><a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.mailbox.Mailbox.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Mailbox.parse">
+<a class="viewcode-back" href="../../../../pymap.parsing.html#pymap.parsing.specials.mailbox.Mailbox.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Mailbox</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
         <span class="n">atom</span><span class="p">,</span> <span class="n">buf</span> <span class="o">=</span> <span class="n">AString</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
@@ -102,6 +106,7 @@
         <span class="k">if</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;INBOX&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">),</span> <span class="n">buf</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">modutf7_decode</span><span class="p">(</span><span class="n">mailbox</span><span class="p">)),</span> <span class="n">buf</span></div>
+
 
     <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -111,6 +116,7 @@
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -161,7 +167,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -172,7 +178,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

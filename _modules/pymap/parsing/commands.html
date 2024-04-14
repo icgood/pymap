@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.parsing.commands &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.parsing.commands &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../parsing.html" accesskey="U">pymap.parsing</a> &#187;</li>
@@ -98,7 +98,9 @@
     <span class="n">UidStoreCommand</span><span class="p">,</span> <span class="n">IdleCommand</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="InvalidCommand"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.InvalidCommand">[docs]</a><span class="k">class</span> <span class="nc">InvalidCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
+<div class="viewcode-block" id="InvalidCommand">
+<a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.InvalidCommand">[docs]</a>
+<span class="k">class</span> <span class="nc">InvalidCommand</span><span class="p">(</span><span class="n">Command</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An invalid command, either because the tag or command name could not be</span>
 <span class="sd">    parsed, the command name was not recognized, or a known command was given</span>
 <span class="sd">    invalid arguments.</span>
@@ -150,13 +152,19 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The parsing exception, if any.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_exc</span>
 
-<div class="viewcode-block" id="InvalidCommand.parse"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.InvalidCommand.parse">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="InvalidCommand.parse">
+<a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.InvalidCommand.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">InvalidCommand</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Commands"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands">[docs]</a><span class="k">class</span> <span class="nc">Commands</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Commands">
+<a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands">[docs]</a>
+<span class="k">class</span> <span class="nc">Commands</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the set of all known IMAP commands and the ability to parse.&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;commands&#39;</span><span class="p">]</span>
@@ -170,7 +178,9 @@
         <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">builtin_commands</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Commands.register"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Command</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Commands.register">
+<a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands.register">[docs]</a>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Command</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a new IMAP command.</span>
 
 <span class="sd">        Args:</span>
@@ -179,7 +189,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">cmd</span><span class="o">.</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmd</span></div>
 
-<div class="viewcode-block" id="Commands.deregister"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands.deregister">[docs]</a>    <span class="k">def</span> <span class="nf">deregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="Commands.deregister">
+<a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands.deregister">[docs]</a>
+    <span class="k">def</span> <span class="nf">deregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deregister an IMAP command by name. Does nothing if the command is</span>
 <span class="sd">        not registered.</span>
 
@@ -189,7 +202,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Commands.parse"><a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
+
+<div class="viewcode-block" id="Commands.parse">
+<a class="viewcode-back" href="../../../pymap.parsing.html#pymap.parsing.commands.Commands.parse">[docs]</a>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span><span class="p">)</span> \
             <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Command</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the given bytes into a command. The basic syntax is a tag</span>
 <span class="sd">        string, a command name, possibly some arguments, and then an endline.</span>
@@ -225,7 +241,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cmd_type</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">NotParseable</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">InvalidCommand</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">cmd_type</span><span class="p">),</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span></div></div>
+            <span class="k">return</span> <span class="n">InvalidCommand</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">cmd_type</span><span class="p">),</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span></div>
+</div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -276,7 +294,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../parsing.html" >pymap.parsing</a> &#187;</li>
@@ -287,7 +305,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

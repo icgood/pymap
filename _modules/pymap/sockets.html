@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.sockets &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.sockets &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.sockets</a></li> 
@@ -84,18 +84,25 @@
 <span class="n">_PeerCert</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># {&#39;issuer&#39;: ..., ...}</span>
 
 
-<div class="viewcode-block" id="InheritedSockets"><a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets">[docs]</a><span class="k">class</span> <span class="nc">InheritedSockets</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="InheritedSockets">
+<a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets">[docs]</a>
+<span class="k">class</span> <span class="nc">InheritedSockets</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstracts the ability to retrieve inherited sockets from the calling</span>
 <span class="sd">    process, usually a service management framework.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="InheritedSockets.get"><a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.get">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="InheritedSockets.get">
+<a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.get">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_socket</span><span class="o">.</span><span class="n">socket</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the sockets inherited by the process.&quot;&quot;&quot;</span>
         <span class="o">...</span></div>
 
-<div class="viewcode-block" id="InheritedSockets.supports"><a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.supports">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="InheritedSockets.supports">
+<a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.supports">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">supports</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_manager</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the given service manager is supported. This does not</span>
 <span class="sd">        guarantee the service manager will provide inherited sockets, only that</span>
@@ -110,7 +117,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="InheritedSockets.of"><a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.of">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="InheritedSockets.of">
+<a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.of">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">of</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_manager</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InheritedSockets</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the inherited sockets for the given service manager.</span>
 
@@ -126,7 +136,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">service_manager</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="InheritedSockets.for_systemd"><a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.for_systemd">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="InheritedSockets.for_systemd">
+<a class="viewcode-back" href="../../pymap.sockets.html#pymap.sockets.InheritedSockets.for_systemd">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">for_systemd</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InheritedSockets</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the inherited sockets for `systemd`_. The `python-systemd`_</span>
 <span class="sd">        library must be installed.</span>
@@ -145,7 +158,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
         <span class="k">if</span> <span class="n">systemd_import_exc</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">systemd_import_exc</span>
-        <span class="k">return</span> <span class="n">_SystemdSockets</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="n">_SystemdSockets</span><span class="p">()</span></div>
+</div>
+
 
 
 <span class="k">class</span> <span class="nc">_SystemdSockets</span><span class="p">(</span><span class="n">InheritedSockets</span><span class="p">):</span>
@@ -220,7 +235,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.sockets</a></li> 
@@ -230,7 +245,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -2,18 +2,18 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pymap.mime &#8212; pymap 0.36.5 documentation</title>
+    <title>pymap.mime &#8212; pymap 0.36.6 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=7848cb2a"></script>
+    <script src="../../_static/documentation_options.js?v=3795f234"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
     
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.mime</a></li> 
@@ -84,7 +84,9 @@
 <span class="n">_Folded</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_Lines</span><span class="p">]]</span>
 
 
-<div class="viewcode-block" id="MessageContent"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent">[docs]</a><span class="k">class</span> <span class="nc">MessageContent</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
+<div class="viewcode-block" id="MessageContent">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageContent</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Contains the message content, parsed for IMAP processing.</span>
 
 <span class="sd">    Args:</span>
@@ -107,7 +109,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">header</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">body</span>
 
-<div class="viewcode-block" id="MessageContent.walk"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.walk">[docs]</a>    <span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MessageContent</span><span class="p">]:</span>
+<div class="viewcode-block" id="MessageContent.walk">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.walk">[docs]</a>
+    <span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MessageContent</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate through the message and all its nested sub-parts in the</span>
 <span class="sd">        order they occur.</span>
 
@@ -116,6 +120,7 @@
             <span class="k">return</span> <span class="n">chain</span><span class="p">([</span><span class="bp">self</span><span class="p">],</span> <span class="o">*</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">walk</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">nested</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_rfc822</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -138,7 +143,9 @@
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">json</span><span class="p">,</span>
                 <span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">json</span><span class="p">}</span>
 
-<div class="viewcode-block" id="MessageContent.from_json"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.from_json">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MessageContent.from_json">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.from_json">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MessageContent</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recover the parsed message content without re-parsing, using the</span>
 <span class="sd">        original raw data and the :attr:`.json`.</span>
@@ -158,7 +165,10 @@
         <span class="n">body</span> <span class="o">=</span> <span class="n">MessageBody</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MessageContent.parse"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.parse">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="MessageContent.parse">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.parse">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageContent</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse the bytestring into message content.</span>
 
@@ -169,6 +179,7 @@
         <span class="n">lines</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_lines</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">view</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span></div>
+
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">view</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">lines</span><span class="p">:</span> <span class="n">_Lines</span><span class="p">)</span> \
@@ -206,8 +217,11 @@
                 <span class="k">return</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="p">[],</span> <span class="n">lines</span>
 
-<div class="viewcode-block" id="MessageContent.write"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MessageContent.write">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageContent.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
@@ -216,7 +230,10 @@
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MessageHeader"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader">[docs]</a><span class="k">class</span> <span class="nc">MessageHeader</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MessageHeader">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageHeader</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The message header. Contains lines in the form of ``Header: value\\n``,</span>
 <span class="sd">    possibly folded onto multiple lines where subsequent lines start with</span>
 <span class="sd">    whitespace.</span>
@@ -258,7 +275,9 @@
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;lines&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lines</span><span class="p">,</span>
                 <span class="s1">&#39;folded&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_folded</span><span class="p">}</span>
 
-<div class="viewcode-block" id="MessageHeader.from_json"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader.from_json">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MessageHeader.from_json">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader.from_json">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MessageHeader</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recover the parsed message header without re-parsing, using the</span>
 <span class="sd">        original raw data and the :attr:`.json`.</span>
@@ -275,10 +294,14 @@
         <span class="n">folded</span><span class="p">:</span> <span class="n">_Folded</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s1">&#39;folded&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">folded</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MessageHeader.empty"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader.empty">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="MessageHeader.empty">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader.empty">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageHeader</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an empty header object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[])</span></div>
+
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_get_folded</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">view</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">folded</span><span class="p">:</span> <span class="n">_Folded</span><span class="p">)</span> \
@@ -338,8 +361,11 @@
             <span class="n">folded</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">cls</span><span class="o">.</span><span class="n">_to_str</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">group</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">folded</span>
 
-<div class="viewcode-block" id="MessageHeader.write"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MessageHeader.write">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageHeader.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
@@ -348,7 +374,10 @@
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MessageBody"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody">[docs]</a><span class="k">class</span> <span class="nc">MessageBody</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MessageBody">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody">[docs]</a>
+<span class="k">class</span> <span class="nc">MessageBody</span><span class="p">(</span><span class="n">Writeable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The message body, starting immediately after the header. The body may</span>
 <span class="sd">    contain nested sub-parts, which are each valid :class:`MessageContent`</span>
 <span class="sd">    objects.</span>
@@ -397,7 +426,9 @@
                 <span class="s1">&#39;content_type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_type</span><span class="p">),</span>
                 <span class="s1">&#39;nested&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">json</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nested</span><span class="p">]}</span>
 
-<div class="viewcode-block" id="MessageBody.from_json"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody.from_json">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="MessageBody.from_json">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody.from_json">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MessageBody</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recover the parsed message body without re-parsing, using the</span>
 <span class="sd">        original raw data and the :attr:`.json`.</span>
@@ -416,11 +447,15 @@
                   <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">json</span><span class="p">[</span><span class="s1">&#39;nested&#39;</span><span class="p">]]</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">content_type</span><span class="p">,</span> <span class="n">nested</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MessageBody.empty"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody.empty">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="MessageBody.empty">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody.empty">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MessageBody</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an empty body object.&quot;&quot;&quot;</span>
         <span class="n">content_type</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_content_type</span><span class="p">(</span><span class="n">_default_type</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">[],</span> <span class="n">content_type</span><span class="p">,</span> <span class="p">[])</span></div>
+
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">view</span><span class="p">:</span> <span class="nb">memoryview</span><span class="p">,</span> <span class="n">lines</span><span class="p">:</span> <span class="n">_Lines</span><span class="p">,</span>
@@ -493,14 +528,18 @@
                 <span class="n">ret</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-<div class="viewcode-block" id="MessageBody.write"><a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="MessageBody.write">
+<a class="viewcode-back" href="../../pymap.mime.html#pymap.mime.MessageBody.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">:</span> <span class="n">WriteStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__bytes__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -551,7 +590,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">pymap 0.36.5 documentation</a> &#187;</li>
+    <li><a href="../../index.html">pymap 0.36.6 documentation</a> &#187;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">pymap.mime</a></li> 
@@ -561,7 +600,7 @@
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
