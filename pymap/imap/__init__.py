@@ -256,8 +256,8 @@ class IMAPConnection:
         return ok
 
     async def write_response(self, resp: Response) -> None:
-        await resp.async_write(self.writer)
         try:
+            await resp.async_write(self.writer)
             await self.writer.drain()
         except ConnectionError:
             pass
