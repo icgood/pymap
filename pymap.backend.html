@@ -7,13 +7,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pymap.backend &#8212; pymap 0.36.6 documentation</title>
+    <title>pymap.backend &#8212; pymap 0.36.7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/cloud.css?v=98ea126a" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noticia+Text:400,i,b,bi|Open+Sans:400,i,b,bi|Roboto+Mono:400,i,b,bi&amp;display=swap" type="text/css" />
     
-    <script src="_static/documentation_options.js?v=3795f234"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/documentation_options.js?v=93ed762d"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
 
     
@@ -55,7 +55,7 @@
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.7 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -355,7 +355,7 @@ message with its assigned UID.</p>
 <li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The UID of the message to copy.</p></li>
 <li><p><strong>destination</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – The destination mailbox.</p></li>
 <li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
-<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – </p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -375,7 +375,7 @@ message with its assigned UID.</p>
 <li><p><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The UID of the message to move.</p></li>
 <li><p><strong>destination</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – The destination mailbox.</p></li>
 <li><p><strong>recent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – True if the message should be marked recent.</p></li>
-<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>) – </p></li>
+<li><p><strong>self</strong> (<a class="reference internal" href="#pymap.backend.mailbox.MailboxDataT" title="pymap.backend.mailbox.MailboxDataT"><em>MailboxDataT</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -412,7 +412,7 @@ message with its assigned UID.</p>
 <li><p><strong>cached_msg</strong> (<a class="reference internal" href="pymap.interfaces.html#pymap.interfaces.message.CachedMessage" title="pymap.interfaces.message.CachedMessage"><em>CachedMessage</em></a>) – The last known cached message.</p></li>
 <li><p><strong>flag_set</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#frozenset" title="(in Python v3.12)"><em>frozenset</em></a><em>[</em><a class="reference internal" href="pymap.parsing.html#pymap.parsing.specials.flag.Flag" title="pymap.parsing.specials.flag.Flag"><em>Flag</em></a><em>]</em>) – The set of flags for the update operation.</p></li>
 <li><p><strong>flag_op</strong> – The mode to change the flags.</p></li>
-<li><p><strong>mode</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><em>FlagOp</em></a>) – </p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="pymap.flags.html#pymap.flags.FlagOp" title="pymap.flags.FlagOp"><em>FlagOp</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -734,7 +734,7 @@ backend to clean up resources.</p>
 <li><p><strong>filter</strong> – Mailbox name with possible wildcards.</p></li>
 <li><p><strong>subscribed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, only list the subscribed mailboxes.</p></li>
 <li><p><strong>selected</strong> (<a class="reference internal" href="pymap.selected.html#pymap.selected.SelectedMailbox" title="pymap.selected.SelectedMailbox"><em>SelectedMailbox</em></a><em> | </em><em>None</em>) – If applicable, the currently selected mailbox name.</p></li>
-<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – </p></li>
+<li><p><strong>filter_</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1245,7 +1245,7 @@ the selected mailbox.</p>
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
@@ -1253,7 +1253,7 @@ the selected mailbox.</p>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
@@ -1293,7 +1293,7 @@ the selected mailbox.</p>
         <li class="right" >
           <a href="pymap.user.html" title="pymap.user"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">pymap 0.36.6 documentation</a> &#187;</li>
+    <li><a href="index.html">pymap 0.36.7 documentation</a> &#187;</li>
 
         <li class="nav-item nav-item-this"><a href=""><code class="docutils literal notranslate"><span class="pre">pymap.backend</span></code></a></li> 
       </ul>
@@ -1302,7 +1302,7 @@ the selected mailbox.</p>
 
     <div class="footer" role="contentinfo">
     &#169; Copyright 2022, Ian Good.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
