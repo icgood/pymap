@@ -80,6 +80,7 @@ doc = [
 [project.urls]
 'Homepage' = 'https://github.com/icgood/pymap/'
 'API Documentation' = 'https://icgood.github.io/pymap/'
+'Docker Image' = 'https://github.com/icgood/pymap/pkgs/container/pymap'
 
 [project.scripts]
 pymap = 'pymap.main:main'
@@ -158,11 +159,13 @@ module = 'pid.*'
 ignore_missing_imports = true
 
 [tool.ruff]
-select = ['ANN', 'B', 'E', 'F', 'N', 'S', 'W']
-ignore = ['ANN101', 'ANN102', 'ANN401', 'N818', 'S101']
 line-length = 79
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint]
+select = ['ANN', 'B', 'E', 'F', 'N', 'S', 'W']
+ignore = ['ANN101', 'ANN102', 'ANN401', 'N818', 'S101']
+
+[tool.ruff.lint.per-file-ignores]
 "test/*" = ['ANN', 'S105', 'S106']
 "pymap/admin/handlers/*" = ['N802']
 
@@ -198,12 +201,15 @@ features = [
 [tool.hatch.envs.default.scripts]
 run-pytest = 'py.test --cov-report=term-missing --cov=pymap'
 run-mypy = 'mypy pymap test'
-run-ruff = 'ruff pymap test'
+run-ruff = 'ruff check pymap test'
 run-autopep8 = 'autopep8 --exit-code -dr pymap test'
 check = ['run-pytest', 'run-autopep8', 'run-mypy', 'run-ruff']
 
 [[tool.hatch.envs.all.matrix]]
 python = ['3.11', '3.12']
+
+[tool.hatch.envs.docker]
+features = ['redis', 'admin', 'macaroon', 'sieve', 'swim', 'optional']
 
 [tool.hatch.envs.doc]
 features = ['doc']

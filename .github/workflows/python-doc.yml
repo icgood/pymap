@@ -1,9 +1,9 @@
 name: doc
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
+    branches: [ main ]
+  push:
     branches: [ main ]
   release:
     types: [ published ]
@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     - name: Install build tools
@@ -26,7 +26,7 @@ jobs:
         hatch run doc:build
     - name: Deploy to GitHub Pages
       if: github.event_name == 'release'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ github.token }}
         publish_dir: ./doc/build/html
