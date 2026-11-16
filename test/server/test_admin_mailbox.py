@@ -47,7 +47,7 @@ class TestMailboxHandlers(TestBase):
             b' ENVELOPE (NIL NIL (("" NIL "user" "example.com"))'
             b' (("" NIL "user" "example.com")) (("" NIL "user" "example.com"))'
             b' NIL NIL NIL NIL NIL)'
-            b' BODY ("text" "plain" NIL NIL NIL "7BIT" 38 3)'
+            b' BODY ("text" "plain" NIL NIL NIL "7BIT" 14 1)'
             b' UID 105)\r\n'
             b'fetch1 OK UID FETCH completed.\r\n')
         transport.push_logout()

@@ -7,6 +7,18 @@ from pymap.mime import MessageContent
 
 class TestMessageContents(unittest.TestCase):
 
+    def test_body_lines(self) -> None:
+        header = b'content-type: text/plain\n\n'
+        cases = ((b'', 0),
+                 (b'abc', 1),
+                 (b'abc\n', 1),
+                 (b'abc\nxyz', 2),
+                 (b'abc\n\n', 2))
+        for body, expected in cases:
+            with self.subTest(body=body):
+                msg = MessageContent.parse(header + body)
+                self.assertEqual(expected, msg.body.lines)
+
     def test_parse(self) -> None:
         header = b'from: sender@example.com \n' \
                  b'to: user1@example.com,\n' \

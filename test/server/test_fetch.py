@@ -36,7 +36,7 @@ class TestFetch(TestBase):
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "friend" "example.com")) '
             b'(("" NIL "me" "example.com")) NIL NIL NIL NIL) '
-            b'BODY ("text" "plain" NIL NIL NIL "7BIT" 1980 38))\r\n'
+            b'BODY ("text" "plain" NIL NIL NIL "7BIT" 1848 32))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -49,7 +49,7 @@ class TestFetch(TestBase):
             b'fetch1 FETCH * (BODYSTRUCTURE)\r\n')
         transport.push_write(
             b'* 4 FETCH (BODYSTRUCTURE ("text" "plain" NIL NIL NIL "7BIT" '
-            b'1980 38 NIL NIL NIL NIL))\r\n'
+            b'1848 32 NIL NIL NIL NIL))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         transport.push_logout()
         await self.run(transport)
@@ -308,6 +308,31 @@ class TestFetch(TestBase):
             b'* 2 FETCH (BODYSTRUCTURE (',
             (br'(?:[^\r]|\r(?!\n))*', ),
             b' ("attachment" ("filename" "Notice.eml")) NIL NIL)',
+            b' "mixed" ("boundary" "test=_71EBCB1C") NIL NIL NIL))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_fetch_bodystructure_multipart_sizes(
+            self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (BODYSTRUCTURE)\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODYSTRUCTURE ('
+            b'("text" "plain" NIL NIL NIL "base64" 44 1 NIL NIL NIL NIL)'
+            b'("text" "plain" NIL NIL NIL "quoted-printable" 22 1'
+            b' NIL NIL NIL NIL)'
+            b'("message" "rfc822" NIL NIL NIL "7BIT" 205'
+            b' ("01-Jan-2000 01:01:00 +0000"'
+            b' "Important notice regarding your account"'
+            b' (("" NIL "corp" "example.com")) (("" NIL "corp" "example.com"))'
+            b' (("" NIL "corp" "example.com")) (("" NIL "me" "example.com"))'
+            b' NIL NIL NIL NIL)'
+            b' ("text" "plain" NIL NIL NIL "7BIT" 33 1 NIL NIL NIL NIL) 8'
+            b' NIL ("attachment" ("filename" "Notice.eml")) NIL NIL)'
             b' "mixed" ("boundary" "test=_71EBCB1C") NIL NIL NIL))\r\n'
             b'fetch1 OK FETCH completed.\r\n')
         transport.push_logout()
