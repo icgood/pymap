@@ -132,9 +132,9 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
 
     def file_write(self) -> None:
         file_path = self.get_file(self.path)
-        with NamedTemporaryFile('w', delete=False) as tmp:
+        with NamedTemporaryFile('w', delete=False, newline='') as tmp:
             self.write(tmp)
-        os.rename(tmp.name, file_path)
+        os.replace(tmp.name, file_path)
         self._touched = False
 
     @classmethod
