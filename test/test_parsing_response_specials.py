@@ -54,7 +54,8 @@ class TestESearchResponse(unittest.TestCase):
 
     def test_bytes(self):
         resp = ESearchResponse(b'tag', True, {b'one': b'2', b'three': b'4'})
-        self.assertEqual(b'* (TAG "tag") UID ONE 2 THREE 4\r\n', bytes(resp))
+        self.assertEqual(b'* ESEARCH (TAG "tag") UID ONE 2 THREE 4\r\n',
+                         bytes(resp))
 
 
 class TestListResponse(unittest.TestCase):

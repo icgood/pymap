@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Awaitable, Callable, Iterable
+from collections.abc import Awaitable, Callable, Iterable, Sequence
 from contextlib import suppress
 from typing import TypeAlias, NoReturn
 
@@ -34,8 +34,9 @@ from pymap.parsing.response.code import Capability, PermanentFlags, UidNext, \
     UidValidity, Unseen, MailboxId
 from pymap.parsing.response.specials import FlagsResponse, ExistsResponse, \
     RecentResponse, FetchResponse, ListResponse, LSubResponse, IdResponse, \
-    SearchResponse, StatusResponse
-from pymap.parsing.specials import StatusAttribute, FetchAttribute, FetchValue
+    SearchResponse, ESearchResponse, StatusResponse
+from pymap.parsing.specials import StatusAttribute, FetchAttribute, \
+    FetchValue, SequenceSet
 from pymap.selected import SelectedMailbox
 from pysasl.creds.plain import PlainCredentials
 from pysasl.creds.server import ServerCredentials
@@ -333,8 +334,28 @@ class ConnectionState:
                 msg_ids.append(msg.uid)
             else:
                 msg_ids.append(msg_seq)
-        resp.add_untagged(SearchResponse(msg_ids))
+        if cmd.options is None:
+            resp.add_untagged(SearchResponse(msg_ids))
+        else:
+            resp.add_untagged(self._get_esearch_response(cmd, msg_ids))
         return resp, updates
+
+    @classmethod
+    def _get_esearch_response(cls, cmd: SearchCommand,
+                              seqs: Sequence[int]) -> ESearchResponse:
+        options = cmd.options or frozenset()
+        data: dict[bytes, MaybeBytes] = {}
+        # RFC 4731 3.1: MIN, MAX and ALL are omitted if nothing matched.
+        if seqs:
+            if b'MIN' in options:
+                data[b'MIN'] = b'%i' % min(seqs)
+            if b'MAX' in options:
+                data[b'MAX'] = b'%i' % max(seqs)
+            if b'ALL' in options:
+                data[b'ALL'] = SequenceSet.build(seqs, uid=cmd.uid)
+        if b'COUNT' in options:
+            data[b'COUNT'] = b'%i' % len(seqs)
+        return ESearchResponse(cmd.tag, cmd.uid, data)
 
     async def do_store(self, cmd: StoreCommand) -> _CommandRet:
         if not cmd.uid:

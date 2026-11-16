@@ -35,6 +35,65 @@ class TestSearch(TestBase):
         transport.push_logout()
         await self.run(transport)
 
+    async def test_esearch(self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'search1 SEARCH RETURN (MIN MAX COUNT ALL) NOT 2\r\n')
+        transport.push_write(
+            b'* ESEARCH (TAG "search1") ALL 1,3:4 COUNT 3 MAX 4 MIN 1\r\n'
+            b'search1 OK SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_esearch_default(self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'search1 SEARCH RETURN () ALL\r\n')
+        transport.push_write(
+            b'* ESEARCH (TAG "search1") ALL 1:4\r\n'
+            b'search1 OK SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_esearch_no_match(self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'search1 SEARCH RETURN (MIN MAX ALL COUNT) DELETED\r\n')
+        transport.push_write(
+            b'* ESEARCH (TAG "search1") COUNT 0\r\n'
+            b'search1 OK SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_uid_esearch(self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'search1 UID SEARCH RETURN (MIN MAX) ALL\r\n')
+        transport.push_write(
+            b'* ESEARCH (TAG "search1") UID MAX 104 MIN 101\r\n'
+            b'search1 OK UID SEARCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
+    async def test_esearch_bad_option(self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'INBOX')
+        transport.push_readline(
+            b'search1 SEARCH RETURN (PARTIAL 1:5) ALL\r\n')
+        transport.push_write(
+            b'search1 BAD ', (br'[^\r]*', ), b'\r\n')
+        transport.push_logout()
+        await self.run(transport)
+
     async def test_search_not(self, imap_server: IMAPServer) -> None:
         transport = self.new_transport(imap_server)
         transport.push_login()
