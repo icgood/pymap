@@ -29,7 +29,7 @@ class TestMessageContents(unittest.TestCase):
                               b'to': ['user1@example.com, user2@example.com',
                                       'user3@example.com'],
                               b'subject': ['hello world \ufffd'],
-                              b'test': [' more stuff']}, msg.header.parsed)
+                              b'test': ['more stuff']}, msg.header.parsed)
             self.assertEqual('hello world \ufffd', msg.header.parsed.subject)
             self.assertEqual(body, bytes(msg.body))
             self.assertFalse(msg.body.has_nested)
