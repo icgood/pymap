@@ -277,12 +277,20 @@ class MailboxData(MailboxDataInterface[Message]):
 
     async def copy(self, uid: int, destination: MailboxData, *,
                    recent: bool = False) -> int | None:
+        maildir = self._maildir
         dest_maildir = destination._maildir
-        try:
-            record, maildir_msg = await self._get_maildir_msg(uid)
-        except KeyError:
-            return None
-        copy_msg = MaildirMessage(maildir_msg)
+        async with UidList.with_read(self._path) as uidl:
+            try:
+                record = uidl.get(uid)
+            except KeyError:
+                return None
+        async with self.messages_lock.read_lock():
+            try:
+                # The full message must be loaded, the metadata alone would
+                # produce an empty message in the destination mailbox.
+                copy_msg = maildir.get_message(record.key)
+            except (KeyError, FileNotFoundError):
+                return None
         copy_msg.set_subdir('new' if recent else 'cur')
         async with destination.messages_lock.write_lock():
             dest_key = dest_maildir.add(copy_msg)
