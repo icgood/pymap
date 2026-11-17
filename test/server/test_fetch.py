@@ -296,3 +296,19 @@ class TestFetch(TestBase):
         assert len({self.matches[f'id{n}'] for n in range(1, 5)}) == 4
         for n in range(1, 5):
             assert self.matches[f'id{n}'] == self.matches[f'id{n + 4}']
+
+    async def test_fetch_bodystructure_disposition(
+            self, imap_server: IMAPServer) -> None:
+        transport = self.new_transport(imap_server)
+        transport.push_login()
+        transport.push_select(b'Sent')
+        transport.push_readline(
+            b'fetch1 FETCH 2 (BODYSTRUCTURE)\r\n')
+        transport.push_write(
+            b'* 2 FETCH (BODYSTRUCTURE (',
+            (br'(?:[^\r]|\r(?!\n))*', ),
+            b' ("attachment" ("filename" "Notice.eml")) NIL NIL)',
+            b' "mixed" ("boundary" "test=_71EBCB1C") NIL NIL NIL))\r\n'
+            b'fetch1 OK FETCH completed.\r\n')
+        transport.push_logout()
+        await self.run(transport)
