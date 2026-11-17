@@ -175,6 +175,11 @@ class TestSearchCommand(unittest.TestCase):
         ret, buf = UidSearchCommand.parse(b' ALL\n  ', Params())
         self.assertTrue(ret.uid)
 
+    def test_parse_uid_sequence_set(self):
+        ret, _ = UidSearchCommand.parse(b' 1:5 UID 7\n', Params())
+        seq_sets = {key.filter.uid for key in ret.keys}
+        self.assertEqual({False, True}, seq_sets)
+
     def test_parse_error(self):
         with self.assertRaises(NotParseable):
             SearchCommand.parse(b' TEST\n', Params())
