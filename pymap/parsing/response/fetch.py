@@ -150,7 +150,8 @@ class EnvelopeStructure(Writeable):
     @property
     def _value(self) -> Writeable:
         datetime: DateTime | Nil = \
-            DateTime(self.date.datetime) if self.date else Nil()
+            DateTime(self.date.datetime) \
+            if self.date and self.date.datetime else Nil()
         return List([datetime,
                      String.build(self.subject),
                      self._addresses(self.from_),

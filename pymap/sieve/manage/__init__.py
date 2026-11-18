@@ -158,7 +158,8 @@ class ManageSieveConnection:
         return ret
 
     @classmethod
-    def _print(cls, log_format: str, output: str | bytes) -> None:
+    def _print(cls, log_format: str,
+               output: str | bytes | bytearray) -> None:
         if _log.isEnabledFor(logging.DEBUG):
             fd = socket_info.get().socket.fileno()
             if not isinstance(output, str):
