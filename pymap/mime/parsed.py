@@ -59,7 +59,10 @@ class ParsedHeaders(Mapping[bytes, Sequence[BaseHeader]]):
             #   https://github.com/python/typeshed/pull/4365
             # assign to hdr_name, hdr_value = ... instead.
             hdr_tuple = SMTP.header_source_parse(lines)
-            yield cls._registry(hdr_tuple[0], hdr_tuple[1])
+            # Python < 3.14 keeps the leading folding whitespace when the
+            # value starts on a continuation line, strip it consistently.
+            hdr_value = hdr_tuple[1].lstrip(' \t\r\n')
+            yield cls._registry(hdr_tuple[0], hdr_value)
 
     def __repr__(self) -> str:
         return repr(dict(self))

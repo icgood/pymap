@@ -191,8 +191,9 @@ class BaseLoadedMessage(LoadedMessageInterface):
                 return Writeable.empty()
         if subset is None:
             return msg.header
-        headers = Writeable.concat(value for key, value in msg.header.folded
-                                   if inverse != (key.upper() in subset))
+        headers = Writeable.concat(
+            bytes(value) for key, value in msg.header.folded
+            if inverse != (key.upper() in subset))
         return Writeable.concat((headers, Writeable.wrap(b'\r\n')))
 
     def get_message_text(self, section: Sequence[int] | None = None) \
