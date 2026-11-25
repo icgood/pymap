@@ -96,7 +96,7 @@ class SearchKey(Parseable[bytes]):
 
     @property
     def filter_key_set(self) -> frozenlist[SearchKey]:
-        return self._get_filter(frozenlist)  # type: ignore
+        return self._get_filter(frozenlist)
 
     @property
     def filter_key_or(self) -> tuple[SearchKey, SearchKey]:

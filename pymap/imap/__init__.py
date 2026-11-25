@@ -157,7 +157,8 @@ class IMAPConnection:
         self.writer.close()
 
     @classmethod
-    def _print(cls, log_format: str, output: str | bytes) -> None:
+    def _print(cls, log_format: str,
+               output: str | bytes | bytearray) -> None:
         if _log.isEnabledFor(logging.DEBUG):
             uid = socket_info.get().unique_id.hex()
             if not isinstance(output, str):

@@ -373,7 +373,7 @@ class Identity(IdentityInterface):
         version, namespace = ns_val.split(b'/', 1)
         if int(version) != DATA_VERSION:
             raise IncompatibleData()
-        return namespace
+        return bytes(namespace)
 
     def _user_from_dict(self, data: dict[str, str]) -> UserMetadata:
         password = data.pop('password', None)
