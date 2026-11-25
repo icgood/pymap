@@ -477,8 +477,15 @@ class UidFetchCommand(FetchCommand):
 
 
 class UidSearchCommand(SearchCommand):
-    """The ``UID SEARCH`` variant of the ``SEARCH`` command, which uses message
-    UIDs instead of sequence numbers.
+    """The ``UID SEARCH`` variant of the ``SEARCH`` command, which returns
+    message UIDs instead of sequence numbers.
+
+    Note:
+        A sequence set given as a search key still refers to message sequence
+        numbers, only the ``UID`` search key refers to message UIDs.
+
+    See Also:
+        `RFC 3501 6.4.8 <https://tools.ietf.org/html/rfc3501#section-6.4.8>`_
 
     """
 
@@ -489,7 +496,7 @@ class UidSearchCommand(SearchCommand):
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[UidSearchCommand, memoryview]:
-        ret, buf = super().parse(buf, params.copy(uid=True))
+        ret, buf = super().parse(buf, params.copy(uid=False))
         if not isinstance(ret, UidSearchCommand):
             raise TypeError(ret)
         return ret, buf
