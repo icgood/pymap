@@ -278,7 +278,7 @@ class QuotedString(String):
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[QuotedString, memoryview]:
         start = cls._whitespace_length(buf)
-        if buf[start:start + 1] != b'"':
+        if bytes(buf[start:start + 1]) != b'"':
             raise NotParseable(buf)
         marker = start + 1
         unquoted = bytearray()
@@ -449,7 +449,7 @@ class List(Parseable[frozenlist[MaybeBytes]]):
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[List, memoryview]:
         start = cls._whitespace_length(buf)
-        if buf[start:start + 1] != b'(':
+        if bytes(buf[start:start + 1]) != b'(':
             raise NotParseable(buf)
         items: list[AnyParseable] = []
         buf = buf[start + 1:]

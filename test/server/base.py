@@ -37,12 +37,10 @@ class TestBase:
     # For speed and determinism.
     _hash_context = BuiltinHash(hash_name='sha1', salt_len=0, rounds=1)
 
-    @classmethod
     @pytest.fixture(autouse=True)
-    def init(cls, request, backend):
-        test = request.instance
-        test._fd = 1
-        test._matches = {}
+    def init(self, backend):
+        self._fd = 1
+        self._matches: dict[str, bytes] = {}
 
     @pytest.fixture
     def imap_server(self, backend):

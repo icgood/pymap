@@ -22,7 +22,7 @@ __all__ = ['subsystem', 'current_command', 'socket_info', 'language_code',
 
 #: The :class:`~pymap.concurrent.Subsystem` for concurrency primitives.
 subsystem: ContextVar[Subsystem] = ContextVar(
-    'subsystem', default=Subsystem.for_asyncio())
+    'subsystem', default=Subsystem.for_asyncio())  # noqa: B039
 
 #: The currently executing :class:`~pymap.parsing.command.Command`.
 current_command: ContextVar[Command] = ContextVar('current_command')
@@ -41,4 +41,4 @@ connection_exit: ContextVar[AsyncExitStack] = ContextVar('connection_exit')
 #: Manages local cluster metadata updates and access to remote status and
 #: metadata.
 cluster_metadata: ContextVar[ClusterMetadata] = ContextVar(
-    'cluster_metdata', default=ClusterMetadata())
+    'cluster_metdata', default=ClusterMetadata())  # noqa: B039

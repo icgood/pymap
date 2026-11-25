@@ -75,7 +75,7 @@ def modutf7_decode(data: bytes) -> str:
     while buf:
         byte = buf[0]
         if is_usascii:
-            if buf[0:2] == b'&-':
+            if bytes(buf[0:2]) == b'&-':
                 parts.append('&')
                 buf = buf[2:]
             elif byte == 0x26:
