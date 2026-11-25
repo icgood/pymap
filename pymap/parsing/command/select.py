@@ -354,7 +354,7 @@ class SearchCommand(CommandSelect):
     def _parse_options(cls, buf: memoryview, params: Params) \
             -> tuple[ExtensionOptions, memoryview]:
         start = cls._whitespace_length(buf)
-        if buf[start:start + 6] == b'RETURN':
+        if bytes(buf[start:start + 6]) == b'RETURN':
             return ExtensionOptions.parse(buf[start + 6:], params)
         else:
             options, _ = ExtensionOptions.parse(memoryview(b''), params)
