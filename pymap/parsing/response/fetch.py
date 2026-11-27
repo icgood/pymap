@@ -88,6 +88,27 @@ class _ParamsList(Writeable):
         return bytes(self._value)
 
 
+class _DispositionList(Writeable):
+
+    def __init__(self, header: ContentDispositionHeader | None) -> None:
+        super().__init__()
+        self.header = header
+
+    @property
+    def _value(self) -> Writeable:
+        header = self.header
+        if header is None or not header.content_disposition:
+            return Nil()
+        return List([String.build(header.content_disposition),
+                     _ParamsList(header.params)])
+
+    def write(self, writer: WriteStream) -> None:
+        self._value.write(writer)
+
+    def __bytes__(self) -> bytes:
+        return bytes(self._value)
+
+
 class EnvelopeStructure(Writeable):
     """Builds the response to an `RFC 3501 7.4.2
     <https://tools.ietf.org/html/rfc3501#section-7.4.2>`_ FETCH ENVELOPE
@@ -260,7 +281,7 @@ class MultipartBodyStructure(BodyStructure):
         parts = [part.extended for part in self.parts]
         return List([_Concatenated(parts), String.build(self.subtype),
                      _ParamsList(self.content_type_params),
-                     String.build(self.content_disposition),
+                     _DispositionList(self.content_disposition),
                      String.build(self.content_language),
                      String.build(self.content_location)])
 
@@ -324,7 +345,7 @@ class ContentBodyStructure(BodyStructure):
                                   fallback=b'7BIT'),
                      Number(self.size),
                      String.build(self.body_md5),
-                     String.build(self.content_disposition),
+                     _DispositionList(self.content_disposition),
                      String.build(self.content_language),
                      String.build(self.content_location)])
 
@@ -384,7 +405,7 @@ class TextBodyStructure(ContentBodyStructure):
                                   fallback=b'7BIT'),
                      Number(self.size), Number(self.lines),
                      String.build(self.body_md5),
-                     String.build(self.content_disposition),
+                     _DispositionList(self.content_disposition),
                      String.build(self.content_language),
                      String.build(self.content_location)])
 
@@ -454,7 +475,7 @@ class MessageBodyStructure(ContentBodyStructure):
                      self.body_structure.extended,
                      Number(self.lines),
                      String.build(self.body_md5),
-                     String.build(self.content_disposition),
+                     _DispositionList(self.content_disposition),
                      String.build(self.content_language),
                      String.build(self.content_location)])
 
