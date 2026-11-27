@@ -40,7 +40,7 @@ class MessageContent(Writeable):
                  body: MessageBody) -> None:
         super().__init__()
         self._raw = get_raw(memoryview(data), header._lines, body._lines)
-        self.lines: Final = header.lines + body.lines - 1
+        self.lines: Final = header.lines + body.lines
         self.header: Final = header
         self.body: Final = body
 
@@ -295,7 +295,7 @@ class MessageBody(Writeable):
 
     """
 
-    __slots__ = ['_raw', '_lines', '_nested', 'content_type']
+    __slots__ = ['_raw', '_lines', '_num_lines', '_nested', 'content_type']
 
     def __init__(self, data: bytes, lines: _Lines,
                  content_type: ContentTypeHeader,
@@ -303,13 +303,15 @@ class MessageBody(Writeable):
         super().__init__()
         self._raw = get_raw(memoryview(data), lines)
         self._lines = lines
+        self._num_lines = (0 if not self._raw else
+                           len(lines) - int(self._raw[-1] == ord('\n')))
         self._nested = nested
         self.content_type: Final = content_type
 
     @property
     def lines(self) -> int:
         """The number of lines in the message body."""
-        return len(self._lines)
+        return self._num_lines
 
     @property
     def has_nested(self) -> bool:

@@ -11,7 +11,7 @@ from .bytes import Writeable
 from .flags import SessionFlags
 from .interfaces.message import FlagsKey, CachedMessage, MessageInterface, \
     LoadedMessageInterface
-from .mime import MessageContent
+from .mime import MessageContent, MessageBody
 from .mime.cte import MessageDecoder
 from .parsing.response.fetch import EnvelopeStructure, BodyStructure, \
     MultipartBodyStructure, ContentBodyStructure, TextBodyStructure, \
@@ -210,8 +210,8 @@ class BaseLoadedMessage(LoadedMessageInterface):
         return msg.body
 
     @classmethod
-    def _get_size_with_lines(cls, msg: MessageContent) -> tuple[int, int]:
-        return len(msg), msg.lines
+    def _get_size_with_lines(cls, body: MessageBody) -> tuple[int, int]:
+        return len(body), body.lines
 
     def get_size(self, section: Sequence[int] | None = None) -> int:
         try:
@@ -266,17 +266,17 @@ class BaseLoadedMessage(LoadedMessageInterface):
             sub_msg = msg.body.nested[0]
             sub_env_struct = cls._get_envelope_structure(sub_msg)
             sub_body_struct = cls._get_body_structure(sub_msg)
-            size, lines = cls._get_size_with_lines(msg)
+            size, lines = cls._get_size_with_lines(msg.body)
             return MessageBodyStructure(
                 params, disposition, language, location, content_id,
                 content_desc, content_encoding, None, size, lines,
                 sub_env_struct, sub_body_struct)
         elif maintype == 'text':
-            size, lines = cls._get_size_with_lines(msg)
+            size, lines = cls._get_size_with_lines(msg.body)
             return TextBodyStructure(
                 subtype, params, disposition, language, location,
                 content_id, content_desc, content_encoding, None, size, lines)
-        size = len(msg)
+        size = len(msg.body)
         return ContentBodyStructure(
             maintype, subtype, params, disposition, language, location,
             content_id, content_desc, content_encoding, None, size)
