@@ -1,8 +1,10 @@
 
 import unittest
+from email.headerregistry import ContentDispositionHeader, HeaderRegistry
 
 from pymap.parsing.response import CommandResponse, ResponseContinuation, \
     ResponseBad, ResponseNo, ResponseOk, ResponseBye, ResponseCode
+from pymap.parsing.response.fetch import _DispositionList
 
 
 _alert = ResponseCode.of(b'ALERT')
@@ -62,3 +64,30 @@ class TestResponseBye(unittest.TestCase):
     def test_bytes(self):
         resp = ResponseBye(b'bye response')
         self.assertEqual(b'* BYE bye response\r\n', bytes(resp))
+
+
+class TestDispositionList(unittest.TestCase):
+
+    @staticmethod
+    def _disposition(value: str) -> ContentDispositionHeader:
+        header = HeaderRegistry()('Content-Disposition', value)
+        # Narrow BaseHeader to ContentDispositionHeader for type checkers.
+        assert isinstance(header, ContentDispositionHeader)
+        return header
+
+    def test_no_header_is_nil(self):
+        self.assertEqual(b'NIL', bytes(_DispositionList(None)))
+
+    def test_missing_disposition_is_nil(self):
+        header = self._disposition('')
+        self.assertEqual(b'NIL', bytes(_DispositionList(header)))
+
+    def test_disposition_without_params_is_nil(self):
+        header = self._disposition('attachment')
+        self.assertEqual(b'("attachment" NIL)',
+                         bytes(_DispositionList(header)))
+
+    def test_disposition_with_params(self):
+        header = self._disposition('attachment; filename="Notice.eml"')
+        self.assertEqual(b'("attachment" ("filename" "Notice.eml"))',
+                         bytes(_DispositionList(header)))
