@@ -5,7 +5,8 @@ import os
 import os.path
 from abc import abstractmethod, ABCMeta
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager, AbstractAsyncContextManager
+from contextlib import asynccontextmanager, AbstractAsyncContextManager, \
+    suppress
 from tempfile import NamedTemporaryFile
 from typing import TypeVar, Generic, Any, IO, Self
 
@@ -132,9 +133,15 @@ class FileWriteable(FileReadable, metaclass=ABCMeta):
 
     def file_write(self) -> None:
         file_path = self.get_file(self.path)
-        with NamedTemporaryFile('w', delete=False, newline='') as tmp:
-            self.write(tmp)
-        os.replace(tmp.name, file_path)
+        directory = os.path.dirname(os.path.abspath(file_path))
+        tmp = NamedTemporaryFile('w', dir=directory, delete=False, newline='')
+        try:
+            with tmp:
+                self.write(tmp)
+            os.replace(tmp.name, file_path)
+        finally:
+            with suppress(FileNotFoundError):
+                os.unlink(tmp.name)
         self._touched = False
 
     @classmethod
