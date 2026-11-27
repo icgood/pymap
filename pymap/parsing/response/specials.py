@@ -191,7 +191,7 @@ class ESearchResponse(UntaggedResponse):
 
     @property
     def text(self) -> bytes:
-        prefixes: list[bytes] = []
+        prefixes: list[bytes] = [b'ESEARCH']
         if self.issuer_tag is not None:
             prefixes += [BytesFormat(b'(TAG "%b")') % self.issuer_tag]
         if self.uid:

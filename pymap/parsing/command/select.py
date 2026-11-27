@@ -311,24 +311,34 @@ class SearchCommand(CommandSelect):
 
     See Also:
         `RFC 3501 6.4.4. <https://tools.ietf.org/html/rfc3501#section-6.4.4>`_
+        `RFC 4731 3.1. <https://tools.ietf.org/html/rfc4731#section-3.1>`_
 
     Args:
         tag: The command tag.
         keys: The search keys.
         charset: The charset in use by the search keys.
+        options: The ``RETURN`` options of an extended search, or ``None``
+            for a regular search.
 
     """
 
     command = b'SEARCH'
     uid: ClassVar[bool] = False
 
+    #: The ``RETURN`` options supported by extended search.
+    return_supported: ClassVar[frozenset[bytes]] = frozenset(
+        [b'MIN', b'MAX', b'ALL', b'COUNT'])
+
+    _return_pattern = re.compile(br' +RETURN +\(', re.IGNORECASE)
+    _return_option_pattern = re.compile(br' *([a-zA-Z]+)')
+
     def __init__(self, tag: bytes, keys: Iterable[SearchKey],
                  charset: str | None,
-                 options: ExtensionOptions | None = None) -> None:
+                 options: Iterable[bytes] | None = None) -> None:
         super().__init__(tag)
         self.keys = frozenset(keys)
         self.charset = charset
-        self.options = options or ExtensionOptions.empty()
+        self.options = None if options is None else frozenset(options)
 
     @classmethod
     def _parse_charset(cls, buf: memoryview, params: Params) \
@@ -351,19 +361,32 @@ class SearchCommand(CommandSelect):
         return None, buf
 
     @classmethod
-    def _parse_options(cls, buf: memoryview, params: Params) \
-            -> tuple[ExtensionOptions, memoryview]:
+    def _parse_return(cls, buf: memoryview, params: Params) \
+            -> tuple[frozenset[bytes] | None, memoryview]:
+        match = cls._return_pattern.match(buf)
+        if match is None:
+            return None, buf
+        buf = buf[match.end(0):]
+        options: set[bytes] = set()
+        while True:
+            opt_match = cls._return_option_pattern.match(buf)
+            if opt_match is None:
+                break
+            option = opt_match.group(1).upper()
+            if option not in cls.return_supported:
+                raise NotParseable(buf)
+            options.add(option)
+            buf = buf[opt_match.end(0):]
         start = cls._whitespace_length(buf)
-        if bytes(buf[start:start + 6]) == b'RETURN':
-            return ExtensionOptions.parse(buf[start + 6:], params)
-        else:
-            options, _ = ExtensionOptions.parse(memoryview(b''), params)
-            return options, buf
+        if bytes(buf[start:start + 1]) != b')':
+            raise NotParseable(buf)
+        # RFC 4731 3.1: an empty list is equivalent to RETURN (ALL).
+        return frozenset(options or [b'ALL']), buf[start + 1:]
 
     @classmethod
     def parse(cls, buf: memoryview, params: Params) \
             -> tuple[SearchCommand, memoryview]:
-        options, buf = cls._parse_options(buf, params)
+        options, buf = cls._parse_return(buf, params)
         charset, buf = cls._parse_charset(buf, params)
         search_keys = []
         while True:

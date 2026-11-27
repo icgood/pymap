@@ -249,6 +249,12 @@ added to a mailbox.
 No additional functionality by itself, but allows pymap to be extended easily
 and more robustly handle bad client implementations.
 
+#### [RFC 4731](https://tools.ietf.org/html/rfc4731)
+
+Adds the `ESEARCH` capability, which allows `SEARCH` and `UID SEARCH` commands
+to request only the `MIN`, `MAX`, `ALL` or `COUNT` of the matching messages
+with the `RETURN` option, using a more compact `ESEARCH` response.
+
 #### [RFC 5530](https://tools.ietf.org/html/rfc5530)
 
 Adds additional IMAP response codes that can help tell an IMAP client why a

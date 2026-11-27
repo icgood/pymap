@@ -184,6 +184,28 @@ class TestSearchCommand(unittest.TestCase):
         with self.assertRaises(NotParseable):
             SearchCommand.parse(b' TEST\n', Params())
 
+    def test_parse_no_return(self):
+        ret, _ = SearchCommand.parse(b' ALL\n', Params())
+        self.assertIsNone(ret.options)
+
+    def test_parse_return(self):
+        ret, buf = SearchCommand.parse(
+            b' return (min Max COUNT) CHARSET UTF-8 ALL\n  ', Params())
+        self.assertEqual({b'MIN', b'MAX', b'COUNT'}, ret.options)
+        self.assertEqual('UTF-8', ret.charset)
+        self.assertSetEqual({SearchKey(b'ALL')}, ret.keys)
+        self.assertEqual(b'  ', buf)
+
+    def test_parse_return_empty(self):
+        ret, _ = SearchCommand.parse(b' RETURN () ALL\n', Params())
+        self.assertEqual({b'ALL'}, ret.options)
+
+    def test_parse_return_error(self):
+        with self.assertRaises(NotParseable):
+            SearchCommand.parse(b' RETURN (PARTIAL) ALL\n', Params())
+        with self.assertRaises(NotParseable):
+            SearchCommand.parse(b' RETURN (MIN ALL\n', Params())
+
 
 class TestIdleCommand(unittest.TestCase):
 
